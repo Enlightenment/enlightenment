@@ -1,7 +1,9 @@
 [Desktop Entry]
 Type=Link
 Name=Time
+Name[fr]=Temps
 Comment=Time-related gadgets and utilities
+Comment[fr]=Gadgets et utilitaires liés au temps
 Comment[it]=Gadget e utilità correlate al tempo
 Icon=e-module-time
 X-Enlightenment-ModuleType=utils

@@ -18,7 +18,7 @@ msgstr ""
 "Project-Id-Version: Enlightenment DR17\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-04-01 18:48+0200\n"
-"PO-Revision-Date: 2019-06-14 07:40+0200\n"
+"PO-Revision-Date: 2019-06-18 18:42+0200\n"
 "Last-Translator: Philippe Jean Guillaumie <similar@orange.fr>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -287,19 +287,19 @@ msgstr "Maximisation en mode « remplissage »"
 
 #: src/bin/e_actions.c:3356
 msgid "Shade Up Mode Toggle"
-msgstr "(Dés)Activer l'ombre vers le haut"
+msgstr "(Dés)Activer l'enroulement vers le haut"
 
 #: src/bin/e_actions.c:3358
 msgid "Shade Down Mode Toggle"
-msgstr "(Dés)Activer l'ombre vers le bas"
+msgstr "(Dés)Activer l'enroulement vers le bas"
 
 #: src/bin/e_actions.c:3360
 msgid "Shade Left Mode Toggle"
-msgstr "(Dés)Activer l'ombre vers la gauche"
+msgstr "(Dés)Activer l'enroulement vers la gauche"
 
 #: src/bin/e_actions.c:3362
 msgid "Shade Right Mode Toggle"
-msgstr "(Dés)Activer l'ombre vers la droite"
+msgstr "(Dés)Activer l'enroulement vers la droite"
 
 #: src/bin/e_actions.c:3364
 msgid "Shade Mode Toggle"
@@ -632,19 +632,19 @@ msgstr "Déplacer au centre"
 
 #: src/bin/e_actions.c:3596
 msgid "Move/resize to upper-left quadrant"
-msgstr "Déplacer/redimensionner vers quadrant en haut à gauche"
+msgstr "Déplacer / redimensionner vers quadrant haut gauche"
 
 #: src/bin/e_actions.c:3601
 msgid "Move/resize to upper-right quadrant"
-msgstr "Déplacer/redimensionner vers quadrant haut droit"
+msgstr "Déplacer / redimensionner vers quadrant haut droit"
 
 #: src/bin/e_actions.c:3606
 msgid "Move/resize to lower-left quadrant"
-msgstr "Déplacer/redimensionner vers quadrant bas gauche"
+msgstr "Déplacer / redimensionner vers quadrant bas gauche"
 
 #: src/bin/e_actions.c:3611
 msgid "Move/resize to lower-right quadrant"
-msgstr "Déplacer/redimensionner vers quadrant bas droit"
+msgstr "Déplacer / redimensionner vers quadrant bas droit"
 
 #: src/bin/e_actions.c:3616
 msgid "Move To Coordinates..."
@@ -975,11 +975,11 @@ msgid ""
 "to software engine.<ps/><ps/>You will need an OpenGL 2.0 (or OpenGL ES 2.0) "
 "capable<ps/>GPU to use OpenGL with compositing."
 msgstr ""
-"Votre pilote d'affichage ne supporte pas OpenGL, les nuanceurs (shaders)<ps/"
-"> GLSL ou aucun moteur OpenGL n'est compilé ou installé<ps/>pour Evas ou "
-"Ecore-Evas. Retour au moteur logiciel.<ps/><ps/>Il vous faut un GPU prenant "
-"en charge OpenGL 2.0 (ou OpenGL ES 2.0)<ps/>pour tirer profit de la "
-"composition avec OpenGL."
+"Votre pilote d'affichage ne supporte pas OpenGL, les nuanceurs<ps/>GLSL, ou "
+"aucun moteur OpenGL n'est compilé ou installé<ps/>pour Evas ou Ecore-Evas. "
+"Retour au moteur logiciel.<ps/><ps/>Il vous faut un GPU prenant en charge "
+"OpenGL 2.0 (ou OpenGL ES 2.0)<ps/>pour tirer profit de la composition avec "
+"OpenGL."
 
 #: src/bin/e_comp_x.c:5636
 msgid "Lock Failed"
@@ -1644,7 +1644,7 @@ msgstr "Tri"
 
 #: src/bin/e_fm.c:8984 src/bin/e_fm.c:9133
 msgid "Refresh View"
-msgstr "Rafraîchir"
+msgstr "Rafraîchir l'affichage"
 
 #: src/bin/e_fm.c:8995 src/bin/e_fm.c:9145
 msgid "New..."
@@ -2180,7 +2180,7 @@ msgstr "Étirer"
 #: src/bin/e_int_client_prop.c:240
 #, c-format
 msgid "Center"
-msgstr "Centrer"
+msgstr "Au centre"
 
 #: src/bin/e_import_config_dialog.c:503
 msgid "Tile"
@@ -2350,7 +2350,7 @@ msgstr "Ancrée"
 
 #: src/bin/e_int_client_menu.c:194
 msgid "Shade"
-msgstr "Enroulée"
+msgstr "Enrouler"
 
 #: src/bin/e_int_client_menu.c:208 src/bin/e_int_config_comp_match.c:474
 msgid "Borderless"
@@ -4403,35 +4403,35 @@ msgstr "Vertical(e)"
 
 #: src/bin/e_shelf.c:72
 msgid "Top-left Corner"
-msgstr "Coin gauche supérieur"
+msgstr "Coin supérieur gauche"
 
 #: src/bin/e_shelf.c:73
 msgid "Top-right Corner"
-msgstr "Coin droit supérieur"
+msgstr "Coin supérieur droit"
 
 #: src/bin/e_shelf.c:74
 msgid "Bottom-left Corner"
-msgstr "Coin gauche inférieur"
+msgstr "Coin inférieur gauche"
 
 #: src/bin/e_shelf.c:75
 msgid "Bottom-right Corner"
-msgstr "Coin droit inférieur"
+msgstr "Coin inférieur droit"
 
 #: src/bin/e_shelf.c:76
 msgid "Left-top Corner"
-msgstr "Coin gauche supérieur"
+msgstr "Coin supérieur gauche"
 
 #: src/bin/e_shelf.c:77
 msgid "Right-top Corner"
-msgstr "Coin droit supérieur"
+msgstr "Coin supérieur droit"
 
 #: src/bin/e_shelf.c:78
 msgid "Left-bottom Corner"
-msgstr "Coin gauche inférieur"
+msgstr "Coin inférieur gauche"
 
 #: src/bin/e_shelf.c:79
 msgid "Right-bottom Corner"
-msgstr "Coin droit inférieur"
+msgstr "Coin inférieur droit"
 
 #: src/bin/e_shelf.c:319 src/bin/e_shelf.c:1088
 #, c-format
@@ -4506,7 +4506,7 @@ msgstr "Auto-masquage"
 
 #: src/bin/e_shelf.c:2379
 msgid "Refresh"
-msgstr "Rafraîchissement"
+msgstr "Rafraîchir"
 
 #: src/bin/e_startup.c:82
 #, c-format
@@ -5783,11 +5783,11 @@ msgstr "Coin gauche en bas"
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:1433
 msgid "(left clickable)"
-msgstr "(cliquable à gauche)"
+msgstr "(répond au clic gauche)"
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:1435
 msgid "(clickable)"
-msgstr "(cliquable)"
+msgstr "(répond au clic)"
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:1443
 msgid "(drag only)"
@@ -7454,7 +7454,7 @@ msgstr "Selon l'ordre d'empilement"
 
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:152
 msgid "Most recently used"
-msgstr "Le plus récemment utilisé"
+msgstr "Selon l'utilisation récente"
 
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:155
 msgid "Sort Order"
@@ -7775,7 +7775,7 @@ msgstr "Plus de rebond"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:251
 msgid "Shading"
-msgstr "Ombrage"
+msgstr "Enroulement"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:259
 #, c-format
@@ -7900,11 +7900,11 @@ msgstr "Suivi du redimensionnement"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:281
 msgid "Follow Raise"
-msgstr "Suivi de la mise au-dessus"
+msgstr "Suivi du placement au-dessus"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:284
 msgid "Follow Lower"
-msgstr "Suivi de la mise au-dessous"
+msgstr "Suivi du placement au-dessous"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:287
 msgid "Follow Layer"
@@ -8076,7 +8076,7 @@ msgstr "Manuel"
 
 #: src/modules/cpufreq/e_mod_main.c:237 src/modules/cpufreq/e_mod_main.c:273
 msgid "Lower Power Automatic"
-msgstr "Mode de plus faible puissance"
+msgstr "Basse puissance automatique"
 
 #: src/modules/cpufreq/e_mod_main.c:239 src/modules/cpufreq/e_mod_main.c:275
 msgid "Automatic Interactive"
@@ -8084,11 +8084,11 @@ msgstr "Mode automatique interactif"
 
 #: src/modules/cpufreq/e_mod_main.c:241 src/modules/cpufreq/e_mod_main.c:277
 msgid "Minimum Speed"
-msgstr "Fréquence minimale"
+msgstr "Vitesse minimale"
 
 #: src/modules/cpufreq/e_mod_main.c:243 src/modules/cpufreq/e_mod_main.c:279
 msgid "Maximum Speed"
-msgstr "Fréquence maximale"
+msgstr "Vitesse maximale"
 
 #: src/modules/cpufreq/e_mod_main.c:318
 #, c-format
@@ -8990,7 +8990,7 @@ msgstr "Ajouter un autre gadget"
 
 #: src/modules/gadman/e_mod_main.c:83
 msgid "Show/hide gadgets"
-msgstr "Voir/Cacher les gadgets"
+msgstr "Voir / Cacher les gadgets"
 
 #: src/modules/gadman/e_mod_main.c:199
 msgid "Change Gadgets"
@@ -10304,7 +10304,7 @@ msgstr "Réarranger les boîtes de dialogue"
 
 #: src/modules/tiling/e_mod_config.c:175
 msgid "Enable floating split-mode"
-msgstr "Activer le mode fluctuant de séparation"
+msgstr "Activer le mode de séparation fluctuant"
 
 #: src/modules/tiling/e_mod_config.c:180
 msgid "Enable/disable tiling per desktop."
@@ -10320,7 +10320,7 @@ msgstr "Aide"
 
 #: src/modules/tiling/e_mod_config.c:319
 msgid "Tiling Configuration"
-msgstr "Configuration du pavage"
+msgstr "Configuration du pavage (tiling)"
 
 #: src/modules/tiling/e_mod_tiling.c:874 src/modules/tiling/e_mod_tiling.c:1870
 #: src/modules/tiling/e_mod_tiling.c:1903
@@ -10615,7 +10615,7 @@ msgstr "Installer / Activer Connman pour le support de la gestion du réseau"
 
 #: src/modules/wizard/page_110.c:20
 msgid "Connman and Wireless modules disabled"
-msgstr "Les modules Connman et Wireless sont désactivés"
+msgstr "Les modules Connman et Sans fil sont désactivés"
 
 #: src/modules/wizard/page_110.c:21
 msgid "Install one of these modules for network management support"
@@ -10657,20 +10657,20 @@ msgid ""
 ">please disable this below. It is highly<ps/>advised that you do not disable "
 "this as it<ps/>may leave you vulnerable or having to live<ps/>with bugs."
 msgstr ""
-"Enlightenment peut vérifier la disponibilité de nouveautés,<ps/>de mises à "
-"jour de sécurité et de corrections de bogues, <ps/>mais aussi d'extensions."
-"<ps/><ps/>C'est d'une aide précieuse pour vous tenir informer des<ps/"
-">correctifs disponibles dès leur parution. Pour ce faire,<ps/> Enlightenment "
-"se connecte à enlightenment.org et échange<ps/>des données comme le fait "
-"n'importe quel navigateur.<ps/>Aucune information personnelle telle que le "
-"nom et le<ps/>mot de passe de l'utilisateur, ou quelque fichier personnel "
-"que<ps/>ce soit, n'est transmis. Si vous n'en voulez vraiment pas,<ps/>alors "
-"désactivez la fonctionnalité ci-dessous. Mais dans ce<ps/>cas, vous vous "
-"exposez à des vulnérabilités et à devoir<ps/>vivre avec des bogues."
+"Enlightenment peut vérifier la disponibilité de nouvelles versions,<ps/>de "
+"mises à jour de sécurité et de corrections de bogues, mais<ps/>aussi "
+"d'extensions.<ps/><ps/>C'est d'une aide précieuse pour vous tenir informer "
+"des<ps/>correctifs disponibles dès leur parution. Pour ce faire,<ps/"
+">Enlightenment se connecte à enlightenment.org et échange<ps/>des données "
+"comme le fait n'importe quel navigateur.<ps/>Aucune information personnelle "
+"telle que le nom et le mot de<ps/>passe de l'utilisateur, ou quelque fichier "
+"personnel que ce<ps/>soit, n'est transmis. Si vous n'en voulez vraiment pas,"
+"<ps/>alors désactivez la fonctionnalité ci-dessous. Mais dans ce<ps/>cas, "
+"vous vous exposez à des vulnérabilités et à devoir<ps/>vivre avec des bogues."
 
 #: src/modules/wizard/page_170.c:59
 msgid "Enable update checking"
-msgstr "Activer la vérification de mise à jour"
+msgstr "Activer la vérification des mises à jour"
 
 #: src/modules/wizard/page_180.c:26
 msgid "Information"

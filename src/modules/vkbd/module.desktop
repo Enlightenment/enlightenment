@@ -1,5 +1,7 @@
 [Desktop Entry]
 Type=Link
 Name=Virtual Keyboard
+Name[fr]=Clavier virtuel
+Name[it]=Tastiera virtuale
 Icon=e-module-vkbd
 X-Enlightenment-ModuleType=mobile
