@@ -16,6 +16,5 @@ custom_target('profile.src',
              )
 
 subdir('default')
-#subdir('mobile')
 subdir('standard')
 subdir('tiling')
