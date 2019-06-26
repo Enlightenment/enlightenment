@@ -858,9 +858,15 @@ _drm_device_del(void *data EINA_UNUSED, const Efl_Event *event)
    seat = efl_input_device_seat_get(event->info);
 
    if (seat != evas_default_device_get(e_comp->evas, EFL_INPUT_DEVICE_TYPE_SEAT)) return;
+#ifdef EFL_VERSION_1_23
+   if (!efl_input_device_is_pointer_type_get(event->info)) return;
+   if (efl_input_device_pointer_device_count_get(seat) == 1)
+     ecore_evas_cursor_device_unset(e_comp->ee, event->info);
+#else
    if (!efl_input_device_has_pointer_caps(event->info)) return;
    if (efl_input_device_has_pointer_caps(seat) == 1)
      ecore_evas_cursor_device_unset(e_comp->ee, event->info);
+#endif
 }
 
 E_API void *
