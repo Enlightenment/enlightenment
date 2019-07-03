@@ -22,6 +22,7 @@ if get_option(m) == true
     'page_090',
     'page_100',
     'page_110',
+    'page_115',
     'page_120',
     'page_130',
     'page_150',
