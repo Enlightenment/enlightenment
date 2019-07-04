@@ -21,7 +21,7 @@ static Evas_Object *o_box = NULL;
 static E_Wizard_Page *pages = NULL;
 static E_Wizard_Page *curpage = NULL;
 static int next_ok = 1;
-static int next_prev = 0;
+static int next_prev = -1;
 static int next_can = 0;
 
 static Eina_List *handlers = NULL;
@@ -32,6 +32,7 @@ static Eina_Bool need_xdg_desktops = EINA_FALSE;
 static Eina_Bool need_xdg_icons = EINA_FALSE;
 
 static Ecore_Timer *next_timer = NULL;
+static Ecore_Timer *next_xdg_timer = NULL;
 
 EINTERN int
 wizard_init(void)
@@ -77,7 +78,10 @@ EINTERN void
 wizard_go(void)
 {
    if (!curpage)
-     curpage = pages;
+     {
+        wizard_button_next_enable_set(0);
+        curpage = pages;
+     }
    if (curpage)
      {
         if (curpage->init) curpage->init(curpage, &need_xdg_desktops, &need_xdg_icons);
@@ -353,6 +357,14 @@ _wizard_check_xdg(void)
    return 1;
 }
 
+static Eina_Bool
+_wizard_next_delay(void *data EINA_UNUSED)
+{
+   next_xdg_timer = NULL;
+   wizard_next();
+   return EINA_FALSE;
+}
+
 static void
 _wizard_next_xdg(void)
 {
@@ -364,12 +376,14 @@ _wizard_next_xdg(void)
    if (curpage->state != E_WIZARD_PAGE_STATE_SHOW)
      {
         if (next_ok) return; // waiting for user
-        wizard_next();
+        if (next_xdg_timer) ecore_timer_del(next_xdg_timer);
+        next_xdg_timer = ecore_timer_add(5.0, _wizard_next_delay, NULL);
      }
    else if ((curpage->show) && (!curpage->show(curpage)))
      {
         curpage->state++;
-        wizard_next();
+        if (next_xdg_timer) ecore_timer_del(next_xdg_timer);
+        next_xdg_timer = ecore_timer_add(5.0, _wizard_next_delay, NULL);
      }
    else
      curpage->state++;
