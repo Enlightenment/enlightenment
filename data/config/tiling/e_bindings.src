@@ -37,7 +37,7 @@ group "E_Config_Bindings" struct {
             value "context" int: 0;
             value "type" int: 6;
             value "status" int: -1;
-            value "action" string: "halt";
+            value "action" string: "syscon";
         }
         group "E_Config_Binding_Acpi" struct {
             value "context" int: 0;
@@ -57,7 +57,7 @@ group "E_Config_Bindings" struct {
             value "context" int: 0;
             value "type" int: 5;
             value "status" int: 1;
-            value "action" string: "suspend";
+            value "action" string: "suspend_smart";
             value "params" string: "now";
         }
         group "E_Config_Binding_Acpi" struct {
@@ -921,7 +921,7 @@ group "E_Config_Bindings" struct {
             value "context" int: 9;
             value "modifiers" int: 0;
             value "key" string: "XF86PowerOff";
-            value "action" string: "halt";
+            value "action" string: "syscon";
             value "any_mod" uchar: 0;
         }
         group "E_Config_Binding_Key" struct {
