@@ -12,6 +12,12 @@ TODO:
 * start - add watchdog handling to e_start to detect a hung e
 * config dialog redo and simplification
 * remove e_dnd and use elm's dnd instead
+* defer signal emits for init splash and stuff like that until after
+  mainloop and pre-caching theme file, wallpaper file, own binary,
+  shared libs and module .so files etc. to minimize any stalls and
+  have a smooth init (maybe on linux just open /proc/sefl/fd after we
+  finally hit mainloop and go to sleep and just find every fd that is
+  a path to a file and load the whole file into ram? simple and effective)
 * new gad usability: be able to move, resize etc. without alt
   (needs old gadget move/resize mode enable/disable in the menu)
 * new gad usability: initial gadget bar setup dnd needs to be normal dnd
