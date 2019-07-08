@@ -132,7 +132,16 @@ e_acpi_init(void)
    E_EVENT_ACPI = ecore_event_type_new();
 
    /* check for running acpid */
-   if (!ecore_file_exists("/var/run/acpid.socket")) return 1;
+   if (!ecore_file_exists("/var/run/acpid.socket"))
+     {
+        if (ecore_file_exists("/proc/acpi"))
+          e_util_dialog_show(_("Error"),
+                             _("You seem to have an ACPI based system, but<br>"
+                               "<hilight>acpid</hilight> does not seem to be running or<br>"
+                               "contactable. Perhaps enable the <hilight>acpid</hilight><br>"
+                               "service on your system?"));
+        return 1;
+     }
 
    /* try to connect to acpid socket */
    _e_acpid = ecore_con_server_connect(ECORE_CON_LOCAL_SYSTEM,
