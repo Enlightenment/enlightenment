@@ -1,4 +1,8 @@
 TODO:
+* login manager mode - be able to function as a login manager/gui since
+  most everything you want in a login manager is already present in e
+  like suspend/resume on lid open/close, multi screen config and even
+  auto-extension, backlight and other such controls.
 * console logger much like quake console like dropdown for logging etc
   (api to append logs. always stores to disk to specific file.
    add button to explicitly share like screenshots. add higher level
