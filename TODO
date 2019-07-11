@@ -1,4 +1,82 @@
 TODO:
+* scriptlets: stdin/out module that provides gui services to some
+  back-end script or process where e just talks via stdin/out.
+  things to provide:
+  * only run scriptlet every N seconds to poll then send back data
+  * only run scriptlet at specific times of day (cron-like)
+  * only run scriptlet when some event happens
+    * dbus signals (some way to define what to listen for)
+    * acpi bindings
+    * key bindings
+    * mouse bindings
+    * startup, shutdown, suspend, resume, lock/unlock, ...
+    * ... screen add/del, backlight dim/undim, ...
+    * ... blank/unblank, ac plug/unplug, battery full, ...
+    * ... battery charge begin, battery charge end, ...
+    * ... network connect/disconnect (connman), ...
+    * ... bt device find/lose, ...
+    * ... volume/mute/audio dev change, virtual desktop change, ...
+    * ... app window appear/disappear/exit, ...
+    * ... something goes fullscreen/unfluscreen, ...
+    * other events on the system or in e?
+  * run script all the time and talk to it and "keep state"
+  * provide menu content in menu specific tree...
+  * provide popups like pager mid-screen one with content like below...
+  * provide gadgets with display content like below...
+  * provide gadget popups (like mixer/clock) with content like below...
+  * provide full windows with content like below...
+  * possible content in a tree:
+    * probably have to provide markdown of below in some way...
+      * thinkimg of mustache style {{{ }}} ?
+      * shell friendly so it doesnt have special meanings in sh
+    * image (png/jpg/gif/video ... whatever)
+    * edje theme element/file fallback
+      * send/get signals
+      * set text parts
+      * send/get messages
+      * create, delete, swallow other edje/image objects
+    * box
+    * table
+    * grid
+    * scroller (content holder)
+    * lists to select from (icon, text, icon at end, groups - genlist)
+    * button
+    * radio
+    * check
+    * label/text
+    * entry (editable single/multi line, passwd)
+    * separator
+    * frame (content holder)
+    * slider
+    * progress/busy spinner
+    * dropdown/hoversel
+    * graph (multiple overlayed with N points horiz or vert, line/solid)
+    * dials (like cpufreq)
+    * mixers like ... mixer
+    * temperature guages like temperature
+    * scrollable logs with per line/item content objects
+    * list trees (genlist)
+    * grid lists (gengrid)
+    * efm show dir
+    * efm open specific file with default mime handler
+    * efm open specific file with mime handler chooser
+  * tell scriptlet where it is stored (env var)
+  * tmpdir setup/deletion for scriptlet (env var)
+  * more permanent config dir setup/storage for scriptlet (env var)
+  * pop up specified menu content
+  * display screen popup with content
+  * display gadget popup with content
+  * get events from content (clicked, selected, etc.)
+  * get state of content
+  * create timers and get called on timeout
+  * built in wget via e/ecore_con_url
+  * built in tcp/tcp+ssl netcat provided by ecore_con
+  * direct notification display (via notification module) e/stdin/out
+  * provide built-in editor to edit scripts and auto-re-run as you edit
+    * entry or elm code based?
+    * massive lowering of barrier ro create/change scriptlets
+    * offer a share mechanism like shots?
+      * security issue - they run. verification needed?
 * login manager mode - be able to function as a login manager/gui since
   most everything you want in a login manager is already present in e
   like suspend/resume on lid open/close, multi screen config and even
@@ -32,10 +110,12 @@ TODO:
 * efm: add disk space used bar for disk volume icons
 * efm: add space used "du -sh" summery for all folders
 * efm: add filesystem cache (all dirs cached in files and updated in bg)
-* efm: thumbs for music gettign album art like rage
+* efm: thumbs for music getting album art like rage
 * efm: thumbs for videos with movie posters like rage
 * efm: show symlink info in icon
 * efm: fuse support (mtp, sshfs, cifs/smb etc.)
+* efm: rsync integration for fsync to/from targets
+  * may need ssh setup too (add to authorized keys on other end)
 * shot: add manual cropping ability
 * shot: add simple free draw, box, line and text on top of shot before save
 * bz5: add icon set for actions/states per bt device (pair.unpair, etc.)
