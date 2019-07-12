@@ -35,10 +35,9 @@ it looks at. This file is intended to be customized by packagers and
 system integrators to match your policies and scripts/tools.
 
 NOTE: To enable wayland support (still considered experimental and not for
-regular end users) use the meson -Dwayland=true option. To run
-enlightenment in wayland mode, just log on on ant vt and run
-enlightenment_start. If you wish to debug and see all the output try
-using something like screen then attaching to the remote screen
-session by sshing in etc.
+regular end users) use the meson -Dwl=true option. To run enlightenment in
+wayland mode, just log on on ant vt and run enlightenment_start. If you
+wish to debug and see all the output try using something like screen then
+attaching to the remote screen session by sshing in etc.
 
 

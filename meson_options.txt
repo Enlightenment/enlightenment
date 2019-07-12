@@ -45,7 +45,7 @@ option('mount-eeze',
 	value: false,
 	description: 'enable eeze mounting support: (default=false)')
 
-option('wayland',
+option('wl',
 	type: 'boolean',
 	value: false,
 	description: 'enable wayland support: (default=false)')
