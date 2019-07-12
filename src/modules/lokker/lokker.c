@@ -331,8 +331,6 @@ _text_login_box_add(Lokker_Popup *lp)
         evas_object_layer_set(lp->login_box, E_LAYER_DESKLOCK);
         evas_object_stack_above(lp->login_box, lp->comp_object);
      }
-
-   evas_object_clip_set(lp->login_box, lp->zone->bg_clip_object);
 }
 
 static void
@@ -470,8 +468,6 @@ _lokker_popup_add(E_Zone *zone)
            case E_DESKLOCK_AUTH_METHOD_PIN:
              _pin_box_add(lp);
              edje_object_part_swallow(lp->bg_object, "e.swallow.login_box", lp->login_box);
-
-             evas_object_clip_set(lp->login_box, lp->zone->bg_clip_object);
 
              E_LIST_HANDLER_APPEND(edd->handlers, ECORE_EVENT_MOUSE_BUTTON_DOWN, _pin_mouse_button_down, lp);
              E_LIST_HANDLER_APPEND(edd->handlers, ECORE_EVENT_MOUSE_BUTTON_UP, _pin_mouse_button_up, lp);
