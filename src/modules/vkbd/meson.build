@@ -14,7 +14,7 @@ src = files(
  )
 
 if get_option(m) == true
-  if get_option('wayland') == true
+  if get_option('wl') == true
     foreach p: [
       '@0@/unstable/input-method/input-method-unstable-v1.xml'.format(dir_wayland_protocols),
       '@0@/unstable/text-input/text-input-unstable-v1.xml'.format(dir_wayland_protocols),

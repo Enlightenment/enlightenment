@@ -275,7 +275,7 @@ dep_emotion          = dependency('emotion'         , required: true)
 dep_elementary       = dependency('elementary'      , required: true)
 
 dep_wayland = []
-if get_option('wayland') == true
+if get_option('wl') == true
   wayland_protocols = dependency('wayland-protocols', version: '>= 1.12')
   dir_wayland_protocols = wayland_protocols.get_pkgconfig_variable('pkgdatadir')
   wayland_version = '>= 1.11.0'
@@ -318,7 +318,7 @@ if get_option('wayland') == true
 endif
 
 dep_ecore_x = []
-if get_option('wayland') == true and get_option('wl-x11') == false and get_option('xwayland') == false
+if get_option('wl') == true and get_option('wl-x11') == false and get_option('xwayland') == false
   config_h.set('HAVE_WAYLAND_ONLY', '1')
 else
   dep_ecore_x = dependency('ecore-x')

@@ -1,4 +1,4 @@
-if get_option('wayland') != true or dep_ecore_drm2.found() != true
+if get_option('wl') != true or dep_ecore_drm2.found() != true
   disable = true
 else
   deps = [dependency('elput'), dependency('libdrm')]

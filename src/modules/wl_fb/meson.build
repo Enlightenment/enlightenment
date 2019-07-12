@@ -1,4 +1,4 @@
-if get_option('wayland') != true
+if get_option('wl') != true
   disable = true
 else
   src = files(
