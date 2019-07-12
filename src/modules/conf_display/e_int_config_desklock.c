@@ -154,7 +154,9 @@ _fill_data(E_Config_Dialog_Data *cfdata)
 #ifndef HAVE_WAYLAND_ONLY
    if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      cfdata->use_xscreensaver = ecore_x_screensaver_event_available_get();
+   else
 #endif
+     cfdata->use_xscreensaver = 1;
 
    cfdata->desklock_auth_method = e_config->desklock_auth_method;
    if (e_config->desklock_custom_desklock_cmd)
