@@ -479,6 +479,7 @@ _config_really_apply(E_Randr2_Screen *s, E_Config_Randr2_Screen *cs)
         s->config.mode.h = cs->mode_h;
         s->config.mode.refresh = cs->mode_refresh;
         s->config.mode.preferred = EINA_FALSE;
+        printf("RRR: really apply rotation=%i\n", cs->rotation);
         s->config.rotation = cs->rotation;
         s->config.priority = cs->priority;
         free(s->config.relative.to);
@@ -918,6 +919,7 @@ _config_screen_clone_resolve(E_Config_Randr2 *cfg, const char *id, int *x, int *
           return _config_screen_clone_resolve(cfg, cs->rel_to, x, y);
         return NULL;
      }
+   printf("RRR: resolve clone... [%s]\n", cs->id);
    _screen_config_do(s);
    *x = s->config.geom.x;
    *y = s->config.geom.y;
@@ -983,12 +985,17 @@ _screen_clones_common_sync(Eina_List *clones)
    int d, diff = 0x7fffffff;
 
    // find the base/root/master screen for clones
+   printf("RRR: find base/root for list=%p count=%i\n", clones, eina_list_count(clones));
    EINA_LIST_FOREACH(clones, l, s)
      {
         // simple check - if it doesn't clone something else - then it's
         // the master (doesn't handle missing screens)
-        if (s->config.relative.mode != E_RANDR2_RELATIVE_CLONE)
+        printf("RRR: clone=%p mode=%i\n", s, s->config.relative.mode);
+        if ((s->config.relative.mode != E_RANDR2_RELATIVE_CLONE) &&
+            (s->config.relative.mode != E_RANDR2_RELATIVE_NONE) &&
+            (s->config.relative.mode != E_RANDR2_RELATIVE_UNKNOWN))
           {
+             printf("RRR: got it\n");
              sbase = s;
              break;
           }
@@ -1000,6 +1007,7 @@ _screen_clones_common_sync(Eina_List *clones)
         modes = eina_list_append(modes, m);
      }
    // ensure it's configured
+   printf("RRR: clone common sync... %p %p\n", sbase, s);
    _screen_config_do(sbase);
 again:
    // we took all modes in the "master"
@@ -1068,6 +1076,7 @@ again:
    s->config.mode.w = mcommon->w;
    s->config.mode.h = mcommon->h;
    s->config.mode.refresh = mcommon->refresh;
+   printf("RRR: clones common sync=%ix%i rotation=%i\n", s->config.mode.w, s->config.mode.h, s->config.rotation);
    if ((s->config.rotation == 0) || (s->config.rotation == 180))
      {
         s->config.geom.w = s->config.mode.w;
@@ -1119,6 +1128,7 @@ _screen_config_do(E_Randr2_Screen *s)
      }
    s->config.geom.x = 0;
    s->config.geom.y = 0;
+   printf("RRR: screen config do %ix%i rotation=%i\n", s->config.mode.w, s->config.mode.h, s->config.rotation);
    if ((s->config.rotation == 0) || (s->config.rotation == 180))
      {
         s->config.geom.w = s->config.mode.w;
@@ -1140,6 +1150,7 @@ _screen_config_do(E_Randr2_Screen *s)
              s->config.geom.h = s2->config.geom.h;
              s->config.mode.w = s2->config.mode.w;
              s->config.mode.h = s2->config.mode.h;
+             printf("RRR: screen config do rotation=%i\n", s2->config.rotation);
              s->config.rotation = s2->config.rotation;
              s->config.mode.refresh = s2->config.mode.refresh;
           }
@@ -1193,6 +1204,7 @@ _screen_config_do(E_Randr2_Screen *s)
                   s->config.geom.y = y;
                   s->config.mode.w = cs->mode_w;
                   s->config.mode.h = cs->mode_h;
+                  printf("RRR: clone cs rotation=%i\n", cs->rotation);
                   s->config.rotation = cs->rotation;
                   s->config.mode.refresh = cs->mode_refresh;
                   if ((cs->rotation == 0) || (cs->rotation == 180))
@@ -1218,15 +1230,20 @@ _screen_config_eval(void)
    E_Randr2_Screen *s;
    int minx, miny, maxx, maxy;
 
+   printf("RRR:--------------------------------1\n");
    EINA_LIST_FOREACH(e_randr2->screens, l, s)
      {
-        if (s->config.configured) _screen_config_do(s);
+        if (s->config.configured)
+          {
+             printf("RRR: screen config eval this...\n");
+             _screen_config_do(s);
+          }
      }
    minx = 65535;
    miny = 65535;
    maxx = -65536;
    maxy = -65536;
-   printf("RRR:--------------------------------\n");
+   printf("RRR:--------------------------------2\n");
    EINA_LIST_FOREACH(e_randr2->screens, l, s)
      {
         if (!s->config.enabled) continue;

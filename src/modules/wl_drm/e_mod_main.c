@@ -396,7 +396,7 @@ _drm2_randr_create(void)
 
         if (ok)
           {
-             int rotations;
+             int rotations, outrot;
 
              if (!possible)
                {
@@ -419,7 +419,22 @@ _drm2_randr_create(void)
                          s->config.geom.w, s->config.geom.h);
                }
 
-             s->config.rotation = e_drm2_output_rotation_get(output);
+             outrot = e_drm2_output_rotation_get(output);
+             if (outrot & ECORE_DRM2_ROTATION_NORMAL)
+               s->config.rotation = 0;
+             else if (outrot & ECORE_DRM2_ROTATION_90)
+               s->config.rotation = 90;
+             else if (outrot & ECORE_DRM2_ROTATION_180)
+               s->config.rotation = 180;
+             else if (outrot & ECORE_DRM2_ROTATION_270)
+               s->config.rotation = 270;
+             else
+               {
+                  printf("DRM2 RRR: caution - rotation flags empty - assum 0\n");
+                  s->config.rotation = 0;
+               }
+
+            printf("DRM2 RRR: drm output rotation=%i\n", s->config.rotation);
 
              s->info.can_rot_0 = EINA_FALSE;
              s->info.can_rot_90 = EINA_FALSE;
@@ -428,6 +443,10 @@ _drm2_randr_create(void)
 
              rotations =
                ecore_drm2_output_supported_rotations_get(output);
+             if (!(rotations &
+                   (ECORE_DRM2_ROTATION_NORMAL | ECORE_DRM2_ROTATION_90 |
+                    ECORE_DRM2_ROTATION_180 | ECORE_DRM2_ROTATION_270)))
+               rotations |= ECORE_DRM2_ROTATION_NORMAL;
 
              if (rotations & ECORE_DRM2_ROTATION_NORMAL)
                s->info.can_rot_0 = EINA_TRUE;
@@ -532,6 +551,12 @@ _drm2_rotation_exists(Ecore_Drm2_Output *output, int rot)
    int rots;
 
    rots = ecore_drm2_output_supported_rotations_get(output);
+   printf("RRR: DRM2 ..... rots for %p rots=%x input=%x\n", output, rots, rot);
+   // hack for ... broken drivers that don't say anything about rotations
+   if (!(rots &
+         (ECORE_DRM2_ROTATION_NORMAL | ECORE_DRM2_ROTATION_90 |
+          ECORE_DRM2_ROTATION_180 | ECORE_DRM2_ROTATION_270)))
+     rots |= ECORE_DRM2_ROTATION_NORMAL;
    if (rots >= 0)
      {
         if ((rot == 0) && (rots & ECORE_DRM2_ROTATION_NORMAL))
@@ -544,6 +569,7 @@ _drm2_rotation_exists(Ecore_Drm2_Output *output, int rot)
           return EINA_TRUE;
      }
 
+   printf("RRR: DRM2 ..... no rot matches!\n");
    return EINA_FALSE;
 }
 
@@ -611,9 +637,10 @@ _drm2_randr_apply(void)
                                  printf("RRR:   crtc slot empty: %i\n", i);
                                  if (ecore_drm2_output_possible_crtc_get(out, crtcs[i]))
                                    {
+                                      printf("RRR:     output is possible...\n");
                                       if (_drm2_rotation_exists(out, s->config.rotation))
                                         {
-                                           printf("RRR:   assign slot out: %p\n", out);
+                                           printf("RRR:       assign slot out: %p\n", out);
                                            outconf[i] = out;
                                            screenconf[i] = s;
                                            break;
@@ -696,9 +723,9 @@ _drm2_randr_apply(void)
    if (nh > maxh) nh = maxh;
    if (nw < minw) nw = minw;
    if (nh < minh) nh = minh;
-   printf("RRR: set vsize: %ix%i\n", nw, nh);
+   printf("RRR: set vsize: %ix%i, rot=%i\n", nw, nh, ecore_evas_rotation_get(e_comp->ee));
    ecore_drm2_device_calibrate(dev, nw, nh);
-   /* ecore_drm2_device_pointer_max_set(dev, nw, nh); */
+   ecore_drm2_device_pointer_max_set(dev, nw, nh);
    ecore_drm2_device_pointer_rotation_set(dev, ecore_evas_rotation_get(e_comp->ee));
 
    if (!e_randr2_cfg->ignore_hotplug_events)
