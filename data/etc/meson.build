@@ -5,6 +5,8 @@ HIBERNATE = ''
 MOUNT     = '/bin/mount'
 UMOUNT    = '/bin/umount'
 EJECT     = '/usr/bin/eject'
+L2PING    = '/usr/bin/l2ping'
+RFKILL    = '/bin/rfkill'
 
 if host_machine.system().contains('bsd') == true
   #SUSPEND = 'acpiconf -s3'
@@ -49,6 +51,16 @@ else
   endif
 endif
 
+l2ping = find_program('l2ping', '/usr/bin/l2ping', '/bin/l2ping', '/usr/sbin/l2ping', '/sbin/l2ping', '/usr/local/bin/l2ping', '/usr/local/sbin/l2ping', required : false)
+if l2ping.found() == true
+  L2PING = l2ping.path()
+endif
+
+rfkill = find_program('rfkill', '/usr/bin/rfkill', '/bin/rfkill', '/usr/sbin/rfkill', '/sbin/rfkill', '/usr/local/bin/rfkill', '/usr/local/sbin/rfkill', required : false)
+if rfkill.found() == true
+  RFKILL = rfkill.path()
+endif
+
 sysactions = configuration_data()
 sysactions.set('HALT'     , HALT)
 sysactions.set('REBOOT'   , REBOOT)
@@ -57,6 +69,8 @@ sysactions.set('HIBERNATE', HIBERNATE)
 sysactions.set('MOUNT'    , MOUNT)
 sysactions.set('UMOUNT'   , UMOUNT)
 sysactions.set('EJECT'    , EJECT)
+sysactions.set('L2PING'   , L2PING)
+sysactions.set('RFKILL'   , RFKILL)
 
 if get_option('install-sysactions')
   configure_file(input        : 'sysactions.conf.in',
