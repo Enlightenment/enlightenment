@@ -580,6 +580,7 @@ _drm2_randr_apply(void)
    Ecore_Drm2_Output **outconf, *out;
    int nw = 0, nh = 0;
    int minw, minh, maxw, maxh;
+   int rot;
    unsigned int *crtcs = NULL;
    int num_crtcs = 0, numout = 0;
    const Eina_List *outputs = NULL;
@@ -725,8 +726,12 @@ _drm2_randr_apply(void)
    if (nh < minh) nh = minh;
    printf("RRR: set vsize: %ix%i, rot=%i\n", nw, nh, ecore_evas_rotation_get(e_comp->ee));
    ecore_drm2_device_calibrate(dev, nw, nh);
-   ecore_drm2_device_pointer_max_set(dev, nw, nh);
-   ecore_drm2_device_pointer_rotation_set(dev, ecore_evas_rotation_get(e_comp->ee));
+   rot = ecore_evas_rotation_get(e_comp->ee);
+   if ((rot == 90) || (rot == 270))
+     ecore_drm2_device_pointer_max_set(dev, nh, nw);
+   else
+     ecore_drm2_device_pointer_max_set(dev, nw, nh);
+   ecore_drm2_device_pointer_rotation_set(dev, rot);
 
    if (!e_randr2_cfg->ignore_hotplug_events)
      e_randr2_screen_refresh_queue(EINA_FALSE);
