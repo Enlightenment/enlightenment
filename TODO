@@ -110,6 +110,9 @@ TODO:
 * efm: add disk space used bar for disk volume icons
 * efm: add space used "du -sh" summery for all folders
 * efm: add filesystem cache (all dirs cached in files and updated in bg)
+  * should be a full filesystem shadow stored to cache db files
+  * async update/scan of dir and present updates when done and have changes
+  * store file, stat info, other metadata, mimetype, icon, space used...
 * efm: thumbs for music getting album art like rage
 * efm: thumbs for videos with movie posters like rage
 * efm: show symlink info in icon
