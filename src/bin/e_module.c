@@ -797,8 +797,6 @@ _e_module_dialog_disable_show(const char *title, const char *body, E_Module *m)
    E_Dialog *dia;
    char buf[4096];
 
-   printf("MODULE ERR:\n%s\n", body);
-
    dia = e_dialog_new(NULL, "E", "_module_unload_dialog");
 
    snprintf(buf, sizeof(buf), "%s<ps/>%s", body,
@@ -834,6 +832,7 @@ _e_module_dialog_disable_create(const char *title, const char *body, E_Module *m
    dd->body = strdup(body);
    dd->m = m;
    ecore_timer_loop_add(1.5, (Ecore_Task_Cb)_e_module_dialog_disable_timer, dd);
+   fprintf(stderr, "MODULE ERR: [%s]\n%s\n", title, body);
 }
 
 static void
