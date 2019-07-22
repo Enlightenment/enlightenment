@@ -9,6 +9,9 @@ static E_Config_DD *conf_device_edd = NULL;
 static E_Config_DD *conf_edd = NULL;
 Config *ebluez5_config = NULL;
 
+static Ecore_Event_Handler *_exe_exit_handler = NULL;
+static Ecore_Exe *_rfkill_exe = NULL;
+
 E_API E_Module_Api e_modapi = {E_MODULE_API_VERSION, "Bluez5"};
 
 static void
@@ -285,6 +288,29 @@ ebluez5_popups_show(void)
      }
 }
 
+static Eina_Bool
+_exe_cb_exit(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_Exe_Event_Del *ev = event;
+
+   if (!ev->exe) return ECORE_CALLBACK_PASS_ON;
+   if (ev->exe == _rfkill_exe)
+     {
+        if ((ev->exited) && (ev->exit_code != EXIT_SUCCESS))
+          {
+             e_util_dialog_show
+               (_("Bluetooth rfkill run Error"),
+                _("Trying to rfkill unblock the bluetooth adapter failed.<br>"
+                  "Do you have rfkill installed? Check sysactions.conf<br>"
+                  "to ensure the command is right and your user is<br>"
+                  "permitted to use the rfkill unblock action. Check the<br>"
+                  "users and groups there to be sure."));
+          }
+        _rfkill_exe = NULL;
+     }
+   return ECORE_CALLBACK_PASS_ON;
+}
+
 void
 ebluez5_rfkill_unblock(const char *name)
 {
@@ -297,7 +323,7 @@ ebluez5_rfkill_unblock(const char *name)
         eina_strbuf_append_printf
           (buf, "%s/enlightenment/utils/enlightenment_sys rfkill-unblock %s",
            e_prefix_lib_get(), name);
-        ecore_exe_run(eina_strbuf_string_get(buf), NULL);
+        _rfkill_exe = ecore_exe_run(eina_strbuf_string_get(buf), NULL);
         eina_strbuf_free(buf);
      }
 }
@@ -449,6 +475,9 @@ e_modapi_init(E_Module *m)
    E_CONFIG_LIST(D, T, adapters, conf_adapter_edd);
    E_CONFIG_LIST(D, T, devices, conf_device_edd);
 
+   _exe_exit_handler =
+     ecore_event_handler_add(ECORE_EXE_EVENT_DEL, _exe_cb_exit, NULL);
+
    ebluez5_config = e_config_domain_load("module.ebluez5", conf_edd);
    if (!ebluez5_config) ebluez5_config = E_NEW(Config, 1);
 
@@ -466,9 +495,6 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    Config_Adapter *ad;
    Config_Device *dev;
-
-   E_CONFIG_DD_FREE(conf_edd);
-   E_CONFIG_DD_FREE(conf_adapter_edd);
 
    EINA_LIST_FREE(ebluez5_config->adapters, ad)
      {
@@ -488,6 +514,14 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
 
    e_gadget_type_del("Bluetooth");
    e_gadcon_provider_unregister(&_gc_class);
+
+   if (_exe_exit_handler)
+     {
+        ecore_event_handler_del(_exe_exit_handler);
+        _exe_exit_handler = NULL;
+     }
+   E_CONFIG_DD_FREE(conf_edd);
+   E_CONFIG_DD_FREE(conf_adapter_edd);
    return 1;
 }
 
