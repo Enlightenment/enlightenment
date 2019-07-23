@@ -87,28 +87,52 @@ TODO:
    logging like tables, icons, timelines and graphs that can be output
    in text emulation and to screen - change eina log to go into here
    with eina_log_print_cb_set() )
-* alert - use full fat efl stack and remove xcb/ecore_drm2 stuff
-  (supply custom theme to guarantee theme is not an issue. create text
-   mode fallback with detection for crashes in crash handler. turtles
-   all the way down - a crash handler for our crash handler)
-* start - add watchdog handling to e_start to detect a hung e
-* config dialog redo and simplification
-* remove e_dnd and use elm's dnd instead
+* crash alert: use full fat efl stack and remove xcb/ecore_drm2 stuff
+  * supply custom theme to guarantee theme is not an issue
+  * create text mode fallback with detection for crashes in crash handler
+    * turtles all the way down - a crash handler for our crash handler
+  * problem: we have to kill e to get kms control which breaks gdb
+    * grab data then kill e then display results?
+    * key combination to kill e and move on?
+* watchdog: add watchdog handling to e_start to detect a hung e
+  * also detect if frames stop rendering but loop ok?
+* settings: config dialog redo and simplification
+  * simplify the config and remove useless options
+    * focus on new simpler config dialog(s) first
+      * cover all the major e config uses now
+      * drop some weird/niche/unused stuff
+    * once new config is done, remove old config dialogs
+  * integrate more config of elm into e
+  * add more system setup stuff like:
+    * system locale config
+    * system locales supported (locale.gen)
+    * system timezone as well as user timezone
+    * user timezone (set TZ env var)
+    * set system clock
+    * set up ntp
+    * set user password
+    * user cron front-end config/editor
+* wallpaper: gen wp files with multiple common resolutions in image set
+  * edje needs logic to handle max texture size and to downsize to work
+    * rpi max texture size is 2048...
+* dnd: remove e_dnd and use elm's dnd instead
 * defer signal emits for init splash and stuff like that until after
   mainloop and pre-caching theme file, wallpaper file, own binary,
   shared libs and module .so files etc. to minimize any stalls and
   have a smooth init (maybe on linux just open /proc/sefl/fd after we
   finally hit mainloop and go to sleep and just find every fd that is
   a path to a file and load the whole file into ram? simple and effective)
-* new gad usability: be able to move, resize etc. without alt
-  (needs old gadget move/resize mode enable/disable in the menu)
-* new gad usability: initial gadget bar setup dnd needs to be normal dnd
-* new gad usability: setup needs an obvious "add" button as dnd not obvious
+* new gadgets:
+  * be able to move, resize etc. without alt move/resize mode like old)
+  * initial gadget bar setup dnd needs to be normal dnd
+  * setup needs an obvious "add" button as dnd not obvious
+  * wizard setup could be nicer? maybe just a default bar with no wizard?
+  * changing settigns should not re-run the wizard!
 * efm: use elm for window
 * efm: use elm scroller for fm view
 * efm: use elm for file popup
 * efm: add disk space used bar for disk volume icons
-* efm: add space used "du -sh" summery for all folders
+* efm: add space used "du -sh" summary for all folders
 * efm: add filesystem cache (all dirs cached in files and updated in bg)
   * should be a full filesystem shadow stored to cache db files
   * async update/scan of dir and present updates when done and have changes
@@ -119,6 +143,25 @@ TODO:
 * efm: fuse support (mtp, sshfs, cifs/smb etc.)
 * efm: rsync integration for fsync to/from targets
   * may need ssh setup too (add to authorized keys on other end)
+* efm: partitioning front end
+* efm: filesystem formatting front-end
+* efm: tune2fs/fsck front-end
+* pager: add "Set desktop name" on right click on desktop in pager
+  * turn on desktop names when setting one here
+* pager: add "Set wallpaper" on right clikc on desktop in pager
+* pager: only show desktop names set and not 0,0 0,1 etc.
+* start: start menu could do with more featured content
+  * like you see on windows for example (search and multiple columns etc.)
+  * a touch screen android-style scrolling fullscreen app icon style
+* music-control: offer launching from the control if mpris app not there
+* music-control: auto search for known mpris services
+* music-control: allow manual addition of new named mpris services
+* wireless: fix on connman to work properly
+  * probably redesign to have a single icon and on click pop up like bz5
+  * divide the popup list with group headers like bz5 into tech
+  * provide fuller status per line (reception and other info?)
+  * massively flesh out connman vpn support in the gui
+    * vpnmanager + create method support
 * shot: add manual cropping ability
 * shot: add simple free draw, box, line and text on top of shot before save
 * bz5: add icon set for actions/states per bt device (pair.unpair, etc.)
@@ -127,23 +170,23 @@ TODO:
 * battery: redesign popup to list other battery details like the
   charge if you have multiple batteries for real or separately the
   battery levels of e.g. bt mice, kbd's and other such devices
+* battery: on click display popup like wireless/bluez5
+  in popup show detailed list of battery devices and data per device
+  * like bluez5 use genlist with groups for core batteris vs other misc devices
+  * filter out hid devices with batteries from core battery state
+  * display other devices in above list separately
+  * handle string capacity values like Full, High, Normal, Low, Critical...
 * randr: get auto layout to handle screens laid out like:
   [dp2-2][dp2-1] <- 2 external monitors
       [edp-1] <- laptop main display
-* battery: on click display popup like wireless/bluez5
-  in popup show detailed list of battery devices and data per device
-    like bluez5 use genlist with groups for core batteris vs other misc devices
-  filter out hid devices with batteries from core battery state
-    display other devices in above list separately
-  handle string capacity values like Full, High, Normal, Low, Critical...
 * device manager: new tool to browser /sys etc. and display nicely present
   hardware and device drivers and state
 * sys top: new tool displays cpu/mem "top" - evisum. we want it to be shipped
   with e though so it's always there guaranteed have back-end system status
   logging to files all day long that always starts with e. gui is a front-end
   view to this back-end data log and follows it as it updates.
-    can go back in time then to previous logs
-    should have the ability to draw nice graphs etc.
+  * can go back in time then to previous logs
+  * should have the ability to draw nice graphs etc.
 
 DONE:
 * music-control: fix aspect ratio of album cover image
