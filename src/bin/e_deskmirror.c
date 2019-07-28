@@ -777,9 +777,9 @@ _client_desk_set(E_Smart_Data *sd, int type EINA_UNUSED, E_Event_Client_Desk_Set
    if (m)
      {
         /* ev->desk is previous desk */
+        _mirror_visible_apply(m);
         if (!e_client_util_desk_visible(ev->ec, sd->desk))
           eina_hash_del_by_key(sd->mirror_hash, &ev->ec->frame);
-        _mirror_visible_apply(m);
      }
    if ((!m) && (sd->desk == ev->ec->desk))
      _e_deskmirror_mirror_add(sd, ev->ec->frame);
