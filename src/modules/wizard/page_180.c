@@ -2,7 +2,7 @@
 #include "e_wizard.h"
 #include "e_wizard_api.h"
 
-static Eina_Bool do_tasks = 1;
+static Eina_Bool do_tasks = 0;
 /*
 E_API int
 wizard_page_init(E_Wizard_Page *pg EINA_UNUSED, Eina_Bool *need_xdg_desktops EINA_UNUSED, Eina_Bool *need_xdg_icons EINA_UNUSED)
@@ -36,7 +36,9 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
    elm_box_pack_end(o, ob);
    elm_object_text_set(ob,
      _("A taskbar can be added to<ps/>"
-       "show open windows and applications."
+       "show open windows and applications.<ps/>"
+       "The IBar launcher already can do this,<ps/>"
+       "so this is in addition to that."
        )
      );
 
