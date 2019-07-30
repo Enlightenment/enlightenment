@@ -187,6 +187,7 @@ TODO:
   view to this back-end data log and follows it as it updates.
   * can go back in time then to previous logs
   * should have the ability to draw nice graphs etc.
+* edge bindings - selectign edge dialog needs a redo (no edje for all content)
 
 DONE:
 * music-control: fix aspect ratio of album cover image
