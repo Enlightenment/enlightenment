@@ -81,9 +81,11 @@ static Eina_Bool    _e_menu_cb_scroll_animator(void *data);
 static void         _e_menu_cb_item_submenu_post_default(void *data, E_Menu *m, E_Menu_Item *mi);
 static void         _e_menu_category_free_cb(E_Menu_Category *cat);
 static void         _e_menu_cb_mouse_evas_down(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED);
+static void         _e_menu_hide_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 
 /* local subsystem globals */
 static Ecore_Window _e_menu_win = UINT_MAX;
+static Eina_Bool _e_menu_grabbed = EINA_FALSE;
 static Eina_List *_e_active_menus = NULL;
 static E_Menu_Item *_e_active_menu_item = NULL;
 static E_Menu_Item *_e_prev_active_menu_item = NULL;
@@ -197,6 +199,11 @@ e_menu_hide_all(void)
         _e_menu_unrealize(m);
         m->in_active_list = 0;
         e_object_unref(E_OBJECT(m));
+     }
+   if (_e_menu_grabbed)
+     {
+        e_comp_ungrab_input(1, 1);
+        _e_menu_grabbed = EINA_FALSE;
      }
 }
 
@@ -1216,7 +1223,11 @@ e_menu_idler_before(void)
      {
         if (_e_menu_win == e_comp->ee_win)
           {
-             e_comp_ungrab_input(1, 1);
+             if (_e_menu_grabbed)
+               {
+                  e_comp_ungrab_input(1, 1);
+                  _e_menu_grabbed = EINA_FALSE;
+               }
              _e_menu_win = UINT_MAX;
              e_bindings_disabled_set(0);
           }
@@ -1869,6 +1880,8 @@ _e_menu_unrealize(E_Menu *m)
    if (!m->realized) return;
    /* freeze+thaw here breaks the universe. don't do it. */
    //evas_event_freeze(m->evas);
+   if (m->comp_object)
+     evas_object_event_callback_del(m->comp_object, EVAS_CALLBACK_HIDE, _e_menu_hide_cb);
    if (m->cur.visible && m->comp_object && (!stopping))
      {
         /* force unref in smart object */
@@ -1881,10 +1894,6 @@ _e_menu_unrealize(E_Menu *m)
         evas_object_hide(m->comp_object);
         E_FREE_FUNC(m->comp_object, evas_object_del);
         return;
-     }
-   if (m->comp_object)
-     {
-        evas_object_event_callback_del_full(m->comp_object, EVAS_CALLBACK_HIDE, _e_menu_hide_cb, m);
      }
    evas_object_hide(m->comp_object);
    evas_object_del(m->comp_object);
@@ -1920,6 +1929,7 @@ _e_menu_activate_internal(E_Menu *m, E_Zone *zone)
              _e_menu_win = UINT_MAX;
              return;
           }
+        _e_menu_grabbed = EINA_TRUE;
         e_bindings_disabled_set(1);
      }
    m->zone = zone;
