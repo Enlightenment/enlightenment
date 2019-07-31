@@ -1548,7 +1548,7 @@ _scan_idler(void *data EINA_UNUSED)
 
              EINA_LIST_FREE(exe_files, s)
                {
-                  ee = malloc(sizeof(E_Exe));
+                  ee = calloc(1, sizeof(E_Exe));
                   if (!ee) continue ;
 
                   ee->path = s;
