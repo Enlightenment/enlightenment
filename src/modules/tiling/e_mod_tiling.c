@@ -567,24 +567,23 @@ _desk_config_apply(E_Desk *d, int old_nb_stacks, int new_nb_stacks)
 static void
 _client_apply_settings(E_Client *ec, Client_Extra *extra)
 {
-   if (!extra)
-     {
-        extra = tiling_entry_func(ec);
-     }
+   const char *bdname = "pixel";
 
-   if (!extra || !extra->tiled)
-      return;
+   if (!extra) extra = tiling_entry_func(ec);
 
-   if (ec->maximized)
-     _e_client_unmaximize(ec, E_MAXIMIZE_BOTH);
+   if ((!extra) || (!extra->tiled)) return;
 
-   if (!tiling_g.config->show_titles && (!ec->bordername ||
-                                         strcmp(ec->bordername, "pixel")))
-     change_window_border(ec, "pixel");
-   else if (tiling_g.config->show_titles && (ec->bordername &&
-                                         !strcmp(ec->bordername, "pixel")))
-     change_window_border(ec, (extra->orig.bordername) ? extra->orig.bordername : "default");
+   if (ec->maximized) _e_client_unmaximize(ec, E_MAXIMIZE_BOTH);
 
+   if (e_theme_border_find("tiling")) bdname = "tiling";
+
+   if ((!tiling_g.config->show_titles) &&
+       (!ec->bordername || strcmp(ec->bordername, bdname)))
+     change_window_border(ec, bdname);
+   else if ((tiling_g.config->show_titles) &&
+            (ec->bordername && !strcmp(ec->bordername, bdname)))
+     change_window_border(ec, (extra->orig.bordername) ?
+                          extra->orig.bordername : "default");
 }
 
 static void
