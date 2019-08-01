@@ -881,6 +881,41 @@ _e_test_internal(void)
    ecore_timer_loop_add(1.0, _e_test_timer, c);
 }
 
+#elif 0
+static Eina_Bool
+_e_test_timer(void *data EINA_UNUSED)
+{
+   static int showhide = 0;
+   static E_Menu *m = NULL;
+
+   if (showhide & 0x1)
+     {
+        printf("del menu\n");
+        e_menu_deactivate(m);
+        e_object_del(E_OBJECT(m));
+     }
+   else
+     {
+        int x, y;
+        E_Zone *zone = e_zone_current_get();
+        printf("add menu\n");
+        m = e_int_menus_main_new();
+        m->zone = zone;
+        ecore_evas_pointer_xy_get(e_comp->ee, &x, &y);
+        e_menu_activate_mouse(m, zone, x, y, 1, 1,
+                              E_MENU_POP_DIRECTION_DOWN, 0);
+     }
+   showhide++;
+   printf("%i\n", showhide);
+   return EINA_TRUE;
+}
+
+static void
+_e_test_internal(void)
+{
+   ecore_timer_loop_add(2.0, _e_test_timer, NULL);
+}
+
 #else
 static void
 _e_test_internal(void)
