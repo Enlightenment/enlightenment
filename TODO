@@ -187,7 +187,12 @@ TODO:
   view to this back-end data log and follows it as it updates.
   * can go back in time then to previous logs
   * should have the ability to draw nice graphs etc.
-* edge bindings - selectign edge dialog needs a redo (no edje for all content)
+* edge bindings - selecting edge dialog needs a redo (no edje for all content)
+* e menu - add obj cache for menu and menu item objects to reduce costs
+  by far the biggest cost in showing/hiding menus is realize/unrealize
+  and this is almost all object creation/setup/deletion costs. menus
+  can be more responsive (on low end systems) if... we avoid this. to
+  avoid... have a cache of spare objecta to re-use.
 
 DONE:
 * music-control: fix aspect ratio of album cover image
