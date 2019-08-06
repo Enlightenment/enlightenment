@@ -49,7 +49,10 @@ e_sys_l2ping(const char *bluetooth_mac, int timeout_ms)
         return -1;
      }
 
-   fcntl(fd, F_SETFL, O_NONBLOCK);
+   if (fcntl(fd, F_SETFL, O_NONBLOCK) != 0)
+     {
+        perror("Can't set socket to non-blocking... continue");
+     }
 
    // Connect to remote device
    memset(&addr, 0, sizeof(addr));
