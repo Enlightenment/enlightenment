@@ -363,13 +363,9 @@ _xwl_pipe_read(void *data, Ecore_Fd_Handler *fdh)
    unsigned char *buf;
 
    buf = malloc(INCR_CHUNK_SIZE);
+   if (!buf) goto err;
+
    len = read(ecore_main_fd_handler_fd_get(fdh), (void*)buf, INCR_CHUNK_SIZE);
-   if (len < 0)
-     {
-        free(buf);
-        _incr_update(p, 0);
-        eina_hash_del_by_key(pipes, &p->win);
-     }
    if (len == INCR_CHUNK_SIZE)
      {
         p->buf = eina_binbuf_manage_new(buf, len, 0);
@@ -386,22 +382,28 @@ _xwl_pipe_read(void *data, Ecore_Fd_Handler *fdh)
         ecore_main_fd_handler_active_set(p->fdh, 0);
         return ECORE_CALLBACK_RENEW;
      }
-   if (len)
-     p->buf = eina_binbuf_manage_new(buf, len, 0);
+   else if (len > 0)
+     {
+        p->buf = eina_binbuf_manage_new(buf, len, 0);
+     }
    else
      {
         _incr_update(p, 0);
+        eina_hash_del_by_key(pipes, &p->win);
         free(buf);
         return ECORE_CALLBACK_RENEW;
      }
    _incr_upload(p);
    if (p->incr)
-     ecore_main_fd_handler_active_set(p->fdh, 0);
+     {
+        ecore_main_fd_handler_active_set(p->fdh, 0);
+     }
    else
      {
         _incr_update(p, 1);
         eina_hash_del_by_key(pipes, &p->win);
      }
+err:
    return ECORE_CALLBACK_RENEW;
 }
 
