@@ -1065,8 +1065,8 @@ _ibox_cb_event_client_remove(void *data EINA_UNUSED, int type EINA_UNUSED, void 
      {
         ic = _ibox_icon_find(b, ev->ec);
         if (!ic) continue;
-        _ibox_icon_free(ic);
         b->icons = eina_list_remove(b->icons, ic);
+        _ibox_icon_free(ic);
         _ibox_empty_handle(b);
         _ibox_resize_handle(b);
         _gc_orient(b->inst->gcc, -1);
