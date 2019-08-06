@@ -55,7 +55,12 @@ e_sys_l2ping(const char *bluetooth_mac, int timeout_ms)
    memset(&addr, 0, sizeof(addr));
    addr.l2_family = AF_BLUETOOTH;
    str2ba(bluetooth_mac, &addr.l2_bdaddr);
-   connect(fd, (struct sockaddr *)&addr, sizeof(addr));
+   if (connect(fd, (struct sockaddr *)&addr, sizeof(addr)) != 0)
+     {
+        perror("Can't bind connect socket");
+        close(fd);
+        return -1;
+     }
 
    FD_ZERO(&rfds);
    FD_ZERO(&wfds);
