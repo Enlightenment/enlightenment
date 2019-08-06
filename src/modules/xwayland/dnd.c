@@ -456,21 +456,30 @@ _xwl_selection_request(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event_Sel
                E_Client *ec;
                int fds[2];
 
+               if (socketpair(AF_UNIX, (SOCK_STREAM | SOCK_CLOEXEC), 0, fds) != 0)
+                 break;
+               if (fcntl(fds[0], F_SETFL, O_NONBLOCK) != 0)
+                 {
+                    close(fds[0]);
+                    close(fds[1]);
+                    break;
+                 }
                p = E_NEW(Pipe, 1);
-               socketpair(AF_UNIX, (SOCK_STREAM | SOCK_CLOEXEC), 0, fds);
-               fcntl(fds[0], F_SETFL, O_NONBLOCK);
-               p->fdh = ecore_main_fd_handler_add(fds[0], ECORE_FD_READ, _xwl_pipe_read, p, NULL, NULL);
-               p->win = ev->requestor;
-               p->source = source;
-               wl_data_source_send_send(source->resource, type, fds[1]);
-               close(fds[1]);
-               p->atom = ev->target;
-               p->selection = ev->selection;
-               p->property = ev->property;
-               ec = e_pixmap_find_client(E_PIXMAP_TYPE_X, ev->requestor);
-               if (ec && ec->override)
-                 ecore_x_window_sniff(ev->requestor);
-               eina_hash_add(pipes, &p->win, p);
+               if (p)
+                 {
+                    p->fdh = ecore_main_fd_handler_add(fds[0], ECORE_FD_READ, _xwl_pipe_read, p, NULL, NULL);
+                    p->win = ev->requestor;
+                    p->source = source;
+                    wl_data_source_send_send(source->resource, type, fds[1]);
+                    close(fds[1]);
+                    p->atom = ev->target;
+                    p->selection = ev->selection;
+                    p->property = ev->property;
+                    ec = e_pixmap_find_client(E_PIXMAP_TYPE_X, ev->requestor);
+                    if (ec && ec->override)
+                      ecore_x_window_sniff(ev->requestor);
+                    eina_hash_add(pipes, &p->win, p);
+                 }
                break;
             }
      }
