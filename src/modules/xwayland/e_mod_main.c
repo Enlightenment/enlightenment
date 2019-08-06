@@ -397,7 +397,7 @@ xwl_init(void *d EINA_UNUSED)
         if (exs->unx_fd < 0)
           {
              unlink(exs->lock);
-             close(exs->abs_fd);
+             if (exs->abs_fd >= 0) close(exs->abs_fd);
              free(exs);
              return EINA_FALSE;
           }
