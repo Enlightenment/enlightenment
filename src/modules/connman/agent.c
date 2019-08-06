@@ -438,8 +438,15 @@ _agent_request_input(const Eldbus_Service_Interface *iface,
             "\tAlternates: (omit array)\n"
             "\tValue: %s",
             field.name, field.type, field.requirement, field.value);
-
-        _dialog_field_add(agent, &field);
+        if (!field.requirement)
+          {
+             ERR("Field '%s' missing requirement string", field.name);
+          }
+        else if (!field.name)
+          {
+             ERR("Field missing name string");
+          }
+        else _dialog_field_add(agent, &field);
      }
 
    return NULL;
