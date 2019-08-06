@@ -793,6 +793,7 @@ _e_text_input_manager_cb_text_input_create(struct wl_client *client, struct wl_r
                                              1, id);
    if (!text_input->resource)
      {
+        free(text_input);
         wl_client_post_no_memory(client);
         ERR("could not create wl_resource for text input");
         return;
