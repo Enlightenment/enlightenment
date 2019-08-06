@@ -285,9 +285,9 @@ _e_comp_wl_data_offer_cb_source_destroy(struct wl_listener *listener, void *data
    E_Comp_Wl_Data_Offer *offer;
 
    DBG("Data Offer Source Destroy");
+   if (!listener) return;
    offer = container_of(listener, E_Comp_Wl_Data_Offer,
                         source_destroy_listener);
-   if (!offer) return;
 
    offer->source = NULL;
 }
