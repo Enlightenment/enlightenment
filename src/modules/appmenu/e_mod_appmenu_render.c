@@ -221,7 +221,6 @@ appmenu_menu_of_instance_render(E_AppMenu_Instance *inst, E_AppMenu_Window *wind
         item = edje_object_add(inst->evas);
         e_theme_edje_object_set(item, "base/themes", "e/modules/appmenu/item");
         edje_object_part_text_set(item, "text", child->label);
-        evas_object_box_append(inst->box, item);
         edje_object_size_min_calc(item, &w, &h);
 
         if (!padding)
@@ -247,6 +246,8 @@ appmenu_menu_of_instance_render(E_AppMenu_Instance *inst, E_AppMenu_Window *wind
              sum_h = sum_h + h;
           }
         evas_object_resize(item, w, h);
+        evas_object_size_hint_min_set(item, w, h);
+        evas_object_box_append(inst->box, item);
         evas_object_show(item);
         evas_object_data_set(item, "gadcon", inst->gcc->gadcon);
         evas_object_event_callback_add(item, EVAS_CALLBACK_MOUSE_DOWN,
