@@ -186,52 +186,56 @@ _xwl_fixes_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Even
                   Ecore_X_Atom *types = (void*)data;
 
                   names = malloc(num * sizeof(void*));
-                  namelist = eina_array_new(num);
-                  for (i = 0; i < num; i++)
+                  if (names)
                     {
-                       char *name;
-
-                       if (types[i] == string_atom)
+                       namelist = eina_array_new(num);
+                       for (i = 0; i < num; i++)
                          {
-                            name = names[i] = strdup("UTF8_STRING");
-                            eina_array_push(namelist, eina_stringshare_add(WL_TEXT_STR));
-                         }
-                       else
-                         names[i] = name = ecore_x_atom_name_get(types[i]);
-                       DBG("XWL TARGET: %s", name);
-                       eina_array_push(namelist, eina_stringshare_add(name));
-                    }
-                  if (num > 3)
-                    {
-                       ecore_x_window_prop_property_set(e_comp->cm_selection,
-                         ECORE_X_ATOM_XDND_TYPE_LIST, ECORE_X_ATOM_ATOM, 32, names, num);
-                    }
+                            char *name;
 
+                            if (types[i] == string_atom)
+                              {
+                                 name = names[i] = strdup("UTF8_STRING");
+                                 eina_array_push(namelist, eina_stringshare_add(WL_TEXT_STR));
+                              }
+                            else
+                              names[i] = name = ecore_x_atom_name_get(types[i]);
+                            DBG("XWL TARGET: %s", name);
+                            eina_array_push(namelist, eina_stringshare_add(name));
+                         }
+                       if (num > 3)
+                         {
+                            ecore_x_window_prop_property_set(e_comp->cm_selection,
+                                                             ECORE_X_ATOM_XDND_TYPE_LIST, ECORE_X_ATOM_ATOM, 32, names, num);
+                         }
+                    }
                   free(data);
                }
-             evas_pointer_canvas_xy_get(e_comp->evas, &x, &y);
-             e_comp_wl->drag_client = e_pixmap_find_client(E_PIXMAP_TYPE_X, ev->owner);
-             if (!e_comp_wl->drag_client) e_comp_wl->drag_client = e_comp_wl->ptr.ec;
-             e_comp_wl->drag = e_drag_new(x, y, (const char**)names, num, NULL, 0, NULL, _xwayland_drop);
-             e_comp_wl->drag->button_mask = evas_pointer_button_down_mask_get(e_comp->evas);
-             ecore_x_window_move_resize(e_comp->cm_selection, 0, 0, e_comp->w, e_comp->h);
-             ecore_x_window_show(e_comp->cm_selection);
-             e_drag_start(e_comp_wl->drag, x, y);
-             if (e_comp_wl->ptr.ec)
-               e_comp_wl_data_device_send_enter(e_comp_wl->ptr.ec);
-             e_comp_canvas_feed_mouse_up(0);
-             source = e_comp_wl_data_manager_source_create(e_comp_wl->xwl_client,
-               e_comp_wl->mgr.resource, 0);
-             source->current_dnd_action = WL_DATA_DEVICE_MANAGER_DND_ACTION_COPY;
-             source->dnd_actions = WL_DATA_DEVICE_MANAGER_DND_ACTION_COPY;
-             e_comp_wl->drag_source = source;
-             source->target = _xwayland_target_send;
-             source->send = _xwayland_send_send;
-             source->cancelled = _xwayland_cancelled_send;
-             source->mime_types = namelist;
-             for (i = 0; i < num; i++)
-               free(names[i]);
-             free(names);
+             if (names)
+               {
+                  evas_pointer_canvas_xy_get(e_comp->evas, &x, &y);
+                  e_comp_wl->drag_client = e_pixmap_find_client(E_PIXMAP_TYPE_X, ev->owner);
+                  if (!e_comp_wl->drag_client) e_comp_wl->drag_client = e_comp_wl->ptr.ec;
+                  e_comp_wl->drag = e_drag_new(x, y, (const char**)names, num, NULL, 0, NULL, _xwayland_drop);
+                  e_comp_wl->drag->button_mask = evas_pointer_button_down_mask_get(e_comp->evas);
+                  ecore_x_window_move_resize(e_comp->cm_selection, 0, 0, e_comp->w, e_comp->h);
+                  ecore_x_window_show(e_comp->cm_selection);
+                  e_drag_start(e_comp_wl->drag, x, y);
+                  if (e_comp_wl->ptr.ec)
+                    e_comp_wl_data_device_send_enter(e_comp_wl->ptr.ec);
+                  e_comp_canvas_feed_mouse_up(0);
+                  source = e_comp_wl_data_manager_source_create(e_comp_wl->xwl_client,
+                                                                e_comp_wl->mgr.resource, 0);
+                  source->current_dnd_action = WL_DATA_DEVICE_MANAGER_DND_ACTION_COPY;
+                  source->dnd_actions = WL_DATA_DEVICE_MANAGER_DND_ACTION_COPY;
+                  e_comp_wl->drag_source = source;
+                  source->target = _xwayland_target_send;
+                  source->send = _xwayland_send_send;
+                  source->cancelled = _xwayland_cancelled_send;
+                  source->mime_types = namelist;
+                  for (i = 0; i < num; i++) free(names[i]);
+                  free(names);
+               }
           }
         else
           {
