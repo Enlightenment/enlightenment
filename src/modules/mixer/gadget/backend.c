@@ -1325,9 +1325,12 @@ backend_sink_default_set(const Emix_Sink *s)
 {
    if (_sink_default != s)
      {
-        DBG("Sink default set %s", s->name);
         _sink_default = s;
-        if (s) emix_config_save_sink_set(s->name);
+        if (s)
+          {
+             DBG("Sink default set %s", s->name);
+             emix_config_save_sink_set(s->name);
+          }
         _backend_changed();
      }
 }
