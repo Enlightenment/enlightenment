@@ -224,7 +224,7 @@ props_get_all_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending 
    eldbus_message_iter_dict_iterate(dict, "sv", item_prop_get, item);
 
    if (!item->menu_path)
-     ERR("Notifier item %s doesn't have menu path.", item->menu_path);
+     ERR("Notifier item doesn't have menu path.");
 
    conn = eldbus_object_connection_get(eldbus_proxy_object_get(item->proxy));
    item->menu_data = e_dbusmenu_load(conn, item->bus_id, item->menu_path, item);
