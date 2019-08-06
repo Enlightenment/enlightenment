@@ -2632,8 +2632,10 @@ E_API E_Client *
 e_client_new(E_Pixmap *cp, int first_map, int internal)
 {
    E_Client *ec;
+   E_Pixmap_Type ptype = e_pixmap_type_get(cp);
 
-   if (eina_hash_find(clients_hash[e_pixmap_type_get(cp)], &cp)) return NULL;
+   if ((ptype != E_PIXMAP_TYPE_X) && (ptype != E_PIXMAP_TYPE_WL)) return NULL;
+   if (eina_hash_find(clients_hash[ptype], &cp)) return NULL;
 
    ec = E_OBJECT_ALLOC(E_Client, E_CLIENT_TYPE, _e_client_free);
    if (!ec) return NULL;
@@ -2716,7 +2718,7 @@ e_client_new(E_Pixmap *cp, int first_map, int internal)
    ec->netwm.opacity = 255;
 
    e_comp->clients = eina_list_append(e_comp->clients, ec);
-   eina_hash_add(clients_hash[e_pixmap_type_get(cp)], &ec->pixmap, ec);
+   eina_hash_add(clients_hash[ptype], &ec->pixmap, ec);
 
    if (!ec->ignored) EC_CHANGED(ec);
 
