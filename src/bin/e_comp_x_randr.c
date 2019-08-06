@@ -418,8 +418,8 @@ _mode_screen_find(Ecore_X_Window root, E_Randr2_Screen *s, Ecore_X_Randr_Output 
              refresh = (double)minfo->dotClock /
                (double)(minfo->hTotal * minfo->vTotal);
              diff =
-               (100 * abs(s->config.mode.w - minfo->width)) +
-               (100 * abs(s->config.mode.h - minfo->height)) +
+               (100 * abs(s->config.mode.w - (int)minfo->width)) +
+               (100 * abs(s->config.mode.h - (int)minfo->height)) +
                fabs((100 * s->config.mode.refresh) - (100 * refresh));
              if (diff < distance)
                {
