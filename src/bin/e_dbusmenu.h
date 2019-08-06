@@ -40,8 +40,10 @@ typedef struct _E_DBusMenu_Ctx E_DBusMenu_Ctx;
 struct _E_DBusMenu_Item
 {
    EINA_INLIST;
-   unsigned revision;
+   unsigned int revision;
    int id;
+   unsigned int icon_data_size;
+   int references;
    const char *label;
    E_DBusMenu_Item_Type type;
    E_DBusMenu_Item_Toggle_Type toggle_type;
@@ -52,7 +54,6 @@ struct _E_DBusMenu_Item
    Eina_Bool is_submenu;
    const char *icon_name;
    unsigned char *icon_data;
-   unsigned icon_data_size;
    Eina_Inlist *sub_items;
    E_DBusMenu_Item *parent;
    E_DBusMenu_Ctx *ctx;
@@ -67,5 +68,7 @@ E_API void e_dbusmenu_update_cb_set(E_DBusMenu_Ctx *menu_data, E_DBusMenu_Update
 E_API void e_dbusmenu_pop_request_cb_set(E_DBusMenu_Ctx *menu_data, E_DBusMenu_Pop_Request_Cb cb);
 
 E_API void e_dbusmenu_event_send(E_DBusMenu_Item *m, E_DBusMenu_Item_Event event);
+E_API void e_dbusmenu_item_ref(E_DBusMenu_Item *m);
+E_API void e_dbusmenu_item_unref(E_DBusMenu_Item *m);
 
 #endif

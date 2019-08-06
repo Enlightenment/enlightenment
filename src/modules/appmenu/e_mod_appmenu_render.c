@@ -45,8 +45,22 @@ menu_deactive(E_Menu *m)
 {
    Eina_List *iter;
    E_Menu_Item *mi;
+   E_DBusMenu_Item *item;
+
+   item = e_object_data_get(E_OBJECT(m));
+   if (item)
+     {
+        e_object_data_set(E_OBJECT(m), NULL);
+        e_dbusmenu_item_unref(item);
+     }
    EINA_LIST_FOREACH(m->items, iter, mi)
      {
+        item = e_object_data_get(E_OBJECT(mi));
+        if (item)
+          {
+             e_object_data_set(E_OBJECT(m), NULL);
+             e_dbusmenu_item_unref(item);
+          }
         if (mi->submenu)
           {
              menu_deactive(mi->submenu);
@@ -81,15 +95,17 @@ item_submenu_new(E_DBusMenu_Item *item, E_Menu_Item *mi)
 
    m = e_menu_new();
    EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
-   if (mi)
-     e_menu_item_submenu_set(mi, m);
+   e_dbusmenu_item_ref(item);
+   e_object_data_set(E_OBJECT(m), item);
+   if (mi) e_menu_item_submenu_set(mi, m);
 
    EINA_INLIST_FOREACH(item->sub_items, child)
      {
         E_Menu_Item *submi;
-        if (!child->visible)
-          continue;
+        if (!child->visible) continue;
         submi = e_menu_item_new(m);
+        e_dbusmenu_item_ref(child);
+        e_object_data_set(E_OBJECT(submi), child);
         if (child->type == E_DBUSMENU_ITEM_TYPE_SEPARATOR)
           {
              e_menu_item_separator_set(submi, 1);
@@ -97,8 +113,7 @@ item_submenu_new(E_DBusMenu_Item *item, E_Menu_Item *mi)
           }
         e_menu_item_label_set(submi, child->label);
         e_menu_item_callback_set(submi, sub_item_clicked_cb, child);
-        if (!child->enabled)
-          e_menu_item_disabled_set(submi, 1);
+        if (!child->enabled) e_menu_item_disabled_set(submi, 1);
         if (child->toggle_type)
           {
              if (child->toggle_type == E_DBUSMENU_ITEM_TOGGLE_TYPE_CHECKMARK)

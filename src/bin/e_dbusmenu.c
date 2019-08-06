@@ -37,11 +37,10 @@ static void proxy_init(E_DBusMenu_Ctx *ctx);
 static int
 id_find(const char *text, const char *array_of_names[], unsigned max)
 {
-   unsigned i;
+   unsigned int i;
    for (i = 0; i < max; i++)
      {
-        if (strcmp(text, array_of_names[i]))
-          continue;
+        if (strcmp(text, array_of_names[i])) continue;
         return i;
      }
    return 0;
@@ -90,8 +89,7 @@ dbus_menu_prop_dict_cb(void *data, const void *key, Eldbus_Message_Iter *var)
 
         eldbus_message_iter_arguments_get(var, "ay", &array);
         eldbus_message_iter_fixed_array_get(array, 'y', &img_data, &size);
-        if (!size)
-          return;
+        if (!size) return;
         m->icon_data = malloc(sizeof(unsigned char) * size);
         EINA_SAFETY_ON_FALSE_RETURN(m->icon_data);
         memcpy(m->icon_data, img_data, size);
@@ -114,19 +112,15 @@ dbus_menu_prop_dict_cb(void *data, const void *key, Eldbus_Message_Iter *var)
      {
         int state;
         eldbus_message_iter_arguments_get(var, "i", &state);
-        if (state == 1)
-          m->toggle_state = EINA_TRUE;
-        else
-          m->toggle_state = EINA_FALSE;
+        if (state == 1) m->toggle_state = EINA_TRUE;
+        else m->toggle_state = EINA_FALSE;
      }
    else if (!strcmp(key, "children-display"))
      {
         const char *display;
         eldbus_message_iter_arguments_get(var, "s", &display);
-        if (!strcmp(display, "submenu"))
-          m->is_submenu = EINA_TRUE;
-        else
-          m->is_submenu = EINA_FALSE;
+        if (!strcmp(display, "submenu")) m->is_submenu = EINA_TRUE;
+        else m->is_submenu = EINA_FALSE;
      }
    else if (!strcmp(key, "disposition"))
      {
@@ -147,6 +141,7 @@ parse_layout(Eldbus_Message_Iter *layout, E_DBusMenu_Item *parent, E_DBusMenu_Ct
    Eldbus_Message_Iter *menu_item_prop, *sub_menu_items_prop, *var;
    E_DBusMenu_Item *m = calloc(1, sizeof(E_DBusMenu_Item));
    EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
+   m->references = 1;
    m->ctx = ctx;
    m->enabled = EINA_TRUE;
    m->visible = EINA_TRUE;
@@ -172,8 +167,7 @@ parse_layout(Eldbus_Message_Iter *layout, E_DBusMenu_Item *parent, E_DBusMenu_Ct
         parse_layout(st, m, ctx);
      }
 
-   if (!parent)
-     return m;
+   if (!parent) return m;
 
    parent->sub_items = eina_inlist_append(parent->sub_items, EINA_INLIST_GET(m));
    m->parent = parent;
@@ -186,17 +180,21 @@ dbus_menu_free(E_DBusMenu_Item *m)
    Eina_Inlist *inlist;
    E_DBusMenu_Item *child;
 
-   if (m->icon_name)
-     eina_stringshare_del(m->icon_name);
-   if (m->label)
-     eina_stringshare_del(m->label);
    EINA_INLIST_FOREACH_SAFE(m->sub_items, inlist, child)
-     dbus_menu_free(child);
-   if (m->parent)
-     m->parent->sub_items = eina_inlist_remove(m->parent->sub_items,
-                                               EINA_INLIST_GET(m));
-   if (m->icon_data_size)
-     free(m->icon_data);
+     {
+        e_dbusmenu_item_unref(child);
+     }
+   EINA_INLIST_FREE(m->sub_items, child)
+     {
+        m->sub_items = eina_inlist_remove
+          (m->sub_items, EINA_INLIST_GET(child));
+        child->parent = NULL;
+     }
+   if (m->icon_name) eina_stringshare_del(m->icon_name);
+   if (m->label) eina_stringshare_del(m->label);
+   if (m->parent) m->parent->sub_items = eina_inlist_remove
+     (m->parent->sub_items, EINA_INLIST_GET(m));
+   if (m->icon_data_size) free(m->icon_data);
    free(m);
 }
 
@@ -229,7 +227,7 @@ attempt_hacks(E_DBusMenu_Ctx *ctx)
    if ((unsigned int)(p - bus) > sizeof(buf) - 1) return EINA_FALSE;
    strncpy(buf, bus, p - bus);
    snprintf(buf2, sizeof(buf2), "%s%d", buf, n);
-   E_FREE_FUNC(ctx->root_menu, dbus_menu_free);
+   E_FREE_FUNC(ctx->root_menu, e_dbusmenu_item_unref);
    eldbus_proxy_unref(ctx->proxy);
    eldbus_object_unref(obj);
 
@@ -267,15 +265,13 @@ layout_get_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EIN
      {
         if (attempt_hacks(ctx))
           {
-             dbus_menu_free(m);
+             e_dbusmenu_item_unref(m);
              return;
           }
      }
 
-   if (ctx->update_cb)
-     ctx->update_cb(ctx->data, m);
-   if (ctx->root_menu)
-     dbus_menu_free(ctx->root_menu);
+   if (ctx->update_cb) ctx->update_cb(ctx->data, m);
+   if (ctx->root_menu) e_dbusmenu_item_unref(ctx->root_menu);
    ctx->root_menu = m;
 }
 
@@ -289,13 +285,11 @@ dbus_menu_find(E_DBusMenu_Ctx *ctx, int id)
    EINA_INLIST_FOREACH(ctx->root_menu, m)
      {
         E_DBusMenu_Item *child, *found;
-        if (m->id == id)
-          return m;
+        if (m->id == id) return m;
         EINA_INLIST_FOREACH(m->sub_items, child)
           {
              found = dbus_menu_find(ctx, id);
-             if (found)
-               return found;
+             if (found) return found;
           }
      }
    return NULL;
@@ -316,10 +310,8 @@ menu_pop_request(void *data, const Eldbus_Message *msg)
      }
 
    m = dbus_menu_find(ctx, id);
-   if (!m)
-     return;
-   if (ctx->pop_request_cb)
-     ctx->pop_request_cb(ctx->data, m);
+   if (!m) return;
+   if (ctx->pop_request_cb) ctx->pop_request_cb(ctx->data, m);
 }
 
 static void
@@ -334,8 +326,7 @@ prop_changed_cb(void *data EINA_UNUSED, const Eldbus_Message *msg)
         return;
      }
 
-   if (strcmp(propname, "IconThemePath"))
-     return;
+   if (strcmp(propname, "IconThemePath")) return;
 
    if (!eldbus_message_iter_arguments_get(variant, "as", &array))
      {
@@ -427,14 +418,26 @@ e_dbusmenu_event_send(E_DBusMenu_Item *m, E_DBusMenu_Item_Event event)
 }
 
 E_API void
+e_dbusmenu_item_ref(E_DBusMenu_Item *m)
+{
+   m->references++;
+}
+
+E_API void
+e_dbusmenu_item_unref(E_DBusMenu_Item *m)
+{
+   m->references--;
+   if (m->references == 0) dbus_menu_free(m);
+}
+
+E_API void
 e_dbusmenu_unload(E_DBusMenu_Ctx *ctx)
 {
    Eldbus_Connection *conn;
    Eldbus_Object *obj;
    EINA_SAFETY_ON_NULL_RETURN(ctx);
 
-   if (ctx->root_menu)
-     dbus_menu_free(ctx->root_menu);
+   if (ctx->root_menu) e_dbusmenu_item_unref(ctx->root_menu);
    obj = eldbus_proxy_object_get(ctx->proxy);
    conn = eldbus_object_connection_get(obj);
    eldbus_proxy_unref(ctx->proxy);

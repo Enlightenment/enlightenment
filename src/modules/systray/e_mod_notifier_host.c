@@ -130,13 +130,25 @@ _menu_post_deactivate(void *data, E_Menu *m)
    Eina_List *iter;
    E_Menu_Item *mi;
    E_Gadcon *gadcon = data;
+   E_DBusMenu_Item *item;
 
-   if (gadcon)
-     e_gadcon_locked_set(gadcon, 0);
+   item = e_object_data_get(E_OBJECT(m));
+   if (item)
+     {
+        e_object_data_set(E_OBJECT(m), NULL);
+        e_dbusmenu_item_unref(item);
+     }
+
+   if (gadcon) e_gadcon_locked_set(gadcon, 0);
    EINA_LIST_FOREACH(m->items, iter, mi)
      {
-        if (mi->submenu)
-          e_menu_deactivate(mi->submenu);
+        item = e_object_data_get(E_OBJECT(mi));
+        if (item)
+          {
+             e_object_data_set(E_OBJECT(m), NULL);
+             e_dbusmenu_item_unref(item);
+          }
+        if (mi->submenu) e_menu_deactivate(mi->submenu);
      }
    e_object_del(E_OBJECT(m));
 }
@@ -149,14 +161,17 @@ _item_submenu_new(E_DBusMenu_Item *item, E_Menu_Item *mi)
    E_Menu_Item *submi;
 
    m = e_menu_new();
+   e_dbusmenu_item_ref(item);
+   e_object_data_set(E_OBJECT(m), item);
    e_menu_post_deactivate_callback_set(m, _menu_post_deactivate, NULL);
-   if (mi)
-     e_menu_item_submenu_set(mi, m);
+   if (mi) e_menu_item_submenu_set(mi, m);
 
    EINA_INLIST_FOREACH(item->sub_items, child)
      {
         if (!child->visible) continue;
         submi = e_menu_item_new(m);
+        e_dbusmenu_item_ref(child);
+        e_object_data_set(E_OBJECT(submi), child);
         if (child->type == E_DBUSMENU_ITEM_TYPE_SEPARATOR)
           e_menu_item_separator_set(submi, 1);
         else
