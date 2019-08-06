@@ -324,6 +324,7 @@ _e_comp_wl_input_keymap_fd_get(void)
    char tmp[PATH_MAX];
    long flags;
    void *mm;
+   Eina_Tmpstr *tmpstr = NULL;
 
    blen = sizeof(tmp) - 1;
 
@@ -339,28 +340,33 @@ _e_comp_wl_input_keymap_fd_get(void)
    else
      return -1;
 
-   if ((fd = mkstemp(tmp)) < 0) return -1;
+   if ((fd = eina_file_mkstemp(tmp, &tmpstr)) < 0) return -1;
 
    flags = fcntl(fd, F_GETFD);
    if (flags < 0)
      {
+        eina_tmpstr_del(tmpstr);
         close(fd);
         return -1;
      }
 
    if (fcntl(fd, F_SETFD, (flags | FD_CLOEXEC)) == -1)
      {
+        eina_tmpstr_del(tmpstr);
         close(fd);
         return -1;
      }
 
    if (ftruncate(fd, e_comp_wl->xkb.map_size) < 0)
      {
+        eina_tmpstr_del(tmpstr);
         close(fd);
         return -1;
      }
 
-   unlink(tmp);
+   unlink(tmpstr);
+   eina_tmpstr_del(tmpstr);
+
    mm = mmap(NULL, e_comp_wl->xkb.map_size, (PROT_READ | PROT_WRITE),
              MAP_SHARED, fd, 0);
    if (mm == MAP_FAILED)
