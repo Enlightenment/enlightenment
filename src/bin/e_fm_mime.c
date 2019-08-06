@@ -83,7 +83,7 @@ try_e_icon_generic:
 
    /* 3. look up icon in theme */
 try_theme:
-   memcpy(buf, "e/icons/fileman/mime/", sizeof("e/icons/fileman/mime/") - 1);
+   memcpy(buf, "e/icons/fileman/mime/", sizeof("e/icons/fileman/mime/"));
    eina_strlcpy(buf + sizeof("e/icons/fileman/mime/") - 1, mime,
                 sizeof(buf) - (sizeof("e/icons/fileman/mime/") - 1));
    val = (char *)e_theme_edje_file_get("base/theme/fileman", buf);
