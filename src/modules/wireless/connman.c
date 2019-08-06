@@ -1186,7 +1186,7 @@ _connman_agent_auth_send(void *data, const Eina_Array *fields)
 {
    Eldbus_Message *reply;
    Eldbus_Message_Iter *iter, *array;
-   const char *f, *fprev;
+   const char *f, *fprev = NULL;
    unsigned int i;
    Eina_Array_Iterator it;
 
@@ -1204,7 +1204,7 @@ _connman_agent_auth_send(void *data, const Eina_Array *fields)
 
    EINA_ARRAY_ITER_NEXT(fields, i, f, it)
      {
-        if (i % 2)
+        if ((i % 2) && (fprev))
           _connman_dbus_dict_append_string(array, fprev, f);
         else
           fprev = f;
