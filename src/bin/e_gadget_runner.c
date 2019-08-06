@@ -913,7 +913,7 @@ runner_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient)
 
    if (orient) return NULL;
    if (*id > 0) ci = _conf_item_get(id);
-   if ((*id < 0) || ci->inst)
+   if ((*id < 0) || ((ci) && (ci->inst)))
      {
         obj = elm_image_add(parent);
         elm_image_file_set(obj, e_theme_edje_file_get(NULL, "e/icons/modules-launcher"), "e/icons/modules-launcher");
