@@ -45,6 +45,7 @@ e_sys_l2ping(const char *bluetooth_mac, int timeout_ms)
    if (bind(fd, (struct sockaddr *)&addr, sizeof(addr)) < 0)
      {
         perror("Can't bind socket");
+        close(fd);
         return -1;
      }
 
