@@ -999,7 +999,7 @@ e_comp_wl_data_device_send_enter(E_Client *ec)
         d2 = d3 = d4 = 0;
         source = e_comp_wl->drag_source;
 
-        if (eina_array_count(source->mime_types) > 3)
+        if ((source->mime_types) && (eina_array_count(source->mime_types) > 3))
           {
              const char *type, *types[eina_array_count(source->mime_types)];
              int i = 0;
