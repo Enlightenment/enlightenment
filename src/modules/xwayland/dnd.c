@@ -388,6 +388,12 @@ _xwl_pipe_read(void *data, Ecore_Fd_Handler *fdh)
      }
    if (len)
      p->buf = eina_binbuf_manage_new(buf, len, 0);
+   else
+     {
+        _incr_update(p, 0);
+        free(buf);
+        return ECORE_CALLBACK_RENEW;
+     }
    _incr_upload(p);
    if (p->incr)
      ecore_main_fd_handler_active_set(p->fdh, 0);
