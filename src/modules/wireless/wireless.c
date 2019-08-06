@@ -1005,8 +1005,10 @@ _wireless_gadget_configure_cb(Evas_Object *g)
    if (!menu_icon)
      return NULL;
    for (type = 0; type < WIRELESS_SERVICE_TYPE_LAST; type++)
-     if (inst->icon[type] == menu_icon)
-       break;
+     {
+        if (inst->icon[type] == menu_icon) break;
+     }
+   if (type >= WIRELESS_SERVICE_TYPE_LAST) return NULL;
 
    return _wireless_gadget_edit(type);
 }
@@ -1024,6 +1026,7 @@ _wireless_gadget_menu_populate_cb(Evas_Object *g, E_Menu *m EINA_UNUSED)
         evas_object_geometry_get(inst->icon[type], &x, &y, &w, &h);
         if (E_INSIDE(px, py, x, y, w, h)) break;
      }
+   if (type >= WIRELESS_SERVICE_TYPE_LAST) return;
    menu_icon = inst->icon[type];
 }
 
@@ -1047,8 +1050,10 @@ _wireless_gadget_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, voi
    if (e_desklock_state_get()) return;
    if (auth_popup) return;
    for (type = 0; type < WIRELESS_SERVICE_TYPE_LAST; type++)
-     if (obj == inst->icon[type])
-       break;
+     {
+        if (obj == inst->icon[type]) break;
+     }
+   if (type >= WIRELESS_SERVICE_TYPE_LAST) return;
    if (ev->button == 2) connman_technology_enabled_set(type, !wireless_type_enabled[type]);
    if (ev->button != 1) return;
    if (wireless_popup.popup)
