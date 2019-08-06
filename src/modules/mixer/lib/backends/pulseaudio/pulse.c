@@ -88,6 +88,7 @@ _pa_cvolume_convert(const pa_cvolume *volume, Emix_Volume *vol)
      {
         WRN("Could not allocate memory for volume");
         vol->channel_count = 0;
+        return;
      }
 
    vol->channel_count = volume->channels;
