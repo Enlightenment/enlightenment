@@ -4125,6 +4125,11 @@ e_comp_object_dirty(Evas_Object *obj)
    if (bxx && byy)
      {
         bxx = w - (bx + bxx), byy = h - (by + byy);
+        // XXX: FIXME: - keep at least ONE border > 0 to allow cutouts to work
+        // evas doesnt have a good fix for this right now.... also
+        // we still BLEND the center bit anyway as we dont switch to non
+        // blend ... so ugh. evas issue tho.
+        if (byy < 1) byy = 1;
         evas_object_image_border_set(cw->obj, bx, bxx, by, byy);
      }
    else
