@@ -49,6 +49,14 @@ evry_util_file_detail_set(Evry_Item_File *file)
    E_FREE(dir);
 }
 
+static inline Eina_Unicode
+_evry_utf8_next(const char *buf, int *iindex)
+{
+   Eina_Unicode u = eina_unicode_utf8_next_get(buf, iindex);
+   if ((!u) || ((u >= 0xdc80) && (u <= 0xdcff))) return 0;
+   return u;
+}
+
 int
 evry_fuzzy_match(const char *str, const char *match)
 {
@@ -131,7 +139,7 @@ evry_fuzzy_match(const char *str, const char *match)
                        ii = 0;
                        /* go to next word */
                        for (; (*p != 0) && ((isspace(*p) || (ip && ispunct(*p)))); p += ii)
-                         if (!eina_unicode_utf8_next_get(p, &ii)) break;
+                         if (!_evry_utf8_next(p, &ii)) break;
                        cnt++;
                        next = p;
                        m_cnt = 0;
@@ -167,7 +175,7 @@ evry_fuzzy_match(const char *str, const char *match)
 
                   /* try next char of match */
                   ii = 0;
-                  if (!eina_unicode_utf8_next_get(m, &ii)) continue;
+                  if (!_evry_utf8_next(m, &ii)) continue;
                   m += ii;
                   if (*m != 0 && !isspace(*m))
                     continue;
@@ -183,7 +191,7 @@ evry_fuzzy_match(const char *str, const char *match)
                   ii = 0;
                   /* go to next match */
                   for (; (m[0] && m[ii]) && !isspace(*m); m += ii)
-                    if (!eina_unicode_utf8_next_get(m, &ii)) break;
+                    if (!_evry_utf8_next(m, &ii)) break;
                }
 
              if (m_cnt < m_num - 1)
@@ -191,7 +199,7 @@ evry_fuzzy_match(const char *str, const char *match)
                   ii = 0;
                   /* test next match */
                   for (; (m[0] && m[ii]) && !isspace(*m); m += ii)
-                    if (!eina_unicode_utf8_next_get(m, &ii)) break;
+                    if (!_evry_utf8_next(m, &ii)) break;
                   m_cnt++;
                   break;
                }
@@ -203,14 +211,14 @@ evry_fuzzy_match(const char *str, const char *match)
                        !((isspace(*p) || (ip && ispunct(*p))));
                        p += ii)
                     {
-                       if (!eina_unicode_utf8_next_get(p, &ii)) break;
+                       if (!_evry_utf8_next(p, &ii)) break;
                     }
                   ii = 0;
                   for (; (p[0] && (s_len - (p - str) >= (unsigned int)ii)) &&
                        ((isspace(*p) || (ip && ispunct(*p))));
                        p += ii)
                     {
-                       if (!eina_unicode_utf8_next_get(p, &ii)) break;
+                       if (!_evry_utf8_next(p, &ii)) break;
                     }
                   cnt++;
                   next = p;
