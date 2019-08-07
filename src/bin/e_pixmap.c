@@ -1129,7 +1129,7 @@ e_pixmap_alias(E_Pixmap *cp, E_Pixmap_Type type, ...)
         id = va_arg(l, int64_t);
         if (!aliases[type])
           aliases[type] = eina_hash_int64_new(NULL);
-        cp2 = eina_hash_find(aliases[type], &xwin);
+        cp2 = eina_hash_find(aliases[type], &id);
         if ((cp2) && (!cp)) cp2->alias = 0;
         else if (cp) cp->alias = id;
         eina_hash_set(aliases[type], &id, cp);
