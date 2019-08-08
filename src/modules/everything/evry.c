@@ -1891,6 +1891,11 @@ _evry_input_complete(Evry_State *s)
      {
         strncpy(s->input, input, INPUTLEN - 1);
         _evry_update_text_label(s);
+        if (CUR_SEL->update_timer)
+          {
+             ecore_timer_del(CUR_SEL->update_timer);
+             CUR_SEL->update_timer = NULL;
+          }
         _evry_cb_update_timer(CUR_SEL);
         evry_item_select(s, it);
      }

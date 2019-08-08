@@ -191,7 +191,10 @@ evry_fuzzy_match(const char *str, const char *match)
                   ii = 0;
                   /* go to next match */
                   for (; (m[0] && m[ii]) && !isspace(*m); m += ii)
-                    if (!_evry_utf8_next(m, &ii)) break;
+                    {
+                       ii = 0;
+                       if (!_evry_utf8_next(m, &ii)) break;
+                    }
                }
 
              if (m_cnt < m_num - 1)
@@ -199,7 +202,10 @@ evry_fuzzy_match(const char *str, const char *match)
                   ii = 0;
                   /* test next match */
                   for (; (m[0] && m[ii]) && !isspace(*m); m += ii)
-                    if (!_evry_utf8_next(m, &ii)) break;
+                    {
+                       ii = 0;
+                       if (!_evry_utf8_next(m, &ii)) break;
+                    }
                   m_cnt++;
                   break;
                }
