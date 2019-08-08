@@ -796,11 +796,17 @@ e_pixmap_native_surface_init(E_Pixmap *cp, Evas_Native_Surface *ns)
         if (!cp->buffer) return EINA_FALSE;
         if (cp->buffer->dmabuf_buffer)
           {
+             static signed char use_hw_planes = -1;
              ns->type = EVAS_NATIVE_SURFACE_WL_DMABUF;
 
              ns->data.wl_dmabuf.attr = &cp->buffer->dmabuf_buffer->attributes;
              ns->data.wl_dmabuf.resource = cp->buffer->resource;
-             if (getenv("E_USE_HARDWARE_PLANES"))
+             if (use_hw_planes == -1)
+               {
+                  if (getenv("E_USE_HARDWARE_PLANES")) use_hw_planes = 1;
+                  else use_hw_planes = 0;
+               }
+             if (use_hw_planes)
                {
                   ns->data.wl_dmabuf.scanout.handler = _e_pixmap_scanout_handler;
                   ns->data.wl_dmabuf.scanout.data = cp->buffer;
