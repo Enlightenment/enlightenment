@@ -325,7 +325,18 @@ _e_sys_systemd_signal_prepare_sleep(void *data EINA_UNUSED, const Eldbus_Message
              _e_sys_comp_resume();
           }
      }
-   else _e_sys_suspended = EINA_TRUE;
+   else
+     {
+        _e_sys_suspended = EINA_TRUE;
+        if (e_config->desklock_on_suspend)
+          {
+             if (!e_desklock_state_get())
+               {
+                  // XXX: this desklock - ensure its instant
+                  e_desklock_show(EINA_TRUE);
+               }
+          }
+     }
 }
 
 /* externally accessible functions */
