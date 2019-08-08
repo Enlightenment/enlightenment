@@ -61,14 +61,16 @@ typedef struct _E_Comp_Object
    E_Client *ec;
 
    E_Comp_Object_Frame client_inset;
-   struct
-   {
+   struct {
       double          start;
       double          val;
       int             x, y;
       E_Direction     dir;
       Ecore_Animator *anim;
    } shade;
+   struct {
+      int             bx, by, bxx, byy;
+   } border;
 
    Eina_Stringshare   *frame_theme;
    Eina_Stringshare   *frame_name;
@@ -4141,11 +4143,17 @@ e_comp_object_dirty(Evas_Object *obj)
              bxx = -cw->client_inset.r, byy = -cw->client_inset.b;
           }
      }
+   if ((cw->border.bx != bx) || (cw->border.by != by) ||
+       (cw->border.bxx != bxx) || (cw->border.byy != byy))
    {
       Edje_Message_Int_Set *msg;
       Edje_Message_Int msg2;
       Eina_Bool id = (bx || by || bxx || byy);
 
+      cw->border.bx = bx;
+      cw->border.by = by;
+      cw->border.bxx = bxx;
+      cw->border.byy = byy;
       msg = alloca(sizeof(Edje_Message_Int_Set) + (sizeof(int) * 3));
       msg->count = 4;
       msg->val[0] = bx;
