@@ -4031,9 +4031,8 @@ e_comp_object_native_surface_set(Evas_Object *obj, Eina_Bool set)
    if ((!set) && (!cw->native)) return;
 
    cw->native = set;
-   _e_comp_object_alpha_set(cw);
-
    evas_object_image_native_surface_set(cw->obj, set && (!cw->blanked) ? (cw->ns ?: &ns) : NULL);
+   _e_comp_object_alpha_set(cw);
    EINA_LIST_FOREACH(cw->obj_mirror, l, o)
      {
         evas_object_image_native_surface_set(o, set ? (cw->ns ?: &ns) : NULL);
@@ -4107,11 +4106,11 @@ e_comp_object_dirty(Evas_Object *obj)
      {
         //evas_object_image_border_set(o, bx, by, bxx, byy);
         //evas_object_image_border_center_fill_set(o, EVAS_BORDER_FILL_SOLID);
-        evas_object_image_pixels_dirty_set(o, dirty);
-        evas_object_image_alpha_set(o, alpha);
         if (!dirty)
           evas_object_image_data_set(o, NULL);
         evas_object_image_size_set(o, w, h);
+        evas_object_image_pixels_dirty_set(o, dirty);
+        evas_object_image_alpha_set(o, alpha);
         visible |= evas_object_visible_get(o);
      }
    if (!dirty)
@@ -4340,8 +4339,8 @@ e_comp_object_util_mirror_add(Evas_Object *obj)
    evas_object_data_set(o, "E_Client", cw->ec);
    evas_object_data_set(o, "comp_mirror", cw);
 
-   evas_object_image_alpha_set(o, evas_object_image_alpha_get(cw->obj));
    evas_object_image_size_set(o, w, h);
+   evas_object_image_alpha_set(o, evas_object_image_alpha_get(cw->obj));
 
    if (cw->ec->shaped)
      {
