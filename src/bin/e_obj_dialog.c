@@ -18,6 +18,18 @@ _key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
      _e_obj_dialog_cb_delete(data, NULL, NULL, NULL);
 }
 
+static void
+_focus_in_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+   edje_object_signal_emit(data, "e,state,focused", "e");
+}
+
+static void
+_focus_out_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+   edje_object_signal_emit(data, "e,state,unfocused", "e");
+}
+
 E_API E_Obj_Dialog *
 e_obj_dialog_new(char *title, char *class_name, char *class_class)
 {
@@ -41,6 +53,11 @@ e_obj_dialog_new(char *title, char *class_name, char *class_class)
    o = edje_object_add(evas_object_evas_get(od->win));
    elm_win_resize_object_add(od->win, o);
    od->bg_object = o;
+
+   evas_object_smart_callback_add(od->win, "focus,in",
+                                  _focus_in_cb, od->bg_object);
+   evas_object_smart_callback_add(od->win, "focus,out",
+                                  _focus_out_cb, od->bg_object);
 
    elm_win_center(od->win, 1, 1);
    od->cb_delete = NULL;
