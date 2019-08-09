@@ -1144,7 +1144,8 @@ _move_or_resize(E_Client *ec)
      {
         return;
      }
-
+/* This seems to create more issues than it seemingly solves? it stops
+ * resizes when no borders are there....
    if (!extra->last_frame_adjustment)
      {
         printf
@@ -1152,7 +1153,7 @@ _move_or_resize(E_Client *ec)
         _reapply_tree();
         return;
      }
-
+ */
    Window_Tree *item = tiling_window_tree_client_find(_G.tinfo->tree, ec);
 
    if (!item)
