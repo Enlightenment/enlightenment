@@ -69,7 +69,7 @@ typedef struct _E_Comp_Object
       Ecore_Animator *anim;
    } shade;
    struct {
-      int             bx, by, bxx, byy;
+      int             bx, by, bxx, byy, w, h;
    } border;
 
    Eina_Stringshare   *frame_theme;
@@ -4144,7 +4144,8 @@ e_comp_object_dirty(Evas_Object *obj)
           }
      }
    if ((cw->border.bx != bx) || (cw->border.by != by) ||
-       (cw->border.bxx != bxx) || (cw->border.byy != byy))
+       (cw->border.bxx != bxx) || (cw->border.byy != byy) ||
+       (cw->border.w != w) || (cw->border.h != h))
    {
       Edje_Message_Int_Set *msg;
       Edje_Message_Int msg2;
@@ -4154,6 +4155,8 @@ e_comp_object_dirty(Evas_Object *obj)
       cw->border.by = by;
       cw->border.bxx = bxx;
       cw->border.byy = byy;
+      cw->border.w = w;
+      cw->border.h = h;
       msg = alloca(sizeof(Edje_Message_Int_Set) + (sizeof(int) * 3));
       msg->count = 4;
       msg->val[0] = bx;
