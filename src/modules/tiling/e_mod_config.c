@@ -228,7 +228,7 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED,
                   E_Config_Dialog_Data *cfdata)
 {
    struct _Config_vdesk *vd;
-   Eina_List *l;
+   Eina_List *l, *vdesks;
 
    tiling_g.config->tile_dialogs = cfdata->config.tile_dialogs;
    tiling_g.config->show_titles = cfdata->config.show_titles;
@@ -265,10 +265,7 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED,
           }
      }
 
-   EINA_LIST_FREE(tiling_g.config->vdesks, vd)
-     {
-        free(vd);
-     }
+   vdesks = tiling_g.config->vdesks;
    tiling_g.config->vdesks = NULL;
 
    for (l = cfdata->config.vdesks; l; l = l->next)
@@ -290,6 +287,11 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED,
      }
 
    e_tiling_update_conf();
+
+   EINA_LIST_FREE(vdesks, vd)
+     {
+        free(vd);
+     }
 
    e_config_save_queue();
 
