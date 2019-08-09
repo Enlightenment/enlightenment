@@ -521,8 +521,14 @@ _basic_create_fill(E_Config_Dialog_Data *cfdata)
 
              e_xkb_flag_file_get(buf, sizeof(buf), name);
              elm_image_file_set(ic, buf, NULL);
-             snprintf(buf, sizeof(buf), "%s (%s, %s)",
-                      cl->name, cl->model, cl->variant);
+             snprintf(buf, sizeof(buf), "%s%s%s%s%s%s",
+                      cl->name ? cl->name : _("No Name"),
+                      cl->model || cl->variant ? " (" : "",
+                      cl->model ? cl->model : "",
+                      cl->model && cl->variant ? ", " : "",
+                      cl->variant ? cl->variant : "",
+                      cl->model || cl->variant ? ")" : ""
+                     );
              evas_object_show(ic);
              it = elm_list_item_append(cfdata->used_list, buf, ic,
                                        NULL, NULL, cl);
@@ -1451,7 +1457,7 @@ _dlg_add_cb_ok(void *data, E_Dialog *dlg)
    E_XKB_Model *m;
    E_XKB_Variant *v;
    E_Config_XKB_Layout *cl;
-   char buf[PATH_MAX], icon_buf[PATH_MAX];
+   char buf[512], icon_buf[PATH_MAX];
    Evas_Object *ic;
    Elm_Object_Item *it;
    /* Configuration information */
@@ -1480,8 +1486,14 @@ _dlg_add_cb_ok(void *data, E_Dialog *dlg)
    ic = elm_icon_add(cfdata->used_list);
    e_xkb_flag_file_get(icon_buf, sizeof(icon_buf), cl->name);
    elm_image_file_set(ic, icon_buf, NULL);
-   snprintf(buf, sizeof(buf), "%s (%s, %s)",
-            cl->name, cl->model, cl->variant);
+   snprintf(buf, sizeof(buf), "%s%s%s%s%s%s",
+            cl->name ? cl->name : _("No Name"),
+            cl->model || cl->variant ? " (" : "",
+            cl->model ? cl->model : "",
+            cl->model && cl->variant ? ", " : "",
+            cl->variant ? cl->variant : "",
+            cl->model || cl->variant ? ")" : ""
+           );
    elm_list_item_append(cfdata->used_list, buf, ic, NULL, NULL, cl);
    elm_list_go(cfdata->used_list);
 
@@ -1499,9 +1511,13 @@ static char *
 _layout_gl_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
 {
    E_XKB_Layout *layout = data;
-   char buf[PATH_MAX];
+   char buf[512];
 
-   snprintf(buf, sizeof(buf), "%s (%s)", layout->description, layout->name);
+   snprintf(buf, sizeof(buf), "%s%s%s%s",
+            layout->description ? layout->description : _("No Description"),
+            layout->name ? " (" : "",
+            layout->name ? layout->name : "",
+            layout->name ? ")" : "");
    return strdup(buf);
 }
 
@@ -1580,10 +1596,13 @@ static char *
 _model_gl_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
 {
    E_XKB_Model *model = data;
-   char buf[PATH_MAX];
+   char buf[512];
 
-   snprintf(buf, sizeof(buf), "%s (%s)", model->description, model->name);
-
+   snprintf(buf, sizeof(buf), "%s%s%s%s",
+            model->description ? model->description : _("No Description"),
+            model->name ? " (" : "",
+            model->name ? model->name : "",
+            model->name ? ")" : "");
    return strdup(buf);
 }
 
@@ -1591,10 +1610,13 @@ static char *
 _variant_gl_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
 {
    E_XKB_Variant *variant = data;
-   char buf[PATH_MAX];
+   char buf[512];
 
-   snprintf(buf, sizeof(buf), "%s (%s)", variant->name, variant->description);
-
+   snprintf(buf, sizeof(buf), "%s%s%s%s",
+            variant->name ? variant->name : _("No Name"),
+            variant->description ? " (" : "",
+            variant->description ? variant->description : "",
+            variant->description ? ")" : "");
    return strdup(buf);
 }
 

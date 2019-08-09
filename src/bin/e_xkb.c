@@ -308,23 +308,27 @@ _e_wl_xkb_reconfig(void)
              eina_strbuf_append(layouts, cl->name);
              eina_strbuf_append_char(layouts, ',');
           }
+        else
+          eina_strbuf_append_char(layouts, ',');
 
-        if (cl->variant)
+        if ((cl->variant) && (strcmp(cl->variant, "basic")))
           {
              eina_strbuf_append(variants, cl->variant);
              eina_strbuf_append_char(variants, ',');
           }
+        else
+          eina_strbuf_append_char(variants, ',');
      }
 
    /* collect model to use */
 
    /* set keymap to the compositor */
    e_comp_wl_input_keymap_set(NULL,
-      e_config->xkb.default_model,
-      eina_strbuf_string_get(layouts), //pool of layouts to use
-      eina_strbuf_string_get(variants),  //pool of variants to use
-      eina_strbuf_string_get(options) //list of options
-   );
+                              e_config->xkb.default_model,
+                              eina_strbuf_string_get(layouts), //pool of layouts to use
+                              eina_strbuf_string_get(variants),  //pool of variants to use
+                              eina_strbuf_string_get(options) //list of options
+                             );
 
    eina_strbuf_free(variants);
    eina_strbuf_free(layouts);

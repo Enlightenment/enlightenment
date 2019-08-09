@@ -193,7 +193,7 @@ parse_rules(void)
                ++p;
 
              variant = E_NEW(E_XKB_Variant, 1);
-             variant->name = eina_stringshare_add("basic");
+             variant->name = NULL; // used to be "basic" but now NULL will do
              variant->description = eina_stringshare_add("Default layout variant");
 
              txt = evas_textblock_text_markup_to_utf8(NULL, p);
