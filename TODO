@@ -201,6 +201,9 @@ if not on a real screen/zone
   and this is almost all object creation/setup/deletion costs. menus
   can be more responsive (on low end systems) if... we avoid this. to
   avoid... have a cache of spare objecta to re-use.
+* e comp object: we dirty far too often in wayland especially with
+  glmark and this leads to a stream of gen and del textures. is this
+  really needed and ca we cut it down?
 
 DONE:
 * music-control: fix aspect ratio of album cover image
