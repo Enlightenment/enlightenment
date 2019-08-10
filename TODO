@@ -214,6 +214,11 @@ if not on a real screen/zone
   * smoothly move/resize windows from old to new positions/sizes
   * don't delay many responses and do it instantly with the above anim
   * probably can do with more actions for bindings for moving/sizing
+* packagekit: much btter support with pre-made config/profiles for the
+  package manager (autodetect if possible)
+  * not just updates but also install/uninstall of pkgs with a minimal
+    front-end to back-end cmdline tools (use shell wrappers?)
+
 
 DONE:
 * music-control: fix aspect ratio of album cover image
