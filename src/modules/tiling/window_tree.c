@@ -296,20 +296,20 @@ _tiling_window_tree_level_apply(Window_Tree *root, Evas_Coord x, Evas_Coord y,
    Tiling_Split_Type split_type = level % 2;
    double total_weight = 0.0;
 
+   root->space.x = x;
+   root->space.y = y;
+   root->space.w = w - padding;
+   root->space.h = h - padding;
+
    if (root->client)
      {
         if (!e_object_is_del(E_OBJECT(root->client)))
           {
              if ((root->client->icccm.min_w > (w - padding)) ||
-                   (root->client->icccm.min_h > (h - padding)))
-               {
-                  *floaters = eina_list_append(*floaters, root->client);
-               }
-             else
-               {
-                  tiling_e_client_move_resize_extra(root->client, x, y,
-                        w - padding, h - padding);
-               }
+                 (root->client->icccm.min_h > (h - padding)))
+               *floaters = eina_list_append(*floaters, root->client);
+             tiling_e_client_move_resize_extra(root->client, x, y,
+                                               w - padding, h - padding);
           }
         return;
      }
@@ -341,9 +341,10 @@ _tiling_window_tree_level_apply(Window_Tree *root, Evas_Coord x, Evas_Coord y,
    ((Window_Tree *)(void *)root->children->last)->weight += 1.0 - total_weight;
 }
 
-void
+Eina_Bool
 tiling_window_tree_apply(Window_Tree *root, Evas_Coord x, Evas_Coord y,
-                         Evas_Coord w, Evas_Coord h, Evas_Coord padding)
+                         Evas_Coord w, Evas_Coord h, Evas_Coord padding,
+                         Eina_Bool force_float)
 {
    Eina_List *floaters = NULL;
    E_Client *ec;
@@ -354,10 +355,16 @@ tiling_window_tree_apply(Window_Tree *root, Evas_Coord x, Evas_Coord y,
    h -= padding;
    _tiling_window_tree_level_apply(root, x, y, w, h, 0, padding, &floaters);
 
-   EINA_LIST_FREE(floaters, ec)
+   if (floaters)
      {
-        tiling_e_client_does_not_fit(ec);
+        // some clients failed to properly fit and maybe SHOULD float
+        EINA_LIST_FREE(floaters, ec)
+          {
+             if (force_float) tiling_e_client_does_not_fit(ec);
+          }
+        return EINA_FALSE;
      }
+   return EINA_TRUE;
 }
 
 static Window_Tree *

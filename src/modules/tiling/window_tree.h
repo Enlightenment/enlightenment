@@ -21,6 +21,9 @@ struct _Window_Tree
    /* FIXME: client is falid iff children is null. Sholud enforce it. */
    Eina_Inlist *children; /* Window_Tree * type */
    E_Client    *client;
+   struct {
+      int x, y, w, h;
+   } space;
    double       weight;
 };
 
@@ -52,8 +55,9 @@ Window_Tree *tiling_window_tree_remove(Window_Tree *root, Window_Tree *item);
 Window_Tree *tiling_window_tree_client_find(Window_Tree *root,
                                             E_Client *client);
 
-void         tiling_window_tree_apply(Window_Tree *root, Evas_Coord x, Evas_Coord y,
-                                      Evas_Coord w, Evas_Coord h, Evas_Coord padding);
+Eina_Bool    tiling_window_tree_apply(Window_Tree *root, Evas_Coord x, Evas_Coord y,
+                                      Evas_Coord w, Evas_Coord h, Evas_Coord padding,
+                                      Eina_Bool force_float);
 
 Eina_Bool    tiling_window_tree_node_resize(Window_Tree *node, int w_dir,
                                             double w_diff, int h_dir, double h_diff);

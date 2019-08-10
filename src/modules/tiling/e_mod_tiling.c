@@ -479,7 +479,8 @@ _reapply_tree(void)
 
         if (zw > 0 && zh > 0)
           tiling_window_tree_apply(_G.tinfo->tree, zx, zy, zw, zh,
-                                   tiling_g.config->window_padding);
+                                   tiling_g.config->window_padding,
+                                   EINA_FALSE);
         else
           ERR("The zone desk geometry was not useful at all (%d,%d,%d,%d)", zx, zy, zw, zh);
      }
