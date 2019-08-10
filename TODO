@@ -208,6 +208,12 @@ if not on a real screen/zone
 * tiling: doesnt handle impossible layouts well - had to remove min size
 * tiling: doesnt honor size stepping too well
 * tiling: probably need to flatten out to table for saner layout
+* tiling: probably could do with analysis on features vs i3 etc. to be
+  more "up to snuff" and competitive
+* tiling could be smoother in its layout handling
+  * smoothly move/resize windows from old to new positions/sizes
+  * don't delay many responses and do it instantly with the above anim
+  * probably can do with more actions for bindings for moving/sizing
 
 DONE:
 * music-control: fix aspect ratio of album cover image
