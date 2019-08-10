@@ -204,6 +204,10 @@ if not on a real screen/zone
 * e comp object: we dirty far too often in wayland especially with
   glmark and this leads to a stream of gen and del textures. is this
   really needed and ca we cut it down?
+* tiling: doesnt retain layout across restarts
+* tiling: doesnt handle impossible layouts well - had to remove min size
+* tiling: doesnt honor size stepping too well
+* tiling: probably need to flatten out to table for saner layout
 
 DONE:
 * music-control: fix aspect ratio of album cover image
