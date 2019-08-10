@@ -869,17 +869,15 @@ tiling_e_client_does_not_fit(E_Client *ec)
    Eina_Strbuf *buf;
 
    buf = eina_strbuf_new();
-   if (ec->netwm.name)
-     eina_strbuf_append_printf(buf, "Window %s cannot be tiled\n", ec->netwm.name);
-   else
-     eina_strbuf_append(buf, "A Window cannot be tiled\n");
+   eina_strbuf_append_printf(buf, _("Window %s cannot be tiled\n"),
+                             e_client_util_name_get(ec));
 
    memset(&n, 0, sizeof(n));
    n.app_name = _("Tiling");
    n.icon.icon = "dialog-error";
    n.summary = _("Window cannot be tiled");
    n.body = eina_strbuf_string_get(buf);
-   n.timeout = 2000;
+   n.timeout = 8000;
    e_notification_client_send(&n, NULL, NULL);
    toggle_floating(ec);
 
