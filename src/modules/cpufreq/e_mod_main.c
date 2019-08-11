@@ -338,45 +338,47 @@ _button_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
 
         if (cpufreq_config->status->pstate)
           {
-             int set;
-             
+             int set, pc;
+
              mo = e_menu_new();
              cpufreq_config->menu_pstate1 = mo;
-
              set = 0;
-#define VALMIN(_n) \
-             mi = e_menu_item_new(mo); \
-             e_menu_item_label_set(mi, #_n); \
-             e_menu_item_radio_set(mi, 1); \
-             e_menu_item_radio_group_set(mi, 1); \
-             if ((!set) && (cpufreq_config->status->pstate_min <= _n)) \
-               { set = 1; e_menu_item_toggle_set(mi, 1); } \
-             e_menu_item_callback_set(mi, _cpufreq_menu_pstate_min, (void *)_n)
-             VALMIN(0);
-             VALMIN(25);
-             VALMIN(50);
-             VALMIN(75);
-             VALMIN(100);
-             
+             for (pc = 0; pc <= 100; pc += 5)
+               {
+                  mi = e_menu_item_new(mo);
+                  snprintf(buf, sizeof(buf), "%i", pc);
+                  e_menu_item_label_set(mi, buf);
+                  e_menu_item_radio_set(mi, 1);
+                  e_menu_item_radio_group_set(mi, 1);
+                  if ((!set) && (cpufreq_config->status->pstate_min <= pc))
+                    {
+                       set = 1;
+                       e_menu_item_toggle_set(mi, 1);
+                    }
+                  e_menu_item_callback_set(mi, _cpufreq_menu_pstate_min,
+                                           (void *)(intptr_t)pc);
+               }
+
              mo = e_menu_new();
              cpufreq_config->menu_pstate2 = mo;
-             
              set = 0;
-#define VALMAX(_n) \
-             mi = e_menu_item_new(mo); \
-             e_menu_item_label_set(mi, #_n); \
-             e_menu_item_radio_set(mi, 1); \
-             e_menu_item_radio_group_set(mi, 1); \
-             if ((!set) && (cpufreq_config->status->pstate_max <= _n)) \
-               { set = 1; e_menu_item_toggle_set(mi, 1); } \
-             e_menu_item_callback_set(mi, _cpufreq_menu_pstate_max, (void *)_n)
-             VALMAX(5);
-             VALMAX(25);
-             VALMAX(50);
-             VALMAX(75);
-             VALMAX(100);
+             for (pc = 0; pc <= 100; pc += 5)
+               {
+                  mi = e_menu_item_new(mo);
+                  snprintf(buf, sizeof(buf), "%i", pc);
+                  e_menu_item_label_set(mi, buf);
+                  e_menu_item_radio_set(mi, 1);
+                  e_menu_item_radio_group_set(mi, 1);
+                  if ((!set) && (cpufreq_config->status->pstate_max <= pc))
+                    {
+                       set = 1;
+                       e_menu_item_toggle_set(mi, 1);
+                    }
+                  e_menu_item_callback_set(mi, _cpufreq_menu_pstate_max,
+                                           (void *)(intptr_t)pc);
+               }
           }
-        
+
         mg = e_menu_new();
         mi = e_menu_item_new(mg);
         e_menu_item_label_set(mi, _("Time Between Updates"));
