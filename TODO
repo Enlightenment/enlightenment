@@ -218,7 +218,8 @@ if not on a real screen/zone
   package manager (autodetect if possible)
   * not just updates but also install/uninstall of pkgs with a minimal
     front-end to back-end cmdline tools (use shell wrappers?)
-
+* cpufreq: support pstate: hwp_dynamic_boost, no_turbo, display turbo_pct,
+  num_pstates
 
 DONE:
 * music-control: fix aspect ratio of album cover image
