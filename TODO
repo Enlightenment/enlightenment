@@ -220,6 +220,10 @@ if not on a real screen/zone
     front-end to back-end cmdline tools (use shell wrappers?)
 * cpufreq: support pstate: hwp_dynamic_boost, no_turbo, display turbo_pct,
   num_pstates
+* need more advanced input device controls like for touchpads for
+  swizzling their gesture recognition etc. - look into libratbag too
+  for gaming mouse stuff if its worth using it or just doing the same
+  stuff ourselves as we will probably have to via libinput
 
 DONE:
 * music-control: fix aspect ratio of album cover image
