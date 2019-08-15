@@ -3179,6 +3179,7 @@ _e_fwin_op_registry_entry_add_cb(void *data,
    E_Fm2_Op_Registry_Entry *ere = (E_Fm2_Op_Registry_Entry *)event;
    E_Fwin_Page *page = data;
    Evas_Object *o;
+   Evas_Coord mw, mh;
 
    if ((ere->op != E_FM_OP_COPY) && (ere->op != E_FM_OP_MOVE) &&
        (ere->op != E_FM_OP_REMOVE) && (ere->op != E_FM_OP_SECURE_REMOVE))
@@ -3187,7 +3188,8 @@ _e_fwin_op_registry_entry_add_cb(void *data,
    o = edje_object_add(evas_object_evas_get(page->scrollframe_obj));
    e_theme_edje_object_set(o, "base/theme/fileman",
                            "e/fileman/default/progress");
-
+   edje_object_size_min_calc(o, &mw, &mh);
+   evas_object_size_hint_min_set(o, mw, mh);
    // Append the element to the box
    edje_object_part_box_append(e_scrollframe_edje_object_get(page->scr),
                                "e.box.operations", o);
