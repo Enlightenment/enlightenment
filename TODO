@@ -112,6 +112,7 @@ TODO:
     * set up ntp
     * set user password
     * user cron front-end config/editor
+    * allow separate LC_MESSAGES, LC_TIME, LC_NUMERIC, LC_NAME, etc.
 * wallpaper: gen wp files with multiple common resolutions in image set
   * edje needs logic to handle max texture size and to downsize to work
     * rpi max texture size is 2048...
