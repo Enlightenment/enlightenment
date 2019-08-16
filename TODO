@@ -225,6 +225,15 @@ if not on a real screen/zone
   swizzling their gesture recognition etc. - look into libratbag too
   for gaming mouse stuff if its worth using it or just doing the same
   stuff ourselves as we will probably have to via libinput
+* per app environment launch config - allow different TZ, LOCALE etc.
+  per app and set up env appropriately
+* back-end e system process for monitoring/polling and launching etc.
+  * split e up into front vs back-end with back-end doing things like
+    * monitoring processes/system (see above)
+    * launching apps (cheaper to fork a small process)
+    * having a root helper for root-only tasks that stays around if it
+      is needed as opposed to enlightenment_sys that runs then exits
+
 
 DONE:
 * music-control: fix aspect ratio of album cover image
