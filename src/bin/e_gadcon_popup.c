@@ -70,6 +70,8 @@ _e_gadcon_popup_free(E_Gadcon_Popup *pop)
    pop->gcc = NULL;
    evas_object_hide(pop->comp_object);
    E_FREE_FUNC(pop->comp_object, evas_object_del);
+   E_FREE_FUNC(pop->show_idle_enterer, ecore_idle_enterer_del);
+   E_FREE_FUNC(pop->show_job, ecore_job_del);
    free(pop);
 }
 
@@ -258,6 +260,25 @@ e_gadcon_popup_content_set(E_Gadcon_Popup *pop, Evas_Object *o)
    _e_gadcon_popup_size_recalc(pop, o);
 }
 
+static void
+_cb_show_job(void *data)
+{
+   E_Gadcon_Popup *pop = data;
+   E_FREE_FUNC(pop->show_idle_enterer, ecore_idle_enterer_del);
+   pop->show_job = NULL;
+   evas_object_show(pop->comp_object);
+}
+
+static Eina_Bool
+_cb_show_idle_enterer(void *data)
+{
+   E_Gadcon_Popup *pop = data;
+   pop->show_idle_enterer = NULL;
+   E_FREE_FUNC(pop->show_job, ecore_job_del);
+   pop->show_job = ecore_job_add(_cb_show_job, pop);
+   return EINA_FALSE;
+}
+
 E_API void
 e_gadcon_popup_show(E_Gadcon_Popup *pop)
 {
@@ -271,6 +292,7 @@ e_gadcon_popup_show(E_Gadcon_Popup *pop)
    pop->autoclose_handlers[1] = ecore_event_handler_add(E_EVENT_CLIENT_FULLSCREEN, _e_popup_autoclose_client_fullscreen_cb, NULL);
    if (pop->content)
      e_comp_object_util_del_list_append(pop->comp_object, pop->content);
+   pop->show_idle_enterer = ecore_idle_enterer_add(_cb_show_idle_enterer, pop);
    evas_object_show(pop->comp_object);
    pop->visible = EINA_TRUE;
 }
@@ -281,6 +303,9 @@ e_gadcon_popup_hide(E_Gadcon_Popup *pop)
    E_OBJECT_CHECK(pop);
    E_OBJECT_TYPE_CHECK(pop, E_GADCON_POPUP_TYPE);
    if (pop->pinned) return;
+   if (!pop->visible) return;
+   E_FREE_FUNC(pop->show_idle_enterer, ecore_idle_enterer_del);
+   E_FREE_FUNC(pop->show_job, ecore_job_del);
    evas_object_hide(pop->comp_object);
    if (pop->gadcon_was_locked)
      _e_gadcon_popup_locked_set(pop, 0);
