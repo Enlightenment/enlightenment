@@ -139,7 +139,10 @@ evry_fuzzy_match(const char *str, const char *match)
                        ii = 0;
                        /* go to next word */
                        for (; (*p != 0) && ((isspace(*p) || (ip && ispunct(*p)))); p += ii)
-                         if (!_evry_utf8_next(p, &ii)) break;
+                         {
+                            ii = 0;
+                            if (!_evry_utf8_next(p, &ii)) break;
+                         }
                        cnt++;
                        next = p;
                        m_cnt = 0;
