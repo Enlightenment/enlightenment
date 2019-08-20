@@ -133,7 +133,10 @@ TODO:
   * initial gadget bar setup dnd needs to be normal dnd
   * setup needs an obvious "add" button as dnd not obvious
   * wizard setup could be nicer? maybe just a default bar with no wizard?
-  * changing settigns should not re-run the wizard!
+  * changing settings should not re-run the wizard!
+  * need to visually join gadget and gadget popup so they can kind of
+    look like a "tab" thats joined when we want to do this kind of
+    appearance
 * efm: use elm for window
 * efm: use elm scroller for fm view
 * efm: use elm for file popup
