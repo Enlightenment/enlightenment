@@ -1680,6 +1680,7 @@ _e_menu_realize(E_Menu *m)
 
 
    evas_event_thaw(m->evas);
+   evas_event_thaw_eval(m->evas);
    m->realized = 1;
 }
 

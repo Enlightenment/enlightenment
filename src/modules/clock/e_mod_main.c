@@ -309,6 +309,8 @@ _clock_popup_new(Instance *inst)
 
    if (inst->popup) return;
 
+   evas = e_comp->evas;
+   evas_event_freeze(evas);
    _todaystr_eval(inst, todaystr, sizeof(todaystr) - 1);
 
    inst->madj = 0;
@@ -316,7 +318,6 @@ _clock_popup_new(Instance *inst)
    _time_eval(inst);
 
    inst->popup = e_gadcon_popup_new(inst->gcc, 0);
-   evas = e_comp->evas;
 
    inst->o_table = elm_table_add(e_comp->elm);
 
@@ -377,6 +378,8 @@ _clock_popup_new(Instance *inst)
 
    evas_smart_objects_calculate(evas);
    e_gadcon_popup_content_set(inst->popup, inst->o_table);
+   evas_event_thaw(evas);
+   evas_event_thaw_eval(evas);
    e_gadcon_popup_show(inst->popup);
 }
 
