@@ -1561,7 +1561,7 @@ no_submenu_item:
                   mi->icon_w = icon_w;
                   mi->icon_h = icon_h;
                   E_WEIGHT(mi->icon_object, 0, 1);
-                  E_FILL(mi->icon_bg_object);
+                  E_FILL(mi->icon_object);
                   evas_object_size_hint_min_set(mi->icon_object, ww, hh);
                   elm_box_pack_end(mi->container_object, o);
                   evas_object_show(o);
