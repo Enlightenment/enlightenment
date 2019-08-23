@@ -241,7 +241,16 @@ if not on a real screen/zone
     * launching apps (cheaper to fork a small process)
     * having a root helper for root-only tasks that stays around if it
       is needed as opposed to enlightenment_sys that runs then exits
-
+* synergy-like e <-> e mouse, kbd, cnp, dnd proxy/sharing
+* efl: flat theme redo
+* efl/eo: start using efl loop as core loop
+  * begin to move some login out into efl threads+loops
+    * to change ui - callsync/async back to ui/main loop
+  * have a deferred deletion of evas objects in idler
+    * hide instead of del, stash in invisible place, delete l8r in idler
+  * have object stash for adding basic objects
+    * have generic/basic object stash
+    * have edje object stash
 
 DONE:
 * music-control: fix aspect ratio of album cover image
