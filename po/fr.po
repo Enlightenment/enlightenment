@@ -18,7 +18,7 @@ msgstr ""
 "Project-Id-Version: Enlightenment DR17\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-08-23 16:18+0100\n"
-"PO-Revision-Date: 2019-06-26 17:27+0200\n"
+"PO-Revision-Date: 2019-08-23 21:14+0200\n"
 "Last-Translator: Philippe Jean Guillaumie <similar@orange.fr>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -54,7 +54,6 @@ msgid "Enlightenment"
 msgstr "Enlightenment"
 
 #: src/bin/e_about.c:26
-#, fuzzy
 msgid ""
 "<title>Copyright &copy; 2000-2019, by the Enlightenment Development Team</"
 "><ps/><ps/>We hope you enjoy using this software as much as we enjoyed "
@@ -63,9 +62,9 @@ msgid ""
 msgstr ""
 "<title>Copyright &copy; 2000-2019, par l'équipe de développement "
 "d'Enlightenment</><ps/><ps/>Nous espérons que vous aurez autant de plaisir à "
-"utiliser ce logiciel<ps/>que nous en avons eu pour l'écrire.<ps/><ps/>Pour "
-"nous contacter, veuillez visiter :<ps/><hilight>http://www.enlightenment."
-"org</><ps/><ps/>"
+"utiliser ce logiciel que nous en avons eu pour l'écrire.<ps/><ps/>Pour nous "
+"contacter, veuillez visiter :<ps/><hilight>http://www.enlightenment.org</"
+"><ps/><ps/>"
 
 #: src/bin/e_about.c:69
 msgid "<title>The Team</><ps/><ps/>"
@@ -235,11 +234,11 @@ msgstr "Activer l'ancrage"
 
 #: src/bin/e_actions.c:3309
 msgid "Iconic Mode Toggle"
-msgstr "(Dés)Activer le mode iconique"
+msgstr "(Dés)Activer le mode iconifié"
 
 #: src/bin/e_actions.c:3313
 msgid "Iconic Mode Enable"
-msgstr "Activer le mode iconique"
+msgstr "Activer le mode iconifié"
 
 #: src/bin/e_actions.c:3318
 msgid "Fullscreen Mode Toggle"
@@ -372,7 +371,7 @@ msgstr "Basculer vers le bureau du dessous"
 
 #: src/bin/e_actions.c:3401
 msgid "Flip Desktop By..."
-msgstr "Se déplacer de … bureaux"
+msgstr "Se déplacer de… bureaux"
 
 #: src/bin/e_actions.c:3407
 msgid "Flip To Previous Desktop"
@@ -388,15 +387,15 @@ msgstr "Afficher le rayon"
 
 #: src/bin/e_actions.c:3423
 msgid "Flip Desktop To..."
-msgstr "Aller au bureau …"
+msgstr "Aller au bureau…"
 
 #: src/bin/e_actions.c:3428
 msgid "Switch Desktop To... On Screen..."
-msgstr "Passer au bureau … à l'écran..."
+msgstr "Passer au bureau… De l'écran..."
 
 #: src/bin/e_actions.c:3434
 msgid "Flip Desktop Linearly..."
-msgstr "Se déplacer linéairement de … bureaux"
+msgstr "Se déplacer linéairement de… bureaux"
 
 #: src/bin/e_actions.c:3440
 msgid "Switch To Desktop 0"
@@ -468,19 +467,19 @@ msgstr "Basculer vers le bureau du dessous (tous les écrans)"
 
 #: src/bin/e_actions.c:3478
 msgid "Flip Desktop By... (All Screens)"
-msgstr "Se déplacer de … bureaux (tous les écrans)"
+msgstr "Se déplacer de… bureaux (tous les écrans)"
 
 #: src/bin/e_actions.c:3484
 msgid "Flip Desktop To... (All Screens)"
-msgstr "Aller au bureau … (tous les écrans)"
+msgstr "Aller au bureau… (tous les écrans)"
 
 #: src/bin/e_actions.c:3490
 msgid "Flip Desktop Linearly... (All Screens)"
-msgstr "Se déplacer linéairement de … bureaux (tous les écrans)"
+msgstr "Se déplacer linéairement de… bureaux (tous les écrans)"
 
 #: src/bin/e_actions.c:3496
 msgid "Flip Desktop In Direction..."
-msgstr "Basculer le bureau en direction de …"
+msgstr "Basculer le bureau en direction de…"
 
 #: src/bin/e_actions.c:3501
 msgid "Switch To Desktop 0 (All Screens)"
@@ -532,7 +531,7 @@ msgstr "Passer au bureau 11 (tous les écrans)"
 
 #: src/bin/e_actions.c:3525
 msgid "Switch To Desktop... (All Screens)"
-msgstr "Passer au bureau … (tous les écrans)"
+msgstr "Passer au bureau… (tous les écrans)"
 
 #: src/bin/e_actions.c:3531 src/bin/e_actions.c:3535
 #: src/modules/winlist/e_mod_main.c:43 src/modules/winlist/e_mod_main.c:45
@@ -549,7 +548,7 @@ msgstr "Basculer vers la fenêtre…"
 
 #: src/bin/e_actions.c:3535
 msgid "Jump to window... or start..."
-msgstr "Basculer vers la fenêtre … ou au début …"
+msgstr "Basculer vers la fenêtre… ou au début…"
 
 #: src/bin/e_actions.c:3540 src/bin/e_actions.c:3542 src/bin/e_actions.c:3544
 #: src/bin/e_actions.c:3550 src/bin/e_actions.c:3552 src/bin/e_actions.c:3554
@@ -573,7 +572,7 @@ msgstr "Envoyer le pointeur à l'écran 1"
 
 #: src/bin/e_actions.c:3544
 msgid "Send Mouse To Screen..."
-msgstr "Envoyer le pointeur à l'écran …"
+msgstr "Envoyer le pointeur à l'écran…"
 
 #: src/bin/e_actions.c:3550
 msgid "Send Mouse Forward 1 Screen"
@@ -585,7 +584,7 @@ msgstr "Envoyer le pointeur à l'écran précédent"
 
 #: src/bin/e_actions.c:3554
 msgid "Send Mouse Forward/Back Screens..."
-msgstr "Envoyer le pointeur … écrans plus loin"
+msgstr "Envoyer le pointeur… écrans plus loin"
 
 #: src/bin/e_actions.c:3559
 msgid "Dim"
@@ -657,15 +656,15 @@ msgstr "Déplacer selon le décalage…"
 
 #: src/bin/e_actions.c:3625
 msgid "Resize By..."
-msgstr "Redimensionner de …"
+msgstr "Redimensionner de…"
 
 #: src/bin/e_actions.c:3631
 msgid "Push in Direction..."
-msgstr "En direction de …"
+msgstr "En direction de…"
 
 #: src/bin/e_actions.c:3637
 msgid "Drag Icon..."
-msgstr "Glisser l'icône …"
+msgstr "Glisser l'icône…"
 
 #: src/bin/e_actions.c:3642 src/bin/e_actions.c:3644 src/bin/e_actions.c:3646
 #: src/bin/e_actions.c:3652 src/bin/e_actions.c:3658 src/bin/e_actions.c:3660
@@ -682,11 +681,11 @@ msgstr "Vers le bureau précédent"
 
 #: src/bin/e_actions.c:3646
 msgid "By Desktop #..."
-msgstr "Déplacer de … bureaux"
+msgstr "Déplacer de… bureaux"
 
 #: src/bin/e_actions.c:3652
 msgid "To Desktop..."
-msgstr "Vers le bureau …"
+msgstr "Vers le bureau…"
 
 #: src/bin/e_actions.c:3658
 msgid "To Next Screen"
@@ -743,7 +742,7 @@ msgstr "Afficher la liste des fenêtres"
 
 #: src/bin/e_actions.c:3694
 msgid "Show Menu..."
-msgstr "Afficher le menu …"
+msgstr "Afficher le menu…"
 
 #: src/bin/e_actions.c:3704 src/bin/e_actions.c:3709 src/bin/e_actions.c:3714
 #: src/modules/conf/e_mod_main.c:273
@@ -834,7 +833,7 @@ msgstr "Éteindre"
 
 #: src/bin/e_actions.c:3769
 msgid "Suspend Now"
-msgstr "Mettre en veille immédiatement"
+msgstr "Mise en veille immédiate"
 
 #: src/bin/e_actions.c:3777
 msgid "Suspend Intelligently"
@@ -842,11 +841,11 @@ msgstr "Mise en veille intelligente"
 
 #: src/bin/e_actions.c:3785
 msgid "Hibernate Now"
-msgstr "Hiberner immédiatement"
+msgstr "Mise en hibernation immédiate"
 
 #: src/bin/e_actions.c:3789
 msgid "Hibernate Intelligently"
-msgstr "Hibernation intelligente"
+msgstr "Mise en hibernation intelligente"
 
 #: src/bin/e_actions.c:3797
 msgid "Lock"
@@ -891,7 +890,7 @@ msgstr "Erreur du client !"
 #: src/bin/e_client.c:4832
 msgid "Something has attempted to set a border when it shouldn't! Report this!"
 msgstr ""
-"La tentative de définir une bordure est non conforme. Reportez le bogue !"
+"La tentative de définir une bordure est non conforme. Reportez ce bogue !"
 
 #: src/bin/e_color_dialog.c:25
 msgid "Color Selector"
@@ -1006,12 +1005,13 @@ msgid ""
 "This is needed for Enlightenment to function."
 msgstr ""
 "Votre serveur d'affichage ne sait pas gérer la fenêtre d'incrustation "
-"composite.<ps/>Cette fonction est essentielle au bon fonctionnement de E."
+"composite.\n"
+"Cette fonction est essentielle au bon fonctionnement de E."
 
 #: src/bin/e_comp_x.c:5816
-#, fuzzy, c-format
+#, c-format
 msgid "Enlightenment cannot initialize X Connection...\n"
-msgstr "Enlightenment ne parvient pas à initialiser Emotion !\n"
+msgstr "Enlightenment ne parvient pas à initialiser une connexion à X...\n"
 
 #: src/bin/e_comp_x.c:5828
 msgid ""
@@ -1818,7 +1818,7 @@ msgstr "Paramètres des icônes de fichiers"
 
 #: src/bin/e_fm.c:10088 src/bin/e_fm.c:10309
 msgid "Set background..."
-msgstr "Définir le fond d'écran …"
+msgstr "Définir le fond d'écran…"
 
 #: src/bin/e_fm.c:10096
 msgid "Clear background"
@@ -1826,7 +1826,7 @@ msgstr "Supprimer le fond d'écran"
 
 #: src/bin/e_fm.c:10103 src/bin/e_fm.c:10337
 msgid "Set overlay..."
-msgstr "Définir l'incrustation …"
+msgstr "Définir l'incrustation…"
 
 #: src/bin/e_fm.c:10109
 msgid "Clear overlay"
@@ -2565,12 +2565,12 @@ msgstr "%1.3f–%1.3f"
 #: src/bin/e_int_client_prop.c:155 src/bin/e_int_client_prop.c:177
 #, c-format
 msgid "Withdrawn"
-msgstr "Retiré"
+msgstr "Non visible"
 
 #: src/bin/e_int_client_prop.c:163 src/bin/e_int_client_prop.c:185
 #, c-format
 msgid "Iconic"
-msgstr "Iconique"
+msgstr "Iconifié"
 
 #: src/bin/e_int_client_prop.c:220
 #, c-format
@@ -2727,7 +2727,7 @@ msgstr "Groupe de la fenêtre"
 
 #: src/bin/e_int_client_prop.c:470
 msgid "Transient For"
-msgstr "Relation transitoire"
+msgstr "Transitoire pour"
 
 #: src/bin/e_int_client_prop.c:471
 msgid "Client Leader"
@@ -3524,9 +3524,8 @@ msgid "Change Wallpaper"
 msgstr "Changer le fond d'écran"
 
 #: src/bin/e_int_menus.c:370
-#, fuzzy
 msgid "Add Gadget Bar (EXPERIMENTAL)"
-msgstr "Ajouter une barre de gadgets"
+msgstr "Ajouter une barre de gadgets (EXPÉRIMENTAL)"
 
 #: src/bin/e_int_menus.c:375
 msgid "Add Gadgets To Desktop"
@@ -6150,7 +6149,7 @@ msgstr "Afficher sur l'écran actuel"
 
 #: src/modules/conf_display/e_int_config_desklock.c:342
 msgid "Show on screen #:"
-msgstr "Afficher sur l'écran ..."
+msgstr "Afficher sur l'écran..."
 
 #: src/modules/conf_display/e_int_config_desklock.c:348
 #: src/modules/conf_display/e_int_config_desks.c:181
@@ -6325,7 +6324,7 @@ msgstr "Activer l'extinction de l'écran"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:201
 msgid "Use Power Saving (DPMS)"
-msgstr ""
+msgstr "Activer l'économie d'énergie (DPMS)"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:205
 #: src/modules/syscon/e_int_config_syscon.c:174
@@ -6350,18 +6349,17 @@ msgid "Suspend even if AC"
 msgstr "Mise en veille même si branché sur secteur"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:230
-#, fuzzy
 msgid "Hibernate instead of suspend"
-msgstr "Veille connectée plutôt que veille prolongée"
+msgstr "Mise en hibernation plutôt qu'en veille"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:236
 msgid "Suspend delay"
 msgstr "Délai avant mise en veille"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:239
-#, fuzzy, c-format
+#, c-format
 msgid "%1.0f hours"
-msgstr "%1.0f car."
+msgstr "%1.0f heures"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:253
 msgid "Disable blanking for Fullscreen Windows"
@@ -6476,7 +6474,7 @@ msgstr "Seuil"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:240
 msgid "Tap to click"
-msgstr ""
+msgstr "Toucher pour cliquer"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:246
 #: src/modules/conf_interaction/e_mod_main.c:24
@@ -7412,11 +7410,11 @@ msgstr "Applications GTK"
 
 #: src/modules/conf_theme/e_int_config_xsettings.c:524
 msgid "Enable icon theme for applications"
-msgstr "Utiliser le thème d'icônes pour les applications"
+msgstr "Utiliser ce thème d'icônes pour les applications"
 
 #: src/modules/conf_theme/e_int_config_xsettings.c:529
 msgid "Enable icon theme for Enlightenment"
-msgstr "Utiliser le thème d'icônes d'Enlightenment"
+msgstr "Utiliser ce thème d'icônes pour Enlightenment"
 
 #: src/modules/conf_theme/e_mod_main.c:45
 #: src/modules/conf_theme/e_mod_main.c:65
@@ -8362,7 +8360,7 @@ msgstr "Alignement du pop-up"
 
 #: src/modules/everything/evry_config.c:575
 msgid "Edge Popup Size"
-msgstr "Taille du bord du pop-up"
+msgstr "Taille du pop-up de bord"
 
 #: src/modules/everything/evry_config.c:592
 #: src/modules/winlist/e_int_config_winlist.c:276
@@ -9014,7 +9012,7 @@ msgstr "Gérer les gadgets"
 
 #: src/modules/ibar/e_mod_config.c:56
 msgid "IBar Settings"
-msgstr "Paramètes de l'IBar"
+msgstr "Paramètres de l'IBar"
 
 #: src/modules/ibar/e_mod_config.c:106
 msgid "Selected source"
@@ -9379,9 +9377,8 @@ msgid "Package Manager"
 msgstr "Gestionnaire de paquets"
 
 #: src/modules/packagekit/e_mod_main.c:150
-#, fuzzy
 msgid "Refresh package list"
-msgstr "Actualiser les paquets"
+msgstr "Actualiser la liste des paquets"
 
 #: src/modules/packagekit/e_mod_main.c:157
 #: src/modules/packagekit/e_mod_packagekit.c:566
@@ -10295,9 +10292,9 @@ msgid "Tiling Configuration"
 msgstr "Configuration du pavage (tiling)"
 
 #: src/modules/tiling/e_mod_tiling.c:873
-#, fuzzy, c-format
+#, c-format
 msgid "Window %s cannot be tiled\n"
-msgstr "Préserver cette fenêtre"
+msgstr "Impossible de juxtaposer la fenêtre %s\n"
 
 #: src/modules/tiling/e_mod_tiling.c:877 src/modules/tiling/e_mod_tiling.c:1872
 #: src/modules/tiling/e_mod_tiling.c:1905
@@ -10539,7 +10536,7 @@ msgstr "Lorsqu'une fenêtre est cliquée."
 
 #: src/modules/wizard/page_060.c:47
 msgid "Whenever the mouse enters a window"
-msgstr "Lorsque la souris entre dans une fenêtre."
+msgstr "Lorsque le pointeur entre dans une fenêtre"
 
 #: src/modules/wizard/page_065.c:85
 msgid "Mouse Modifiers"
@@ -10600,7 +10597,7 @@ msgstr "Installez l'un de ces modules pour le support de la gestion du réseau"
 
 #: src/modules/wizard/page_110.c:154
 msgid "Checking to see if Connman exists"
-msgstr "Vérification si Connman existe"
+msgstr "Vérification de la présence de Connman"
 
 #: src/modules/wizard/page_150.c:29
 msgid "Compositing"
@@ -10636,7 +10633,7 @@ msgid ""
 msgstr ""
 "Enlightenment peut vérifier la disponibilité de nouvelles versions,<ps/>de "
 "mises à jour de sécurité et de corrections de bogues, mais<ps/>aussi "
-"d'extensions.<ps/><ps/>C'est d'une aide précieuse pour vous tenir informer "
+"d'extensions.<ps/><ps/>C'est d'une aide précieuse pour vous tenir informé "
 "des<ps/>correctifs disponibles dès leur parution. Pour ce faire,<ps/"
 ">Enlightenment se connecte à enlightenment.org et échange<ps/>des données "
 "comme le fait n'importe quel navigateur.<ps/>Aucune information personnelle "
@@ -10654,13 +10651,13 @@ msgid "Information"
 msgstr "Information"
 
 #: src/modules/wizard/page_180.c:38
-#, fuzzy
 msgid ""
 "A taskbar can be added to<ps/>show open windows and applications.<ps/>The "
 "IBar launcher already can do this,<ps/>so this is in addition to that."
 msgstr ""
 "Une barre des tâches peut être ajoutée pour montrer<ps/>les fenêtres et les "
-"applications ouvertes."
+"applications ouvertes.<ps/>Cependant l'IBar peut déjà faire cela, cette<ps/"
+">fonctionnalité viendra se surajouter."
 
 #: src/modules/wizard/page_180.c:49
 msgid "Enable Taskbar"
@@ -10673,9 +10670,8 @@ msgstr "Paramètres du clavier"
 #: src/modules/xkbswitch/e_mod_config.c:525
 #: src/modules/xkbswitch/e_mod_config.c:1490
 #: src/modules/xkbswitch/e_mod_config.c:1616
-#, fuzzy
 msgid "No Name"
-msgstr "Nom de l'icône"
+msgstr "Sans nom"
 
 #: src/modules/xkbswitch/e_mod_config.c:615
 msgid "Do not apply any keyboard settings ever"
@@ -10795,9 +10791,8 @@ msgstr "Variante"
 
 #: src/modules/xkbswitch/e_mod_config.c:1517
 #: src/modules/xkbswitch/e_mod_config.c:1602
-#, fuzzy
 msgid "No Description"
-msgstr "Aucune sélection"
+msgstr "Sans description"
 
 #: src/modules/xkbswitch/e_mod_main.c:199
 msgid "NONE"
