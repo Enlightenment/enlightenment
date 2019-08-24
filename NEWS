@@ -1,13 +1,14 @@
 Release 0.23.0:
-
-* New padded screenshot option
-* Meson build now is the build system
-* Musc Control now supports rage mpris dbus protocol
-* Add Bluez5 support with totally new and redone module and gadget
-* Add dpms option to turn it off or on
-* Alt-tab window switcher allows moving of windows while alt-tabbing
-* Lots of bug fixes , compile warning fixes etc.
-* Massive improvements to Wayland support
+---------------------
+Hilights:
+      * New padded screenshot option
+      * Meson build now is the build system
+      * Music Control now supports rage mpris dbus protocol
+      * Add Bluez5 support with totally new and redone module and gadget
+      * Add dpms option to turn it off or on
+      * Alt-tab window switcher allows moving of windows while alt-tabbing
+      * Lots of bug fixes, compile warning fixes etc.
+      * Massive improvements to Wayland support
 
 Release 0.22.0:
 ---------------------
