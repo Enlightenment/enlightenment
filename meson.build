@@ -38,7 +38,7 @@ config_h.set('E_RELEASE_BUILD'         , '1')
 #release = 'ver-0.23'
 ####
 
-efl_version = '>= 1.22.2'
+efl_version = '>= 1.22.3'
 
 add_global_arguments('-DHAVE_CONFIG_H=1', language: 'c')
 dir_prefix    = get_option('prefix')
