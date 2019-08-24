@@ -20,7 +20,7 @@ config_h = configuration_data()
 e_version   = ver.split('.')
 
 #### FOR RELEASE
-e_version_rev = '.'.join([ver, 'beta'])
+e_version_rev = '.'.join([ver])
 release = '@0@.@1@.@2@'.format(e_version[0], e_version[1], e_version[2])
 config_h.set('E_RELEASE_BUILD'         , '1')
 ####
