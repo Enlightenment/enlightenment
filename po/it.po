@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-23 16:18+0100\n"
-"PO-Revision-Date: 2019-06-06 19:53+0200\n"
+"POT-Creation-Date: 2019-08-24 14:11+0200\n"
+"PO-Revision-Date: 2019-08-25 09:31+0200\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: General\n"
 "Language: it\n"
@@ -10298,9 +10298,9 @@ msgid "Tiling Configuration"
 msgstr "Configurazione di Tiling"
 
 #: src/modules/tiling/e_mod_tiling.c:873
-#, fuzzy, c-format
+#, c-format
 msgid "Window %s cannot be tiled\n"
-msgstr "La finestra non può essere messa in griglia"
+msgstr "La finestra %s non può essere messa in griglia\n"
 
 #: src/modules/tiling/e_mod_tiling.c:877 src/modules/tiling/e_mod_tiling.c:1872
 #: src/modules/tiling/e_mod_tiling.c:1905
@@ -10661,13 +10661,10 @@ msgid "Information"
 msgstr "Informazione"
 
 #: src/modules/wizard/page_180.c:38
-#, fuzzy
 msgid ""
 "A taskbar can be added to<ps/>show open windows and applications.<ps/>The "
 "IBar launcher already can do this,<ps/>so this is in addition to that."
-msgstr ""
-"È possibile aggiungere una<ps/>taskbar per mostrare finestre<ps/>e "
-"applicazioni aperte."
+msgstr "È possibile aggiungere una<ps/>taskbar per mostrare finestre<ps/>e applicazioni aperte.<ps/>Il lanciatore IBar fa già la<ps/>stessa cosa quindi questa è<ps/>un'alternativa a esso."
 
 #: src/modules/wizard/page_180.c:49
 msgid "Enable Taskbar"
@@ -10680,9 +10677,8 @@ msgstr "Impostazioni della tastiera"
 #: src/modules/xkbswitch/e_mod_config.c:525
 #: src/modules/xkbswitch/e_mod_config.c:1490
 #: src/modules/xkbswitch/e_mod_config.c:1616
-#, fuzzy
 msgid "No Name"
-msgstr "Nome icona"
+msgstr "Nessun nome"
 
 #: src/modules/xkbswitch/e_mod_config.c:615
 msgid "Do not apply any keyboard settings ever"
@@ -10802,9 +10798,8 @@ msgstr "Variante"
 
 #: src/modules/xkbswitch/e_mod_config.c:1517
 #: src/modules/xkbswitch/e_mod_config.c:1602
-#, fuzzy
 msgid "No Description"
-msgstr "Nessuna selezione"
+msgstr "Nessuna descrizione"
 
 #: src/modules/xkbswitch/e_mod_main.c:199
 msgid "NONE"
