@@ -34,6 +34,7 @@ packagekit_icon_update(E_PackageKit_Module_Context *ctxt,
                   case PK_INFO_ENUM_BUGFIX:
                   case PK_INFO_ENUM_IMPORTANT:
                   case PK_INFO_ENUM_SECURITY:
+                  case PK_INFO_ENUM_AVAILABLE:
                      count++;
                      break;
                   default:
