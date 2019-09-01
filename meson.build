@@ -1,6 +1,6 @@
 ##### project
 project('enlightenment', 'c',
-        version        : '0.23.0',
+        version        : '0.23.99',
         license        : 'BSD 2 clause',
         default_options: [ 'buildtype=release', 'c_std=gnu99', 'warning_level=2' ],
         meson_version  : '>= 0.47.0')
@@ -20,22 +20,22 @@ config_h = configuration_data()
 e_version   = ver.split('.')
 
 #### FOR RELEASE
-e_version_rev = '.'.join([ver])
-release = '@0@.@1@.@2@'.format(e_version[0], e_version[1], e_version[2])
-config_h.set('E_RELEASE_BUILD'         , '1')
+#e_version_rev = '.'.join([ver])
+#release = '@0@.@1@.@2@'.format(e_version[0], e_version[1], e_version[2])
+#config_h.set('E_RELEASE_BUILD'         , '1')
 ####
 
 #### FOR DEVELOPMENT
-#git_version = '0'
-#git         = find_program('git', required: false)
-#if git.found() == true
-#  git_cmd = run_command(git.path(), 'rev-list', '--count', 'HEAD')
-#  if git_cmd.returncode() == 0
-#    git_version = git_cmd.stdout().strip()
-#  endif
-#endif
-#e_version_rev = '.'.join([ver, git_version])
-#release = 'ver-0.23'
+git_version = '0'
+git         = find_program('git', required: false)
+if git.found() == true
+  git_cmd = run_command(git.path(), 'rev-list', '--count', 'HEAD')
+  if git_cmd.returncode() == 0
+    git_version = git_cmd.stdout().strip()
+  endif
+endif
+e_version_rev = '.'.join([ver, git_version])
+release = 'dev-0.23.99'
 ####
 
 efl_version = '>= 1.22.3'
