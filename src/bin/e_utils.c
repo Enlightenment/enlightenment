@@ -1506,3 +1506,37 @@ e_util_exe_safe_run(const char *cmd, void *data)
 #endif
    return ecore_exe_pipe_run(cmd, flags, data);
 }
+
+static Eina_Bool
+str_matches_one(const char *instr, const char **strset)
+{
+   int i;
+
+   if ((!instr) || (!strset)) return EINA_FALSE;
+   for (i = 0; strset[i]; i++)
+     {
+        if (!strcmp(strset[i], instr)) return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+E_API E_Util_Action
+e_util_key_geometry_action_get(const char *key, int *x, int *y, int dx, int dy)
+{
+   const char *k_up[]    = { "Up",     "KP_Up",     "k", "K", "w", "W", NULL };
+   const char *k_down[]  = { "Down",   "KP_Down",   "j", "J", "s", "S", NULL };
+   const char *k_left[]  = { "Left",   "KP_Left",   "h", "H", "a", "A", NULL };
+   const char *k_right[] = { "Right",  "KP_Right",  "l", "L", "d", "D", NULL };
+   const char *k_done[]  = { "Return", "KP_Enter",  "space",  NULL };
+   const char *k_abort[] = { "Escape", "BackSpace", "Delete", "x", "X", NULL };
+
+   if      (str_matches_one(key, k_up))    *y -= dy;
+   else if (str_matches_one(key, k_down))  *y += dy;
+   else if (str_matches_one(key, k_left))  *x -= dx;
+   else if (str_matches_one(key, k_right)) *x += dx;
+   else if (str_matches_one(key, k_done))  return E_UTIL_ACTION_DONE;
+   else if (str_matches_one(key, k_abort)) return E_UTIL_ACTION_ABORT;
+   else return E_UTIL_ACTION_NONE;
+
+   return E_UTIL_ACTION_DO;
+}
