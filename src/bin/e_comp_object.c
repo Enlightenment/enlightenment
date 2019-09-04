@@ -2631,6 +2631,7 @@ _e_comp_object_move_end(void *d EINA_UNUSED, E_Client *ec)
    Evas_Object *rect;
    Eina_Array_Iterator it;
 
+   if (!cw) return;
    if (!cw->input_objs) return;
 
    EINA_ARRAY_ITER_NEXT(cw->input_objs, i, rect, it)
@@ -2645,6 +2646,7 @@ _e_comp_object_move_begin(void *d EINA_UNUSED, E_Client *ec)
    Evas_Object *rect;
    Eina_Array_Iterator it;
 
+   if (!cw) return;
    if (!cw->input_objs) return;
 
    EINA_ARRAY_ITER_NEXT(cw->input_objs, i, rect, it)
