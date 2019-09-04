@@ -971,22 +971,26 @@ static Eina_Bool
 _e_winlist_cb_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Event_Key *ev = event;
+   E_Util_Action act;
+   int x = 0, y = 0;
 
    if (ev->window != _input_window) return ECORE_CALLBACK_PASS_ON;
-   if (!strcmp(ev->key, "Up"))
-     e_winlist_direction_select(_winlist_zone, 0);
-   else if (!strcmp(ev->key, "Down"))
-     e_winlist_direction_select(_winlist_zone, 1);
-   else if (!strcmp(ev->key, "Left"))
-     e_winlist_direction_select(_winlist_zone, 2);
-   else if (!strcmp(ev->key, "Right"))
-     e_winlist_direction_select(_winlist_zone, 3);
-   else if (!strcmp(ev->key, "Return"))
+   act = e_util_key_geometry_action_get(ev->key, &x, &y, 1, 1);
+   if (act == E_UTIL_ACTION_DONE)
      e_winlist_hide();
-   else if (!strcmp(ev->key, "space"))
-     e_winlist_hide();
-   else if (!strcmp(ev->key, "Escape"))
+   else if (act == E_UTIL_ACTION_ABORT)
      _e_winlist_restore_desktop();
+   else if (act == E_UTIL_ACTION_DO)
+     {
+        if      (y < 0)
+          e_winlist_direction_select(_winlist_zone, 0);
+        else if (y > 0)
+          e_winlist_direction_select(_winlist_zone, 1);
+        else if (x < 0)
+          e_winlist_direction_select(_winlist_zone, 2);
+        else if (x > 0)
+          e_winlist_direction_select(_winlist_zone, 3);
+     }
    else if (!strcmp(ev->key, "1"))
      _e_winlist_activate_nth(0);
    else if (!strcmp(ev->key, "2"))
