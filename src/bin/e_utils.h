@@ -70,6 +70,16 @@ E_API Ecore_Exe *e_util_open(const char *exe, void *data);
 
 E_API Ecore_Exe *e_util_exe_safe_run(const char *cmd, void *data);
 
+typedef enum
+{
+   E_UTIL_ACTION_NONE,
+   E_UTIL_ACTION_DONE,
+   E_UTIL_ACTION_ABORT,
+   E_UTIL_ACTION_DO
+} E_Util_Action;
+
+E_API E_Util_Action e_util_key_geometry_action_get(const char *key, int *x, int *y, int dx, int dy);
+
 static inline Eina_Bool
 isedje(const Evas_Object *obj)
 {

@@ -292,10 +292,18 @@ _e_comp_object_layers_add(E_Comp_Object *cw, E_Comp_Object *above, E_Comp_Object
    if (!cw->ec) return;
 */
    if (above)
-    e_comp->layers[above->layer].clients = eina_inlist_append_relative(e_comp->layers[above->layer].clients, EINA_INLIST_GET(cw->ec), EINA_INLIST_GET(above->ec));
+     {
+        cw->layer = above->layer;
+        e_comp->layers[above->layer].clients = eina_inlist_append_relative(e_comp->layers[above->layer].clients, EINA_INLIST_GET(cw->ec), EINA_INLIST_GET(above->ec));
+        e_comp->layers[above->layer].clients_count++;
+     }
    else if (below)
-     e_comp->layers[below->layer].clients = eina_inlist_prepend_relative(e_comp->layers[below->layer].clients, EINA_INLIST_GET(cw->ec), EINA_INLIST_GET(below->ec));
-   if ((!above) && (!below))
+     {
+        cw->layer = below->layer;
+        e_comp->layers[below->layer].clients = eina_inlist_prepend_relative(e_comp->layers[below->layer].clients, EINA_INLIST_GET(cw->ec), EINA_INLIST_GET(below->ec));
+        e_comp->layers[below->layer].clients_count++;
+     }
+   else
      {
         if (prepend)
           e_comp->layers[cw->layer].clients = eina_inlist_prepend(e_comp->layers[cw->layer].clients, EINA_INLIST_GET(cw->ec));
@@ -303,8 +311,8 @@ _e_comp_object_layers_add(E_Comp_Object *cw, E_Comp_Object *above, E_Comp_Object
           e_comp->layers[cw->layer].clients = eina_inlist_prepend_relative(e_comp->layers[cw->layer].clients, EINA_INLIST_GET(cw->ec), EINA_INLIST_GET(layer_cw->ec));
         else //this is either the layer object or a tough actin tinactin^W^W^Wfast stacking client
           e_comp->layers[cw->layer].clients = eina_inlist_append(e_comp->layers[cw->layer].clients, EINA_INLIST_GET(cw->ec));
+        e_comp->layers[cw->layer].clients_count++;
      }
-   e_comp->layers[cw->layer].clients_count++;
 #ifndef E_RELEASE_BUILD
    if (layer_cw)
      {

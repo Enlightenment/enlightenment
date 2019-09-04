@@ -820,15 +820,12 @@ _e_client_action_restore_orig(E_Client *ec)
 static int
 _e_client_key_down_modifier_apply(int modifier, int value)
 {
-   if (modifier & ECORE_EVENT_MODIFIER_CTRL)
-     return value * 2;
+   if (modifier & ECORE_EVENT_MODIFIER_CTRL) return value * 5;
    else if (modifier & ECORE_EVENT_MODIFIER_ALT)
      {
-        value /= 2;
-        if (value)
-          return value;
-        else
-          return 1;
+        value /= 5;
+        if (value) return value;
+        else return 1;
      }
 
    return value;
@@ -897,16 +894,17 @@ _e_client_action_move_timeout(void *data EINA_UNUSED)
 static void
 _e_client_action_move_timeout_add(void)
 {
+   double timeout = e_config->border_keyboard.timeout;
    E_FREE_FUNC(action_timer, ecore_timer_del);
-   if (EINA_DBL_NONZERO(e_config->border_keyboard.timeout))
-     action_timer = ecore_timer_loop_add(e_config->border_keyboard.timeout, _e_client_action_move_timeout, NULL);
+   if (!EINA_DBL_NONZERO(timeout)) timeout = 5.0;
+   action_timer = ecore_timer_loop_add(timeout, _e_client_action_move_timeout, NULL);
 }
 
 static Eina_Bool
 _e_client_move_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Event_Key *ev = event;
-   int x, y;
+   int x, y, dx, dy;
 
    if (!comp_grabbed) return ECORE_CALLBACK_RENEW;
    if (!action_client)
@@ -918,27 +916,28 @@ _e_client_move_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *even
    x = action_client->x;
    y = action_client->y;
 
-   if ((strcmp(ev->key, "Up") == 0) || (strcmp(ev->key, "k") == 0))
-     y -= _e_client_key_down_modifier_apply(ev->modifiers, MAX(e_config->border_keyboard.move.dy, 1));
-   else if ((strcmp(ev->key, "Down") == 0) || (strcmp(ev->key, "j") == 0))
-     y += _e_client_key_down_modifier_apply(ev->modifiers, MAX(e_config->border_keyboard.move.dy, 1));
-   else if ((strcmp(ev->key, "Left") == 0) || (strcmp(ev->key, "h") == 0))
-     x -= _e_client_key_down_modifier_apply(ev->modifiers, MAX(e_config->border_keyboard.move.dx, 1));
-   else if ((strcmp(ev->key, "Right") == 0) || (strcmp(ev->key, "l") == 0))
-     x += _e_client_key_down_modifier_apply(ev->modifiers, MAX(e_config->border_keyboard.move.dx, 1));
-   else if (strcmp(ev->key, "Return") == 0)
-     goto stop;
-   else if (strcmp(ev->key, "Escape") == 0)
+   dx = e_config->border_keyboard.move.dx;
+   dx = _e_client_key_down_modifier_apply(ev->modifiers, dx);
+   dy = e_config->border_keyboard.move.dy;
+   dy = _e_client_key_down_modifier_apply(ev->modifiers, dy);
+
+   switch (e_util_key_geometry_action_get(ev->key, &x, &y, dx, dy))
      {
+      case E_UTIL_ACTION_DONE:
+        goto stop;
+        break;
+      case E_UTIL_ACTION_ABORT:
         _e_client_action_restore_orig(action_client);
         goto stop;
+        break;
+      case E_UTIL_ACTION_DO:
+        evas_object_move(action_client->frame, x, y);
+        _e_client_action_move_timeout_add();
+        break;
+      case E_UTIL_ACTION_NONE:
+      default:
+        break;
      }
-   else if ((strncmp(ev->key, "Control", sizeof("Control") - 1) != 0) &&
-            (strncmp(ev->key, "Alt", sizeof("Alt") - 1) != 0))
-     goto stop;
-
-   evas_object_move(action_client->frame, x, y);
-   _e_client_action_move_timeout_add();
 
    return ECORE_CALLBACK_PASS_ON;
 
@@ -1118,9 +1117,10 @@ _e_client_action_resize_timeout(void *data EINA_UNUSED)
 static void
 _e_client_action_resize_timeout_add(void)
 {
+   double timeout = e_config->border_keyboard.timeout;
    E_FREE_FUNC(action_timer, ecore_timer_del);
-   if (EINA_DBL_NONZERO(e_config->border_keyboard.timeout))
-     action_timer = ecore_timer_loop_add(e_config->border_keyboard.timeout, _e_client_action_resize_timeout, NULL);
+   if (!EINA_DBL_NONZERO(timeout)) timeout = 5.0;
+   action_timer = ecore_timer_loop_add(timeout, _e_client_action_resize_timeout, NULL);
 }
 
 static Eina_Bool
@@ -1140,48 +1140,41 @@ _e_client_resize_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev
    h = action_client->h;
 
    dx = e_config->border_keyboard.resize.dx;
-   if (dx < action_client->icccm.step_w)
-     dx = action_client->icccm.step_w;
+   if (dx < action_client->icccm.step_w) dx = action_client->icccm.step_w;
    dx = _e_client_key_down_modifier_apply(ev->modifiers, dx);
-   if (dx < action_client->icccm.step_w)
-     dx = action_client->icccm.step_w;
+   if (dx < action_client->icccm.step_w) dx = action_client->icccm.step_w;
 
    dy = e_config->border_keyboard.resize.dy;
-   if (dy < action_client->icccm.step_h)
-     dy = action_client->icccm.step_h;
+   if (dy < action_client->icccm.step_h) dy = action_client->icccm.step_h;
    dy = _e_client_key_down_modifier_apply(ev->modifiers, dy);
-   if (dy < action_client->icccm.step_h)
-     dy = action_client->icccm.step_h;
+   if (dy < action_client->icccm.step_h) dy = action_client->icccm.step_h;
 
-   if ((strcmp(ev->key, "Up") == 0) || (strcmp(ev->key, "k") == 0))
-     h -= dy;
-   else if ((strcmp(ev->key, "Down") == 0) || (strcmp(ev->key, "j") == 0))
-     h += dy;
-   else if ((strcmp(ev->key, "Left") == 0) || (strcmp(ev->key, "h") == 0))
-     w -= dx;
-   else if ((strcmp(ev->key, "Right") == 0) || (strcmp(ev->key, "l") == 0))
-     w += dx;
-   else if (strcmp(ev->key, "Return") == 0)
-     goto stop;
-   else if (strcmp(ev->key, "Escape") == 0)
+   switch (e_util_key_geometry_action_get(ev->key, &w, &h, dx, dy))
      {
+      case E_UTIL_ACTION_DONE:
+        goto stop;
+        break;
+      case E_UTIL_ACTION_ABORT:
         _e_client_action_restore_orig(action_client);
         goto stop;
-     }
-   else if ((strncmp(ev->key, "Control", sizeof("Control") - 1) != 0) &&
-            (strncmp(ev->key, "Alt", sizeof("Alt") - 1) != 0))
-     goto stop;
-   if (e_config->screen_limits == E_CLIENT_OFFSCREEN_LIMIT_ALLOW_NONE)
-     {
-        if (action_client->zone)
+        break;
+      case E_UTIL_ACTION_DO:
+        if (e_config->screen_limits == E_CLIENT_OFFSCREEN_LIMIT_ALLOW_NONE)
           {
-             w = MIN(w, action_client->zone->w);
-             h = MIN(h, action_client->zone->h);
+             if (action_client->zone)
+               {
+                  w = MIN(w, action_client->zone->w);
+                  h = MIN(h, action_client->zone->h);
+               }
           }
+        e_client_resize_limit(action_client, &w, &h);
+        evas_object_resize(action_client->frame, w, h);
+        _e_client_action_resize_timeout_add();
+        break;
+      case E_UTIL_ACTION_NONE:
+      default:
+        break;
      }
-   e_client_resize_limit(action_client, &w, &h);
-   evas_object_resize(action_client->frame, w, h);
-   _e_client_action_resize_timeout_add();
 
    return ECORE_CALLBACK_PASS_ON;
 
@@ -2426,7 +2419,6 @@ e_client_idler_before(void)
    E_Client *ec;
 
    if ((!eina_hash_population(clients_hash[0])) && (!eina_hash_population(clients_hash[1]))) return;
-
 
    EINA_LIST_FOREACH(e_comp->clients, l, ec)
      {
@@ -4870,17 +4862,15 @@ e_client_act_move_keyboard(E_Client *ec)
 
    if (!_e_client_move_begin(ec))
      return;
-
    _e_client_action_init(ec);
-   _e_client_action_move_timeout_add();
    if (!_e_client_hook_call(E_CLIENT_HOOK_MOVE_UPDATE, ec)) return;
-   evas_object_freeze_events_set(ec->frame, 1);
 
    if (!action_handler_key)
      action_handler_key = ecore_event_handler_add(ECORE_EVENT_KEY_DOWN, _e_client_move_key_down, NULL);
 
    if (!action_handler_mouse)
      action_handler_mouse = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, _e_client_move_mouse_down, NULL);
+   _e_client_action_move_timeout_add();
 }
 
 E_API void
@@ -4896,16 +4886,14 @@ e_client_act_resize_keyboard(E_Client *ec)
         ec->keyboard_resizing = 0;
         return;
      }
-
    _e_client_action_init(ec);
-   _e_client_action_resize_timeout_add();
-   evas_object_freeze_events_set(ec->frame, 1);
 
    if (!action_handler_key)
      action_handler_key = ecore_event_handler_add(ECORE_EVENT_KEY_DOWN, _e_client_resize_key_down, NULL);
 
    if (!action_handler_mouse)
      action_handler_mouse = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, _e_client_resize_mouse_down, NULL);
+   _e_client_action_resize_timeout_add();
 }
 
 E_API void
