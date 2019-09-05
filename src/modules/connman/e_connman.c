@@ -901,6 +901,9 @@ static inline void _e_connman_system_name_owner_exit(void)
    connman_manager = NULL;
 
    ecore_event_add(E_CONNMAN_EVENT_MANAGER_OUT, NULL, NULL, NULL);
+   e_util_dialog_show(_("Connman Service Missing"),
+                      _("The Connman service is not able to be found.<br>"
+                        "Is <b>connmand</b> daemon running?"));
 }
 
 static inline void _e_connman_system_name_owner_enter(const char *owner EINA_UNUSED)
