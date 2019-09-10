@@ -276,8 +276,6 @@ e_modapi_init(E_Module *m)
    maug =
      e_int_menus_menu_augmentation_add_sorted("config/0", _("Settings Panel"),
                                               _e_mod_menu_add, NULL, NULL, NULL);
-   e_module_delayed_set(m, 1);
-
    snprintf(buf, sizeof(buf), "%s/e-module-conf.edj",
             e_module_dir_get(conf_module));
 

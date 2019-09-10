@@ -17,7 +17,6 @@ e_modapi_init(E_Module *m)
    e_configure_registry_category_add("menus", 60, _("Menus"), NULL, "preferences-menus");
    e_configure_registry_item_add("menus/menu_settings", 30, _("Menu Settings"), NULL, "preferences-menu-settings", e_int_config_menus);
    conf_module = m;
-   e_module_delayed_set(m, 1);
    return m;
 }
 

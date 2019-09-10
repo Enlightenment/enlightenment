@@ -138,9 +138,6 @@ e_modapi_init(E_Module *m)
    evry_view_help_init();
    evry_gadget_init();
 
-   e_module_priority_set(m, -1000);
-   e_module_delayed_set(m, 1);
-
    /* cleanup every hour :) */
    cleanup_timer = ecore_timer_loop_add(3600, _cleanup_history, NULL);
 

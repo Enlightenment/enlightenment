@@ -40,7 +40,6 @@ e_modapi_init(E_Module *m)
                                  "preferences-desktop-signal-bindings",
                                  e_int_config_signalbindings);
    conf_module = m;
-   e_module_delayed_set(m, 1);
 
    return m;
 }

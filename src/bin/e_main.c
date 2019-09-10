@@ -620,8 +620,6 @@ main(int argc, char **argv)
    TS("E_Ipc Init Done");
    _e_main_shutdown_push(e_ipc_shutdown);
 
-   edje_frametime_set(1.0 / e_config->framerate);
-
    TS("E_Font Init");
    if (!e_font_init())
      {

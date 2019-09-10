@@ -1056,8 +1056,6 @@ e_modapi_init(E_Module *m)
         return NULL;
      }
 
-   e_module_delayed_set(m, 1);
-
    shot_module = m;
    act = e_action_add("shot");
    if (act)

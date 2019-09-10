@@ -203,12 +203,9 @@ _plugins_shutdown(void)
 /***************************************************************************/
 
 Eina_Bool
-evry_plug_settings_init(E_Module *m)
+evry_plug_settings_init(E_Module *m EINA_UNUSED)
 {
    EVRY_MODULE_NEW(evry_module, evry, _plugins_init, _plugins_shutdown);
-
-   e_module_delayed_set(m, 1);
-
    return EINA_TRUE;
 }
 

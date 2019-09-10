@@ -27,7 +27,6 @@ e_modapi_init(E_Module *m)
 
    /* Set this module to be loaded after all other modules, or we don't see
       modules loaded after this */
-   e_module_priority_set(m, 100);
 
    gadman_init(m);
 

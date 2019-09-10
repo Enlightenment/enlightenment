@@ -65,7 +65,6 @@ e_modapi_init(E_Module *m)
         e_action_predef_name_set(N_("Window : List"), N_("Window on the Right"),
                                  "winlist", "right", NULL, 0);
      }
-   e_module_delayed_set(m, 1);
    return m;
 }
 

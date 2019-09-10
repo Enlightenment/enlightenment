@@ -28,7 +28,6 @@ e_modapi_init(E_Module *m)
                                  _("Input Method Settings"), NULL,
                                  "preferences-imc", e_int_config_imc);
    conf_module = m;
-   e_module_delayed_set(m, 1);
 
    return m;
 }

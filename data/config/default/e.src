@@ -1,5 +1,5 @@
 group "E_Config" struct {
-  value "config_version" int: 1000014;
+  value "config_version" int: 1000028;
   value "config_type" uint: 0; // this profile seems to just be super minimalist
   value "show_splash" int: 0;
   value "desktop_default_name" string: "%i-%i";
@@ -26,8 +26,6 @@ group "E_Config" struct {
     group "E_Config_Module" struct {
       value "name" string: "wizard";
       value "enabled" uchar: 1;
-      value "delayed" uchar: 0;
-      value "priority" int: 0;
     }
   }
   value "window_placement_policy" int: 0;

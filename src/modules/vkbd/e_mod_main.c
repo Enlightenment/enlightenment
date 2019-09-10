@@ -85,7 +85,6 @@ e_modapi_init(E_Module *m)
                                  "vkbd_toggle", NULL, NULL, 0);
      }
 
-   e_module_delayed_set(m, 1);
    ki_delay_timer = ecore_timer_add(1.0, _il_ki_delay_cb, NULL);
    e_kbd_send_init();
    return m;

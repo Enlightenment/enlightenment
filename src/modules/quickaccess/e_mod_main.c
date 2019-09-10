@@ -56,7 +56,6 @@ e_modapi_init(E_Module *m)
    qa_mod = E_NEW(Mod, 1);
    qa_mod->module = m;
    m->data = qa_mod;
-   e_module_delayed_set(m, 0);
    conf_edd = e_qa_config_dd_new();
    qa_config = e_config_domain_load("module.quickaccess", conf_edd);
    if (qa_config)

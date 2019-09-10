@@ -76,8 +76,6 @@ E_API Eina_List   *e_module_list(void);
 E_API Eina_List   *e_module_desktop_list(void);
 E_API void         e_module_desktop_free(E_Module_Desktop *md);
 E_API void         e_module_dialog_show(E_Module *m, const char *title, const char *body);
-E_API void         e_module_delayed_set(E_Module *m, int delayed);
-E_API void         e_module_priority_set(E_Module *m, int priority);
-E_API Eina_Bool   e_module_loading_get(void);
+E_API Eina_Bool    e_module_loading_get(void);
 #endif
 #endif

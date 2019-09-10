@@ -21,7 +21,6 @@ e_modapi_init(E_Module *m)
    e_configure_registry_item_add("windows/window_list_menu", 40, _("Window List Menu"), NULL, "preferences-winlist", e_int_config_clientlist);
    e_configure_registry_item_add("windows/window_process", 50, _("Window Process Management"), NULL, "preferences-window-process", e_int_config_window_process);
    conf_module = m;
-   e_module_delayed_set(m, 1);
    return m;
 }
 

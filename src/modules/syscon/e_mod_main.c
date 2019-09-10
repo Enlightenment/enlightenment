@@ -36,7 +36,6 @@ e_modapi_init(E_Module *m)
    e_configure_registry_category_add("advanced", 80, _("Advanced"), NULL, "preferences-advanced");
    e_configure_registry_item_add("advanced/syscon", 10, _("System Controls"), NULL, "system-shutdown", e_int_config_syscon);
    e_syscon_gadget_init(m);
-   e_module_delayed_set(m, 1);
    return m;
 }
 

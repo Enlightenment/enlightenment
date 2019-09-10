@@ -1,5 +1,5 @@
 group "E_Config" struct {
-    value "config_version" int: 1000014;
+    value "config_version" int: 1000028;
     value "config_type" uint: 3;
     value "show_splash" int: 1;
     value "desktop_default_name" string: "%i-%i";
@@ -10,7 +10,6 @@ group "E_Config" struct {
     value "border_shade_animate" int: 1;
     value "border_shade_transition" int: 3;
     value "border_shade_speed" double: 3000.0;
-    value "framerate" double: 60.0;
     value "priority" int: 3;
     value "image_cache" int: 4096;
     value "font_cache" int: 512;
@@ -217,7 +216,6 @@ group "E_Config" struct {
     value "powersave.extreme" double: 1200.0;
     value "powersave.min" int: 0;
     value "powersave.max" int: 5;
-    value "no_module_delay" int: 1;
     group "syscon.actions" list {
         group "E_Config_Syscon_Action" struct {
             value "action" string: "halt";
@@ -550,7 +548,7 @@ group "E_Config" struct {
             value "mime" string: "application/x-desktop";
             value "icon" string: "DESKTOP";
         }
-        group "E_Config_Mime_Icon" struct {        
+        group "E_Config_Mime_Icon" struct {
            value "mime" string: "application/vnd.oasis.opendocument.presentation";
            value "icon" string: "THUMB";
         }
@@ -871,227 +869,153 @@ group "E_Config" struct {
         group "E_Config_Module" struct {
             value "name" string: "tasks";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 0;
-            value "priority" int: 0;
         }
         group "E_Config_Module" struct {
             value "name" string: "mixer";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 1;
-            value "priority" int: 0;
         }
         group "E_Config_Module" struct {
             value "name" string: "conf_window_remembers";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 1;
-            value "priority" int: 0;
         }
         group "E_Config_Module" struct {
             value "name" string: "conf_interaction";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 1;
-            value "priority" int: 0;
         }
         group "E_Config_Module" struct {
             value "name" string: "fileman";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 1;
-            value "priority" int: 0;
         }
         group "E_Config_Module" struct {
             value "name" string: "fileman_opinfo";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 1;
-            value "priority" int: 0;
         }
         group "E_Config_Module" struct {
             value "name" string: "conf_window_manipulation";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 1;
-            value "priority" int: 0;
         }
         group "E_Config_Module" struct {
             value "name" string: "conf_theme";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 1;
-            value "priority" int: 0;
         }
         group "E_Config_Module" struct {
             value "name" string: "conf_shelves";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 1;
-            value "priority" int: 0;
         }
         group "E_Config_Module" struct {
             value "name" string: "conf_performance";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 1;
-            value "priority" int: 0;
         }
         group "E_Config_Module" struct {
             value "name" string: "conf_paths";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 1;
-            value "priority" int: 0;
         }
         group "E_Config_Module" struct {
             value "name" string: "conf_menus";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 1;
-            value "priority" int: 0;
         }
         group "E_Config_Module" struct {
             value "name" string: "conf_bindings";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 1;
-            value "priority" int: 0;
         }
         group "E_Config_Module" struct {
             value "name" string: "conf_intl";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 1;
-            value "priority" int: 0;
         }
         group "E_Config_Module" struct {
             value "name" string: "conf_display";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 1;
-            value "priority" int: 0;
         }
         group "E_Config_Module" struct {
             value "name" string: "conf_dialogs";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 1;
-            value "priority" int: 0;
         }
         group "E_Config_Module" struct {
             value "name" string: "conf_applications";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 1;
-            value "priority" int: 0;
         }
         group "E_Config_Module" struct {
             value "name" string: "conf_randr";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 1;
-            value "priority" int: 0;
         }
         group "E_Config_Module" struct {
             value "name" string: "conf";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 1;
-            value "priority" int: 0;
         }
         group "E_Config_Module" struct {
             value "name" string: "xkbswitch";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 1;
-            value "priority" int: 0;
         }
         group "E_Config_Module" struct {
             value "name" string: "winlist";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 1;
-            value "priority" int: 0;
         }
         group "E_Config_Module" struct {
             value "name" string: "pager";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 1;
-            value "priority" int: 0;
         }
         group "E_Config_Module" struct {
             value "name" string: "temperature";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 1;
-            value "priority" int: 0;
         }
         group "E_Config_Module" struct {
             value "name" string: "cpufreq";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 1;
-            value "priority" int: 0;
         }
         group "E_Config_Module" struct {
             value "name" string: "battery";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 1;
-            value "priority" int: 0;
         }
         group "E_Config_Module" struct {
             value "name" string: "clock";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 1;
-            value "priority" int: 0;
         }
         group "E_Config_Module" struct {
             value "name" string: "ibar";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 1;
-            value "priority" int: 0;
         }
         group "E_Config_Module" struct {
             value "name" string: "start";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 1;
-            value "priority" int: 0;
         }
         group "E_Config_Module" struct {
             value "name" string: "gadman";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 1;
-            value "priority" int: -100;
         }
         group "E_Config_Module" struct {
             value "name" string: "syscon";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 1;
-            value "priority" int: 0;
         }
         group "E_Config_Module" struct {
             value "name" string: "lokker";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 0;
-            value "priority" int: 0;
         }
         group "E_Config_Module" struct {
             value "name" string: "notification";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 1;
-            value "priority" int: 0;
         }
         group "E_Config_Module" struct {
             value "name" string: "everything";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 1;
-            value "priority" int: -1000;
         }
         group "E_Config_Module" struct {
             value "name" string: "shot";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 1;
-            value "priority" int: 0;
         }
         group "E_Config_Module" struct {
             value "name" string: "backlight";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 1;
-            value "priority" int: 0;
         }
         group "E_Config_Module" struct {
             value "name" string: "connman";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 1;
-            value "priority" int: 0;
         }
         group "E_Config_Module" struct {
             value "name" string: "bluez5";
             value "enabled" uchar: 1;
-            value "delayed" uchar: 1;
-            value "priority" int: 0;
         }
     }
-    group "xkb.used_layouts" list {   
+    group "xkb.used_layouts" list {
         group "E_Config_XKB_Layout" struct {
            value "name" string: "us";
            value "model" string: "default";

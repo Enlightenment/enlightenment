@@ -353,7 +353,6 @@ e_shelf_zone_new(E_Zone *zone, const char *name, const char *style, E_Layer laye
    shelves = eina_list_append(shelves, es);
 
    es->hidden = 0;
-   es->hide_step = 0;
    es->locked = 0;
 
    es->hide_origin = -1;
@@ -500,8 +499,11 @@ e_shelf_toggle(E_Shelf *es, int show)
                   es->hide_timer = NULL;
                }
              if (!es->hide_animator)
-               es->hide_animator =
-                 ecore_animator_add(_e_shelf_cb_hide_animator, es);
+               {
+                  es->hide_begin = ecore_loop_time_get();
+                  es->hide_animator =
+                    ecore_animator_add(_e_shelf_cb_hide_animator, es);
+               }
           }
      }
    else if ((!show) && (!es->hidden) && ((!es->gadcon) || (!es->gadcon->editing)) &&
@@ -847,7 +849,6 @@ e_shelf_position_calc(E_Shelf *es)
       default:
         break;
      }
-   es->hide_step = 0;
    es->hide_origin = -1;
 
    if ((es->x == x) && (es->y == y) && (es->w == w) && (es->h == h)) return;
@@ -2033,7 +2034,8 @@ static Eina_Bool
 _e_shelf_cb_hide_animator(void *data)
 {
    E_Shelf *es;
-   int step, hide_max = 0;
+   int hide_max = 0;
+   double pos;
 
    es = data;
    if (!es->gadcon)
@@ -2070,30 +2072,16 @@ _e_shelf_cb_hide_animator(void *data)
         break;
      }
 
-   step = (hide_max / e_config->framerate) / es->cfg->hide_duration;
-   if (!step) step = 1;
-
+   pos = (ecore_loop_time_get() - es->hide_begin) / es->cfg->hide_duration;
    if (es->hidden)
      {
-        if (es->hide_step < hide_max)
-          {
-             if (es->hide_step + step > hide_max)
-               es->hide_step = hide_max;
-             else
-               es->hide_step += step;
-          }
-        else goto end;
+        es->hide_step = hide_max * pos;
+        if (es->hide_step > hide_max) es->hide_step = hide_max;
      }
    else
      {
-        if (es->hide_step > 0)
-          {
-             if (es->hide_step < step)
-               es->hide_step = 0;
-             else
-               es->hide_step -= step;
-          }
-        else goto end;
+        es->hide_step = hide_max * (1.0 - pos);
+        if (es->hide_step <= 0) es->hide_step = 0;
      }
 
    switch (es->gadcon->orient)
@@ -2129,6 +2117,14 @@ _e_shelf_cb_hide_animator(void *data)
         break;
      }
 
+   if (es->hidden)
+     {
+        if (es->hide_step == hide_max) goto end;
+     }
+   else
+     {
+        if (es->hide_step == 0) goto end;
+     }
    return ECORE_CALLBACK_RENEW;
 
 end:
@@ -2157,7 +2153,10 @@ _e_shelf_cb_hide_animator_timer(void *data)
 
    es = data;
    if (!es->hide_animator)
-     es->hide_animator = ecore_animator_add(_e_shelf_cb_hide_animator, es);
+     {
+        es->hide_begin = ecore_loop_time_get();
+        es->hide_animator = ecore_animator_add(_e_shelf_cb_hide_animator, es);
+     }
    es->hide_timer = NULL;
    return ECORE_CALLBACK_CANCEL;
 }

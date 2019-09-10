@@ -59,7 +59,6 @@ e_modapi_init(E_Module *m)
    if (act2)
      act2->func.go = _e_mod_action_fileman_reset_cb;
    maug = e_int_menus_menu_augmentation_add_sorted("main/1", _("Navigate"), _e_mod_menu_add, NULL, NULL, NULL);
-   e_module_delayed_set(m, 1);
 
    e_fwin_init();
 

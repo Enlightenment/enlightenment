@@ -433,32 +433,32 @@ group "E_Config_Bindings" struct {
             value "modifiers" int: 0;
             value "action" string: "desk_flip_in_direction";
             value "edge" uchar: 1;
-            value "any_mod" uchar: 0;
-            value "delay" float: 0.3000000119209289550781250;
+            value "any_mod" uchar: 1;
+            value "delay" float: 0.3;
         }
         group "E_Config_Binding_Edge" struct {
             value "context" int: 3;
             value "modifiers" int: 0;
             value "action" string: "desk_flip_in_direction";
             value "edge" uchar: 2;
-            value "any_mod" uchar: 0;
-            value "delay" float: 0.3000000119209289550781250;
+            value "any_mod" uchar: 1;
+            value "delay" float: 0.3;
         }
         group "E_Config_Binding_Edge" struct {
             value "context" int: 3;
             value "modifiers" int: 0;
             value "action" string: "desk_flip_in_direction";
             value "edge" uchar: 3;
-            value "any_mod" uchar: 0;
-            value "delay" float: 0.3000000119209289550781250;
+            value "any_mod" uchar: 1;
+            value "delay" float: 0.3;
         }
         group "E_Config_Binding_Edge" struct {
             value "context" int: 3;
-            value "modifiers" int: 0;
+            value "modifiers" int: 1;
             value "action" string: "desk_flip_in_direction";
             value "edge" uchar: 4;
-            value "any_mod" uchar: 0;
-            value "delay" float: 0.3000000119209289550781250;
+            value "any_mod" uchar: 1;
+            value "delay" float: 0.3;
         }
     }
     group "key_bindings" list {
@@ -1037,6 +1037,20 @@ group "E_Config_Bindings" struct {
             value "modifiers" int: 8;
             value "action" string: "swap_window";
             value "button" uchar: 1;
+            value "any_mod" uchar: 0;
+        }
+        group "E_Config_Binding_Mouse" struct {
+            value "context" int: 9;
+            value "modifiers" int: 4;
+            value "action" string: "gadget_move";
+            value "button" uchar: 1;
+            value "any_mod" uchar: 0;
+        }
+        group "E_Config_Binding_Mouse" struct {
+            value "context" int: 9;
+            value "modifiers" int: 4;
+            value "action" string: "gadget_resize";
+            value "button" uchar: 2;
             value "any_mod" uchar: 0;
         }
     }

@@ -280,8 +280,6 @@ _e_config_edd_init(Eina_Bool old)
 #define D _e_config_module_edd
    E_CONFIG_VAL(D, T, name, STR);
    E_CONFIG_VAL(D, T, enabled, UCHAR);
-   E_CONFIG_VAL(D, T, delayed, UCHAR);
-   E_CONFIG_VAL(D, T, priority, INT);
 
    _e_config_font_default_edd = E_CONFIG_DD_NEW("E_Font_Default",
                                                 E_Font_Default);
@@ -475,14 +473,12 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, border_shade_animate, INT); /**/
    E_CONFIG_VAL(D, T, border_shade_transition, INT); /**/
    E_CONFIG_VAL(D, T, border_shade_speed, DOUBLE); /**/
-   E_CONFIG_VAL(D, T, framerate, DOUBLE); /**/
    E_CONFIG_VAL(D, T, priority, INT); /**/
    E_CONFIG_VAL(D, T, zone_desks_x_count, INT); /**/
    E_CONFIG_VAL(D, T, zone_desks_y_count, INT); /**/
    E_CONFIG_VAL(D, T, show_desktop_icons, INT); /**/
    E_CONFIG_VAL(D, T, edge_flip_dragging, INT); /**/
    E_CONFIG_VAL(D, T, language, STR); /**/
-   E_CONFIG_VAL(D, T, no_module_delay, INT); /**/
    E_CONFIG_VAL(D, T, desklock_language, STR); /**/
    E_CONFIG_LIST(D, T, modules, _e_config_module_edd); /**/
    EET_DATA_DESCRIPTOR_ADD_LIST_STRING(D, T, "bad_modules", bad_modules);
@@ -1218,7 +1214,7 @@ e_config_load(void)
              int do_conf = 0;
              Eina_List *l, *ll;
              E_Config_Module *em;
-             int enabled = 0, delayed = 0, priority = 0;
+             int enabled = 0;
 
              CONFIG_VERSION_UPDATE_INFO(10);
              EINA_LIST_FOREACH_SAFE(e_config->modules, l, ll, em)
@@ -1231,8 +1227,6 @@ e_config_load(void)
                     {
                        do_conf += do_free = EINA_TRUE;
                        enabled |= em->enabled;
-                       delayed |= em->delayed;
-                       priority = MIN(priority, em->priority);
                     }
                   if (do_free)
                     {
@@ -1247,8 +1241,6 @@ e_config_load(void)
                   em = E_NEW(E_Config_Module, 1);
                   em->name = eina_stringshare_add("conf_bindings");
                   em->enabled = !!enabled;
-                  em->delayed = !!delayed;
-                  em->priority = priority;
                   e_config->modules = eina_list_append(e_config->modules, em);
                }
           }
@@ -1353,7 +1345,6 @@ e_config_load(void)
                   em = E_NEW(E_Config_Module, 1);
                   em->name = eina_stringshare_add("lokker");
                   em->enabled = 1;
-                  em->delayed = 0;
                   e_config->modules = eina_list_append(e_config->modules, em);
                }
           }
@@ -1430,7 +1421,6 @@ e_config_load(void)
                        module = E_NEW(E_Config_Module, 1);
                        module->name = eina_stringshare_add("wireless");
                        module->enabled = 1;
-                       module->delayed = 1;
                        e_config->modules = eina_list_append(e_config->modules, module);
                     }
                   else if (eina_streq(em->name, "clock"))
@@ -1438,7 +1428,6 @@ e_config_load(void)
                        module = E_NEW(E_Config_Module, 1);
                        module->name = eina_stringshare_add("time");
                        module->enabled = 1;
-                       module->delayed = 1;
                        e_config->modules = eina_list_append(e_config->modules, module);
                     }
                }
@@ -1473,7 +1462,6 @@ e_config_load(void)
                     module = E_NEW(E_Config_Module, 1);
                     module->name = eina_stringshare_add("luncher");
                     module->enabled = 1;
-                    module->delayed = 1;
                     e_config->modules = eina_list_append(e_config->modules, module);
                  }
             }
@@ -1496,7 +1484,6 @@ e_config_load(void)
                     module = E_NEW(E_Config_Module, 1);
                     module->name = eina_stringshare_add("sysinfo");
                     module->enabled = 1;
-                    module->delayed = 1;
                     e_config->modules = eina_list_append(e_config->modules, module);
                  }
             }
@@ -1512,6 +1499,7 @@ e_config_load(void)
                Eina_List *l;
                E_Config_Binding_Edge *ebe;
 
+               CONFIG_VERSION_UPDATE_INFO(25);
                EINA_LIST_FOREACH(e_bindings->edge_bindings, l, ebe)
                  {
                     if ((ebe->context == E_BINDING_CONTEXT_ZONE) &&
@@ -1524,7 +1512,6 @@ e_config_load(void)
                          ebe->any_mod = 1;
                       }
                  }
-               CONFIG_VERSION_UPDATE_INFO(25);
                e_config_save_queue();
             }
           CONFIG_VERSION_CHECK(26)
@@ -1536,6 +1523,7 @@ e_config_load(void)
                E_Config_Gadcon *gc;
                E_Config_Gadcon_Client *gcc;
 
+               CONFIG_VERSION_UPDATE_INFO(26);
                EINA_LIST_FOREACH(e_config->modules, l, em)
                  {
                     if (!em->enabled) continue;
@@ -1562,7 +1550,6 @@ e_config_load(void)
                            }
                       }
                  }
-               CONFIG_VERSION_UPDATE_INFO(26);
                e_config_save_queue();
             }
           CONFIG_VERSION_CHECK(28)
@@ -1570,6 +1557,7 @@ e_config_load(void)
                Eina_List *l, *ll;
                E_Config_Binding_Mouse *ebm;
 
+               CONFIG_VERSION_UPDATE_INFO(28);
                EINA_LIST_FOREACH_SAFE(e_bindings->mouse_bindings, l, ll, ebm)
                  {
                     if ((eina_streq(ebm->action, "gadget_menu")) ||
@@ -1583,7 +1571,6 @@ e_config_load(void)
                          free(ebm);
                       }
                  }
-               CONFIG_VERSION_UPDATE_INFO(27);
                e_config_save_queue();
             }
      }
@@ -1605,7 +1592,6 @@ e_config_load(void)
    E_CONFIG_LIMIT(e_config->border_shade_animate, 0, 1);
    E_CONFIG_LIMIT(e_config->border_shade_transition, 0, 8);
    E_CONFIG_LIMIT(e_config->border_shade_speed, 1.0, 20000.0);
-   E_CONFIG_LIMIT(e_config->framerate, 1.0, 200.0);
    E_CONFIG_LIMIT(e_config->priority, 0, 19);
    E_CONFIG_LIMIT(e_config->zone_desks_x_count, 1, 64);
    E_CONFIG_LIMIT(e_config->zone_desks_y_count, 1, 64);

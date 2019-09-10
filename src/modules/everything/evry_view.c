@@ -40,7 +40,9 @@ struct _Smart_Data
 
    double              last_select;
    double              scroll_align;
+   double              scroll_align_from;
    double              scroll_align_to;
+   double              animator_start;
    Ecore_Animator     *animator;
 
    int                 slide_offset;
@@ -756,25 +758,20 @@ _animator(void *data)
 {
    Smart_Data *sd = evas_object_smart_data_get(data);
    if (!sd) return ECORE_CALLBACK_CANCEL;
-
    double da;
-   double spd = ((25.0 / (double)e_config->framerate) /
-                 (double)(1 + sd->view->zoom));
-   if (spd > 0.9) spd = 0.9;
-
+   double pos = (ecore_loop_time_get() - sd->animator_start) / 0.2;
    int wait = 0;
 
+   if (pos < 0.0) pos = 0.0;
+   else if (pos > 1.0) pos = 1.0;
    if (!EINA_DBL_EQ(sd->scroll_align, sd->scroll_align_to))
      {
-        sd->scroll_align = ((sd->scroll_align * (1.0 - spd)) +
-                            (sd->scroll_align_to * spd));
-
+        sd->scroll_align = ((sd->scroll_align_from * (1.0 - pos)) +
+                            (sd->scroll_align_to * pos));
         da = sd->scroll_align - sd->scroll_align_to;
         if (da < 0.0) da = -da;
-        if (da < 0.02)
-          sd->scroll_align = sd->scroll_align_to;
-        else
-          wait++;
+        if (da < 0.02) sd->scroll_align = sd->scroll_align_to;
+        else wait++;
 
         e_scrollframe_child_pos_set(sd->view->sframe,
                                     0, sd->scroll_align);
@@ -868,7 +865,11 @@ _pan_item_select(Evas_Object *obj, Item *it, int scroll)
         sd->scroll_align_to = align;
 
         if ((!EINA_DBL_EQ(align, sd->cy)) && !sd->animator)
-          sd->animator = ecore_animator_add(_animator, obj);
+          {
+             sd->animator_start = ecore_loop_time_get();
+             sd->scroll_align_from = sd->scroll_align;
+             sd->animator = ecore_animator_add(_animator, obj);
+          }
      }
    else
      {

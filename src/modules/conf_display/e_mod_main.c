@@ -46,7 +46,6 @@ e_modapi_init(E_Module *m)
                                  e_int_config_desk);
    
    conf_module = m;
-   e_module_delayed_set(m, 1);
    return m;
 }
 

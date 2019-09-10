@@ -30,6 +30,7 @@ struct _E_Shelf
    E_Menu              *menu;
    Ecore_Timer         *hide_timer;
    Ecore_Animator      *hide_animator;
+   double               hide_begin;
    int                  hide_step;
    int                  hidden_state_size;
    int                  hide_origin;

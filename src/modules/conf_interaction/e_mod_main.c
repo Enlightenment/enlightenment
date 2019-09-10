@@ -25,7 +25,6 @@ e_modapi_init(E_Module *m)
                                  "preferences-desktop-mouse",
                                  e_int_config_mouse);
    conf_module = m;
-   e_module_delayed_set(m, 1);
    return m;
 }
 

@@ -25,7 +25,6 @@ e_modapi_init(E_Module *m)
                                  "preferences-variables", 
                                  e_int_config_env);
    conf_module = m;
-   e_module_delayed_set(m, 1);
 
    return m;
 }

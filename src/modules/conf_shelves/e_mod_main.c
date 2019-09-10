@@ -28,7 +28,6 @@ e_modapi_init(E_Module *m)
                                               _e_mod_menu_add, NULL, NULL, NULL);
 
    conf_module = m;
-   e_module_delayed_set(m, 1);
 
    return m;
 }

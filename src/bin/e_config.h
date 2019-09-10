@@ -69,13 +69,11 @@ struct _E_Config
    int         border_shade_animate; // GUI
    int         border_shade_transition; // GUI
    double      border_shade_speed; // GUI
-   double      framerate; // GUI
    int         priority; // GUI
    int         zone_desks_x_count; // GUI
    int         zone_desks_y_count; // GUI
    int         show_desktop_icons; // GUI
    int         edge_flip_dragging; // GUI
-   int         no_module_delay; // GUI
    const char *language; // GUI
    const char *desklock_language; // GUI
    Eina_List  *modules; // GUI
@@ -485,8 +483,6 @@ struct _E_Config_Module
 {
    const char   *name;
    unsigned char enabled;
-   unsigned char delayed;
-   int           priority;
 };
 
 struct _E_Config_Binding_Mouse

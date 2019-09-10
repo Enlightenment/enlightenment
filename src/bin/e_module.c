@@ -12,17 +12,13 @@ static void      _e_module_free(E_Module *m);
 static void      _e_module_dialog_disable_create(const char *title, const char *body, E_Module *m);
 static void      _e_module_cb_dialog_disable(void *data, E_Dialog *dia);
 static void      _e_module_event_update_free(void *data, void *event);
-static Eina_Bool _e_module_cb_idler(void *data);
 static int       _e_module_sort_name(const void *d1, const void *d2);
-static int       _e_module_sort_priority(const void *d1, const void *d2);
 static void      _e_module_whitelist_check(void);
 static Eina_Bool _e_module_desktop_list_cb(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data, void *fdata);
 
 /* local subsystem globals */
 static Eina_List *_e_modules = NULL;
 static Eina_Hash *_e_modules_hash = NULL;
-static Ecore_Idle_Enterer *_e_module_idler = NULL;
-static Eina_List *_e_modules_delayed = NULL;
 static Eina_Bool _e_modules_initting = EINA_FALSE;
 static Eina_Bool _e_modules_init_end = EINA_FALSE;
 
@@ -288,8 +284,6 @@ e_module_all_load(void)
              free(em);
           }
      }
-   e_config->modules =
-     eina_list_sort(e_config->modules, 0, _e_module_sort_priority);
 
    EINA_LIST_FOREACH_SAFE(e_config->modules, l, ll, em)
      {
@@ -302,15 +296,7 @@ e_module_all_load(void)
              free(em);
              continue;
           }
-        if ((em->delayed) && (em->enabled) && (!e_config->no_module_delay))
-          {
-             if (!_e_module_idler)
-               _e_module_idler = ecore_idle_enterer_add(_e_module_cb_idler, NULL);
-             _e_modules_delayed =
-               eina_list_append(_e_modules_delayed,
-                                eina_stringshare_add(em->name));
-          }
-        else if (em->enabled)
+        if (em->enabled)
           {
              E_Module *m;
 
@@ -324,14 +310,10 @@ e_module_all_load(void)
              if (m) e_module_enable(m);
           }
      }
-
-   if (!_e_modules_delayed)
-     {
-        ecore_event_add(E_EVENT_MODULE_INIT_END, NULL, NULL, NULL);
-        _e_modules_init_end = EINA_TRUE;
-        _e_modules_initting = EINA_FALSE;
-        _e_module_whitelist_check();
-     }
+   ecore_event_add(E_EVENT_MODULE_INIT_END, NULL, NULL, NULL);
+   _e_modules_init_end = EINA_TRUE;
+   _e_modules_initting = EINA_FALSE;
+   _e_module_whitelist_check();
 
    unsetenv("E_MODULE_LOAD");
 }
@@ -670,50 +652,6 @@ e_module_dialog_show(E_Module *m, const char *title, const char *body)
    e_win_client_icon_set(dia->win, icon);
 }
 
-E_API void
-e_module_delayed_set(E_Module *m, int delayed)
-{
-   Eina_List *l;
-   E_Config_Module *em;
-
-   EINA_LIST_FOREACH(e_config->modules, l, em)
-     {
-        if (!em) continue;
-        if (!e_util_strcmp(m->name, em->name))
-          {
-             if (em->delayed != delayed)
-               {
-                  em->delayed = delayed;
-                  e_config_save_queue();
-               }
-             break;
-          }
-     }
-}
-
-E_API void
-e_module_priority_set(E_Module *m, int priority)
-{
-   /* Set the loading order for a module.
-      More priority means load earlier */
-   Eina_List *l;
-   E_Config_Module *em;
-
-   EINA_LIST_FOREACH(e_config->modules, l, em)
-     {
-        if (!em) continue;
-        if (!e_util_strcmp(m->name, em->name))
-          {
-             if (em->priority != priority)
-               {
-                  em->priority = priority;
-                  e_config_save_queue();
-               }
-             break;
-          }
-     }
-}
-
 E_API Eina_List *
 e_module_desktop_list(void)
 {
@@ -847,51 +785,6 @@ _e_module_cb_dialog_disable(void *data, E_Dialog *dia)
    e_config_save_queue();
 }
 
-static Eina_Bool
-_e_module_cb_idler(void *data EINA_UNUSED)
-{
-   while (_e_modules_delayed)
-     {
-        const char *name;
-        E_Module *m;
-
-        name = eina_list_data_get(_e_modules_delayed);
-        _e_modules_delayed =
-          eina_list_remove_list(_e_modules_delayed, _e_modules_delayed);
-        if (eina_hash_find(_e_modules_hash, name))
-          {
-             eina_stringshare_del(name);
-             break;
-          }
-        m = NULL;
-        if (name) m = e_module_new(name);
-        if (m)
-          {
-#ifndef E_RELEASE_BUILD
-             char buf[1024];
-             snprintf(buf, sizeof(buf), "DELAYED MODULE LOAD: %s", name);
-             e_main_ts(buf);
-#endif
-             e_module_enable(m);
-          }
-        eina_stringshare_del(name);
-        break;
-     }
-   if (_e_modules_delayed)
-     {
-        e_util_wakeup();
-        return ECORE_CALLBACK_RENEW;
-     }
-
-   ecore_event_add(E_EVENT_MODULE_INIT_END, NULL, NULL, NULL);
-   _e_modules_init_end = EINA_TRUE;
-   _e_modules_initting = EINA_FALSE;
-   _e_module_whitelist_check();
-
-   _e_module_idler = NULL;
-   return ECORE_CALLBACK_CANCEL;
-}
-
 static int
 _e_module_sort_name(const void *d1, const void *d2)
 {
@@ -902,16 +795,6 @@ _e_module_sort_name(const void *d1, const void *d2)
    m2 = d2;
    if (!m2->name) return 1;
    return strcmp(m1->name, m2->name);
-}
-
-static int
-_e_module_sort_priority(const void *d1, const void *d2)
-{
-   const E_Config_Module *m1, *m2;
-
-   m1 = d1;
-   m2 = d2;
-   return m2->priority - m1->priority;
 }
 
 static void
