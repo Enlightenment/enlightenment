@@ -878,7 +878,6 @@ _e_module_whitelist_check(void)
    {
       "backlight",
       "battery",
-      "bluez4",
       "bluez5",
       "clock",
       "conf",

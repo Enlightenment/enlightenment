@@ -33,7 +33,6 @@ mods = [
   'gadman',
   'geolocation',
   'connman',
-  'bluez4',
   'bluez5',
   'syscon',
   'systray',
