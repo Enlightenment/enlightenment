@@ -604,6 +604,7 @@ main(int argc, char **argv)
 
    s = getenv("E_DESKLOCK_LOCKED");
    if ((s) && (!strcmp(s, "locked"))) waslocked = EINA_TRUE;
+   putenv("E_DESKLOCK_LOCKED=");
 
    TS("E Paths Init");
    if (!_e_main_path_init())

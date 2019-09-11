@@ -249,6 +249,3 @@ if not on a real screen/zone
   * have object stash for adding basic objects
     * have generic/basic object stash
     * have edje object stash
-
-DONE:
-* music-control: fix aspect ratio of album cover image
