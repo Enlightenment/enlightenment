@@ -77,8 +77,6 @@ TODO:
     * massive lowering of barrier ro create/change scriptlets
     * offer a share mechanism like shots?
       * security issue - they run. verification needed?
-* fix lock screen to force dpms on once it has blanked if special
-  timeout exists
 * keyboard backlight controls, not just screen
 * backlight module/controls should control the screen the gadget is on
   * allow multiple screens to have different backlight controls

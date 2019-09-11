@@ -360,6 +360,7 @@ _desklock_show_internal(Eina_Bool suspend)
    _e_desklock_state = EINA_TRUE;
    e_bindings_disabled_set(1);
    e_screensaver_update();
+   e_dpms_force_update();
    return 1;
 lang_fail:
    if (e_config->desklock_language)
@@ -432,6 +433,7 @@ _desklock_hide_internal(void)
    ecore_event_add(E_EVENT_DESKLOCK, ev, NULL, NULL);
 
    e_screensaver_update();
+   e_dpms_force_update();
 
    if (e_desklock_is_external())
      {

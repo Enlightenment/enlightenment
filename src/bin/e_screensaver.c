@@ -51,18 +51,23 @@ E_API int
 e_screensaver_timeout_get(Eina_Bool use_idle)
 {
    int timeout = 0, count = (1 + _e_screensaver_ask_presentation_count);
+   Eina_Bool use_special_instead_of_dim = EINA_FALSE;
 
    if (_screensaver_now) return 1;
    if ((e_config->screensaver_enable) && (!e_config->mode.presentation))
      {
         if ((e_desklock_state_get()) &&
             (e_config->screensaver_desklock_timeout > 0))
-          timeout = e_config->screensaver_desklock_timeout;
+          {
+             timeout = e_config->screensaver_desklock_timeout;
+             use_special_instead_of_dim = EINA_TRUE;
+          }
         else
           timeout = e_config->screensaver_timeout * count;
      }
 
-   if ((use_idle) && (!e_config->mode.presentation))
+   if ((use_idle) && (!e_config->mode.presentation) &&
+       (!use_special_instead_of_dim))
      {
         if (e_config->backlight.idle_dim)
           {
@@ -553,9 +558,15 @@ e_screensaver_now_set(Eina_Bool now)
 E_API void
 e_screensaver_eval(Eina_Bool saver_on)
 {
+   Eina_Bool use_special_instead_of_dim = EINA_FALSE;
+
+   if ((e_desklock_state_get()) &&
+       (e_config->screensaver_desklock_timeout > 0))
+     use_special_instead_of_dim = EINA_TRUE;
    if (saver_on)
      {
-        if (e_config->backlight.idle_dim)
+        if ((e_config->backlight.idle_dim) &&
+            (!use_special_instead_of_dim))
           {
              double t = e_config->screensaver_timeout -
                e_config->backlight.timer;
@@ -588,7 +599,8 @@ e_screensaver_eval(Eina_Bool saver_on)
    if (screensaver_idle_timer)
      {
         E_FREE_FUNC(screensaver_idle_timer, ecore_timer_del);
-        if (e_config->backlight.idle_dim)
+        if ((e_config->backlight.idle_dim) &&
+            (!use_special_instead_of_dim))
           {
              if (e_backlight_mode_get(NULL) != E_BACKLIGHT_MODE_NORMAL)
                e_backlight_mode_set(NULL, E_BACKLIGHT_MODE_NORMAL);
