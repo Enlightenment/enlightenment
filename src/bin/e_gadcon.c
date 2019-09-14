@@ -567,14 +567,14 @@ e_gadcon_populate(E_Gadcon *gc)
 {
    Eina_List *l;
    E_Config_Gadcon_Client *cf_gcc;
+   E_Gadcon_Client_Class *cc;
+   int x = 0;
 
    E_OBJECT_CHECK_RETURN(gc, EINA_FALSE);
    E_OBJECT_TYPE_CHECK_RETURN(gc, E_GADCON_TYPE, EINA_FALSE);
    e_gadcon_layout_freeze(gc->o_container);
    EINA_LIST_FOREACH(gc->cf->clients, l, cf_gcc)
      {
-        E_Gadcon_Client_Class *cc;
-
         if (!cf_gcc->name) continue;
         cc = eina_hash_find(providers, cf_gcc->name);
         if (cc)
@@ -590,9 +590,43 @@ e_gadcon_populate(E_Gadcon *gc)
         else
           e_gadcon_client_queue(gc, cf_gcc);
      }
-   e_gadcon_layout_thaw(gc->o_container);
-   if (gc->populated_classes && (!gc->populate_requests))
-     _e_gadcon_event_populate(gc);
+   if (!gc->toolbar)
+     {
+        EINA_LIST_FREE(gc->populate_requests, cc)
+          {
+             char buf[256];
+
+             e_main_ts(cc->name);
+             if (gc->populate_class.func)
+               gc->populate_class.func(gc->populate_class.data, gc, cc);
+             else
+               e_gadcon_populate_class(gc, cc);
+             if (!eina_list_data_find(gc->populated_classes, cc))
+               {
+                  gc->populated_classes = eina_list_append(gc->populated_classes, cc);
+                  if (gc->cf)
+                    {
+                       Eina_List *ll;
+
+                       if (!gc->awaiting_classes) continue;
+                       ll = eina_hash_set(gc->awaiting_classes, cc->name, NULL);
+                       EINA_LIST_FREE(ll, cf_gcc)
+                         _e_gadcon_client_populate(gc, cc, cf_gcc);
+                    }
+               }
+             snprintf(buf, sizeof(buf), "%s Done", cc->name);
+             e_main_ts(buf);
+             x++;
+          }
+        if (x && _modules_loaded) _e_gadcon_event_populate(gc);
+          e_gadcon_layout_thaw(gc->o_container);
+     }
+   else
+     {
+        e_gadcon_layout_thaw(gc->o_container);
+        if (gc->populated_classes && (!gc->populate_requests))
+          _e_gadcon_event_populate(gc);
+     }
    return EINA_TRUE;
 }
 

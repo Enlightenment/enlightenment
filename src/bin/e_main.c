@@ -79,7 +79,6 @@ static int       _e_main_dirs_init(void);
 static int       _e_main_dirs_shutdown(void);
 static int       _e_main_path_init(void);
 static int       _e_main_path_shutdown(void);
-static void      _e_main_test_formats(void);
 static int       _e_main_screens_init(void);
 static int       _e_main_screens_shutdown(void);
 static void      _e_main_desk_save(void);
@@ -206,10 +205,46 @@ _xdg_data_dirs_augment(void)
 }
 
 static Eina_Bool
-_e_main_shelf_init_job(void *data EINA_UNUSED)
+_precache_file(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data EINA_UNUSED, void *fdata)
 {
-   e_shelf_config_update();
-   return ECORE_CALLBACK_CANCEL;
+   Eina_List **precache_files = fdata;
+   *precache_files = eina_list_append(*precache_files, strdup(key));
+   return EINA_TRUE;
+}
+
+static void *
+_precache_thread(void *data, Eina_Thread thr EINA_UNUSED)
+{
+   Eina_List *precache_files = data;
+   char *path;
+   double t = ecore_time_get();
+   unsigned int sum = 0;
+   unsigned int reads = 0;
+
+
+   EINA_LIST_FREE(precache_files, path)
+     {
+        double tt = ecore_time_get();
+        FILE *f = fopen(path, "r");
+        unsigned char buf[4096];
+
+        if (f)
+          {
+             size_t sz;
+
+             while ((sz = fread(buf, 1, sizeof(buf), f)) > 0)
+               {
+                  reads ++;
+                  sum = ((sum << 1) ^ buf[0]) + reads;
+               }
+             fclose(f);
+          }
+        printf("PRECACHE: [%1.5f] [%s] DONE\n", ecore_time_get() - tt, path);
+        free(path);
+     }
+   printf("PRECACHE: TOTAL [%1.5f]\n", ecore_time_get() - t);
+   printf("PRECACHE: SUM=%08x, READS=%i\n", sum, reads);
+   return NULL;
 }
 
 /* externally accessible functions */
@@ -368,7 +403,11 @@ main(int argc, char **argv)
      }
    TS("Ecore Init Done");
    _e_main_shutdown_push(ecore_shutdown);
+
+   TS("E Comp Canvas Intercept Init");
    e_comp_canvas_intercept();
+   TS("E Comp Canvas Intercept Init Done");
+
    e_first_frame = getenv("E_FIRST_FRAME");
    if (e_first_frame && e_first_frame[0])
      e_first_frame_start_time = ecore_time_get();
@@ -616,6 +655,52 @@ main(int argc, char **argv)
    TS("E Paths Init Done");
    _e_main_shutdown_push(_e_main_path_shutdown);
 
+   TS("E_Precache");
+   if (!getenv("E_NO_PRECACHE"))
+     {
+        const Eina_List *l;
+        const Eina_List *theme_items = elm_theme_list_get(NULL);
+        Eina_List *precache_files = NULL;
+        Eina_Hash *files = eina_hash_string_superfast_new(NULL);
+        Eina_Thread thr;
+        int scr, dx, dy;
+        // find all theme edj files to precache
+        EINA_LIST_FOREACH(theme_items, l, s)
+          {
+             Eina_Bool search = EINA_FALSE;
+             char *path = elm_theme_list_item_path_get(s, &search);
+             if (path)
+               {
+                  eina_hash_del(files, path, files);
+                  eina_hash_add(files, path, files);
+                  free(path);
+               }
+          }
+        // go over the first 4 screens and all desks and find possible
+        // background files and add them to our hash to precache
+        for (scr = 0; scr < 4; scr++)
+          {
+             for (dy = 0; dy < e_config->zone_desks_y_count; dy++)
+               {
+                  for (dx = 0; dx < e_config->zone_desks_x_count; dx++)
+                    {
+                       const char *bgfile = e_bg_file_get(scr, dx, dy);
+                       eina_hash_del(files, bgfile, files);
+                       eina_hash_add(files, bgfile, files);
+                       eina_stringshare_del(bgfile);
+                    }
+               }
+          }
+        eina_hash_foreach(files, _precache_file, &precache_files);
+        eina_hash_free(files);
+        if (!eina_thread_create(&thr, EINA_THREAD_BACKGROUND, -1,
+                                _precache_thread, precache_files))
+          {
+             ERR("Can't spawn file precache thread");
+          }
+     }
+   TS("E_Precache Done");
+
    TS("E_Ipc Init");
    if (!e_ipc_init()) _e_main_shutdown(-1);
    TS("E_Ipc Init Done");
@@ -768,21 +853,21 @@ main(int argc, char **argv)
         _e_main_shutdown_push(e_init_shutdown);
      }
    if (!((!e_config->show_splash) || (after_restart)))
-     e_init_show();
+     {
+        TS("E_Splash Show");
+        e_init_show();
+        TS("E_Splash Show Done");
+     }
 
-   if (!really_know)
-     {
-        TS("Test File Format Support");
-        _e_main_test_formats();
-        TS("Test File Format Support Done");
-     }
-   else
-     {
-        efreet_icon_extension_add(".svg");
-        efreet_icon_extension_add(".jpg");
-        efreet_icon_extension_add(".png");
-        efreet_icon_extension_add(".edj");
-     }
+   TS("Add Icon Extensions");
+   efreet_icon_extension_add(".svg");
+   efreet_icon_extension_add(".svgz");
+   efreet_icon_extension_add(".svg.gz");
+   efreet_icon_extension_add(".jpg");
+   efreet_icon_extension_add(".jpeg");
+   efreet_icon_extension_add(".png");
+   efreet_icon_extension_add(".edj");
+   TS("Add Icon Extensions Done");
 
    if (e_config->show_splash)
      e_init_status_set(_("Setup ACPI"));
@@ -1033,9 +1118,6 @@ main(int argc, char **argv)
 
    if (e_config->show_splash)
      e_init_status_set(_("Load Modules"));
-   TS("Load Modules");
-   _e_main_modules_load(safe_mode);
-   TS("Load Modules Done");
 
    TS("Run Startup Apps");
    if (!nostartup)
@@ -1055,6 +1137,10 @@ main(int argc, char **argv)
    e_test();
    TS("E_Test Done");
 
+   TS("Load Modules");
+   _e_main_modules_load(safe_mode);
+   TS("Load Modules Done");
+
    if (E_EFL_VERSION_MINIMUM(1, 17, 99))
      {
         if (e_config->show_splash)
@@ -1073,9 +1159,8 @@ main(int argc, char **argv)
         e_error_message_show(_("Enlightenment cannot set up its module system.\n"));
         _e_main_shutdown(-1);
      }
+   e_shelf_config_update();
    TS("E_Shelf Init Done");
-
-   ecore_idle_enterer_before_add(_e_main_shelf_init_job, NULL);
 
    _idle_after = ecore_idle_enterer_add(_e_main_cb_idle_after, NULL);
 
@@ -1544,87 +1629,6 @@ _e_main_path_shutdown(void)
    return 1;
 }
 
-static void
-_e_main_test_formats(void)
-{
-   Evas *evas;
-   Ecore_Evas *ee;
-   Evas_Object *im, *txt;
-   Evas_Coord tw, th;
-   char buff[PATH_MAX];
-   char *types[] =
-   {
-      "svg",
-      "jpg",
-      "png",
-      "edj"
-   };
-   unsigned int i, t_edj = 3;
-
-   if (e_config->show_splash)
-     e_init_status_set(_("Testing Format Support"));
-
-   if (!(ee = ecore_evas_buffer_new(1, 1)))
-     {
-        e_error_message_show(_("Enlightenment found Evas can't create a buffer canvas. Please check\n"
-                               "Evas has Software Buffer engine support.\n"));
-        _e_main_shutdown(-1);
-     }
-   evas = ecore_evas_get(ee);
-   im = evas_object_image_add(evas);
-
-   for (i = 0; i < EINA_C_ARRAY_LENGTH(types); i++)
-     {
-        char b[128], *t = types[i];
-        const char *key = NULL;
-
-        snprintf(b, sizeof(b), "data/images/test.%s", types[i]);
-        e_prefix_data_concat_static(buff, b);
-        if (i == t_edj)
-          {
-             t = "eet";
-             key = "images/0";
-          }
-        evas_object_image_file_set(im, buff, key);
-        switch (evas_object_image_load_error_get(im))
-          {
-           case EVAS_LOAD_ERROR_CORRUPT_FILE:
-           case EVAS_LOAD_ERROR_DOES_NOT_EXIST:
-           case EVAS_LOAD_ERROR_PERMISSION_DENIED:
-             e_error_message_show(_("Enlightenment cannot access test image for '%s' filetype. "
-                                    "Check your install for setup issues.\n"), t);
-             EINA_FALLTHROUGH;
-             // fallthrough anyway as normally these files should work
-
-           case EVAS_LOAD_ERROR_NONE:
-             snprintf(b, sizeof(b), ".%s", types[i]);
-             efreet_icon_extension_add(b);
-             break;
-
-           default:
-             e_error_message_show(_("Enlightenment found Evas can't load '%s' files. "
-                                    "Check Evas has '%s' loader support.\n"), t, t);
-             if (i) _e_main_shutdown(-1);
-             break;
-          }
-     }
-
-   evas_object_del(im);
-
-   txt = evas_object_text_add(evas);
-   evas_object_text_font_set(txt, "Sans", 10);
-   evas_object_text_text_set(txt, "Hello");
-   evas_object_geometry_get(txt, NULL, NULL, &tw, &th);
-   if ((tw <= 0) && (th <= 0))
-     {
-        e_error_message_show(_("Enlightenment found Evas can't load the 'Sans' font. Check Evas has fontconfig\n"
-                               "support and system fontconfig defines a 'Sans' font.\n"));
-        _e_main_shutdown(-1);
-     }
-   evas_object_del(txt);
-   ecore_evas_free(ee);
-}
-
 static int
 _e_main_screens_init(void)
 {
@@ -1642,8 +1646,11 @@ _e_main_screens_init(void)
         e_error_message_show(_("Enlightenment cannot create a compositor.\n"));
         _e_main_shutdown(-1);
      }
+   TS("Compositor Init Done");
 
+   TS("Desk Restore");
    _e_main_desk_restore();
+   TS("Desk Restore Done");
 
 #ifndef HAVE_WAYLAND_ONLY
    if (e_config->show_splash)

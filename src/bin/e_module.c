@@ -14,7 +14,6 @@ static void      _e_module_cb_dialog_disable(void *data, E_Dialog *dia);
 static void      _e_module_event_update_free(void *data, void *event);
 static int       _e_module_sort_name(const void *d1, const void *d2);
 static void      _e_module_whitelist_check(void);
-static Eina_Bool _e_module_desktop_list_cb(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data, void *fdata);
 
 /* local subsystem globals */
 static Eina_List *_e_modules = NULL;
@@ -22,111 +21,10 @@ static Eina_Hash *_e_modules_hash = NULL;
 static Eina_Bool _e_modules_initting = EINA_FALSE;
 static Eina_Bool _e_modules_init_end = EINA_FALSE;
 
-static Eina_List *_e_module_path_monitors = NULL;
-static Eina_List *_e_module_path_lists = NULL;
-static Eina_List *handlers = NULL;
 static Eina_Hash *_e_module_path_hash = NULL;
 
 E_API int E_EVENT_MODULE_UPDATE = 0;
 E_API int E_EVENT_MODULE_INIT_END = 0;
-
-static Eina_Stringshare *mod_src_path = NULL;
-
-static Eina_Bool
-_module_filter_cb(void *d EINA_UNUSED, Eio_File *ls EINA_UNUSED, const Eina_File_Direct_Info *info)
-{
-   struct stat st;
-
-   if (lstat(info->path, &st)) return EINA_FALSE;
-   return (info->path[info->name_start] != '.');
-}
-
-static void
-_module_main_cb(void *d, Eio_File *ls EINA_UNUSED, const Eina_File_Direct_Info *info)
-{
-   Eina_Stringshare *s;
-
-   s = eina_hash_set(_e_module_path_hash, info->path + info->name_start, eina_stringshare_add(info->path));
-   if (!s) return;
-   if (!d)
-     {
-        if (!strstr(s, e_user_dir_get()))
-          INF("REPLACING DUPLICATE MODULE PATH: %s -> %s", s, info->path);
-        else
-          {
-             INF("NOT REPLACING DUPLICATE MODULE PATH: %s -X> %s", s, info->path);
-             s = eina_hash_set(_e_module_path_hash, info->path + info->name_start, s);
-          }
-     }
-   eina_stringshare_del(s);
-}
-
-static void
-_module_done_cb(void *d EINA_UNUSED, Eio_File *ls)
-{
-   _e_module_path_lists = eina_list_remove(_e_module_path_lists, ls);
-   if (_e_module_path_lists) return;
-   if (_e_modules_initting) e_module_all_load();
-   else if (!_e_modules_init_end)
-     {
-        ecore_event_add(E_EVENT_MODULE_INIT_END, NULL, NULL, NULL);
-        _e_modules_init_end = EINA_TRUE;
-     }
-}
-
-static void
-_module_error_cb(void *d EINA_UNUSED, Eio_File *ls, int error EINA_UNUSED)
-{
-   _e_module_path_lists = eina_list_remove(_e_module_path_lists, ls);
-   if (_e_module_path_lists) return;
-   if (_e_modules_initting) e_module_all_load();
-}
-
-static Eina_Bool
-_module_monitor_dir_create(void *d, int type EINA_UNUSED, Eio_Monitor_Event *ev)
-{
-   Eina_Stringshare *s;
-   const char *path;
-
-   path = ecore_file_file_get(ev->filename);
-   s = eina_hash_set(_e_module_path_hash, path, eina_stringshare_ref(ev->filename));
-   if (!s) return ECORE_CALLBACK_RENEW;
-   if ((!d) && (s != ev->filename))
-     {
-        if (!strstr(s, e_user_dir_get()))
-          INF("REPLACING DUPLICATE MODULE PATH: %s -> %s", s, ev->filename);
-        else
-          {
-             INF("NOT REPLACING DUPLICATE MODULE PATH: %s -X> %s", s, ev->filename);
-             s = eina_hash_set(_e_module_path_hash, path, s);
-          }
-     }
-   eina_stringshare_del(s);
-
-   return ECORE_CALLBACK_RENEW;
-}
-
-static Eina_Bool
-_module_monitor_dir_del(void *d EINA_UNUSED, int type EINA_UNUSED, Eio_Monitor_Event *ev)
-{
-   Eina_Stringshare *s;
-   const char *path;
-
-   path = ecore_file_file_get(ev->filename);
-   s = eina_hash_find(_e_module_path_hash, path);
-   if (s == ev->filename)
-     eina_hash_del_by_key(_e_module_path_hash, path);
-
-   return ECORE_CALLBACK_RENEW;
-}
-
-static Eina_Bool
-_module_monitor_error(void *d EINA_UNUSED, int type EINA_UNUSED, Eio_Monitor_Error *ev)
-{
-   _e_module_path_monitors = eina_list_remove(_e_module_path_monitors, ev->monitor);
-   eio_monitor_del(ev->monitor);
-   return ECORE_CALLBACK_RENEW;
-}
 
 static Eina_Bool
 _module_is_nosave(const char *name)
@@ -170,51 +68,10 @@ _module_is_important(const char *name)
 EINTERN int
 e_module_init(void)
 {
-   Eina_List *module_paths;
-   Eina_List *next_path;
-   E_Path_Dir *epd;
-   Eio_Monitor *mon;
-   Eio_File *ls;
-
    if (_e_modules_hash) return 1;
    E_EVENT_MODULE_UPDATE = ecore_event_type_new();
    E_EVENT_MODULE_INIT_END = ecore_event_type_new();
-   _e_module_path_hash = eina_hash_string_superfast_new((Eina_Free_Cb)eina_stringshare_del);
    _e_modules_hash = eina_hash_string_superfast_new(NULL);
-
-   if (!mod_src_path)
-     mod_src_path = eina_stringshare_add(getenv("E_MODULE_SRC_PATH"));
-
-   E_LIST_HANDLER_APPEND(handlers, EIO_MONITOR_DIRECTORY_CREATED, _module_monitor_dir_create, NULL);
-   E_LIST_HANDLER_APPEND(handlers, EIO_MONITOR_DIRECTORY_DELETED, _module_monitor_dir_del, NULL);
-   E_LIST_HANDLER_APPEND(handlers, EIO_MONITOR_ERROR, _module_monitor_error, NULL);
-
-   if (mod_src_path)
-     {
-        if (ecore_file_is_dir(mod_src_path))
-          {
-             mon = eio_monitor_stringshared_add(mod_src_path);
-             ls = eio_file_direct_ls(mod_src_path, _module_filter_cb, _module_main_cb, _module_done_cb, _module_error_cb, NULL);
-             _e_module_path_monitors = eina_list_append(_e_module_path_monitors, mon);
-             _e_module_path_lists = eina_list_append(_e_module_path_lists, ls);
-             return 1;
-          }
-     }
-   module_paths = e_path_dir_list_get(path_modules);
-   EINA_LIST_FOREACH(module_paths, next_path, epd)
-     {
-        if (ecore_file_is_dir(epd->dir))
-          {
-             void *data = NULL;
-
-             mon = eio_monitor_stringshared_add(epd->dir);
-             data = (intptr_t*)(long)!!strstr(epd->dir, e_user_dir_get());
-             ls = eio_file_direct_ls(epd->dir, _module_filter_cb, _module_main_cb, _module_done_cb, _module_error_cb, data);
-             _e_module_path_monitors = eina_list_append(_e_module_path_monitors, mon);
-             _e_module_path_lists = eina_list_append(_e_module_path_lists, ls);
-          }
-     }
-   e_path_dir_list_free(module_paths);
 
    return 1;
 }
@@ -251,9 +108,6 @@ e_module_shutdown(void)
 
    E_FREE_FUNC(_e_module_path_hash, eina_hash_free);
    E_FREE_FUNC(_e_modules_hash, eina_hash_free);
-   E_FREE_LIST(handlers, ecore_event_handler_del);
-   E_FREE_LIST(_e_module_path_monitors, eio_monitor_del);
-   E_FREE_LIST(_e_module_path_lists, eio_file_cancel);
 
    return 1;
 }
@@ -266,7 +120,6 @@ e_module_all_load(void)
    char buf[128];
 
    _e_modules_initting = EINA_TRUE;
-   if (_e_module_path_lists) return;
 
    // remove duplicate modules in load
    e_config->modules =
@@ -340,27 +193,8 @@ e_module_new(const char *name)
    m = E_OBJECT_ALLOC(E_Module, E_MODULE_TYPE, _e_module_free);
    if (name[0] != '/')
      {
-        Eina_Stringshare *path = NULL;
-
-        if (!mod_src_path)
-          mod_src_path = eina_stringshare_add(getenv("E_MODULE_SRC_PATH"));
-        if (mod_src_path)
-          {
-             snprintf(buf, sizeof(buf), "%s/%s/.libs/module.so", mod_src_path, name);
-             modpath = eina_stringshare_add(buf);
-          }
-        if (!modpath)
-          path = eina_hash_find(_e_module_path_hash, name);
-        if (path)
-          {
-             snprintf(buf, sizeof(buf), "%s/%s/module.so", path, MODULE_ARCH);
-             modpath = eina_stringshare_add(buf);
-          }
-        else if (!modpath)
-          {
-             snprintf(buf, sizeof(buf), "%s/%s/module.so", name, MODULE_ARCH);
-             modpath = e_path_find(path_modules, buf);
-          }
+        snprintf(buf, sizeof(buf), "%s/%s/module.so", name, MODULE_ARCH);
+        modpath = e_path_find(path_modules, buf);
      }
    else if (eina_str_has_extension(name, ".so"))
      modpath = eina_stringshare_add(name);
@@ -652,13 +486,46 @@ e_module_dialog_show(E_Module *m, const char *title, const char *body)
    e_win_client_icon_set(dia->win, icon);
 }
 
+static Eina_List *
+_e_module_desktop_list(Eina_List *modules, const char *dir)
+{
+   Eina_List *l, *files;
+   Efreet_Desktop *desktop;
+   char buf[PATH_MAX], *f;
+   E_Module_Desktop *md;
+
+   files = ecore_file_ls(dir);
+   EINA_LIST_FOREACH(files, l, f)
+     {
+        snprintf(buf, sizeof(buf), "%s/%s/module.desktop", dir, f);
+        desktop = efreet_desktop_new(buf);
+        if (desktop)
+          {
+             md = E_NEW(E_Module_Desktop, 1);
+             md->desktop = desktop;
+             snprintf(buf, sizeof(buf), "%s/%s", dir, f);
+             md->dir = eina_stringshare_add(buf);
+             modules = eina_list_append(modules, md);
+          }
+     }
+   return modules;
+}
+
 E_API Eina_List *
 e_module_desktop_list(void)
 {
-   Eina_List *l = NULL;
+   Eina_List *modules = NULL, *l;
+   E_Path_Dir *epd;
 
-   eina_hash_foreach(_e_module_path_hash, _e_module_desktop_list_cb, &l);
-   return l;
+   EINA_LIST_FOREACH(path_modules->default_dir_list, l, epd)
+     {
+        modules = _e_module_desktop_list(modules, epd->dir);
+     }
+   EINA_LIST_FOREACH(*(path_modules->user_dir_list), l, epd)
+     {
+        modules = _e_module_desktop_list(modules, epd->dir);
+     }
+   return modules;
 }
 
 E_API void
@@ -700,26 +567,6 @@ _e_module_free(E_Module *m)
 //   if (m->handle) dlclose(m->handle); DONT dlclose! causes problems with deferred callbacks for free etc. - when their code goes away!
    _e_modules = eina_list_remove(_e_modules, m);
    free(m);
-}
-
-static Eina_Bool
-_e_module_desktop_list_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata)
-{
-   char buf[PATH_MAX];
-   Eina_List **l = fdata;
-   Efreet_Desktop *desktop;
-   E_Module_Desktop *md;
-
-   snprintf(buf, sizeof(buf), "%s/module.desktop", (char*)data);
-   desktop = efreet_desktop_new(buf);
-   if (desktop)
-     {
-        md = E_NEW(E_Module_Desktop, 1);
-        md->desktop = desktop;
-        md->dir = eina_stringshare_ref(data);
-        *l = eina_list_append(*l, md);
-     }
-   return EINA_TRUE;
 }
 
 typedef struct Disable_Dialog

@@ -243,6 +243,7 @@ e_bg_zone_update(E_Zone *zone, E_Bg_Transition transition)
         evas_object_data_set(o, "e_zone", zone);
         snprintf(buf, sizeof(buf), "e/transitions/%s", trans);
         e_theme_edje_object_set(o, "base/theme/transitions", buf);
+        edje_object_preload(o, EINA_FALSE);
         edje_object_signal_callback_add(o, "e,state,done", "*", _e_bg_signal, zone);
         evas_object_move(o, zone->x, zone->y);
         evas_object_resize(o, zone->w, zone->h);
@@ -254,6 +255,7 @@ e_bg_zone_update(E_Zone *zone, E_Bg_Transition transition)
      {
         o = edje_object_add(e_comp->evas);
         edje_object_file_set(o, bgfile, "e/desktop/background");
+        edje_object_preload(o, EINA_FALSE);
         if (edje_object_data_get(o, "noanimation"))
           edje_object_animation_set(o, EINA_FALSE);
      }
@@ -264,6 +266,7 @@ e_bg_zone_update(E_Zone *zone, E_Bg_Transition transition)
             (eina_str_has_extension(bgfile, ".bmp")))
      {
         o = e_icon_add(e_comp->evas);
+        e_icon_preload_set(o, EINA_TRUE);
         e_icon_file_key_set(o, bgfile, NULL);
         e_icon_scale_size_set(o, 0);
         e_icon_fill_inside_set(o, 0);

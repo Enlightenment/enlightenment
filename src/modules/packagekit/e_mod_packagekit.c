@@ -226,6 +226,8 @@ packagekit_popup_update(E_PackageKit_Instance *inst, Eina_Bool rebuild_list)
    char buf[1024];
    Eina_List *l;
 
+   if (!inst->popup_genlist) return;
+
    if (inst->popup_help_mode)
      inst->popup_help_mode = EINA_FALSE;
 
