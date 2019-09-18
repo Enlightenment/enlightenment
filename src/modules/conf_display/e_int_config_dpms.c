@@ -14,6 +14,8 @@ struct _E_Config_Dialog_Data
    E_Config_Dialog *cfd;
 
    Evas_Object *backlight_slider_idle;
+   Evas_Object *backlight_battery_slider_idle;
+   Evas_Object *backlight_battery_label;
    Evas_Object *backlight_slider_fade;
 
    char *bl_dev;
@@ -23,6 +25,7 @@ struct _E_Config_Dialog_Data
    double backlight_normal;
    double backlight_dim;
    double backlight_timeout;
+   double backlight_battery_timeout;
    double backlight_transition;
 
    int ask_presentation;
@@ -68,6 +71,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    cfdata->backlight_transition = e_config->backlight.transition;
    cfdata->enable_idle_dim = e_config->backlight.idle_dim;
    cfdata->backlight_timeout = e_config->backlight.timer;
+   cfdata->backlight_battery_timeout = e_config->backlight.battery_timer;
    cfdata->ask_presentation = e_config->screensaver_ask_presentation;
    cfdata->ask_presentation_timeout = e_config->screensaver_ask_presentation_timeout;
 }
@@ -97,6 +101,7 @@ _apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
    e_config->backlight.dim = cfdata->backlight_dim / 100.0;
    e_config->backlight.transition = cfdata->backlight_transition;
    e_config->backlight.timer = lround(cfdata->backlight_timeout);
+   e_config->backlight.battery_timer = lround(cfdata->backlight_battery_timeout);
    e_config->backlight.idle_dim = cfdata->enable_idle_dim;
    e_config->screensaver_ask_presentation = cfdata->ask_presentation;
    e_config->screensaver_ask_presentation_timeout = cfdata->ask_presentation_timeout;
@@ -125,12 +130,15 @@ _advanced_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *
 {
    // set state from saved config
    e_widget_disabled_set(cfdata->backlight_slider_idle, !cfdata->enable_idle_dim);
+   e_widget_disabled_set(cfdata->backlight_battery_slider_idle, !cfdata->enable_idle_dim);
+   e_widget_disabled_set(cfdata->backlight_battery_label, !cfdata->enable_idle_dim);
    e_widget_disabled_set(cfdata->backlight_slider_fade, !cfdata->enable_idle_dim);
 
    return (!EINA_DBL_EQ(e_config->backlight.normal * 100.0, cfdata->backlight_normal)) ||
           (!EINA_DBL_EQ(e_config->backlight.dim * 100.0, cfdata->backlight_dim)) ||
           (!EINA_DBL_EQ(e_config->backlight.transition, cfdata->backlight_transition)) ||
           (!EINA_DBL_EQ(e_config->backlight.timer, cfdata->backlight_timeout)) ||
+          (!EINA_DBL_EQ(e_config->backlight.battery_timer, cfdata->backlight_battery_timeout)) ||
           (e_config->backlight.idle_dim != cfdata->enable_idle_dim) ||
           (e_config->screensaver_ask_presentation != cfdata->ask_presentation) ||
           (!EINA_DBL_EQ(e_config->screensaver_ask_presentation_timeout, cfdata->ask_presentation_timeout));
@@ -190,6 +198,15 @@ _advanced_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_
    ob = e_widget_slider_add(evas, 1, 0, _("%1.0f second(s)"), 5.0, 300.0, 1.0, 0,
 			    &(cfdata->backlight_timeout), NULL, 100);
    cfdata->backlight_slider_idle = ob;
+   e_widget_disabled_set(ob, !cfdata->enable_idle_dim); // set state from saved config
+   e_widget_list_object_append(o, ob, 1, 1, 0.5);
+   ob = e_widget_label_add(evas, _("Fade Time on Battery"));
+   cfdata->backlight_battery_label = ob;
+   e_widget_disabled_set(ob, !cfdata->enable_idle_dim); // set state from saved config
+   e_widget_list_object_append(o, ob, 1, 1, 0.5);
+   ob = e_widget_slider_add(evas, 1, 0, _("%1.0f second(s)"), 0.0, 300.0, 1.0, 0,
+			    &(cfdata->backlight_battery_timeout), NULL, 100);
+   cfdata->backlight_battery_slider_idle = ob;
    e_widget_disabled_set(ob, !cfdata->enable_idle_dim); // set state from saved config
    e_widget_list_object_append(o, ob, 1, 1, 0.5);
    

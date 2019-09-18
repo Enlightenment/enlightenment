@@ -369,6 +369,7 @@ struct _E_Config
       double        dim; // GUI
       double        transition; // GUI
       double        timer; // GUI
+      double        battery_timer; // GUI
       const char   *sysdev; // GUI
       unsigned char idle_dim; // GUI
       E_Backlight_Mode mode; /* not saved, display-only */

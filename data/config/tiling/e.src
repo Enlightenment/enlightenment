@@ -193,6 +193,9 @@ group "E_Config" struct {
     value "backlight.normal" double: 1.0;
     value "backlight.dim" double: 0.3;
     value "backlight.transition" double: 0.5;
+    value "backlight.timer" double: 30.0;
+    value "backlight.battery_timer" double: 20.0;
+    value "backlight.idle_dim" uchar: 1;
     value "deskenv.load_xrdb" uchar: 1;
     value "deskenv.load_xmodmap" uchar: 1;
     value "deskenv.load_gnome" uchar: 0;

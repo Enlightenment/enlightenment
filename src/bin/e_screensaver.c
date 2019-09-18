@@ -71,13 +71,16 @@ e_screensaver_timeout_get(Eina_Bool use_idle)
      {
         if (e_config->backlight.idle_dim)
           {
+             double t2 = e_config->backlight.timer;
+
+             if ((e_powersave_mode_get() > E_POWERSAVE_MODE_LOW) &&
+                 (e_config->backlight.battery_timer > 0.0))
+               t2 = e_config->backlight.battery_timer;
              if (timeout > 0)
                {
-                  if (e_config->backlight.timer < timeout)
-                    timeout = e_config->backlight.timer;
+                  if (t2 < timeout) timeout = t2;
                }
-             else
-               timeout = e_config->backlight.timer;
+             else timeout = t2;
           }
      }
    return timeout;
@@ -568,8 +571,12 @@ e_screensaver_eval(Eina_Bool saver_on)
         if ((e_config->backlight.idle_dim) &&
             (!use_special_instead_of_dim))
           {
-             double t = e_config->screensaver_timeout -
-               e_config->backlight.timer;
+             double t2 = e_config->backlight.timer;
+
+             if ((e_powersave_mode_get() > E_POWERSAVE_MODE_LOW) &&
+                 (e_config->backlight.battery_timer > 0.0))
+               t2 = e_config->backlight.battery_timer;
+             double t = e_config->screensaver_timeout - t2;
 
              if (t < 1.0) t = 1.0;
              if (_screensaver_now) t = 1.0;

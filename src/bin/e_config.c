@@ -739,6 +739,7 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, backlight.dim, DOUBLE);
    E_CONFIG_VAL(D, T, backlight.transition, DOUBLE);
    E_CONFIG_VAL(D, T, backlight.timer, DOUBLE);
+   E_CONFIG_VAL(D, T, backlight.battery_timer, DOUBLE);
    E_CONFIG_VAL(D, T, backlight.sysdev, STR);
    E_CONFIG_VAL(D, T, backlight.idle_dim, UCHAR);
 
