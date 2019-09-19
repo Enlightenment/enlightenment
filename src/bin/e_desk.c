@@ -118,11 +118,7 @@ e_desk_new(E_Zone *zone, int x, int y)
         break;
      }
 
-   if (!ok)
-     {
-        snprintf(name, sizeof(name), "%d,%d", x, y);
-        desk->name = eina_stringshare_add(name);
-     }
+   if (!ok) desk->name = eina_stringshare_add("");
 
    /* Get window profile name for current desktop */
    if (zone->randr2_id)
@@ -231,11 +227,7 @@ e_desk_name_update(void)
                        break;
                     }
 
-                  if (!ok)
-                    {
-                       snprintf(name, sizeof(name), "%d,%d", d_x, d_y);
-                       e_desk_name_set(desk, name);
-                    }
+                  if (!ok) e_desk_name_set(desk, "");
                }
           }
      }

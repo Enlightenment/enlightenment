@@ -150,7 +150,6 @@ TODO:
 * pager: add "Set desktop name" on right click on desktop in pager
   * turn on desktop names when setting one here
 * pager: add "Set wallpaper" on right clikc on desktop in pager
-* pager: only show desktop names set and not 0,0 0,1 etc.
 * start: start menu could do with more featured content
   * like you see on windows for example (search and multiple columns etc.)
   * a touch screen android-style scrolling fullscreen app icon style
@@ -186,8 +185,8 @@ TODO:
   screen migrated to has diffrent res
 * randr: when losing a zone/screen, put windows in purgatory and then have
   purgatory screens available via pager to drag onto a current screen,
-  or the specific virtual desktops from purgator to be accessible evenm
-if not on a real screen/zone
+  or the specific virtual desktops from purgator to be accessible even
+  if not on a real screen/zone
 * device manager: new tool to browser /sys etc. and display nicely present
   hardware and device drivers and state
 * sys top: new tool displays cpu/mem "top" - evisum. we want it to be shipped
