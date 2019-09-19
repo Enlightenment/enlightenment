@@ -53,17 +53,7 @@ e_comp_cfdata_edd_init(E_Config_DD **conf_edd, E_Config_DD **match_edd)
    E_CONFIG_VAL(D, T, nofade, UCHAR);
    E_CONFIG_VAL(D, T, smooth_windows, UCHAR);
    E_CONFIG_VAL(D, T, first_draw_delay, DOUBLE);
-   E_CONFIG_VAL(D, T, disable_screen_effects, UCHAR);
    E_CONFIG_VAL(D, T, enable_advanced_features, UCHAR);
-   E_CONFIG_VAL(D, T, fast_popups, UCHAR);
-   E_CONFIG_VAL(D, T, fast_borders, UCHAR);
-   E_CONFIG_VAL(D, T, fast_menus, UCHAR);
-   E_CONFIG_VAL(D, T, fast_overrides, UCHAR);
-   E_CONFIG_VAL(D, T, match.disable_popups, UCHAR);
-   E_CONFIG_VAL(D, T, match.disable_borders, UCHAR);
-   E_CONFIG_VAL(D, T, match.disable_overrides, UCHAR);
-   E_CONFIG_VAL(D, T, match.disable_menus, UCHAR);
-   E_CONFIG_VAL(D, T, match.disable_objects, UCHAR);
    E_CONFIG_LIST(D, T, match.popups, *match_edd);
    E_CONFIG_LIST(D, T, match.borders, *match_edd);
    E_CONFIG_LIST(D, T, match.overrides, *match_edd);

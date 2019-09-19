@@ -5,8 +5,6 @@
 
 static Eina_Bool do_gl = 0;
 static Eina_Bool do_vsync = 0;
-static Eina_Bool disable_effects = 0;
-
 
 static void
 check_add(Evas_Object *box, const char *txt, Eina_Bool *val)
@@ -14,17 +12,17 @@ check_add(Evas_Object *box, const char *txt, Eina_Bool *val)
    Evas_Object *ck;
 
    ck = elm_check_add(box);
-   evas_object_show(ck);
    E_ALIGN(ck, 0, 0.5);
    elm_object_text_set(ck, txt);
    elm_check_state_pointer_set(ck, val);
    elm_box_pack_end(box, ck);
+   evas_object_show(ck);
 }
 
 E_API int
 wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
 {
-   Evas_Object *o, *of;
+   Evas_Object *o, *of, *ob;
 
    api->wizard_title_set(_("Compositing"));
 
@@ -48,10 +46,9 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
                do_gl = do_vsync = 1;
              evas_gl_free(gl);
           }
-        check_add(o, _("Hardware Accelerated (OpenGL)"), &do_gl);
-        check_add(o, _("Tear-free Rendering (OpenGL only)"), &do_vsync);
      }
-   check_add(o, _("Disable composite effects"), &disable_effects);
+   check_add(o, _("Hardware Accelerated (OpenGL)"), &do_gl);
+   check_add(o, _("Tear-free Rendering (OpenGL only)"), &do_vsync);
 
    evas_object_show(of);
    api->wizard_page_show(of);
@@ -76,15 +73,6 @@ wizard_page_hide(E_Wizard_Page *pg EINA_UNUSED)
         conf->engine = E_COMP_ENGINE_SW;
         conf->smooth_windows = 0;
         conf->vsync = 0;
-     }
-   if (disable_effects)
-     {
-        conf->disable_screen_effects =
-        conf->match.disable_borders =
-        conf->match.disable_popups =
-        conf->match.disable_menus =
-        conf->match.disable_objects =
-        conf->match.disable_overrides = 1;
      }
 
    e_comp_internal_save();

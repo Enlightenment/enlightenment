@@ -591,7 +591,7 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
    E_Comp_Match *m;
    Eina_Stringshare *reshadow_group = NULL;
    Eina_Bool focus = EINA_FALSE, urgent = EINA_FALSE, skip = EINA_FALSE,
-             fast = EINA_FALSE, reshadow = EINA_FALSE, no_shadow = EINA_FALSE, override;
+             reshadow = EINA_FALSE, no_shadow = EINA_FALSE, override;
    Eina_Stringshare *name, *title;
    E_Comp_Config *conf = e_comp_config_get();
 
@@ -601,8 +601,7 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
    list = override ? conf->match.overrides : conf->match.borders;
    name = cw->ec->icccm.name;
    title = cw->ec->icccm.title;
-   skip = (override ? conf->match.disable_overrides : conf->match.disable_borders) || (title && (!strncmp(title, "noshadow", 8)));
-   fast = override ? conf->fast_overrides : conf->fast_borders;
+   skip = (title && (!strncmp(title, "noshadow", 8)));
 
    /* skipping here is mostly a hack for systray because I hate it */
    if (!skip)
@@ -619,15 +618,6 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
              no_shadow = m->no_shadow;
              if (m->shadow_style)
                {
-                  /* fast effects are just themes with "/fast" appended and shorter effect times */
-                  if (fast)
-                    {
-                       snprintf(buf, sizeof(buf), "e/comp/frame/%s/fast", m->shadow_style);
-                       reshadow = ok = !e_util_strcmp(reshadow_group, buf);
-                       if (!ok)
-                         ok = e_theme_edje_object_set(cw->shobj, "base/theme/comp", buf);
-                    }
-                  /* default to non-fast style if fast not available */
                   if (!ok)
                     {
                        snprintf(buf, sizeof(buf), "e/comp/frame/%s", m->shadow_style);
@@ -652,13 +642,6 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
         if (ok) break;
         if (conf->shadow_style)
           {
-             if (fast)
-               {
-                  snprintf(buf, sizeof(buf), "e/comp/frame/%s/fast", conf->shadow_style);
-                  reshadow = ok = !e_util_strcmp(reshadow_group, buf);
-                  if (!ok)
-                    ok = e_theme_edje_object_set(cw->shobj, "base/theme/comp", buf);
-               }
              if (!ok)
                {
                   snprintf(buf, sizeof(buf), "e/comp/frame/%s", conf->shadow_style);
@@ -669,18 +652,9 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
           }
         if (!ok)
           {
-             if (fast)
-               {
-                  reshadow = ok = !e_util_strcmp(reshadow_group, "e/comp/frame/default/fast");
-                  if (!ok)
-                    ok = e_theme_edje_object_set(cw->shobj, "base/theme/comp", "e/comp/frame/default/fast");
-               }
+             reshadow = ok = !e_util_strcmp(reshadow_group, "e/comp/frame/default");
              if (!ok)
-               {
-                  reshadow = ok = !e_util_strcmp(reshadow_group, "e/comp/frame/default");
-                  if (!ok)
-                    ok = e_theme_edje_object_set(cw->shobj, "base/theme/comp", "e/comp/frame/default");
-               }
+               ok = e_theme_edje_object_set(cw->shobj, "base/theme/comp", "e/comp/frame/default");
           }
         break;
      }
@@ -2869,7 +2843,7 @@ e_comp_object_util_type_set(Evas_Object *obj, E_Comp_Object_Type type)
    const char *name = NULL;
    Eina_List *l, *list = NULL;
    E_Comp_Config *conf = e_comp_config_get();
-   Eina_Bool skip = EINA_FALSE, fast = EINA_FALSE, shadow = EINA_FALSE;
+   Eina_Bool skip = EINA_FALSE, shadow = EINA_FALSE;
    E_Comp_Match *m;
    const char *grp;
    char buf[1024];
@@ -2882,19 +2856,13 @@ e_comp_object_util_type_set(Evas_Object *obj, E_Comp_Object_Type type)
      {
       case E_COMP_OBJECT_TYPE_MENU:
         list = conf->match.menus;
-        skip = conf->match.disable_menus;
-        fast = conf->fast_menus;
         shadow = EINA_TRUE;
         break;
       case E_COMP_OBJECT_TYPE_POPUP:
         list = conf->match.popups;
-        skip = conf->match.disable_popups;
-        fast = conf->fast_popups;
         break;
       default:
         list = conf->match.objects;
-        skip = conf->match.disable_objects;
-        fast = conf->fast_objects;
      }
    content = edje_object_part_swallow_get(obj, "e.swallow.content");
    if (content)
@@ -2918,18 +2886,9 @@ e_comp_object_util_type_set(Evas_Object *obj, E_Comp_Object_Type type)
                  ((name) && (m->name) && (!e_util_glob_match(name, m->name))))
                continue;
              if (!m->shadow_style) continue;
-             if (fast)
-               {
-                  snprintf(buf, sizeof(buf), "e/comp/frame/%s/fast", m->shadow_style);
-                  if (eina_streq(buf, grp)) return;
-                  ok = e_theme_edje_object_set(obj, "base/theme/comp", buf);
-               }
-             if (!ok)
-               {
-                  snprintf(buf, sizeof(buf), "e/comp/frame/%s", m->shadow_style);
-                  if (eina_streq(buf, grp)) return;
-                  ok = e_theme_edje_object_set(obj, "base/theme/comp", buf);
-               }
+             snprintf(buf, sizeof(buf), "e/comp/frame/%s", m->shadow_style);
+             if (eina_streq(buf, grp)) return;
+             ok = e_theme_edje_object_set(obj, "base/theme/comp", buf);
              if (ok)
                {
                   shadow = !m->no_shadow;
@@ -2949,30 +2908,13 @@ e_comp_object_util_type_set(Evas_Object *obj, E_Comp_Object_Type type)
         if (ok) break;
         if (conf->shadow_style)
           {
-             if (fast)
-               {
-                  snprintf(buf, sizeof(buf), "e/comp/frame/%s/fast", conf->shadow_style);
-                  if (eina_streq(buf, grp)) return;
-                  ok = e_theme_edje_object_set(obj, "base/theme/comp", buf);
-               }
-             if (!ok)
-               {
-                  snprintf(buf, sizeof(buf), "e/comp/frame/%s", conf->shadow_style);
-                  if (eina_streq(buf, grp)) return;
-                  ok = e_theme_edje_object_set(obj, "base/theme/comp", buf);
-               }
+             snprintf(buf, sizeof(buf), "e/comp/frame/%s", conf->shadow_style);
+             if (eina_streq(buf, grp)) return;
+             ok = e_theme_edje_object_set(obj, "base/theme/comp", buf);
              if (ok) break;
           }
-        if (fast)
-          {
-             if (eina_streq("e/comp/frame/default/fast", grp)) return;
-             ok = e_theme_edje_object_set(obj, "base/theme/comp", "e/comp/frame/default/fast");
-          }
-        if (!ok)
-          {
-             if (eina_streq("e/comp/frame/default", grp)) return;
-             ok = e_theme_edje_object_set(obj, "base/theme/comp", "e/comp/frame/default");
-          }
+        if (eina_streq("e/comp/frame/default", grp)) return;
+        ok = e_theme_edje_object_set(obj, "base/theme/comp", "e/comp/frame/default");
         break;
      }
    if (shadow && (e_util_strcmp(evas_object_type_get(obj), "edje") || (!edje_object_data_get(obj, "noshadow"))))
@@ -3727,9 +3669,6 @@ e_comp_object_signal_emit(Evas_Object *obj, const char *sig, const char *src)
    if (cw->frame_object) edje_object_signal_emit(cw->frame_object, sig, src);
    if (cw->frame_icon && e_icon_edje_get(cw->frame_icon))
      edje_object_signal_emit(e_icon_edje_get(cw->frame_icon), sig, src);
-   if ((cw->ec->override && e_comp_config_get()->match.disable_overrides) ||
-       ((!cw->ec->override) && e_comp_config_get()->match.disable_borders))
-     return;
    /* start with highest priority callback first */
    EINA_INLIST_REVERSE_FOREACH(_e_comp_object_movers, prov)
      {
@@ -4417,8 +4356,7 @@ e_comp_object_effect_allowed_get(Evas_Object *obj)
    API_ENTRY EINA_FALSE;
 
    if (!cw->shobj) return EINA_FALSE;
-   if (cw->ec->override) return !e_comp_config_get()->match.disable_overrides;
-   return !e_comp_config_get()->match.disable_borders;
+   return EINA_TRUE;
 }
 
 /* setup an api effect for a client */

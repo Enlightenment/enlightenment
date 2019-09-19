@@ -39,17 +39,7 @@ struct _E_Config_Dialog_Data
    int          fps_corner;
    int          fps_average_range;
    double       first_draw_delay;
-   int disable_screen_effects;
    int enable_advanced_features;
-   // the following options add the "/fast" suffix to the normal groups
-   int fast_popups;
-   int fast_borders;
-   int fast_menus;
-   int fast_overrides;
-   int fast_objects;
-   int fast;
-   Evas_Object *fast_ob;
-   int fast_changed E_BITFIELD;
 };
 
 /* Protos */
@@ -101,17 +91,6 @@ _create_data(E_Config_Dialog *cfd EINA_UNUSED)
        (cfdata->engine != E_COMP_ENGINE_GL))
      cfdata->engine = E_COMP_ENGINE_SW;
 
-   cfdata->fast_popups = conf->fast_popups;
-   cfdata->fast_borders = conf->fast_borders;
-   cfdata->fast_overrides = conf->fast_overrides;
-   cfdata->fast_menus = conf->fast_menus;
-   cfdata->fast_objects = conf->fast_objects;
-   cfdata->match.disable_popups = conf->match.disable_popups;
-   cfdata->match.disable_borders = conf->match.disable_borders;
-   cfdata->match.disable_overrides = conf->match.disable_overrides;
-   cfdata->match.disable_menus = conf->match.disable_menus;
-   cfdata->match.disable_objects = conf->match.disable_objects;
-   cfdata->disable_screen_effects = conf->disable_screen_effects;
    cfdata->enable_advanced_features = conf->enable_advanced_features;
 
    cfdata->indirect = conf->indirect;
@@ -164,12 +143,6 @@ _free_data(E_Config_Dialog *cfd  EINA_UNUSED,
 }
 
 static void
-_advanced_comp_style_toggle(void *oi, Evas_Object *o)
-{
-   e_widget_disabled_set(oi, e_widget_check_checked_get(o));
-}
-
-static void
 _advanced_matches_edit(void *data, void *d EINA_UNUSED)
 {
    E_Config_Dialog *cfd = data;
@@ -202,53 +175,6 @@ _advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data 
    e_widget_list_object_append(ol, of, 1, 1, 0.5);
 
    e_widget_toolbook_page_append(otb, NULL, _("Styles"), ol, 1, 1, 1, 1, 0.5, 0.0);
-
-   //////////////////////////////////////////////
-
-   ol = e_widget_list_add(evas, 0, 0);
-   {
-      Evas_Object *w, *m, *p, *o1, *o2;
-
-      of = e_widget_framelist_add(evas, _("Fast Effects"), 0);
-      w = ob = e_widget_check_add(evas, _("Enable fast composite effects for windows"), &(cfdata->fast_borders));
-      e_widget_disabled_set(ob, cfdata->match.disable_borders);
-      e_widget_framelist_object_append(of, ob);
-      m = ob = e_widget_check_add(evas, _("Enable fast composite effects for menus"), &(cfdata->fast_menus));
-      e_widget_disabled_set(ob, cfdata->match.disable_menus);
-      e_widget_framelist_object_append(of, ob);
-      p = ob = e_widget_check_add(evas, _("Enable fast composite effects for popups"), &(cfdata->fast_popups));
-      e_widget_disabled_set(ob, cfdata->match.disable_popups);
-      e_widget_framelist_object_append(of, ob);
-      o1 = ob = e_widget_check_add(evas, _("Enable fast composite effects for objects"), &(cfdata->fast_objects));
-      e_widget_disabled_set(ob, cfdata->match.disable_objects);
-      e_widget_framelist_object_append(of, ob);
-      o2 = ob = e_widget_check_add(evas, _("Enable fast composite effects for overrides"), &(cfdata->fast_overrides));
-      e_widget_disabled_set(ob, cfdata->match.disable_overrides);
-      e_widget_framelist_object_append(of, ob);
-      e_widget_list_object_append(ol, of, 1, 0, 0.5);
-
-      of = e_widget_framelist_add(evas, _("Disable Effects"), 0);
-      ob = e_widget_check_add(evas, _("Disable composite effects for windows"), &(cfdata->match.disable_borders));
-      e_widget_on_change_hook_set(ob, _advanced_comp_style_toggle, w);
-      e_widget_framelist_object_append(of, ob);
-      ob = e_widget_check_add(evas, _("Disable composite effects for menus"), &(cfdata->match.disable_menus));
-      e_widget_on_change_hook_set(ob, _advanced_comp_style_toggle, m);
-      e_widget_framelist_object_append(of, ob);
-      ob = e_widget_check_add(evas, _("Disable composite effects for popups"), &(cfdata->match.disable_popups));
-      e_widget_on_change_hook_set(ob, _advanced_comp_style_toggle, p);
-      e_widget_framelist_object_append(of, ob);
-      ob = e_widget_check_add(evas, _("Disable composite effects for objects"), &(cfdata->match.disable_objects));
-      e_widget_on_change_hook_set(ob, _advanced_comp_style_toggle, o1);
-      e_widget_framelist_object_append(of, ob);
-      ob = e_widget_check_add(evas, _("Disable composite effects for overrides"), &(cfdata->match.disable_overrides));
-      e_widget_on_change_hook_set(ob, _advanced_comp_style_toggle, o2);
-      e_widget_framelist_object_append(of, ob);
-      ob = e_widget_check_add(evas, _("Disable composite effects for screen"), &(cfdata->disable_screen_effects));
-      e_widget_framelist_object_append(of, ob);
-      e_widget_list_object_append(ol, of, 1, 0, 0.5);
-   }
-
-   e_widget_toolbook_page_append(otb, NULL, _("Effects"), ol, 1, 1, 1, 1, 0.5, 0.0);
 
    ///////////////////////////////////////////
    ol = e_widget_list_add(evas, 0, 0);
@@ -427,31 +353,9 @@ _advanced_apply_data(E_Config_Dialog *cfd  EINA_UNUSED,
        (cfdata->fps_corner != conf->fps_corner) ||
        (cfdata->fps_average_range != conf->fps_average_range) ||
        (!EINA_DBL_EQ(cfdata->first_draw_delay, conf->first_draw_delay)) ||
-       (conf->match.disable_popups != cfdata->match.disable_popups) ||
-       (conf->match.disable_borders != cfdata->match.disable_borders) ||
-       (conf->match.disable_overrides != cfdata->match.disable_overrides) ||
-       (conf->match.disable_menus != cfdata->match.disable_menus) ||
-       (conf->match.disable_objects != cfdata->match.disable_objects) ||
-       (conf->disable_screen_effects != cfdata->disable_screen_effects) ||
-       (conf->enable_advanced_features != cfdata->enable_advanced_features) ||
-       (conf->fast_popups != cfdata->fast_popups) ||
-       (conf->fast_borders != cfdata->fast_borders) ||
-       (conf->fast_overrides != cfdata->fast_overrides) ||
-       (conf->fast_menus != cfdata->fast_menus) ||
-       (conf->fast_objects != cfdata->fast_objects)
+       (conf->enable_advanced_features != cfdata->enable_advanced_features)
        )
      {
-        conf->fast_popups = cfdata->fast_popups;
-        conf->fast_borders = cfdata->fast_borders;
-        conf->fast_overrides = cfdata->fast_overrides;
-        conf->fast_menus = cfdata->fast_menus;
-        conf->fast_objects = cfdata->fast_objects;
-        conf->match.disable_popups = cfdata->match.disable_popups;
-        conf->match.disable_borders = cfdata->match.disable_borders;
-        conf->match.disable_overrides = cfdata->match.disable_overrides;
-        conf->match.disable_menus = cfdata->match.disable_menus;
-        conf->match.disable_objects = cfdata->match.disable_objects;
-        conf->disable_screen_effects = cfdata->disable_screen_effects;
         if (conf->enable_advanced_features != cfdata->enable_advanced_features)
           _advanced_features_changed(conf);
         conf->lock_fps = cfdata->lock_fps;
@@ -496,19 +400,11 @@ _advanced_apply_data(E_Config_Dialog *cfd  EINA_UNUSED,
 }
 
 static void
-_basic_comp_style_fast_toggle(void *data, Evas_Object *o EINA_UNUSED)
-{
-   E_Config_Dialog_Data *cfdata = data;
-   cfdata->fast_changed = 1;
-}
-
-static void
 _basic_comp_style_toggle(void *data, Evas_Object *o)
 {
    E_Config_Dialog_Data *cfdata = data;
    
    e_widget_disabled_set(cfdata->styles_il, e_widget_check_checked_get(o));
-   e_widget_disabled_set(cfdata->fast_ob, e_widget_check_checked_get(o));
    cfdata->match.toggle_changed = 1;
 }
 
@@ -534,21 +430,6 @@ _basic_create_widgets(E_Config_Dialog *cfd,
    ob = e_widget_check_add(evas, _("Don't fade backlight"), &(cfdata->nofade));
    e_widget_list_object_append(ol, ob, 1, 0, 0.5);
    
-   cfdata->fast =
-     (cfdata->fast_menus && cfdata->fast_overrides && cfdata->fast_borders && cfdata->fast_popups && cfdata->fast_objects);
-   cfdata->fast_ob = ob = e_widget_check_add(evas, _("Enable \"fast\" composite effects"), &(cfdata->fast));
-   evas_object_data_set(ob, "cfdata", cfdata);
-   e_widget_list_object_append(ol, ob, 1, 0, 0.5);
-   e_widget_on_change_hook_set(ob, _basic_comp_style_fast_toggle, cfdata);
-
-   cfdata->match.disable_all =
-     (cfdata->match.disable_menus && cfdata->match.disable_overrides && cfdata->match.disable_borders &&
-      cfdata->match.disable_popups && cfdata->match.disable_objects && cfdata->disable_screen_effects);
-   e_widget_disabled_set(ob, cfdata->match.disable_all);
-   ob = e_widget_check_add(evas, _("Disable composite effects"), &(cfdata->match.disable_all));
-   evas_object_data_set(ob, "cfdata", cfdata);
-   e_widget_list_object_append(ol, ob, 1, 0, 0.5);
-
    of = e_widget_frametable_add(evas, _("Select default style"), 0);
    e_widget_frametable_content_align_set(of, 0.5, 0.5);
    cfdata->styles_il = oi = e_comp_style_selector_create(evas, &(cfdata->shadow_style));
@@ -602,7 +483,7 @@ _basic_apply_data(E_Config_Dialog *cfd  EINA_UNUSED,
 {
    E_Comp_Config *conf = e_comp_config_get();
 
-   if (cfdata->match.toggle_changed || cfdata->fast_changed ||
+   if (cfdata->match.toggle_changed ||
        (cfdata->lock_fps != conf->lock_fps) ||
        (cfdata->smooth_windows != conf->smooth_windows) ||
        (cfdata->grab != conf->grab) ||
@@ -621,23 +502,6 @@ _basic_apply_data(E_Config_Dialog *cfd  EINA_UNUSED,
        (!EINA_DBL_EQ(cfdata->first_draw_delay, conf->first_draw_delay))
        )
      {
-        if (cfdata->match.toggle_changed)
-          {
-             conf->match.disable_popups = cfdata->match.disable_popups = cfdata->match.disable_all;
-             conf->match.disable_borders = cfdata->match.disable_borders = cfdata->match.disable_all;
-             conf->match.disable_overrides = cfdata->match.disable_overrides = cfdata->match.disable_all;
-             conf->match.disable_menus = cfdata->match.disable_menus = cfdata->match.disable_all;
-             conf->match.disable_objects = cfdata->match.disable_objects = cfdata->match.disable_all;
-             conf->disable_screen_effects = cfdata->disable_screen_effects = cfdata->match.disable_all;
-          }
-        if (cfdata->fast_changed)
-          {
-             conf->fast_borders = cfdata->fast_borders = cfdata->fast;
-             conf->fast_popups = cfdata->fast_popups = cfdata->fast;
-             conf->fast_menus = cfdata->fast_menus = cfdata->fast;
-             conf->fast_objects = cfdata->fast_objects = cfdata->fast;
-             conf->fast_overrides = cfdata->fast_overrides = cfdata->fast;
-          }
         conf->lock_fps = cfdata->lock_fps;
         conf->smooth_windows = cfdata->smooth_windows;
         conf->grab = cfdata->grab;

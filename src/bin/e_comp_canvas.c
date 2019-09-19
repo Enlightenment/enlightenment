@@ -545,26 +545,15 @@ E_API void
 e_comp_canvas_zone_update(E_Zone *zone)
 {
    Evas_Object *o;
-   const char *const over_styles[] =
-   {
-      "e/comp/screen/overlay/default",
-      "e/comp/screen/overlay/noeffects"
-   };
-   const char *const under_styles[] =
-   {
-      "e/comp/screen/base/default",
-      "e/comp/screen/base/noeffects"
-   };
-   E_Comp_Config *conf = e_comp_config_get();
 
    if (zone->over && zone->base)
      {
         e_theme_edje_object_set(zone->base, "base/theme/comp",
-                                under_styles[conf->disable_screen_effects]);
+                                "e/comp/screen/base/default");
         edje_object_part_swallow(zone->base, "e.swallow.background",
                                  zone->transition_object ?: zone->bg_object);
         e_theme_edje_object_set(zone->over, "base/theme/comp",
-                                over_styles[conf->disable_screen_effects]);
+                                "e/comp/screen/overlay/default");
         return;
      }
    E_FREE_FUNC(zone->base, evas_object_del);
@@ -572,7 +561,7 @@ e_comp_canvas_zone_update(E_Zone *zone)
    zone->base = o = edje_object_add(e_comp->evas);
    evas_object_repeat_events_set(o, 1);
    evas_object_name_set(zone->base, "zone->base");
-   e_theme_edje_object_set(o, "base/theme/comp", under_styles[conf->disable_screen_effects]);
+   e_theme_edje_object_set(o, "base/theme/comp", "e/comp/screen/base/default");
    edje_object_part_swallow(zone->base, "e.swallow.background", zone->transition_object ?: zone->bg_object);
    evas_object_move(o, zone->x, zone->y);
    evas_object_resize(o, zone->w, zone->h);
@@ -585,7 +574,7 @@ e_comp_canvas_zone_update(E_Zone *zone)
    evas_object_raise(o);
    evas_object_name_set(zone->over, "zone->over");
    evas_object_pass_events_set(o, 1);
-   e_theme_edje_object_set(o, "base/theme/comp", over_styles[conf->disable_screen_effects]);
+   e_theme_edje_object_set(o, "base/theme/comp", "e/comp/screen/overlay/default");
    evas_object_move(o, zone->x, zone->y);
    evas_object_resize(o, zone->w, zone->h);
    evas_object_raise(o);

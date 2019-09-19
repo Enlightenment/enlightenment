@@ -30,26 +30,14 @@ struct _E_Comp_Config
    unsigned char smooth_windows;
    unsigned char nofade;
    double        first_draw_delay;
-   Eina_Bool disable_screen_effects;
    Eina_Bool enable_advanced_features;
-   // the following options add the "/fast" suffix to the normal groups
-   Eina_Bool fast_popups;
-   Eina_Bool fast_borders;
-   Eina_Bool fast_menus;
-   Eina_Bool fast_overrides;
-   Eina_Bool fast_objects;
 
    struct
    {
-      Eina_Bool disable_popups;
       Eina_List *popups;    // used for e popups
-      Eina_Bool disable_borders;
       Eina_List *borders;    // used for borders
-      Eina_Bool disable_overrides;
       Eina_List *overrides;    // used for client menus, tooltips etc.
-      Eina_Bool disable_menus;
       Eina_List *menus;    // used for e menus
-      Eina_Bool disable_objects;
       Eina_List *objects;    // used for e objects which are not popups or menus
    } match;
 };
