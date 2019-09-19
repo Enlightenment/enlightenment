@@ -147,9 +147,6 @@ TODO:
 * efm: partitioning front end
 * efm: filesystem formatting front-end
 * efm: tune2fs/fsck front-end
-* pager: add "Set desktop name" on right click on desktop in pager
-  * turn on desktop names when setting one here
-* pager: add "Set wallpaper" on right clikc on desktop in pager
 * start: start menu could do with more featured content
   * like you see on windows for example (search and multiple columns etc.)
   * a touch screen android-style scrolling fullscreen app icon style

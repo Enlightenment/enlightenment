@@ -45,6 +45,9 @@ struct _Pager
    int             xnum, ynum;
    Eina_List      *desks;
    Pager_Desk     *active_pd;
+   struct {
+      int zone_num, desk_x, desk_y;
+   } menu;
    unsigned char   dragging E_BITFIELD;
    unsigned char   just_dragged E_BITFIELD;
    Evas_Coord      dnd_x, dnd_y;
@@ -106,6 +109,7 @@ static void             _pager_cb_obj_moveresize(void *data, Evas *e EINA_UNUSED
 static void             _button_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info);
 static void             _pager_inst_cb_menu_configure(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED);
 static void             _pager_inst_cb_menu_virtual_desktops_dialog(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED);
+static void             _pager_inst_cb_menu_virtual_desktop_dialog(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED);
 static void             _pager_instance_drop_zone_recalc(Instance *inst);
 static Eina_Bool        _pager_cb_event_desk_show(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
 static Eina_Bool        _pager_cb_event_desk_name_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
@@ -876,6 +880,7 @@ _button_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
    E_Menu *m;
    E_Menu_Item *mi;
    int cx, cy;
+   Pager_Desk *pd;
 
    inst = data;
    ev = event_info;
@@ -889,12 +894,27 @@ _button_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
    e_menu_item_callback_set(mi, _pager_inst_cb_menu_configure, NULL);
 
    m = e_gadcon_client_util_menu_items_append(inst->gcc, m, 0);
+
+   mi = e_menu_item_new_relative(m, NULL);
+   e_menu_item_separator_set(mi, 1);
+
    if (e_configure_registry_exists("screen/virtual_desktops"))
      {
         mi = e_menu_item_new_relative(m, NULL);
-        e_menu_item_label_set(mi, _("Virtual Desktops Settings"));
+        e_menu_item_label_set(mi, _("All desktop settings"));
         e_util_menu_item_theme_icon_set(mi, "preferences-desktop");
         e_menu_item_callback_set(mi, _pager_inst_cb_menu_virtual_desktops_dialog, inst);
+     }
+   if (e_configure_registry_exists("internal/desk"))
+     {
+        pd = _pager_desk_at_coord(inst->pager, ev->canvas.x, ev->canvas.y);
+        inst->pager->menu.zone_num = inst->pager->zone->num;
+        inst->pager->menu.desk_x = pd->desk->x;
+        inst->pager->menu.desk_y = pd->desk->y;
+        mi = e_menu_item_new_relative(m, NULL);
+        e_menu_item_label_set(mi, _("This desktop name and wallpaper settings"));
+        e_util_menu_item_theme_icon_set(mi, "preferences-desktop");
+        e_menu_item_callback_set(mi, _pager_inst_cb_menu_virtual_desktop_dialog, inst);
      }
 
    e_gadcon_canvas_zone_geometry_get(inst->gcc->gadcon, &cx, &cy,
@@ -929,6 +949,17 @@ static void
 _pager_inst_cb_menu_virtual_desktops_dialog(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    e_configure_registry_call("screen/virtual_desktops", NULL, NULL);
+}
+
+static void
+_pager_inst_cb_menu_virtual_desktop_dialog(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
+{
+   Instance *inst = data;
+   char buf[256];
+
+   snprintf(buf, sizeof(buf), "%i %i %i", inst->pager->menu.zone_num,
+            inst->pager->menu.desk_x, inst->pager->menu.desk_y);
+   e_configure_registry_call("internal/desk", NULL, buf);
 }
 
 static void
