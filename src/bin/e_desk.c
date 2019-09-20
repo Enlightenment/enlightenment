@@ -90,8 +90,6 @@ e_desk_new(E_Zone *zone, int x, int y)
    E_Desk *desk;
    Eina_List *l;
    E_Config_Desktop_Name *cfname;
-
-   char name[40];
    int ok = 0;
 
    E_OBJECT_CHECK_RETURN(zone, NULL);
@@ -205,7 +203,6 @@ e_desk_name_update(void)
    E_Desk *desk;
    E_Config_Desktop_Name *cfname;
    int d_x, d_y, ok;
-   char name[40];
 
    EINA_LIST_FOREACH(e_comp->zones, z, zone)
      {
