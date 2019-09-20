@@ -1360,7 +1360,7 @@ _e_actions_zone_get(E_Object *obj)
         else if (obj->type == (int)E_CLIENT_TYPE)
           return ((E_Client *)(void *)obj)->zone;
         else if (obj->type == (int)E_SHELF_TYPE)
-          return ((E_Shelf *)obj)->zone;
+          return ((E_Shelf *)(void *)obj)->zone;
         else if (e_obj_is_win(obj))
           return e_win_client_get((void*)obj)->zone;
      }
