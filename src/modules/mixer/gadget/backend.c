@@ -351,10 +351,8 @@ _sink_event(int type, void *info)
         if (sink == _sink_default)
           {
              l = emix_sinks_get();
-             if (l)
-               _sink_default = l->data;
-             else
-               _sink_default = NULL;
+             if (l) _sink_default = l->data;
+             else _sink_default = NULL;
              if (emix_config_save_get()) e_config_save_queue();
              _backend_changed();
           }
@@ -363,15 +361,17 @@ _sink_event(int type, void *info)
      {
         if (_sink_default == sink)
           {
+             static int prev_vol = -1;
              int vol;
 
              _backend_changed();
-             if (sink->mute || !sink->volume.channel_count)
-               vol = 0;
-             else
-               vol = sink->volume.volumes[0];
-
-             _notify(vol);
+             if (sink->mute || !sink->volume.channel_count) vol = 0;
+             else vol = sink->volume.volumes[0];
+             if (vol != prev_vol)
+               {
+                  _notify(vol);
+                  prev_vol = vol;
+               }
           }
      }
    else
