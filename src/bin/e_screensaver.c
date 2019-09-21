@@ -299,6 +299,8 @@ _e_screensaver_suspend_cb(void *data EINA_UNUSED)
 static Eina_Bool
 _e_screensaver_handler_powersave_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
+   _e_screensaver_timeout = -1;
+   e_screensaver_update();
    if ((e_config->screensaver_suspend) && (_e_screensaver_on))
      {
         if (_e_screensaver_suspend_timer)
