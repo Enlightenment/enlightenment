@@ -1094,22 +1094,52 @@ e_comp_init(void)
              e_comp_config_get()->engine = E_COMP_ENGINE_GL;
            else if (!strcmp(gl, "sw"))
              e_comp_config_get()->engine = E_COMP_ENGINE_SW;
+           else
+             {
+                fprintf(stderr,
+                        "ERROR: E_COMP_ENGINE value '%s' invalid.\n"
+                        "Please use 'gl' or 'sw'.\n"
+                        "Valid values below that request a type of acceleration:\n"
+                        "  'gl' : OpenGL based acceleration.\n"
+                        "  'sw' : CPU based Software rendering.\n",
+                        gl);
+                exit(101);
+             }
         }
    }
    {
       const char *eng;
-      
+
       eng = getenv("E_WL_FORCE");
       if (eng)
         {
-           char buf[128];
-
-           snprintf(buf, sizeof(buf), "wl_%s", eng);
-           e_xkb_init(E_PIXMAP_TYPE_WL);
-           if (e_module_enable(e_module_new(buf)))
+           if ((!strcmp(eng, "buffer")) ||
+               (!strcmp(eng, "drm")) ||
+               (!strcmp(eng, "wl")) ||
+               (!strcmp(eng, "x11")))
              {
-                e_comp->comp_type = E_PIXMAP_TYPE_WL;
-                goto out;
+                char buf[128];
+
+                snprintf(buf, sizeof(buf), "wl_%s", eng);
+                e_xkb_init(E_PIXMAP_TYPE_WL);
+                if (e_module_enable(e_module_new(buf)))
+                  {
+                     e_comp->comp_type = E_PIXMAP_TYPE_WL;
+                     goto out;
+                  }
+             }
+           else
+             {
+                fprintf(stderr,
+                        "ERROR: E_WL_FORCE value '%s' invalid.\n"
+                        "Please use 'buffer', 'drm', 'wl' or 'x11'\n"
+                        "Valid values below that request a type of rendering output target:\n"
+                        "  'buffer' : Invisible memory buffer. (Debugging/testing)\n"
+                        "  'drm'    : DRM/KMS framebuffer. (You want this as a normal full-screen stand-alone Wayland compositor)\n"
+                        "  'wl'     : Window as a Wayland application. (Compositor in a Window for debugging/development/testing)\n"
+                        "  'x11'    : Window as a X11 application. (Compositor in a Window for debugging/development/testing)\n",
+                        eng);
+                exit(101);
              }
         }
    }
