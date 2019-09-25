@@ -577,7 +577,8 @@ if config_h.has('HAVE_WAYLAND') == true
 		name_prefix: '',
 		include_directories: include_directories('../..'),
 		dependencies: [
-      dep_dl,
+			dep_dl,
+			dependency('uuid'),
 			dependency('elementary'),
 			dependency('ecore-wl2'),
 			dependency('wayland-client'),
