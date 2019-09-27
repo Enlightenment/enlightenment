@@ -90,13 +90,8 @@ TODO:
    logging like tables, icons, timelines and graphs that can be output
    in text emulation and to screen - change eina log to go into here
    with eina_log_print_cb_set() )
-* crash alert: use full fat efl stack and remove xcb/ecore_drm2 stuff
-  * supply custom theme to guarantee theme is not an issue
-  * create text mode fallback with detection for crashes in crash handler
-    * turtles all the way down - a crash handler for our crash handler
-  * problem: we have to kill e to get kms control which breaks gdb
-    * grab data then kill e then display results?
-    * key combination to kill e and move on?
+* crash alert: we have to kill e to get kms control which breaks gdb
+  * grab data then kill e then display results?
 * watchdog: add watchdog handling to e_start to detect a hung e
   * also detect if frames stop rendering but loop ok?
 * settings: config dialog redo and simplification

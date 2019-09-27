@@ -8,9 +8,6 @@ Requirements
 
 Must:
   * efl
-  * xcb
-  * xcb-shape
-  * xcb-keysyms
   * libpam (On Linux)
 
 Highly suggested:

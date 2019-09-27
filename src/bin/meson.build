@@ -530,21 +530,16 @@ executable('enlightenment_static_grabber',
            install            : true
           )
 
-deps_e_alert = []
-if config_h.has('HAVE_WAYLAND') == true
-  deps_e_alert += [ dep_ecore_drm2, dep_ecore_input, dep_dl ]
-endif
+deps_e_alert = [ dep_elementary ]
 if config_h.has('HAVE_WAYLAND_ONLY') == false
   deps_e_alert += [
-    dependency('xcb'),
-    dependency('xcb-shape'),
-    dependency('xcb-keysyms')
+    dep_ecore_x
   ]
 endif
 executable('enlightenment_alert',
            [ 'e_alert_main.c' ],
            include_directories: include_directories('../..'),
-           dependencies       : [ dep_eina, dep_ecore, dep_evas, dep_ecore_ipc, deps_e_alert ],
+           dependencies       : [ deps_e_alert ],
            install_dir        : dir_e_utils,
            install            : true
           )
