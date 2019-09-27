@@ -762,14 +762,22 @@ not_done:
                   else
                     r = 0;
 
+                  /* kill e */
+                  if (!getenv("DISPLAY"))
+                    {
+                       kill(child, SIGKILL);
+                       usleep(500000);
+                    }
+
                   /* call e_alert */
                   r = _e_call_alert(child, sig, r, backtrace_str,
                                     remember_sigusr1);
                   free(backtrace_str);
 
-                  /* kill e */
-                  kill(child, SIGKILL);
-
+                  if (getenv("DISPLAY"))
+                    {
+                       kill(child, SIGKILL);
+                    }
                   if (WEXITSTATUS(r) == 1)
                     restart = EINA_FALSE;
                }
