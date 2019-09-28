@@ -720,6 +720,7 @@ _cb_screen_change_delay(void *data EINA_UNUSED)
         int lid_screens = 0;
         int close_lid_screens = 0;
         int external_screens = 0;
+        int prev_external_screens = 0;
         E_Randr2 *rtemp;
 
         printf("RRR: reconfigure screens due to event...\n");
@@ -738,19 +739,41 @@ _cb_screen_change_delay(void *data EINA_UNUSED)
                }
              EINA_LIST_FOREACH(rtemp->screens, l, s)
                {
+                  printf("RRR: scr: %s lid=%i conn=%i\n", s->id, s->info.is_lid, s->info.connected);
 //                  if (!s->id) continue;
                   if (s->info.is_lid)
                     {
+                       printf("RRR: is lid, lid++\n");
                        lid_screens++;
-                       if (s->info.lid_closed) close_lid_screens++;
+                       if (s->info.lid_closed)
+                         {
+                            printf("RRR: is lid, is closed, closed++\n");
+                            close_lid_screens++;
+                         }
                     }
                   else
                     {
-                       if ((s->info.connected) && (s->config.enabled))
-                         external_screens++;
+                       if (s->info.connected)
+                         {
+                            printf("RRR: is not lid, is connected, ext++\n");
+                            external_screens++;
+                         }
+                       else
+                         {
+                            printf("RRR: is not lid, is not connected\n");
+                         }
                     }
                }
-             printf("RRR: lids=%i closed=%i ext=%i\n", lid_screens, close_lid_screens, external_screens);
+             EINA_LIST_FOREACH(e_randr2->screens, l, s)
+               {
+                  printf("RRR: prev_scr: %s lid=%i conn=%i\n", s->id, s->info.is_lid, s->info.connected);
+//                  if (!s->id) continue;
+                  if (!s->info.is_lid)
+                    {
+                       if (s->info.connected) prev_external_screens++;
+                    }
+               }
+             printf("RRR: lids=%i closed=%i ext=%i prev_ext=%i\n", lid_screens, close_lid_screens, external_screens, prev_external_screens);
              _info_free(rtemp);
           }
         printf("RRR: change = %i\n", change);
@@ -759,7 +782,7 @@ _cb_screen_change_delay(void *data EINA_UNUSED)
         if (change)
           {
              if ((lid_screens > 0) && (close_lid_screens == lid_screens) &&
-                 (external_screens == 0))
+                 (external_screens == 0) && (external_screens == prev_external_screens))
                {
                   printf("RRR: skip change with all lids closed and no ext\n");
                   change = EINA_FALSE;
@@ -774,7 +797,7 @@ _cb_screen_change_delay(void *data EINA_UNUSED)
                   // force dpms...
                }
              if ((lid_screens > 0) && (close_lid_screens < lid_screens) &&
-                 (external_screens == 0))
+                 (external_screens == 0) && (external_screens == prev_external_screens))
                {
                   printf("RRR: skip change with lid screens open and no ext\n");
                   change = EINA_FALSE;
