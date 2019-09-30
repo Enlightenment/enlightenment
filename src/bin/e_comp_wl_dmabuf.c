@@ -40,6 +40,10 @@
 
 #include "linux-dmabuf-unstable-v1-server-protocol.h"
 
+#ifndef DRM_FORMAT_MOD_LINEAR
+# define DRM_FORMAT_MOD_LINEAR 0
+#endif
+
 static void
 linux_dmabuf_buffer_destroy(struct linux_dmabuf_buffer *buffer)
 {
@@ -117,7 +121,10 @@ params_add(struct wl_client *client,
 	buffer->attributes.fd[plane_idx] = name_fd;
 	buffer->attributes.offset[plane_idx] = offset;
 	buffer->attributes.stride[plane_idx] = stride;
-	buffer->attributes.modifier[plane_idx] = ((uint64_t)modifier_hi << 32) |
+	if (wl_resource_get_version(params_resource) < ZWP_LINUX_DMABUF_V1_MODIFIER_SINCE_VERSION)
+		buffer->attributes.modifier[plane_idx] = DRM_FORMAT_MOD_INVALID;
+	else
+		buffer->attributes.modifier[plane_idx] = ((uint64_t)modifier_hi << 32) |
 						 modifier_lo;
 	buffer->attributes.n_planes++;
 }
@@ -512,11 +519,17 @@ bind_linux_dmabuf(struct wl_client *client,
 			modifiers = &modifier_invalid;
 		}
 		for (j = 0; j < num_modifiers; j++) {
-			uint32_t modifier_lo = modifiers[j] & 0xFFFFFFFF;
-			uint32_t modifier_hi = modifiers[j] >> 32;
-			zwp_linux_dmabuf_v1_send_modifier(resource, formats[i],
-							  modifier_hi,
-							  modifier_lo);
+			if (version >= ZWP_LINUX_DMABUF_V1_MODIFIER_SINCE_VERSION) {
+				uint32_t modifier_lo = modifiers[j] & 0xFFFFFFFF;
+				uint32_t modifier_hi = modifiers[j] >> 32;
+				zwp_linux_dmabuf_v1_send_modifier(resource, formats[i],
+								  modifier_hi,
+								  modifier_lo);
+			} else if (modifiers[j] == DRM_FORMAT_MOD_LINEAR ||
+				   modifiers == &modifier_invalid) {
+				zwp_linux_dmabuf_v1_send_format(resource,
+								formats[i]);
+			}
 		}
 		if (modifiers != &modifier_invalid)
 			free(modifiers);
