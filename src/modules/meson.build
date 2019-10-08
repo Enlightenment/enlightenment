@@ -65,6 +65,7 @@ mods = [
 # also standard modules with no icon or desktop file
   'xwayland',
   'lokker',
+  'polkit',
   'wl_x11',
   'wl_wl',
   'wl_buffer',

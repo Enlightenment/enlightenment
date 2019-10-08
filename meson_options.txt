@@ -155,6 +155,10 @@ option('lokker',
 	type: 'boolean',
 	value: true,
 	description: 'enable lokker module: (default=true)')
+option('polkit',
+	type: 'boolean',
+	value: true,
+	description: 'enable polkit module: (default=true)')
 option('luncher',
 	type: 'boolean',
 	value: true,

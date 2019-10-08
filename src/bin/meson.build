@@ -34,7 +34,7 @@ deps_e = [
   dep_intl
 ]
 
-deps_ckpass = [ ]
+deps_ckpass = [ dep_eina, dep_ecore, dep_eldbus ]
 
 if freebsd == true
   deps_ckpass += dep_crypt

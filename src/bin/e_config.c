@@ -1441,6 +1441,7 @@ e_config_load(void)
                e_config->window_maximize_animate = 1;
                e_config->window_maximize_transition = E_EFX_EFFECT_SPEED_SINUSOIDAL;
                e_config->window_maximize_time = 0.15;
+               e_config_save_queue();
             }
           CONFIG_VERSION_CHECK(22)
             {
@@ -1465,6 +1466,7 @@ e_config_load(void)
                     module->enabled = 1;
                     e_config->modules = eina_list_append(e_config->modules, module);
                  }
+               e_config_save_queue();
             }
           CONFIG_VERSION_CHECK(23)
             {
@@ -1487,6 +1489,7 @@ e_config_load(void)
                     module->enabled = 1;
                     e_config->modules = eina_list_append(e_config->modules, module);
                  }
+               e_config_save_queue();
             }
           CONFIG_VERSION_CHECK(24)
             {
@@ -1494,6 +1497,7 @@ e_config_load(void)
 
                if (!elm_config_profile_exists(_e_config_profile))
                  elm_config_profile_save(_e_config_profile);
+               e_config_save_queue();
             }
           CONFIG_VERSION_CHECK(25)
             {
@@ -1571,6 +1575,29 @@ e_config_load(void)
                          eina_stringshare_del(ebm->params);
                          free(ebm);
                       }
+                 }
+               e_config_save_queue();
+            }
+          CONFIG_VERSION_CHECK(29)
+            {
+               Eina_List *l;
+               E_Config_Module *em, *module;
+               Eina_Bool mod_loaded = EINA_FALSE;
+
+               CONFIG_VERSION_UPDATE_INFO(29);
+
+               EINA_LIST_FOREACH(e_config->modules, l, em)
+                 {
+                    if (!em->enabled) continue;
+                    if (eina_streq(em->name, "polkit"))
+                      mod_loaded = EINA_TRUE;
+                 }
+               if (!mod_loaded)
+                 {
+                    module = E_NEW(E_Config_Module, 1);
+                    module->name = eina_stringshare_add("polkit");
+                    module->enabled = 1;
+                    e_config->modules = eina_list_append(e_config->modules, module);
                  }
                e_config_save_queue();
             }

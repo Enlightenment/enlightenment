@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Link
+Name=Polkit
+Comment=This module provides a polkit authentication agent
+Icon=e-module-polkit
+X-Enlightenment-ModuleType=core

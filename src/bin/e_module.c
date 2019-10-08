@@ -753,6 +753,7 @@ _e_module_whitelist_check(void)
       "ibox",
       "layout",
       "lokker",
+      "polkit",
       "luncher",
       "mixer",
       "msgbus",

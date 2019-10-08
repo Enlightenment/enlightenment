@@ -2,6 +2,7 @@
 #define E_AUTH_H
 
 E_API int e_auth_begin(char *passwd);
+E_API int e_auth_polkit_begin(char *passwd, const char *cookie, unsigned int uid);
 
 static inline int
 e_auth_hash_djb2(const char *key, int len)

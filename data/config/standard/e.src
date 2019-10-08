@@ -1,5 +1,5 @@
 group "E_Config" struct {
-    value "config_version" int: 1000028;
+    value "config_version" int: 1000029;
     value "config_type" uint: 3;
     value "show_splash" int: 1;
     value "desktop_default_name" string: "%i-%i";
@@ -1013,6 +1013,10 @@ group "E_Config" struct {
         }
         group "E_Config_Module" struct {
             value "name" string: "bluez5";
+            value "enabled" uchar: 1;
+        }
+        group "E_Config_Module" struct {
+            value "name" string: "polkit";
             value "enabled" uchar: 1;
         }
     }
