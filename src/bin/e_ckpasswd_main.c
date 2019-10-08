@@ -192,7 +192,6 @@ polkit_auth(const char *cookie, unsigned int auth_uid)
    Eldbus_Proxy *proxy;
    Eldbus_Message *m;
    Eldbus_Message_Iter *iter, *subj, *array, *dict, *vari;
-   unsigned int uid;
 
    eina_init();
    ecore_init();
@@ -208,7 +207,6 @@ polkit_auth(const char *cookie, unsigned int auth_uid)
    if (!m) return -1;
    iter = eldbus_message_iter_get(m);
    if (!iter) return -1;
-   uid = getuid();
    if (eldbus_message_iter_arguments_append(iter, "us", auth_uid, cookie))
      {
         if (eldbus_message_iter_arguments_append(iter, "(sa{sv})", &subj))
