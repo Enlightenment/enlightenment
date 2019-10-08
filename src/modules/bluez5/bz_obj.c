@@ -1,6 +1,7 @@
 #include "bz.h"
 #include "e_mod_main.h"
 
+static Eldbus_Object *objman_obj = NULL;
 static Eldbus_Proxy *objman_proxy = NULL;
 static Eldbus_Signal_Handler *sig_ifadd = NULL;
 static Eldbus_Signal_Handler *sig_ifdel = NULL;
@@ -295,18 +296,16 @@ cb_obj_prop_changed(void *data EINA_UNUSED, const Eldbus_Message *msg EINA_UNUSE
 Obj *
 bz_obj_add(const char *path)
 {
-   Eldbus_Object *obj;
-
    Obj *o = calloc(1, sizeof(Obj));
    o->ref = 1;
    o->path = eina_stringshare_add(path);
-   obj = eldbus_object_get(bz_conn, "org.bluez", o->path);
+   o->obj = eldbus_object_get(bz_conn, "org.bluez", o->path);
    o->type = BZ_OBJ_UNKNOWN;
    o->in_table = EINA_TRUE;
    eina_hash_add(obj_table, o->path, o);
    if (!strcmp(o->path, "/org/bluez"))
      {
-        o->proxy = eldbus_proxy_get(obj, "org.bluez.AgentManager1");
+        o->proxy = eldbus_proxy_get(o->obj, "org.bluez.AgentManager1");
         o->type = BZ_OBJ_BLUEZ;
         o->add_called = EINA_TRUE;
         bz_obj_ref(o);
@@ -317,12 +316,12 @@ bz_obj_add(const char *path)
    // all devices are /org/bluez/XXX/dev_XXX so look for /dev_
    else if (strstr(o->path, "/dev_"))
      {
-        o->proxy = eldbus_proxy_get(obj, "org.bluez.Device1");
+        o->proxy = eldbus_proxy_get(o->obj, "org.bluez.Device1");
         o->type = BZ_OBJ_DEVICE;
         if (o->proxy)
           {
              eldbus_proxy_property_get_all(o->proxy, cb_obj_prop, o);
-             o->prop_proxy = eldbus_proxy_get(obj,
+             o->prop_proxy = eldbus_proxy_get(o->obj,
                                               "org.freedesktop.DBus.Properties");
              if (o->prop_proxy)
                o->prop_sig = eldbus_proxy_signal_handler_add(o->prop_proxy,
@@ -334,12 +333,12 @@ bz_obj_add(const char *path)
    // all dadapters begin with /org/bluez/
    else if (!strncmp(o->path, "/org/bluez/", 11))
      {
-        o->proxy = eldbus_proxy_get(obj, "org.bluez.Adapter1");
+        o->proxy = eldbus_proxy_get(o->obj, "org.bluez.Adapter1");
         o->type = BZ_OBJ_ADAPTER;
         if (o->proxy)
           {
              eldbus_proxy_property_get_all(o->proxy, cb_obj_prop, o);
-             o->prop_proxy = eldbus_proxy_get(obj,
+             o->prop_proxy = eldbus_proxy_get(o->obj,
                                               "org.freedesktop.DBus.Properties");
              if (o->prop_proxy)
                o->prop_sig = eldbus_proxy_signal_handler_add(o->prop_proxy,
@@ -742,16 +741,6 @@ bz_obj_unref(Obj *o)
         eldbus_signal_handler_del(o->prop_sig);
         o->prop_sig = NULL;
      }
-   if (o->proxy)
-     {
-        eldbus_proxy_unref(o->proxy);
-        o->proxy = NULL;
-     }
-   if (o->prop_proxy)
-     {
-        eldbus_proxy_unref(o->prop_proxy);
-        o->prop_proxy = NULL;
-     }
    if (o->path)
      {
         eina_stringshare_del(o->path);
@@ -786,6 +775,21 @@ bz_obj_unref(Obj *o)
      {
         ecore_exe_free(o->ping_exe);
         o->ping_exe = NULL;
+     }
+   if (o->proxy)
+     {
+        eldbus_proxy_unref(o->proxy);
+        o->proxy = NULL;
+     }
+   if (o->prop_proxy)
+     {
+        eldbus_proxy_unref(o->prop_proxy);
+        o->prop_proxy = NULL;
+     }
+   if (o->obj)
+     {
+        eldbus_object_unref(o->obj);
+        o->obj = NULL;
      }
    free(o);
 }
@@ -894,12 +898,10 @@ _obj_hash_free(Obj *o)
 void
 bz_obj_init(void)
 {
-   Eldbus_Object *obj;
-
    obj_table = eina_hash_string_superfast_new((void *)_obj_hash_free);
 
-   obj = eldbus_object_get(bz_conn, "org.bluez", "/");
-   objman_proxy = eldbus_proxy_get(obj, "org.freedesktop.DBus.ObjectManager");
+   objman_obj = eldbus_object_get(bz_conn, "org.bluez", "/");
+   objman_proxy = eldbus_proxy_get(objman_obj, "org.freedesktop.DBus.ObjectManager");
    sig_ifadd = eldbus_proxy_signal_handler_add(objman_proxy, "InterfacesAdded",
                                                cb_obj_add, NULL);
    sig_ifdel = eldbus_proxy_signal_handler_add(objman_proxy, "InterfacesRemoved",
@@ -928,8 +930,16 @@ bz_obj_shutdown(void)
         eldbus_signal_handler_del(sig_ifdel);
         sig_ifdel = NULL;
      }
-   eldbus_proxy_unref(objman_proxy);
-   objman_proxy = NULL;
+   if (objman_proxy)
+     {
+        eldbus_proxy_unref(objman_proxy);
+        objman_proxy = NULL;
+     }
+   if (objman_obj)
+     {
+        eldbus_object_unref(objman_obj);
+        objman_obj = NULL;
+     }
 }
 
 void

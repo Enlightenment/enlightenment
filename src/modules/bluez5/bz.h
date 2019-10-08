@@ -13,6 +13,7 @@ typedef struct _Obj Obj;
 
 struct _Obj {
    //// internal object data
+   Eldbus_Object *obj;
    Eldbus_Proxy *proxy;
    Eldbus_Proxy *prop_proxy;
    Eldbus_Signal_Handler *prop_sig;

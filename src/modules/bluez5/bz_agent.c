@@ -2,6 +2,7 @@
 #include "e.h"
 
 static Eldbus_Service_Interface *agent_iface = NULL;
+static Eldbus_Object *agent_obj = NULL;
 static Eldbus_Proxy *agent_proxy = NULL;
 static void (*fn_release) (void) = NULL;
 static void (*fn_cancel) (void) = NULL;
@@ -149,6 +150,11 @@ cb_unregister(void *data EINA_UNUSED, const Eldbus_Message *msg,
         eldbus_proxy_unref(agent_proxy);
         agent_proxy = NULL;
      }
+   if (agent_obj)
+     {
+        eldbus_object_unref(agent_obj);
+        agent_obj = NULL;
+     }
    if (agent_iface)
      {
         eldbus_service_object_unregister(agent_iface);
@@ -266,10 +272,8 @@ bz_agent_msg_u32_add(Eldbus_Message *msg, unsigned int u32)
 void
 bz_agent_init(void)
 {
-   Eldbus_Object *obj;
-
-   obj = eldbus_object_get(bz_conn, "org.bluez", "/org/bluez");
-   agent_proxy = eldbus_proxy_get(obj, "org.bluez.AgentManager1");
+   agent_obj = eldbus_object_get(bz_conn, "org.bluez", "/org/bluez");
+   agent_proxy = eldbus_proxy_get(agent_obj, "org.bluez.AgentManager1");
    agent_iface = eldbus_service_interface_register
      (bz_conn, "/org/enlightenment/bluez5/agent", &agent_desc);
    if (agent_proxy)
