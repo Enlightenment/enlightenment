@@ -12,7 +12,10 @@ static pid_t       pid;
 static Eina_Bool   tainted = EINA_FALSE;
 static const char *backtrace_str = NULL;
 
-#define FONT           "Mono"
+//#define FONT           "TopazPlus_a500_v1.0.pcf"
+//#define FONT           "terminus-16.pcf"
+#define FONT           "Topaz_a500_v1.0.ttf"
+#define FONT_FALLBACK  "Mono"
 #define COL_BG         0,   0,   0, 255
 #define COL_FG         255,   0,   0, 255
 #define HDIV           10
@@ -85,10 +88,22 @@ key_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED
      }
 }
 
+static const char *
+font_get(void)
+{
+   const char *s = getenv("E_ALERT_FONT_DIR");
+   static char buf[4096];
+
+   if (s) snprintf(buf, sizeof(buf), "%s/"FONT, s);
+   else snprintf(buf, sizeof(buf), "%s", FONT_FALLBACK);
+   return buf;
+}
+
 static void
 resize(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *o, void *info EINA_UNUSED)
 {
    Evas_Coord w, h, tw, th;
+   const char *font = font_get();
 
    evas_object_geometry_get(o, NULL, NULL, &w, &h);
    h = w / HDIV;
@@ -99,15 +114,15 @@ resize(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *o, void *info E
    evas_object_geometry_set(obj_inner, (2 * h) / PDIV, (2 * h) / PDIV,
                             w - ((h * 4) / PDIV), h - ((h * 4) / PDIV));
 
-   evas_object_text_font_set(obj_line1, FONT, h / 8);
+   evas_object_text_font_set(obj_line1, font, h / 8);
    evas_object_geometry_get(obj_line1, NULL, NULL, &tw, &th);
    evas_object_move(obj_line1, (w - tw) / 2, (3 * h) / PDIV);
 
-   evas_object_text_font_set(obj_line2, FONT, h / 8);
+   evas_object_text_font_set(obj_line2, font, h / 8);
    evas_object_geometry_get(obj_line2, NULL, NULL, &tw, &th);
    evas_object_move(obj_line2, (w - tw) / 2, (h - th) / 2);
 
-   evas_object_text_font_set(obj_line3, FONT, h / 8);
+   evas_object_text_font_set(obj_line3, font, h / 8);
    evas_object_geometry_get(obj_line3, NULL, NULL, &tw, &th);
    evas_object_move(obj_line3, (w - tw) / 2, h - th - (3 * h) / PDIV);
 }
@@ -125,6 +140,7 @@ setup_display(void)
 {
    Evas *e;
    Evas_Object *win, *o;
+   const char *font = font_get();
 
    win = o = elm_win_add(NULL, "e-alert", ELM_WIN_SPLASH);
    if (!win) return EINA_FALSE;
@@ -147,21 +163,21 @@ setup_display(void)
 
    obj_line1 = o = evas_object_text_add(e);
    evas_object_color_set(o, COL_FG);
-   evas_object_text_font_set(o, FONT, 10);
+   evas_object_text_font_set(o, font, 10);
    evas_object_text_text_set(o, title1());
    evas_object_pass_events_set(o, EINA_TRUE);
    evas_object_show(o);
 
    obj_line2 = o = evas_object_text_add(e);
    evas_object_color_set(o, COL_FG);
-   evas_object_text_font_set(o, FONT, 10);
+   evas_object_text_font_set(o, font, 10);
    evas_object_text_text_set(o, title2());
    evas_object_pass_events_set(o, EINA_TRUE);
    evas_object_show(o);
 
    obj_line3 = o = evas_object_text_add(e);
    evas_object_color_set(o, COL_FG);
-   evas_object_text_font_set(o, FONT, 10);
+   evas_object_text_font_set(o, font, 10);
    evas_object_text_text_set(o, title3());
    evas_object_pass_events_set(o, EINA_TRUE);
    evas_object_show(o);

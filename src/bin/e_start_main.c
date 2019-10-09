@@ -484,6 +484,7 @@ _e_call_alert(int child, siginfo_t sig, int exit_gdb, const char *backtrace_str,
               Eina_Bool susr1)
 {
    char buf[4096];
+
    snprintf(buf, sizeof(buf),
             backtrace_str ?
             "%s/enlightenment/utils/enlightenment_alert %i %i %i '%s'" :
@@ -552,7 +553,7 @@ main(int argc, char **argv)
    int i, valgrind_mode = 0;
    int valgrind_tool = 0;
    int valgrind_gdbserver = 0;
-   char buf[16384], **args, *home;
+   char buf[8192], buf2[4096], **args, *home;
    char valgrind_path[PATH_MAX] = "";
    const char *valgrind_log = NULL;
    const char *bindir;
@@ -659,6 +660,9 @@ main(int argc, char **argv)
         if (really_know) _env_path_append("PATH", bindir);
         else _env_path_prepend("PATH", bindir);
      }
+   snprintf(buf2, sizeof(buf2),
+            "E_ALERT_FONT_DIR=%s/data/fonts", eina_prefix_data_get(pfx));
+   putenv(buf2);
 
    if ((valgrind_mode || valgrind_tool) &&
        !find_valgrind(valgrind_path, sizeof(valgrind_path)))
