@@ -185,6 +185,10 @@ TODO:
   view to this back-end data log and follows it as it updates.
   * can go back in time then to previous logs
   * should have the ability to draw nice graphs etc.
+* brightness/contrast etc. controls need to work better
+  look at ddcutil (ddc capabilities, ddc getvcp/setvcp) to be able to
+  control screen brightness, rgb gain, display technology type,
+  display modes, color presets etc. etc. http://www.ddcutil.com
 * edge bindings - selecting edge dialog needs a redo (no edje for all content)
 * e menu - add obj cache for menu and menu item objects to reduce costs
   by far the biggest cost in showing/hiding menus is realize/unrealize
