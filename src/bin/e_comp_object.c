@@ -1696,7 +1696,7 @@ _e_comp_intercept_show_helper(E_Comp_Object *cw)
    /* ensure that some kind of frame calc has occurred if there's a frame */
    if (e_pixmap_is_x(cw->ec->pixmap) && cw->frame_object &&
        (cw->ec->h == cw->ec->client.h) && (cw->ec->w == cw->ec->client.w))
-     CRI("ACK!");
+     ERR("Frame calc hasn't happened");
    /* force resize in case it hasn't happened yet, or just to update size */
    evas_object_resize(cw->smart_obj, cw->ec->w, cw->ec->h);
    if ((cw->w < 1) || (cw->h < 1))
