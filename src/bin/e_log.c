@@ -39,10 +39,8 @@ e_log_init(void)
         if (level < 1)
           eina_log_print_cb_set(_e_log_cb, NULL);
      }
-#ifndef E_RELEASE_BUILD
-   if (!getenv("E_DONT_ABORT"))
+   if (getenv("E_ABORT"))
      eina_log_abort_on_critical_set(1);
-#endif
    return e_log_dom != -1;
 }
 
