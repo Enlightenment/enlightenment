@@ -733,8 +733,6 @@ main(int argc, char **argv)
    TS("E_Moveresize Init Done");
    _e_main_shutdown_push(e_moveresize_shutdown);
 
-   if (e_config->show_splash)
-     e_init_status_set(_("Setup Message Bus"));
    TS("E_Msgbus Init");
    if (!e_msgbus_init())
      {
@@ -761,8 +759,6 @@ main(int argc, char **argv)
    TS("Efreet Init Done");
    _e_main_shutdown_push(efreet_shutdown);
 
-   if (e_config->show_splash)
-     e_init_status_set(_("Starting International Support"));
    TS("E_Intl Post Init");
    if (!e_intl_post_init())
      {
@@ -778,8 +774,6 @@ main(int argc, char **argv)
 
    e_screensaver_preinit();
 
-   if (e_config->show_splash)
-     e_init_status_set(_("Setup Actions"));
    TS("E_Actions Init");
    if (!e_actions_init())
      {
@@ -796,8 +790,6 @@ main(int argc, char **argv)
    e_desk_init();
    e_exehist_init();
 
-   if (e_config->show_splash)
-     e_init_status_set(_("Setup Powersave Modes"));
    TS("E_Powersave Init");
    if (!e_powersave_init())
      {
@@ -807,11 +799,6 @@ main(int argc, char **argv)
    TS("E_Powersave Init Done");
    _e_main_shutdown_push(e_powersave_shutdown);
 
-   if (e_config->show_splash)
-     e_init_status_set(_("Setup Screensaver"));
-
-   if (e_config->show_splash)
-     e_init_status_set(_("Setup Screens"));
    TS("Screens Init");
    if (!_e_main_screens_init())
      {
@@ -869,15 +856,11 @@ main(int argc, char **argv)
    efreet_icon_extension_add(".edj");
    TS("Add Icon Extensions Done");
 
-   if (e_config->show_splash)
-     e_init_status_set(_("Setup ACPI"));
    TS("E_Acpi Init");
    e_acpi_init();
    TS("E_Acpi Init Done");
    _e_main_shutdown_push(e_acpi_shutdown);
 
-   if (e_config->show_splash)
-     e_init_status_set(_("Setup Backlight"));
    TS("E_Backlight Init");
    if (!e_backlight_init())
      {
@@ -886,8 +869,6 @@ main(int argc, char **argv)
      }
    TS("E_Backlight Init Done");
 
-   if (e_config->show_splash)
-     e_init_status_set(_("Setup DPMS"));
    TS("E_Dpms Init");
    if (!e_dpms_init())
      {
@@ -897,8 +878,6 @@ main(int argc, char **argv)
    TS("E_Dpms Init Done");
    _e_main_shutdown_push(e_dpms_shutdown);
 
-   if (e_config->show_splash)
-     e_init_status_set(_("Setup Desklock"));
    TS("E_Desklock Init");
    if (!e_desklock_init())
      {
@@ -914,14 +893,10 @@ main(int argc, char **argv)
         e_screensaver_update();
      }
 
-   if (e_config->show_splash)
-     e_init_status_set(_("Setup Paths"));
    TS("Efreet Paths");
    _e_main_efreet_paths_init();
    TS("Efreet Paths Done");
 
-   if (e_config->show_splash)
-     e_init_status_set(_("Setup System Controls"));
    TS("E_Sys Init");
    if (!e_sys_init())
      {
@@ -931,8 +906,6 @@ main(int argc, char **argv)
    TS("E_Sys Init Done");
    _e_main_shutdown_push(e_sys_shutdown);
 
-   if (e_config->show_splash)
-     e_init_status_set(_("Setup Execution System"));
    TS("E_Exec Init");
    if (!e_exec_init())
      {
@@ -945,8 +918,6 @@ main(int argc, char **argv)
    e_comp_all_freeze();
    TS("E_Comp Freeze Done");
 
-   if (e_config->show_splash)
-     e_init_status_set(_("Setup Filemanager"));
    TS("E_Fm2 Init");
    if (!e_fm2_init())
      {
@@ -956,8 +927,6 @@ main(int argc, char **argv)
    TS("E_Fm2 Init Done");
    _e_main_shutdown_push(e_fm2_shutdown);
 
-   if (e_config->show_splash)
-     e_init_status_set(_("Setup Message System"));
    TS("E_Msg Init");
    if (!e_msg_init())
      {
@@ -967,8 +936,6 @@ main(int argc, char **argv)
    TS("E_Msg Init Done");
    _e_main_shutdown_push(e_msg_shutdown);
 
-   if (e_config->show_splash)
-     e_init_status_set(_("Setup Grab Input Handling"));
    TS("E_Grabinput Init");
    if (!e_grabinput_init())
      {
@@ -978,8 +945,6 @@ main(int argc, char **argv)
    TS("E_Grabinput Init Done");
    _e_main_shutdown_push(e_grabinput_shutdown);
 
-   if (e_config->show_splash)
-     e_init_status_set(_("Setup Modules"));
    TS("E_Module Init");
    if (!e_module_init())
      {
@@ -989,8 +954,6 @@ main(int argc, char **argv)
    TS("E_Module Init Done");
    _e_main_shutdown_push(e_module_shutdown);
 
-   if (e_config->show_splash)
-     e_init_status_set(_("Setup Remembers"));
    TS("E_Remember Init");
    if (!e_remember_init(after_restart ? E_STARTUP_RESTART : E_STARTUP_START))
      {
@@ -1000,15 +963,11 @@ main(int argc, char **argv)
    TS("E_Remember Init Done");
    _e_main_shutdown_push(e_remember_shutdown);
 
-   if (e_config->show_splash)
-     e_init_status_set(_("Setup Gadgets"));
    TS("E_Gadget Init");
    e_gadget_init();
    TS("E_Gadget Init Done");
    _e_main_shutdown_push((void*)e_gadget_shutdown);
 
-   if (e_config->show_splash)
-     e_init_status_set(_("Setup Gadcon"));
    TS("E_Gadcon Init");
    if (!e_gadcon_init())
      {
@@ -1018,8 +977,6 @@ main(int argc, char **argv)
    TS("E_Gadcon Init Done");
    _e_main_shutdown_push(e_gadcon_shutdown);
 
-   if (e_config->show_splash)
-     e_init_status_set(_("Setup Toolbars"));
    TS("E_Toolbar Init");
    if (!e_toolbar_init())
      {
@@ -1029,8 +986,6 @@ main(int argc, char **argv)
    TS("E_Toolbar Init Done");
    _e_main_shutdown_push(e_toolbar_shutdown);
 
-   if (e_config->show_splash)
-     e_init_status_set(_("Setup Wallpaper"));
    TS("E_Bg Init");
    if (!e_bg_init())
      {
@@ -1040,8 +995,6 @@ main(int argc, char **argv)
    TS("E_Bg Init Done");
    _e_main_shutdown_push(e_bg_shutdown);
 
-   if (e_config->show_splash)
-     e_init_status_set(_("Setup Mouse"));
    TS("E_Mouse Init");
    if (!e_mouse_update())
      {
@@ -1050,8 +1003,6 @@ main(int argc, char **argv)
      }
    TS("E_Mouse Init Done");
 
-   if (e_config->show_splash)
-     e_init_status_set(_("Setup Bindings"));
    TS("E_Bindings Init");
    if (!e_bindings_init())
      {
@@ -1061,8 +1012,6 @@ main(int argc, char **argv)
    TS("E_Bindings Init Done");
    _e_main_shutdown_push(e_bindings_shutdown);
 
-   if (e_config->show_splash)
-     e_init_status_set(_("Setup Thumbnailer"));
    TS("E_Thumb Init");
    if (!e_thumb_init())
      {
@@ -1090,8 +1039,6 @@ main(int argc, char **argv)
    TS("E_Update Init Done");
    _e_main_shutdown_push(e_update_shutdown);
 
-   if (e_config->show_splash)
-     e_init_status_set(_("Setup Desktop Environment"));
    TS("E_Deskenv Init");
    if (!e_deskenv_init())
      {
@@ -1101,8 +1048,6 @@ main(int argc, char **argv)
    TS("E_Deskenv Init Done");
    _e_main_shutdown_push(e_deskenv_shutdown);
 
-   if (e_config->show_splash)
-     e_init_status_set(_("Setup File Ordering"));
    TS("E_Order Init");
    if (!e_order_init())
      {
@@ -1115,9 +1060,6 @@ main(int argc, char **argv)
    TS("E_Comp_Canvas Keys Grab");
    e_comp_canvas_keys_grab();
    TS("E_Comp_Canvas Keys Grab Done");
-
-   if (e_config->show_splash)
-     e_init_status_set(_("Load Modules"));
 
    TS("Run Startup Apps");
    if (!nostartup)
@@ -1143,16 +1085,12 @@ main(int argc, char **argv)
 
    if (E_EFL_VERSION_MINIMUM(1, 17, 99))
      {
-        if (e_config->show_splash)
-          e_init_status_set(_("Setup Bryces"));
         TS("Bryce Init");
         e_bryce_init();
         TS("Bryce Init Done");
         _e_main_shutdown_push((void*)e_bryce_shutdown);
      }
 
-   if (e_config->show_splash)
-     e_init_status_set(_("Setup Shelves"));
    TS("E_Shelf Init");
    if (!e_shelf_init())
      {
@@ -1165,7 +1103,7 @@ main(int argc, char **argv)
    _idle_after = ecore_idle_enterer_add(_e_main_cb_idle_after, NULL);
 
    if (e_config->show_splash)
-     e_init_status_set(_("Almost Done"));
+     e_init_status_set(_("Welcome to Enlightenment"));
 
    starting = EINA_FALSE;
    inloop = EINA_TRUE;
@@ -1653,8 +1591,6 @@ _e_main_screens_init(void)
    TS("Desk Restore Done");
 
 #ifndef HAVE_WAYLAND_ONLY
-   if (e_config->show_splash)
-     e_init_status_set(_("Setup DND"));
    TS("E_Dnd Init");
    if (!e_dnd_init())
      {

@@ -700,7 +700,6 @@ _e_sys_cb_timer(void *data EINA_UNUSED)
     */
    char buf[4096];
 
-   e_init_status_set(_("Checking System Permissions"));
    snprintf(buf, sizeof(buf),
             "%s/enlightenment/utils/enlightenment_sys -t halt",
             e_prefix_lib_get());
@@ -735,7 +734,6 @@ _e_sys_cb_exit(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
      }
    if ((_e_sys_halt_check_exe) && (ev->exe == _e_sys_halt_check_exe))
      {
-        e_init_status_set(_("System Check Done"));
         /* exit_code: 0 == OK, 5 == suid root removed, 7 == group id error
          * 10 == permission denied, 20 == action undefined */
         if (ev->exit_code == 0)
@@ -746,7 +744,6 @@ _e_sys_cb_exit(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
      }
    else if ((_e_sys_reboot_check_exe) && (ev->exe == _e_sys_reboot_check_exe))
      {
-        e_init_status_set(_("System Check Done"));
         if (ev->exit_code == 0)
           {
              _e_sys_can_reboot = 1;
@@ -755,7 +752,6 @@ _e_sys_cb_exit(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
      }
    else if ((_e_sys_suspend_check_exe) && (ev->exe == _e_sys_suspend_check_exe))
      {
-        e_init_status_set(_("System Check Done"));
         if (ev->exit_code == 0)
           {
              _e_sys_can_suspend = 1;
@@ -764,7 +760,6 @@ _e_sys_cb_exit(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
      }
    else if ((_e_sys_hibernate_check_exe) && (ev->exe == _e_sys_hibernate_check_exe))
      {
-        e_init_status_set(_("System Check Done"));
         if (ev->exit_code == 0)
           {
              _e_sys_can_hibernate = 1;

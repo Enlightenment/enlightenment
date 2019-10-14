@@ -95,7 +95,6 @@ static void
 _e_startup(void)
 {
    Efreet_Desktop *desktop;
-   char buf[1024];
    const char *s;
    double delay = 0.0;
 
@@ -130,8 +129,6 @@ _e_startup(void)
         ecore_timer_add(delay, _e_startup_delay, desktop);
      }
    else e_exec(NULL, desktop, NULL, NULL, NULL);
-   snprintf(buf, sizeof(buf), _("Starting %s"), desktop->name);
-   e_init_status_set(buf);
    ecore_job_add(_e_startup_next_cb, NULL);
 }
 

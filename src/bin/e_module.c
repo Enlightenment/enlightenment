@@ -157,7 +157,6 @@ e_module_all_load(void)
 
              e_util_env_set("E_MODULE_LOAD", em->name);
              snprintf(buf, sizeof(buf), _("Loading Module: %s"), em->name);
-             e_init_status_set(buf);
 
              m = e_module_new(em->name);
              if (m) e_module_enable(m);
