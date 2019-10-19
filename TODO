@@ -227,6 +227,11 @@ TODO:
     * having a root helper for root-only tasks that stays around if it
       is needed as opposed to enlightenment_sys that runs then exits
 * synergy-like e <-> e mouse, kbd, cnp, dnd proxy/sharing
+* cpufreq - move to config dialog for settings
+  * set governor for ac vs battery (or powerstate levels)
+  * set pstate min and max for ac vs battery (or power state levels)
+* set backlight and dim timeout per powersave level
+* battery - set powersave levels based on ac or battery level
 * efl: flat theme redo
 * efl/eo: start using efl loop as core loop
   * begin to move some login out into efl threads+loops
