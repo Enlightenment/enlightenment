@@ -1,5 +1,4 @@
 TODO:
-
 * scriptlets: stdin/out module that provides gui services to some
   back-end script or process where e just talks via stdin/out.
   things to provide:
