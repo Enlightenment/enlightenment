@@ -15,10 +15,10 @@
 # similar <similar@orange.fr>, 2019.
 msgid ""
 msgstr ""
-"Project-Id-Version: Enlightenment DR17\n"
-"Report-Msgid-Bugs-To: \n"
+"Project-Id-Version: Enlightenment DR23\n"
+"Report-Msgid-Bugs-To: enlightenment-intl@lists.sourceforge.net\n"
 "POT-Creation-Date: 2019-08-23 16:18+0100\n"
-"PO-Revision-Date: 2019-08-23 21:14+0200\n"
+"PO-Revision-Date: 2019-10-26 15:11+0200\n"
 "Last-Translator: Philippe Jean Guillaumie <similar@orange.fr>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -27,7 +27,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
 "X-Launchpad-Export-Date: 2014-09-07 06:08+0000\n"
-"X-Generator: Poedit 2.0.6\n"
+"X-Generator: Poedit 2.2.4\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
 #: src/bin/e_about.c:17
@@ -2936,7 +2936,7 @@ msgstr "N'appliquer qu'à une seule fenêtre"
 
 #: src/bin/e_int_client_remember.c:814
 msgid "Always focus on start"
-msgstr "Toujours focaliser au démarrage"
+msgstr "Toujours focaliser au lancement"
 
 #: src/bin/e_int_client_remember.c:818
 msgid "Keep current properties"
@@ -4181,7 +4181,7 @@ msgstr ""
 "plutôt le lanceur « enlightenment_start ». Ce dernier se\n"
 "charge du paramétrage des variables d'environnement,\n"
 "des chemins et de la gestion de tout autre service\n"
-"nécessaire, avant même le démarrage d'enlightenment.\n"
+"nécessaire, avant même le démarrage d'Enlightenment.\n"
 
 #: src/bin/e_main.c:1566
 msgid "Testing Format Support"
@@ -6951,7 +6951,7 @@ msgstr "Échelle"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:1087
 msgid "Restore setup on start"
-msgstr "Restaurer la configuration au lancement"
+msgstr "Restaurer la configuration au démarrage"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:1096
 msgid "Monitor hotplug"
@@ -7596,7 +7596,7 @@ msgstr "Élever lorsque le focus est rétabli"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:314
 msgid "Active Window Hint Policy"
-msgstr "Gestion de l'indication pour la fenêtre activze"
+msgstr "Gestion de l'indication pour la fenêtre active"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:316
 msgid "Ignore hint"
@@ -9821,7 +9821,7 @@ msgid ""
 "(not permanent)"
 msgstr ""
 "Le menu des accès rapides fournit les options suivantes :<ps/><hilight>Auto-"
-"masquage</hilight> — masque la fenêtre si elle perd le focus<ps/"
+"masquage</hilight> — masque la fenêtre lorsqu'elle perd le focus<ps/"
 "><hilight>Masquer au lieu d'élever</hilight> — masque la fenêtre si elle est "
 "activée sans prendre le focus<ps/><hilight>Mode saut</hilight> — bascule "
 "vers le bureau de la fenêtre au lieu d'afficher/masquer<ps/"
@@ -9879,8 +9879,7 @@ msgstr "Tutoriel des accès rapides"
 #: src/modules/quickaccess/e_mod_quickaccess.c:1246
 msgid "This is a demo dialog used in the Quickaccess tutorial"
 msgstr ""
-"C'est la boîte de dialogue de démonstration utilisée pour le tuto des accès "
-"rapides"
+"C'est le dialogue de démonstration utilisée pour le tuto des accès rapides"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:1268
 msgid ""
@@ -10532,7 +10531,7 @@ msgstr "Focus :"
 
 #: src/modules/wizard/page_060.c:38
 msgid "Whenever a window is clicked"
-msgstr "Lorsqu'une fenêtre est cliquée."
+msgstr "Lorsqu'une fenêtre est cliquée"
 
 #: src/modules/wizard/page_060.c:47
 msgid "Whenever the mouse enters a window"
