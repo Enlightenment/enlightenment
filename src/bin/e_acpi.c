@@ -125,6 +125,18 @@ static E_ACPI_Device_Multiplexed _devices_multiplexed[] =
 /* public variables */
 E_API int E_EVENT_ACPI = 0;
 
+static Eina_Bool
+_acpi_error_cb(void *data EINA_UNUSED)
+{
+   e_util_dialog_show
+     (_("ACPI Error"),
+      _("You seem to have an ACPI based system, but<br>"
+        "<hilight>acpid</hilight> does not seem to be running or<br>"
+        "contactable. Perhaps enable the <hilight>acpid</hilight><br>"
+        "service on your system?"));
+   return EINA_FALSE;
+}
+
 /* public functions */
 EINTERN int
 e_acpi_init(void)
@@ -135,11 +147,7 @@ e_acpi_init(void)
    if (!ecore_file_exists("/var/run/acpid.socket"))
      {
         if (ecore_file_exists("/proc/acpi"))
-          e_util_dialog_show(_("Error"),
-                             _("You seem to have an ACPI based system, but<br>"
-                               "<hilight>acpid</hilight> does not seem to be running or<br>"
-                               "contactable. Perhaps enable the <hilight>acpid</hilight><br>"
-                               "service on your system?"));
+          ecore_timer_add(5.0, _acpi_error_cb, NULL);
         return 1;
      }
 
