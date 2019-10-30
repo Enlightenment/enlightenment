@@ -5715,11 +5715,10 @@ e_client_transients_restack(E_Client *ec)
    if (!ec->transients) return;
 
    list = eina_list_clone(ec->transients);
-   E_LIST_REVERSE_FREE(list, child)
+   EINA_LIST_FREE(list, child)
      {
-        /* Don't stack iconic transients. If the user wants these shown,
-         * that's another option.
-         */
+        // Don't stack iconic transients. If the user wants these shown,
+        // that's another option.
         if (child->iconic) continue;
         if (below)
           {
