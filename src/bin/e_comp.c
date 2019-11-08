@@ -713,6 +713,7 @@ _e_comp_shapes_update_job(void *d EINA_UNUSED)
    Eina_Rectangle *r;
    Eina_List *rl = NULL;
    E_Color color = {0};
+   const char *type;
 
    SHAPE_INF("---------------------");
 
@@ -738,11 +739,14 @@ _e_comp_shapes_update_job(void *d EINA_UNUSED)
              _e_comp_shapes_update_object_shape_comp_helper(o, tb);
              continue;
           }
-        ec = e_comp_object_client_get(o);
+        ec = NULL;
+        type = evas_object_type_get(o);
+        if ((type) && (!strcmp(type, "e_comp_object")))
+          ec = e_comp_object_client_get(o);
         if (ec && (!ec->no_shape_cut))
           _e_comp_shapes_update_comp_client_shape_comp_helper(ec, tb
-                                                           ,&rl
-                                                          );
+                                                              ,&rl
+                                                             );
 
         else
           _e_comp_shapes_update_object_shape_comp_helper(o, tb);
