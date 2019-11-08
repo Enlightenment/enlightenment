@@ -663,7 +663,7 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
      {
         if (cw->zoomap_disabled)
           {
-             if (cw->frame_object && (e_zoomap_child_get(cw->zoomobj) == cw->frame_object)) return EINA_FALSE;
+             if (cw->frame_object && (cw->zoomobj && e_zoomap_child_get(cw->zoomobj) == cw->frame_object)) return EINA_FALSE;
           }
         else
           {
@@ -2989,7 +2989,6 @@ e_comp_object_util_del_list_append(Evas_Object *obj, Evas_Object *to_del)
 {
    Eina_List *l;
 
-   SOFT_ENTRY();
    EINA_SAFETY_ON_NULL_RETURN(to_del);
    l = evas_object_data_get(obj, "comp_object-to_del");
    evas_object_data_set(obj, "comp_object-to_del", eina_list_append(l, to_del));
@@ -3178,12 +3177,15 @@ E_API void
 e_comp_object_util_center_on(Evas_Object *obj, Evas_Object *on)
 {
    int x, y, w, h, ow, oh;
-   E_Comp_Object *cw2;
+   E_Comp_Object *cw2 = NULL;
+   const char *type;
 
    SOFT_ENTRY();
    EINA_SAFETY_ON_NULL_RETURN(on);
 
-   cw2 = evas_object_smart_data_get(on);
+   type = evas_object_type_get(on);
+   if ((type) && (!strcmp(type, "e_comp_object")))
+     cw2 = evas_object_smart_data_get(on);
    if (cw2 && eina_streq(evas_object_type_get(on), SMART_NAME))
      x = cw2->ec->x, y = cw2->ec->y, w = cw2->ec->w, h = cw2->ec->h;
    else
