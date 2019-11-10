@@ -40,6 +40,8 @@ E_API void e_hints_window_e_state_get(E_Client *ec);
 E_API void e_hints_window_qtopia_soft_menu_get(E_Client *ec);
 E_API void e_hints_window_qtopia_soft_menus_get(E_Client *ec);
 
+E_API void e_hints_window_steam_game_get(E_Client *ec);
+
 E_API void e_hints_window_virtual_keyboard_state_get(E_Client *ec);
 E_API void e_hints_window_virtual_keyboard_get(E_Client *ec);
 
@@ -58,6 +60,7 @@ extern E_API Ecore_X_Atom ATM_ENLIGHTENMENT_SCALE;
 extern E_API Ecore_X_Atom ATM_NETWM_SHOW_WINDOW_MENU;
 extern E_API Ecore_X_Atom ATM_NETWM_PERFORM_BUTTON_ACTION;
 extern E_API Ecore_X_Atom ATM_GTK_FRAME_EXTENTS;
+extern E_API Ecore_X_Atom ATM_STEAM_GAME;
 #endif
 
 #ifdef HAVE_WAYLAND

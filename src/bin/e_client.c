@@ -2195,6 +2195,29 @@ _e_client_eval(E_Client *ec)
           }
         if (!ec->desktop)
           {
+             if (ec->steam.steam_game_id)
+               {
+                  Efreet_Desktop *d;
+                  Eina_List *desks = efreet_util_desktop_name_glob_list("*");
+                  EINA_LIST_FREE(desks, d)
+                    {
+                       if (!d->exec) continue;
+                       if (!strncmp(d->exec, "steam ", 6))
+                         {
+                            const char *st = strstr(d->exec, "steam://rungameid/");
+                            if (st)
+                              {
+                                 st += strlen("steam://rungameid/");
+                                 unsigned int id = atoi(st);
+                                 if (id == ec->steam.steam_game_id)
+                                   ec->desktop = d;
+                              }
+                         }
+                    }
+               }
+          }
+        if (!ec->desktop)
+          {
              E_Exec_Instance *inst;
 
              inst = e_exec_startup_id_pid_instance_find(ec->netwm.startup_id,
@@ -2227,9 +2250,17 @@ _e_client_eval(E_Client *ec)
           }
         if (!ec->desktop)
           {
+             // special case hacks for specific apps that just don't do things
+             // right so we have to work around them
+             if (ec->icccm.class && ec->icccm.name &&
+                 (!strcmp(ec->icccm.class, "Steam")) &&
+                 (!strcmp(ec->icccm.name, "Steam")))
+               {
+                  ec->desktop = efreet_util_desktop_file_id_find("steam.desktop");
+               }
              /* libreoffice and maybe others match window class
                 with .desktop file name */
-             if (ec->icccm.class)
+             else if (ec->icccm.class)
                {
                   char buf[4096] = {0};
                   snprintf(buf, sizeof(buf), "%s.desktop", ec->icccm.class);

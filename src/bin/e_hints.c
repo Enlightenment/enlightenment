@@ -15,6 +15,8 @@ E_API Ecore_X_Atom ATM_ENLIGHTENMENT_SCALE = 0;
 E_API Ecore_X_Atom ATM_NETWM_SHOW_WINDOW_MENU = 0;
 E_API Ecore_X_Atom ATM_NETWM_PERFORM_BUTTON_ACTION = 0;
 E_API Ecore_X_Atom ATM_GTK_FRAME_EXTENTS = 0;
+
+E_API Ecore_X_Atom ATM_STEAM_GAME = 0;
 #endif
 
 EINTERN void
@@ -34,6 +36,7 @@ e_hints_init(Ecore_Window root, Ecore_Window propwin)
       "_NET_WM_SHOW_WINDOW_MENU",
       "_NET_WM_PERFORM_BUTTON_ACTION",
       "_GTK_FRAME_EXTENTS",
+      "STEAM_GAME",
    };
    Ecore_X_Atom atoms[EINA_C_ARRAY_LENGTH(atom_names)];
    Ecore_X_Atom supported[46];
@@ -53,6 +56,7 @@ e_hints_init(Ecore_Window root, Ecore_Window propwin)
    ATM_NETWM_SHOW_WINDOW_MENU = atoms[6];
    ATM_NETWM_PERFORM_BUTTON_ACTION = atoms[7];
    ATM_GTK_FRAME_EXTENTS = atoms[8];
+   ATM_STEAM_GAME = atoms[9];
 
    supported_num = 0;
    /* Set what hints we support */
@@ -1602,6 +1606,22 @@ e_hints_window_qtopia_soft_menus_get(E_Client *ec)
      ec->qtopia.soft_menus = val;
    else
      ec->qtopia.soft_menus = 0;
+#endif
+}
+
+E_API void
+e_hints_window_steam_game_get(E_Client *ec)
+{
+#ifdef HAVE_WAYLAND_ONLY
+   (void)ec;
+#else
+   unsigned int val;
+
+   if (!e_client_has_xwindow(ec)) return;
+   if (ecore_x_window_prop_card32_get(e_client_util_win_get(ec), ATM_STEAM_GAME, &val, 1))
+     ec->steam.steam_game_id = val;
+   else
+     ec->steam.steam_game_id = 0;
 #endif
 }
 

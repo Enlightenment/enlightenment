@@ -568,6 +568,10 @@ struct E_Client
       unsigned char                  have_property E_BITFIELD;
       unsigned char                  vkbd E_BITFIELD;
    } vkbd;
+   
+   struct {
+      unsigned int steam_game_id;
+   } steam;
 
    struct
    {

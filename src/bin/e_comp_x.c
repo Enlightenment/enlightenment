@@ -560,6 +560,8 @@ _e_comp_x_client_new_helper(E_Client *ec)
                ec->e.fetch.stack = 1;
              else if (atoms[i] == ATM_GTK_FRAME_EXTENTS)
                ec->comp_data->fetch_gtk_frame_extents = 1;
+             else if (atoms[i] == ATM_STEAM_GAME)
+               e_hints_window_steam_game_get(ec);
              else if (ec->re_manage)
                {
                   if (atoms[i] == E_ATOM_DESKTOP_FILE)
@@ -2198,6 +2200,12 @@ _e_comp_x_property(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_W
    else if (ev->atom == ATM_GTK_FRAME_EXTENTS)
      {
         _e_comp_x_client_data_get(ec)->fetch_gtk_frame_extents = 1;
+        EC_CHANGED(ec);
+     }
+   else if (ev->atom == ATM_STEAM_GAME)
+     {
+        e_hints_window_steam_game_get(ec);
+        ec->changes.icon = 1;
         EC_CHANGED(ec);
      }
 
