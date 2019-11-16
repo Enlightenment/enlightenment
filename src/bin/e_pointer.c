@@ -217,7 +217,7 @@ _e_pointer_cb_mouse_wheel(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev
    return ECORE_CALLBACK_PASS_ON;
 }
 
-static void 
+static void
 _e_pointer_cb_hot_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Pointer *ptr = data;
@@ -225,20 +225,20 @@ _e_pointer_cb_hot_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA
 
    if (!ptr->e_cursor) return;
    if (!evas_object_visible_get(ptr->o_ptr)) return;
-   edje_object_part_geometry_get(ptr->o_ptr, "e.swallow.hotspot", 
-                                 &x, &y, NULL, NULL);
+   evas_object_geometry_get(ptr->buffer_o_hot,
+                            &x, &y, NULL, NULL);
    _e_pointer_hot_update(ptr, x, y);
 }
 
-static void 
+static void
 _e_pointer_cb_hot_show(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Pointer *ptr = data;
    int x = 0, y = 0;
 
    if (!ptr->e_cursor) return;
-   edje_object_part_geometry_get(ptr->o_ptr, "e.swallow.hotspot", 
-                                 &x, &y, NULL, NULL);
+   evas_object_geometry_get(ptr->buffer_o_hot,
+                            &x, &y, NULL, NULL);
    _e_pointer_hot_update(ptr, x, y);
 }
 
@@ -465,6 +465,7 @@ _e_pointer_type_set(E_Pointer *ptr, const char *type)
         /* try to set the edje object theme */
         if (!e_theme_edje_object_set(ptr->o_ptr, "base/theme/pointer", cursor))
           cursor[0] = 0;
+        edje_object_part_swallow(ptr->o_ptr, "e.swallow.hotspot", ptr->o_hot);
         if (!init)
           {
              edje_object_signal_emit(ptr->o_ptr, "e,state,init", "e");
@@ -474,8 +475,8 @@ _e_pointer_type_set(E_Pointer *ptr, const char *type)
         _e_pointer_x11_setup(ptr, cursor);
         if (!cursor[0]) return;
 
-        edje_object_part_geometry_get(ptr->o_ptr, "e.swallow.hotspot", 
-                                      &x, &y, NULL, NULL);
+        evas_object_geometry_get(ptr->buffer_o_hot,
+                                 &x, &y, NULL, NULL);
         _e_pointer_hot_update(ptr, x, y);
 
         if (ptr->canvas)
