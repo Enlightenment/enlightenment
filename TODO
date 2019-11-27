@@ -1,5 +1,6 @@
 TODO:
- scriptlets: stdin/out module that provides gui services to some
+* clipboard manager - monitor clipboard changes + history + select from it
+* scriptlets: stdin/out module that provides gui services to some
   back-end script or process where e just talks via stdin/out.
   things to provide:
   * only run scriptlet every N seconds to poll then send back data
