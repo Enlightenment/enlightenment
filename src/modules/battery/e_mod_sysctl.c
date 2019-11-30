@@ -126,7 +126,8 @@ _battery_sysctl_start(void)
 # endif
    _battery_sysctl_battery_update();
 
-   bat->last_update = ecore_time_get();
+   if (bat)
+     bat->last_update = ecore_time_get();
 
    return 1;
 }
@@ -184,6 +185,8 @@ _battery_sysctl_battery_update()
        ecore_poller_poller_interval_set(bat->poll,
                                         battery_config->poll_interval);
 # if defined(__OpenBSD__) || defined(__NetBSD__)
+       charge = 0;
+
        /* last full capacity */
        bat->mib[3] = 7;
        bat->mib[4] = 0;

@@ -98,7 +98,9 @@ _batman_popup_create(Instance *inst)
    elm_box_pack_end(box, label);
    evas_object_show(label);
 
-   if (inst->cfg->batman.have_power && (inst->cfg->batman.full < 99))
+   if (eina_list_count(batman_device_batteries) == 0)
+     snprintf(buf, sizeof(buf), _("No Battery Found"));
+   else if (inst->cfg->batman.have_power && (inst->cfg->batman.full < 99))
      snprintf(buf, sizeof(buf), _("Battery Charging"));
    else if (inst->cfg->batman.full >= 99)
      snprintf(buf, sizeof(buf), _("Battery Fully Charged"));
@@ -112,6 +114,16 @@ _batman_popup_create(Instance *inst)
         if (!eina_list_count(udis) || !eina_list_data_find(udis, bat->udi))
           {
              udis = eina_list_append(udis, bat->udi);
+             if (bat->vendor && bat->vendor[0] && bat->model && bat->model[0])
+               {
+                  label = elm_label_add(box);
+                  E_EXPAND(label); E_ALIGN(label, 0.5, 0.5);
+                  snprintf(buf, sizeof(buf), "%s (%s)", bat->vendor, bat->model);
+                  elm_object_text_set(label, buf);
+                  elm_box_pack_end(box, label);
+                  evas_object_show(label);
+               }
+
              pbar = elm_progressbar_add(box);
              E_EXPAND(pbar); E_FILL(pbar);
              elm_progressbar_span_size_set(pbar, 200 * e_scale);

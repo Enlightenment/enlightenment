@@ -58,13 +58,6 @@ struct _Battery
    Eina_Bool got_prop E_BITFIELD;
    Eldbus_Proxy *proxy;
    int * mib;
-#if defined(__FreeBSD__) || defined(__DragonFly__)
-   int * mib_state;
-   int * mib_units;
-   int * mib_time;
-   int batteries;
-   int time_min;
-#endif
 };
 
 struct _Ac_Adapter

@@ -3,6 +3,11 @@
 #include <sys/types.h>
 #include <sys/sysctl.h>
 
+#if defined(__FreeBSD__) || defined(__DragonFly__)
+# include <dev/acpica/acpiio.h>
+# include <sys/ioctl.h>
+#endif
+
 #if defined(__OpenBSD__) || defined(__NetBSD__)
 # include <sys/param.h>
 # include <sys/sensors.h>
@@ -25,10 +30,13 @@ _batman_sysctl_start(Instance *inst)
    struct sensordev snsrdev;
    size_t sdlen = sizeof(struct sensordev);
    char name[256];
-#elif defined(__FreeBSD__) || defined(__DragonFly__)
-   size_t len;
-#endif
-#if defined(__OpenBSD__) || defined(__NetBSD__)
+
+   if (eina_list_count(batman_device_batteries) != 0)
+     {
+        _batman_sysctl_battery_update(inst);
+        return 1;
+     }
+
    for (devn = 0;; devn++)
      {
         mib[2] = devn;
@@ -79,40 +87,48 @@ _batman_sysctl_start(Instance *inst)
           }
      }
 #elif defined(__FreeBSD__) || defined(__DragonFly__)
-   if ((sysctlbyname("hw.acpi.battery.life", NULL, &len, NULL, 0)) != -1)
+   size_t len;
+   int i, count, fd;
+   union acpi_battery_ioctl_arg battio;
+
+   if (eina_list_count(batman_device_batteries) != 0)
      {
-        Battery *bat = E_NEW(Battery, 1);
-        if (!bat)
-          return 0;
-        bat->inst = inst;
-        bat->mib = malloc(sizeof(int) * 4);
-        if (!bat->mib) return 0;
-        sysctlnametomib("hw.acpi.battery.life", bat->mib, &len);
-
-        bat->mib_state = malloc(sizeof(int) * 4);
-        if (!bat->mib_state) return 0;
-        sysctlnametomib("hw.acpi.battery.state", bat->mib_state, &len);
-
-        bat->mib_time = malloc(sizeof(int) * 4);
-        if (!bat->mib_time) return 0;
-        sysctlnametomib("hw.acpi.battery.time", bat->mib_time, &len);
-
-        bat->mib_units = malloc(sizeof(int) * 4);
-        if (!bat->mib_units) return 0;
-        sysctlnametomib("hw.acpi.battery.units", bat->mib_units, &len);
-
-        bat->last_update = ecore_time_get();
-        bat->udi = eina_stringshare_add("hw.acpi.battery");
-        bat->technology = eina_stringshare_add("Unknown");
-        bat->model = eina_stringshare_add("Unknown");
-        bat->vendor = eina_stringshare_add("Unknown");
-
-        bat->poll = ecore_poller_add(ECORE_POLLER_CORE,
-                                     inst->cfg->batman.poll_interval,
-                                     _batman_sysctl_battery_update_poll, inst);
-
-        batman_device_batteries = eina_list_append(batman_device_batteries, bat);
+        _batman_sysctl_battery_update(inst);
+        return 1;
      }
+
+   if ((fd = open("/dev/acpi", O_RDONLY)) == -1)
+     return 0;
+
+   if (ioctl(fd, ACPIIO_BATT_GET_UNITS, &count) == -1)
+     {
+        close(fd);
+        return 0;
+     }
+
+   for (i = 0; i < count; i++)
+     {
+        battio.unit = i;
+        if (ioctl(fd, ACPIIO_BATT_GET_BIF, &battio) != -1)
+          {
+             Battery *bat = E_NEW(Battery, 1);
+             if (!bat) return 0;
+
+             bat->inst = inst;
+             bat->last_update = ecore_time_get();
+             bat->last_full_charge = battio.bif.lfcap;
+             bat->model = eina_stringshare_add(battio.bif.model);
+             bat->vendor = eina_stringshare_add(battio.bif.oeminfo);
+             bat->technology = eina_stringshare_add(battio.bif.type);
+             bat->poll = ecore_poller_add(ECORE_POLLER_CORE,
+                                          inst->cfg->batman.poll_interval,
+                                          _batman_sysctl_battery_update_poll, inst);
+
+             batman_device_batteries = eina_list_append(batman_device_batteries, bat);
+          }
+     }
+
+   close(fd);
 
    if ((sysctlbyname("hw.acpi.acline", NULL, &len, NULL, 0)) != -1)
      {
@@ -155,11 +171,6 @@ _batman_sysctl_stop(void)
         E_FREE_FUNC(bat->model, eina_stringshare_del);
         E_FREE_FUNC(bat->vendor, eina_stringshare_del);
         E_FREE_FUNC(bat->poll, ecore_poller_del);
-#if defined(__FreeBSD__) || defined(__DragonFly__)
-        E_FREE(bat->mib_state);
-        E_FREE(bat->mib_time);
-        E_FREE(bat->mib_units);
-#endif
         E_FREE(bat->mib);
         E_FREE(bat);
      }
@@ -189,9 +200,9 @@ _batman_sysctl_battery_update(Instance *inst)
    struct sensor s;
    size_t slen = sizeof(struct sensor);
 #elif defined(__FreeBSD__) || defined(__DragonFly__)
-   double _time;
-   int value;
+   union acpi_battery_ioctl_arg battio;
    size_t len;
+   int value, fd, i = 0;
 #endif
    EINA_LIST_FOREACH(batman_device_batteries, l, bat)
      {
@@ -284,44 +295,38 @@ _batman_sysctl_battery_update(Instance *inst)
           }
         _batman_device_update(bat->inst);
 #elif defined(__FreeBSD__) || defined(__DragonFly__)
-        len = sizeof(value);
-        if ((sysctl(bat->mib, 4, &value, &len, NULL, 0)) == -1)
+
+        if ((fd = open("/dev/acpi", O_RDONLY)) != -1)
           {
-             return EINA_FALSE;
+             battio.unit = i;
+
+             if (ioctl(fd, ACPIIO_BATT_GET_BATTINFO, &battio) != -1)
+               {
+                  bat->got_prop = 1;
+
+                  bat->percent = battio.battinfo.cap;
+
+                  if (battio.battinfo.state & ACPI_BATT_STAT_CHARGING)
+                    bat->charging = EINA_TRUE;
+                  else
+                    bat->charging = EINA_FALSE;
+
+                  bat->time_left = battio.battinfo.min * 60;
+                  if (bat->charge_rate > 0)
+                    {
+                       bat->time_full = (bat->last_full_charge - bat->current_charge) / bat->charge_rate;
+                    }
+               }
+             else
+               {
+                  bat->time_full = bat->time_left = -1;
+               }
+
+             close(fd);
           }
 
-        bat->percent = value;
-
-        _time = ecore_time_get();
-        bat->last_update = _time;
-
-        len = sizeof(value);
-        if ((sysctl(bat->mib_state, 4, &value, &len, NULL, 0)) == -1)
-          {
-             return EINA_FALSE;
-          }
-
-        bat->charging = !value;
-        bat->got_prop = 1;
-
-        bat->time_full = -1;
-        bat->time_left = -1;
-
-        len = sizeof(bat->time_min);
-        if ((sysctl(bat->mib_time, 4, &bat->time_min, &len, NULL, 0)) == -1)
-          {
-             bat->time_min = -1;
-          }
-
-        len = sizeof(bat->batteries);
-        if ((sysctl(bat->mib_units, 4, &bat->batteries, &len, NULL, 0)) == -1)
-          {
-             bat->batteries = 1;
-          }
-
-        if (bat->time_min >= 0) bat->time_left = bat->time_min * 60;
-        if (bat->batteries == 1) bat->time_left = -1;
         _batman_device_update(inst);
+        i++;
 #endif
      }
 
