@@ -359,7 +359,7 @@ _batman_device_update(Instance *inst)
 static Eina_Bool
 _screensaver_on(void *data)
 {
-#if defined(HAVE_EEZE)
+#if defined(HAVE_EEZE) || defined(__OpenBSD__) || defined(__DragonFly__) || defined(__FreeBSD__) || defined(__NetBSD__)
    Instance *inst = data;
 #else
    (void)data;
@@ -368,7 +368,7 @@ _screensaver_on(void *data)
 #if defined(HAVE_EEZE)
    _batman_udev_stop(inst);
 #elif defined(__OpenBSD__) || defined(__DragonFly__) || defined(__FreeBSD__) || defined(__NetBSD__)
-   _batman_sysctl_stop();
+   _batman_sysctl_stop(inst);
 #elif defined(upower)
    _batman_upower_stop();
 #else
@@ -583,7 +583,7 @@ _batman_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
 #if defined(HAVE_EEZE)
    _batman_udev_stop(inst);
 #elif defined(__OpenBSD__) || defined(__DragonFly__) || defined(__FreeBSD__) || defined(__NetBSD__)
-   _batman_sysctl_stop();
+   _batman_sysctl_stop(inst);
 #elif defined(upower)
    _batman_upower_stop();
 #else
@@ -616,8 +616,7 @@ sysinfo_batman_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
 #if defined(HAVE_EEZE)
    _batman_udev_stop(inst);
 #elif defined(__OpenBSD__) || defined(__DragonFly__) || defined(__FreeBSD__) || defined(__NetBSD__)
-   (void)inst;
-   _batman_sysctl_stop();
+   _batman_sysctl_stop(inst);
 #elif defined(upower)
    (void)inst;
    _batman_upower_stop();

@@ -104,7 +104,7 @@ EINTERNvoid _batman_upower_stop(void);
 #else
 /* in batman_sysctl.c */
 EINTERN int _batman_sysctl_start(Instance *inst);
-EINTERN void _batman_sysctl_stop(void);
+EINTERN void _batman_sysctl_stop(Instance *inst);
 /* end batman_sysctl.c */
 #endif
 

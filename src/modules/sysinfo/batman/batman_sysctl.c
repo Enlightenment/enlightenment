@@ -152,10 +152,45 @@ _batman_sysctl_start(Instance *inst)
 }
 
 void
-_batman_sysctl_stop(void)
+_batman_sysctl_stop(Instance *inst)
 {
+   Instance *child;
+   Eina_List *l;
    Battery *bat;
    Ac_Adapter *ac;
+   int bat_num = 0;
+
+   /* This is a dummy battery we return here. */
+   if (inst->cfg->batman.have_battery != 1)
+     {
+        return;
+     }
+
+   /* If this is NOT the last batman gadget then we return before
+    * freeing everything. This is NOT optimal but is allows us to have
+    * many gadgets and share the same data between multiple batman
+    * gadget instances. The instance will be deleted.
+    */
+
+   EINA_LIST_FOREACH(sysinfo_instances, l, child)
+     {
+        if (inst->cfg->esm == E_SYSINFO_MODULE_BATMAN ||
+            inst->cfg->esm == E_SYSINFO_MODULE_SYSINFO)
+          {
+             bat_num++;
+             if (child == inst)
+               {
+                  bat_num--;
+                  break;
+               }
+          }
+     }
+
+   /* This is not the last batman gadget. */
+   if (bat_num > 0) return;
+
+   /* We have no batman or sysinfo gadgets remaining. We can safely
+      remove these batteries and adapters. */
 
    EINA_LIST_FREE(batman_device_ac_adapters, ac)
      {
@@ -178,11 +213,18 @@ _batman_sysctl_stop(void)
 
 #if defined(__OpenBSD__) || defined(__NetBSD__) || defined(__FreeBSD__) || defined(__DragonFly__)
 static Eina_Bool
-_batman_sysctl_battery_update_poll(void *data)
+_batman_sysctl_battery_update_poll(void *data EINA_UNUSED)
 {
-   Instance *inst = data;
+   Eina_List *l;
+   Instance *inst;
 
-   _batman_sysctl_battery_update(inst);
+   /* We need to ensure we update both batman and sysinfo instances. */
+   EINA_LIST_FOREACH(sysinfo_instances, l, inst)
+     {
+        if (inst->cfg->esm == E_SYSINFO_MODULE_BATMAN ||
+            inst->cfg->esm == E_SYSINFO_MODULE_SYSINFO)
+          _batman_sysctl_battery_update(inst);
+     }
 
    return EINA_TRUE;
 }
@@ -204,6 +246,7 @@ _batman_sysctl_battery_update(Instance *inst)
    size_t len;
    int value, fd, i = 0;
 #endif
+
    EINA_LIST_FOREACH(batman_device_batteries, l, bat)
      {
         /* update the poller interval */
