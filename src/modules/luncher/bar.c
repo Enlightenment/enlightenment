@@ -848,7 +848,7 @@ _bar_icon_preview_show(void *data)
 
    EINA_LIST_FREE(clients, ec)
      {
-        if (!ec->netwm.state.skip_taskbar && !e_client_util_ignored_get(ec))
+        if (ec && !ec->netwm.state.skip_taskbar && !e_client_util_ignored_get(ec))
           {
              if (!e_client_util_is_popup(ec))
                {
