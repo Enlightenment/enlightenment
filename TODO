@@ -155,6 +155,8 @@ TODO:
     * vpnmanager + create method support
 * shot: add manual cropping ability
 * shot: add simple free draw, box, line and text on top of shot before save
+* shot: create special save dir for shots (~/.e/...) and keep last N
+* shot: use efm and offer save dir to dnd from
 * bz5: add icon set for actions/states per bt device (pair.unpair, etc.)
 * bz5: add obex agent support integrated with efm for sharing via bt
   and downloads when received via obex bt (~/Downloads/...)
