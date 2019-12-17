@@ -318,26 +318,26 @@ prop_changed(void *data, Eldbus_Proxy *proxy EINA_UNUSED, void *event_info)
 }
 
 static void
-cb_name_owner_has(void *data, const Eldbus_Message *msg,
-                  Eldbus_Pending *pending EINA_UNUSED)
+cb_name_owner_changed(void *data,
+                      const char *bus EINA_UNUSED,
+                      const char *from EINA_UNUSED,
+                      const char *to)
 {
    E_Music_Control_Module_Context *ctxt = data;
-   Eina_Bool owner_exists;
 
-   if (eldbus_message_error_get(msg, NULL, NULL)) return;
-   if (!eldbus_message_arguments_get(msg, "b", &owner_exists)) return;
-   if (owner_exists)
+   have_player = EINA_FALSE;
+   if (to[0])
      {
         media_player2_player_playback_status_propget
           (ctxt->mpris2_player, cb_playback_status_get, ctxt);
         media_player2_player_metadata_propget
           (ctxt->mpris2_player, cb_metadata_get, ctxt);
+        have_player = EINA_TRUE;
      }
-   have_player = owner_exists;
 }
 
 void
-music_control_launch(void)
+music_control_launch(E_Music_Control_Instance *inst)
 {
    E_Music_Control_Module_Context *ctxt;
 
@@ -346,26 +346,60 @@ music_control_launch(void)
    if (have_player) return;
    if (ctxt->config->player_selected < 0)
      {
+        Efreet_Desktop *desktop;
+        int i;
+
+        for (i = 0; i < PLAYER_COUNT; i++)
+          {
+             desktop = efreet_util_desktop_exec_find
+               (music_player_players[i].command);
+             if (desktop)
+               {
+                  E_Zone *zone = e_gadcon_zone_get(inst->gcc->gadcon);
+                  e_exec(zone, desktop, NULL/* command */,
+                         NULL/* file list */, "module/music-control");
+                  ctxt->config->player_selected = i;
+                  music_control_dbus_init
+                    (ctxt, music_player_players[i].dbus_name);
+                  break;
+               }
+          }
      }
    else if (ctxt->config->player_selected < PLAYER_COUNT)
      {
-        ecore_exe_run
-          (music_player_players[ctxt->config->player_selected].command, NULL);
+        E_Zone *zone = e_gadcon_zone_get(inst->gcc->gadcon);
+        e_exec(zone, NULL/* efreet desktop*/,
+               music_player_players[ctxt->config->player_selected].command,
+               NULL/* file list */, "module/music-control");
      }
 }
 
 Eina_Bool
 music_control_dbus_init(E_Music_Control_Module_Context *ctxt, const char *bus)
 {
-   ctxt->conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
+   if (!ctxt->conn)
+     ctxt->conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctxt->conn, EINA_FALSE);
 
+   if (ctxt->mpris2_player)
+     mpris_media_player2_proxy_unref(ctxt->mpris2_player);
+   if (ctxt->mrpis2)
+     media_player2_player_proxy_unref(ctxt->mrpis2);
    ctxt->mrpis2 = mpris_media_player2_proxy_get(ctxt->conn, bus, NULL);
    ctxt->mpris2_player = media_player2_player_proxy_get(ctxt->conn, bus, NULL);
    eldbus_proxy_event_callback_add(ctxt->mpris2_player,
                                    ELDBUS_PROXY_EVENT_PROPERTY_CHANGED,
                                    prop_changed, ctxt);
-   eldbus_name_owner_has(ctxt->conn, bus, cb_name_owner_has, ctxt);
+   if (ctxt->dbus_name)
+     {
+        eldbus_name_owner_changed_callback_del
+          (ctxt->conn, ctxt->dbus_name, cb_name_owner_changed, ctxt);
+        eina_stringshare_del(ctxt->dbus_name);
+     }
+   ctxt->dbus_name = eina_stringshare_add(bus);
+   eldbus_name_owner_changed_callback_add(ctxt->conn, bus,
+                                          cb_name_owner_changed,
+                                          ctxt, EINA_TRUE);
    return EINA_TRUE;
 }
 
@@ -386,7 +420,11 @@ e_modapi_init(E_Module *m)
    E_CONFIG_VAL(D, T, player_selected, INT);
    E_CONFIG_VAL(D, T, pause_on_desklock, INT);
    ctxt->config = e_config_domain_load(MUSIC_CONTROL_DOMAIN, ctxt->conf_edd);
-   if (!ctxt->config) ctxt->config = calloc(1, sizeof(Music_Control_Config));
+   if (!ctxt->config)
+     {
+        ctxt->config = calloc(1, sizeof(Music_Control_Config));
+        ctxt->config->player_selected = -1;
+     }
 
    if (ctxt->config->player_selected < 0)
      {
@@ -430,6 +468,9 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
 
    E_FREE_FUNC(desklock_handler, ecore_event_handler_del);
 
+   eldbus_name_owner_changed_callback_del
+     (ctxt->conn, ctxt->dbus_name, cb_name_owner_changed, ctxt);
+   eina_stringshare_del(ctxt->dbus_name);
    media_player2_player_proxy_unref(ctxt->mpris2_player);
    mpris_media_player2_proxy_unref(ctxt->mrpis2);
    eldbus_connection_unref(ctxt->conn);

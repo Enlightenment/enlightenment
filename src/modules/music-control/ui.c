@@ -92,7 +92,7 @@ _label_clicked(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EI
 {
    E_Music_Control_Instance *inst = data;
    music_control_popup_del(inst);
-   music_control_launch();
+   music_control_launch(inst);
    mpris_media_player2_raise_call(inst->ctxt->mrpis2);
 }
 
@@ -229,8 +229,6 @@ _cfg_data_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
      E_FREE_FUNC(desklock_handler, ecore_event_handler_del);
 
    inst->ctxt->playing = EINA_FALSE;
-   mpris_media_player2_proxy_unref(inst->ctxt->mpris2_player);
-   media_player2_player_proxy_unref(inst->ctxt->mrpis2);
    music_control_dbus_init(inst->ctxt,
           music_player_players[inst->ctxt->config->player_selected].dbus_name);
    return 1;
@@ -261,6 +259,7 @@ music_control_mouse_down_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
 
    if (ev->button == 1)
      {
+        music_control_launch(inst);
         if (!inst->popup)
           _popup_new(inst);
         else
