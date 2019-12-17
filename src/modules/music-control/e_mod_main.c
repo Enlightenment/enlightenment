@@ -5,6 +5,7 @@
 static E_Module *music_control_mod = NULL;
 static Eina_Bool was_playing_before_lock = EINA_FALSE;
 static const char _e_music_control_Name[] = N_("Music controller");
+static Eina_Bool have_player = EINA_FALSE;
 
 const Player music_player_players[] =
 {
@@ -331,6 +332,25 @@ cb_name_owner_has(void *data, const Eldbus_Message *msg,
           (ctxt->mpris2_player, cb_playback_status_get, ctxt);
         media_player2_player_metadata_propget
           (ctxt->mpris2_player, cb_metadata_get, ctxt);
+     }
+   have_player = owner_exists;
+}
+
+void
+music_control_launch(void)
+{
+   E_Music_Control_Module_Context *ctxt;
+
+   if (!music_control_mod) return;
+   ctxt = music_control_mod->data;
+   if (have_player) return;
+   if (ctxt->config->player_selected < 0)
+     {
+     }
+   else if (ctxt->config->player_selected < PLAYER_COUNT)
+     {
+        ecore_exe_run
+          (music_player_players[ctxt->config->player_selected].command, NULL);
      }
 }
 

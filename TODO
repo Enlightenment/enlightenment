@@ -144,7 +144,6 @@ TODO:
 * start: start menu could do with more featured content
   * like you see on windows for example (search and multiple columns etc.)
   * a touch screen android-style scrolling fullscreen app icon style
-* music-control: offer launching from the control if mpris app not there
 * music-control: auto search for known mpris services
 * music-control: allow manual addition of new named mpris services
 * wireless: fix on connman to work properly

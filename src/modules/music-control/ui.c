@@ -92,6 +92,7 @@ _label_clicked(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EI
 {
    E_Music_Control_Instance *inst = data;
    music_control_popup_del(inst);
+   music_control_launch();
    mpris_media_player2_raise_call(inst->ctxt->mrpis2);
 }
 
