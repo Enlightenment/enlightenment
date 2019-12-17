@@ -49,6 +49,7 @@ Eina_Bool _desklock_cb(void *data, int type, void *ev);
 typedef struct _Player {
    const char *name;
    const char *dbus_name;
+   const char *command;
 } Player;
 
 #endif

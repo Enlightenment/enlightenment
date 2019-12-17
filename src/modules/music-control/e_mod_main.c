@@ -10,22 +10,24 @@ static const char _e_music_control_Name[] = N_("Music controller");
 
 const Player music_player_players[] =
 {
-   {"gmusicbrowser", "org.mpris.MediaPlayer2.gmusicbrowser"},
-   {"Banshee", "org.mpris.MediaPlayer2.banshee"},
-   {"Clementine", "org.mpris.MediaPlayer2.clementine"},
-   {"Audacious", "org.mpris.MediaPlayer2.audacious"},
-   {"VLC", "org.mpris.MediaPlayer2.vlc"},
-   {"BMP", "org.mpris.MediaPlayer2.bmp"},
-   {"XMMS2", "org.mpris.MediaPlayer2.xmms2"},
-   {"DeaDBeeF", "org.mpris.MediaPlayer2.deadbeef"},
-   {"Rhythmbox", "org.gnome.Rhythmbox3"},
-   {"Quod Libet", "org.mpris.MediaPlayer2.quodlibet"},
-   {"MPD", "org.mpris.MediaPlayer2.mpd"},
-   {"Emotion Media Center", "org.mpris.MediaPlayer2.epymc"},
-   {"Pithos", "org.mpris.MediaPlayer2.pithos"},
-   {"Tomahawk", "org.mpris.MediaPlayer2.tomahawk"},
-   {"Spotify", "org.mpris.MediaPlayer2.spotify"},
-   {"Rage", "org.mpris.MediaPlayer2.rage"},
+    // Label/Name           dbus iface name                         command to execute
+   {"gmusicbrowser",        "org.mpris.MediaPlayer2.gmusicbrowser", "gmusicbrowser"},
+   {"Banshee",              "org.mpris.MediaPlayer2.banshee",       "banshee"},
+   {"Clementine",           "org.mpris.MediaPlayer2.clementine",    "clementine"},
+   {"Audacious",            "org.mpris.MediaPlayer2.audacious",     "audacious"},
+   {"VLC",                  "org.mpris.MediaPlayer2.vlc",           "vlc"},
+   {"BMP",                  "org.mpris.MediaPlayer2.bmp",           "bmp"},
+   {"XMMS2",                "org.mpris.MediaPlayer2.xmms2",         "xmms2"},
+   {"DeaDBeeF",             "org.mpris.MediaPlayer2.deadbeef",      "deadbeef"},
+   {"Rhythmbox",            "org.gnome.Rhythmbox3",                 "rhythmbox"},
+   {"Quod Libet",           "org.mpris.MediaPlayer2.quodlibet",     "quodlibet"},
+   {"MPD",                  "org.mpris.MediaPlayer2.mpd",           "mpd"},
+   {"Emotion Media Center", "org.mpris.MediaPlayer2.epymc",         "epymc"},
+   {"Pithos",               "org.mpris.MediaPlayer2.pithos",        "pithos"},
+   {"Tomahawk",             "org.mpris.MediaPlayer2.tomahawk",      "tomahawk"},
+   {"Spotify",              "org.mpris.MediaPlayer2.spotify",       "spotify"},
+   {"Rage",                 "org.mpris.MediaPlayer2.rage",          "rage"},
+#define PLAYER_COUNT 16
    {NULL, NULL}
 };
 
@@ -392,8 +394,16 @@ e_modapi_init(E_Module *m)
    if (!ctxt->config)
      ctxt->config = calloc(1, sizeof(Music_Control_Config));
 
-   if (!music_control_dbus_init(ctxt, music_player_players[ctxt->config->player_selected].dbus_name))
-     goto error_dbus_bus_get;
+   if (ctxt->config->player_selected < 0)
+     {
+     }
+   else
+     {
+        if (ctxt->config->player_selected >= PLAYER_COUNT)
+          ctxt->config->player_selected = PLAYER_COUNT - 1;
+        if (!music_control_dbus_init(ctxt, music_player_players[ctxt->config->player_selected].dbus_name))
+          goto error_dbus_bus_get;
+     }
    music_control_mod = m;
 
    e_gadcon_provider_register(&_gc_class);
