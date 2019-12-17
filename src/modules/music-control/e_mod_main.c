@@ -3,9 +3,7 @@
 #define MUSIC_CONTROL_DOMAIN "module.music_control"
 
 static E_Module *music_control_mod = NULL;
-
 static Eina_Bool was_playing_before_lock = EINA_FALSE;
-
 static const char _e_music_control_Name[] = N_("Music controller");
 
 const Player music_player_players[] =
@@ -34,40 +32,34 @@ const Player music_player_players[] =
 Eina_Bool
 _desklock_cb(void *data, int type EINA_UNUSED, void *ev)
 {
-   E_Music_Control_Module_Context *ctxt;
-   E_Event_Desklock *event;
+   E_Music_Control_Module_Context *ctxt = data;
+   E_Event_Desklock *event = ev;
 
-   ctxt = data;
-   event = ev;
-
-   /* Lock with music on. Pause it */
+   // Lock with music on. Pause it
    if (event->on && ctxt->playing)
      {
         media_player2_player_play_pause_call(ctxt->mpris2_player);
         was_playing_before_lock = EINA_TRUE;
         return ECORE_CALLBACK_PASS_ON;
      }
-
-   /* Lock without music. Keep music off as state */
+   // Lock without music. Keep music off as state
    if (event->on && (!ctxt->playing))
      {
         was_playing_before_lock = EINA_FALSE;
         return ECORE_CALLBACK_PASS_ON;
      }
-
-   /* Unlock with music pause and playing before lock. Turn it back on */
+   // Unlock with music pause and playing before lock. Turn it back on
    if ((!event->on) && (!ctxt->playing) && was_playing_before_lock)
      media_player2_player_play_pause_call(ctxt->mpris2_player);
-
    return ECORE_CALLBACK_PASS_ON;
 }
 
 static void
 _music_control(E_Object *obj EINA_UNUSED, const char *params)
 {
-   E_Music_Control_Module_Context *ctxt;
+   E_Music_Control_Module_Context *ctxt = music_control_mod->data;
    EINA_SAFETY_ON_NULL_RETURN(music_control_mod->data);
-   ctxt = music_control_mod->data;
+
    if (!strcmp(params, "play"))
      media_player2_player_play_pause_call(ctxt->mpris2_player);
    else if (!strcmp(params, "next"))
@@ -87,23 +79,20 @@ static void
 _actions_register(E_Music_Control_Module_Context *ctxt)
 {
    E_Action *action;
-   if (ctxt->actions_set) return;
 
+   if (ctxt->actions_set) return;
    action = e_action_add(ACTION_NEXT);
    action->func.go = _music_control;
    e_action_predef_name_set(_e_music_control_Name, ACTION_NEXT_NAME,
                             ACTION_NEXT, "next", NULL, 0);
-
    action = e_action_add(ACTION_PLAY_PAUSE);
    action->func.go = _music_control;
    e_action_predef_name_set(_e_music_control_Name, ACTION_PLAY_PAUSE_NAME,
                             ACTION_PLAY_PAUSE, "play", NULL, 0);
-
    action = e_action_add(ACTION_PREVIOUS);
    action->func.go = _music_control;
    e_action_predef_name_set(_e_music_control_Name, ACTION_PREVIOUS_NAME,
                             ACTION_PREVIOUS, "previous", NULL, 0);
-
    ctxt->actions_set = EINA_TRUE;
 }
 
@@ -117,7 +106,6 @@ _actions_unregister(E_Music_Control_Module_Context *ctxt)
    e_action_del(ACTION_PLAY_PAUSE);
    e_action_predef_name_del(ACTION_PREVIOUS_NAME, ACTION_PREVIOUS);
    e_action_del(ACTION_PREVIOUS);
-
    ctxt->actions_set = EINA_FALSE;
 }
 
@@ -136,15 +124,13 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    inst->gadget = edje_object_add(gc->evas);
    e_theme_edje_object_set(inst->gadget, "base/theme/modules/music-control",
                            "e/modules/music-control/main");
-
    inst->gcc = e_gadcon_client_new(gc, name, id, style, inst->gadget);
    inst->gcc->data = inst;
 
-   evas_object_event_callback_add(inst->gadget, EVAS_CALLBACK_MOUSE_DOWN, music_control_mouse_down_cb, inst);
-
+   evas_object_event_callback_add(inst->gadget, EVAS_CALLBACK_MOUSE_DOWN,
+                                  music_control_mouse_down_cb, inst);
    ctxt->instances = eina_list_append(ctxt->instances, inst);
    _actions_register(ctxt);
-
    return inst->gcc;
 }
 
@@ -155,16 +141,12 @@ _gc_shutdown(E_Gadcon_Client *gcc)
    E_Music_Control_Module_Context *ctxt;
 
    EINA_SAFETY_ON_NULL_RETURN(music_control_mod);
-
    ctxt = music_control_mod->data;
    inst = gcc->data;
-
    evas_object_del(inst->gadget);
    if (inst->popup) music_control_popup_del(inst);
    ctxt->instances = eina_list_remove(ctxt->instances, inst);
-   if (!ctxt->instances)
-     _actions_unregister(ctxt);
-
+   if (!ctxt->instances) _actions_unregister(ctxt);
    free(inst);
 }
 
@@ -201,7 +183,6 @@ _gc_id_new(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
    E_Music_Control_Module_Context *ctxt;
    EINA_SAFETY_ON_NULL_RETURN_VAL(music_control_mod, NULL);
    ctxt = music_control_mod->data;
-
    snprintf(tmpbuf, sizeof(tmpbuf), "music-control.%d",
             eina_list_count(ctxt->instances));
    return tmpbuf;
@@ -209,8 +190,7 @@ _gc_id_new(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
 
 static const E_Gadcon_Client_Class _gc_class =
 {
-   GADCON_CLIENT_CLASS_VERSION, "music-control",
-   {
+   GADCON_CLIENT_CLASS_VERSION, "music-control", {
       _gc_init, _gc_shutdown, _gc_orient, _gc_label, _gc_icon, _gc_id_new, NULL,
       e_gadcon_site_is_not_toolbar
    },
@@ -229,7 +209,6 @@ parse_metadata(E_Music_Control_Module_Context *ctxt, Eina_Value *array)
    E_FREE_FUNC(ctxt->meta_artist, eina_stringshare_del);
    E_FREE_FUNC(ctxt->meta_cover, eina_stringshare_del);
    // DBG("Metadata: %s", eina_value_to_string(array));
-
    for (i = 0; i < eina_value_array_count(array); i++)
      {
         const char *key, *str_val;
@@ -293,14 +272,13 @@ cb_playback_status_get(void *data, Eldbus_Pending *p EINA_UNUSED,
 
    if (error_info)
      {
-        fprintf(stderr, "MUSIC-CONTROL: %s %s", error_info->error, error_info->message);
+        fprintf(stderr, "MUSIC-CONTROL: %s %s",
+                error_info->error, error_info->message);
         return;
      }
 
-   if (!strcmp(value, "Playing"))
-     ctxt->playing = EINA_TRUE;
-   else
-     ctxt->playing = EINA_FALSE;
+   if (!strcmp(value, "Playing")) ctxt->playing = EINA_TRUE;
+   else ctxt->playing = EINA_FALSE;
    music_control_state_update_all(ctxt);
 }
 
@@ -327,10 +305,8 @@ prop_changed(void *data, Eldbus_Proxy *proxy EINA_UNUSED, void *event_info)
         const char *status;
 
         eina_value_get(value, &status);
-        if (!strcmp(status, "Playing"))
-          ctxt->playing = EINA_TRUE;
-        else
-          ctxt->playing = EINA_FALSE;
+        if (!strcmp(status, "Playing")) ctxt->playing = EINA_TRUE;
+        else ctxt->playing = EINA_FALSE;
         music_control_state_update_all(ctxt);
      }
    else if (!strcmp(event->name, "Metadata"))
@@ -347,16 +323,14 @@ cb_name_owner_has(void *data, const Eldbus_Message *msg,
    E_Music_Control_Module_Context *ctxt = data;
    Eina_Bool owner_exists;
 
-   if (eldbus_message_error_get(msg, NULL, NULL))
-     return;
-   if (!eldbus_message_arguments_get(msg, "b", &owner_exists))
-     return;
+   if (eldbus_message_error_get(msg, NULL, NULL)) return;
+   if (!eldbus_message_arguments_get(msg, "b", &owner_exists)) return;
    if (owner_exists)
      {
-        media_player2_player_playback_status_propget(ctxt->mpris2_player,
-                                                  cb_playback_status_get, ctxt);
-        media_player2_player_metadata_propget(ctxt->mpris2_player,
-                                              cb_metadata_get, ctxt);
+        media_player2_player_playback_status_propget
+          (ctxt->mpris2_player, cb_playback_status_get, ctxt);
+        media_player2_player_metadata_propget
+          (ctxt->mpris2_player, cb_metadata_get, ctxt);
      }
 }
 
@@ -368,8 +342,9 @@ music_control_dbus_init(E_Music_Control_Module_Context *ctxt, const char *bus)
 
    ctxt->mrpis2 = mpris_media_player2_proxy_get(ctxt->conn, bus, NULL);
    ctxt->mpris2_player = media_player2_player_proxy_get(ctxt->conn, bus, NULL);
-   eldbus_proxy_event_callback_add(ctxt->mpris2_player, ELDBUS_PROXY_EVENT_PROPERTY_CHANGED,
-                                  prop_changed, ctxt);
+   eldbus_proxy_event_callback_add(ctxt->mpris2_player,
+                                   ELDBUS_PROXY_EVENT_PROPERTY_CHANGED,
+                                   prop_changed, ctxt);
    eldbus_name_owner_has(ctxt->conn, bus, cb_name_owner_has, ctxt);
    return EINA_TRUE;
 }
@@ -384,15 +359,14 @@ e_modapi_init(E_Module *m)
    music_control_mod = m;
 
    ctxt->conf_edd = E_CONFIG_DD_NEW("music_control_config", Music_Control_Config);
-   #undef T
-   #undef D
-   #define T Music_Control_Config
-   #define D ctxt->conf_edd
+#undef T
+#undef D
+#define T Music_Control_Config
+#define D ctxt->conf_edd
    E_CONFIG_VAL(D, T, player_selected, INT);
    E_CONFIG_VAL(D, T, pause_on_desklock, INT);
    ctxt->config = e_config_domain_load(MUSIC_CONTROL_DOMAIN, ctxt->conf_edd);
-   if (!ctxt->config)
-     ctxt->config = calloc(1, sizeof(Music_Control_Config));
+   if (!ctxt->config) ctxt->config = calloc(1, sizeof(Music_Control_Config));
 
    if (ctxt->config->player_selected < 0)
      {
@@ -401,7 +375,8 @@ e_modapi_init(E_Module *m)
      {
         if (ctxt->config->player_selected >= PLAYER_COUNT)
           ctxt->config->player_selected = PLAYER_COUNT - 1;
-        if (!music_control_dbus_init(ctxt, music_player_players[ctxt->config->player_selected].dbus_name))
+        if (!music_control_dbus_init
+            (ctxt, music_player_players[ctxt->config->player_selected].dbus_name))
           goto error_dbus_bus_get;
      }
    music_control_mod = m;
@@ -409,8 +384,8 @@ e_modapi_init(E_Module *m)
    e_gadcon_provider_register(&_gc_class);
 
    if (ctxt->config->pause_on_desklock)
-     desklock_handler = ecore_event_handler_add(E_EVENT_DESKLOCK, _desklock_cb, ctxt);
-
+     desklock_handler = ecore_event_handler_add(E_EVENT_DESKLOCK,
+                                                _desklock_cb, ctxt);
    return ctxt;
 
 error_dbus_bus_get:
@@ -446,7 +421,6 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
 
    free(ctxt);
    music_control_mod = NULL;
-
    return 1;
 }
 
