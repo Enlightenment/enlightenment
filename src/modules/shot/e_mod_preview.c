@@ -68,17 +68,17 @@ _rect_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA
              e_widget_radio_toggle_set(o_radio[z->num], 1);
           }
         else
-           e_widget_radio_toggle_set(o_radio[z->num], 0);
+          e_widget_radio_toggle_set(o_radio[z->num], 0);
      }
 
    EINA_LIST_FOREACH(e_comp->zones, l, z)
      {
         if (screen == -1)
-           evas_object_color_set(o_rectdim[z->num], 0, 0, 0, 0);
+          evas_object_color_set(o_rectdim[z->num], 0, 0, 0, 0);
         else if (screen == (int)z->num)
-           evas_object_color_set(o_rectdim[z->num], 0, 0, 0, 0);
+          evas_object_color_set(o_rectdim[z->num], 0, 0, 0, 0);
         else
-           evas_object_color_set(o_rectdim[z->num], 0, 0, 0, 200);
+          evas_object_color_set(o_rectdim[z->num], 0, 0, 0, 200);
      }
 }
 
@@ -100,14 +100,13 @@ preview_dialog_show(E_Zone *zone, E_Client *ec, const char *params, void *dst,
    elm_win_center(win, 1, 1);
    ecore_evas_name_class_set(e_win_ee_get(win), "E", "_shot_dialog");
 
-   o = elm_layout_add(e_win_evas_win_get(evas));
+   o_bg = o = elm_layout_add(e_win_evas_win_get(evas));
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, o);
-   o_bg = o;
    e_theme_edje_object_set(o, "base/theme/dialog", "e/widgets/dialog/main");
    evas_object_show(o);
 
-   o = e_widget_list_add(evas, 0, 0);
-   o_content = o;
+   o_content = o = e_widget_list_add(evas, 0, 0);
    elm_object_part_content_set(o_bg, "e.swallow.content", o);
    evas_object_show(o);
 
@@ -115,15 +114,12 @@ preview_dialog_show(E_Zone *zone, E_Client *ec, const char *params, void *dst,
    if (w < 220) w = 220;
    h = (w * sh) / sw;
 
-   o = e_widget_aspect_add(evas, w, h);
-   oa = o;
-   o = e_widget_preview_add(evas, w, h);
-   op = o;
+   oa = o = e_widget_aspect_add(evas, w, h);
+   op = o = e_widget_preview_add(evas, w, h);
 
    evas2 = e_widget_preview_evas_get(op);
 
-   o = evas_object_image_filled_add(evas2);
-   o_img = o;
+   o_img = o = evas_object_image_filled_add(evas2);
    evas_object_image_colorspace_set(o, EVAS_COLORSPACE_ARGB8888);
    evas_object_image_alpha_set(o, EINA_FALSE);
    evas_object_image_size_set(o, sw, sh);
@@ -139,11 +135,9 @@ preview_dialog_show(E_Zone *zone, E_Client *ec, const char *params, void *dst,
    e_widget_aspect_child_set(oa, op);
    e_widget_list_object_append(o_content, oa, 0, 0, 0.5);
 
-   o = e_widget_list_add(evas, 1, 1);
-   o_hlist = o;
+   o_hlist = o = e_widget_list_add(evas, 1, 1);
 
-   o = e_widget_framelist_add(evas, _("Quality"), 0);
-   ol = o;
+   ol = o = e_widget_framelist_add(evas, _("Quality"), 0);
 
    rg = e_widget_radio_group_new(&quality);
    o = e_widget_radio_add(evas, _("Perfect"), 100, rg);
@@ -166,12 +160,10 @@ preview_dialog_show(E_Zone *zone, E_Client *ec, const char *params, void *dst,
              E_Zone *z;
              int i;
 
-             o = e_widget_framelist_add(evas, _("Screen"), 0);
-             ol = o;
+             ol = o = e_widget_framelist_add(evas, _("Screen"), 0);
 
              rg = e_widget_radio_group_new(&screen);
-             o = e_widget_radio_add(evas, _("All"), -1, rg);
-             o_radio_all = o;
+             o_radio_all = o = e_widget_radio_add(evas, _("All"), -1, rg);
              evas_object_smart_callback_add(o, "changed",
                                             _screen_change_cb, NULL);
              e_widget_framelist_object_append(ol, o);
@@ -182,16 +174,14 @@ preview_dialog_show(E_Zone *zone, E_Client *ec, const char *params, void *dst,
 
                   if (z->num >= MAXZONES) continue;
                   snprintf(buf, sizeof(buf), "%i", z->num);
-                  o = e_widget_radio_add(evas, buf, z->num, rg);
-                  o_radio[z->num] = o;
+                  o_radio[z->num] = o = e_widget_radio_add(evas, buf, z->num, rg);
                   evas_object_smart_callback_add(o, "changed",
                                                  _screen_change_cb, NULL);
                   e_widget_framelist_object_append(ol, o);
 
-                  o = evas_object_rectangle_add(evas2);
+                  o_rectdim[z->num] = o = evas_object_rectangle_add(evas2);
                   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
                                                  _rect_down_cb, NULL);
-                  o_rectdim[z->num] = o;
                   evas_object_color_set(o, 0, 0, 0, 0);
                   evas_object_show(o);
                   evas_object_geometry_get(o_img, NULL, NULL, &w, &h);
@@ -213,8 +203,7 @@ preview_dialog_show(E_Zone *zone, E_Client *ec, const char *params, void *dst,
 
    ///////////////////////////////////////////////////////////////////////
 
-   o = e_widget_list_add(evas, 1, 1);
-   o_box = o;
+   o_box = o = e_widget_list_add(evas, 1, 1);
    elm_object_part_content_set(o_bg, "e.swallow.buttons", o);
 
    o = e_widget_button_add(evas, _("Save"), NULL, _win_save_cb, win, NULL);
@@ -229,11 +218,8 @@ preview_dialog_show(E_Zone *zone, E_Client *ec, const char *params, void *dst,
    evas_object_size_hint_min_set(o, w, h);
    elm_object_part_content_set(o_bg, "e.swallow.buttons", o);
 
-   o = evas_object_rectangle_add(evas);
-   o_event = o;
-
+   o_event = o = evas_object_rectangle_add(evas);
    evas_object_size_hint_min_get(o_bg, &w, &h);
-   evas_object_resize(o_bg, w, h);
    evas_object_resize(win, w, h);
    evas_object_size_hint_min_set(win, w, h);
    evas_object_size_hint_max_set(win, 99999, 99999);
@@ -254,18 +240,16 @@ preview_dialog_show(E_Zone *zone, E_Client *ec, const char *params, void *dst,
         else quality = atoi(squal);
 
         if (!strcmp(smode, "save")) _win_save_cb(NULL, NULL);
-        else if (!strcmp(smode, "share"))  _win_share_cb(NULL, NULL);
+        else if (!strcmp(smode, "share")) _win_share_cb(NULL, NULL);
      }
    else
      {
         evas_object_show(win);
         e_win_client_icon_set(win, "screenshot");
-
         if (!e_widget_focus_get(o_bg)) e_widget_focus_set(o_box, 1);
         if (ec)
           {
              E_Client *c = e_win_client_get(win);
-
              if (c) evas_object_layer_set(c->frame, ec->layer);
           }
      }
