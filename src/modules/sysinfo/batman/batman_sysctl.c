@@ -177,11 +177,9 @@ _batman_sysctl_stop(Instance *inst)
         if (inst->cfg->esm == E_SYSINFO_MODULE_BATMAN ||
             inst->cfg->esm == E_SYSINFO_MODULE_SYSINFO)
           {
-             bat_num++;
-             if (child == inst)
+             if (child != inst)
                {
-                  bat_num--;
-                  break;
+                  bat_num++;
                }
           }
      }
