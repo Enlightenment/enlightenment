@@ -42,6 +42,9 @@ _batman_udev_stop(Instance *inst)
 {
    Ac_Adapter *ac;
    Battery *bat;
+   Eina_List *l;
+   Instance *child;
+   int bat_num = 0;
 
   /* This is a dummy battery we return here. */
    if (inst->cfg->batman.have_battery != 1)
@@ -53,6 +56,30 @@ _batman_udev_stop(Instance *inst)
      E_FREE_FUNC(inst->cfg->batman.batwatch, eeze_udev_watch_del);
    if (inst->cfg->batman.acwatch)
      E_FREE_FUNC(inst->cfg->batman.acwatch, eeze_udev_watch_del);
+
+   /* If this is NOT the last batman gadget then we return before
+    * freeing everything. This is NOT optimal but is allows us to have
+    * many gadgets and share the same data between multiple batman
+    * gadget instances. The instance will be deleted.
+    */
+
+   EINA_LIST_FOREACH(sysinfo_instances, l, child)
+     {
+        if (inst->cfg->esm == E_SYSINFO_MODULE_BATMAN ||
+            inst->cfg->esm == E_SYSINFO_MODULE_SYSINFO)
+          {
+             if (child != inst)
+               {
+                  bat_num++;
+               }
+          }
+     }
+
+   /* This is not the last batman gadget. */
+   if (bat_num > 0) return;
+
+   /* We have no batman or sysinfo gadgets remaining. We can safely
+      remove these batteries and adapters. */
 
    EINA_LIST_FREE(batman_device_ac_adapters, ac)
      {
