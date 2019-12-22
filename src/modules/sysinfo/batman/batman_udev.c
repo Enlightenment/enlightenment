@@ -43,6 +43,12 @@ _batman_udev_stop(Instance *inst)
    Ac_Adapter *ac;
    Battery *bat;
 
+  /* This is a dummy battery we return here. */
+   if (inst->cfg->batman.have_battery != 1)
+     {
+        return;
+     }
+
    if (inst->cfg->batman.batwatch)
      E_FREE_FUNC(inst->cfg->batman.batwatch, eeze_udev_watch_del);
    if (inst->cfg->batman.acwatch)
