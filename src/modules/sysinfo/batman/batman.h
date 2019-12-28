@@ -99,7 +99,7 @@ EINTERN void _batman_udev_stop(Instance *inst);
 #elif !defined(__OpenBSD__) && !defined(__DragonFly__) && !defined(__FreeBSD__) && !defined(__NetBSD__)
 /* in batman_upower.c */
 EINTERN int _batman_upower_start(Instance *inst);
-EINTERNvoid _batman_upower_stop(void);
+EINTERN void _batman_upower_stop(void);
 /* end batman_upower.c */
 #else
 /* in batman_sysctl.c */

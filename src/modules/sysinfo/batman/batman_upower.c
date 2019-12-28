@@ -350,7 +350,7 @@ _device_removed_cb(void *data, const Eldbus_Message *msg)
           }
      }
    exists = EINA_FALSE;
-   adapters = _batman_ac_adapter_get(path);
+   adapters = _batman_ac_adapter_find(path);
    if (eina_list_count(adapters))
      {
         EINA_LIST_FOREACH(adapters, l, ac)
