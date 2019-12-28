@@ -2,6 +2,7 @@ src = files(
   'e_mod_main.c',
   'e_mod_main.h',
   'e_mod_preview.c',
+  'e_mod_edit.c',
   'e_mod_save.c',
   'e_mod_share.c'
 )
@@ -14,4 +15,5 @@ if get_option(m) == true
              install_dir        : _dir_bin,
              install            : true
             )
+  subdir('data')
 endif

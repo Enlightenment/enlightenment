@@ -1,7 +1,5 @@
 #include "e_mod_main.h"
 
-static int          quality = 90;
-static int          screen = -1;
 static Evas_Object *o_fsel = NULL;
 static E_Dialog    *fsel_dia = NULL;
 
@@ -78,7 +76,10 @@ save_to(const char *file)
         size_t size = 0;
         Evas_Object *img = preview_image_get();
 
-        if (screen == -1)
+        ui_edit_prepare();
+        printf("C: %i %i %ix%i\n", crop.x, crop.y, crop.w, crop.h);
+        if ((crop.x == 0) && (crop.y == 0) &&
+            (crop.w == 0) && (crop.h == 0))
           {
              if (img)
                {
@@ -109,33 +110,23 @@ save_to(const char *file)
                   evas_object_image_size_get(img, &w, &h);
                   if ((stride > 0) && (src_data) && (h > 0))
                     {
-                       Eina_List *l;
-                       E_Zone *z = NULL;
+                       size = crop.w * crop.h * 4;
+                       data = malloc(size);
+                       if (data)
+                         {
+                            int y;
+                            unsigned char *s, *d;
 
-                       EINA_LIST_FOREACH(e_comp->zones, l, z)
-                         {
-                            if (screen == (int)z->num) break;
-                            z = NULL;
-                         }
-                       if (z)
-                         {
-                            size = z->w * z->h * 4;
-                            data = malloc(size);
-                            if (data)
+                            imw = crop.w;
+                            imh = crop.h;
+                            imstride = imw * 4;
+                            d = data;
+                            printf("Cpy dat %p -> %p | %ix%i\n", src_data, data, imw, imh);
+                            for (y = crop.y; y < (crop.y + crop.h); y++)
                               {
-                                 int y;
-                                 unsigned char *s, *d;
-
-                                 imw = z->w;
-                                 imh = z->h;
-                                 imstride = imw * 4;
-                                 d = data;
-                                 for (y = z->y; y < (z->y + z->h); y++)
-                                   {
-                                      s = src_data + (stride * y) + (z->x * 4);
-                                      memcpy(d, s, z->w * 4);
-                                      d += z->w * 4;
-                                   }
+                                 s = src_data + (stride * y) + (crop.x * 4);
+                                 memcpy(d, s, crop.w * 4);
+                                 d += crop.w * 4;
                               }
                          }
                     }

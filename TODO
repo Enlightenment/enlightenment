@@ -151,8 +151,7 @@ TODO:
   * provide fuller status per line (reception and other info?)
   * massively flesh out connman vpn support in the gui
     * vpnmanager + create method support
-* shot: add manual cropping ability
-* shot: add simple free draw, box, line and text on top of shot before save
+* shot: add customizable timeout version of shot action
 * shot: create special save dir for shots (~/.e/...) and keep last N
 * shot: use efm and offer save dir to dnd from
 * bz5: add icon set for actions/states per bt device (pair.unpair, etc.)

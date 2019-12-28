@@ -25,11 +25,12 @@ static char *shot_params;
 static void
 _shot_post(void *buffer EINA_UNUSED, Evas *e EINA_UNUSED, void *event EINA_UNUSED)
 {
-   int w, h;
-   evas_object_geometry_get(snap, NULL, NULL, &w, &h);
+   int x, y, w, h;
+   evas_object_geometry_get(snap, &x, &y, &w, &h);
    evas_event_callback_del(e_comp->evas, EVAS_CALLBACK_RENDER_POST, _shot_post);
    preview_dialog_show(shot_zone, shot_ec, shot_params,
-                       (void *)evas_object_image_data_get(snap, 0), w, h);
+                       (void *)evas_object_image_data_get(snap, 0),
+                       x, y, w, h);
    E_FREE_FUNC(snap, evas_object_del);
    shot_ec = NULL;
    shot_zone = NULL;
@@ -75,7 +76,7 @@ _shot_now(E_Zone *zone, E_Client *ec, const char *params)
      {
         preview_dialog_show(zone, ec, params,
                             (void *)ecore_evas_buffer_pixels_get(e_comp->ee),
-                            w, h);
+                            x, y, w, h);
         return;
      }
    shot_ec = ec;
@@ -101,7 +102,7 @@ _shot_delay(void *data)
 
    return EINA_FALSE;
 }
-
+/*
 static Eina_Bool
 _shot_delay_border(void *data)
 {
@@ -110,7 +111,7 @@ _shot_delay_border(void *data)
 
    return EINA_FALSE;
 }
-
+*/
 static Eina_Bool
 _shot_delay_border_padded(void *data)
 {
@@ -122,14 +123,14 @@ _shot_delay_border_padded(void *data)
 
    return EINA_FALSE;
 }
-
+/*
 static void
 _shot_border(E_Client *ec)
 {
    if (border_timer) ecore_timer_del(border_timer);
    border_timer = ecore_timer_loop_add(1.0, _shot_delay_border, ec);
 }
-
+*/
 static void
 _shot_border_padded(E_Client *ec)
 {
@@ -143,13 +144,13 @@ _shot(E_Zone *zone)
    if (timer) ecore_timer_del(timer);
    timer = ecore_timer_loop_add(1.0, _shot_delay, zone);
 }
-
+/*
 static void
 _e_mod_menu_border_cb(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    _shot_border(data);
 }
-
+*/
 static void
 _e_mod_menu_border_padded_cb(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
@@ -241,10 +242,6 @@ _bd_hook(void *d EINA_UNUSED, E_Client *ec)
 
    mi = e_menu_item_new_relative(m, mi);
    e_menu_item_label_set(mi, _("Take Shot"));
-   e_util_menu_item_theme_icon_set(mi, "screenshot");
-   e_menu_item_callback_set(mi, _e_mod_menu_border_cb, ec);
-   mi = e_menu_item_new_relative(m, mi);
-   e_menu_item_label_set(mi, _("Take Padded Shot"));
    e_util_menu_item_theme_icon_set(mi, "screenshot");
    e_menu_item_callback_set(mi, _e_mod_menu_border_padded_cb, ec);
 }
