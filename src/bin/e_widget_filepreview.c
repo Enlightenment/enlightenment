@@ -49,6 +49,7 @@ struct _E_Widget_Data
    Eina_Bool     is_dir E_BITFIELD;
    Eina_Bool     is_txt E_BITFIELD;
    Eina_Bool     is_font E_BITFIELD;
+   Eina_Bool     is_media E_BITFIELD;
    Eina_Bool     prev_is_fm E_BITFIELD;
    Eina_Bool     prev_is_txt E_BITFIELD;
    Eina_Bool     prev_is_font E_BITFIELD;
@@ -88,7 +89,7 @@ _e_wid_fprev_preview_update(void *data, Evas_Object *obj, void *event_info EINA_
         evas_object_image_size_get(o, &iw, &ih);
         evas_object_del(o);
      }
-   if ((iw > 0) && (ih > 0))
+   if ((iw > 0) && (ih > 0) && wd->is_media)
      {
         e_widget_label_text_set(wd->o_preview_extra, _("Resolution:"));
         snprintf(buf, sizeof(buf), _("%i×%i"), iw, ih);
@@ -222,7 +223,7 @@ _e_wid_fprev_clear_widgets(E_Widget_Data *wd)
    CLRWID(o_preview_preview);
    CLRWID(o_preview_scrollframe);
    CLRWID(o_preview_artwork);
-   wd->is_dir = wd->is_txt = wd->is_font = wd->prev_is_fm = wd->prev_is_video = EINA_FALSE;
+   wd->is_dir = wd->is_txt = wd->is_font = wd->is_media = wd->prev_is_fm = wd->prev_is_video = EINA_FALSE;
    wd->vid_pct = 0;
 
    if (wd->preview_text_file_thread) eio_file_cancel(wd->preview_text_file_thread);
@@ -501,7 +502,7 @@ _e_wid_fprev_preview_fs_widgets(E_Widget_Data *wd, Eina_Bool mount_point)
 }
 
 static void
-_e_wid_fprev_preview_file_widgets(E_Widget_Data *wd, Eina_Bool dir, Eina_Bool txt, Eina_Bool font)
+_e_wid_fprev_preview_file_widgets(E_Widget_Data *wd, Eina_Bool dir, Eina_Bool txt, Eina_Bool font, Eina_Bool media)
 {
    Evas *evas = evas_object_evas_get(wd->obj);
    Evas_Object *o, *win;
@@ -523,10 +524,11 @@ _e_wid_fprev_preview_file_widgets(E_Widget_Data *wd, Eina_Bool dir, Eina_Bool tx
    wd->is_dir = dir;
    wd->is_txt = txt;
    wd->is_font = font;
+   wd->is_media = media;
 
    if (!dir)
      {
-        if (!txt)
+        if (!txt && wd->is_media)
           WIDROW(_("Resolution:"), o_preview_extra, o_preview_extra_entry, 100);
         WIDROW(_("Size:"), o_preview_size, o_preview_size_entry, 100);
      }
@@ -736,6 +738,11 @@ _e_wid_fprev_preview_file(E_Widget_Data *wd)
         else
           e_widget_entry_text_set(wd->o_preview_size_entry, _("Unknown"));
         is_fs = EINA_TRUE;
+        wd->is_media = EINA_TRUE;
+     }
+   else if (wd->mime && (evas_object_image_extension_can_load_get(wd->path)))
+     {
+        wd->is_media = EINA_TRUE;
      }
    if (is_fs) return;
 
@@ -779,7 +786,7 @@ _e_wid_fprev_preview_file(E_Widget_Data *wd)
                wd->is_font = !strcmp(wd->mime, "application/x-cisco-vpn-settings");
           }
      }
-   _e_wid_fprev_preview_file_widgets(wd, wd->is_dir, wd->is_txt, wd->is_font);
+   _e_wid_fprev_preview_file_widgets(wd, wd->is_dir, wd->is_txt, wd->is_font, wd->is_media);
 
    _e_wid_fprev_preview_reset(wd);
    _e_wid_fprev_preview_fm(wd);
@@ -1342,7 +1349,7 @@ e_widget_filepreview_filemode_force(Evas_Object *obj)
    if (!obj) return;
    wd = e_widget_data_get(obj);
    if (!wd) return;
-   _e_wid_fprev_preview_file_widgets(wd, 0, 0, 0);
+   _e_wid_fprev_preview_file_widgets(wd, 0, 0, 0, 0);
 }
 
 E_API void
