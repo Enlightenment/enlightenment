@@ -1449,6 +1449,7 @@ crop_move(int x, int y)
 // zoom handling
 #define ZOOM_COUNT 16
 #define ZOOM_DEFAULT 8
+#define ZOOM_NONE 8
 static int zoom = ZOOM_DEFAULT;
 static int zooms[] = { 125, 143, 167, 200, 250, 333, 500, 750,
                        1000,
@@ -1477,7 +1478,7 @@ _cb_tool_zoom_plus(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *i
 static void
 _cb_tool_zoom_reset(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *info EINA_UNUSED)
 {
-   zoom_set(3);
+   zoom_set(ZOOM_NONE);
 }
 
 static void
