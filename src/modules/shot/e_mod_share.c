@@ -1,6 +1,5 @@
 #include "e_mod_main.h"
 
-static Evas_Object      *win = NULL;
 static E_Confirm_Dialog *cd = NULL;
 static Ecore_Exe        *img_write_exe = NULL;
 static Evas_Object      *o_label = NULL;

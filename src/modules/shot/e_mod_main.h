@@ -33,5 +33,10 @@ Evas_Object *ui_edit(Evas_Object *window, Evas_Object *o_bg, E_Zone *zone,
 void         ui_edit_prepare(void);
 void         ui_edit_crop_screen_set(int x, int y, int w, int h);
 
+void         win_delay(void);
+void         delay_abort(void);
+
+
+extern Evas_Object *win;
 extern int quality;
 extern Eina_Rectangle crop;

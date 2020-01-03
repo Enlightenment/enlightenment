@@ -4,7 +4,8 @@ src = files(
   'e_mod_preview.c',
   'e_mod_edit.c',
   'e_mod_save.c',
-  'e_mod_share.c'
+  'e_mod_share.c',
+  'e_mod_delay.c'
 )
 
 if get_option(m) == true

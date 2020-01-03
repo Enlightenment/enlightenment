@@ -12,15 +12,50 @@
 
 E_Module *shot_module = NULL;
 
-static E_Action *border_act = NULL, *act = NULL;
+static E_Action *border_act = NULL, *delay_act = NULL, *act = NULL;
 static E_Int_Menu_Augmentation *maug = NULL;
-static Ecore_Timer *timer, *border_timer = NULL;
+static Ecore_Timer *timer = NULL, *border_timer = NULL;
 static Evas_Object *snap = NULL;
 static E_Client_Menu_Hook *border_hook = NULL;
+static E_Object_Delfn *delfn_client = NULL;
+static E_Object_Delfn *delfn_zone = NULL;
 
 static E_Client *shot_ec = NULL;
 static E_Zone *shot_zone = NULL;
 static char *shot_params;
+
+static void
+_cb_client_del(void *data EINA_UNUSED, void *obj EINA_UNUSED)
+{
+   if (delfn_client)
+     {
+        e_object_delfn_del(E_OBJECT(shot_ec), delfn_client);
+        delfn_client = NULL;
+     }
+   if (delfn_zone)
+     {
+        e_object_delfn_del(E_OBJECT(shot_zone), delfn_zone);
+        delfn_zone = NULL;
+     }
+   if (timer)
+     {
+        ecore_timer_del(timer);
+        timer = NULL;
+     }
+   if (border_timer)
+     {
+        ecore_timer_del(border_timer);
+        border_timer = NULL;
+     }
+   E_FREE_FUNC(snap, evas_object_del);
+   E_FREE(shot_params);
+}
+
+static void
+_cb_zone_del(void *data, void *obj)
+{
+   _cb_client_del(data, obj);
+}
 
 static void
 _shot_post(void *buffer EINA_UNUSED, Evas *e EINA_UNUSED, void *event EINA_UNUSED)
@@ -32,6 +67,16 @@ _shot_post(void *buffer EINA_UNUSED, Evas *e EINA_UNUSED, void *event EINA_UNUSE
                        (void *)evas_object_image_data_get(snap, 0),
                        x, y, w, h);
    E_FREE_FUNC(snap, evas_object_del);
+   if (delfn_client)
+     {
+        e_object_delfn_del(E_OBJECT(shot_ec), delfn_client);
+        delfn_client = NULL;
+     }
+   if (delfn_zone)
+     {
+        e_object_delfn_del(E_OBJECT(shot_zone), delfn_zone);
+        delfn_zone = NULL;
+     }
    shot_ec = NULL;
    shot_zone = NULL;
    E_FREE(shot_params);
@@ -77,6 +122,16 @@ _shot_now(E_Zone *zone, E_Client *ec, const char *params)
         preview_dialog_show(zone, ec, params,
                             (void *)ecore_evas_buffer_pixels_get(e_comp->ee),
                             x, y, w, h);
+        if (delfn_client)
+          {
+             e_object_delfn_del(E_OBJECT(ec), delfn_client);
+             delfn_client = NULL;
+          }
+        if (delfn_zone)
+          {
+             e_object_delfn_del(E_OBJECT(zone), delfn_zone);
+             delfn_zone = NULL;
+          }
         return;
      }
    shot_ec = ec;
@@ -99,7 +154,6 @@ _shot_delay(void *data)
 {
    timer = NULL;
    _shot_now(data, NULL, NULL);
-
    return EINA_FALSE;
 }
 /*
@@ -118,9 +172,8 @@ _shot_delay_border_padded(void *data)
    char buf[128];
 
    border_timer = NULL;
-   snprintf(buf, sizeof(buf), "pad %i", (int)(64 * e_scale));
+   snprintf(buf, sizeof(buf), "pad %i", (int)(ELM_SCALE_SIZE(64)));
    _shot_now(NULL, data, buf);
-
    return EINA_FALSE;
 }
 /*
@@ -136,6 +189,7 @@ _shot_border_padded(E_Client *ec)
 {
    if (border_timer) ecore_timer_del(border_timer);
    border_timer = ecore_timer_loop_add(1.0, _shot_delay_border_padded, ec);
+   delfn_client = e_object_delfn_add(E_OBJECT(ec), _cb_client_del, NULL);
 }
 
 static void
@@ -143,6 +197,7 @@ _shot(E_Zone *zone)
 {
    if (timer) ecore_timer_del(timer);
    timer = ecore_timer_loop_add(1.0, _shot_delay, zone);
+   delfn_zone = e_object_delfn_add(E_OBJECT(zone), _cb_zone_del, NULL);
 }
 /*
 static void
@@ -193,6 +248,40 @@ _delayed_shot(void *data)
    e_object_unref(E_OBJECT(ds->zone));
    free(ds->params);
    free(ds);
+}
+
+static void
+_delayed_shot_timer(void *data)
+{
+   timer = NULL;
+   _delayed_shot(data);
+   return EINA_FALSE;
+}
+
+static void
+_e_mod_action_delay_cb(E_Object *obj, const char *params)
+{
+   E_Zone *zone = NULL;
+   Delayed_Shot *ds;
+   double delay = 0.0;
+
+   if (obj)
+     {
+        if (obj->type == E_COMP_TYPE) zone = e_zone_current_get();
+        else if (obj->type == E_ZONE_TYPE) zone = ((void *)obj);
+        else zone = e_zone_current_get();
+     }
+   if (!zone) zone = e_zone_current_get();
+   if (!zone) return;
+   E_FREE_FUNC(timer, ecore_timer_del);
+   ds = E_NEW(Delayed_Shot, 1);
+   e_object_ref(E_OBJECT(zone));
+   ds->zone = zone;
+   ds->params = params ? strdup(params) : NULL;
+   if (params) delay = (double)atoi(params) / 1000.0;
+   if (timer) ecore_timer_del(timer);
+   timer = ecore_timer_loop_add(delay, _delayed_shot_timer, ds);
+   delfn_zone = e_object_delfn_add(E_OBJECT(zone), _cb_zone_del, NULL);
 }
 
 static void
@@ -283,6 +372,14 @@ e_modapi_init(E_Module *m)
                                  "shot", NULL,
                                  "syntax: [share|save [perfect|high|medium|low|QUALITY current|all|SCREEN-NUM]", 1);
      }
+   delay_act = e_action_add("shot_delay");
+   if (delay_act)
+     {
+        delay_act->func.go = _e_mod_action_delay_cb;
+        e_action_predef_name_set(N_("Screen"), N_("Take Screenshot with Delay"),
+                                 "shot_delay", NULL,
+                                 "syntax: delay_ms (e.g. 3000)", 1);
+     }
    border_act = e_action_add("border_shot");
    if (border_act)
      {
@@ -304,11 +401,29 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    share_abort();
    save_abort();
    preview_abort();
+   delay_abort();
+   if (delfn_client)
+     {
+        e_object_delfn_del(E_OBJECT(shot_ec), delfn_client);
+        delfn_client = NULL;
+     }
+   if (delfn_zone)
+     {
+        e_object_delfn_del(E_OBJECT(shot_zone), delfn_zone);
+        delfn_zone = NULL;
+     }
    if (timer)
      {
         ecore_timer_del(timer);
         timer = NULL;
      }
+   if (border_timer)
+     {
+        ecore_timer_del(border_timer);
+        border_timer = NULL;
+     }
+   E_FREE_FUNC(snap, evas_object_del);
+   E_FREE(shot_params);
    if (maug)
      {
         e_int_menus_menu_augmentation_del("main/2", maug);

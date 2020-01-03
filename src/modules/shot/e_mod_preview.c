@@ -1,7 +1,8 @@
 #include "e_mod_main.h"
 
-static Evas_Object *win = NULL;
 static Evas_Object *o_img = NULL;
+
+Evas_Object *win = NULL;
 int          quality = 90;
 Eina_Rectangle crop = { 0, 0, 0, 0 };
 
@@ -15,6 +16,13 @@ static void
 _win_share_cb(void *d EINA_UNUSED, void *d2 EINA_UNUSED)
 {
    share_confirm();
+}
+
+static void
+_win_delay_cb(void *d EINA_UNUSED, void *d2 EINA_UNUSED)
+{
+   E_FREE_FUNC(win, evas_object_del);
+   win_delay();
 }
 
 static void
@@ -45,12 +53,11 @@ preview_dialog_show(E_Zone *zone, E_Client *ec, const char *params, void *dst,
    int w, h;
    char smode[128], squal[128], sscreen[128];
 
-   win = elm_win_add(NULL, NULL, ELM_WIN_BASIC);
-
-   evas = evas_object_evas_get(win);
-   elm_win_title_set(win, _("Select action to take with screenshot"));
-   evas_object_event_callback_add(win, EVAS_CALLBACK_DEL, _win_delete_cb, NULL);
-   ecore_evas_name_class_set(e_win_ee_get(win), "E", "_shot_dialog");
+   win = o = elm_win_add(NULL, NULL, ELM_WIN_BASIC);
+   evas = evas_object_evas_get(o);
+   elm_win_title_set(o, _("Select action to take with screenshot"));
+   evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _win_delete_cb, NULL);
+   ecore_evas_name_class_set(e_win_ee_get(o), "E", "_shot_dialog");
 
    o_bg = o = elm_layout_add(e_win_evas_win_get(evas));
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -81,6 +88,11 @@ preview_dialog_show(E_Zone *zone, E_Client *ec, const char *params, void *dst,
    e_widget_list_object_append(o_box, o, 1, 0, 0.5);
    o = e_widget_button_add(evas, _("Share"), NULL, _win_share_cb, win, NULL);
    e_widget_list_object_append(o_box, o, 1, 0, 0.5);
+   if (!ec)
+     {
+        o = e_widget_button_add(evas, _("Delay"), NULL, _win_delay_cb, win, NULL);
+        e_widget_list_object_append(o_box, o, 1, 0, 0.5);
+     }
    o = e_widget_button_add(evas, _("Cancel"), NULL, _win_cancel_cb, win, NULL);
    e_widget_list_object_append(o_box, o, 1, 0, 0.5);
 

@@ -2,7 +2,7 @@
 
 //////////////////////////////////////////////////////////////////////////////
 // globals
-static Evas_Object *win, *o_img, *o_rend, *win2, *o_events, *o_scroll;
+static Evas_Object *o_img, *o_rend, *win2, *o_events, *o_scroll;
 static Evas_Object *o_col1, *o_col2;
 static int img_w, img_h,  edit_w, edit_h;
 
@@ -1361,10 +1361,10 @@ try_win:
                   if (point_in_area(x, y, crop_window_areas[i]))
                     {
                        crop_area = crop_window_areas[i];
-                       crop_area.x -= window_pad;
-                       crop_area.y -= window_pad;
-                       crop_area.w += window_pad * 2;
-                       crop_area.h += window_pad * 2;
+                       crop_area.x -= ELM_SCALE_SIZE(window_pad);
+                       crop_area.y -= ELM_SCALE_SIZE(window_pad);
+                       crop_area.w += ELM_SCALE_SIZE(window_pad) * 2;
+                       crop_area.h += ELM_SCALE_SIZE(window_pad) * 2;
                        E_RECTS_CLIP_TO_RECT(crop_area.x, crop_area.y,
                                             crop_area.w, crop_area.h,
                                             0, 0, img_w, img_h);
