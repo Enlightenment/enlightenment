@@ -1904,9 +1904,9 @@ ui_edit(Evas_Object *window, Evas_Object *o_bg, E_Zone *zone EINA_UNUSED,
 
    _tool_info_count = 0;
    radg
-     = ui_tool_add(win, tb2, NULL, 0, 0, "crop",             "Select crop area",      40, NULL,            TOOL_CROP);
-   o = ui_tool_add(win, tb2, radg, 1, 0, "modify",           "Modify objects",        40, NULL,            TOOL_MODIFY);
-   o = ui_tool_add(win, tb2, radg, 2, 0, "delete",           "Delete objects",        40, NULL,            TOOL_DELETE);
+     = ui_tool_add(win, tb2, NULL, 0, 0, "crop",               "Select crop area",      40, NULL,             TOOL_CROP);
+   o = ui_tool_add(win, tb2, radg, 1, 0, "modify",             "Modify objects",        40, NULL,             TOOL_MODIFY);
+   o = ui_tool_add(win, tb2, radg, 2, 0, "delete",             "Delete objects",        40, NULL,             TOOL_DELETE);
 
    o = elm_separator_add(win);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
@@ -1915,25 +1915,30 @@ ui_edit(Evas_Object *window, Evas_Object *o_bg, E_Zone *zone EINA_UNUSED,
    elm_table_pack(tb2, o, 0, 1, 4, 1);
    evas_object_show(o);
 
-   o = ui_tool_add(win, tb2, radg, 0, 2, "line-arrow",       "Single arrow line",     40, "arrow",         TOOL_LINE);
-   o = ui_tool_add(win, tb2, radg, 1, 2, "line-arrow2",      "Double arrow line",     40, "arrow2",        TOOL_LINE);
-   o = ui_tool_add(win, tb2, radg, 2, 2, "line-arrow0",      "Plain line",            40, "arrow0",        TOOL_LINE);
-   o = ui_tool_add(win, tb2, radg, 3, 2, "box-solid",        "Solid box",             40, "solid",         TOOL_BOX);
+   o = ui_tool_add(win, tb2, radg, 0, 2, "line-arrow",         "Single arrow line",     40, "arrow",          TOOL_LINE);
+   o = ui_tool_add(win, tb2, radg, 1, 2, "line-arrow2",        "Double arrow line",     40, "arrow2",         TOOL_LINE);
+   o = ui_tool_add(win, tb2, radg, 2, 2, "line-arrow0",        "Plain line",            40, "arrow0",         TOOL_LINE);
+   o = ui_tool_add(win, tb2, radg, 3, 2, "box-solid",          "Solid box",             40, "solid",          TOOL_BOX);
 
-   o = ui_tool_add(win, tb2, radg, 0, 3, "box-malloc",       "Malloc",                40, "malloc",        TOOL_BOX);
-   o = ui_tool_add(win, tb2, radg, 1, 3, "box-demalloc",     "Malloc (evil)",         40, "demalloc",      TOOL_BOX);
-   o = ui_tool_add(win, tb2, radg, 2, 3, "box-finger",       "Pointing finger",       40, "finger",        TOOL_BOX);
-   o = ui_tool_add(win, tb2, radg, 3, 3, "box-logo",         "Enlightenment logo",    40, "logo",          TOOL_BOX);
+   o = ui_tool_add(win, tb2, radg, 0, 3, "box-malloc",         "Malloc",                40, "malloc",         TOOL_BOX);
+   o = ui_tool_add(win, tb2, radg, 1, 3, "box-demalloc",       "Malloc (evil)",         40, "demalloc",       TOOL_BOX);
+   o = ui_tool_add(win, tb2, radg, 2, 3, "box-finger",         "Pointing finger",       40, "finger",         TOOL_BOX);
+   o = ui_tool_add(win, tb2, radg, 3, 3, "box-logo",           "Enlightenment logo",    40, "logo",           TOOL_BOX);
 
-   o = ui_tool_add(win, tb2, radg, 0, 4, "box-text-empty",   "Plain text",            40, "text/empty",    TOOL_BOX);
-   o = ui_tool_add(win, tb2, radg, 1, 4, "box-text-plain",   "Text box",              40, "text/plain",    TOOL_BOX);
-   o = ui_tool_add(win, tb2, radg, 2, 4, "box-text-cloud",   "Text thought bubble",   40, "text/cloud",    TOOL_BOX);
-   o = ui_tool_add(win, tb2, radg, 3, 4, "box-text-cloud2",  "Text thought bubble 2", 40, "text/cloud2",   TOOL_BOX);
+   o = ui_tool_add(win, tb2, radg, 0, 4, "box-foot",           "Foot",                  40, "foot",           TOOL_BOX);
+   o = ui_tool_add(win, tb2, radg, 1, 4, "box-walk",           "Silly walk",            40, "walk",           TOOL_BOX);
+   o = ui_tool_add(win, tb2, radg, 2, 4, "box-outline-box",    "Box outline",           40, "outline-box",    TOOL_BOX);
+   o = ui_tool_add(win, tb2, radg, 3, 4, "box-outline-circle", "Circle outline",        40, "outline-circle", TOOL_BOX);
 
-   o = ui_tool_add(win, tb2, radg, 0, 5, "box-text-speech",  "Speech bubble",         40, "text/speech",   TOOL_BOX);
-   o = ui_tool_add(win, tb2, radg, 1, 5, "box-text-speech2", "Speech bubble 2",       40, "text/speech2",  TOOL_BOX);
-   o = ui_tool_add(win, tb2, radg, 2, 5, "box-text-kaboom",  "Kaboom splat",          40, "text/kaboom",   TOOL_BOX);
-   o = ui_tool_add(win, tb2, radg, 3, 5, "box-text-kapow",   "Pow explode",           40, "text/kapow",    TOOL_BOX);
+   o = ui_tool_add(win, tb2, radg, 0, 5, "box-text-empty",     "Plain text",            40, "text/empty",     TOOL_BOX);
+   o = ui_tool_add(win, tb2, radg, 1, 5, "box-text-plain",     "Text box",              40, "text/plain",     TOOL_BOX);
+   o = ui_tool_add(win, tb2, radg, 2, 5, "box-text-cloud",     "Text thought bubble",   40, "text/cloud",     TOOL_BOX);
+   o = ui_tool_add(win, tb2, radg, 3, 5, "box-text-cloud2",    "Text thought bubble 2", 40, "text/cloud2",    TOOL_BOX);
+
+   o = ui_tool_add(win, tb2, radg, 0, 6, "box-text-speech",    "Speech bubble",         40, "text/speech",    TOOL_BOX);
+   o = ui_tool_add(win, tb2, radg, 1, 6, "box-text-speech2",   "Speech bubble 2",       40, "text/speech2",   TOOL_BOX);
+   o = ui_tool_add(win, tb2, radg, 2, 6, "box-text-kaboom",    "Kaboom splat",          40, "text/kaboom",    TOOL_BOX);
+   o = ui_tool_add(win, tb2, radg, 3, 6, "box-text-kapow",     "Pow explode",           40, "text/kapow",     TOOL_BOX);
 
    _cb_tool_changed(NULL, radg, NULL);
 

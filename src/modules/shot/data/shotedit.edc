@@ -38,6 +38,10 @@ collections {
   TOOL_ICON("box-demalloc")
   TOOL_ICON("box-finger")
   TOOL_ICON("box-logo")
+  TOOL_ICON("box-foot")
+  TOOL_ICON("box-walk")
+  TOOL_ICON("box-outline-box")
+  TOOL_ICON("box-outline-circle")
   TOOL_ICON("box-text-empty")
   TOOL_ICON("box-text-plain")
   TOOL_ICON("box-text-cloud")
@@ -523,6 +527,102 @@ collections {
           min: 50 60;
           color: 0 0 0 128;
           image.normal: "shotedit-e-logo-shadow.png";
+        }
+      }
+    }
+  }
+  group { name: "e/modules/shot/item/box/foot";
+    images.image: "shotedit-foot.png" COMP;
+    parts {
+      part { name: "box";
+        description { state: "default" 0.0;
+          image.normal: "shotedit-foot.png";
+          min: 45 55;
+        }
+      }
+    }
+  }
+  group { name: "e/modules/shot/item/box/foot/shadow";
+    parts {
+    }
+  }
+  group { name: "e/modules/shot/item/box/walk";
+    images.image: "shotedit-walk.png" COMP;
+    parts {
+      part { name: "box";
+        description { state: "default" 0.0;
+          min: 40 40;
+          color: 255 255 255 255;
+          color_class: "color";
+          image.normal: "shotedit-walk.png";
+        }
+      }
+    }
+  }
+  group { name: "e/modules/shot/item/box/walk/shadow";
+    data.item: "offset_x" "0";
+    data.item: "offset_y" "10";
+    images.image: "shotedit-walk-shadow.png" COMP;
+    parts {
+      part { name: "shadow";
+        description { state: "default" 0.0;
+          min: 50 50;
+          color: 0 0 0 128;
+          image.normal: "shotedit-walk-shadow.png";
+        }
+      }
+    }
+  }
+  group { name: "e/modules/shot/item/box/outline-box";
+    images.image: "shotedit-outline-box.png" COMP;
+    parts {
+      part { name: "box";
+        description { state: "default" 0.0;
+          min: 40 40;
+          color: 255 255 255 255;
+          color_class: "color";
+          image.normal: "shotedit-outline-box.png";
+        }
+      }
+    }
+  }
+  group { name: "e/modules/shot/item/box/outline-box/shadow";
+    data.item: "offset_x" "0";
+    data.item: "offset_y" "10";
+    images.image: "shotedit-outline-box-shadow.png" COMP;
+    parts {
+      part { name: "shadow";
+        description { state: "default" 0.0;
+          min: 50 50;
+          color: 0 0 0 128;
+          image.normal: "shotedit-outline-box-shadow.png";
+        }
+      }
+    }
+  }
+  group { name: "e/modules/shot/item/box/outline-circle";
+    images.image: "shotedit-outline-circle.png" COMP;
+    parts {
+      part { name: "box";
+        description { state: "default" 0.0;
+          min: 40 40;
+          color: 255 255 255 255;
+          color_class: "color";
+          image.normal: "shotedit-outline-circle.png";
+        }
+      }
+    }
+  }
+  group { name: "e/modules/shot/item/box/outline-circle/shadow";
+    data.item: "offset_x" "0";
+    data.item: "offset_y" "10";
+    images.image: "shotedit-outline-circle-shadow.png" COMP;
+    parts {
+      part { name: "shadow";
+        description { state: "default" 0.0;
+          min: 50 50;
+          color: 0 0 0 128;
+          image.normal: "shotedit-outline-circle-shadow.png";
         }
       }
     }
