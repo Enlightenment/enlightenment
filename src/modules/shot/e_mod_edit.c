@@ -1447,9 +1447,12 @@ crop_move(int x, int y)
 
 //////////////////////////////////////////////////////////////////////////////
 // zoom handling
-static int zoom = 1;
-#define ZOOM_COUNT 7
-static int zooms[] = { 125, 250, 500, 1000, 2000, 4000, 8000 };
+#define ZOOM_COUNT 16
+#define ZOOM_DEFAULT 8
+static int zoom = ZOOM_DEFAULT;
+static int zooms[] = { 125, 143, 167, 200, 250, 333, 500, 750,
+                       1000,
+                       2000, 3000, 4000, 5000, 6000, 7000, 8000 };
 
 static void
 zoom_set(int slot)
@@ -1679,7 +1682,7 @@ _cb_win_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
    crop_area.x = crop_area.y = crop_area.w = crop_area.h = 0;
    crop_area_changed = EINA_FALSE;
    crop_mouse_pressed = EINA_FALSE;
-   zoom = 1;
+   zoom = ZOOM_DEFAULT;
    modify_down = EINA_FALSE;
    win = NULL;
 }
@@ -1865,6 +1868,7 @@ ui_edit(Evas_Object *window, Evas_Object *o_bg, E_Zone *zone EINA_UNUSED,
    elm_table_pack(tb, o, 0, 0, 10, 10);
 
    sc = o = elm_scroller_add(win);
+   elm_scroller_gravity_set(o, 0.5, 0.5);
    elm_object_focus_next_object_set(o, o, ELM_FOCUS_PREVIOUS);
    elm_object_focus_next_object_set(o, o, ELM_FOCUS_NEXT);
    elm_object_focus_next_object_set(o, o, ELM_FOCUS_UP);
