@@ -250,7 +250,7 @@ _delayed_shot(void *data)
    free(ds);
 }
 
-static void
+static Eina_Bool
 _delayed_shot_timer(void *data)
 {
    timer = NULL;
