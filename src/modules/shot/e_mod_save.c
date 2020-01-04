@@ -192,11 +192,7 @@ save_show(void)
             e_module_dir_get(shot_module));
    snprintf(path2, sizeof(path2), "%s/fileman/favorites/shots.desktop",
             e_user_dir_get());
-   if (!ecore_file_exists(path2))
-     {
-        printf("CP [%s]->[%s]\n", path, path2);
-        ecore_file_cp(path, path2);
-     }
+   if (!ecore_file_exists(path2)) ecore_file_cp(path, path2);
    a = e_action_find("fileman");
    if (a)
      {
