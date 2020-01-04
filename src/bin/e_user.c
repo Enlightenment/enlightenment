@@ -131,6 +131,8 @@ e_user_icon_dir_get(void)
 static const char *_e_user_dir = NULL;
 static size_t _e_user_dir_len = 0;
 
+E_API void         e_util_env_set(const char *var, const char *val);
+
 /**
  * Return ~/.e/e
  */
@@ -141,36 +143,32 @@ e_user_dir_get(void)
 
    if (!dir[0])
      {
-        char *d;
-        
-        if ((d = getenv("E_HOME")))
-          {
-             snprintf(dir, sizeof(dir), "%s/e", d);
-             _e_user_dir_len = strlen(dir);
-          }
+        char *d = getenv("E_HOME");
+
+        if (d)
+          snprintf(dir, sizeof(dir), "E_HOME_DIR=%s/e", d);
         else
           {
-#ifdef DOXDG             
+#ifdef DOXDG
              if ((d = getenv("XDG_CONFIG_HOME")))
-               {
-                  snprintf(dir, sizeof(dir), "%s/e", d);
-                  _e_user_dir_len = strlen(dir);
-               }
+               snprintf(dir, sizeof(dir), "E_HOME_DIR=%s/e", d);
              else
-#endif               
+#endif
                {
-#ifdef DOXDG             
-                  _e_user_dir_len = e_user_homedir_concat(dir, sizeof(dir),
-                                                          ".config/e");
-#else                  
-                  _e_user_dir_len = e_user_homedir_concat(dir, sizeof(dir),
-                                                          ".e/e");
-#endif                  
+                  char buf[PATH_MAX - 128];
+#ifdef DOXDG
+                  e_user_homedir_concat(buf, sizeof(buf), ".config/e");
+#else
+                  e_user_homedir_concat(buf, sizeof(buf), ".e/e");
+#endif
+                  snprintf(dir, sizeof(dir), "E_HOME_DIR=%s", buf);
                }
           }
-        _e_user_dir = dir;
+        _e_user_dir = dir + strlen("E_HOME_DIR=");
+        _e_user_dir_len = strlen(_e_user_dir);
+        putenv(dir);
      }
-   return dir;
+   return _e_user_dir;
 }
 
 /**
