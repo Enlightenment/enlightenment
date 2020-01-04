@@ -1,11 +1,5 @@
 #include "e_mod_main.h"
 
-static Evas_Object *o_fsel = NULL;
-static E_Dialog    *fsel_dia = NULL;
-
-static void _file_select_ok_cb(void *data EINA_UNUSED, E_Dialog *dia);
-static void _file_select_cancel_cb(void *data EINA_UNUSED, E_Dialog *dia);
-
 typedef struct
 {
    char *path, *outfile;
@@ -174,91 +168,44 @@ save_to(const char *file)
    return;
 }
 
-static void
-_file_select_ok_cb(void *data EINA_UNUSED, E_Dialog *dia)
-{
-   const char *file;
-
-   dia = fsel_dia;
-   file = e_widget_fsel_selection_path_get(o_fsel);
-   if ((!file) || (!file[0]) ||
-       ((!eina_str_has_extension(file, ".jpg")) &&
-        (!eina_str_has_extension(file, ".png"))))
-     {
-        e_util_dialog_show
-        (_("Error - Unknown format"),
-            _("File has an unspecified extension.<ps/>"
-              "Please use '.jpg' or '.png' extensions<ps/>"
-              "only as other formats are not<ps/>"
-              "supported currently."));
-        return;
-     }
-   save_to(file);
-   if (dia) e_util_defer_object_del(E_OBJECT(dia));
-   preview_abort();
-   fsel_dia = NULL;
-}
-
-static void
-_file_select_cancel_cb(void *data EINA_UNUSED, E_Dialog *dia)
-{
-   if (dia) e_util_defer_object_del(E_OBJECT(dia));
-   preview_abort();
-   fsel_dia = NULL;
-}
-
-static void
-_file_select_del_cb(void *d EINA_UNUSED)
-{
-   preview_abort();
-   fsel_dia = NULL;
-}
-
 void
-save_dialog_show(void)
+save_show(void)
 {
-   E_Dialog *dia;
-   Evas_Object *o;
-   Evas_Coord mw, mh;
+   char path[PATH_MAX + 512];
+   char path2[PATH_MAX + 512];
+   char buf[256];
+   const char *dirs[] = { "shots", NULL };
    time_t tt;
    struct tm *tm;
-   char buf[PATH_MAX];
+   E_Action *a;
 
+   ecore_file_mksubdirs(e_user_dir_get(), dirs);
    time(&tt);
    tm = localtime(&tt);
    if (quality == 100)
      strftime(buf, sizeof(buf), "shot-%Y-%m-%d_%H-%M-%S.png", tm);
    else
      strftime(buf, sizeof(buf), "shot-%Y-%m-%d_%H-%M-%S.jpg", tm);
-   fsel_dia = dia = e_dialog_new(NULL, "E", "_e_shot_fsel");
-   e_dialog_resizable_set(dia, EINA_TRUE);
-   e_dialog_title_set(dia, _("Select screenshot save location"));
-   o = e_widget_fsel_add(evas_object_evas_get(dia->win), "desktop", "/", 
-                         buf, NULL, NULL, NULL, NULL, NULL, 1);
-   e_object_del_attach_func_set(E_OBJECT(dia), _file_select_del_cb);
-   e_widget_fsel_window_set(o, dia->win);
-   o_fsel = o;
-   evas_object_show(o);
-   e_widget_size_min_get(o, &mw, &mh);
-   e_dialog_content_set(dia, o, mw, mh);
-   e_dialog_button_add(dia, _("Save"), NULL,
-                       _file_select_ok_cb, NULL);
-   e_dialog_button_add(dia, _("Cancel"), NULL,
-                       _file_select_cancel_cb, NULL);
-   elm_win_center(dia->win, 1, 1);
-   o = evas_object_rectangle_add(evas_object_evas_get(dia->win));
-   e_dialog_show(dia);
-}
-
-Eina_Bool
-save_have(void)
-{
-   if (fsel_dia) return EINA_TRUE;
-   return EINA_FALSE;
-}
-
-void
-save_abort(void)
-{
-   E_FREE_FUNC(fsel_dia, e_object_del);
+   e_user_dir_snprintf(path, sizeof(path), "shots/%s", buf);
+   save_to(path);
+   snprintf(path, sizeof(path), "%s/shots.desktop",
+            e_module_dir_get(shot_module));
+   snprintf(path2, sizeof(path2), "%s/fileman/favorites/shots.desktop",
+            e_user_dir_get());
+   if (!ecore_file_exists(path2))
+     {
+        printf("CP [%s]->[%s]\n", path, path2);
+        ecore_file_cp(path, path2);
+     }
+   a = e_action_find("fileman");
+   if (a)
+     {
+        a->func.go(NULL, "$E_HOME_DIR/shots");
+     }
+   else
+     e_util_dialog_show
+       (_("Error - No Filemanager"),
+        _("No filemanager action and/or module was found.<br>"
+          "Cannot show the location of your screenshots."));
+   preview_abort();
 }

@@ -23,9 +23,7 @@ Eina_Bool    preview_have            (void);
 void         preview_abort           (void);
 Evas_Object *preview_image_get       (void);
 void         save_to                 (const char *file);
-void         save_dialog_show        (void);
-Eina_Bool    save_have               (void);
-void         save_abort              (void);
+void         save_show               (void);
 
 Evas_Object *ui_edit(Evas_Object *window, Evas_Object *o_bg, E_Zone *zone,
                      E_Client *ec, void *dst, int sx, int sy, int sw, int sh,

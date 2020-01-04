@@ -86,7 +86,7 @@ static void
 _shot_now(E_Zone *zone, E_Client *ec, const char *params)
 {
    int x, y, w, h;
-   if (preview_have() || save_have() || share_have() || (snap)) return;
+   if (preview_have() || share_have() || (snap)) return;
    if ((!zone) && (!ec)) return;
    if (zone)
      {
@@ -377,7 +377,6 @@ E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    share_abort();
-   save_abort();
    preview_abort();
    delay_abort();
    if (delfn_client)

@@ -9,7 +9,7 @@ Eina_Rectangle crop = { 0, 0, 0, 0 };
 static void
 _win_save_cb(void *data EINA_UNUSED, void *data2 EINA_UNUSED)
 {
-   save_dialog_show();
+   save_show();
 }
 
 static void

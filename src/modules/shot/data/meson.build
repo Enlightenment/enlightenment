@@ -15,5 +15,6 @@ out = join_paths(_dir, edc + '.edj')
 install_data(['BD_Cartoon_Shout.ttf',
               'ComiquitaSans.ttf',
               'FuturaHandwritten.ttf',
-              'Suplexmentary_Comic_NC.ttf'],
+              'Suplexmentary_Comic_NC.ttf',
+              'shots.desktop'],
              install_dir: _dir)
