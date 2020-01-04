@@ -1448,7 +1448,7 @@ crop_move(int x, int y)
 //////////////////////////////////////////////////////////////////////////////
 // zoom handling
 #define ZOOM_COUNT 16
-#define ZOOM_DEFAULT 8
+#define ZOOM_DEFAULT 4
 #define ZOOM_NONE 8
 static int zoom = ZOOM_DEFAULT;
 static int zooms[] = { 125, 143, 167, 200, 250, 333, 500, 750,
@@ -1792,8 +1792,8 @@ ui_edit(Evas_Object *window, Evas_Object *o_bg, E_Zone *zone EINA_UNUSED,
    evas = evas_object_evas_get(win);
    evas_object_event_callback_add(win, EVAS_CALLBACK_DEL, _cb_win_del, NULL);
 
-   w = sw / 4;
-   if (w < 220) w = 220;
+   w = (sw * zooms[zoom]) / 1000;
+   if (w < ELM_SCALE_SIZE(400)) w = 400;
    h = (w * sh) / sw;
 
    if (!ec)
