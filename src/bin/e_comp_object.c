@@ -3021,6 +3021,11 @@ e_comp_object_client_add(E_Client *ec)
    _e_comp_smart_init();
    o = evas_object_smart_add(e_comp->evas, _e_comp_smart);
    cw = evas_object_smart_data_get(o);
+   if (!cw)
+     {
+        evas_object_del(o);
+        return NULL;
+     }
    evas_object_data_set(o, "E_Client", ec);
 //   REFD(ec, 9);
 //   e_object_ref(E_OBJECT(ec));
