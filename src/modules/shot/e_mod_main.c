@@ -156,16 +156,7 @@ _shot_delay(void *data)
    _shot_now(data, NULL, NULL);
    return EINA_FALSE;
 }
-/*
-static Eina_Bool
-_shot_delay_border(void *data)
-{
-   border_timer = NULL;
-   _shot_now(NULL, data, NULL);
 
-   return EINA_FALSE;
-}
-*/
 static Eina_Bool
 _shot_delay_border_padded(void *data)
 {
@@ -176,14 +167,7 @@ _shot_delay_border_padded(void *data)
    _shot_now(NULL, data, buf);
    return EINA_FALSE;
 }
-/*
-static void
-_shot_border(E_Client *ec)
-{
-   if (border_timer) ecore_timer_del(border_timer);
-   border_timer = ecore_timer_loop_add(1.0, _shot_delay_border, ec);
-}
-*/
+
 static void
 _shot_border_padded(E_Client *ec)
 {
@@ -199,13 +183,7 @@ _shot(E_Zone *zone)
    timer = ecore_timer_loop_add(1.0, _shot_delay, zone);
    delfn_zone = e_object_delfn_add(E_OBJECT(zone), _cb_zone_del, NULL);
 }
-/*
-static void
-_e_mod_menu_border_cb(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
-{
-   _shot_border(data);
-}
-*/
+
 static void
 _e_mod_menu_border_padded_cb(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
