@@ -5,6 +5,7 @@
 /////////////////////////////////////////////////////////////////////////
 static Eina_Bool               _screen_closed(E_Randr2_Screen *s);
 static void                    _animated_apply_abort(void);
+static void                    _cb_delay_init_save(void *data);
 static Eina_Bool               _cb_delay_timer(void *data);
 static Eina_Bool               _cb_fade_animator(void *data);
 static void                    _animated_apply(void);
@@ -39,6 +40,12 @@ E_API E_Config_Randr2 *e_randr2_cfg = NULL;
 E_API E_Randr2        *e_randr2 = NULL;
 
 E_API int              E_EVENT_RANDR_CHANGE = 0;
+
+static void
+_cb_delay_init_save(void *data EINA_UNUSED)
+{
+   e_randr2_config_save();
+}
 
 /////////////////////////////////////////////////////////////////////////
 EINTERN Eina_Bool
@@ -105,7 +112,7 @@ e_randr2_init(void)
    else
      {
         _config_update(e_randr2, e_randr2_cfg, 0);
-        e_randr2_config_save();
+        ecore_job_add(_cb_delay_init_save, NULL);
      }
    ecore_event_add(E_EVENT_RANDR_CHANGE, NULL, NULL, NULL);
    return EINA_TRUE;
