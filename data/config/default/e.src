@@ -1,5 +1,5 @@
 group "E_Config" struct {
-  value "config_version" int: 1000029;
+  value "config_version" int: 1000030;
   value "config_type" uint: 0; // this profile seems to just be super minimalist
   value "show_splash" int: 0;
   value "desktop_default_name" string: "%i-%i";

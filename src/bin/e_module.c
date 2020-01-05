@@ -759,7 +759,6 @@ _e_module_whitelist_check(void)
       "notification",
       "ofono",
       "pager",
-      "pager_plain",
       "quickaccess",
       "shot",
       "start",

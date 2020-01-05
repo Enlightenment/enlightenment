@@ -8,7 +8,6 @@ mods = [
 # standard run of the mill modules with cion and desktop
   'ibar',
   'pager',
-  'pager_plain',
   'temperature',
   'mixer',
   'notification',

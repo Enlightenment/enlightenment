@@ -1601,6 +1601,23 @@ e_config_load(void)
                  }
                e_config_save_queue();
             }
+          CONFIG_VERSION_CHECK(30)
+            {
+               Eina_List *l;
+               E_Config_Module *em;
+
+               CONFIG_VERSION_UPDATE_INFO(30);
+               EINA_LIST_FOREACH(e_config->modules, l, em)
+                 {
+                    if (!em->enabled) continue;
+                    if (!em->name) continue;
+                    if (eina_streq(em->name, "pager_plain"))
+                      {
+                         eina_stringshare_replace(&(em->name), "pager");
+                      }
+                 }
+               e_config_save_queue();
+            }
      }
    elm_config_profile_set(_e_config_profile);
    if (!e_config->remember_internal_fm_windows)
