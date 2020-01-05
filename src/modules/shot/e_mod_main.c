@@ -112,10 +112,11 @@ _shot_now(E_Zone *zone, E_Client *ec, const char *params)
         y = ec->y - pad;
         w = ec->w + (pad * 2);
         h = ec->h + (pad * 2);
-        x = E_CLAMP(x, 0, e_comp->w);
-        y = E_CLAMP(y, 0, e_comp->h);
-        w = E_CLAMP(w, 1, e_comp->w);
-        h = E_CLAMP(h, 1, e_comp->h);
+        E_RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, e_comp->w, e_comp->h);
+        if (w < 1) w = 1;
+        if (h < 1) h = 1;
+        if (x >= e_comp->w) x = e_comp->w - 1;
+        if (y >= e_comp->h) y = e_comp->h - 1;
      }
    if (eina_streq(ecore_evas_engine_name_get(e_comp->ee), "buffer"))
      {
