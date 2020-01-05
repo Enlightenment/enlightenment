@@ -1269,7 +1269,6 @@ crop_update(void)
 static void
 crop_eval(int x1, int y1, int x2, int y2)
 {
-   printf("crop eval %i %i -> %i %i \n", x1, y1, x2, y2);
    if (x1 < x2)
      {
         crop_area.x = x1;
@@ -1290,8 +1289,13 @@ crop_eval(int x1, int y1, int x2, int y2)
         crop_area.y = y2;
         crop_area.h = y1 - y2 + 1;
      }
+   E_RECTS_CLIP_TO_RECT(crop_area.x, crop_area.y,
+                        crop_area.w, crop_area.h,
+                        0, 0, img_w, img_h);
    if (crop_area.w < 1) crop_area.w = 1;
    if (crop_area.h < 1) crop_area.h = 1;
+   if (crop_area.x >= img_w) crop_area.x = img_w - 1;
+   if (crop_area.y >= img_h) crop_area.y = img_h - 1;
    crop_export();
    crop_update();
 }
