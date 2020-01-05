@@ -51,10 +51,6 @@ collections {
   TOOL_ICON("box-text-kaboom")
   TOOL_ICON("box-text-kapow")
   group { name: "e/modules/shot/tool/crop";
-    images.image: "shotedit-crop1.png" COMP;
-    images.image: "shotedit-crop2.png" COMP;
-    images.image: "shotedit-crop3.png" COMP;
-    images.image: "shotedit-crop4.png" COMP;
     parts {
       part { name: "e/drag/rel1"; type: SPACER;
         dragable.x: 1 1 0;
@@ -115,64 +111,67 @@ collections {
           color: 0 0 0 192;
         }
       }
-      part { name: "mod-tl";
-        scale: 1;
-        description { state: "default" 0.0;
-          rel.to: "e/drag/rel1";
-          rel1.offset: -18 -18;
-          rel2.relative: 0.0 0.0;
-          offscale;
-          image.normal: "shotedit-crop1.png";
-        }
+#define HANDLE(_name, _relnamex, _relnamey, _rel, _x1, _y1, _x2, _y2, _x3, _y3, _x4, _y4, _x5, _y5, _x6, _y6, _x7, _y7, _x8, _y8) \
+      part { name: "mod-"_name"1"; type: RECT; \
+        scale: 1; \
+        description { state: "default" 0.0; \
+          rel.to_x: "e/drag/"_relnamex; \
+          rel.to_y: "e/drag/"_relnamey; \
+          rel1.offset: _x1 _y1; \
+          rel2.offset: _x2 _y2; \
+          rel2.relative: _rel; \
+          color: 255 255 255 255; \
+          offscale; \
+        } \
+      } \
+      part { name: "mod-"_name"2"; type: RECT; \
+        scale: 1; \
+        description { state: "default" 0.0; \
+          rel.to_x: "e/drag/"_relnamex; \
+          rel.to_y: "e/drag/"_relnamey; \
+          rel1.offset: _x3 _y3; \
+          rel2.offset: _x4 _y4; \
+          rel2.relative: _rel; \
+          color: 255 255 255 255; \
+          offscale; \
+        } \
+      } \
+      part { name: "mod-"_name"h1"; type: RECT; \
+        scale: 1; \
+        description { state: "default" 0.0; \
+          rel.to_x: "e/drag/"_relnamex; \
+          rel.to_y: "e/drag/"_relnamey; \
+          rel1.offset: _x5 _y5; \
+          rel2.offset: _x6 _y6; \
+          rel2.relative: _rel; \
+          color: 0 0 0 0; \
+          offscale; \
+        } \
+      } \
+      part { name: "mod-"_name"h2"; type: RECT; \
+        scale: 1; \
+        description { state: "default" 0.0; \
+          rel.to_x: "e/drag/"_relnamex; \
+          rel.to_y: "e/drag/"_relnamey; \
+          rel1.offset: _x7 _y7; \
+          rel2.offset: _x8 _y8; \
+          rel2.relative: _rel; \
+          color: 0 0 0 0; \
+          offscale; \
+        } \
+      } \
+      program { signal: "mouse,down,1"; source: "mod-"_name"h*"; \
+        action: SIGNAL_EMIT "action,resize,"_name",begin" "e"; \
       }
-      program { signal: "mouse,down,1"; source: "mod-tl";
-        action: SIGNAL_EMIT "action,resize,tl,begin" "e";
-      }
-      part { name: "mod-tr";
-        scale: 1;
-        description { state: "default" 0.0;
-          rel.to_x: "e/drag/rel2";
-          rel.to_y: "e/drag/rel1";
-          rel1.offset: 0 -18;
-          rel1.relative: 1.0 0.0;
-          rel2.offset: 18 -1;
-          rel2.relative: 1.0 0.0;
-          offscale;
-          image.normal: "shotedit-crop2.png";
-        }
-      }
-      program { signal: "mouse,down,1"; source: "mod-tr";
-        action: SIGNAL_EMIT "action,resize,tr,begin" "e";
-      }
-      part { name: "mod-bl";
-        scale: 1;
-        description { state: "default" 0.0;
-          rel.to_x: "e/drag/rel1";
-          rel.to_y: "e/drag/rel2";
-          rel1.offset: -18 0;
-          rel1.relative: 0.0 1.0;
-          rel2.offset: -1 18;
-          rel2.relative: 0.0 1.0;
-          offscale;
-          image.normal: "shotedit-crop4.png";
-        }
-      }
-      program { signal: "mouse,down,1"; source: "mod-bl";
-        action: SIGNAL_EMIT "action,resize,bl,begin" "e";
-      }
-      part { name: "mod-br";
-        scale: 1;
-        description { state: "default" 0.0;
-          rel.to: "e/drag/rel2";
-          rel1.offset: 0 0;
-          rel2.offset: 18 18;
-          offscale;
-          image.normal: "shotedit-crop3.png";
-        }
-      }
-      program { signal: "mouse,down,1"; source: "mod-br";
-        action: SIGNAL_EMIT "action,resize,br,begin" "e";
-      }
+
+      HANDLE("tl", "rel1", "rel1", 0.0 0.0, -18, -4, 17, -1, -4, -18, -1, 17,
+             -36, -36, 17, -1, -36, -36,  -1, 17)
+      HANDLE("tr", "rel2", "rel1", 1.0 0.0, -18, -4, 17, -1,  0, -18,  3, 17,
+             -18, -36, 35, -1,   0, -36,  35, 35)
+      HANDLE("bl", "rel1", "rel2", 0.0 1.0, -18,  0, 17,  3, -4, -18, -1, 17,
+             -36,   0, 17, 35, -36, -18,  -1, 35)
+      HANDLE("br", "rel2", "rel2", 1.0 1.0, -18,  0, 17,  3,  0, -18,  3, 17,
+             -18,   0, 35, 35,   0, -36,  35, 35)
     }
   }
   group { name: "e/modules/shot/tool/line/handle";
