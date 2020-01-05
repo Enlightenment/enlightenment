@@ -1452,8 +1452,8 @@ crop_move(int x, int y)
 //////////////////////////////////////////////////////////////////////////////
 // zoom handling
 #define ZOOM_COUNT 16
-#define ZOOM_DEFAULT 4
 #define ZOOM_NONE 8
+#define ZOOM_DEFAULT 4
 static int zoom = ZOOM_DEFAULT;
 static int zooms[] = { 125, 143, 167, 200, 250, 333, 500, 750,
                        1000,
@@ -1782,7 +1782,7 @@ ui_icon_button_add(Evas_Object *parent, const char *icon)
 }
 
 Evas_Object *
-ui_edit(Evas_Object *window, Evas_Object *o_bg, E_Zone *zone EINA_UNUSED,
+ui_edit(Evas_Object *window, Evas_Object *o_bg, E_Zone *zone,
         E_Client *ec, void *dst, int sx, int sy, int sw, int sh,
         Evas_Object **o_img_ret)
 {
@@ -1796,9 +1796,25 @@ ui_edit(Evas_Object *window, Evas_Object *o_bg, E_Zone *zone EINA_UNUSED,
    evas = evas_object_evas_get(win);
    evas_object_event_callback_add(win, EVAS_CALLBACK_DEL, _cb_win_del, NULL);
 
+   if ((!zone) && (ec)) zone = ec->zone;
+   if (zone)
+     {
+        int i;
+
+        for (i = ZOOM_NONE; i >= 0; i--)
+          {
+             w = (sw * zooms[i]) / 1000;
+             if (w <= (zone->w / 2))
+               {
+                  zoom = i;
+                  break;
+               }
+          }
+     }
    w = (sw * zooms[zoom]) / 1000;
    if (w < ELM_SCALE_SIZE(400)) w = 400;
    h = (w * sh) / sw;
+   if ((zone) && (h > (zone->h / 2))) h = zone->h / 2;
 
    if (!ec)
      {
