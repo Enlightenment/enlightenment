@@ -1476,18 +1476,21 @@ zoom_set(int slot)
 static void
 _cb_tool_zoom_plus(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *info EINA_UNUSED)
 {
+   elm_scroller_gravity_set(o_scroll, 0.5, 0.5);
    zoom_set(zoom + 1);
 }
 
 static void
 _cb_tool_zoom_reset(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *info EINA_UNUSED)
 {
+   elm_scroller_gravity_set(o_scroll, 0.5, 0.5);
    zoom_set(ZOOM_NONE);
 }
 
 static void
 _cb_tool_zoom_minus(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *info EINA_UNUSED)
 {
+   elm_scroller_gravity_set(o_scroll, 0.5, 0.5);
    zoom_set(zoom - 1);
 }
 
@@ -1500,6 +1503,21 @@ _cb_edit_wheel(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EIN
    if ((evas_key_modifier_is_set(ev->modifiers, "Control")) &&
        (ev->direction == 0))
      {
+        Evas_Coord x, y, w, h, px, py;
+        double gx, gy;
+
+        evas_pointer_canvas_xy_get(evas_object_evas_get(win), &px, &py);
+        evas_object_geometry_get(o_rend, &x, &y, &w, &h);
+        if (px < x) px = x;
+        if (py < y) py = y;
+        if (px >= (x + w)) px = x + w - 1;
+        if (py >= (y + h)) py = y + h - 1;
+        if ((w > 0) && (h > 0))
+          {
+             gx = (double)(px - x) / (double)w;
+             gy = (double)(py - y) / (double)h;
+             elm_scroller_gravity_set(o_scroll, gx, gy);
+          }
         zoom_set(zoom - ev->z);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
