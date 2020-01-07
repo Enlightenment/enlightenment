@@ -165,7 +165,6 @@ TODO:
   * filter out hid devices with batteries from core battery state
   * display other devices in above list separately
   * handle string capacity values like Full, High, Normal, Low, Critical...
-* randr: use xfixes to limit mouse to visible screen area (xserver broke)
 * randr: get auto layout to handle screens laid out like:
   [dp2-2][dp2-1] <- 2 external monitors
       [edp-1] <- laptop main display
