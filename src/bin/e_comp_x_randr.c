@@ -560,62 +560,73 @@ e_comp_x_randr_config_apply(void)
           }
         if (numout)
           {
-        // set up a crtc to drive each output (or not)
-        for (i = 0; i < crtcs_num; i++)
-          {
-             // XXX: find clones and set them as outputs in an array
-             if (outconf[i])
-               {
-                  Ecore_X_Randr_Orientation orient =
-                    ECORE_X_RANDR_ORIENTATION_ROT_0;
-                  Ecore_X_Randr_Mode mode;
+             Ecore_X_Rectangle *scrs = alloca(crtcs_num * sizeof(Ecore_X_Rectangle));
+             int scrs_num;
 
-                  mode = _mode_screen_find(root, screenconf[i], outconf[i]);
-                  if (screenconf[i]->config.rotation == 0)
-                    orient = ECORE_X_RANDR_ORIENTATION_ROT_0;
-                  else if (screenconf[i]->config.rotation == 90)
-                    orient = ECORE_X_RANDR_ORIENTATION_ROT_90;
-                  else if (screenconf[i]->config.rotation == 180)
-                    orient = ECORE_X_RANDR_ORIENTATION_ROT_180;
-                  else if (screenconf[i]->config.rotation == 270)
-                    orient = ECORE_X_RANDR_ORIENTATION_ROT_270;
-                  printf("RRR: crtc on: %i = '%s'     @ %i %i    - %ix%i orient %i mode %x out %x\n",
-                         i, screenconf[i]->info.name,
-                         screenconf[i]->config.geom.x,
-                         screenconf[i]->config.geom.y,
-                         screenconf[i]->config.geom.w,
-                         screenconf[i]->config.geom.h,
-                         orient, mode, outconf[i]);
-                  if (!ecore_x_randr_crtc_settings_set
-                      (root, crtcs[i], &(outconf[i]), 1,
-                       screenconf[i]->config.geom.x,
-                       screenconf[i]->config.geom.y,
-                       mode, orient))
-                    printf("RRR:   failed to set crtc!!!!!!\n");
-                  ecore_x_randr_crtc_panning_area_set
-                    (root, crtcs[i],
-                     screenconf[i]->config.geom.x,
-                     screenconf[i]->config.geom.y,
-                     screenconf[i]->config.geom.w,
-                     screenconf[i]->config.geom.h);
-                  if (screenconf[i]->config.priority == top_priority)
+             scrs_num = 0;
+             // set up a crtc to drive each output (or not)
+             for (i = 0; i < crtcs_num; i++)
+               {
+                  // XXX: find clones and set them as outputs in an array
+                  if (outconf[i])
                     {
-                       ecore_x_randr_primary_output_set(root, outconf[i]);
-                       top_priority = -1;
+                       Ecore_X_Randr_Orientation orient =
+                         ECORE_X_RANDR_ORIENTATION_ROT_0;
+                       Ecore_X_Randr_Mode mode;
+
+                       mode = _mode_screen_find(root, screenconf[i], outconf[i]);
+                       if (screenconf[i]->config.rotation == 0)
+                         orient = ECORE_X_RANDR_ORIENTATION_ROT_0;
+                       else if (screenconf[i]->config.rotation == 90)
+                         orient = ECORE_X_RANDR_ORIENTATION_ROT_90;
+                       else if (screenconf[i]->config.rotation == 180)
+                         orient = ECORE_X_RANDR_ORIENTATION_ROT_180;
+                       else if (screenconf[i]->config.rotation == 270)
+                         orient = ECORE_X_RANDR_ORIENTATION_ROT_270;
+                       printf("RRR: crtc on: %i = '%s'     @ %i %i    - %ix%i orient %i mode %x out %x\n",
+                              i, screenconf[i]->info.name,
+                              screenconf[i]->config.geom.x,
+                              screenconf[i]->config.geom.y,
+                              screenconf[i]->config.geom.w,
+                              screenconf[i]->config.geom.h,
+                              orient, mode, outconf[i]);
+                       if (!ecore_x_randr_crtc_settings_set
+                             (root, crtcs[i], &(outconf[i]), 1,
+                              screenconf[i]->config.geom.x,
+                              screenconf[i]->config.geom.y,
+                              mode, orient))
+                       printf("RRR:   failed to set crtc!!!!!!\n");
+                       ecore_x_randr_crtc_panning_area_set
+                         (root, crtcs[i],
+                          screenconf[i]->config.geom.x,
+                          screenconf[i]->config.geom.y,
+                          screenconf[i]->config.geom.w,
+                          screenconf[i]->config.geom.h);
+                       if (screenconf[i]->config.priority == top_priority)
+                         {
+                            ecore_x_randr_primary_output_set(root, outconf[i]);
+                            top_priority = -1;
+                         }
+                       scrs[scrs_num].x      = screenconf[i]->config.geom.x;
+                       scrs[scrs_num].y      = screenconf[i]->config.geom.y;
+                       scrs[scrs_num].width  = screenconf[i]->config.geom.w;
+                       scrs[scrs_num].height = screenconf[i]->config.geom.h;
+                       scrs_num++;
+                    }
+                  else
+                    {
+                       printf("RRR: crtc off: %i\n", i);
+                       ecore_x_randr_crtc_settings_set
+                         (root, crtcs[i], NULL, 0, 0, 0, 0,
+                          ECORE_X_RANDR_ORIENTATION_ROT_0);
                     }
                }
-             else
-               {
-                  printf("RRR: crtc off: %i\n", i);
-                  ecore_x_randr_crtc_settings_set
-                    (root, crtcs[i], NULL, 0, 0, 0, 0,
-                     ECORE_X_RANDR_ORIENTATION_ROT_0);
-               }
-          }
+             ecore_x_root_screen_barriers_set(scrs, scrs_num);
           }
         else
           {
              printf("RRR: EERRRRRROOOORRRRRRR no outputs to configure!\n");
+             ecore_x_root_screen_barriers_set(NULL, 0);
           }
      }
    free(outputs);

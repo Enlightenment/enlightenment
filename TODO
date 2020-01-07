@@ -1,4 +1,6 @@
 TODO:
+* pointer: bug: sometiems get sstuck in move/resize modfe if mouse
+  over move/resize area when desklock kicks in
 * clipboard manager - monitor clipboard changes + history + select from it
 * scriptlets: stdin/out module that provides gui services to some
   back-end script or process where e just talks via stdin/out.
