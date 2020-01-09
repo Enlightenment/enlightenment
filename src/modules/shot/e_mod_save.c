@@ -193,7 +193,7 @@ save_show(void)
    snprintf(path2, sizeof(path2), "%s/fileman/favorites/shots.desktop",
             e_user_dir_get());
    if (!ecore_file_exists(path2)) ecore_file_cp(path, path2);
-   a = e_action_find("fileman");
+   a = e_action_find("fileman_show");
    if (a)
      {
         a->func.go(NULL, "$E_HOME_DIR/shots");

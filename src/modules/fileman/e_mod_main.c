@@ -3,6 +3,8 @@
 /* actual module specifics */
 static void _e_mod_action_fileman_cb(E_Object   *obj,
                                      const char *params);
+static void _e_mod_action_fileman_show_cb(E_Object   *obj,
+                                          const char *params);
 static void _e_mod_action_fileman_reset_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED);
 static void      _e_mod_menu_add(void   *data, E_Menu *m);
 static void      _e_mod_fileman_config_load(void);
@@ -14,6 +16,7 @@ static Eina_Bool _e_mod_zone_add(void *data,
 static E_Module *conf_module = NULL;
 static E_Action *act = NULL;
 static E_Action *act2 = NULL;
+static E_Action *act3 = NULL;
 static E_Int_Menu_Augmentation *maug = NULL;
 static Ecore_Event_Handler *zone_add_handler = NULL;
 
@@ -58,6 +61,13 @@ e_modapi_init(E_Module *m)
    act2 = e_action_add("fileman_reset");
    if (act2)
      act2->func.go = _e_mod_action_fileman_reset_cb;
+   act3 = e_action_add("fileman_show");
+   if (act3)
+     {
+        act3->func.go = _e_mod_action_fileman_show_cb;
+        e_action_predef_name_set(N_("Show Dir"), N_("File Manager"),
+                                 "fileman_show", NULL, "syntax: /path/to/dir or ~/path/to/dir or favorites or desktop, examples: /boot/grub, ~/downloads", 1);
+     }
    maug = e_int_menus_menu_augmentation_add_sorted("main/1", _("Navigate"), _e_mod_menu_add, NULL, NULL, NULL);
 
    e_fwin_init();
@@ -118,6 +128,11 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
         e_action_del("fileman_reset");
         act2 = NULL;
      }
+   if (act3)
+     {
+        e_action_del("fileman_show");
+        act3 = NULL;
+     }
    while ((cfd = e_config_dialog_get("E", "fileman/mime_edit_dialog")))
       e_object_del(E_OBJECT(cfd));
    while ((cfd = e_config_dialog_get("E", "fileman/file_icons")))
@@ -156,6 +171,12 @@ _e_mod_action_fileman_reset_cb(E_Object *obj EINA_UNUSED, const char *params EIN
 }
 
 static void
+fwin(const char *dev, const char *path)
+{
+   if (!e_fwin_show(dev, path)) e_fwin_new(dev, path);
+}
+
+static void
 _e_mod_action_fileman_cb(E_Object   *obj EINA_UNUSED,
                          const char *params)
 {
@@ -181,6 +202,46 @@ _e_mod_action_fileman_cb(E_Object   *obj EINA_UNUSED,
         else
           e_fwin_new("favorites", "/");
      }
+}
+
+static void
+_e_mod_action_fileman_show_cb(E_Object   *obj EINA_UNUSED,
+                              const char *params)
+{
+   const char *dev = NULL, *path = NULL;
+   char *p = NULL;
+   E_Zone *zone = NULL;
+
+   zone = e_zone_current_get();
+   if (zone)
+     {
+        if (params && params[0] == '/')
+          {
+             dev = "/";
+             path = params;
+          }
+        else if (params && params[0] == '~')
+          {
+             dev = "~/";
+             path = params + 1;
+          }
+        else if (params && strcmp(params, "(none)")) /* avoid matching paths that no longer exist */
+          {
+             p = e_util_shell_env_path_eval(params);
+             if (p)
+               {
+                  dev = p;
+                  path = "/";
+               }
+          }
+        else
+          {
+             dev = "favorites";
+             path = "/";
+          }
+     }
+   fwin(dev, path);
+   free(p);
 }
 
 void

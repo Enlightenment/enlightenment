@@ -647,6 +647,26 @@ e_fwin_zone_find(E_Zone *zone)
    return NULL;
 }
 
+Eina_Bool
+e_fwin_show(const char *dev, const char *path)
+{
+   Eina_List *f;
+   E_Fwin *fwin;
+
+   EINA_LIST_FOREACH(fwins, f, fwin)
+     {
+        char *d, *p;
+
+        e_fm2_path_get(fwin->cur_page->fm_obj, &d, &p);
+        if ((d) && (!strcmp(dev, d)) && (p) && (!strcmp(path, p)))
+          {
+             elm_win_activate(fwin->win);
+             return EINA_TRUE;
+          }
+     }
+   return EINA_FALSE;
+}
+
 /* local subsystem functions */
 static void
 _e_fwin_bg_mouse_down(E_Fwin *fwin, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)

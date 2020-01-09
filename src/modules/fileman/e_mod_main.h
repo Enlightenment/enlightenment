@@ -125,7 +125,8 @@ void e_fwin_zone_new      (E_Zone *zone, void *path);
 void e_fwin_zone_shutdown (E_Zone *zone);
 void e_fwin_all_unsel     (void *data);
 void e_fwin_reload_all    (void);
-void *e_fwin_zone_find     (E_Zone *zone);
+void *e_fwin_zone_find    (E_Zone *zone);
+Eina_Bool e_fwin_show     (const char *dev, const char *path);
 
 Eina_Bool e_fwin_nav_init(void);
 Eina_Bool e_fwin_nav_shutdown(void);
