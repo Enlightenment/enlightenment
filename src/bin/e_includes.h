@@ -109,6 +109,7 @@
 #include "e_widget_color_well.h"
 #include "e_color_dialog.h"
 #include "e_sys.h"
+#include "e_system.h"
 #include "e_obj_dialog.h"
 #include "e_filereg.h"
 #include "e_widget_aspect.h"

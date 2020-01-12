@@ -147,6 +147,13 @@ config_h.set_quoted('PACKAGE_NAME'     , proj)
 config_h.set_quoted('BINDIR'           , dir_bin)
 config_h.set_quoted('DATADIR'          , dir_data)
 
+if cc.has_header('sys/prctl.h') == true
+  config_h.set('HAVE_PRCTL'            , '1')
+endif
+if cc.has_header('sys/procctl.h') == true
+  config_h.set('HAVE_PROCCTL'          , '1')
+endif
+
 if cc.has_function('setenv') == true
   config_h.set('HAVE_SETENV'           , '1')
 endif

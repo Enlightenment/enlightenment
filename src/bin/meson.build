@@ -177,6 +177,7 @@ src = [
   'e_spectrum.c',
   'e_startup.c',
   'e_sys.c',
+  'e_system.c',
   'e_test.c',
   'e_theme_about.c',
   'e_theme.c',
@@ -355,6 +356,7 @@ hdr = [
   'e_spectrum.h',
   'e_startup.h',
   'e_sys.h',
+  'e_system.h',
   'e_test.h',
   'e_theme_about.h',
   'e_theme.h',
@@ -582,3 +584,4 @@ if config_h.has('HAVE_WAYLAND') == true
 		install: true)
 endif
 subdir('e_fm')
+subdir('system')

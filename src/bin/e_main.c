@@ -790,6 +790,15 @@ main(int argc, char **argv)
    e_desk_init();
    e_exehist_init();
 
+   TS("E_System Init");
+   if (!e_system_init())
+     {
+        e_error_message_show(_("Enlightenment cannot initialize the Privelege System access system.\n"));
+        _e_main_shutdown(-1);
+     }
+   TS("E_System Init Done");
+   _e_main_shutdown_push(e_system_shutdown);
+
    TS("E_Powersave Init");
    if (!e_powersave_init())
      {
