@@ -644,7 +644,7 @@ _screens_differ(E_Randr2 *r1, E_Randr2 *r2)
    EINA_LIST_FOREACH(r2->screens, l, s)
      {
         if (!s->id) continue;
-        EINA_LIST_FOREACH(r2->screens, ll, ss)
+        EINA_LIST_FOREACH(r1->screens, ll, ss)
           {
              if ((ss->id) && (!strcmp(s->id, ss->id))) break;
              ss = NULL;
