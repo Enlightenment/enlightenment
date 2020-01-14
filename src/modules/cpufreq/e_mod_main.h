@@ -48,7 +48,6 @@ struct _Config
    E_Menu       *menu_pstate1;
    E_Menu       *menu_pstate2;
    Cpu_Status   *status;
-   char         *set_exe_path;
    Ecore_Thread *frequency_check_thread;
    Ecore_Event_Handler *handler;
    E_Config_Dialog *config_dialog;

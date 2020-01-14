@@ -486,41 +486,74 @@ _menu_cb_post(void *data, E_Menu *m EINA_UNUSED)
    cpufreq_config->menu_powersave = NULL;
 }
 
+static Eina_Bool _response = EINA_FALSE;
+
+static void
+_cpufreq_error(const char *params)
+{
+   E_Dialog *dia;
+
+   if (!((params) && (!strcmp(params, "err")))) return;
+
+   if (!(dia = e_dialog_new(NULL, "E", "_e_mod_cpufreq_error_setfreq")))
+     return;
+   e_dialog_title_set(dia, "Enlightenment Cpufreq Module");
+   e_dialog_icon_set(dia, "enlightenment", 64);
+   e_dialog_text_set(dia, _("There was an error trying to modify CPU<br>"
+                            "frequency control parameters."));
+   e_dialog_button_add(dia, _("OK"), NULL, NULL, NULL);
+   elm_win_center(dia->win, 1, 1);
+   e_dialog_show(dia);
+}
+
+static void
+_cb_cpufreq_governor(void *data EINA_UNUSED, const char *params)
+{
+   _cpufreq_error(params);
+}
+
+static void
+_cb_cpufreq_freq(void *data EINA_UNUSED, const char *params)
+{
+   _cpufreq_error(params);
+}
+
+static void
+_cb_cpufreq_pstate(void *data EINA_UNUSED, const char *params)
+{
+   _cpufreq_error(params);
+}
+
+static void
+_cpufreq_response_init(void)
+{
+   if (_response) return;
+   _response = EINA_TRUE;
+   e_system_handler_add("cpufreq-governor", _cb_cpufreq_governor, NULL);
+   e_system_handler_add("cpufreq-freq", _cb_cpufreq_freq, NULL);
+   e_system_handler_add("pstate", _cb_cpufreq_pstate, NULL);
+}
+
+static void
+_cpufreq_response_shutdown(void)
+{
+   if (!_response) return;
+   _response = EINA_FALSE;
+   e_system_handler_add("cpufreq-governor", _cb_cpufreq_governor, NULL);
+   e_system_handler_add("cpufreq-freq", _cb_cpufreq_freq, NULL);
+   e_system_handler_add("pstate", _cb_cpufreq_pstate, NULL);
+}
+
 void
 _cpufreq_set_governor(const char *governor)
 {
-   char buf[4096];
-   int ret;
-   struct stat st;
-
-   if (stat(cpufreq_config->set_exe_path, &st) < 0) return;
-
-   snprintf(buf, sizeof(buf),
-            "%s %s %s", cpufreq_config->set_exe_path, "governor", governor);
-   ret = system(buf);
-   if (ret != 0)
-     {
-        E_Dialog *dia;
-
-        if (!(dia = e_dialog_new(NULL, "E", "_e_mod_cpufreq_error_setfreq")))
-          return;
-        e_dialog_title_set(dia, "Enlightenment Cpufreq Module");
-        e_dialog_icon_set(dia, "enlightenment", 64);
-        e_dialog_text_set(dia, _("There was an error trying to set the<ps/>"
-                                 "cpu frequency governor via the module's<ps/>"
-                                 "setfreq utility."));
-        e_dialog_button_add(dia, _("OK"), NULL, NULL, NULL);
-        elm_win_center(dia->win, 1, 1);
-        e_dialog_show(dia);
-     }
+   _cpufreq_response_init();
+   e_system_send("cpufreq-governor", "%s", governor);
 }
 
 static void
 _cpufreq_set_frequency(int frequency)
 {
-   char buf[4096];
-   int ret;
-
 #if defined(__FreeBSD__) || defined(__DragonFly__)
    frequency /= 1000;
 #endif
@@ -546,25 +579,8 @@ _cpufreq_set_frequency(int frequency)
    /* OpenBSD doesn't have governors */
    _cpufreq_set_governor("userspace");
 #endif
-
-   snprintf(buf, sizeof(buf),
-            "%s %s %i", cpufreq_config->set_exe_path, "frequency", frequency);
-   ret = system(buf);
-   if (ret != 0)
-     {
-        E_Dialog *dia;
-
-        if (!(dia = e_dialog_new(NULL, "E", "_e_mod_cpufreq_error_setfreq")))
-          return;
-        e_dialog_title_set(dia, "Enlightenment Cpufreq Module");
-        e_dialog_icon_set(dia, "enlightenment", 64);
-        e_dialog_text_set(dia, _("There was an error trying to set the<ps/>"
-                                 "cpu frequency setting via the module's<ps/>"
-                                 "setfreq utility."));
-        e_dialog_button_add(dia, _("OK"), NULL, NULL, NULL);
-        elm_win_center(dia->win, 1, 1);
-        e_dialog_show(dia);
-     }
+   _cpufreq_response_init();
+   e_system_send("cpufreq-freq", "%i", frequency);
 }
 
 void
@@ -574,25 +590,8 @@ _cpufreq_set_pstate(int min, int max)
    (void) min;
    (void) max;
 #else
-   char buf[4096];
-   snprintf(buf, sizeof(buf),
-            "%s %s %i %i %i", cpufreq_config->set_exe_path, "pstate", min, max, cpufreq_config->status->pstate_turbo);
-   int ret = system(buf);
-   if (ret != 0)
-     {
-        E_Dialog *dia;
-
-        if (!(dia = e_dialog_new(NULL, "E", "_e_mod_cpufreq_error_setfreq")))
-          return;
-        e_dialog_title_set(dia, "Enlightenment Cpufreq Module");
-        e_dialog_icon_set(dia, "enlightenment", 64);
-        e_dialog_text_set(dia, _("There was an error trying to set the<ps/>"
-                                 "cpu power state setting via the module's<ps/>"
-                                 "setfreq utility."));
-        e_dialog_button_add(dia, _("OK"), NULL, NULL, NULL);
-        elm_win_center(dia->win, 1, 1);
-        e_dialog_show(dia);
-     }
+   _cpufreq_response_init();
+   e_system_send("cpufreq-pstate", "%i %i %i", min, max, cpufreq_config->status->pstate_turbo);
 #endif
 }
 
@@ -1410,7 +1409,6 @@ E_API E_Module_Api e_modapi =
 E_API void *
 e_modapi_init(E_Module *m)
 {
-   struct stat st;
    char buf[PATH_MAX];
    Eina_List *l;
 
@@ -1452,30 +1450,6 @@ e_modapi_init(E_Module *m)
      }
    E_CONFIG_LIMIT(cpufreq_config->poll_interval, 1, 1024);
 
-   snprintf(buf, sizeof(buf), "%s/%s/freqset",
-            e_module_dir_get(m), MODULE_ARCH);
-   cpufreq_config->set_exe_path = strdup(buf);
-   
-   if (stat(buf, &st) < 0)
-     {
-        e_util_dialog_show(_("Cpufreq Error"),
-                           _("The freqset binary in the cpufreq module<ps/>"
-                             "directory cannot be found (stat failed)"));
-     }
-   else if ((st.st_uid != 0) ||
-            ((st.st_mode & (S_ISUID)) != (S_ISUID)) ||
-            ((st.st_mode & (S_IXOTH)) != (S_IXOTH)))
-     {
-        e_util_dialog_show(_("Cpufreq Permissions Error"),
-                           _("The freqset binary in the cpufreq module<ps/>"
-                             "is not owned by root or does not have the<ps/>"
-                             "setuid bit set. Please ensure this is the<ps/>"
-                             "case. For example:<ps/>"
-                             "<ps/>"
-                             "sudo chown root %s<ps/>"
-                             "sudo chmod u+s,a+x %s<ps/>"),
-                           buf, buf);
-     }
    cpufreq_config->status = _cpufreq_status_new();
 
    _cpufreq_status_check_available(cpufreq_config->status);
@@ -1508,6 +1482,7 @@ e_modapi_init(E_Module *m)
 E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
+   _cpufreq_response_shutdown();
    e_configure_registry_item_del("advanced/cpufreq");
    e_configure_registry_category_del("advanced");
    
@@ -1551,11 +1526,10 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    if (cpufreq_config->governor)
      eina_stringshare_del(cpufreq_config->governor);
    if (cpufreq_config->status) _cpufreq_status_free(cpufreq_config->status);
-   E_FREE(cpufreq_config->set_exe_path);
-   
+
    if (cpufreq_config->config_dialog)
      e_object_del(E_OBJECT(cpufreq_config->config_dialog));
-   
+
    free(cpufreq_config);
    cpufreq_config = NULL;
    E_CONFIG_DD_FREE(conf_edd);
