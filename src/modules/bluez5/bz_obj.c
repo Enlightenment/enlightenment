@@ -537,35 +537,42 @@ bz_obj_disconnect(Obj *o)
      (o->proxy, "Disconnect", cb_disconnect, o, -1, "");
 }
 
-static Eina_Bool
-cb_ping_exit(void *data, int type EINA_UNUSED, void *event)
+static void
+_cb_l2ping(void *data, const char *params)
 {
    Obj *o = data;
-   Ecore_Exe_Event_Del *ev = event;
+   char addr[256];
+   int timeout = 0;
 
-   printf("@@@EXE EXIT.. %p == %p\n", ev->exe, o->ping_exe);
-   if (ev->exe != o->ping_exe) return ECORE_CALLBACK_PASS_ON;
-   printf("@@@PING RESULT... %i\n", ev->exit_code);
-   o->ping_exe = NULL;
-   if (ev->exit_code == 0)
+   if (sscanf(params, "%255s %i", addr, &timeout) == 2)
      {
-        if (!o->ping_ok)
+        if (!strcmp(o->address, addr))
           {
-             printf("@@@PING SUCCEED\n");
-             o->ping_ok = EINA_TRUE;
-             if (o->fn_change) o->fn_change(o);
+             if (o->ping_busy)
+               {
+                  e_system_handler_del("l2ping-ping", _cb_l2ping, o);
+                  o->ping_busy = EINA_FALSE;
+               }
+             if (timeout >= 0)
+               {
+                  if (!o->ping_ok)
+                    {
+                       printf("@@@PING SUCCEED\n");
+                       o->ping_ok = EINA_TRUE;
+                       if (o->fn_change) o->fn_change(o);
+                    }
+               }
+             else
+               {
+                  if (o->ping_ok)
+                    {
+                       printf("@@@PING FAIL\n");
+                       o->ping_ok = EINA_FALSE;
+                       if (o->fn_change) o->fn_change(o);
+                    }
+               }
           }
      }
-   else
-     {
-        if (o->ping_ok)
-          {
-             printf("@@@PING FAIL\n");
-             o->ping_ok = EINA_FALSE;
-             if (o->fn_change) o->fn_change(o);
-          }
-     }
-   return ECORE_CALLBACK_PASS_ON;
 }
 
 static int
@@ -584,24 +591,13 @@ ping_powersave_timeout_get(void)
 static void
 ping_do(Obj *o)
 {
-   Eina_Strbuf *buf;
-
-   if (!o->ping_exe_handler)
-     o->ping_exe_handler = ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
-                                                   cb_ping_exit, o);
-   buf = eina_strbuf_new();
-   if (buf)
-     {
-        int timeout = ping_powersave_timeout_get();
-
-        timeout *= 1000;
-        eina_strbuf_append_printf
-          (buf, "%s/enlightenment/utils/enlightenment_sys l2ping %s %i",
-           e_prefix_lib_get(), o->address, timeout);
-        o->ping_exe = ecore_exe_run(eina_strbuf_string_get(buf), NULL);
-        eina_strbuf_free(buf);
-        printf("@@@ run new ping %s %i = %p\n", o->address, timeout, o->ping_exe);
-     }
+   int timeout = 1000 * ping_powersave_timeout_get();
+   if (o->ping_busy)
+     e_system_handler_del("l2ping-ping", _cb_l2ping, o);
+   o->ping_busy = EINA_TRUE;
+   e_system_handler_add("l2ping-ping", _cb_l2ping, o);
+   e_system_send("l2ping-ping", "%s %i", o->address, timeout);
+   printf("@@@ run new ping %s %i\n", o->address, timeout);
 }
 
 static Eina_Bool cb_ping_timer(void *data);
@@ -621,11 +617,10 @@ cb_ping_timer(void *data)
    Obj *o = data;
 
    printf("@@@ ping timer %s\n", o->address);
-   if (o->ping_exe)
+   if (o->ping_busy)
      {
-        printf("@@@PING TIMEOUT\n");
-        ecore_exe_free(o->ping_exe);
-        o->ping_exe = NULL;
+        o->ping_busy = EINA_FALSE;
+        e_system_handler_del("l2ping-ping", _cb_l2ping, o);
         if (o->ping_ok)
           {
              o->ping_ok = EINA_FALSE;
@@ -641,15 +636,10 @@ void
 bz_obj_ping_begin(Obj *o)
 {
    if (o->ping_timer) return;
-   if (o->ping_exe_handler)
+   if (o->ping_busy)
      {
-        ecore_event_handler_del(o->ping_exe_handler);
-        o->ping_exe_handler = NULL;
-     }
-   if (o->ping_exe)
-     {
-        ecore_exe_free(o->ping_exe);
-        o->ping_exe = NULL;
+        o->ping_busy = EINA_FALSE;
+        e_system_handler_del("l2ping-ping", _cb_l2ping, o);
      }
    ping_do(o);
    ping_schedule(o);
@@ -658,20 +648,15 @@ bz_obj_ping_begin(Obj *o)
 void
 bz_obj_ping_end(Obj *o)
 {
-   if (o->ping_exe_handler)
-     {
-        ecore_event_handler_del(o->ping_exe_handler);
-        o->ping_exe_handler = NULL;
-     }
    if (o->ping_timer)
      {
         ecore_timer_del(o->ping_timer);
         o->ping_timer = NULL;
      }
-   if (o->ping_exe)
+   if (o->ping_busy)
      {
-        ecore_exe_free(o->ping_exe);
-        o->ping_exe = NULL;
+        o->ping_busy = EINA_FALSE;
+        e_system_handler_del("l2ping-ping", _cb_l2ping, o);
      }
    if (o->ping_ok)
      {
@@ -735,6 +720,11 @@ bz_obj_unref(Obj *o)
         o->in_table = EINA_FALSE;
         eina_hash_del(obj_table, o->path, o);
      }
+   if (o->ping_busy)
+     {
+        o->ping_busy = EINA_FALSE;
+        e_system_handler_del("l2ping-ping", _cb_l2ping, o);
+     }
    _obj_clear(o);
    if (o->prop_sig)
      {
@@ -761,20 +751,10 @@ bz_obj_unref(Obj *o)
         bz_agent_msg_drop(o->agent_msg_ok);
         o->agent_msg_ok = NULL;
      }
-   if (o->ping_exe_handler)
-     {
-        ecore_event_handler_del(o->ping_exe_handler);
-        o->ping_exe_handler = NULL;
-     }
    if (o->ping_timer)
      {
         ecore_timer_del(o->ping_timer);
         o->ping_timer = NULL;
-     }
-   if (o->ping_exe)
-     {
-        ecore_exe_free(o->ping_exe);
-        o->ping_exe = NULL;
      }
    if (o->proxy)
      {

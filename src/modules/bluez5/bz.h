@@ -21,9 +21,8 @@ struct _Obj {
    Eina_Bool in_table : 1;
    Eina_Bool add_called : 1;
    Eina_Bool ping_ok : 1;
+   Eina_Bool ping_busy : 1;
    Ecore_Timer *ping_timer;
-   Ecore_Exe *ping_exe;
-   Ecore_Event_Handler *ping_exe_handler;
    //// public data to read
    const char *path;
    Obj_Type type;
