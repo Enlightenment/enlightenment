@@ -34,36 +34,11 @@ elif host_machine.system().contains('bsd') == true
   src += files(
     'batman/batman_sysctl.c',
     'thermal/thermal_sysctl.c',
-    'cpuclock/cpuclock_sysctl.c',
     'netstatus/netstatus_sysctl.c',
     'cpumonitor/cpumonitor_sysctl.c',
     'memusage/memusage_sysctl.c')
 else
   src += files(
     'batman/batman_upower.c',
-    'thermal/thermal_sysctl.c',
-    'cpuclock/cpuclock_sysctl.c')
-endif
-
-if get_option(m) == true
-  executable('cpuclock_sysfs',
-             'cpuclock/cpuclock_sysfs.c',
-             dependencies: dep_crypt,
-             c_args      : suid_cflags,
-             link_args   : suid_ldflags,
-             install_dir : _dir_bin,
-             install     : true
-            )
-  suid_exes += join_paths(_dir_bin, 'cpuclock_sysfs')
-endif
-
-if get_option(m) == true and host_os.startswith('freebsd') or host_os.startswith('dragonfly')
-   executable('cpuclock_sysctl',
-              'cpuclock/cpuclock_sysctl.c',
-              c_args    : suid_cflags,
-              link_args : suid_ldflags,
-              install_dir : _dir_bin,
-              install     : true
-              )
-   suid_exes += join_paths(_dir_bin, 'cpuclock_sysctl')
+    'thermal/thermal_sysctl.c')
 endif

@@ -74,66 +74,22 @@ _cpuclock_cb_sort(const void *item1, const void *item2)
 void
 _cpuclock_set_governor(const char *governor)
 {
-#if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__)
-   return;
-#endif
-   char buf[4096 + 100], exe[4096];
-   struct stat st;
-
-   snprintf(exe, 4096, "%s/%s/cpuclock_sysfs",
-            e_module_dir_get(sysinfo_config->module), MODULE_ARCH);
-   if (stat(exe, &st) < 0) return;
-
-   snprintf(buf, sizeof(buf),
-            "%s %s %s", exe, "governor", governor);
-   if (system(buf) != 0)
-     ERR("Error code from trying to run \"%s\"", buf);
+   e_system_send("cpufreq-governor", "%s", governor);
 }
 
 void
 _cpuclock_set_frequency(int frequency)
 {
-   char buf[4096 + 100], exe[4096];
-   struct stat st;
-
 #if defined(__FreeBSD__) || defined(__DragonFly__)
    frequency /= 1000;
 #endif
-
-#if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__)
-   snprintf(exe, sizeof(exe), "%s/%s/cpuclock_sysctl",
-            e_module_dir_get(sysinfo_config->module), MODULE_ARCH);
-   if (stat(exe, &st) < 0) return;
-   snprintf(buf, sizeof(buf), "%s %d", exe, frequency);
-   if (system(buf) != 0)
-     ERR("Error code from trying to run \"%s\"", buf);
-#else
-   snprintf(exe, 4096, "%s/%s/cpuclock_sysfs",
-            e_module_dir_get(sysinfo_config->module), MODULE_ARCH);
-   if (stat(exe, &st) < 0) return;
-   snprintf(buf, sizeof(buf),
-            "%s %s %i", exe, "frequency", frequency);
-   if (system(buf) != 0)
-     ERR("Error code from trying to run \"%s\"", buf);
-#endif
+   e_system_send("cpufreq-freq", "%i", frequency);
 }
 
 void
 _cpuclock_set_pstate(int min, int max, int turbo)
 {
-#if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__)
-   return;
-#endif
-   char buf[4096 + 100], exe[4096];
-   struct stat st;
-
-   snprintf(exe, 4096, "%s/%s/cpuclock_sysfs",
-            e_module_dir_get(sysinfo_config->module), MODULE_ARCH);
-   if (stat(exe, &st) < 0) return;
-   snprintf(buf, sizeof(buf),
-            "%s %s %i %i %i", exe, "pstate", min, max, turbo);
-   if (system(buf) != 0)
-     ERR("Error code from trying to run \"%s\"", buf);
+   e_system_send("cpufreq-pstate", "%i %i %i", min, max, turbo);
 }
 
 static void
