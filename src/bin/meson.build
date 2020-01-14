@@ -489,17 +489,6 @@ executable('enlightenment_askpass',
            install     : true
           )
 
-executable('enlightenment_backlight',
-           [ 'e_backlight_main.c' ],
-           include_directories: include_directories('../..'),
-           dependencies       : [ dep_eina, dep_eeze ],
-           c_args             : suid_cflags,
-           link_args          : suid_ldflags,
-           install_dir        : dir_e_utils,
-           install            : true
-          )
-suid_exes += join_paths(dir_e_utils, 'enlightenment_backlight')
-
 executable('enlightenment_fm_op',
            [ 'e_fm_op.c' ],
            include_directories: include_directories('../..'),

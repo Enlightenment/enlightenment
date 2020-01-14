@@ -32,16 +32,10 @@ static Eina_Bool bl_avail = EINA_TRUE;
 static Eina_Bool xbl_avail = EINA_FALSE;
 #endif
 #if defined(HAVE_EEZE) || defined(__FreeBSD_kernel__)
-static double bl_delayval = 1.0;
-static const char *bl_sysval = NULL;
-static Ecore_Event_Handler *bl_sys_exit_handler = NULL;
-static Ecore_Exe *bl_sys_set_exe = NULL;
-static Eina_Bool bl_sys_pending_set = EINA_FALSE;
-static Eina_Bool bl_sys_set_exe_ready = EINA_TRUE;
+const char *bl_sysval = NULL;
 
 static void      _bl_sys_find(void);
 static void      _bl_sys_level_get(void);
-static Eina_Bool _e_bl_cb_exit(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
 static void      _bl_sys_level_set(double val);
 #endif
 #ifdef __FreeBSD_kernel__
@@ -88,10 +82,6 @@ e_backlight_shutdown(void)
 #ifdef HAVE_EEZE
    if (bl_sysval) eina_stringshare_del(bl_sysval);
    bl_sysval = NULL;
-   if (bl_sys_exit_handler) ecore_event_handler_del(bl_sys_exit_handler);
-   bl_sys_exit_handler = NULL;
-   bl_sys_set_exe = NULL;
-   bl_sys_pending_set = EINA_FALSE;
    eeze_shutdown();
 #endif
 
@@ -477,53 +467,10 @@ _bl_sys_level_get(void)
 #endif  // HAVE_EEZE
 
 #if defined(HAVE_EEZE) || defined(__FreeBSD_kernel__)
-static Eina_Bool
-_e_bl_cb_ext_delay(void *data EINA_UNUSED)
-{
-   bl_sys_set_exe_ready = EINA_TRUE;
-   if (bl_sys_pending_set)
-     {
-        bl_sys_pending_set = EINA_FALSE;
-
-        _bl_sys_level_set(bl_delayval);
-     }
-   return EINA_FALSE;
-}
-
-static Eina_Bool
-_e_bl_cb_exit(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
-{
-   Ecore_Exe_Event_Del *ev;
-
-   ev = event;
-   if (ev->exe == bl_sys_set_exe)
-     {
-        bl_sys_set_exe_ready = EINA_FALSE;
-        bl_sys_set_exe = NULL;
-        ecore_timer_loop_add(0.05, _e_bl_cb_ext_delay, NULL);
-     }
-   return ECORE_CALLBACK_RENEW;
-}
-
 static void
 _bl_sys_level_set(double val)
 {
-   char buf[PATH_MAX];
-
-   if (!bl_sys_exit_handler)
-     bl_sys_exit_handler = ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
-                                                   _e_bl_cb_exit, NULL);
-   bl_delayval = val;
-   if ((bl_sys_set_exe) || (!bl_sys_set_exe_ready))
-     {
-        bl_sys_pending_set = EINA_TRUE;
-        return;
-     }
-//   fprintf(stderr, "SET: %1.3f\n", val);
-   snprintf(buf, sizeof(buf),
-            "%s/enlightenment/utils/enlightenment_backlight %i %s",
-            e_prefix_lib_get(), (int)(val * 1000.0), bl_sysval);
-   bl_sys_set_exe = ecore_exe_run(buf, NULL);
+   e_system_send("bklight-set", "%s %i", bl_sysval, (int)(val * 1000.0));
 }
 #endif  // HAVE_EEZE || __FreeBSD_kernel__
 
