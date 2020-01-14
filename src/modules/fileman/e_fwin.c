@@ -655,7 +655,7 @@ e_fwin_show(const char *dev, const char *path)
 
    EINA_LIST_FOREACH(fwins, f, fwin)
      {
-        char *d, *p;
+        const char *d, *p;
 
         e_fm2_path_get(fwin->cur_page->fm_obj, &d, &p);
         if ((d) && (!strcmp(dev, d)) && (p) && (!strcmp(path, p)))
