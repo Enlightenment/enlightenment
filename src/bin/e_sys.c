@@ -3,8 +3,6 @@
 #define ACTION_TIMEOUT 30.0
 
 /* local subsystem functions */
-static Eina_Bool _e_sys_cb_timer(void *data);
-static Eina_Bool _e_sys_cb_exit(void *data, int type, void *event);
 static void      _e_sys_cb_logout_logout(void *data, E_Dialog *dia);
 static void      _e_sys_cb_logout_wait(void *data, E_Dialog *dia);
 static void      _e_sys_cb_logout_abort(void *data, E_Dialog *dia);
@@ -12,14 +10,8 @@ static Eina_Bool _e_sys_cb_logout_timer(void *data);
 static void      _e_sys_logout_after(void);
 static void      _e_sys_logout_begin(E_Sys_Action a_after, Eina_Bool raw);
 static void      _e_sys_current_action(void);
-static void      _e_sys_action_failed(void);
 static int       _e_sys_action_do(E_Sys_Action a, char *param, Eina_Bool raw);
 
-static Ecore_Event_Handler *_e_sys_exe_exit_handler = NULL;
-static Ecore_Exe *_e_sys_halt_check_exe = NULL;
-static Ecore_Exe *_e_sys_reboot_check_exe = NULL;
-static Ecore_Exe *_e_sys_suspend_check_exe = NULL;
-static Ecore_Exe *_e_sys_hibernate_check_exe = NULL;
 static int _e_sys_can_halt = 0;
 static int _e_sys_can_reboot = 0;
 static int _e_sys_can_suspend = 0;
@@ -28,7 +20,6 @@ static int _e_sys_can_hibernate = 0;
 static E_Sys_Action _e_sys_action_current = E_SYS_NONE;
 static E_Sys_Action _e_sys_action_after = E_SYS_NONE;
 static Eina_Bool _e_sys_action_after_raw = EINA_FALSE;
-static Ecore_Exe *_e_sys_exe = NULL;
 static double _e_sys_begin_time = 0.0;
 static double _e_sys_logout_begin_time = 0.0;
 static Ecore_Timer *_e_sys_logout_timer = NULL;
@@ -364,9 +355,6 @@ e_sys_init(void)
    E_EVENT_SYS_SUSPEND = ecore_event_type_new();
    E_EVENT_SYS_HIBERNATE = ecore_event_type_new();
    E_EVENT_SYS_RESUME = ecore_event_type_new();
-   /* this is not optimal - but it does work cleanly */
-   _e_sys_exe_exit_handler = ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
-                                                     _e_sys_cb_exit, NULL);
    return 1;
 }
 
@@ -379,16 +367,9 @@ e_sys_shutdown(void)
      ecore_timer_del(_e_sys_screensaver_unignore_timer);
    if (_e_sys_acpi_handler)
      ecore_event_handler_del(_e_sys_acpi_handler);
-   if (_e_sys_exe_exit_handler)
-     ecore_event_handler_del(_e_sys_exe_exit_handler);
    _e_sys_resume_delay_timer = NULL;
    _e_sys_screensaver_unignore_timer = NULL;
    _e_sys_acpi_handler = NULL;
-   _e_sys_exe_exit_handler = NULL;
-   _e_sys_halt_check_exe = NULL;
-   _e_sys_reboot_check_exe = NULL;
-   _e_sys_suspend_check_exe = NULL;
-   _e_sys_hibernate_check_exe = NULL;
    if (login1_manger_proxy)
      {
          Eldbus_Connection *conn;
@@ -620,8 +601,11 @@ _e_sys_systemd_exists_cb(void *data EINA_UNUSED, const Eldbus_Message *m, Eldbus
    return;
 fail:
    systemd_works = EINA_FALSE;
-   /* delay this for 1.0 seconds while the rest of e starts up */
-   ecore_timer_loop_add(1.0, _e_sys_cb_timer, NULL);
+   // just pretend to do everything in this case
+   _e_sys_can_halt = 1;
+   _e_sys_can_reboot = 1;
+   _e_sys_can_suspend = 1;
+   _e_sys_can_hibernate = 1;
 }
 
 static void
@@ -692,83 +676,6 @@ _e_sys_susp_hib_check(void)
 }
 
 /* local subsystem functions */
-static Eina_Bool
-_e_sys_cb_timer(void *data EINA_UNUSED)
-{
-   /* exec out sys helper and ask it to test if we are allowed to do these
-    * things
-    */
-   char buf[4096];
-
-   snprintf(buf, sizeof(buf),
-            "%s/enlightenment/utils/enlightenment_sys -t halt",
-            e_prefix_lib_get());
-   _e_sys_halt_check_exe = ecore_exe_run(buf, NULL);
-   snprintf(buf, sizeof(buf),
-            "%s/enlightenment/utils/enlightenment_sys -t reboot",
-            e_prefix_lib_get());
-   _e_sys_reboot_check_exe = ecore_exe_run(buf, NULL);
-   snprintf(buf, sizeof(buf),
-            "%s/enlightenment/utils/enlightenment_sys -t suspend",
-            e_prefix_lib_get());
-   _e_sys_suspend_check_exe = ecore_exe_run(buf, NULL);
-   snprintf(buf, sizeof(buf),
-            "%s/enlightenment/utils/enlightenment_sys -t hibernate",
-            e_prefix_lib_get());
-   _e_sys_hibernate_check_exe = ecore_exe_run(buf, NULL);
-   return ECORE_CALLBACK_CANCEL;
-}
-
-static Eina_Bool
-_e_sys_cb_exit(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
-{
-   Ecore_Exe_Event_Del *ev;
-
-   ev = event;
-   if ((_e_sys_exe) && (ev->exe == _e_sys_exe))
-     {
-        if (ev->exit_code != 0) _e_sys_action_failed();
-        _e_sys_action_current = E_SYS_NONE;
-        _e_sys_exe = NULL;
-        return ECORE_CALLBACK_RENEW;
-     }
-   if ((_e_sys_halt_check_exe) && (ev->exe == _e_sys_halt_check_exe))
-     {
-        /* exit_code: 0 == OK, 5 == suid root removed, 7 == group id error
-         * 10 == permission denied, 20 == action undefined */
-        if (ev->exit_code == 0)
-          {
-             _e_sys_can_halt = 1;
-             _e_sys_halt_check_exe = NULL;
-          }
-     }
-   else if ((_e_sys_reboot_check_exe) && (ev->exe == _e_sys_reboot_check_exe))
-     {
-        if (ev->exit_code == 0)
-          {
-             _e_sys_can_reboot = 1;
-             _e_sys_reboot_check_exe = NULL;
-          }
-     }
-   else if ((_e_sys_suspend_check_exe) && (ev->exe == _e_sys_suspend_check_exe))
-     {
-        if (ev->exit_code == 0)
-          {
-             _e_sys_can_suspend = 1;
-             _e_sys_suspend_check_exe = NULL;
-          }
-     }
-   else if ((_e_sys_hibernate_check_exe) && (ev->exe == _e_sys_hibernate_check_exe))
-     {
-        if (ev->exit_code == 0)
-          {
-             _e_sys_can_hibernate = 1;
-             _e_sys_hibernate_check_exe = NULL;
-          }
-     }
-   return ECORE_CALLBACK_RENEW;
-}
-
 static void
 _e_sys_cb_logout_logout(void *data EINA_UNUSED, E_Dialog *dia)
 {
@@ -1006,48 +913,6 @@ _e_sys_current_action(void)
    e_dialog_show(dia);
 }
 
-static void
-_e_sys_action_failed(void)
-{
-   /* display dialog that the current action failed */
-   E_Dialog *dia;
-
-   dia = e_dialog_new(NULL,
-                      "E", "_sys_error_action_failed");
-   if (!dia) return;
-
-   e_dialog_title_set(dia, _("Enlightenment is busy with another request"));
-   e_dialog_icon_set(dia, "enlightenment/sys", 64);
-   switch (_e_sys_action_current)
-     {
-      case E_SYS_HALT:
-      case E_SYS_HALT_NOW:
-        e_dialog_text_set(dia, _("Power off failed."));
-        break;
-
-      case E_SYS_REBOOT:
-        e_dialog_text_set(dia, _("Reset failed."));
-        break;
-
-      case E_SYS_SUSPEND:
-        e_dialog_text_set(dia, _("Suspend failed."));
-        break;
-
-      case E_SYS_HIBERNATE:
-        e_dialog_text_set(dia, _("Hibernate failed."));
-        break;
-
-      default:
-        e_dialog_text_set(dia, _("EEK! This should not happen"));
-        break;
-     }
-   e_dialog_button_add(dia, _("OK"), NULL, NULL, NULL);
-   e_dialog_button_focus_num(dia, 0);
-   elm_win_center(dia->win, 1, 1);
-   e_win_no_remember_set(dia->win, 1);
-   e_dialog_show(dia);
-}
-
 static Eina_Bool
 _e_sys_cb_acpi_event(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
@@ -1128,16 +993,7 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
         /* shutdown -h now */
         if (e_util_immortal_check()) return 0;
         e_fm2_die();
-        snprintf(buf, sizeof(buf),
-                 "%s/enlightenment/utils/enlightenment_sys halt",
-                 e_prefix_lib_get());
-        if (_e_sys_exe)
-          {
-             if ((ecore_time_get() - _e_sys_begin_time) > 2.0)
-               _e_sys_current_action();
-             return 0;
-          }
-        else if (!_e_sys_comp_waiting)
+        if (!_e_sys_comp_waiting)
           {
              if (raw)
                {
@@ -1146,7 +1002,7 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
                     _e_sys_systemd_poweroff();
                   else
                     {
-                       _e_sys_exe = ecore_exe_run(buf, NULL);
+                       e_system_send("power-halt", NULL);
                        ret = 1;
                     }
                }
@@ -1167,13 +1023,7 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
         snprintf(buf, sizeof(buf),
                  "%s/enlightenment/utils/enlightenment_sys reboot",
                  e_prefix_lib_get());
-        if (_e_sys_exe)
-          {
-             if ((ecore_time_get() - _e_sys_begin_time) > 2.0)
-               _e_sys_current_action();
-             return 0;
-          }
-        else if (!_e_sys_comp_waiting)
+        if (!_e_sys_comp_waiting)
           {
              if (raw)
                {
@@ -1182,7 +1032,7 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
                     _e_sys_systemd_reboot();
                   else
                     {
-                       _e_sys_exe = ecore_exe_run(buf, NULL);
+                       e_system_send("power-reboot", NULL);
                        ret = 1;
                     }
                }
@@ -1198,16 +1048,7 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
 
       case E_SYS_SUSPEND:
         /* /etc/acpi/sleep.sh force */
-        snprintf(buf, sizeof(buf),
-                 "%s/enlightenment/utils/enlightenment_sys suspend",
-                 e_prefix_lib_get());
-        if (_e_sys_exe)
-          {
-             if ((ecore_time_get() - _e_sys_begin_time) > 2.0)
-               _e_sys_current_action();
-             return 0;
-          }
-        else if (!_e_sys_comp_waiting)
+        if (!_e_sys_comp_waiting)
           {
              if (_e_sys_phantom_wake_check_timer)
                ecore_timer_del(_e_sys_phantom_wake_check_timer);
@@ -1226,7 +1067,7 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
                        else
                          {
                             _e_sys_susp_hib_check();
-                            _e_sys_exe = ecore_exe_run(buf, NULL);
+                            e_system_send("power-suspend", NULL);
                             ret = 1;
                          }
                     }
@@ -1244,7 +1085,7 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
                        // devices suspended as possible. below is a simple
                        // "freeze the cpu/kernel" which is not what we
                        // want actually
-                       // ecore_exe_run("sleep 2 && echo freeze | sudo tee /sys/power/state", NULL);
+                       //   sleep 2 && echo freeze | sudo tee /sys/power/state
                     }
                }
              else
@@ -1259,16 +1100,7 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
 
       case E_SYS_HIBERNATE:
         /* /etc/acpi/hibernate.sh force */
-        snprintf(buf, sizeof(buf),
-                 "%s/enlightenment/utils/enlightenment_sys hibernate",
-                 e_prefix_lib_get());
-        if (_e_sys_exe)
-          {
-             if ((ecore_time_get() - _e_sys_begin_time) > 2.0)
-               _e_sys_current_action();
-             return 0;
-          }
-        else if (!_e_sys_comp_waiting)
+        if (!_e_sys_comp_waiting)
           {
              if (_e_sys_phantom_wake_check_timer)
                ecore_timer_del(_e_sys_phantom_wake_check_timer);
@@ -1285,7 +1117,7 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
                   else
                     {
                        _e_sys_susp_hib_check();
-                       _e_sys_exe = ecore_exe_run(buf, NULL);
+                       e_system_send("power-hibernate", NULL);
                        ret = 1;
                     }
                }

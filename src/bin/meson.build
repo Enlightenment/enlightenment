@@ -535,17 +535,6 @@ executable('enlightenment_alert',
            install            : true
           )
 
-executable('enlightenment_sys',
-           [ 'e_sys_main.c', 'e_sys_l2ping.c' ],
-           include_directories: include_directories('../..'),
-           dependencies       : [dep_eina, dep_ecore, dep_bluez],
-           c_args             : suid_cflags,
-           link_args          : suid_ldflags,
-           install_dir        : dir_e_utils,
-           install            : true
-          )
-suid_exes += join_paths(dir_e_utils, 'enlightenment_sys')
-
 executable('enlightenment_ckpasswd',
            'e_ckpasswd_main.c',
            include_directories: include_directories('../..'),
