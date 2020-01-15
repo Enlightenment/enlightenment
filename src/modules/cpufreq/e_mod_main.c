@@ -43,7 +43,6 @@ static Cpu_Status *_cpufreq_status_new(void);
 static void      _cpufreq_status_free(Cpu_Status *s);
 static void      _cpufreq_status_check_available(Cpu_Status *s);
 static int       _cpufreq_status_check_current(Cpu_Status *s);
-static int       _cpufreq_cb_sort(const void *item1, const void *item2);
 static void      _cpufreq_face_update_available(Instance *inst);
 static void      _cpufreq_face_update_current(Instance *inst);
 static void      _cpufreq_face_cb_set_frequency(void *data, Evas_Object *o, const char *emission, const char *source);
@@ -62,6 +61,11 @@ static void      _cpufreq_menu_powersave_governor(void *data, E_Menu *m, E_Menu_
 static void      _cpufreq_menu_frequency(void *data, E_Menu *m, E_Menu_Item *mi);
 static void      _cpufreq_menu_pstate_min(void *data, E_Menu *m, E_Menu_Item *mi);
 static void      _cpufreq_menu_pstate_max(void *data, E_Menu *m, E_Menu_Item *mi);
+
+#if defined(__FreeBSD__) || defined(__DragonFly__) || defined (__OpenBSD__)
+#else
+static int       _cpufreq_cb_sort(const void *item1, const void *item2);
+#endif
 
 static E_Config_DD *conf_edd = NULL;
 
@@ -623,6 +627,8 @@ _cpufreq_status_free(Cpu_Status *s)
    free(s);
 }
 
+#if defined(__FreeBSD__) || defined(__DragonFly__) || defined (__OpenBSD__)
+#else
 static int
 _cpufreq_cb_sort(const void *item1, const void *item2)
 {
@@ -635,6 +641,7 @@ _cpufreq_cb_sort(const void *item1, const void *item2)
      return 1;
    return 0;
 }
+#endif
 
 static void
 _cpufreq_status_check_available(Cpu_Status *s)
