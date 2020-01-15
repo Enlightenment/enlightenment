@@ -217,7 +217,7 @@ e_system_shutdown(void)
    return 1;
 }
 
-E_API void
+E_API void EINA_PRINTF(2, 3)
 e_system_send(const char *cmd, const char *fmt, ...)
 {
    char *buf = NULL, stack_buf[4096];

@@ -135,7 +135,7 @@ e_prefix_data_concat(char *dst, size_t size, const char *path)
    return e_prefix_data_concat_len(dst, size, path, strlen(path));
 }
 
-E_API size_t
+E_API size_t EINA_PRINTF(3, 4)
 e_prefix_data_snprintf(char *dst, size_t size, const char *fmt, ...)
 {
    size_t off, ret;

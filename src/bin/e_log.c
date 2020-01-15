@@ -10,7 +10,7 @@ static const char *_names[] = {
    "DBG",
 };
 
-static void
+static void  EINA_PRINTF(6, 0)
 _e_log_cb(const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc EINA_UNUSED, int line, const char *fmt, void *data EINA_UNUSED, va_list args)
 {
    const char *color;

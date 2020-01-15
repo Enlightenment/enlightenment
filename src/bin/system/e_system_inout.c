@@ -116,7 +116,7 @@ e_system_inout_command_register(const char *cmd, void (*func) (void *data, const
    eina_hash_add(_cmd_handlers, cmd, h);
 }
 
-void
+void EINA_PRINTF(2, 3)
 e_system_inout_command_send(const char *cmd, const char *fmt, ...)
 {
    char *buf = NULL, stack_buf[4096];

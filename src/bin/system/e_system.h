@@ -97,7 +97,7 @@ extern gid_t gid;
 void e_system_inout_init(void);
 void e_system_inout_shutdown(void);
 void e_system_inout_command_register(const char *cmd, void (*func) (void *data, const char *aprams), void *data);
-void e_system_inout_command_send(const char *cmd, const char *fmt, ...);
+void e_system_inout_command_send(const char *cmd, const char *fmt, ...) EINA_PRINTF(2, 3);
 
 void e_system_backlight_init(void);
 void e_system_backlight_shutdown(void);
