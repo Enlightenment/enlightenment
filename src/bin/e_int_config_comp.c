@@ -445,9 +445,12 @@ _basic_create_widgets(E_Config_Dialog *cfd,
 
    of = e_widget_framelist_add(evas, _("Behavior"), 0);
 
-   ob = e_widget_check_add(evas, _("Tear-free updates (VSynced)"), &(cfdata->vsync));
-   e_widget_framelist_object_append(of, ob);
-   
+   if (ecore_evas_engine_type_supported_get(ECORE_EVAS_ENGINE_OPENGL_X11))
+     {
+        ob = e_widget_check_add(evas, _("Tear-free updates (VSynced)"), &(cfdata->vsync));
+        e_widget_framelist_object_append(of, ob);
+     }
+
    ob = e_widget_check_add(evas, _("Smooth scaling of window content"), &(cfdata->smooth_windows));
    e_widget_framelist_object_append(of, ob);
 
