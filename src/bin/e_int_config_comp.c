@@ -26,6 +26,13 @@ struct _E_Config_Dialog_Data
 
    Evas_Object *styles_il;
    Evas_Object *vsync_check;
+   Evas_Object *texture_check;
+
+   Evas_Object *swap_auto_radio;
+   Evas_Object *swap_full_radio;
+   Evas_Object *swap_copy_radio;
+   Evas_Object *swap_double_radio;
+   Evas_Object *swap_triple_radio;
 
    int          keep_unmapped;
    int          max_unmapped_pixels;
@@ -131,6 +138,30 @@ _comp_engine_toggle(void *data, Evas_Object *o EINA_UNUSED, void *event EINA_UNU
 
    e_widget_disabled_set(cfdata->vsync_check,
                          (cfdata->engine == E_COMP_ENGINE_SW));
+
+   if (cfdata->texture_check)
+     e_widget_disabled_set(cfdata->texture_check,
+                           (cfdata->engine == E_COMP_ENGINE_SW));
+
+   if (cfdata->swap_auto_radio)
+     e_widget_disabled_set(cfdata->swap_auto_radio,
+                           (cfdata->engine == E_COMP_ENGINE_SW));
+
+   if (cfdata->swap_full_radio)
+     e_widget_disabled_set(cfdata->swap_full_radio,
+                           (cfdata->engine == E_COMP_ENGINE_SW));
+
+   if (cfdata->swap_copy_radio)
+     e_widget_disabled_set(cfdata->swap_copy_radio,
+                           (cfdata->engine == E_COMP_ENGINE_SW));
+
+   if (cfdata->swap_double_radio)
+     e_widget_disabled_set(cfdata->swap_double_radio,
+                           (cfdata->engine == E_COMP_ENGINE_SW));
+
+   if (cfdata->swap_triple_radio)
+     e_widget_disabled_set(cfdata->swap_triple_radio,
+                           (cfdata->engine == E_COMP_ENGINE_SW));
 }
 
 static void
@@ -214,25 +245,47 @@ _advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data 
           {
              ob = e_widget_label_add(evas, _("OpenGL options:"));
              e_widget_framelist_object_append(of, ob);
+
              ob = e_widget_check_add(evas, _("Tear-free updates (VSynced)"), &(cfdata->vsync));
              e_widget_framelist_object_append(of, ob);
              cfdata->vsync_check = ob;
              e_widget_disabled_set(ob, (cfdata->engine == E_COMP_ENGINE_SW));
+
              ob = e_widget_check_add(evas, _("Texture from pixmap"), &(cfdata->texture_from_pixmap));
              e_widget_framelist_object_append(of, ob);
+             cfdata->texture_check = ob;
+             e_widget_disabled_set(ob, (cfdata->engine == E_COMP_ENGINE_SW));
+
              ob = e_widget_label_add(evas, _("Assume swapping method:"));
              e_widget_framelist_object_append(of, ob);
+
              rg = e_widget_radio_group_new(&(cfdata->swap_mode));
+
              ob = e_widget_radio_add(evas, _("Auto"), ECORE_EVAS_GL_X11_SWAP_MODE_AUTO, rg);
              e_widget_framelist_object_append(of, ob);
+             cfdata->swap_auto_radio = ob;
+             e_widget_disabled_set(ob, (cfdata->engine == E_COMP_ENGINE_SW));
+
              ob = e_widget_radio_add(evas, _("Invalidate (full redraw)"), ECORE_EVAS_GL_X11_SWAP_MODE_FULL, rg);
              e_widget_framelist_object_append(of, ob);
+             cfdata->swap_full_radio = ob;
+             e_widget_disabled_set(ob, (cfdata->engine == E_COMP_ENGINE_SW));
+
              ob = e_widget_radio_add(evas, _("Copy from back to front"), ECORE_EVAS_GL_X11_SWAP_MODE_COPY, rg);
              e_widget_framelist_object_append(of, ob);
+             cfdata->swap_copy_radio = ob;
+             e_widget_disabled_set(ob, (cfdata->engine == E_COMP_ENGINE_SW));
+
              ob = e_widget_radio_add(evas, _("Double buffered swaps"), ECORE_EVAS_GL_X11_SWAP_MODE_DOUBLE, rg);
              e_widget_framelist_object_append(of, ob);
+             cfdata->swap_double_radio = ob;
+             e_widget_disabled_set(ob, (cfdata->engine == E_COMP_ENGINE_SW));
+
              ob = e_widget_radio_add(evas, _("Triple buffered swaps"), ECORE_EVAS_GL_X11_SWAP_MODE_TRIPLE, rg);
              e_widget_framelist_object_append(of, ob);
+             cfdata->swap_triple_radio = ob;
+             e_widget_disabled_set(ob, (cfdata->engine == E_COMP_ENGINE_SW));
+
 // lets not offer this anymore             
 //             ob = e_widget_check_add(evas, _("Indirect OpenGL (EXPERIMENTAL)"), &(cfdata->indirect));
 //             e_widget_framelist_object_append(of, ob);
