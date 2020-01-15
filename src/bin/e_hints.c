@@ -674,7 +674,8 @@ e_hints_window_type_set(E_Client *ec)
    (void)ec;
 #else
    if (!e_client_has_xwindow(ec)) return;
-   ecore_x_netwm_window_type_set(e_client_util_win_get(ec), ec->netwm.type);
+   ecore_x_netwm_window_type_set(e_client_util_win_get(ec),
+                                 (Ecore_X_Window_Type)ec->netwm.type);
 #endif
 }
 
@@ -700,12 +701,12 @@ e_hints_window_type_get(E_Client *ec)
    else
      {
         j = 0;
-        ec->netwm.type = types[j];
+        ec->netwm.type = (E_Window_Type)types[j];
         j++;
         while ((j < num) &&
                (ec->netwm.type == E_WINDOW_TYPE_UNKNOWN))
           {
-             ec->netwm.type = types[j];
+             ec->netwm.type = (E_Window_Type)types[j];
              j++;
           }
         if (num > j)
@@ -715,7 +716,7 @@ e_hints_window_type_get(E_Client *ec)
              if (ec->netwm.extra_types)
                {
                   for (i = j, k = 0; i < num; i++, k++)
-                    ec->netwm.extra_types[k] = types[i];
+                    ec->netwm.extra_types[k] = (E_Window_Type)types[i];
                   ec->netwm.extra_types_num = num - j;
                }
           }
