@@ -101,7 +101,7 @@ _cb_cpufreq_freq(void *data EINA_UNUSED, const char *params)
 }
 
 static void
-_cb_cpufreq_governor(void *data EINA_UNUSED, const char *params)
+_cb_cpufreq_governor(void *data EINA_UNUSED, const char *params EINA_UNUSED)
 {
    // NAME
 #if defined __OpenBSD__
@@ -123,7 +123,7 @@ _cb_cpufreq_governor(void *data EINA_UNUSED, const char *params)
 }
 
 static void
-_cb_cpufreq_pstate(void *data EINA_UNUSED, const char *params)
+_cb_cpufreq_pstate(void *data EINA_UNUSED, const char *params EINA_UNUSED)
 {
    // MIN_PERC MAX_PERC TURBO
 #if defined __OpenBSD__
