@@ -48,7 +48,7 @@ _light_get(Light *lig)
         eina_stringshare_del(s);
      }
 #elif defined(__FreeBSD_kernel__)
-   int plen = sizeof(lig->val);
+   size_t plen = sizeof(lig->val);
    sysctlbyname(lig->dev, &(lig->val), &plen, NULL, 0);
 #endif
 }
@@ -155,7 +155,7 @@ _light_add(const char *dev)
    if (lig->max <= 0) lig->max = 255;
    lig->prefer = eeze_udev_syspath_check_sysattr(lig->dev, "type", "firmware");
 #elif defined(__FreeBSD_kernel__)
-   int plen = sizeof(lig->val);
+   size_t plen = sizeof(lig->val);
    sysctlbyname(lig->dev, &(lig->val), &plen, NULL, 0);
    lig->max = 100;
 #endif
