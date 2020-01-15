@@ -147,7 +147,7 @@ _editor_style_click(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *eve
    ly = elm_object_part_content_get(obj, "e.swallow.content");
    elm_layout_file_get(ly, NULL, &g);
    g += (sizeof("e/bryce/") - 1);
-   memcpy(style, g, MIN(sizeof(style) - 1, strchr(g, '/') - g));
+   memcpy(style, g, MIN(sizeof(style) - 1, (size_t)(strchr(g, '/') - g)));
 
    bryce = evas_object_data_get(data, "__bryce_editor_bryce");
    bi = evas_object_data_get(data, "__bryce_info");
