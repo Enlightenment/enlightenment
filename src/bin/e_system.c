@@ -61,13 +61,14 @@ static Eina_Bool
 _system_message_read(void)
 {
    Message_Head *head;
-   const char *data = (const char *)eina_binbuf_string_get(_msg_buf);
+   const void *bdata = eina_binbuf_string_get(_msg_buf);
+   const char *data = bdata;
    size_t len = eina_binbuf_length_get(_msg_buf);
    Eina_Binbuf *buf2;
 
    if (!data) return EINA_FALSE;
    if (len < sizeof(Message_Head)) return EINA_FALSE;
-   head = (Message_Head *)data;
+   head = (Message_Head *)bdata;
    if (len < (sizeof(Message_Head) + head->size)) return EINA_FALSE;
    if (_handlers)
      {
