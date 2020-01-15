@@ -404,6 +404,8 @@ _e_ptrace_getsiginfo(int child, siginfo_t *sig, Eina_Bool really_know)
    if (!really_know)
      return ptrace(PT_GETSIGINFO, child, NULL, sig);
 #else
+   (void)child;
+   (void)sig;
    (void)really_know;
 #endif
    return 0;
