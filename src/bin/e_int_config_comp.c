@@ -204,6 +204,7 @@ _advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data 
              e_widget_framelist_object_append(of, ob);
              ob = e_widget_check_add(evas, _("Tear-free updates (VSynced)"), &(cfdata->vsync));
              e_widget_framelist_object_append(of, ob);
+             e_widget_disabled_set(ob, (cfdata->engine == E_COMP_ENGINE_SW));
              ob = e_widget_check_add(evas, _("Texture from pixmap"), &(cfdata->texture_from_pixmap));
              e_widget_framelist_object_append(of, ob);
              ob = e_widget_label_add(evas, _("Assume swapping method:"));
@@ -449,6 +450,7 @@ _basic_create_widgets(E_Config_Dialog *cfd,
      {
         ob = e_widget_check_add(evas, _("Tear-free updates (VSynced)"), &(cfdata->vsync));
         e_widget_framelist_object_append(of, ob);
+        e_widget_disabled_set(ob, (cfdata->engine == E_COMP_ENGINE_SW));
      }
 
    ob = e_widget_check_add(evas, _("Smooth scaling of window content"), &(cfdata->smooth_windows));
