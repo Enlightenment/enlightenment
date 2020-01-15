@@ -317,10 +317,10 @@ _cpuclock_config_updated(Instance *inst)
 
    if (inst->cfg->id == -1)
      {
-        inst->cfg->cpuclock.status->cur_frequency = 3.0;
-        inst->cfg->cpuclock.status->can_set_frequency = 1;
-        inst->cfg->cpuclock.status->cur_min_frequency = 0.5;
-        inst->cfg->cpuclock.status->cur_max_frequency = 3.5;
+        inst->cfg->cpuclock.status->cur_frequency     = 3000000;
+        inst->cfg->cpuclock.status->can_set_frequency = 1000000;
+        inst->cfg->cpuclock.status->cur_min_frequency =  500000;
+        inst->cfg->cpuclock.status->cur_max_frequency = 3500000;
         return;
      }
    if (inst->cfg->cpuclock.status->frequencies)
