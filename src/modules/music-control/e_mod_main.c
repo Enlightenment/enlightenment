@@ -27,7 +27,7 @@ const Player music_player_players[] =
    {"Spotify",              "org.mpris.MediaPlayer2.spotify",       "spotify"},
    {"Rage",                 "org.mpris.MediaPlayer2.rage",          "rage"},
 #define PLAYER_COUNT 16
-   {NULL, NULL}
+   {NULL, NULL, NULL}
 };
 
 Eina_Bool
