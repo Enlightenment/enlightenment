@@ -727,6 +727,7 @@ main(int argc, char **argv)
         else if (child == 0)
           return _e_start_child(args, really_know);
 
+        putenv("E_RESTART_OK=");
         /* in the parent - ptrace attach and continue */
         putenv("E_RESTART=1");
         _e_ptrace_attach(child, &status, really_know);
@@ -784,6 +785,12 @@ not_done:
                     }
                   if (WEXITSTATUS(r) == 1)
                     restart = EINA_FALSE;
+               }
+             else if (WEXITSTATUS(status) == 111)
+               {
+                  putenv("E_RESTART_OK=1");
+                  restart = EINA_TRUE;
+                  done = EINA_TRUE;
                }
              else if (!WIFEXITED(status) || stop_ptrace)
                done = EINA_TRUE;

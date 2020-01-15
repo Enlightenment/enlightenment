@@ -1142,10 +1142,8 @@ main(int argc, char **argv)
 
    if (restart)
      {
-        e_util_env_set("E_RESTART_OK", "1");
-        if (getenv("E_START_MTRACK"))
-          e_util_env_set("MTRACK", "track");
-        ecore_app_restart();
+        e_system_shutdown();
+        exit(111); // return code so e_start restrts e freshly
      }
 
    e_prefix_shutdown();
