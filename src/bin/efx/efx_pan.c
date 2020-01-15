@@ -337,7 +337,7 @@ _e_efx_pan_init(Evas_Object *obj)
    if (!e->pan_data)
      {
         e->pan_data = calloc(1, sizeof(E_Efx_Pan_Data));
-        EINA_SAFETY_ON_NULL_RETURN_VAL(e->pan_data, EINA_FALSE);
+        EINA_SAFETY_ON_NULL_RETURN_VAL(e->pan_data, NULL);
         evas_object_event_callback_add(obj, EVAS_CALLBACK_FREE, (Evas_Object_Event_Cb)_obj_del, e->pan_data);
         epd = e->pan_data;
         epd->pan = _smart_pan_add(evas_object_evas_get(obj));
