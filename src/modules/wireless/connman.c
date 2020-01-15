@@ -1229,7 +1229,7 @@ _connman_agent_request_input(const Eldbus_Service_Interface *iface EINA_UNUSED, 
      {
         Eldbus_Message_Iter *var;
         char *signature;
-        Connman_Field field = { NULL };
+        Connman_Field field = { NULL, CONNMAN_FIELD_STATE_MANDATORY, NULL, NULL };
 
         if (!eldbus_message_iter_arguments_get(dict, "sv", &field.name, &var))
           goto err;
