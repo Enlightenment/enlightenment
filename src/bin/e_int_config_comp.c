@@ -25,6 +25,7 @@ struct _E_Config_Dialog_Data
    } match;
 
    Evas_Object *styles_il;
+   Evas_Object *vsync_check;
 
    int          keep_unmapped;
    int          max_unmapped_pixels;
@@ -124,6 +125,15 @@ _create_data(E_Config_Dialog *cfd EINA_UNUSED)
 }
 
 static void
+_comp_engine_toggle(void *data, Evas_Object *o EINA_UNUSED, void *event EINA_UNUSED)
+{
+   E_Config_Dialog_Data *cfdata = data;
+
+   e_widget_disabled_set(cfdata->vsync_check,
+                         (cfdata->engine == E_COMP_ENGINE_SW));
+}
+
+static void
 _advanced_features_changed(E_Comp_Config *conf)
 {
    conf->enable_advanced_features = !conf->enable_advanced_features;
@@ -193,8 +203,10 @@ _advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data 
    of = e_widget_framelist_add(evas, _("Engine"), 0);
    rg = e_widget_radio_group_new(&(cfdata->engine));
    ob = e_widget_radio_add(evas, _("Software"), E_COMP_ENGINE_SW, rg);
+   evas_object_smart_callback_add(ob, "changed", _comp_engine_toggle, cfdata);
    e_widget_framelist_object_append(of, ob);
    ob = e_widget_radio_add(evas, _("OpenGL"), E_COMP_ENGINE_GL, rg);
+   evas_object_smart_callback_add(ob, "changed", _comp_engine_toggle, cfdata);
    e_widget_framelist_object_append(of, ob);
    if ((e_comp->comp_type == E_PIXMAP_TYPE_X) && (!getenv("ECORE_X_NO_XLIB")))
      {
@@ -204,6 +216,7 @@ _advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data 
              e_widget_framelist_object_append(of, ob);
              ob = e_widget_check_add(evas, _("Tear-free updates (VSynced)"), &(cfdata->vsync));
              e_widget_framelist_object_append(of, ob);
+             cfdata->vsync_check = ob;
              e_widget_disabled_set(ob, (cfdata->engine == E_COMP_ENGINE_SW));
              ob = e_widget_check_add(evas, _("Texture from pixmap"), &(cfdata->texture_from_pixmap));
              e_widget_framelist_object_append(of, ob);
@@ -450,6 +463,7 @@ _basic_create_widgets(E_Config_Dialog *cfd,
      {
         ob = e_widget_check_add(evas, _("Tear-free updates (VSynced)"), &(cfdata->vsync));
         e_widget_framelist_object_append(of, ob);
+        cfdata->vsync_check = ob;
         e_widget_disabled_set(ob, (cfdata->engine == E_COMP_ENGINE_SW));
      }
 
@@ -468,8 +482,10 @@ _basic_create_widgets(E_Config_Dialog *cfd,
    rg = e_widget_radio_group_new(&(cfdata->engine));
    ob = e_widget_radio_add(evas, _("Software"), E_COMP_ENGINE_SW, rg);
    e_widget_framelist_object_append(of, ob);
+   evas_object_smart_callback_add(ob, "changed", _comp_engine_toggle, cfdata);
    ob = e_widget_radio_add(evas, _("OpenGL"), E_COMP_ENGINE_GL, rg);
    e_widget_framelist_object_append(of, ob);
+   evas_object_smart_callback_add(ob, "changed", _comp_engine_toggle, cfdata);
 
    e_widget_list_object_append(ol, of, 1, 0, 0.5);
    
