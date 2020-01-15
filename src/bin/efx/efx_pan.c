@@ -304,7 +304,7 @@ _pan_cb(E_Efx_Pan_Data *epd, double pos)
    int x, y, px = 0, py = 0;
    double pct;
 
-   pct = ecore_animator_pos_map(pos, epd->speed, 0, 0);
+   pct = ecore_animator_pos_map(pos, (Ecore_Pos_Map)epd->speed, 0, 0);
    x = lround(pct * (double)epd->change.x) - epd->current.x;
    y = lround(pct * (double)epd->change.y) - epd->current.y;
    _smart_pan_get(epd->pan, &px, &py);
