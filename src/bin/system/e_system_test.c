@@ -26,13 +26,14 @@ static Eina_Bool
 _message_read(void)
 {
    Message_Head *head;
-   const unsigned char *data = eina_binbuf_string_get(buf);
+   const void *bdata = eina_binbuf_string_get(buf);
+   const unsigned char *data = bdata;
    size_t len = eina_binbuf_length_get(buf);
    Eina_Binbuf *buf2;
 
    if (!data) return EINA_FALSE;
    if (len < sizeof(Message_Head)) return EINA_FALSE;
-   head = (Message_Head *)data;
+   head = (Message_Head *)bdata;
    if (len < (sizeof(Message_Head) + head->size)) return EINA_FALSE;
    printf("CMD: [%s]", head->cmd);
    if (head->size == 0) printf("\n\n");
