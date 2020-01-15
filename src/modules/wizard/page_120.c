@@ -34,6 +34,8 @@
    }
  */
 
+#if defined (__FreeBSD__) || defined (__OpenBSD__)
+#else
 static Eina_List *
 _wizard_temperature_get_bus_files(const char *bus)
 {
@@ -76,6 +78,7 @@ _wizard_temperature_get_bus_files(const char *bus)
      }
    return result;
 }
+#endif
 
 /*
 E_API int
@@ -93,7 +96,13 @@ wizard_page_shutdown(E_Wizard_Page *pg EINA_UNUSED)
 E_API int
 wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
 {
+#ifdef HAVE_EEZE
    Eina_List *tempdevs = NULL;
+#endif
+   int hav_temperature = 0;
+#if defined (__FreeBSD__) || defined (__OpenBSD__)
+   // figure out on bsd if we have temp sensors
+#else
    const char *sensor_path[] = {
       "/proc/omnibook/temperature",
       "/proc/acpi/thermal_zone",    //LINUX_ACPI Directory
@@ -104,11 +113,6 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
       "/sys/devices/platform/thinkpad_hwmon/temp1_input",
       NULL
    };
-   int hav_temperature = 0;
-
-#if defined (__FreeBSD__) || defined (__OpenBSD__)
-   // figure out on bsd if we have temp sensors
-#else
 
 #ifdef HAVE_EEZE
    tempdevs = eeze_udev_find_by_type(EEZE_UDEV_TYPE_IS_IT_HOT_OR_IS_IT_COLD_SENSOR, NULL);
