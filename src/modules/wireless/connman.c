@@ -255,7 +255,7 @@ _connman_service_convert(Connman_Service *cs)
    wn->name = cs->name;
    wn->security = cs->security;
    wn->state = _connman_wifi_state_convert(cs->state);
-   wn->type = cs->type;
+   wn->type = (Wireless_Service_Type)cs->type;
    wn->strength = cs->strength;
    wn->connect_cb = _connman_service_connect;
    return wn;
