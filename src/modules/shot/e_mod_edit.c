@@ -1625,7 +1625,7 @@ typedef struct
 } Tool_Info;
 
 static int       _tool_info_count = 0;
-static Tool_Info tool_info[100] =  { 0 };
+static Tool_Info tool_info[100] =  { { 0 } };
 
 static void
 _cb_tool_changed(void *data EINA_UNUSED, Evas_Object *obj, void *info EINA_UNUSED)
