@@ -527,7 +527,7 @@ e_elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 }
 
 E_API Evas_Object *
-elm_win_util_standard_add(const char *name, const char *title)
+e_elm_win_util_standard_add(const char *name, const char *title)
 {
    char *eng;
    Evas_Object *o;
