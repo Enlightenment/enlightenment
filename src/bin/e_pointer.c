@@ -289,7 +289,8 @@ _e_pointer_canvas_add(E_Pointer *ptr)
      goto err;
 
    /* try to get the buffer engine info */
-   einfo = (Evas_Engine_Info_Buffer *)evas_engine_info_get(ptr->buffer_evas);
+   einfo = (Evas_Engine_Info_Buffer *)(void *)
+     evas_engine_info_get(ptr->buffer_evas);
    if (!einfo) goto err;
 
    /* fill in buffer engine info */
@@ -330,7 +331,8 @@ _e_pointer_canvas_resize(E_Pointer *ptr, int w, int h)
 
    ptr->pixels = realloc(ptr->pixels, (ptr->w * ptr->h * sizeof(int)));
 
-   einfo = (Evas_Engine_Info_Buffer *)evas_engine_info_get(ptr->buffer_evas);
+   einfo = (Evas_Engine_Info_Buffer *)(void *)
+     evas_engine_info_get(ptr->buffer_evas);
    EINA_SAFETY_ON_NULL_RETURN(einfo);
 
    einfo->info.dest_buffer = ptr->pixels;
