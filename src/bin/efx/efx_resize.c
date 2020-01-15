@@ -61,7 +61,7 @@ _resize_cb(E_Efx_Resize_Data *erd, double pos)
      {
         int w, h;
 
-        factor = ecore_animator_pos_map(pos, erd->speed, 0, 0);
+        factor = ecore_animator_pos_map(pos, (Ecore_Pos_Map)erd->speed, 0, 0);
         w = lround(factor * (erd->w - erd->start_w)) + erd->start_w;
         h = lround(factor * (erd->h - erd->start_h)) + erd->start_h;
         //DBG("%p to (%dx%d)", erd->e->obj, w, h);

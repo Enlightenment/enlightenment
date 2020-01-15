@@ -40,7 +40,7 @@ _move_circle_cb(E_Efx_Move_Data *emd, double pos)
    Evas_Coord xx, yy, ox, oy, w, h;
 
 
-   pct = ecore_animator_pos_map(pos, emd->speed, 0, 0);
+   pct = ecore_animator_pos_map(pos, (Ecore_Pos_Map)emd->speed, 0, 0);
    degrees = pct * emd->degrees;
    ox = emd->e->x, oy = emd->e->y;
    if (emd->e->resize_data)
@@ -80,7 +80,7 @@ _move_cb(E_Efx_Move_Data *emd, double pos)
    Eina_List *l;
    E_EFX *e;
 
-   pct = ecore_animator_pos_map(pos, emd->speed, 0, 0);
+   pct = ecore_animator_pos_map(pos, (Ecore_Pos_Map)emd->speed, 0, 0);
    x = lround(pct * (double)emd->change.x) - emd->current.x;
    y = lround(pct * (double)emd->change.y) - emd->current.y;
    _e_efx_resize_adjust(emd->e, &x, &y);

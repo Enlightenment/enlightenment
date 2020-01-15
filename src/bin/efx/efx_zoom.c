@@ -58,7 +58,7 @@ _zoom_cb(E_Efx_Zoom_Data *ezd, double pos)
    Eina_List *l;
    E_EFX *e;
 
-   zoom = ecore_animator_pos_map(pos, ezd->speed, 0, 0);
+   zoom = ecore_animator_pos_map(pos, (Ecore_Pos_Map)ezd->speed, 0, 0);
    ezd->e->map_data.zoom = (zoom * (ezd->ending_zoom - ezd->starting_zoom)) + ezd->starting_zoom;
    //DBG("total: %g || zoom (pos %g): %g || endzoom: %g || startzoom: %g", ezd->e->map_data.zoom, zoom, pos, ezd->ending_zoom, ezd->starting_zoom);
    e_efx_maps_apply(ezd->e, ezd->e->obj, NULL, E_EFX_MAPS_APPLY_ALL);

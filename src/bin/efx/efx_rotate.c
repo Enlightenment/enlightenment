@@ -27,7 +27,7 @@ _rotate_cb(E_Efx_Rotate_Data *erd, double pos)
    Eina_List *l;
    E_EFX *e;
 
-   degrees = ecore_animator_pos_map(pos, erd->speed, 0, 0);
+   degrees = ecore_animator_pos_map(pos, (Ecore_Pos_Map)erd->speed, 0, 0);
    erd->e->map_data.rotation = degrees * erd->degrees + erd->start_degrees;
    //DBG("erd->e->map_data.rotation=%g,erd->degrees=%g,erd->start_degrees=%g", erd->e->map_data.rotation, erd->degrees, erd->start_degrees);
    e_efx_maps_apply(erd->e, erd->e->obj, NULL, E_EFX_MAPS_APPLY_ALL);
