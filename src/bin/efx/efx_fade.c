@@ -60,7 +60,7 @@ _fade_cb(E_Efx_Fade_Data *efd, double pos)
         g = efd->start.g;
         b = efd->start.b;
         a = efd->alpha[0];
-        factor = ecore_animator_pos_map(pos, efd->speed, 0, 0);
+        factor = ecore_animator_pos_map(pos, (Ecore_Pos_Map)efd->speed, 0, 0);
         if (efd->color.r != efd->start.r)
           r -= lround(factor * ((int)efd->start.r - (int)efd->color.r));
         if (efd->color.g != efd->start.g)
