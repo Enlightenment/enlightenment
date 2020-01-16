@@ -21,9 +21,3 @@ executable('enlightenment_system', src,
            install            : true
            )
 suid_exes += join_paths(dir_e_utils, 'enlightenment_system')
-executable('enlightenment_system_test', [ 'e_system_test.c' ],
-           include_directories: include_directories('../../..'),
-           dependencies       : [ dep_eina, dep_ecore ],
-           install_dir        : dir_e_utils,
-           install            : true
-          )
