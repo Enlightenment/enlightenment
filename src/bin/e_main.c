@@ -303,8 +303,6 @@ main(int argc, char **argv)
    snprintf(buff, sizeof(buff), "%1.1f", tstart);
    e_util_env_set("E_START_TIME", buff);
 
-   if (getenv("E_START_MTRACK"))
-     e_util_env_set("MTRACK", NULL);
    TS("Eina Init");
    if (!eina_init())
      {
