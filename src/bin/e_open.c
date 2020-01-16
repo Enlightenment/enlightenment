@@ -136,6 +136,11 @@ handler_find(const char *mime)
      }
 
    if (!desktop)
+     {
+        if (!strcmp(mime, "inode/directory"))
+          desktop = efreet_util_desktop_file_id_find("enlightenment_filemanager.desktop");
+     }
+   if (!desktop)
      desktop = desktop_first_free_others(efreet_util_desktop_mime_list(mime));
 
    return desktop;
