@@ -942,7 +942,6 @@ _e_sys_cb_acpi_event(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 static int
 _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
 {
-   char buf[PATH_MAX];
    int ret = 0;
 
    switch (a)
@@ -1020,9 +1019,6 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
         /* shutdown -r now */
         if (e_util_immortal_check()) return 0;
         e_fm2_die();
-        snprintf(buf, sizeof(buf),
-                 "%s/enlightenment/utils/enlightenment_sys reboot",
-                 e_prefix_lib_get());
         if (!_e_sys_comp_waiting)
           {
              if (raw)
