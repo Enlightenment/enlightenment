@@ -180,22 +180,7 @@ _xdg_data_dirs_augment(void)
         e_util_env_set("XDG_CONFIG_DIRS", buf);
      }
 
-   if (!getenv("XDG_RUNTIME_DIR"))
-     {
-        const char *dir;
-
-        snprintf(buf, sizeof(buf), "/tmp/xdg-XXXXXX");
-        dir = mkdtemp(buf);
-        if (!dir) dir = "/tmp";
-        else
-          {
-             char buf2[4096];
-
-             e_util_env_set("XDG_RUNTIME_DIR", dir);
-             snprintf(buf2, sizeof(buf2), "%s/.e-deleteme", dir);
-             ecore_file_mkdir(buf2);
-          }
-     }
+   // N.B. XDG_RUNTIME_DIR is taken care of in e_start
 
    /* set menu prefix so we get our e menu */
    if (!getenv("XDG_MENU_PREFIX"))
@@ -331,6 +316,11 @@ main(int argc, char **argv)
    if (!s) e_util_env_set("EINA_STATGEN", NULL);
 
    _e_main_shutdown_push(eina_shutdown);
+
+   /* Eio's eio_init internally calls efreet_init. Set XDG_MENU_PREFIX here      */
+   /* else efreet's efreet_menu_prefix symbol is set erroneously during eio_init. */
+   _xdg_data_dirs_augment();
+
    if (!e_log_init())
      {
         e_error_message_show(_("Enlightenment could not create a logging domain!\n"));
@@ -422,10 +412,6 @@ main(int argc, char **argv)
      }
    TS("EFX Init Done");
    _e_main_shutdown_push((void*)e_efx_shutdown);
-
-   /* Eio's eio_init internally calls efreet_init. Set XDG_MENU_PREFIX here      */
-   /* else efreet's efreet_menu_prefix symbol is set erroneously during eio_init. */
-   _xdg_data_dirs_augment();
 
    TS("EIO Init");
    if (!eio_init())

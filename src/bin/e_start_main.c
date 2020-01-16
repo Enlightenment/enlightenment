@@ -558,9 +558,10 @@ main(int argc, char **argv)
    char buf[8192], buf2[4096], **args, *home;
    char valgrind_path[PATH_MAX] = "";
    const char *valgrind_log = NULL;
-   const char *bindir;
+   const char *bindir, *s;
    Eina_Bool really_know = EINA_FALSE;
    struct sigaction action;
+   struct stat st;
    pid_t child = -1;
    Eina_Bool restart = EINA_TRUE;
 
@@ -583,6 +584,25 @@ main(int argc, char **argv)
    action.sa_flags = SA_RESETHAND;
    sigemptyset(&action.sa_mask);
    sigaction(SIGHUP, &action, NULL);
+
+   s = getenv("XDG_RUNTIME_DIR");
+   if ((!s) || (stat(s, &st) != 0) || (!S_ISDIR(st.st_mode)))
+     {
+        const char *dir;
+
+        snprintf(buf, sizeof(buf), "/tmp/xdg-XXXXXX");
+        dir = mkdtemp(buf);
+        if (!dir) dir = "/tmp";
+        else
+          {
+             FILE *f;
+
+             snprintf(buf2, sizeof(buf2), "%s/.e-deleteme", dir);
+             f = fopen(buf2, "w");
+             if (f) fclose(f);
+          }
+        env_set("XDG_RUNTIME_DIR", dir);
+     }
 
    eina_init();
 
