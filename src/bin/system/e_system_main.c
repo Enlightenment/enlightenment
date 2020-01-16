@@ -257,6 +257,17 @@ singleton_setup(void)
    ecore_thread_feedback_run(_cb_die, NULL, NULL, NULL, NULL, EINA_TRUE);
 }
 
+static Eina_Bool
+_cb_idle_enterer(void *data EINA_UNUSED)
+{
+   // welcome to unportable code land... :)
+   // trim process down as much as possible when going idle
+#ifdef HAVE_MALLOC_TRIM
+   malloc_trim(0);
+#endif
+   return ECORE_CALLBACK_RENEW;
+}
+
 int
 main(int argc EINA_UNUSED, const char **argv EINA_UNUSED)
 {
@@ -281,6 +292,8 @@ main(int argc EINA_UNUSED, const char **argv EINA_UNUSED)
    e_system_rfkill_init();
    e_system_l2ping_init();
    e_system_cpufreq_init();
+
+   ecore_idle_enterer_add(_cb_idle_enterer, NULL);
 
    ecore_main_loop_begin();
 

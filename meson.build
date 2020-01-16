@@ -154,6 +154,12 @@ if cc.has_header('sys/procctl.h') == true
   config_h.set('HAVE_PROCCTL'          , '1')
 endif
 
+if cc.has_header('malloc.h') == true
+  config_h.set('HAVE_MALLOC_H'     , '1')
+endif
+if cc.has_function('malloc_trim') == true
+  config_h.set('HAVE_MALLOC_TRIM'      , '1')
+endif
 if cc.has_function('setenv') == true
   config_h.set('HAVE_SETENV'           , '1')
 endif
