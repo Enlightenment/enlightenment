@@ -1099,7 +1099,7 @@ e_config_load(void)
         e_config_profile_set("default");
         if (!reload) e_config_profile_del(e_config_profile_get());
         e_config_save_block_set(1);
-        ecore_app_restart();
+        exit(111);
         //e_sys_action_do(E_SYS_RESTART, NULL);
         return;
      }

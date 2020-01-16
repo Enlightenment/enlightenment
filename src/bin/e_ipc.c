@@ -187,7 +187,7 @@ _e_ipc_cb_client_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
          switch (e->minor)
            {
             case E_ALERT_OP_RESTART:
-              ecore_app_restart();
+              exit(111);
               break;
 
             case E_ALERT_OP_EXIT:
