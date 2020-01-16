@@ -2705,6 +2705,7 @@ _e_fm2_client_eject(const char *udi)
    data = alloca(size);
    strcpy(data, udi);
 
+   fprintf(stderr, "EJECT [%s]\n", udi); // udi == /dev/sdd1 :)
    return _e_fm_client_send_new(E_FM_OP_EJECT, data, size);
 }
 
