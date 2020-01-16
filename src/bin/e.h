@@ -104,6 +104,10 @@ void *alloca (size_t);
 #  include <execinfo.h>
 # endif
 
+# ifdef HAVE_MALLOC_H
+#  include <malloc.h>
+# endif
+
 // XXX: FIXME: TMP solution for window stack until api is settled
 #define EFL_BETA_API_SUPPORT
 
