@@ -5381,17 +5381,24 @@ e_client_signal_resize_end(E_Client *ec, const char *dir EINA_UNUSED, const char
 E_API void
 e_client_resize_limit(const E_Client *ec, int *w, int *h)
 {
-   int dw, dh;
+   int l = 0, r = 0, t = 0, b = 0;
+   int dw = 0, dh = 0;
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
 
-   if (ec->frame)
+   e_comp_object_frame_geometry_get(ec->frame, &l, &r, &t, &b);
+   if ((ec->frame) && e_comp_object_frame_allowed(ec->frame))
      {
         e_comp_object_frame_wh_unadjust(ec->frame, ec->w, ec->h, &dw, &dh);
         e_comp_object_frame_wh_unadjust(ec->frame, *w, *h, w, h);
      }
    else
-     dw = ec->w, dh = ec->h;
+     {
+        *w -= l + r;
+        *h -= t + b;
+        dw = ec->w;
+        dh = ec->h;
+     }
    dw = abs(*w - dw);
    dh = abs(*h - dh);
    if (*h < 1) *h = 1;
@@ -5504,9 +5511,16 @@ e_client_resize_limit(const E_Client *ec, int *w, int *h)
    if (*h < 1) *h = 1;
    if (*w < 1) *w = 1;
 
-
-   if (ec->frame)
-     e_comp_object_frame_wh_adjust(ec->frame, *w, *h, w, h);
+   if ((ec->frame) && e_comp_object_frame_allowed(ec->frame))
+     {
+        if (ec->frame)
+          e_comp_object_frame_wh_adjust(ec->frame, *w, *h, w, h);
+     }
+   else
+     {
+        *w += l + r;
+        *h += t + b;
+     }
 }
 
 ////////////////////////////////////////////
