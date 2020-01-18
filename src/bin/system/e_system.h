@@ -66,8 +66,10 @@ void *alloca (size_t);
 # include <inttypes.h>
 # include <assert.h>
 # include <fcntl.h>
-# ifdef HAVE_MALLOC_H
-#  include <malloc.h>
+# if !defined (__FreeBSD__) && !defined (__OpenBSD__)
+#  ifdef HAVE_MALLOC_H
+#   include <malloc.h>
+#  endif
 # endif
 
 #if defined (__FreeBSD__) || defined (__OpenBSD__)
