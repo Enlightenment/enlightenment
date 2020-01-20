@@ -1301,7 +1301,9 @@ _e_comp_x_evas_fullscreen_zoom_cb(void *data, Evas_Object *obj EINA_UNUSED, void
         free(sizes);
      }
    else
-     evas_object_geometry_set(ec->frame, ec->zone->x, ec->zone->y, ec->zone->w, ec->zone->h);
+     {
+        evas_object_geometry_set(ec->frame, ec->zone->x, ec->zone->y, ec->zone->w, ec->zone->h);
+     }
 }
 
 static Eina_Bool
@@ -1358,7 +1360,9 @@ _e_comp_x_resize_request(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_E
           h = zh;
      }
    if ((w != ec->w) || (h != ec->h))
-     evas_object_resize(ec->frame, w, h);
+     {
+        evas_object_resize(ec->frame, w, h);
+     }
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -1947,7 +1951,9 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
    /* FIXME: need to send synthetic stacking event to, as well as move/resize */
    if ((((ec->maximized & E_MAXIMIZE_TYPE) != E_MAXIMIZE_NONE) && (move || resize)) ||
        ((!move) && (!resize)))
-     _e_comp_x_client_move_resize_send(ec);
+     {
+        _e_comp_x_client_move_resize_send(ec);
+     }
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -2821,7 +2827,7 @@ _e_comp_x_sync_alarm(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event
 {
    unsigned int serial;
    E_Client *ec;
-   Eina_Bool resize = EINA_FALSE;
+//   Eina_Bool resize = EINA_FALSE;
 
    ec = _e_comp_x_client_find_by_alarm(ev->alarm);
    if ((!ec) || e_object_is_del(E_OBJECT(ec))) return ECORE_CALLBACK_RENEW;
@@ -2847,26 +2853,30 @@ _e_comp_x_sync_alarm(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event
 
         if (pnd)
           {
-             resize = ((ec->w != pnd->w) || (ec->h != pnd->h));
-             e_comp_object_frame_wh_adjust(ec->frame, pnd->w, pnd->h, &ec->w, &ec->h);
+// disable this as it just seems to cause mis-sizing and issues...
+//             resize = ((ec->w != pnd->w) || (ec->h != pnd->h));
+//             e_comp_object_frame_wh_adjust(ec->frame, pnd->w, pnd->h, &ec->w, &ec->h);
              E_FREE(pnd);
           }
      }
 
-   if (resize)
-     {
-        evas_object_resize(ec->frame, ec->w, ec->h);
-        if (ec->internal_elm_win)
-          evas_object_resize(ec->internal_elm_win, ec->client.w, ec->client.h);
-     }
-
-   ecore_x_pointer_xy_get(e_comp->root,
-                          &ec->mouse.current.mx,
-                          &ec->mouse.current.my);
+// this too... as above
+//   if (resize)
+//     {
+//        evas_object_resize(ec->frame, ec->w, ec->h);
+//        if (ec->internal_elm_win)
+//          evas_object_resize(ec->internal_elm_win, ec->client.w, ec->client.h);
+//     }
 
    ec->netwm.sync.send_time = ecore_loop_time_get();
-   if (resize)
-     e_client_mouse_move(ec, &(Evas_Point){ec->mouse.current.mx, ec->mouse.current.my});
+// this too - as above
+//   if (resize)
+//     {
+//        ecore_x_pointer_xy_get(e_comp->root,
+//                               &ec->mouse.current.mx,
+//                               &ec->mouse.current.my);
+//        e_client_mouse_move(ec, &(Evas_Point){ec->mouse.current.mx, ec->mouse.current.my});
+//     }
    return ECORE_CALLBACK_RENEW;
 }
 
