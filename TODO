@@ -1,4 +1,8 @@
 TODO:
+* wifi/bt net: associate app/desktop(s) or actions to run when:
+  * bt device comes or goes (alongside lock device feature)
+  * wifi appears or disappears
+  * wifi or wired network connected or disconnected to/from
 * pointer: bug: sometiems get sstuck in move/resize modfe if mouse
   over move/resize area when desklock kicks in
 * clipboard manager - monitor clipboard changes + history + select from it
