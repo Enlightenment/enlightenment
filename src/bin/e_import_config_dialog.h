@@ -7,21 +7,18 @@ typedef struct _E_Import_Config_Dialog E_Import_Config_Dialog;
 #define E_IMPORT_CONFIG_DIALOG_TYPE 0xE0b01040
 struct _E_Import_Config_Dialog
 {
-   E_Object              e_obj_inherit;
-   Ecore_End_Cb          ok;
-   Ecore_Cb              cancel;
+   E_Object             e_obj_inherit;
+   Ecore_End_Cb         ok;
+   Ecore_Cb             cancel;
 
-   const char *file;
-   int   method;
-   int   external;
-   int   quality;
+   const char          *file;
+   int                  method;
+   int                  quality;
    E_Color              color;
 
    Ecore_Exe            *exe;
    Ecore_Event_Handler  *exe_handler;
-   const char         *path;
-   char          *tmpf;
-   const char          *fdest;
+   const char           *fdest;
 
    E_Dialog             *dia;
 };

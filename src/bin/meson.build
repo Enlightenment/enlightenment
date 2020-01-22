@@ -513,10 +513,10 @@ executable('enlightenment_elm_cfgtool',
            install            : true
           )
 
-executable('enlightenment_static_grabber',
-           [ 'e_static_grab.c' ],
+executable('enlightenment_wallpaper_gen',
+           [ 'e_wallpaper_gen_main.c' ],
            include_directories: include_directories('../..'),
-           dependencies       : [ dep_eina, dep_eet ],
+           dependencies       : [ dep_elementary ],
            install_dir        : dir_e_utils,
            install            : true
           )

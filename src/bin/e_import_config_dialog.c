@@ -13,24 +13,16 @@ static Eina_Bool _import_cb_edje_cc_exit(void *data, int type, void *event);
 static void
 _import_edj_gen(E_Import_Config_Dialog *import)
 {
-   Evas *evas;
-   Evas_Object *img;
-   Eina_Bool anim = EINA_FALSE;
-   int fd, num = 1;
-   int w = 0, h = 0;
-   const char *file, *locale;
-   char buf[PATH_MAX], fbuf[PATH_MAX], cmd[PATH_MAX + PATH_MAX + 40], tmpn[PATH_MAX], ipart[PATH_MAX], enc[128];
-   Eina_Tmpstr *path = NULL;
-   char *imgdir = NULL, *fstrip;
-   int cr, cg, cb, ca;
-   FILE *f;
+   const char *file, *fill, *s;
+   char buf[PATH_MAX], fbuf[PATH_MAX], cmd[PATH_MAX + PATH_MAX + 40];
+   char *fstrip, *infile, *outfile;
+   int num, cr, cg, cb;
    size_t len, off;
 
-   evas = evas_object_evas_get(import->dia->win);
    file = ecore_file_file_get(import->file);
    fstrip = ecore_file_strip_ext(file);
    if (!fstrip) return;
-   len = e_user_dir_snprintf(buf, sizeof(buf), "backgrounds/%s.edj", fstrip);
+   len = e_user_dir_snprintf(buf, sizeof(buf), "backgrounds/.tmp.%s.edj", fstrip);
    if (len >= sizeof(buf))
      {
         free(fstrip);
@@ -43,238 +35,47 @@ _import_edj_gen(E_Import_Config_Dialog *import)
    cr = import->color.r;
    cg = import->color.g;
    cb = import->color.b;
-   ca = import->color.a;
 
    if (num == 100)
      {
         printf("Couldn't come up with another filename for %s\n", buf);
         return;
      }
-
-   strcpy(tmpn, "e_bgdlg_new.edc-tmp-XXXXXX");
-   fd = eina_file_mkstemp(tmpn, &path);
-   if (fd < 0)
-     {
-        printf("Error Creating tmp file: %s\n", strerror(errno));
-        return;
-     }
-
-   f = fdopen(fd, "w");
-   if (!f)
-     {
-        printf("Cannot open %s for writing\n", tmpn);
-        return;
-     }
-
-   anim = eina_str_has_extension(import->file, "gif");
-   imgdir = ecore_file_dir_get(import->file);
-   if (!imgdir) ipart[0] = '\0';
-   else
-     {
-        snprintf(ipart, sizeof(ipart), "-id %s", e_util_filename_escape(imgdir));
-        free(imgdir);
-     }
-
-   img = evas_object_image_add(evas);
-   evas_object_image_file_set(img, import->file, NULL);
-   evas_object_image_size_get(img, &w, &h);
-   evas_object_del(img);
-
-   if (import->external)
-     {
-        const char *esc = e_util_filename_escape(import->file);
-        fstrip = memcpy(fbuf, esc, strlen(esc) + 1);
-        snprintf(enc, sizeof(enc), "USER");
-     }
-   else
-     {
-        const char *esc = e_util_filename_escape(file);
-        fstrip = memcpy(fbuf, esc, strlen(esc) + 1);
-        if (import->quality == 100)
-          snprintf(enc, sizeof(enc), "COMP");
-        else
-          snprintf(enc, sizeof(enc), "LOSSY %i", import->quality);
-     }
    switch (import->method)
      {
-      case IMPORT_STRETCH:
-        fprintf(f,
-                "images { image: \"%s\" %s; }\n"
-                "collections {\n"
-                "group { name: \"e/desktop/background\";\n"
-                "%s"
-                "data { item: \"style\" \"0\"; }\n"
-                "parts {\n"
-                "part { name: \"bg\"; mouse_events: 0;\n"
-                "description { state: \"default\" 0.0;\n"
-                "image { normal: \"%s\"; scale_hint: STATIC; }\n"
-                "} } } } }\n"
-                , fstrip, enc, anim ? "" : "data.item: \"noanimation\" \"1\";\n", fstrip);
-        break;
-
-      case IMPORT_TILE:
-        fprintf(f,
-                "images { image: \"%s\" %s; }\n"
-                "collections {\n"
-                "group { name: \"e/desktop/background\";\n"
-                "data { item: \"style\" \"1\"; }\n"
-                "%s"
-                "parts {\n"
-                "part { name: \"bg\"; mouse_events: 0;\n"
-                "description { state: \"default\" 0.0;\n"
-                "image { normal: \"%s\"; }\n"
-                "fill { size {\n"
-                "relative: 0.0 0.0;\n"
-                "offset: %i %i;\n"
-                "} } } } } } }\n"
-                , fstrip, enc, anim ? "" : "data.item: \"noanimation\" \"1\";\n", fstrip, w, h);
-        break;
-
-      case IMPORT_CENTER:
-        fprintf(f,
-                "images { image: \"%s\" %s; }\n"
-                "collections {\n"
-                "group { name: \"e/desktop/background\";\n"
-                "data { item: \"style\" \"2\"; }\n"
-                "%s"
-                "parts {\n"
-                "part { name: \"col\"; type: RECT; mouse_events: 0;\n"
-                "description { state: \"default\" 0.0;\n"
-                "color: %i %i %i %i;\n"
-                "} }\n"
-                "part { name: \"bg\"; mouse_events: 0;\n"
-                "description { state: \"default\" 0.0;\n"
-                "min: %i %i; max: %i %i;\n"
-                "image { normal: \"%s\"; }\n"
-                "} } } } }\n"
-                , fstrip, enc, anim ? "" : "data.item: \"noanimation\" \"1\";\n", cr, cg, cb, ca, w, h, w, h, fstrip);
-        break;
-
-      case IMPORT_SCALE_ASPECT_IN:
-        locale = e_intl_language_get();
-        setlocale(LC_NUMERIC, "C");
-        fprintf(f,
-                "images { image: \"%s\" %s; }\n"
-                "collections {\n"
-                "group { name: \"e/desktop/background\";\n"
-                "data { item: \"style\" \"3\"; }\n"
-                "%s"
-                "parts {\n"
-                "part { name: \"col\"; type: RECT; mouse_events: 0;\n"
-                "description { state: \"default\" 0.0;\n"
-                "color: %i %i %i %i;\n"
-                "} }\n"
-                "part { name: \"bg\"; mouse_events: 0;\n"
-                "description { state: \"default\" 0.0;\n"
-                "aspect: %1.9f %1.9f; aspect_preference: BOTH;\n"
-                "image { normal: \"%s\";  scale_hint: STATIC; }\n"
-                "} } } } }\n"
-                , fstrip, enc, anim ? "" : "data.item: \"noanimation\" \"1\";\n",
-                cr, cg, cb, ca, (double)w / (double)h, (double)w / (double)h, fstrip);
-        setlocale(LC_NUMERIC, locale);
-        break;
-
-      case IMPORT_SCALE_ASPECT_OUT:
-        locale = e_intl_language_get();
-        setlocale(LC_NUMERIC, "C");
-        fprintf(f,
-                "images { image: \"%s\" %s; }\n"
-                "collections {\n"
-                "group { name: \"e/desktop/background\";\n"
-                "data { item: \"style\" \"4\"; }\n"
-                "%s"
-                "parts {\n"
-                "part { name: \"bg\"; mouse_events: 0;\n"
-                "description { state: \"default\" 0.0;\n"
-                "aspect: %1.9f %1.9f; aspect_preference: NONE;\n"
-                "image { normal: \"%s\";  scale_hint: STATIC; }\n"
-                "} } } } }\n"
-                , fstrip, enc, anim ? "" : "data.item: \"noanimation\" \"1\";\n",
-                (double)w / (double)h, (double)w / (double)h, fstrip);
-        setlocale(LC_NUMERIC, locale);
-        break;
-
-      case IMPORT_PAN:
-        locale = e_intl_language_get();
-        setlocale(LC_NUMERIC, "C");
-        fprintf(f,
-                "images { image: \"%s\" %s; }\n"
-                "collections {\n"
-                "group { name: \"e/desktop/background\";\n"
-                "data { item: \"style\" \"4\"; }\n"
-                "%s"
-                "script {\n"
-                "public cur_anim; public cur_x; public cur_y; public prev_x;\n"
-                "public prev_y; public total_x; public total_y; \n"
-                "public pan_bg(val, Float:v) {\n"
-                "new Float:x, Float:y, Float:px, Float: py;\n"
-
-                "px = get_float(prev_x); py = get_float(prev_y);\n"
-                "if (get_int(total_x) > 1) {\n"
-                "x = float(get_int(cur_x)) / (get_int(total_x) - 1);\n"
-                "x = px - (px - x) * v;\n"
-                "} else { x = 0.0; v = 1.0; }\n"
-                "if (get_int(total_y) > 1) {\n"
-                "y = float(get_int(cur_y)) / (get_int(total_y) - 1);\n"
-                "y = py - (py - y) * v;\n"
-                "} else { y = 0.0; v = 1.0; }\n"
-
-                "set_state_val(PART:\"bg\", STATE_ALIGNMENT, x, y);\n"
-
-                "if (v >= 1.0) {\n"
-                "set_int(cur_anim, 0); set_float(prev_x, x);\n"
-                "set_float(prev_y, y); return 0;\n"
-                "}\n"
-                "return 1;\n"
-                "}\n"
-                "public message(Msg_Type:type, id, ...) {\n"
-                "if ((type == MSG_FLOAT_SET) && (id == 0)) {\n"
-                "new ani;\n"
-
-                "get_state_val(PART:\"bg\", STATE_ALIGNMENT, prev_x, prev_y);\n"
-                "set_int(cur_x, round(getfarg(3))); set_int(total_x, round(getfarg(4)));\n"
-                "set_int(cur_y, round(getfarg(5))); set_int(total_y, round(getfarg(6)));\n"
-
-                "ani = get_int(cur_anim); if (ani > 0) cancel_anim(ani);\n"
-                "ani = anim(getfarg(2), \"pan_bg\", 0); set_int(cur_anim, ani);\n"
-                "} } }\n"
-                "parts {\n"
-                "part { name: \"bg\"; mouse_events: 0;\n"
-                "description { state: \"default\" 0.0;\n"
-                "aspect: %1.9f %1.9f; aspect_preference: NONE;\n"
-                "image { normal: \"%s\";  scale_hint: STATIC; }\n"
-                "} } }\n"
-                "programs { program {\n"
-                " name: \"init\";\n"
-                " signal: \"load\";\n"
-                " source: \"\";\n"
-                " script { custom_state(PART:\"bg\", \"default\", 0.0);\n"
-                " set_state(PART:\"bg\", \"custom\", 0.0);\n"
-                " set_float(prev_x, 0.0); set_float(prev_y, 0.0);\n"
-                "} } } } }\n"
-                , fstrip, enc, anim ? "" : "data.item: \"noanimation\" \"1\";\n",
-                (double)w / (double)h, (double)w / (double)h, fstrip);
-        setlocale(LC_NUMERIC, locale);
-        break;
-
-      default:
-        /* won't happen */
-        break;
+      case IMPORT_STRETCH:          fill = "stretch"; break;
+      case IMPORT_TILE:             fill = "tile"; break;
+      case IMPORT_CENTER:           fill = "center"; break;
+      case IMPORT_SCALE_ASPECT_IN:  fill = "scale_in"; break;
+      case IMPORT_SCALE_ASPECT_OUT: fill = "scale_out"; break;
+      case IMPORT_PAN:              fill = "pan"; break;
+      default: return; break;
      }
-
-   fclose(f);
-
-   snprintf(cmd, sizeof(cmd), "%s/edje_cc -v %s %s %s", e_prefix_bin_get(),
-            ipart, path, e_util_filename_escape(buf));
-
-   import->tmpf = strdup(tmpn);
+   s = e_util_filename_escape(import->file);
+   if (s) infile = strdup(s);
+   else return;
+   s = e_util_filename_escape(buf);
+   if (s) outfile = strdup(s);
+   else
+     {
+        free(infile);
+        return;
+     }
+   snprintf(fbuf, sizeof(fbuf), "%s/edje_cc", e_prefix_bin_get());
+   if (!ecore_file_can_exec(fbuf))
+     snprintf(fbuf, sizeof(fbuf), "edje_cc");
+   snprintf(cmd, sizeof(cmd),
+            "%s/enlightenment/utils/enlightenment_wallpaper_gen "
+            "%s %s %s %s %i %i %i %i",
+            e_prefix_lib_get(),
+            fbuf, fill, infile, outfile, import->quality, cr, cg, cb);
+   free(infile);
+   free(outfile);
    import->fdest = eina_stringshare_add(buf);
-   import->exe_handler =
-     ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
-                             _import_cb_edje_cc_exit, import);
+   import->exe_handler = ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
+                                                 _import_cb_edje_cc_exit,
+                                                 import);
    import->exe = ecore_exe_run(cmd, import);
-
-   eina_tmpstr_del(path);
 }
 
 static Eina_Bool
@@ -298,6 +99,29 @@ _import_cb_edje_cc_exit(void *data, EINA_UNUSED int type, void *event)
 
    if (r && import->ok)
      {
+        char *p, *newfile = strdup(import->fdest);
+
+        if (!newfile)
+          {
+             e_object_del(E_OBJECT(import));
+             return ECORE_CALLBACK_DONE;
+          }
+        p = strrchr(newfile, '/');
+        if (!p)
+          {
+             e_object_del(E_OBJECT(import));
+             return ECORE_CALLBACK_DONE;
+          }
+        // strip out the .tmp. before the name
+        for (p = p + 1; ; p++)
+          {
+             *p = p[5];
+             if (*p == 0) break;
+          }
+        ecore_file_mv(import->fdest, newfile);
+        eina_stringshare_replace(&(import->fdest), newfile);
+        free(newfile);
+
         e_object_ref(E_OBJECT(import));
         import->ok((void *)import->fdest, import);
         e_object_del(E_OBJECT(import));
@@ -409,9 +233,6 @@ _e_import_config_dialog_del(void *data)
 
    if (import->exe_handler) ecore_event_handler_del(import->exe_handler);
    import->exe_handler = NULL;
-   if (import->tmpf && (unlink(import->tmpf) < 0))
-     ERR("Could not delete tmpfile '%s'", import->tmpf);
-   free(import->tmpf);
    eina_stringshare_del(import->fdest);
    import->exe = NULL;
    eina_stringshare_del(import->file);
@@ -462,12 +283,10 @@ e_import_config_dialog_show(Evas_Object *parent, const char *path, Ecore_End_Cb 
    dia->data = import;
    import->dia = dia;
    import->ok = ok, import->cancel = cancel;
-   import->path = eina_stringshare_add(path);
    e_object_del_attach_func_set(E_OBJECT(dia), _e_import_config_dia_del);
    evas_object_event_callback_add(dia->win, EVAS_CALLBACK_DEL, _e_import_config_dialog_win_del, dia);
 
    import->method = IMPORT_SCALE_ASPECT_OUT;
-   import->external = 0;
    import->quality = 90;
    import->file = eina_stringshare_add(path);
 
@@ -522,11 +341,9 @@ e_import_config_dialog_show(Evas_Object *parent, const char *path, Ecore_End_Cb 
    ol = e_widget_list_add(evas, 0, 1);
 
    of = e_widget_frametable_add(evas, _("File Quality"), 0);
-   ord = e_widget_check_add(evas, _("Use original file"), &(import->external));
-   e_widget_frametable_object_append(of, ord, 0, 0, 1, 1, 1, 0, 1, 0);
    ord = e_widget_slider_add(evas, 1, 0, _("%3.0f%%"), 0.0, 100.0, 1.0, 0,
                              NULL, &(import->quality), 150);
-   e_widget_frametable_object_append(of, ord, 0, 1, 1, 1, 1, 0, 1, 0);
+   e_widget_frametable_object_append(of, ord, 0, 0, 1, 1, 1, 0, 1, 0);
    e_widget_list_object_append(ol, of, 1, 1, 0);
 
    of = e_widget_framelist_add(evas, _("Fill Color"), 0);
