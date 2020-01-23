@@ -313,10 +313,6 @@ main(int argc, char **argv)
 
    _e_main_shutdown_push(eina_shutdown);
 
-   /* Eio's eio_init internally calls efreet_init. Set XDG_MENU_PREFIX here      */
-   /* else efreet's efreet_menu_prefix symbol is set erroneously during eio_init. */
-   _xdg_data_dirs_augment();
-
    if (!e_log_init())
      {
         e_error_message_show(_("Enlightenment could not create a logging domain!\n"));
@@ -344,6 +340,10 @@ main(int argc, char **argv)
                 "       executed strangely. This is unusual.\n");
      }
    TS("Determine Prefix Done");
+
+   /* Eio's eio_init internally calls efreet_init. Set XDG_MENU_PREFIX here      */
+   /* else efreet's efreet_menu_prefix symbol is set erroneously during eio_init. */
+   _xdg_data_dirs_augment();
 
    /* for debugging by redirecting stdout of e to a log file to tail */
    setvbuf(stdout, NULL, _IONBF, 0);
