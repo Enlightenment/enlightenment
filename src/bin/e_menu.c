@@ -312,13 +312,16 @@ e_menu_activate_mouse(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int d
    E_OBJECT_TYPE_CHECK(m, E_MENU_TYPE);
    E_OBJECT_CHECK(zone);
    E_OBJECT_TYPE_CHECK(zone, E_ZONE_TYPE);
-   if (_e_active_menus) e_menu_hide_all();
+
+   e_object_ref(E_OBJECT(m));
+   e_menu_hide_all();
    _e_menu_activate_time = 0;
    _e_menu_activate_floating = 0;
    _e_menu_activate_internal(m, zone);
    if (!m->zone)
      {
         e_menu_deactivate(m);
+        e_object_unref(E_OBJECT(m));
         return;
      }
    switch (dir)
@@ -369,6 +372,7 @@ e_menu_activate_mouse(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int d
    pending_feed = 1;
    if (!activate_time) activate_time = lround(ecore_loop_time_get() * 1000);
    _e_menu_activate_time = pending_activate_time = activate_time;
+   e_object_unref(E_OBJECT(m));
 }
 
 E_API void
@@ -1138,7 +1142,7 @@ e_menu_idler_before(void)
    /* phase 2. move & reisze all the menus that want to moves/resized */
    EINA_LIST_FOREACH(_e_active_menus, l, m)
      {
-        if (m->frozen || (!m->active)) continue;
+        if (m->frozen || (!m->active) || (!m->zone)) continue;
         if (!m->realized) _e_menu_realize(m);
         if (!m->realized) continue;
         if (((m->cur.w) != (m->prev.w)) ||
@@ -1702,6 +1706,7 @@ _e_menu_items_layout_update(E_Menu *m)
    int zh = 0, ms = 0, maxh = 0;
    unsigned int cur_items = 0, max_items = -1;
 
+   if (!m->zone) return;
    EINA_LIST_FOREACH(m->items, l, mi)
      {
         if (mi->icon) icons_on = 1;
@@ -2023,6 +2028,7 @@ _e_menu_reposition(E_Menu *m)
    E_Menu_Item *mi;
    int parent_item_bottom;
 
+   if (!m->zone) return;
    if (!m->parent_item) return;
    m->cur.x = m->parent_item->menu->cur.x + m->parent_item->menu->cur.w;
 
@@ -2037,7 +2043,7 @@ _e_menu_reposition(E_Menu *m)
         else
           /* more is shown if menu goes down */
           m->cur.y = parent_item_bottom - m->zone->y;
-#endif        
+#endif
      }
    else
      {
@@ -2448,6 +2454,7 @@ _e_menu_outside_bounds_get(int xdir, int ydir)
 
    EINA_LIST_FOREACH(_e_active_menus, l, m)
      {
+        if (!m->zone) continue;
         if (m->cur.x < m->zone->x + e_config->menu_autoscroll_margin)
           {
              i = m->zone->x - m->cur.x + e_config->menu_autoscroll_margin;
@@ -2514,7 +2521,7 @@ _e_menu_mouse_autoscroll_check(void)
    if (_e_active_menus)
      {
         m = eina_list_data_get(_e_active_menus);
-        if (m)
+        if ((m) && (m->zone))
           {
              mx -= m->zone->x;
              my -= m->zone->y;
@@ -2530,7 +2537,7 @@ _e_menu_mouse_autoscroll_check(void)
      }
    if ((!autoscroll_x) && (!autoscroll_y))
      {
-        if (m)
+        if ((m) && (m->zone))
           {
              if (mx + e_config->menu_autoscroll_cursor_margin >= (m->zone->w - 1))
                {
@@ -2577,6 +2584,7 @@ _e_menu_auto_place_vert(E_Menu *m, int x, int y, int w, int h)
 {
    int zx, zy, zw, zh;
 
+   if (!m->zone) return;
    e_zone_useful_geometry_get(m->zone, &zx, &zy, &zw, &zh);
    if (E_CONTAINS(zx, zy, zw, zh, m->cur.x, y, m->cur.w, m->cur.h))
      {
@@ -2610,6 +2618,7 @@ _e_menu_auto_place(E_Menu *m, int x, int y, int w, int h)
     *
     * quadrants... which one
     */
+   if (!m->zone) return 0;
    if (w != m->zone->w)
      xr = (double)(x - m->zone->x) /
        (double)(m->zone->w - w);
