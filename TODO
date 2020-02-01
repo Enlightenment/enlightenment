@@ -100,8 +100,6 @@ TODO:
     * offer a share mechanism like shots?
       * security issue - they run. verification needed?
 * keyboard backlight controls, not just screen
-* backlight module/controls should control the screen the gadget is on
-  * allow multiple screens to have different backlight controls
 * login manager mode - be able to function as a login manager/gui since
   most everything you want in a login manager is already present in e
   like suspend/resume on lid open/close, multi screen config and even
