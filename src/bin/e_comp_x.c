@@ -75,7 +75,6 @@ static Ecore_X_Randr_Screen_Size screen_size = { -1, -1 };
 static int screen_size_index = -1;
 
 static Ecore_X_Atom backlight_atom = 0;
-extern double e_bl_val;
 
 static Ecore_Timer *mouse_in_fix_check_timer = NULL;
 
@@ -5293,17 +5292,8 @@ _e_comp_x_screensaver_notify_cb(void *data EINA_UNUSED, int type EINA_UNUSED, Ec
 static Eina_Bool
 _e_comp_x_backlight_notify_cb(void *data EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event_Randr_Output_Property_Notify *ev)
 {
-   double x_bl;
-
    if (ev->property != backlight_atom) return ECORE_CALLBACK_RENEW;
-   x_bl = ecore_x_randr_output_backlight_level_get(0, ev->output);
-
-   if (x_bl >= 0.0)
-     {
-        if (fabs(e_bl_val - x_bl) < DBL_EPSILON)
-          ecore_event_add(E_EVENT_BACKLIGHT_CHANGE, NULL, NULL, NULL);;
-        e_bl_val = x_bl;
-     }
+   e_backlight_update();
    return ECORE_CALLBACK_RENEW;
 }
 

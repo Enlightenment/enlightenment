@@ -62,6 +62,8 @@ struct _E_Zone
    /* formerly E_Comp_Zone */
    Evas_Object *base;
    Evas_Object *over;
+
+   E_Backlight_Mode bl_mode;
    double       bl;
    Eina_Bool    bloff;
 
