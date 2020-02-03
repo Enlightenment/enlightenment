@@ -38,8 +38,8 @@ _backlight_level_set(Instance *inst, double val, Eina_Bool set_slider)
    if (set_slider)
      e_widget_slider_value_double_set(inst->o_slider, val);
    inst->val = val;
-   e_backlight_mode_set(e_zone_current_get(), E_BACKLIGHT_MODE_NORMAL);
-   e_backlight_level_set(e_zone_current_get(), val, 0.0);
+   e_backlight_mode_set(e_comp_object_util_zone_get(inst->o_main), E_BACKLIGHT_MODE_NORMAL);
+   e_backlight_level_set(e_comp_object_util_zone_get(inst->o_main), val, 0.0);
    e_config->backlight.normal = val;
    e_config_save_queue();
 }
@@ -74,8 +74,8 @@ _backlight_popup_new(Instance *inst)
 
    if (inst->popup) return;
 
-   e_backlight_mode_set(e_zone_current_get(), E_BACKLIGHT_MODE_NORMAL);
-   inst->val = e_backlight_level_get(e_zone_current_get());
+   e_backlight_mode_set(e_comp_object_util_zone_get(inst->o_main), E_BACKLIGHT_MODE_NORMAL);
+   inst->val = e_backlight_level_get(e_comp_object_util_zone_get(inst->o_main));
    _backlight_gadget_update(inst);
 
    inst->popup = elm_ctxpopup_add(e_comp->elm);
@@ -129,7 +129,7 @@ _backlight_cb_mouse_wheel(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj E
    Evas_Event_Mouse_Wheel *ev = event;
    Instance *inst = data;
 
-   inst->val = e_backlight_level_get(e_zone_current_get());
+   inst->val = e_backlight_level_get(e_comp_object_util_zone_get(inst->o_main));
    if (ev->z > 0)
      _backlight_level_set(inst, inst->val - 0.1, EINA_FALSE);
    else if (ev->z < 0)
@@ -167,7 +167,7 @@ _backlight_cb_mod_init_end(void *d EINA_UNUSED, int type EINA_UNUSED, void *ev E
 
    EINA_LIST_FOREACH(ginstances, l, inst)
      {
-        inst->val = e_backlight_level_get(e_zone_current_get());
+        inst->val = e_backlight_level_get(e_comp_object_util_zone_get(inst->o_main));
         _backlight_gadget_update(inst);
      }
    return ECORE_CALLBACK_RENEW;
@@ -181,7 +181,7 @@ _backlight_cb_changed(void *d EINA_UNUSED, int type EINA_UNUSED, void *ev EINA_U
 
    EINA_LIST_FOREACH(ginstances, l, inst)
      {
-        inst->val = e_backlight_level_get(e_zone_current_get());
+        inst->val = e_backlight_level_get(e_comp_object_util_zone_get(inst->o_main));
         _backlight_gadget_update(inst);
      }
    return ECORE_CALLBACK_RENEW;
@@ -244,7 +244,7 @@ _backlight_gadget_created_cb(void *data, Evas_Object *obj, void *event_info EINA
         elm_box_pack_end(inst->o_main, inst->o_backlight);
         evas_object_show(inst->o_backlight);
         if (!EINA_FLT_EQ(inst->val, -1.0))
-          inst->val = e_backlight_level_get(e_zone_current_get());
+          inst->val = e_backlight_level_get(e_comp_object_util_zone_get(inst->o_main));
         _backlight_gadget_update(inst);
      }
    evas_object_smart_callback_del_full(obj, "gadget_created", _backlight_gadget_created_cb, data);
