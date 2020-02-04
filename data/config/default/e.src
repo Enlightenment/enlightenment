@@ -199,7 +199,7 @@ group "E_Config" struct {
   value "exec.show_run_dialog" uchar: 1;
   value "exec.show_exit_dialog" uchar: 1;
   value "null_container_win" uchar: 1;
-  value "backlight.normal" double: 1.0
+  value "backlight.normal" double: 1.0;
   value "backlight.dim" double: 0.3;
   value "backlight.transition" double: 0.5;
   value "backlight.timer" double: 30.0;
