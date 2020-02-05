@@ -35,12 +35,14 @@ _backlight_level_set(Instance *inst, double val, Eina_Bool set_slider)
 {
    if (val > 1.0) val = 1.0;
    if (val < 0.0) val = 0.0;
-   if (set_slider)
-     e_widget_slider_value_double_set(inst->o_slider, val);
    inst->val = val;
+   
+   if (set_slider)
+     elm_slider_value_set(inst->o_slider, inst->val * 100);
+   
    e_backlight_mode_set(e_comp_object_util_zone_get(inst->o_main), E_BACKLIGHT_MODE_NORMAL);
-   e_backlight_level_set(e_comp_object_util_zone_get(inst->o_main), val, 0.0);
-   e_config->backlight.normal = val;
+   e_backlight_level_set(e_comp_object_util_zone_get(inst->o_main), inst->val, 0.0);
+   e_config->backlight.normal = inst->val;
    e_config_save_queue();
 }
 
@@ -48,7 +50,7 @@ static void
 _slider_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Instance *inst = data;
-   inst->val = elm_slider_value_get(inst->o_slider);
+   inst->val = elm_slider_value_get(inst->o_slider) / 100;
    _backlight_level_set(inst, inst->val, EINA_FALSE);
 }
 
@@ -93,12 +95,12 @@ _backlight_popup_new(Instance *inst)
    o = elm_slider_add(inst->box);
    elm_slider_horizontal_set(o, EINA_FALSE);
    elm_slider_inverted_set(o, EINA_TRUE);
-   elm_slider_unit_format_set(o, NULL);
+   elm_slider_unit_format_set(o, "%.0f");
    elm_slider_indicator_show_set(o, EINA_FALSE);
-   elm_slider_min_max_set(o, 0.05, 1.0);
+   elm_slider_min_max_set(o, 1, 100.0);
    elm_slider_step_set(o, 0.05);
    elm_slider_span_size_set(o, 100);
-   elm_slider_value_set(o, inst->val);
+   elm_slider_value_set(o, inst->val * 100.0);
    evas_object_smart_callback_add(o, "changed", _slider_cb, inst);
    elm_box_pack_end(inst->box, o);
    evas_object_show(o);
@@ -131,9 +133,9 @@ _backlight_cb_mouse_wheel(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj E
 
    inst->val = e_backlight_level_get(e_comp_object_util_zone_get(inst->o_main));
    if (ev->z > 0)
-     _backlight_level_set(inst, inst->val - 0.1, EINA_FALSE);
+     _backlight_level_set(inst, inst->val - 0.1, EINA_TRUE);
    else if (ev->z < 0)
-     _backlight_level_set(inst, inst->val + 0.1, EINA_FALSE);
+     _backlight_level_set(inst, inst->val + 0.1, EINA_TRUE);
 }
 
 static void
@@ -145,17 +147,7 @@ _e_mod_action_cb(E_Object *obj EINA_UNUSED,
 
    EINA_LIST_FOREACH(ginstances, l, inst)
      {
-        if (!params)
-          {
-             if (inst->popup) elm_ctxpopup_dismiss(inst->popup);
-             else _backlight_popup_new(inst);
-          }
-        else
-          {
-             _backlight_level_set(inst, inst->val + atof(params), EINA_FALSE);
-             if (inst->popup) elm_ctxpopup_dismiss(inst->popup);
-             _backlight_popup_new(inst);
-          }
+        if (params) _backlight_level_set(inst, inst->val + atof(params), EINA_TRUE);
      }
 }
 
@@ -308,4 +300,3 @@ backlight_shutdown(void)
      }
    E_FREE_LIST(handlers, ecore_event_handler_del);
 }
-
