@@ -492,44 +492,48 @@ _cb_worker(void *data EINA_UNUSED, Ecore_Thread *th)
 
    for (;;)
      {
+        Eina_List *local_req;
+
         // wait for requests
         eina_semaphore_lock(&_worker_sem);
+        local_req = NULL;
         eina_lock_take(&_devices_lock);
         if (_req)
           {
-             r = _req->data;
-             if (r)
-               {
-                  _req = eina_list_remove_list(_req, _req);
-                  eina_lock_release(&_devices_lock);
-                  if (!strcmp(r->req, "list"))
-                    {
-                       _do_list(th);
-                    }
-                  else if (!strcmp(r->req, "refresh"))
-                    {
-                       _ddc_probe();
-                       _do_list(th);
-                    }
-                  else if (!strcmp(r->req, "val-set"))
-                    {
-                       int id, val;
-                       char edid[257];
-                       if (sscanf(r->params, "%256s %i %i", edid, &id, &val) == 3)
-                         _do_val_set(th, edid, id, val);
-                    }
-                  else if (!strcmp(r->req, "val-get"))
-                    {
-                       int id;
-                       char edid[257];
-                       if (sscanf(r->params, "%256s %i", edid, &id) == 2)
-                         _do_val_get(th, edid, id);
-                    }
-                  free(r);
-               }
-             else eina_lock_release(&_devices_lock);
+             local_req = _req;
+             _req = NULL;
           }
-        else eina_lock_release(&_devices_lock);
+        eina_lock_release(&_devices_lock);
+        while (local_req)
+          {
+             r = local_req->data;
+             local_req = eina_list_remove_list(local_req, local_req);
+             if (!r) continue;
+             if (!strcmp(r->req, "list"))
+               {
+                  _do_list(th);
+               }
+             else if (!strcmp(r->req, "refresh"))
+               {
+                  _ddc_probe();
+                  _do_list(th);
+               }
+             else if (!strcmp(r->req, "val-set"))
+               {
+                  int id, val;
+                  char edid[257];
+                  if (sscanf(r->params, "%256s %i %i", edid, &id, &val) == 3)
+                  _do_val_set(th, edid, id, val);
+               }
+             else if (!strcmp(r->req, "val-get"))
+               {
+                  int id;
+                  char edid[257];
+                  if (sscanf(r->params, "%256s %i", edid, &id) == 2)
+                  _do_val_get(th, edid, id);
+               }
+             free(r);
+          }
      }
 }
 
