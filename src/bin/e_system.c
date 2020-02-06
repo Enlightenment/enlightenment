@@ -107,7 +107,8 @@ _system_message_read(void)
         if (del_count > 0)
           {
              eina_hash_del(_handlers, head->cmd, plist);
-             eina_hash_add(_handlers, head->cmd, list);
+             if (list)
+               eina_hash_add(_handlers, head->cmd, list);
           }
      }
    buf2 = eina_binbuf_new();

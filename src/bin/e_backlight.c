@@ -40,10 +40,33 @@ _backlight_system_get_cb(void *data, const char *params)
 }
 
 static void
+_backlight_system_ddc_get_cb(void *data, const char *params)
+{
+   char edid[257];
+   int id = -1, val = -1;
+   double fval;
+   Backlight_Device *bd = data;
+
+   if (!params) return;
+   if (sscanf(params, "%256s %i %i", edid, &id, &val) != 3) return;
+   if (!!strncmp(bd->edid, edid, strlen(edid))) return;
+   e_system_handler_del("ddc-val-get", _backlight_system_ddc_get_cb, bd);
+   fval = (double)val / 100.0;
+   if (fabs(fval - bd->val) >= DBL_EPSILON)
+     {
+        bd->val = fval;
+        ecore_event_add(E_EVENT_BACKLIGHT_CHANGE, NULL, NULL, NULL);
+     }
+}
+
+static void
 _backlight_devices_clear(void)
 {
+   const char *s;
    Backlight_Device *bd;
 
+   EINA_LIST_FREE(bl_devs, s)
+     eina_stringshare_del(s);
    EINA_LIST_FREE(_devices, bd)
      {
         eina_stringshare_del(bd->dev);
@@ -51,6 +74,7 @@ _backlight_devices_clear(void)
         eina_stringshare_del(bd->edid);
         if (bd->anim) ecore_animator_del(bd->anim);
         e_system_handler_del("bklight-val", _backlight_system_get_cb, bd);
+        e_system_handler_del("ddc-val-get", _backlight_system_ddc_get_cb, bd);
         free(bd);
      }
 }
@@ -170,7 +194,8 @@ _backlight_devices_device_set(Backlight_Device *bd, double val)
 #endif
    if (!strncmp(bd->dev, "ddc:", 4))
      {
-        // XXX: implement ddc support
+        e_system_send("ddc-val-set", "%s %i %i", bd->dev + 4, 0x10, (int)(bd->val * 100.0)); // backlight val in e_system_ddc.c
+        ecore_event_add(E_EVENT_BACKLIGHT_CHANGE, NULL, NULL, NULL);
      }
    else
      {
@@ -221,7 +246,8 @@ _backlight_devices_device_update(Backlight_Device *bd)
 #endif
    if (!strncmp(bd->dev, "ddc:", 4))
      {
-        // XXX: implement ddc support
+        e_system_handler_add("ddc-val-get", _backlight_system_ddc_get_cb, bd);
+        e_system_send("ddc-val-get", "%s %i", bd->dev + 4, 0x10); // backlight val in e_system_ddc.c
      }
    else
      {
@@ -262,6 +288,21 @@ _backlight_devices_screen_lid_get(void)
    return NULL;
 }
 
+static E_Randr2_Screen *
+_backlight_devices_screen_edid_get(const char *edid)
+{
+   Eina_List *l;
+   E_Randr2_Screen *sc;
+
+   if (!e_randr2) return NULL;
+   EINA_LIST_FOREACH(e_randr2->screens, l, sc)
+     {
+        if (!sc->info.edid) continue;
+        if (!strncmp(sc->info.edid, edid, strlen(edid))) return sc;
+     }
+   return NULL;
+}
+
 static Backlight_Device *
 _backlight_devices_edid_find(const char *edid)
 {
@@ -282,6 +323,7 @@ _backlight_devices_lid_register(const char *dev, Eina_Bool force)
    E_Randr2_Screen *sc = _backlight_devices_screen_lid_get();
    Backlight_Device *bd;
    if (!sc) return;
+   if (!sc->info.edid) return;
    bd = _backlight_devices_edid_find(sc->info.edid);
    if (!bd)
      {
@@ -303,22 +345,35 @@ _backlight_devices_lid_register(const char *dev, Eina_Bool force)
 }
 
 static void
+_backlight_devices_edid_register(const char *dev, const char *edid)
+{
+   E_Randr2_Screen *sc = _backlight_devices_screen_edid_get(edid);
+   Backlight_Device *bd;
+   if (!sc) return;
+   bd = _backlight_devices_edid_find(sc->info.edid);
+   if (!bd)
+     {
+        bd = calloc(1, sizeof(Backlight_Device));
+        if (!bd) return;
+        bd->edid = eina_stringshare_add(sc->info.edid);
+        bd->output = eina_stringshare_add(sc->info.name);
+        _devices = eina_list_append(_devices, bd);
+     }
+   if (bd->dev)
+     {
+        if (!strcmp(bd->dev, "randr")) return; // randr devices win
+     }
+   eina_stringshare_replace(&(bd->dev), dev);
+}
+
+static void
 _backlight_system_list_cb(void *data EINA_UNUSED, const char *params)
 {
    // params "dev flag dev flag ..."
-   const char *p = params, *s;
+   const char *p = params;
    char dev[1024], flag, devnum = 0;
 
    e_system_handler_del("bklight-list", _backlight_system_list_cb, NULL);
-   EINA_LIST_FREE(bl_devs, s)
-     eina_stringshare_del(s);
-#ifndef HAVE_WAYLAND_ONLY
-   if ((e_comp) && (e_comp->comp_type == E_PIXMAP_TYPE_X))
-     {
-        if (ecore_x_randr_output_backlight_available())
-          bl_devs = eina_list_append(bl_devs, eina_stringshare_add("randr"));
-     }
-#endif
    while ((p) && (*p))
      {
         if (sscanf(p, "%1023s", dev) == 1)
@@ -364,7 +419,30 @@ _backlight_system_list_cb(void *data EINA_UNUSED, const char *params)
 }
 
 static void
-_backlight_devices_probe(void)
+_backlight_system_ddc_list_cb(void *data EINA_UNUSED, const char *params)
+{
+   const char *p = params;
+   char dev[257], buf[343];
+
+   e_system_handler_del("ddc-list", _backlight_system_ddc_list_cb, NULL);
+   while ((p) && (*p))
+     {
+        if (sscanf(p, "%256s", dev) == 1)
+          {
+             p += strlen(dev);
+             snprintf(buf, sizeof(buf), "ddc:%s", dev);
+             bl_devs = eina_list_append
+               (bl_devs, eina_stringshare_add(buf));
+             _backlight_devices_edid_register(buf, dev);
+             if (*p != ' ') break;
+          }
+        else break;
+     }
+   _backlight_devices_pending_done();
+}
+
+static void
+_backlight_devices_probe(Eina_Bool initial)
 {
    _backlight_devices_clear();
 #ifndef HAVE_WAYLAND_ONLY
@@ -381,6 +459,7 @@ _backlight_devices_probe(void)
              Ecore_X_Randr_Output *out;
              int i, num = 0;
 
+             bl_devs = eina_list_append(bl_devs, eina_stringshare_add("randr"));
              out = ecore_x_randr_window_outputs_get(root, &num);
              if ((out) && (num > 0))
                {
@@ -417,8 +496,12 @@ _backlight_devices_probe(void)
    // to respond to the device listing later
    _devices_pending_ops++;
    e_system_handler_add("bklight-list", _backlight_system_list_cb, NULL);
-   e_system_send("bklight-refresh", NULL);
+   if (!initial) e_system_send("bklight-refresh", NULL);
    e_system_send("bklight-list", NULL);
+   _devices_pending_ops++;
+   e_system_handler_add("ddc-list", _backlight_system_ddc_list_cb, NULL);
+   if (!initial) e_system_send("ddc-refresh", NULL);
+   e_system_send("ddc-list", NULL);
    // XXXX: add ddc to e_syystem and query that too
 }
 
@@ -444,7 +527,7 @@ static void
 _cb_job_zone_change(void *data EINA_UNUSED)
 {
    zone_change_job = NULL;
-   _backlight_devices_probe();
+   _backlight_devices_probe(EINA_FALSE);
    e_backlight_update();
 }
 
@@ -460,7 +543,7 @@ EINTERN int
 e_backlight_init(void)
 {
    E_EVENT_BACKLIGHT_CHANGE = ecore_event_type_new();
-   _backlight_devices_probe();
+   _backlight_devices_probe(EINA_TRUE);
 #define H(ev, cb) \
    handlers = eina_list_append(handlers, \
                                ecore_event_handler_add(ev, cb, NULL));
@@ -546,7 +629,6 @@ e_backlight_level_set(E_Zone *zone, double val, double tim)
    if (zone->bl_mode == E_BACKLIGHT_MODE_NORMAL) tim = 0.5;
    else if (tim < 0.0) tim = e_config->backlight.transition;
 
-   // XXX: store in bl device
    E_FREE_FUNC(bd->anim, ecore_animator_del);
    bd->anim = ecore_animator_timeline_add(tim, _bl_anim, bd);
    bd->from_val = bl_now;

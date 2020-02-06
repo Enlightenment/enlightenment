@@ -122,5 +122,8 @@ void e_system_l2ping_shutdown(void);
 void e_system_cpufreq_init(void);
 void e_system_cpufreq_shutdown(void);
 
+void e_system_ddc_init(void);
+void e_system_ddc_shutdown(void);
+
 #endif
 

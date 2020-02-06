@@ -2,6 +2,7 @@ src = [
   'e_system_main.c',
   'e_system_inout.c',
   'e_system_backlight.c',
+  'e_system_ddc.c',
   'e_system_storage.c',
   'e_system_power.c',
   'e_system_rfkill.c',

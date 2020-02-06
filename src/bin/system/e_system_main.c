@@ -287,6 +287,7 @@ main(int argc EINA_UNUSED, const char **argv EINA_UNUSED)
 
    e_system_inout_init();
    e_system_backlight_init();
+   e_system_ddc_init();
    e_system_storage_init();
    e_system_power_init();
    e_system_rfkill_init();
@@ -302,6 +303,7 @@ main(int argc EINA_UNUSED, const char **argv EINA_UNUSED)
    e_system_rfkill_shutdown();
    e_system_power_shutdown();
    e_system_storage_shutdown();
+   e_system_ddc_shutdown();
    e_system_backlight_shutdown();
    e_system_inout_shutdown();
 
