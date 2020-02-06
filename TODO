@@ -198,12 +198,9 @@ TODO:
   view to this back-end data log and follows it as it updates.
   * can go back in time then to previous logs
   * should have the ability to draw nice graphs etc.
-* brightness/contrast etc. controls need to work better
-  look at ddcutil (ddcutil capabilities, ddcutil getvcp/setvcp) to be able to
-  control screen brightness, rgb gain, display technology type,
-  display modes, color presets etc. etc. http://www.ddcutil.com
-  n.b.: modprobe i2c-dev ...
-  n.b.: use --edid 00fffff....90b020304... to control specific mon
+* ddc: provide ddc controls for all the other properties than backlight
+  (contrast, sharpness, r, g, b, correction, color temp, osd on/off etc.)
+* ddc: provide abstract interface to query rotation of monitors...
 * edge bindings - selecting edge dialog needs a redo (no edje for all content)
 * e menu - add obj cache for menu and menu item objects to reduce costs
   by far the biggest cost in showing/hiding menus is realize/unrealize
