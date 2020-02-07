@@ -387,6 +387,7 @@ _do_list(Ecore_Thread *th)
 static Eina_Bool
 _id_ok(int id)
 {
+   if ((id < 0) || (id > 0xff)) return EINA_FALSE; // limited range
    if (id == 0x10) return EINA_TRUE; // backlight allowed
    return EINA_FALSE;
 }
@@ -433,10 +434,12 @@ _do_val_set(Ecore_Thread *th, const char *edid, int id, int val)
    if (ddc_func.ddca_set_non_table_vcp_value
        (ddc_dh[screen], id, (val >> 8) & 0xff, val & 0xff) == 0)
      {
+        fprintf(stderr, "DDC: set ok %s 0x%02x %i\n", edid, id, val);
         snprintf(buf, sizeof(buf), "%s %i %i ok", edid, id, val);
      }
    else
      {
+        fprintf(stderr, "DDC: set fail %s 0x%02x %i\n", edid, id, val);
 err:
         snprintf(buf, sizeof(buf), "%s %i %i err", edid, id, val);
      }
@@ -471,10 +474,12 @@ _do_val_get(Ecore_Thread *th, const char *edid, int id)
        (ddc_dh[screen], id, &valrec) == 0)
      {
         val = valrec.sl | (valrec.sh << 8);
+        fprintf(stderr, "DDC: get ok %s 0x%02x = %i\n", edid, id, val);
         snprintf(buf, sizeof(buf), "%s %i %i", edid, id, val);
      }
    else
      {
+        fprintf(stderr, "DDC: get fail %s 0x%02x\n", edid, id);
 err:
         snprintf(buf, sizeof(buf), "%s %i -1", edid, id);
      }

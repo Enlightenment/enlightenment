@@ -5,9 +5,11 @@ typedef struct
    const char *dev;
    const char *output;
    const char *edid;
-   double val;
+   double val, expected_val;
    double from_val, to_val;
    Ecore_Animator *anim;
+   Ecore_Timer *retry_timer;
+   int retries;
 } Backlight_Device;
 
 E_API int E_EVENT_BACKLIGHT_CHANGE = -1;
@@ -18,6 +20,38 @@ static Ecore_Job *zone_change_job = NULL;
 static Eina_List *_devices = NULL;
 static int        _devices_pending_ops = 0;
 static Eina_Bool  _devices_zones_update = EINA_FALSE;
+
+static void _backlight_devices_device_set(Backlight_Device *bd, double val);
+static void _backlight_devices_device_update(Backlight_Device *bd);
+
+static Eina_Bool
+_backlight_retry_timer_cb(void *data)
+{
+   Backlight_Device *bd = data;
+   bd->retry_timer = NULL;
+   _backlight_devices_device_set(bd, bd->expected_val);
+   _backlight_devices_device_update(bd);
+   return EINA_FALSE;
+}
+
+static void
+_backlight_mismatch_retry(Backlight_Device *bd)
+{
+   if (// if want 1.0 or normal or dim
+       ((fabs(bd->expected_val - 1.0) < DBL_EPSILON) ||
+        (fabs(bd->expected_val - e_config->backlight.normal) < DBL_EPSILON) ||
+        (fabs(bd->expected_val - e_config->backlight.dim) < DBL_EPSILON)) &&
+       // and the delta between expected and val >= 0.05
+       (fabs(bd->expected_val - bd->val) >= 0.05) &&
+       // and we retried < 20 times
+       (bd->retries < 20))
+     { // try again
+        bd->retries++;
+        if (bd->retry_timer) ecore_timer_del(bd->retry_timer);
+        ecore_timer_add(0.1, _backlight_retry_timer_cb, bd);
+     } // or give up
+   else bd->retries = 0;
+}
 
 static void
 _backlight_system_get_cb(void *data, const char *params)
@@ -36,6 +70,7 @@ _backlight_system_get_cb(void *data, const char *params)
      {
         bd->val = fval;
         ecore_event_add(E_EVENT_BACKLIGHT_CHANGE, NULL, NULL, NULL);
+        _backlight_mismatch_retry(bd);
      }
 }
 
@@ -51,11 +86,13 @@ _backlight_system_ddc_get_cb(void *data, const char *params)
    if (sscanf(params, "%256s %i %i", edid, &id, &val) != 3) return;
    if (!!strncmp(bd->edid, edid, strlen(edid))) return;
    e_system_handler_del("ddc-val-get", _backlight_system_ddc_get_cb, bd);
+   if (val < 0) return; // get failed.... don't update
    fval = (double)val / 100.0;
    if (fabs(fval - bd->val) >= DBL_EPSILON)
      {
         bd->val = fval;
         ecore_event_add(E_EVENT_BACKLIGHT_CHANGE, NULL, NULL, NULL);
+        _backlight_mismatch_retry(bd);
      }
 }
 
@@ -73,6 +110,7 @@ _backlight_devices_clear(void)
         eina_stringshare_del(bd->output);
         eina_stringshare_del(bd->edid);
         if (bd->anim) ecore_animator_del(bd->anim);
+        if (bd->retry_timer) ecore_timer_del(bd->retry_timer);
         e_system_handler_del("bklight-val", _backlight_system_get_cb, bd);
         e_system_handler_del("ddc-val-get", _backlight_system_ddc_get_cb, bd);
         free(bd);
@@ -176,7 +214,7 @@ _backlight_devices_randr_output_get(Ecore_X_Window root, const char *output, con
 static void
 _backlight_devices_device_set(Backlight_Device *bd, double val)
 {
-   bd->val = val;
+   bd->val = bd->expected_val = val;
 #ifndef HAVE_WAYLAND_ONLY
    if (!strcmp(bd->dev, "randr"))
      {
@@ -629,6 +667,7 @@ e_backlight_level_set(E_Zone *zone, double val, double tim)
    if (zone->bl_mode == E_BACKLIGHT_MODE_NORMAL) tim = 0.5;
    else if (tim < 0.0) tim = e_config->backlight.transition;
 
+   E_FREE_FUNC(bd->retry_timer, ecore_timer_del);
    E_FREE_FUNC(bd->anim, ecore_animator_del);
    bd->anim = ecore_animator_timeline_add(tim, _bl_anim, bd);
    bd->from_val = bl_now;
