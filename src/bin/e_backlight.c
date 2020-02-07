@@ -28,6 +28,7 @@ static Eina_Bool
 _backlight_retry_timer_cb(void *data)
 {
    Backlight_Device *bd = data;
+
    bd->retry_timer = NULL;
    _backlight_devices_device_set(bd, bd->expected_val);
    _backlight_devices_device_update(bd);
@@ -48,7 +49,7 @@ _backlight_mismatch_retry(Backlight_Device *bd)
      { // try again
         bd->retries++;
         if (bd->retry_timer) ecore_timer_del(bd->retry_timer);
-        ecore_timer_add(0.1, _backlight_retry_timer_cb, bd);
+        bd->retry_timer = ecore_timer_add(0.1, _backlight_retry_timer_cb, bd);
      } // or give up
    else bd->retries = 0;
 }
@@ -84,6 +85,7 @@ _backlight_system_ddc_get_cb(void *data, const char *params)
 
    if (!params) return;
    if (sscanf(params, "%256s %i %i", edid, &id, &val) != 3) return;
+   if (!bd->edid) return;
    if (!!strncmp(bd->edid, edid, strlen(edid))) return;
    e_system_handler_del("ddc-val-get", _backlight_system_ddc_get_cb, bd);
    if (val < 0) return; // get failed.... don't update
@@ -215,6 +217,7 @@ static void
 _backlight_devices_device_set(Backlight_Device *bd, double val)
 {
    bd->val = bd->expected_val = val;
+   bd->retries = 0;
 #ifndef HAVE_WAYLAND_ONLY
    if (!strcmp(bd->dev, "randr"))
      {
@@ -284,11 +287,13 @@ _backlight_devices_device_update(Backlight_Device *bd)
 #endif
    if (!strncmp(bd->dev, "ddc:", 4))
      {
+        e_system_handler_del("ddc-val-get", _backlight_system_ddc_get_cb, bd);
         e_system_handler_add("ddc-val-get", _backlight_system_ddc_get_cb, bd);
         e_system_send("ddc-val-get", "%s %i", bd->dev + 4, 0x10); // backlight val in e_system_ddc.c
      }
    else
      {
+        e_system_handler_del("bklight-val", _backlight_system_get_cb, bd);
         e_system_handler_add("bklight-val", _backlight_system_get_cb, bd);
         e_system_send("bklight-get", "%s", bd->dev);
      }
@@ -534,10 +539,12 @@ _backlight_devices_probe(Eina_Bool initial)
    // ask enlightenment_system to list backlight devices. this is async so we have
    // to respond to the device listing later
    _devices_pending_ops++;
+   e_system_handler_del("bklight-list", _backlight_system_list_cb, NULL);
    e_system_handler_add("bklight-list", _backlight_system_list_cb, NULL);
    if (!initial) e_system_send("bklight-refresh", NULL);
    e_system_send("bklight-list", NULL);
    _devices_pending_ops++;
+   e_system_handler_del("ddc-list", _backlight_system_ddc_list_cb, NULL);
    e_system_handler_add("ddc-list", _backlight_system_ddc_list_cb, NULL);
    if (!initial) e_system_send("ddc-refresh", NULL);
    e_system_send("ddc-list", NULL);

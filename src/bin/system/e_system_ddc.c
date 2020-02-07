@@ -226,17 +226,24 @@ _ddc_clean(void)
 static Eina_Bool
 _ddc_probe(void)
 {
+   Dev *d;
    int i;
 
    if (!ddc_lib) return EINA_FALSE;
+   eina_lock_take(&_devices_lock);
+   EINA_LIST_FREE(_devices, d)
+     {
+        free(d->edid);
+        free(d);
+     }
+   eina_lock_release(&_devices_lock);
    _ddc_clean();
 
    // the below can be quite sluggish, so we don't want to do this
    // often, even though this is isolated in a worker thread. it will
    // block the ddc worker thread while this is done.
-   if (ddc_func.ddca_get_display_info_list2(false, &ddc_dlist) != 0)
-     return EINA_FALSE;
-   if (!ddc_dlist) return EINA_FALSE;
+   if (ddc_func.ddca_get_display_info_list2(false, &ddc_dlist) != 0) goto err;
+   if (!ddc_dlist) goto err;
    ddc_dh = calloc(ddc_dlist->ct, sizeof(DDCA_Display_Handle));
    if (!ddc_dh)
      {
@@ -249,7 +256,6 @@ _ddc_probe(void)
         DDCA_Display_Info *dinfo = &(ddc_dlist->info[i]);
         DDCA_Display_Ref dref = dinfo->dref;
         int j;
-        Dev *d;
 
         if (ddc_func.ddca_open_display2(dref, false, &(ddc_dh[i])) != 0)
           {
@@ -261,22 +267,28 @@ _ddc_probe(void)
              ddc_dh = NULL;
              ddc_func.ddca_free_display_info_list(ddc_dlist);
              ddc_dlist = NULL;
-             return EINA_FALSE;
+             goto err;
           }
         d = calloc(1, sizeof(Dev));
-        d->edid = malloc((128 * 2) + 1);
-        if (d->edid)
+        if (d)
           {
-             for (j = 0; j < 128; j++)
-               snprintf(&(d->edid[j * 2]), 3, "%02x", dinfo->edid_bytes[j]);
-             d->edid[j * 2] = 0;
-             d->screen = i;
-             eina_lock_take(&_devices_lock);
-             _devices = eina_list_append(_devices, d);
-             eina_lock_release(&_devices_lock);
+             d->edid = malloc((128 * 2) + 1);
+             if (d->edid)
+               {
+                  for (j = 0; j < 128; j++)
+                  snprintf(&(d->edid[j * 2]), 3, "%02x", dinfo->edid_bytes[j]);
+                  d->edid[j * 2] = 0;
+                  d->screen = i;
+                  eina_lock_take(&_devices_lock);
+                  _devices = eina_list_append(_devices, d);
+                  eina_lock_release(&_devices_lock);
+               }
+             else free(d);
           }
      }
    return EINA_TRUE;
+err:
+   return EINA_FALSE;
 }
 
 static Eina_Bool
@@ -311,7 +323,7 @@ _req_alloc(const char *req, const char *params)
 {
    Req *r;
 
-   if (!params) return NULL;
+   if (!params) params = "";
    r = calloc(1, sizeof(Req) + strlen(req) + 1 + strlen(params) + 1);
    if (!r) return NULL;
    r->req = ((char *)r) + sizeof(Req);
@@ -522,8 +534,15 @@ _cb_worker(void *data EINA_UNUSED, Ecore_Thread *th)
                }
              else if (!strcmp(r->req, "refresh"))
                {
-                  _ddc_probe();
-                  _do_list(th);
+                  int i = 0;
+
+                  for (i = 0; i < 10; i++)
+                    {
+                       if (_ddc_probe()) break;
+                       usleep(10 * 1000);
+                    }
+                  if (i == 10)
+                    fprintf(stderr, "DDC: PROBE FAILED.\n");
                }
              else if (!strcmp(r->req, "val-set"))
                {

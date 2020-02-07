@@ -20,6 +20,28 @@ typedef struct
    int  size;
 } Message_Head;
 
+static int fd_null = -1, fd_supress = -1;
+
+static void
+_stdout_off(void)
+{
+   fflush(stdout);
+   fd_supress = dup(1);
+   if (fd_null == -1) fd_null = open("/dev/null", O_WRONLY);
+   dup2(fd_null, 1);
+}
+
+static void
+_stdout_on(void)
+{
+   fflush(stdout);
+   dup2(fd_supress, 1);
+   close(fd_supress);
+   close(fd_null);
+   fd_supress = -1;
+   fd_null = -1;
+}
+
 static Eina_Bool
 _cb_stdio_in_read(void *data EINA_UNUSED, Ecore_Fd_Handler *fd_handler EINA_UNUSED)
 {
@@ -81,6 +103,7 @@ done:
 void
 e_system_inout_init(void)
 {
+   _stdout_off();
    _cmd_handlers = eina_hash_string_superfast_new(free);
    _fdh_in = ecore_main_fd_handler_add(0, ECORE_FD_READ,
                                        _cb_stdio_in_read, NULL,
@@ -94,6 +117,7 @@ e_system_inout_shutdown(void)
    _fdh_in = NULL;
    eina_hash_free(_cmd_handlers);
    _cmd_handlers = NULL;
+   _stdout_on();
 }
 
 void
@@ -151,7 +175,7 @@ e_system_inout_command_send(const char *cmd, const char *fmt, ...)
    memcpy(head.cmd, cmd, len);
    if (printed > 0) head.size = printed + 1;
    else head.size = 0;
-   ret = write(1, &head, sizeof(head));
+   ret = write(fd_supress, &head, sizeof(head));
    if (ret != sizeof(head))
      {
         ERR("Write of command failed at %lli\n", (long long)ret);
@@ -159,7 +183,7 @@ e_system_inout_command_send(const char *cmd, const char *fmt, ...)
      }
    if ((buf) && (head.size > 0))
      {
-        ret = write(1, buf, head.size);
+        ret = write(fd_supress, buf, head.size);
         if (ret != (ssize_t)head.size)
           {
              ERR("Write of command buffer failed at %lli/%llu\n", (long long)ret, (unsigned long long)head.size);

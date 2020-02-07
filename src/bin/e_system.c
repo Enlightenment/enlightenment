@@ -69,6 +69,7 @@ _system_message_read(void)
    if (!data) return EINA_FALSE;
    if (len < sizeof(Message_Head)) return EINA_FALSE;
    head = (Message_Head *)bdata;
+   head->cmd[23] = 0;
    if (len < (sizeof(Message_Head) + head->size)) return EINA_FALSE;
    if (_handlers)
      {
