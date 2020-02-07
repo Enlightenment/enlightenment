@@ -309,6 +309,7 @@ _backlight_devices_pending_done(void)
 {
    _devices_pending_ops--;
    if (_devices_pending_ops > 0) return;
+   e_backlight_level_set(NULL, e_config->backlight.normal, -1.0);
    _backlight_devices_update();
 }
 
@@ -592,7 +593,7 @@ e_backlight_init(void)
    H(E_EVENT_ZONE_UNSTOW, _cb_handler_zone_change);
    e_backlight_update();
    if (!getenv("E_RESTART"))
-     e_backlight_level_set(NULL, e_config->backlight.normal, 0.0);
+     e_backlight_level_set(NULL, e_config->backlight.normal, -1.0);
    return 1;
 }
 
