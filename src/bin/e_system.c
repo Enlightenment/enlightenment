@@ -317,7 +317,8 @@ e_system_handler_del(const char *cmd, void (*func) (void *data, const char *para
                   break;
                }
           }
-        eina_hash_add(_handlers, cmd, list);
+        if (list)
+          eina_hash_add(_handlers, cmd, list);
      }
 }
 
