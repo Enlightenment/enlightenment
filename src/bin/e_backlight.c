@@ -47,6 +47,8 @@ _backlight_mismatch_retry(Backlight_Device *bd)
        // and we retried < 20 times
        (bd->retries < 20))
      { // try again
+        printf("RETRY backlight set as %1.2f != %1.2f (expected) try=%i\n",
+               bd->val, bd->expected_val, bd->retries);
         bd->retries++;
         if (bd->retry_timer) ecore_timer_del(bd->retry_timer);
         bd->retry_timer = ecore_timer_add(0.1, _backlight_retry_timer_cb, bd);
@@ -90,7 +92,7 @@ _backlight_system_ddc_get_cb(void *data, const char *params)
    e_system_handler_del("ddc-val-get", _backlight_system_ddc_get_cb, bd);
    if (val < 0) return; // get failed.... don't update
    fval = (double)val / 100.0;
-   if (fabs(fval - bd->val) >= DBL_EPSILON)
+   if ((fabs(fval - bd->val) >= DBL_EPSILON) || (val == -1))
      {
         bd->val = fval;
         ecore_event_add(E_EVENT_BACKLIGHT_CHANGE, NULL, NULL, NULL);

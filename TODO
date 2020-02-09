@@ -1,4 +1,10 @@
 TODO:
+* magnifier - need a magnifier tool
+  * live follow the mouse and zoom around it in some corner /region of
+    the screen
+  * toggle on/off or bring up only while key or button pressed
+  * freeze the zooms like a screenshot/xmag like thing
+  * offer coordinates and measuring by pixel
 * pam/auth - exotic auth things like fingerprint readers etc. need to work
   * fingerprint
   * smart card
