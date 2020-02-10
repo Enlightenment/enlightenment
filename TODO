@@ -1,4 +1,15 @@
 TODO:
+* clock - add event/alarm/appointment tracking and notifications etc.
+  * this perhaps can be merged with the cron front-end
+  * cmdline tools to import/export events and alarms
+  * dbus api to imports/export calendar
+  * some kind of intrgration to ical/outlook and other calendar data
+  * display events/alarms in calendar
+  * ability to wake up from screen sleep and show an alarm or
+    notification even if locked
+  * ability to wake up from suspend/hibernate like above
+  * ability to even power on/boot from nothing
+    * the above will require RTC and other deep integration...
 * magnifier - need a magnifier tool
   * live follow the mouse and zoom around it in some corner /region of
     the screen
