@@ -90,8 +90,8 @@ _backlight_system_ddc_get_cb(void *data, const char *params)
    if (!bd->edid) return;
    if (!!strncmp(bd->edid, edid, strlen(edid))) return;
    e_system_handler_del("ddc-val-get", _backlight_system_ddc_get_cb, bd);
-   if (val < 0) return; // get failed.... don't update
-   fval = (double)val / 100.0;
+   if (val < 0) fval = -1.0;
+   else fval = (double)val / 100.0;
    if ((fabs(fval - bd->val) >= DBL_EPSILON) || (val == -1))
      {
         bd->val = fval;
