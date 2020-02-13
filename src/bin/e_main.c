@@ -1149,8 +1149,6 @@ static void
 _e_main_shutdown(int errcode)
 {
    int i = 0;
-   char buf[PATH_MAX];
-   const char *dir;
 
    printf("E: Begin Shutdown Procedure!\n");
 
