@@ -549,6 +549,25 @@ done:
    return ret;
 }
 
+static void
+rmrf(const char *path)
+{
+   Eina_Iterator *iter = eina_file_direct_ls(path);
+
+   if (iter)
+     {
+        Eina_File_Direct_Info *info;
+
+        EINA_ITERATOR_FOREACH(iter, info)
+          {
+             if (info->type == EINA_FILE_DIR) rmrf(info->path);
+             else eina_file_unlink(info->path);
+          }
+        eina_iterator_free(iter);
+     }
+   eina_file_unlink(path);
+}
+
 int
 main(int argc, char **argv)
 {
@@ -562,6 +581,7 @@ main(int argc, char **argv)
    Eina_Bool really_know = EINA_FALSE;
    struct sigaction action;
    struct stat st;
+   int ret = -1;
    pid_t child = -1;
    Eina_Bool restart = EINA_TRUE;
 
@@ -745,9 +765,15 @@ main(int argc, char **argv)
         child = fork();
 
         if (child < 0)
-          return -1;
+          {
+             ret = -1;
+             break;
+          }
         else if (child == 0)
-          return _e_start_child(args, really_know);
+          { // we are in the child fork - so exec
+             ret = _e_start_child(args, really_know);
+             break;
+          }
 
         putenv("E_RESTART_OK=");
         /* in the parent - ptrace attach and continue */
@@ -758,8 +784,7 @@ main(int argc, char **argv)
 not_done:
         result = waitpid(child, &status, WNOHANG);
         /* Wait for E */
-        if (!result)
-          result = waitpid(-1, &status, 0);
+        if (!result) result = waitpid(-1, &status, 0);
 
         if (result == child)
           {
@@ -801,12 +826,8 @@ not_done:
                                     remember_sigusr1);
                   free(backtrace_str);
 
-                  if (getenv("DISPLAY"))
-                    {
-                       kill(child, SIGKILL);
-                    }
-                  if (WEXITSTATUS(r) == 1)
-                    restart = EINA_FALSE;
+                  if (getenv("DISPLAY")) kill(child, SIGKILL);
+                  if (WEXITSTATUS(r) == 1) restart = EINA_FALSE;
                }
              else if (WEXITSTATUS(status) == 111)
                {
@@ -831,10 +852,15 @@ not_done:
                   _e_ptrace_detach(child, 0, really_know);
                }
           }
-        if (!done)
-          goto not_done;
+        if (!done) goto not_done;
      }
-
-   return -1;
+   // clean up xdg runtime_dir if we created it
+   s = getenv("XDG_RUNTIME_DIR");
+   if ((s) && (stat(s, &st) == 0) && (S_ISDIR(st.st_mode)))
+     {
+        snprintf(buf, sizeof(buf), "%s/.e-deleteme", s);
+        if (stat(buf, &st) == 0) rmrf(s);
+     }
+   return ret;
 }
 
