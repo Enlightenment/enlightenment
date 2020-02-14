@@ -1,4 +1,8 @@
 TODO:
+* action to switch config profiles so it can be bound
+* clean up some old actions that are handled better by newer ones
+  * like suspend intelligently is better than regular suspend but
+    suspend now is very explicit and worth keeping
 * clock - add event/alarm/appointment tracking and notifications etc.
   * this perhaps can be merged with the cron front-end
   * cmdline tools to import/export events and alarms
