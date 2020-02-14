@@ -196,6 +196,8 @@ struct {
      (DDCA_Display_Handle ddca_dh, DDCA_Vcp_Feature_Code feature_code, uint8_t hi_byte, uint8_t lo_byte);
    DDCA_Status (*ddca_close_display)
      (DDCA_Display_Handle ddca_dh);
+   void (*ddca_set_global_sleep_multiplier)
+     (double multiplier);
 } ddc_func;
 
 static DDCA_Display_Info_List *ddc_dlist = NULL;
@@ -307,6 +309,12 @@ _ddc_init(void)
    SYM(ddca_get_non_table_vcp_value);
    SYM(ddca_set_non_table_vcp_value);
    SYM(ddca_close_display);
+   // optional api's
+#define SYM_OPT(_x) \
+   do { \
+      ddc_func._x = dlsym(ddc_lib, #_x); \
+   } while (0)
+   SYM_OPT(ddca_set_global_sleep_multiplier);
 
    // brute force modprobe this as it likely is needed - probe will fail
    // if this doesn't work or find devices anyway
