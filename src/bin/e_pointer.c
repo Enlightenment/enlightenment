@@ -525,7 +525,7 @@ e_pointer_window_new(Ecore_Window win, Eina_Bool filled)
      return NULL;
 
    /* set default pointer properties */
-   ptr->w = ptr->h = e_config->cursor_size;
+   ptr->w = ptr->h = (double)e_config->cursor_size * e_scale;
    ptr->e_cursor = e_config->use_e_cursor;
    ptr->win = win;
    ptr->color = EINA_FALSE;
@@ -555,7 +555,7 @@ e_pointer_canvas_new(Ecore_Evas *ee, Eina_Bool filled)
    /* set default pointer properties */
    ptr->color = EINA_TRUE;
    ptr->canvas = EINA_TRUE;
-   ptr->w = ptr->h = e_config->cursor_size;
+   ptr->w = ptr->h = (double)e_config->cursor_size * e_scale;
    ptr->e_cursor = 1;
 
    ptr->ee = ee;
@@ -581,6 +581,7 @@ e_pointers_size_set(int size)
 
    if (!e_config->show_cursor) return;
 
+   size = (double)size * e_scale;
    EINA_LIST_FOREACH(_ptrs, l, ptr)
      {
         if ((ptr->w == size) && (ptr->h == size)) continue;
