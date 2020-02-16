@@ -1757,18 +1757,15 @@ _pager_cb_event_client_property(void *data EINA_UNUSED, int type EINA_UNUSED, vo
 static Eina_Bool
 _pager_cb_event_zone_desk_count_set(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Zone_Desk_Count_Set *ev)
 {
-   E_Desk *desk;
-   Eina_List *l, *ll;
+   Eina_List *l;
    Pager *p;
-   Pager_Desk *pd = NULL;
-   int x, y, xx, yy;
+   int xx, yy;
 
    xx = ev->zone->desk_x_count;
    yy = ev->zone->desk_y_count;
    EINA_LIST_FOREACH(pagers, l, p)
      {
-        if ((xx == p->xnum) && (yy == p->ynum))
-          continue;
+        if ((xx == p->xnum) && (yy == p->ynum)) continue;
         _pager_empty(p);
         _pager_fill(p);
         if (p->inst) _pager_orient(p->inst, e_gadget_site_orient_get(e_gadget_site_get(p->inst->o_pager)));
