@@ -1769,29 +1769,8 @@ _pager_cb_event_zone_desk_count_set(void *data EINA_UNUSED, int type EINA_UNUSED
      {
         if ((xx == p->xnum) && (yy == p->ynum))
           continue;
-        for (x = 0; x < xx; x++)
-          {
-             for (y = 0; y < yy; y++)
-               {
-                  if ((x >= p->xnum) || (y >= p->ynum))
-                    {
-                       desk = e_desk_at_xy_get(p->zone, x, y);
-                       if (desk)
-                         pd = _pager_desk_new(p, desk, x, y, p->invert);
-                       if (pd)
-                         p->desks = eina_list_append(p->desks, pd);
-                    }
-               }
-          }
-        EINA_LIST_FOREACH(p->desks, ll, pd)
-          {
-             if (!e_desk_at_xy_get(p->zone, pd->xpos, pd->ypos))
-               {
-                  p->desks = eina_list_remove(p->desks, pd);
-                  _pager_desk_free(pd);
-               }
-          }
-        e_zone_desk_count_get(p->zone, &(p->xnum), &(p->ynum));
+        _pager_empty(p);
+        _pager_fill(p);
         if (p->inst) _pager_orient(p->inst, e_gadget_site_orient_get(e_gadget_site_get(p->inst->o_pager)));
      }
    return ECORE_CALLBACK_PASS_ON;
