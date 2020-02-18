@@ -1458,24 +1458,28 @@ e_util_evas_objects_above_print_smart(Evas_Object *o)
      }
 }
 
-/*
- * NOTICE: This function should not be used by external modules!!!
- *
- * This function is just a hack to allow us to "securely" clear sensitive
- * info until memset_s() is readily available, or at least we move this hack
- * to Eina.
- *
- * This is going to work until link time optimizations are good enough.
- * Hopefully by then, we'll be able to properly use memset_s().
- */
-static void *(* const volatile memset_ptr)(void *, int, size_t) = memset;
+#if   defined(HAVE_MEMSET_S)
+#elif defined(HAVE_EXPLICIT_BZERO)
+#elif defined(HAVE_EXPLICIT_MEMSET)
+#else
+void *(* const volatile __memset_ptr)(void *, int, size_t) = memset;
+#endif
 
 E_API void
 e_util_memclear(void *s, size_t n)
 {
-   memset_ptr(s, 0, n);
+   if (n == 0) return;
+#if   defined(HAVE_MEMSET_S)
+   memset_s(s, n, 0, n);
+#elif defined(HAVE_EXPLICIT_BZERO)
+   explicit_bzero(s, n);
+#elif defined(HAVE_EXPLICIT_MEMSET)
+   explicit_memset(s, 0, n);
+#else
+   __memset_ptr(s, 0, n);
+   __asm__ __volatile__("": :"r"(s) : "memory");
+#endif
 }
-
 
 E_API Ecore_Exe *
 e_util_open(const char *exe, void *data)

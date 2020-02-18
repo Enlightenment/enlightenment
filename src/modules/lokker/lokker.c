@@ -1,4 +1,5 @@
 #include "e_mod_main.h"
+#include <sys/mman.h>
 
 #define PASSWD_LEN                256
 
@@ -858,6 +859,9 @@ lokker_lock(void)
      }
    edd = E_NEW(Lokker_Data, 1);
    if (!edd) return EINA_FALSE;
+#ifdef HAVE_MLOCK
+   mlock(edd, sizeof(Lokker_Data));
+#endif
 
    E_LIST_FOREACH(e_comp->zones, _lokker_popup_add);
    total_zone_num = eina_list_count(e_comp->zones);
@@ -881,5 +885,8 @@ lokker_unlock(void)
    E_FREE_LIST(edd->handlers, ecore_event_handler_del);
    if (edd->move_handler) ecore_event_handler_del(edd->move_handler);
 
+#ifdef HAVE_MLOCK
+   munlock(edd, sizeof(Lokker_Data));
+#endif
    E_FREE(edd);
 }

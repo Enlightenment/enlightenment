@@ -186,6 +186,18 @@ if cc.has_header('execinfo.h') == true
 elif cc.has_function('backtrace_symbols_fd', dependencies: 'execinfo') == false
   execinfo_dep = dependency('execinfo', required: false)
 endif
+if cc.has_function('explicit_bzero') == true
+  config_h.set('HAVE_EXPLICIT_BZERO'   , '1')
+endif
+if cc.has_function('explicit_memset') == true
+  config_h.set('HAVE_EXPLICIT_MEMSET'  , '1')
+endif
+if cc.has_function('memset_s') == true
+  config_h.set('HAVE_MEMSET_S'         , '1')
+endif
+if cc.has_function('mlock') == true
+  config_h.set('HAVE_MLOCK'            , '1')
+endif
 
 if cc.has_header('fnmatch.h') == false
   error('fnmatch.h not found')
