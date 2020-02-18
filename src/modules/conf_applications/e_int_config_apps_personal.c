@@ -74,15 +74,20 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    Evas_Coord mw, mh;
 
    e_dialog_resizable_set(cfd->dia, 1);
-   
+
    of = e_widget_table_add(e_win_evas_win_get(evas), 0);
+
+   ob = evas_object_rectangle_add(evas);
+   evas_object_color_set(ob, 0, 0, 0, 0);
+   evas_object_pass_events_set(ob, EINA_TRUE);
+   mw = 260 * e_scale; mh = 200 * e_scale;
+   evas_object_size_hint_min_set(ob, mw, mh);
+   e_widget_table_object_append(of, ob, 0, 1, 2, 1, 1, 1, 1, 1);
 
    li = e_widget_ilist_add(evas, 24, 24, NULL);
    cfdata->obj.list = li;
    e_widget_ilist_multi_select_set(li, EINA_TRUE);
    e_widget_size_min_get(li, &mw, &mh);
-   if (mw < (200 * e_scale)) mw = 200 * e_scale;
-   if (mh < (160 * e_scale)) mh = 160 * e_scale;
    e_widget_size_min_set(li, mw, mh);
    e_widget_on_change_hook_set(li, _widget_list_selection_changed, cfdata);
    e_widget_table_object_append(of, li, 0, 1, 2, 1, 1, 1, 1, 1);
