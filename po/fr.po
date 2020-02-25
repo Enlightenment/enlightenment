@@ -12,13 +12,13 @@
 # rustyBSD <rustyBSD@gmx.fr>, 2012.
 # Raoul Hecky <raoul.hecky@gmail.com>, 2012.
 # Eliovir <eliovir@gmail.com>, 2013.
-# similar <similar@orange.fr>, 2019.
+# similar <similar@orange.fr>, 2019, 2020.
 msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment DR23\n"
 "Report-Msgid-Bugs-To: enlightenment-intl@lists.sourceforge.net\n"
 "POT-Creation-Date: 2019-08-23 16:18+0100\n"
-"PO-Revision-Date: 2019-10-26 15:11+0200\n"
+"PO-Revision-Date: 2020-02-25 17:15+0100\n"
 "Last-Translator: Philippe Jean Guillaumie <similar@orange.fr>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -311,7 +311,7 @@ msgstr "Définir l'état d'enroulement"
 
 #: src/bin/e_actions.c:3367
 msgid "syntax: \"(0|1) (up|down|left|right)\""
-msgstr "syntaxe: \"(0|1) (up|down|left|right)\""
+msgstr "syntaxe : \"(0|1) (up|down|left|right)\""
 
 #: src/bin/e_actions.c:3371
 msgid "Toggle Borderless State"
@@ -1020,8 +1020,8 @@ msgid ""
 "need XRender and XFixes support in X11 and Ecore."
 msgstr ""
 "Votre serveur d'affichage ne supporte pas XComposite, ou Ecore-X a été "
-"compilé sans support de XComposite. Notez que pour le support de composite "
-"vous aurez aussi besoin de XRender et XFixes dans X11 et Ecore."
+"compilé sans le support de XComposite. Notez que pour le support de "
+"composite vous aurez aussi besoin de XRender et XFixes dans X11 et Ecore."
 
 #: src/bin/e_comp_x.c:5837
 msgid ""
@@ -3049,7 +3049,7 @@ msgstr "Désactiver la composition pour les fenêtres en plein écran"
 
 #: src/bin/e_int_config_comp.c:263 src/bin/e_int_config_comp.c:534
 msgid "Don't fade backlight"
-msgstr "Ne pas diminuer le rétro-éclairage"
+msgstr "Ne pas diminuer le rétroéclairage"
 
 #: src/bin/e_int_config_comp.c:267 src/bin/e_int_config_comp.c:581
 msgid "Engine"
@@ -5550,11 +5550,11 @@ msgstr "Wi-Fi"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:381
 msgid "Zoom Out"
-msgstr "Agrandir"
+msgstr "Réduire"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:383
 msgid "Zoom In"
-msgstr "Réduire"
+msgstr "Agrandir"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:385
 msgid "Brightness Down"
@@ -5832,8 +5832,8 @@ msgid ""
 "Unable to set a mouse wheel binding without modifiers<ps/>on a window: "
 "conflict with existing edje signal bindings.<ps/>FIXME!!!"
 msgstr ""
-"Impossible de définir un raccourci avec la molette sans modificateurs<ps/>: "
-"il se produirait un signal edje conflictuel avec les raccourcis existants."
+"Impossible de définir un raccourci avec la molette sans modificateurs :<ps/"
+">il se produirait un signal edje conflictuel avec les raccourcis existants."
 "<ps/>À CORRIGER !"
 
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:246
@@ -6819,7 +6819,7 @@ msgstr "Niveau"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:170
 msgid "e.g. Saving to disk"
-msgstr "p. ex. sauvegarde sur le disque"
+msgstr "p. ex. enregistrement sur le disque"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:208
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:295
@@ -7131,11 +7131,11 @@ msgstr "Icône de bureau"
 #: src/modules/conf_theme/e_int_config_fonts.c:99
 #: src/modules/conf_theme/e_int_config_fonts.c:258
 msgid "Small"
-msgstr "Petite"
+msgstr "Petit(e)"
 
 #: src/modules/conf_theme/e_int_config_fonts.c:101
 msgid "Large"
-msgstr "Grande"
+msgstr "Grand(e)"
 
 #: src/modules/conf_theme/e_int_config_fonts.c:102
 msgid "Small Styled"
@@ -7159,11 +7159,11 @@ msgstr "Minuscule"
 
 #: src/modules/conf_theme/e_int_config_fonts.c:270
 msgid "Big"
-msgstr "Grande"
+msgstr "Gros(se)"
 
 #: src/modules/conf_theme/e_int_config_fonts.c:276
 msgid "Really Big"
-msgstr "Très grande"
+msgstr "Très gros(se)"
 
 #: src/modules/conf_theme/e_int_config_fonts.c:282
 msgid "Huge"
@@ -8147,8 +8147,8 @@ msgid ""
 "There was an error trying to set the<ps/>cpu frequency governor via the "
 "module's<ps/>setfreq utility."
 msgstr ""
-"Une erreur s'est produite lors de la tentative<ps/>de changement de "
-"fréquence du CPU<ps/>via l'utilitaire setfreq du module."
+"Une erreur s'est produite lors de la tentative<ps/>de modification du "
+"régulateur de fréquence du CPU<ps/>via l'utilitaire setfreq du module."
 
 #: src/modules/cpufreq/e_mod_main.c:535
 msgid ""
@@ -8284,7 +8284,7 @@ msgstr "Défilement animé"
 
 #: src/modules/everything/evry_config.c:472
 msgid "Up/Down select next item in icon view"
-msgstr "Flèche haut/bas va à l'élément suivant dans la vue en icônes"
+msgstr "Flèche haut / bas va à l'élément suivant dans la vue en icônes"
 
 #: src/modules/everything/evry_config.c:481
 msgid "Hide input when inactive"
@@ -9086,7 +9086,7 @@ msgstr "Retirer de la barre"
 #: src/modules/ibar/e_mod_main.c:1664
 #, c-format
 msgid "Icon %s"
-msgstr "Icon %s"
+msgstr "Icône %s"
 
 #: src/modules/ibar/e_mod_main.c:2893
 msgid "Focus IBar"
@@ -9473,7 +9473,7 @@ msgstr "Changer de bureau avec la molette de la souris"
 #: src/modules/pager_plain/e_mod_config.c:132
 #: src/modules/pager_plain/e_mod_config.c:192
 msgid "Always show desktop names"
-msgstr "Toujours afficher les nom des bureaux"
+msgstr "Toujours afficher le nom des bureaux"
 
 #: src/modules/pager/e_mod_config.c:136 src/modules/pager/e_mod_config.c:217
 #: src/modules/pager_plain/e_mod_config.c:141
@@ -9916,7 +9916,7 @@ msgstr "nom / identifiant de l'accès rapide"
 
 #: src/modules/shot/e_mod_main.c:173 src/modules/shot/e_mod_main.c:211
 msgid "Error saving screenshot file"
-msgstr "Impossible de sauvegarder le fichier screenshot"
+msgstr "Impossible d'enregistrer la capture"
 
 #: src/modules/shot/e_mod_main.c:174 src/modules/shot/e_mod_main.c:212
 #, c-format
