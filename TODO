@@ -1,4 +1,43 @@
 TODO:
+* illume: work on this again given pinephone + librem5 appeared
+  * single app at a time with switching mode
+    * winlist should do the switching with another layout mode...
+  * shelf can expamnd/slow down to show more (indicator/notification)
+    * gadget bar too... ? or just gad bar?
+  * vkbd integrates with proper sizing and layout
+    * manual show/hide with various controls (actions, swipes, gadget)
+  * finger friendly desklock
+    * integrate with vkbd, also allow pin no. or pattern or camera or bt?
+  * notification in gadget i shelf (pull down)
+    * scrollable list with / X/swipe dismiss
+  * handle edge swipes (middle/left/right of edge) with edge bindings
+    * also swipe along an edge (in each dir)
+  * add swiping to type in vkbd
+  * home screen launcher + switcher (single instance mode debugged and on)
+  * pre-launch window show with icon/splash img/past screenshot show
+    * replace when app actually starts and shows window
+  * aggressive sigstop of bg apps unless whitelisted or when desklocked/blanked
+  * aggressive cpufreq limiting when desklocked/blanked
+  * ambient light sensor control of backlight
+  * hide/show mouse pointer base on real mouse device
+  * vibrator support api in e (efl)
+  * hide/show vkbd based on real kbd device pluggd/unplugged
+  * pull in convertible for rotation
+  * need to handle ofono / incoming call+sms notifications without
+    dialler always running
+  * longpress bindings for key/mouse/etc.
+  * use xinput for edge bindings and other gestures (always listen to ev)
+  * need apps:
+    * dialler/phone incoming call handling
+    * sms app
+    * camera app (video and still)
+    * gallery app
+    * audio recorder + playback
+    * browser (just use ffox etc.?)
+    * ofono config
+      * bt tethering
+      * usb tehtering
+      * wifi tethering
 * mixer: if pulseaudio is not there - try run it
 * action to switch config profiles so it can be bound
 * clean up some old actions that are handled better by newer ones
