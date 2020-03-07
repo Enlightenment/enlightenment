@@ -823,7 +823,7 @@ collections {
         description { state: "default" 0.0;
           min: (35+35+50) (45+55+50);
           color: 0 0 0 128;
-          image.normal: "shotedit-speech-shadow.png";
+          image.normal: "shotedit-speech2-shadow.png";
         }
       }
     }
