@@ -75,12 +75,12 @@ static void  _e_wid_fprev_preview_fm(E_Widget_Data *wd);
 static void
 _e_wid_fprev_preview_update(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   E_Widget_Data *wd;
+   E_Widget_Data *wd = data;
    Evas_Object *o;
    char buf[256];
    int iw = 0, ih = 0;
 
-   wd = data;
+   if (!wd->o_preview_extra) return;
    if (evas_object_image_extension_can_load_get(wd->path))
      {
         o = evas_object_image_add(evas_object_evas_get(obj));
@@ -204,9 +204,6 @@ _e_wid_fprev_clear_widgets(E_Widget_Data *wd)
 #define CLRWID(xx) \
   do { if (wd->xx) { evas_object_del(wd->xx); wd->xx = NULL; } } while (0)
 
-   CLRWID(o_preview_preview_table);
-   CLRWID(o_preview_properties_table);
-   CLRWID(o_preview_scroll);
    CLRWID(o_preview_extra);
    CLRWID(o_preview_extra_entry);
    CLRWID(o_preview_size);
@@ -222,6 +219,9 @@ _e_wid_fprev_clear_widgets(E_Widget_Data *wd)
    CLRWID(o_preview_preview);
    CLRWID(o_preview_scrollframe);
    CLRWID(o_preview_artwork);
+   CLRWID(o_preview_scroll);
+   CLRWID(o_preview_preview_table);
+   CLRWID(o_preview_properties_table);
    wd->is_dir = wd->is_txt = wd->is_font = wd->prev_is_fm = wd->prev_is_video = EINA_FALSE;
    wd->vid_pct = 0;
 
