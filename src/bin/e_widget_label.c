@@ -50,27 +50,24 @@ e_widget_label_add(Evas *evas, const char *label)
 E_API void
 e_widget_label_text_set(Evas_Object *obj, const char *text)
 {
-   E_Widget_Data *wd;
-
-   wd = e_widget_data_get(obj);
+   E_Widget_Data *wd = e_widget_data_get(obj);
+   if (!wd) return;
    elm_object_text_set(wd->text, text);
 }
 
 static void
 _e_wid_del_hook(Evas_Object *obj)
 {
-   E_Widget_Data *wd;
-
-   wd = e_widget_data_get(obj);
+   E_Widget_Data *wd = e_widget_data_get(obj);
    free(wd);
+   if (!wd) return;
 }
 
 static void
 _e_wid_disable_hook(Evas_Object *obj)
 {
-   E_Widget_Data *wd;
-
-   wd = e_widget_data_get(obj);
+   E_Widget_Data *wd = e_widget_data_get(obj);
+   if (!wd) return;
    elm_object_disabled_set(wd->text, e_widget_disabled_get(obj));
 }
 

@@ -45,9 +45,8 @@ e_widget_table_object_append(Evas_Object *obj, Evas_Object *sobj, int col, int r
 E_API void
 e_widget_table_object_align_append(Evas_Object *obj, Evas_Object *sobj, int col, int row, int colspan, int rowspan, int fill_w, int fill_h, int expand_w, int expand_h, double ax, double ay)
 {
-   E_Widget_Data *wd;
-
-   wd = e_widget_data_get(obj);
+   E_Widget_Data *wd = e_widget_data_get(obj);
+   if (!wd) return;
 
    if (fill_w) ax = -1;
    if (fill_h) ay = -1;
@@ -70,9 +69,8 @@ e_widget_table_object_repack(Evas_Object *obj EINA_UNUSED, Evas_Object *sobj, in
 E_API void
 e_widget_table_unpack(Evas_Object *obj, Evas_Object *sobj)
 {
-   E_Widget_Data *wd;
-
-   wd = e_widget_data_get(obj);
+   E_Widget_Data *wd = e_widget_data_get(obj);
+   if (!wd) return;
    e_widget_sub_object_del(obj, sobj);
    elm_table_unpack(wd->o_table, sobj);
 }
@@ -80,9 +78,8 @@ e_widget_table_unpack(Evas_Object *obj, Evas_Object *sobj)
 static void
 _e_wid_del_hook(Evas_Object *obj)
 {
-   E_Widget_Data *wd;
-
-   wd = e_widget_data_get(obj);
+   E_Widget_Data *wd = e_widget_data_get(obj);
+   if (!wd) return;
    free(wd);
 }
 
