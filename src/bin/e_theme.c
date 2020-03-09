@@ -34,7 +34,7 @@ e_theme_collection_items_find(const char *base EINA_UNUSED, const char *collname
 {
    Eina_List *list, *list2 = NULL, *l;
    const char *s, *s2;
-   int len = strlen(collname);
+   size_t len = strlen(collname);
 
    list = elm_theme_group_base_list(NULL, collname);
    if (!list) return NULL;
@@ -44,8 +44,13 @@ e_theme_collection_items_find(const char *base EINA_UNUSED, const char *collname
         size_t slen;
 
         slen = strlen(s);
-        trans = memcpy(alloca(slen + 1), s, slen + 1);
-        p = trans + len + 1;
+        if (slen <= len) goto done;
+        trans = alloca(slen + 1);
+        if (!trans) goto done;
+        memcpy(trans, s, slen + 1);
+        p = trans + len;
+        if (*p != '/') goto done;
+        p++;
         if (*p)
           {
              p2 = strchr(p, '/');
@@ -56,6 +61,8 @@ e_theme_collection_items_find(const char *base EINA_UNUSED, const char *collname
                }
              if (!l) list2 = eina_list_append(list2, eina_stringshare_add(p));
           }
+done:
+        eina_stringshare_del(s);
      }
    return list2;
 }
