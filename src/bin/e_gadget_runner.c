@@ -1,5 +1,5 @@
 #include "e.h"
-#include <Efl_Wl.h>
+#include <Efl_Canvas_Wl.h>
 #include "e-gadget-server-protocol.h"
 #include "action_route-server-protocol.h"
 #include <sched.h>
@@ -38,7 +38,7 @@ typedef struct Instance
    E_Gadget_Site_Anchor anchor;
    Evas_Object *box;
    Evas_Object *obj;
-   Ecore_Exe *exe;
+   Efl_Exe *exe;
    Config_Item *ci;
    Eina_Hash *allowed_pids;
    Eina_List *tooltip_surfaces;
@@ -80,6 +80,7 @@ typedef struct Wizard_Item
    Eina_Bool sandbox E_BITFIELD;
 } Wizard_Item;
 
+static void runner_exe_del(void *data, const Efl_Event *ev);
 
 static char *
 sandbox_name(const char *filename)
@@ -147,7 +148,8 @@ runner_run(Instance *inst)
 
    unshare(CLONE_NEWPID);
 
-   inst->exe = efl_wl_run(inst->obj, inst->ci->cmd);
+   inst->exe = efl_canvas_wl_run(inst->obj, inst->ci->cmd);
+   efl_event_callback_add(inst->exe, EFL_TASK_EVENT_EXIT, runner_exe_del, inst);
 
    setns(ns_fd, CLONE_NEWPID);
 
@@ -157,8 +159,7 @@ runner_run(Instance *inst)
    e_util_env_set("LD_PRELOAD", preload);
    free(preload);
    eina_hash_free_buckets(inst->allowed_pids);
-   pid = ecore_exe_pid_get(inst->exe);
-   ecore_exe_data_set(inst->exe, inst);
+   pid = efl_exe_pid_get(inst->exe);
    eina_hash_add(inst->allowed_pids, &pid, (void*)1);
 }
 
@@ -182,7 +183,7 @@ _config_close(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_inf
    if (!inst) ci->cmd_changed = 0;
    if (!ci->cmd_changed) return;
    ci->cmd_changed = 0;
-   if (inst->exe) ecore_exe_quit(inst->exe);
+   if (inst->exe) efl_exe_signal(inst->exe, EFL_EXE_SIGNAL_QUIT);
    runner_run(inst);
 }
 
@@ -219,7 +220,7 @@ _config_cmd_activate(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    free(cmd);
    e_config_save_queue();
    if (!inst) return;
-   if (inst->exe) ecore_exe_quit(inst->exe);
+   if (inst->exe) efl_exe_signal(inst->exe, EFL_EXE_SIGNAL_QUIT);
    runner_run(inst);
 }
 
@@ -422,8 +423,10 @@ runner_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info E
    if (inst->ci)
      inst->ci->inst = NULL;
    else
-     ecore_exe_signal(inst->exe, 2);
-   E_FREE_FUNC(inst->exe, ecore_exe_terminate);
+     efl_exe_signal(inst->exe, EFL_EXE_SIGNAL_USR2);
+   efl_event_callback_del(inst->exe, EFL_TASK_EVENT_EXIT, runner_exe_del, inst);
+   efl_exe_signal(inst->exe, EFL_EXE_SIGNAL_TERM);
+   inst->exe = NULL;
    instances = eina_list_remove(instances, inst);
    eina_hash_free(inst->allowed_pids);
    eina_list_free(inst->tooltip_surfaces);
@@ -499,7 +502,7 @@ gadget_bind(struct wl_client *client, void *data, uint32_t version, uint32_t id)
    Evas_Object *site;
 
    wl_client_get_credentials(client, &pid, NULL, NULL);
-   if (pid != ecore_exe_pid_get(inst->exe))
+   if (pid != efl_exe_pid_get(inst->exe))
      {
         wl_client_post_no_memory(client);
         return;
@@ -524,7 +527,7 @@ ar_bind(struct wl_client *client, void *data, uint32_t version, uint32_t id)
    pid_t pid;
 
    wl_client_get_credentials(client, &pid, NULL, NULL);
-   if (pid != ecore_exe_pid_get(inst->exe))
+   if (pid != efl_exe_pid_get(inst->exe))
      {
         wl_client_post_no_memory(client);
         return;
@@ -561,7 +564,7 @@ child_added(void *data, Evas_Object *obj, void *event_info)
    E_Zone *zone = e_comp_object_util_zone_get(obj);
    Instance *inst = data;
 
-   if (!efl_wl_surface_extract(event_info)) return;
+   if (!efl_canvas_wl_surface_extract(event_info)) return;
    inst->extracted = eina_list_append(inst->extracted, event_info);
    inst->popup.content = event_info;
 
@@ -714,7 +717,7 @@ popup_added(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
    Instance *inst = data;
    Evas_Object *bx;
 
-   if (!efl_wl_surface_extract(event_info)) return;
+   if (!efl_canvas_wl_surface_extract(event_info)) return;
    inst->extracted = eina_list_append(inst->extracted, event_info);
    if (inst->tooltip_surfaces)
      {
@@ -722,13 +725,13 @@ popup_added(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         struct wl_resource *surface;
 
         EINA_LIST_FOREACH(inst->tooltip_surfaces, l, surface)
-          if (event_info == efl_wl_extracted_surface_object_find(surface))
+          if (event_info == efl_canvas_wl_extracted_surface_object_find(surface))
             {
-               Evas_Object *base = efl_wl_extracted_surface_extracted_parent_get(event_info);
+               Evas_Object *base = efl_canvas_wl_surface_parent_surface_get(event_info);
                Tooltip *tt = NULL;
 
                //FIXME: if (inst->tooltip_content) error
-               if (base)
+               if (base && efl_canvas_wl_surface_extracted_get(base))
                  {
                     if (base == inst->popup.content)
                       tt = &inst->popup;
@@ -786,8 +789,8 @@ popup_added(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 static void
 seat_added(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   efl_wl_seat_keymap_set(obj, NULL, e_comp_wl->xkb.state, e_comp_wl->xkb.map_string, &e_comp_wl->kbd.keys);
-   efl_wl_seat_key_repeat_set(obj, NULL, e_config->keyboard.repeat_rate, e_config->keyboard.repeat_delay);
+   efl_canvas_wl_seat_keymap_set(obj, NULL, e_comp_wl->xkb.state, e_comp_wl->xkb.map_string, &e_comp_wl->kbd.keys);
+   efl_canvas_wl_seat_key_repeat_set(obj, NULL, e_config->keyboard.repeat_rate, e_config->keyboard.repeat_delay);
 }
 
 static void
@@ -838,7 +841,7 @@ runner_menu(void *data, Evas_Object *obj, void *event_info)
         e_object_unref(E_OBJECT(subm));
 
         mi = e_menu_item_new(subm);
-        snprintf(buf, sizeof(buf), "PID: %u", ecore_exe_pid_get(inst->exe));
+        snprintf(buf, sizeof(buf), "PID: %u", efl_exe_pid_get(inst->exe));
         e_menu_item_label_set(mi, buf);
         e_menu_item_disabled_set(mi, 1);
 
@@ -872,24 +875,24 @@ gadget_create(Evas_Object *parent, Config_Item *ci, int *id, E_Gadget_Site_Orien
      inst->ci = _conf_item_get(id);
    inst->ci->inst = inst;
    inst->allowed_pids = eina_hash_int32_new(NULL);
-   inst->obj = efl_wl_add(e_comp->evas);
+   inst->obj = efl_add(EFL_CANVAS_WL_CLASS, e_comp->evas);
    if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
      {
-        efl_wl_seat_keymap_set(inst->obj, NULL, e_comp_wl->xkb.state, e_comp_wl->xkb.map_string, &e_comp_wl->kbd.keys);
-        efl_wl_seat_key_repeat_set(inst->obj, NULL, e_config->keyboard.repeat_rate, e_config->keyboard.repeat_delay);
+        efl_canvas_wl_seat_keymap_set(inst->obj, NULL, e_comp_wl->xkb.state, e_comp_wl->xkb.map_string, &e_comp_wl->kbd.keys);
+        efl_canvas_wl_seat_key_repeat_set(inst->obj, NULL, e_config->keyboard.repeat_rate, e_config->keyboard.repeat_delay);
         e_comp_wl->efl_wls = eina_list_append(e_comp_wl->efl_wls, inst->obj);
      }
    E_EXPAND(inst->obj);
    E_FILL(inst->obj);
-   efl_wl_aspect_set(inst->obj, 1);
-   efl_wl_minmax_set(inst->obj, 1);
-   efl_wl_global_add(inst->obj, &e_gadget_interface, 1, inst, gadget_bind);
+   efl_canvas_wl_aspect_set(inst->obj, 1);
+   efl_canvas_wl_minmax_set(inst->obj, 1);
+   efl_canvas_wl_global_add(inst->obj, &e_gadget_interface, 1, inst, gadget_bind);
    evas_object_smart_callback_add(inst->obj, "child_added", child_added, inst);
    evas_object_smart_callback_add(inst->obj, "popup_added", popup_added, inst);
    if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
      evas_object_smart_callback_add(inst->obj, "seat_added", seat_added, inst);
    e_comp_wl_extension_action_route_interface_get(&ar_version);
-   efl_wl_global_add(inst->obj, &action_route_interface, ar_version, inst, ar_bind);
+   efl_canvas_wl_global_add(inst->obj, &action_route_interface, ar_version, inst, ar_bind);
    evas_object_event_callback_add(inst->obj, EVAS_CALLBACK_MOUSE_DOWN, mouse_down, inst);
    evas_object_smart_callback_add(parent, "gadget_created", runner_created, inst);
    evas_object_smart_callback_add(parent, "gadget_removed", runner_removed, inst);
@@ -923,17 +926,17 @@ runner_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient)
    return gadget_create(parent, ci, id, orient);
 }
 
-static Eina_Bool
-runner_exe_del(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Exe_Event_Del *ev)
+static void
+runner_exe_del(void *data, const Efl_Event *ev)
 {
-   Instance *inst = ecore_exe_data_get(ev->exe);
+   Instance *inst = data;
 
-   if ((!inst) || (!instances) || (!eina_list_data_find(instances, inst))) return ECORE_CALLBACK_RENEW;
+   if ((!instances) || (!eina_list_data_find(instances, inst))) return;
    switch (inst->ci->exit_mode)
      {
       case EXIT_MODE_RESTART:
         /* FIXME: probably notify? */
-        if (ev->exit_code == 255) //exec error
+        if (efl_task_exit_code_get(ev->object) == 255) //exec error
           e_gadget_del(inst->box);
         else
           runner_run(inst);
@@ -942,7 +945,6 @@ runner_exe_del(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Exe_Event_Del *ev)
         e_gadget_del(inst->box);
         break;
      }
-   return ECORE_CALLBACK_RENEW;
 }
 
 ///////////////////////////////
@@ -1211,7 +1213,6 @@ e_gadget_runner_init(void)
       gadget_monitor = eio_monitor_add(buf);
       gadget_lister = eio_file_direct_ls(buf, list_filter_cb, list_main_cb, list_done_cb, list_error_cb, NULL);
    }
-   E_LIST_HANDLER_APPEND(handlers, ECORE_EXE_EVENT_DEL, runner_exe_del, NULL);
    E_LIST_HANDLER_APPEND(handlers, EIO_MONITOR_DIRECTORY_CREATED, monitor_dir_create, NULL);
    E_LIST_HANDLER_APPEND(handlers, EIO_MONITOR_DIRECTORY_DELETED, monitor_dir_del, NULL);
    E_LIST_HANDLER_APPEND(handlers, EIO_MONITOR_ERROR, monitor_error, NULL);

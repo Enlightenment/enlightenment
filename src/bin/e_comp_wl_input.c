@@ -5,7 +5,7 @@
 #ifdef HAVE_WL_DRM
 #include <Ecore_Drm2.h>
 #endif
-#include <Efl_Wl.h>
+#include <Efl_Canvas_Wl.h>
 
 E_API int E_EVENT_TEXT_INPUT_PANEL_VISIBILITY_CHANGE = -1;
 static xkb_keycode_t (*_xkb_keymap_key_by_name)(void *, const char *);
@@ -429,7 +429,7 @@ nested_keymap_update(void)
    Evas_Object *obj;
 
    EINA_LIST_FOREACH(e_comp_wl->efl_wls, l, obj)
-     efl_wl_seat_keymap_set(obj, NULL, e_comp_wl->xkb.state, e_comp_wl->xkb.map_string, &e_comp_wl->kbd.keys);
+     efl_canvas_wl_seat_keymap_set(obj, NULL, e_comp_wl->xkb.state, e_comp_wl->xkb.map_string, &e_comp_wl->kbd.keys);
 }
 
 static void
