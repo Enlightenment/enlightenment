@@ -884,8 +884,8 @@ gadget_create(Evas_Object *parent, Config_Item *ci, int *id, E_Gadget_Site_Orien
      }
    E_EXPAND(inst->obj);
    E_FILL(inst->obj);
-   efl_canvas_wl_aspect_set(inst->obj, 1);
-   efl_canvas_wl_minmax_set(inst->obj, 1);
+   efl_canvas_wl_aspect_propagate_set(inst->obj, 1);
+   efl_canvas_wl_minmax_propagate_set(inst->obj, 1);
    efl_canvas_wl_global_add(inst->obj, &e_gadget_interface, 1, inst, gadget_bind);
    evas_object_smart_callback_add(inst->obj, "child_added", child_added, inst);
    evas_object_smart_callback_add(inst->obj, "popup_added", popup_added, inst);
