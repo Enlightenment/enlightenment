@@ -3065,7 +3065,7 @@ e_gadget_editor_add(Evas_Object *parent, Evas_Object *site)
         e_gadget_site_gadget_add(tempsite, type, 1);
         ZGS_GET(tempsite);
         zgc = eina_list_last_data_get(zgs->gadgets);
-        if (!zgc->gadget) _gadget_remove(zgc);
+        if ((zgc) && (!zgc->gadget)) _gadget_remove(zgc);
      }
    eina_iterator_free(it);
 
