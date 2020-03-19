@@ -558,10 +558,11 @@ child_close(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info 
 }
 
 static void
-child_added(void *data, Evas_Object *obj, void *event_info)
+child_added(void *data, const Efl_Event *ev)
 {
    Evas_Object *popup, *bx;
-   E_Zone *zone = e_comp_object_util_zone_get(obj);
+   Eo *event_info = ev->info;
+   E_Zone *zone = e_comp_object_util_zone_get(ev->object);
    Instance *inst = data;
 
    if (!efl_canvas_wl_surface_extract(event_info)) return;
@@ -712,9 +713,10 @@ tooltip_content_cb(void *data, Evas_Object *obj EINA_UNUSED, Evas_Object *toolti
 }
 
 static void
-popup_added(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+popup_added(void *data, const Efl_Event *ev)
 {
    Instance *inst = data;
+   Eo *event_info = ev->info;
    Evas_Object *bx;
 
    if (!efl_canvas_wl_surface_extract(event_info)) return;
@@ -787,10 +789,10 @@ popup_added(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 }
 
 static void
-seat_added(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+seat_added(void *data EINA_UNUSED, const Efl_Event *ev)
 {
-   efl_canvas_wl_seat_keymap_set(obj, NULL, e_comp_wl->xkb.state, e_comp_wl->xkb.map_string, &e_comp_wl->kbd.keys);
-   efl_canvas_wl_seat_key_repeat_set(obj, NULL, e_config->keyboard.repeat_rate, e_config->keyboard.repeat_delay);
+   efl_canvas_wl_seat_keymap_set(ev->object, NULL, e_comp_wl->xkb.state, e_comp_wl->xkb.map_string, &e_comp_wl->kbd.keys);
+   efl_canvas_wl_seat_key_repeat_set(ev->object, NULL, e_config->keyboard.repeat_rate, e_config->keyboard.repeat_delay);
 }
 
 static void
@@ -887,10 +889,10 @@ gadget_create(Evas_Object *parent, Config_Item *ci, int *id, E_Gadget_Site_Orien
    efl_canvas_wl_aspect_propagate_set(inst->obj, 1);
    efl_canvas_wl_minmax_propagate_set(inst->obj, 1);
    efl_canvas_wl_global_add(inst->obj, &e_gadget_interface, 1, inst, gadget_bind);
-   evas_object_smart_callback_add(inst->obj, "child_added", child_added, inst);
-   evas_object_smart_callback_add(inst->obj, "popup_added", popup_added, inst);
+   efl_event_callback_add(inst->obj, EFL_CANVAS_WL_EVENT_CHILD_ADDED, child_added, inst);
+   efl_event_callback_add(inst->obj, EFL_CANVAS_WL_EVENT_POPUP_ADDED, popup_added, inst);
    if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
-     evas_object_smart_callback_add(inst->obj, "seat_added", seat_added, inst);
+     efl_event_callback_add(inst->obj, EFL_CANVAS_WL_EVENT_SEAT_ADDED, seat_added, inst);
    e_comp_wl_extension_action_route_interface_get(&ar_version);
    efl_canvas_wl_global_add(inst->obj, &action_route_interface, ar_version, inst, ar_bind);
    evas_object_event_callback_add(inst->obj, EVAS_CALLBACK_MOUSE_DOWN, mouse_down, inst);
