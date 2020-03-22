@@ -163,6 +163,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
 static void
 _ilist_refresh(E_Shelf *es EINA_UNUSED)
 {
+   if (!_cfdata) return;
    _ilist_empty(_cfdata);
    _ilist_fill(_cfdata);
 }
@@ -318,6 +319,7 @@ _ilist_fill(E_Config_Dialog_Data *cfdata)
 static void
 _ilist_cb_selected(void *data EINA_UNUSED)
 {
+   if (!_cfdata) return;
    _widgets_disable(_cfdata, 0, EINA_TRUE);
 }
 
@@ -401,7 +403,8 @@ _cb_dialog_yes(void *data)
    E_Shelf *es;
    E_Config_Dialog_Data *cfdata = _cfdata;
 
-   es = data;;
+   if (!_cfdata) return;
+   es = data;
    if (e_object_is_del(E_OBJECT(es))) return;
    e_shelf_unsave(es);
    e_object_del(E_OBJECT(es));
@@ -417,7 +420,8 @@ _cb_dialog_destroy(void *data)
    E_Shelf *es;
    E_Config_Dialog_Data *cfdata = _cfdata;
 
-   es = data;;
+   if (!_cfdata) return;
+   es = data;
    if (e_object_is_del(E_OBJECT(es))) return;
    e_object_unref(E_OBJECT(es));
    _widgets_disable(cfdata, 0, EINA_TRUE);
@@ -426,6 +430,7 @@ _cb_dialog_destroy(void *data)
 static void
 _cb_config_end(void *data EINA_UNUSED)
 {
+   if (!_cfdata) return;
    e_widget_disabled_set(_cfdata->o_list, 0);
 }
 
@@ -448,6 +453,7 @@ _cb_config(void *data, void *data2 EINA_UNUSED)
 static void
 _cb_contents_end(void *data EINA_UNUSED)
 {
+   if (!_cfdata) return;
    e_widget_disabled_set(_cfdata->o_list, 0);
 }
 
