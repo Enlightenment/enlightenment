@@ -18,5 +18,6 @@ Comment[it]=Un modulo per controllare il volume dell'audio e degli stream.
 Comment[ms]=Modul untuk mengawal volum dan strim audio.
 Comment[sr]=Јединица за управљање јечином звука и токова.
 Comment[tr]=Ses seviyesi ve ses akışı kontrol modülü.
-Categories=AudioVideo;System;
+Categories=AudioVideo;
+OnlyShowIn=Enlightenment;
 StartupWMClass=emixer
