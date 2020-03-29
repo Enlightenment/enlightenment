@@ -516,6 +516,30 @@ _cb_files_files_deleted(void *data, Evas_Object *obj EINA_UNUSED, void *event_in
 }
 
 static void
+_cb_import_online(void *data1 EINA_UNUSED, void *data2 EINA_UNUSED)
+{
+   Efreet_Desktop *desktop;
+   E_Zone *zone;
+
+   desktop = efreet_util_desktop_file_id_find("extra.desktop");
+   if (!desktop)
+   {
+      e_util_dialog_internal
+         (_("Missing Application"),
+         _("This module wants to execute an external application<ps/> "
+            "that does not exist.<ps/>"
+            "Please install <b>extra</b> application.<ps/>"
+            "https://git.enlightenment.org/apps/extra.git/"));
+      return;
+   }
+
+   zone = e_zone_current_get();
+
+   e_exec(zone, desktop, NULL, NULL, "extra/app");
+   efreet_desktop_free(desktop);
+}
+
+static void
 _cb_import(void *data1, void *data2 EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
@@ -742,6 +766,14 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    o = e_widget_button_add(evas, _(" Import..."), "preferences-desktop-theme",
                            _cb_import, cfdata, NULL);
    e_widget_list_object_append(il, o, 1, 0, 0.5);
+   
+   if (efreet_util_desktop_file_id_find("extra.desktop"))
+   {
+      o = e_widget_button_add(evas, _(" Import Online..."), "preferences-desktop-theme",
+                              _cb_import_online, NULL, NULL);
+      e_widget_list_object_append(il, o, 1, 0, 0.5);
+   }
+
    o = e_widget_check_add(evas, _("Show startup splash"), &cfdata->show_splash);
    e_widget_list_object_append(il, o, 1, 0, 0.5);
    e_widget_list_object_append(of, il, 1, 0, 0.0);
