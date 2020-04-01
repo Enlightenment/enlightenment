@@ -783,7 +783,6 @@ e_pointer_idler_before(void)
 #ifndef HAVE_WAYLAND_ONLY
                   Ecore_X_Cursor cur;
 
-                  printf("update cursor hot %i %i\n", ptr->hot.x, ptr->hot.y);
                   cur = ecore_x_cursor_new(ptr->win, ptr->pixels, ptr->w, 
                                            ptr->h, ptr->hot.x, ptr->hot.y);
                   ecore_x_window_cursor_set(ptr->win, cur);
@@ -831,7 +830,6 @@ e_pointer_object_set(E_Pointer *ptr, Evas_Object *obj, int x, int y)
    else if ((o != ptr->o_ptr) || (x != px) || (y != py))
      {
         ecore_evas_cursor_unset(ptr->ee);
-        printf("ecore_evas_obj ptr hot %i %i\n", ptr->hot.x, ptr->hot.y);
         ecore_evas_object_cursor_set(ptr->ee, ptr->o_ptr, E_LAYER_MAX - 1, ptr->hot.x, ptr->hot.y);
         evas_object_show(ptr->o_ptr);
      }
