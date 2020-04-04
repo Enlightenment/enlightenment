@@ -671,6 +671,13 @@ _adv_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *
                             _cb_import, cfdata, NULL);
    e_widget_table_object_append(ot, ow, 0, 1, 1, 1, 1, 0, 0, 0);
 
+   if (efreet_util_desktop_file_id_find("extra.desktop"))
+   {
+      ow = e_widget_button_add(evas, _("Import Online..."), "preferences-desktop-theme",
+                              _cb_import_online, NULL, NULL);
+      e_widget_table_object_append(ot, ow, 1, 1, 1, 1, 1, 0, 0, 0);
+   }
+
    mw = 320;
    mh = (320 * zone->h) / zone->w;
    oa = e_widget_aspect_add(evas, mw, mh);
