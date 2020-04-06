@@ -40,7 +40,6 @@ typedef struct _Sink
 typedef struct _Sink_Input
 {
    Emix_Sink_Input base;
-   const char *icon;
    int idx;
 } Sink_Input;
 
@@ -129,7 +128,7 @@ _sink_input_del(Sink_Input *input)
      eina_stringshare_del(input->base.volume.channel_names[i]);
    free(input->base.volume.channel_names);
    eina_stringshare_del(input->base.name);
-   eina_stringshare_del(input->icon);
+   eina_stringshare_del(input->base.icon);
    free(input);
 }
 
@@ -411,7 +410,7 @@ _sink_input_cb(pa_context *c EINA_UNUSED, const pa_sink_input_info *info,
         if (s->idx == (int)info->sink)
           input->base.sink = (Emix_Sink *)s;
      }
-   input->icon = eina_stringshare_add(_icon_from_properties(info->proplist));
+   input->base.icon = eina_stringshare_add(_icon_from_properties(info->proplist));
    ctx->inputs = eina_list_append(ctx->inputs, input);
 
    if ((t = pa_proplist_gets(info->proplist, PA_PROP_APPLICATION_PROCESS_ID)))

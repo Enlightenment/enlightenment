@@ -569,7 +569,7 @@ _emix_sink_input_volume_fill(Emix_Sink_Input *input, Evas_Object *bxv, Evas_Obje
 static void
 _emix_sink_input_add(Emix_Sink_Input *input)
 {
-   Evas_Object *bxv, *bx, *lb, *hv, *sep;
+   Evas_Object *bxv, *bx, *lb, *hv, *sep, *ic;
    const Eina_List *l;
    Emix_Sink *sink;
    Eina_Bool locked = EINA_TRUE;
@@ -584,9 +584,17 @@ _emix_sink_input_add(Emix_Sink_Input *input)
    bx = elm_box_add(win);
    elm_box_horizontal_set(bx, EINA_TRUE);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, 0.5);
+   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, 0.0);
    elm_box_pack_end(bxv, bx);
    evas_object_show(bx);
+
+   ic = elm_icon_add(win);
+   elm_icon_standard_set(ic, input->icon);
+   evas_object_size_hint_weight_set(ic, 0.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(ic, 0.0, EVAS_HINT_FILL);
+   evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+   elm_box_pack_end(bx, ic);
+   evas_object_show(ic);
 
    lb = elm_label_add(win);
    elm_object_text_set(lb, input->name);

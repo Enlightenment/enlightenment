@@ -71,6 +71,7 @@ typedef struct _Emix_Sink_Input {
    Eina_Bool mute;
    Emix_Sink *sink;
    pid_t pid;
+   const char *icon;
 } Emix_Sink_Input;
 
 typedef struct _Emix_Source {
