@@ -1332,13 +1332,14 @@ elm_main(int argc, char **argv)
    tbar = elm_toolbar_add(win);
    elm_toolbar_select_mode_set(tbar, ELM_OBJECT_SELECT_MODE_ALWAYS);
    elm_toolbar_homogeneous_set(tbar, EINA_TRUE);
+   elm_object_style_set(tbar, "item_horizontal");
    evas_object_size_hint_weight_set(tbar, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(tbar, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
-   elm_toolbar_item_append(tbar, NULL, "Playback", _cb_playback, NULL);
-   elm_toolbar_item_append(tbar, NULL, "Outputs", _cb_outputs, NULL);
-   elm_toolbar_item_append(tbar, NULL, "Inputs", _cb_inputs, NULL);
-   elm_toolbar_item_append(tbar, NULL, "Cards", _cb_card, NULL);
+   elm_toolbar_item_append(tbar, "media-playback-start", "Playback", _cb_playback, NULL);
+   elm_toolbar_item_append(tbar, "audio-volume-medium", "Outputs", _cb_outputs, NULL);
+   elm_toolbar_item_append(tbar, "audio-input-microphone", "Inputs", _cb_inputs, NULL);
+   elm_toolbar_item_append(tbar, "audio-card", "Cards", _cb_card, NULL);
 
    elm_table_pack(tb, tbar, 0, 0, 1, 1);
    evas_object_show(tbar);
