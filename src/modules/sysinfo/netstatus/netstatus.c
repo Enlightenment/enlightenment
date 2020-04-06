@@ -64,7 +64,6 @@ _netstatus_configure_cb(Evas_Object *g)
    Instance *inst = evas_object_data_get(g, "Instance");
 
    if (!sysinfo_config) return NULL;
-   if (inst->cfg->netstatus.popup) return NULL;
    return netstatus_configure(inst);
 }
 

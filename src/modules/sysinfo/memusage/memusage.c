@@ -106,7 +106,6 @@ _memusage_configure_cb(Evas_Object *g)
    Instance *inst = evas_object_data_get(g, "Instance");
 
    if (!sysinfo_config) return NULL;
-   if (inst->cfg->memusage.popup) return NULL;
    return memusage_configure(inst);
 }
 
