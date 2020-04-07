@@ -811,6 +811,7 @@ _apply_positioner(E_Client *ec, Positioner *p)
 {
    int x, y;
    int zx, zy, zw, zh;
+
    /* apply base geometry:
     * coords are relative to parent
     */
@@ -863,13 +864,12 @@ _apply_positioner(E_Client *ec, Positioner *p)
    if (_apply_positioner_slide(ec, p, zx, zy, zw, zh)) return;
    _apply_positioner_slide(ec, p, ec->zone->x, ec->zone->y, ec->zone->w, ec->zone->h);
 
-#if 0
-//resize_x/y is stupid so we're not going to do it
    if (!CONSTRAINED(ec, ec->x, ec->y)) return;
 
    if ((p->constrain & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_RESIZE_X) &&
        (!E_CONTAINS(zx, zy, zw, zh, ec->x, zy, ec->w, 1)))
      {
+        if (ec->x < zx) ec->x = zx;
         ec->w = zx + zw - ec->x;
         e_client_resize_limit(ec, &ec->w, &ec->h);
         ec->changes.size = 1;
@@ -878,11 +878,11 @@ _apply_positioner(E_Client *ec, Positioner *p)
    if ((p->constrain & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_RESIZE_Y) &&
        (!E_CONTAINS(zx, zy, zw, zh, zx, ec->y, 1, ec->h)))
      {
+        if (ec->y < zy) ec->y = zy;
         ec->h = zy + zh - ec->y;
         e_client_resize_limit(ec, &ec->w, &ec->h);
         ec->changes.size = 1;
      }
-#endif
 }
 
 static void
