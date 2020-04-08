@@ -1331,7 +1331,7 @@ _gadget_menu(Evas_Object *g, unsigned int timestamp)
    if (zgc->configure)
      {
         mi = e_menu_item_new(zgc->menu);
-        e_menu_item_label_set(mi, _("Gadget Settings"));
+        e_menu_item_label_set(mi, _("Settings"));
         e_util_menu_item_theme_icon_set(mi, "configure");
         e_menu_item_callback_set(mi, _gadget_menu_configure, zgc);
      }
@@ -1393,7 +1393,7 @@ _gadget_menu(Evas_Object *g, unsigned int timestamp)
      e_object_del(E_OBJECT(mi));
 
    mi = e_menu_item_new(zgc->menu);
-   e_menu_item_label_set(mi, _("Remove Gadget"));
+   e_menu_item_label_set(mi, _("Delete"));
    e_util_menu_item_theme_icon_set(mi, "list-remove");
    e_menu_item_callback_set(mi, _gadget_menu_remove, zgc);
 

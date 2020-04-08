@@ -788,12 +788,12 @@ _bryce_menu_populate(Bryce *b, E_Menu *m, Evas_Object *g)
    if (g)
      {
         mi = e_menu_item_new(m);
-        e_menu_item_label_set(mi, _("Gadget Settings"));
+        e_menu_item_label_set(mi, _("Settings"));
         e_util_menu_item_theme_icon_set(mi, "preferences-system");
         e_menu_item_callback_set(mi, _bryce_gadget_settings_menu, g);
 
         mi = e_menu_item_new(m);
-        e_menu_item_label_set(mi, _("Remove Gadget"));
+        e_menu_item_label_set(mi, _("Delete"));
         e_util_menu_item_theme_icon_set(mi, "list-remove");
         e_menu_item_callback_set(mi, _bryce_gadget_remove_menu, g);
 
@@ -816,15 +816,15 @@ _bryce_menu_populate(Bryce *b, E_Menu *m, Evas_Object *g)
    e_menu_item_callback_set(mi, _bryce_autohide_menu, b);
 
    mi = e_menu_item_new(m);
-   e_menu_item_label_set(mi, _("Wizard"));
+   e_menu_item_label_set(mi, _("Bar Settings"));
    e_menu_item_callback_set(mi, _bryce_wizard_menu, b);
 
    mi = e_menu_item_new(m);
-   e_menu_item_label_set(mi, _("Select Gadgets"));
+   e_menu_item_label_set(mi, _("Add Gadget"));
    e_menu_item_callback_set(mi, _bryce_gadgets_menu, b);
 
    mi = e_menu_item_new(m);
-   e_menu_item_label_set(mi, _("Remove Gadget Bar"));
+   e_menu_item_label_set(mi, _("Delete Bar"));
    e_util_menu_item_theme_icon_set(mi, "list-remove");
    e_menu_item_callback_set(mi, _bryce_remove_menu, b);
 
