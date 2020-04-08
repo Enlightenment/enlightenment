@@ -222,6 +222,9 @@ setuid_setup(void)
    _etc_enlightenment_system_conf();
 }
 
+// no singleton mode - this is not really a bonus, just painful, so disable
+// but keep code aroun for future possible use
+/*
 static void
 _cb_die(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
 {
@@ -256,6 +259,7 @@ singleton_setup(void)
 
    ecore_thread_feedback_run(_cb_die, NULL, NULL, NULL, NULL, EINA_TRUE);
 }
+*/
 
 static Eina_Bool
 _cb_idle_enterer(void *data EINA_UNUSED)
@@ -283,7 +287,7 @@ main(int argc EINA_UNUSED, const char **argv EINA_UNUSED)
 #endif
    eet_init();
 
-   singleton_setup();
+//   singleton_setup();
 
    e_system_inout_init();
    e_system_backlight_init();
