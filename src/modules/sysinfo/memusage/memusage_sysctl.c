@@ -49,6 +49,7 @@ _memusage_sysctl_getusage(unsigned long *mem_total,
    *mem_total = *mem_used = *mem_cached = *mem_buffers = *mem_shared = 0;
    *swp_total = *swp_used = 0;
 #if defined(__FreeBSD__) || defined(__DragonFly__)
+   size_t miblen;
    int total_pages = 0, free_pages = 0, inactive_pages = 0;
    long int result = 0;
    int page_size = getpagesize();
@@ -93,16 +94,19 @@ _memusage_sysctl_getusage(unsigned long *mem_total,
    if (result < 0) return;
    *swp_total = (result / 1024);
 
+   miblen = 3;
+   if (sysctlnametomib("vm.swap_info", mib, &miblen) == -1) return;
+
    struct xswdev xsw;
    // previous mib is important for this one...
 
-   while (i++)
+   for (i = 0; ; i++)
      {
-        mib[2] = i;
+        mib[miblen] = i;
         len = sizeof(xsw);
-        if (sysctl(mib, 3, &xsw, &len, NULL, 0) == -1) break;
+        if (sysctl(mib, miblen + 1, &xsw, &len, NULL, 0) == -1) break;
 
-        *swp_used += xsw.xsw_used * page_size;
+        *swp_used += (unsigned long)xsw.xsw_used * page_size;
      }
 
    *swp_used >>= 10;
