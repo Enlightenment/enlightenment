@@ -711,7 +711,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
 
    ot = e_widget_table_add(e_win_evas_win_get(evas), 0);
    ol = e_widget_table_add(e_win_evas_win_get(evas), 0);
-   il = e_widget_table_add(e_win_evas_win_get(evas), 1);
+   il = e_widget_table_add(e_win_evas_win_get(evas), 0);
 
    rg = e_widget_radio_group_new(&(cfdata->fmdir));
    o = e_widget_radio_add(evas, _("Personal"), 0, rg);
@@ -722,13 +722,13 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    cfdata->o_system = o;
    evas_object_smart_callback_add(o, "changed", _cb_dir, cfdata);
    e_widget_table_object_append(il, o, 1, 0, 1, 1, 1, 1, 0, 0);
-
-   e_widget_table_object_append(ol, il, 0, 0, 1, 1, 0, 0, 0, 0);
-
-   o = e_widget_button_add(evas, _("Go up a Directory"), "go-up",
+      o = e_widget_button_add(evas, _("Go up a Directory"), "go-up",
                            _cb_button_up, cfdata, NULL);
    cfdata->o_up_button = o;
-   e_widget_table_object_append(ol, o, 0, 1, 1, 1, 0, 0, 0, 0);
+   e_widget_table_object_append(il, o, 2, 0, 1, 1, 1, 1, 0, 0);
+
+   e_widget_table_object_align_append(ol, il, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0);
+
 
    if (cfdata->fmdir == 1)
      snprintf(path, sizeof(path), "%s", elm_theme_system_dir_get());
@@ -739,6 +739,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
      }
 
    o = e_widget_flist_add(evas);
+   e_widget_size_min_set(o, 160, 160);
    cfdata->o_fm = o;
    {
       E_Fm2_Config *cfg;
@@ -757,32 +758,32 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
 
    e_widget_size_min_set(o, 160, 160);
    e_widget_table_object_append(ol, o, 0, 2, 1, 1, 1, 1, 1, 1);
-   e_widget_table_object_append(ot, ol, 0, 0, 1, 1, 1, 1, 1, 1);
+   e_widget_table_object_append(ot, ol, 0, 0, 1, 1, 1, 1, 0, 1);
 
    of = e_widget_list_add(evas, 0, 0);
 
-   il = e_widget_list_add(evas, 0, 1);
+   il = e_widget_table_add(evas, 0);
 
-   o = e_widget_button_add(evas, _(" Import..."), "preferences-desktop-theme",
+   o = e_widget_button_add(evas, _(" Import File..."), "preferences-desktop-theme",
                            _cb_import, cfdata, NULL);
-   e_widget_list_object_append(il, o, 1, 0, 0.5);
-   
+   e_widget_table_object_align_append(il, o, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0);
+
    if (efreet_util_desktop_file_id_find("extra.desktop"))
    {
       o = e_widget_button_add(evas, _(" Import Online..."), "preferences-desktop-theme",
                               _cb_import_online, NULL, NULL);
-      e_widget_list_object_append(il, o, 1, 0, 0.5);
+      e_widget_table_object_align_append(il, o, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0);
    }
 
    o = e_widget_check_add(evas, _("Show startup splash"), &cfdata->show_splash);
-   e_widget_list_object_append(il, o, 1, 0, 0.5);
-   e_widget_list_object_append(of, il, 1, 0, 0.0);
+   e_widget_table_object_align_append(il, o, 2, 0, 1, 1, 0, 0, 1, 0, 0, 0);
+   e_widget_list_object_append(of, il, 0, 0, 0.0);
 
    {
       Evas_Object *oa;
       int mw, mh;
 
-      mw = 320;
+      mw = 500;
       mh = (mw * z->h) / z->w;
       oa = e_widget_aspect_add(evas, mw, mh);
       o = e_widget_preview_add(evas, mw, mh);
