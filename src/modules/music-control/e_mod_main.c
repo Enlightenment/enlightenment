@@ -10,22 +10,22 @@ static Eina_Bool have_player = EINA_FALSE;
 const Player music_player_players[] =
 {
     // Label/Name           dbus iface name                         command to execute
-   {"gmusicbrowser",        "org.mpris.MediaPlayer2.gmusicbrowser", "gmusicbrowser"},
-   {"Banshee",              "org.mpris.MediaPlayer2.banshee",       "banshee"},
-   {"Clementine",           "org.mpris.MediaPlayer2.clementine",    "clementine"},
-   {"Audacious",            "org.mpris.MediaPlayer2.audacious",     "audacious"},
-   {"VLC",                  "org.mpris.MediaPlayer2.vlc",           "vlc"},
-   {"BMP",                  "org.mpris.MediaPlayer2.bmp",           "bmp"},
-   {"XMMS2",                "org.mpris.MediaPlayer2.xmms2",         "xmms2"},
-   {"DeaDBeeF",             "org.mpris.MediaPlayer2.deadbeef",      "deadbeef"},
-   {"Rhythmbox",            "org.gnome.Rhythmbox3",                 "rhythmbox"},
-   {"Quod Libet",           "org.mpris.MediaPlayer2.quodlibet",     "quodlibet"},
-   {"MPD",                  "org.mpris.MediaPlayer2.mpd",           "mpd"},
-   {"Emotion Media Center", "org.mpris.MediaPlayer2.epymc",         "epymc"},
-   {"Pithos",               "org.mpris.MediaPlayer2.pithos",        "pithos"},
-   {"Tomahawk",             "org.mpris.MediaPlayer2.tomahawk",      "tomahawk"},
-   {"Spotify",              "org.mpris.MediaPlayer2.spotify",       "spotify"},
-   {"Rage",                 "org.mpris.MediaPlayer2.rage",          "rage"},
+   {"Audacious",            "org.mpris.MediaPlayer2.audacious",        "audacious"},
+   {"BMP",                  "org.mpris.MediaPlayer2.bmp",              "bmp"},
+   {"Banshee",              "org.mpris.MediaPlayer2.banshee",          "banshee"},
+   {"Clementine",           "org.mpris.MediaPlayer2.clementine",       "clementine"},
+   {"DeaDBeeF",             "org.mpris.MediaPlayer2.deadbeef",         "deadbeef"},
+   {"Emotion Media Center", "org.mpris.MediaPlayer2.epymc",            "epymc"},
+   {"MPD",                  "org.mpris.MediaPlayer2.mpd",              "mpd"},
+   {"Pithos",               "org.mpris.MediaPlayer2.io.github.Pithos", "pithos"},
+   {"Quod Libet",           "org.mpris.MediaPlayer2.quodlibet",        "quodlibet"},
+   {"Rage",                 "org.mpris.MediaPlayer2.rage",             "rage"},
+   {"Rhythmbox",            "org.gnome.Rhythmbox3",                    "rhythmbox"},
+   {"Spotify",              "org.mpris.MediaPlayer2.spotify",          "spotify"},
+   {"Tomahawk",             "org.mpris.MediaPlayer2.tomahawk",         "tomahawk"},
+   {"VLC",                  "org.mpris.MediaPlayer2.vlc",              "vlc"},
+   {"XMMS2",                "org.mpris.MediaPlayer2.xmms2",            "xmms2"},
+   {"gmusicbrowser",        "org.mpris.MediaPlayer2.gmusicbrowser",    "gmusicbrowser"},
 #define PLAYER_COUNT 16
    {NULL, NULL, NULL}
 };
