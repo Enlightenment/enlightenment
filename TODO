@@ -201,6 +201,8 @@ TODO:
   * need to visually join gadget and gadget popup so they can kind of
     look like a "tab" thats joined when we want to do this kind of
     appearance
+* efm: smartctl status info and monitoring
+* efm: lvm/raid setup array and status support
 * efm: use elm for window
 * efm: use elm scroller for fm view
 * efm: use elm for file popup
