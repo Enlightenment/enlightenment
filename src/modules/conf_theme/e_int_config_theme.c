@@ -55,11 +55,13 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
    Evas *e;
    Evas_Coord w = 320, h = 240, mw = 0, mh = 0;
    Eina_List *objs = NULL;
-   Evas_Object *o, *po, *po2, *po3, *win;
+   Evas_Object *o, *po, *po2, *po3, *win, *parent;
+
+   parent = e_win_evas_win_get(e);
 
    _e_int_theme_preview_clear(preview);
    e = e_widget_preview_evas_get(preview);
-   win = e_win_evas_win_get(e);
+   win = parent;
    if (!win)
      win = elm_win_fake_add(ecore_evas_ecore_evas_get(e));
    evas_object_size_hint_min_get(preview, &w, &h);
@@ -701,17 +703,19 @@ _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 static Evas_Object *
 _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
-   Evas_Object *o, *ot, *of, *il, *ol;
+   Evas_Object *o, *ot, *of, *il, *ol, *parent;
    E_Zone *z;
    E_Radio_Group *rg;
    char path[PATH_MAX];
 
+   parent = e_win_evas_win_get(evas);
+
    z = e_zone_current_get();
    e_dialog_resizable_set(cfd->dia, 1);
 
-   ot = e_widget_table_add(e_win_evas_win_get(evas), 0);
-   ol = e_widget_table_add(e_win_evas_win_get(evas), 0);
-   il = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   ot = e_widget_table_add(parent, 0);
+   ol = e_widget_table_add(parent, 0);
+   il = e_widget_table_add(parent, 0);
 
    rg = e_widget_radio_group_new(&(cfdata->fmdir));
    o = e_widget_radio_add(evas, _("Personal"), 0, rg);
