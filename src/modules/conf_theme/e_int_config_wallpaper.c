@@ -438,7 +438,7 @@ static Evas_Object *
 _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    Evas_Object *o, *rt, *ot, *oa, *tt;
-   Evas_Object *ow;
+   Evas_Object *parent, *ow;
    E_Zone *zone = NULL;
    E_Radio_Group *rg;
    char path[PATH_MAX];
@@ -446,12 +446,14 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
 
    e_dialog_resizable_set(cfd->dia, 1);
 
+   parent = e_win_evas_win_get(evas);
+
    zone = e_zone_current_get();
-   o = e_widget_table_add(evas, 0);
+   o = e_widget_table_add(parent, 0);
 
    rg = e_widget_radio_group_new(&(cfdata->fmdir));
-   ot = e_widget_table_add(e_win_evas_win_get(evas), 0);
-   rt = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   ot = e_widget_table_add(parent, 0);
+   rt = e_widget_table_add(parent, 0);
 
    /* create dir radios */
    ow = e_widget_radio_add(evas, _("Personal"), 0, rg);
@@ -496,9 +498,9 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    e_widget_table_object_append(ot, ow, 0, 2, 1, 1, 1, 1, 1, 1);
    e_widget_table_object_append(o, ot, 0, 0, 1, 1, 1, 1, 0, 1);
 
-   tt = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   tt = e_widget_table_add(parent, 0);
 
-   ot = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   ot = e_widget_table_add(parent, 0);
    ow = e_widget_check_add(evas, _("Use Theme Wallpaper"),
                            &cfdata->use_theme_bg);
    cfdata->o_theme_bg = ow;
@@ -635,7 +637,7 @@ static Evas_Object *
 _adv_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    Evas_Object *o, *rt, *ot, *oa, *tt;
-   Evas_Object *ow, *of;
+   Evas_Object *ow, *of, *parent;
    E_Zone *zone = NULL;
    E_Radio_Group *rg;
    char path[PATH_MAX];
@@ -643,12 +645,14 @@ _adv_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *
 
    e_dialog_resizable_set(cfd->dia, 1);
 
+   parent = e_win_evas_win_get(evas);
+
    zone = e_zone_current_get();
-   o = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   o = e_widget_table_add(parent, 0);
 
    rg = e_widget_radio_group_new(&(cfdata->fmdir));
-   ot = e_widget_table_add(e_win_evas_win_get(evas), 0);
-   rt = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   ot = e_widget_table_add(parent, 0);
+   rt = e_widget_table_add(parent, 0);
 
    /* create dir radios */
    ow = e_widget_radio_add(evas, _("Personal"), 0, rg);
@@ -693,10 +697,9 @@ _adv_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *
    e_widget_table_object_append(ot, ow, 0, 2, 1, 1, 1, 1, 1, 1);
    e_widget_table_object_append(o, ot, 0, 0, 1, 1, 1, 1, 0, 1);
 
-   tt = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   tt = e_widget_table_add(parent, 0);
 
-
-   ot = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   ot = e_widget_table_add(parent, 0);
    ow = e_widget_check_add(evas, _("Use Theme Wallpaper"),
                            &cfdata->use_theme_bg);
    cfdata->o_theme_bg = ow;
@@ -710,8 +713,10 @@ _adv_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *
 
    if (efreet_util_desktop_file_id_find("extra.desktop"))
    {
-      ow = e_widget_button_add(evas, _("Import Online..."), "preferences-desktop-theme",
-                              _cb_import_online, NULL, NULL);
+      ow =
+        e_widget_button_add(evas, _("Import Online..."),
+                            "preferences-desktop-theme",
+                            _cb_import_online, NULL, NULL);
       cfdata->o_online = ow;
       e_widget_table_object_align_append(tt, ow, 2, 0, 1, 1, 0, 0, 1, 0, 0, 0);
    }
