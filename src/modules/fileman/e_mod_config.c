@@ -334,7 +334,7 @@ _basic_create(E_Config_Dialog *cfd  EINA_UNUSED,
                             NULL, &(cfdata->icon.icon.w), 150);
    e_widget_list_object_append(o, ob, 1, 1, 0.5);
 
-   e_widget_toolbook_page_append(otb, NULL, _("View"), o, 0, 0, 0, 0, 0.5, 0.0);
+   e_widget_toolbook_page_append(otb, NULL, _("View"), o, 1, 1, 1, 0, 0.0, 0.0);
 
    /////////////////////////////////////////////////////////////
    o = e_widget_list_add(evas, 1, 0);
@@ -359,7 +359,7 @@ _basic_create(E_Config_Dialog *cfd  EINA_UNUSED,
                            &(cfdata->view.menu_shows_files));
    e_widget_list_object_append(o, ob, 1, 1, 0.5);
 */
-   e_widget_toolbook_page_append(otb, NULL, _("Display"), o, 0, 0, 0, 0, 0.5, 0.0);
+   e_widget_toolbook_page_append(otb, NULL, _("Display"), o, 1, 1, 1, 0, 0.0, 0.0);
 
    /////////////////////////////////////////////////////////////
    o = e_widget_list_add(evas, 0, 0);
@@ -389,7 +389,7 @@ _basic_create(E_Config_Dialog *cfd  EINA_UNUSED,
                            &(cfdata->list.sort.dirs.last));
    e_widget_on_change_hook_set(ob, _dir_sort_last_changed, cfdata);
    e_widget_list_object_append(o, ob, 1, 1, 0.5);
-   e_widget_toolbook_page_append(otb, NULL, _("Sorting"), o, 0, 0, 0, 0, 0.5, 0.0);
+   e_widget_toolbook_page_append(otb, NULL, _("Sorting"), o, 1, 1, 1, 0, 0.0, 0.0);
    /////////////////////////////////////////////////////////////
    o = e_widget_list_add(evas, 1, 0);
    ob = e_widget_check_add(evas, _("Open Dirs In Place"),
@@ -422,7 +422,7 @@ _basic_create(E_Config_Dialog *cfd  EINA_UNUSED,
    ob = e_widget_slider_add(evas, 1, 0, _("%1.0f seconds"), 1.0, 10.0, 1, 0,
                             NULL, &(cfdata->view.spring_delay), 150);
    e_widget_list_object_append(o, ob, 1, 1, 0.5);
-   e_widget_toolbook_page_append(otb, NULL, _("Behavior"), o, 0, 0, 0, 0, 0.5, 0.0);
+   e_widget_toolbook_page_append(otb, NULL, _("Behavior"), o, 1, 1, 1, 0, 0.0, 0.0);
    /////////////////////////////////////////////////////////////
 
    o = e_widget_list_add(evas, 2, 0);
@@ -459,7 +459,7 @@ _basic_create(E_Config_Dialog *cfd  EINA_UNUSED,
                            &(cfdata->dbus.auto_open));
    e_widget_list_object_append(o, ob, 1, 1, 0.5);
 
-   e_widget_toolbook_page_append(otb, NULL, _("Device"), o, 0, 0, 0, 0, 0.5, 0.0);
+   e_widget_toolbook_page_append(otb, NULL, _("Device"), o, 1, 1, 1, 0, 0.0, 0.0);
 
    /////////////////////////////////////////////////////////////
    o = e_widget_list_add(evas, 1, 0);
@@ -482,7 +482,7 @@ _basic_create(E_Config_Dialog *cfd  EINA_UNUSED,
                             &cfdata->tooltip.size, NULL, 150);
    e_widget_list_object_append(o, ob, 1, 1, 0.5);
    _tooltip_changed(cfdata, NULL);
-   e_widget_toolbook_page_append(otb, NULL, _("Tooltips"), o, 0, 0, 0, 0, 0.5, 0.0);
+   e_widget_toolbook_page_append(otb, NULL, _("Tooltips"), o, 1, 1, 1, 0, 0.0, 0.0);
    e_widget_toolbook_page_show(otb, 0);
                                return otb;
 }

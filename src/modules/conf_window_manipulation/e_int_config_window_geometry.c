@@ -199,7 +199,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Resistance"), ol, 
-                                 1, 0, 1, 0, 0.5, 0.0);
+                                 1, 1, 1, 0, 0.0, 0.0);
 
    /* Maximization */
    ol = e_widget_list_add(evas, 0, 0);
@@ -233,7 +233,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    e_widget_framelist_object_append(of, ow);
    e_widget_list_object_append(ol, of, 1, 0, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Maximization"), ol, 
-                                 1, 0, 1, 0, 0.5, 0.0);
+                                 1, 1, 1, 0, 0.0, 0.0);
 
    /* Keyboard Move and resize */
    ol = e_widget_list_add(evas, 0, 0);
@@ -253,7 +253,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
                             &(cfdata->border_keyboard.resize.dx), 100);
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Keyboard"), ol, 
-                                 1, 0, 1, 0, 0.5, 0.0);
+                                 1, 1, 1, 0, 0.0, 0.0);
 
 
    /* Automatic Move and resize */
@@ -268,7 +268,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
                            &(cfdata->border_fix_on_shelf_toggle));
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Automatic"), ol, 
-                                 1, 0, 1, 0, 0.5, 0.0);
+                                 1, 1, 1, 0, 0.0, 0.0);
 
    /* Transient  */
    ol = e_widget_list_add(evas, 0, 0);
@@ -295,7 +295,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
    
    e_widget_toolbook_page_append(otb, NULL, _("Transients"), ol,
-                                 1, 0, 1, 0, 0.5, 0.0);
+                                 1, 1, 1, 0, 0.0, 0.0);
 
    e_widget_toolbook_page_show(otb, 0);
    return otb;

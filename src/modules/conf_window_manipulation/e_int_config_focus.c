@@ -280,7 +280,7 @@ _advanced_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_D
    e_widget_framelist_object_append(of, ob);
    e_widget_list_object_append(ol, of, 1, 0, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Focus"), ol,
-                                 1, 0, 1, 0, 0.5, 0.0);
+                                 1, 1, 1, 0, 0.0, 0.0);
 
    /* Stacking */
    ol = e_widget_list_add(evas, 0, 0);
@@ -308,7 +308,7 @@ _advanced_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_D
    e_widget_framelist_object_append(of, ob);
    e_widget_list_object_append(ol, of, 1, 0, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Stacking"), ol,
-                                 1, 0, 1, 0, 0.5, 0.0);
+                                 1, 1, 1, 0, 0.0, 0.0);
 
    /* Urgency */
    of = e_widget_framelist_add(evas, _("Active Window Hint Policy"), 0);
@@ -322,7 +322,7 @@ _advanced_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_D
    ob = e_widget_radio_add(evas, _("Activate if on visible desk"), E_ACTIVEHINT_POLICY_ACTIVATE_EXCLUDE, rg);
    e_widget_framelist_object_append(of, ob);
    e_widget_toolbook_page_append(otb, NULL, _("Hints"), of,
-                                 1, 0, 1, 0, 0.5, 0.0);
+                                 1, 1, 1, 0, 0.0, 0.0);
    /* Pointer */
    ol = e_widget_list_add(evas, 0, 0);
    of = e_widget_framelist_add(evas, _("Warping"), 0);
@@ -350,7 +350,7 @@ _advanced_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_D
    e_widget_framelist_object_append(of, ob);
    e_widget_list_object_append(ol, of, 1, 0, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Pointer"), ol,
-                                 1, 0, 1, 0, 0.5, 0.0);
+                                 1, 1, 1, 0, 0.0, 0.0);
 
    /* Misc */
    ol = e_widget_list_add(evas, 0, 0);
@@ -375,7 +375,7 @@ _advanced_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_D
    e_widget_framelist_object_append(of, ob);
    e_widget_list_object_append(ol, of, 1, 0, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Miscellaneous"), ol,
-                                 1, 0, 1, 0, 0.5, 0.0);
+                                 1, 1, 1, 0, 0.0, 0.0);
 
    e_widget_toolbook_page_show(otb, 0);
    return otb;
