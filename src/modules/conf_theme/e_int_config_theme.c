@@ -739,7 +739,6 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
      }
 
    o = e_widget_flist_add(evas);
-   e_widget_size_min_set(o, 160, 160);
    cfdata->o_fm = o;
    {
       E_Fm2_Config *cfg;
