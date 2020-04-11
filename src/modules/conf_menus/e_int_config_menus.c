@@ -276,14 +276,12 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    ow = e_widget_check_add(evas, _("Show gadget settings in top-level"), &(cfdata->menu_gadcon_client_toplevel));
    e_widget_framelist_object_append(of, ow);
    e_widget_list_object_append(ol, of, 1, 1, 0.5);
-   e_widget_toolbook_page_append(otb, NULL, _("Menus"), ol, 1, 0, 1, 0, 
-                                 0.5, 0.0);
+   e_widget_toolbook_page_append(otb, NULL, _("Menus"), ol, 1, 1, 1, 0, 0.0, 0.0);
 
    ol = e_widget_list_add(evas, 0, 0);
    ow = _create_menus_list(evas, cfdata);
-   e_widget_list_object_append(ol, ow, 1, 0, 0.5);   
-   e_widget_toolbook_page_append(otb, NULL, _("Applications"), ol, 1, 0, 1, 0, 
-                                 0.5, 0.0);
+   e_widget_list_object_append(ol, ow, 1, 1, 0.5);   
+   e_widget_toolbook_page_append(otb, NULL, _("Applications"), ol, 1, 1, 1, 1, 0.0, 0.0);
 
    ol = e_widget_list_add(evas, 0, 0);
    ow = e_widget_label_add(evas, _("Margin"));
@@ -296,8 +294,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    ow = e_widget_slider_add(evas, 1, 0, _("%2.0f pixels"), 0, 50, 1, 0, NULL, 
                             &(cfdata->autoscroll_cursor_margin), 100);
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
-   e_widget_toolbook_page_append(otb, NULL, _("Autoscroll"), ol, 1, 0, 1, 0, 
-                                 0.5, 0.0);
+   e_widget_toolbook_page_append(otb, NULL, _("Autoscroll"), ol, 1, 1, 1, 0, 0.0, 0.0);
 
    ol = e_widget_list_add(evas, 0, 0);
    ow = e_widget_check_add(evas, _("Disable icons in menus"), &(cfdata->hide_icons));
@@ -317,8 +314,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    ow = e_widget_slider_add(evas, 1, 0, _("%2.2f s"), 0, 10, 0.25, 
                             0, &(cfdata->click_drag_timeout), NULL, 100);
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
-   e_widget_toolbook_page_append(otb, NULL, _("Miscellaneous"), ol, 1, 0, 1, 0, 
-                                 0.5, 0.0);
+   e_widget_toolbook_page_append(otb, NULL, _("Miscellaneous"), ol, 1, 1, 1, 0, 0.0, 0.0);
 
    e_widget_toolbook_page_show(otb, 0);
    return otb;

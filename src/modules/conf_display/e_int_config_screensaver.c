@@ -255,7 +255,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    e_widget_list_object_append(ol, oc, 1, 1, 0.5);
 
    e_widget_toolbook_page_append(otb, NULL, _("Blanking"), ol, 
-                                 1, 0, 1, 0, 0.5, 0.0);
+                                 1, 1, 1, 0, 0.0, 0.0);
 
    /* Wakeups */
    ol = e_widget_list_add(evas, 0, 0);
@@ -266,7 +266,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
                            &(cfdata->wake_on_urgent));
    e_widget_list_object_append(ol, oc, 1, 1, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Wakeups"), ol,
-                                 1, 0, 1, 0, 0.5, 0.0);
+                                 1, 1, 1, 0, 0.0, 0.0);
    /* Presentation */
    ol = e_widget_list_add(evas, 0, 0);
    oc2 = e_widget_check_add(evas, _("Suggest if deactivated before"), 
@@ -282,7 +282,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    e_widget_on_disable_hook_set(ow, _cb_ask_presentation_changed, cfdata);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Presentation"), ol,
-                                 1, 0, 1, 0, 0.5, 0.0);
+                                 1, 1, 1, 0, 0.0, 0.0);
    
    e_widget_toolbook_page_show(otb, 0);
 

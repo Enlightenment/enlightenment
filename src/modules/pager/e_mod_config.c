@@ -130,7 +130,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    ow = e_widget_check_add(evas, _("Always show desktop names"),
                            &(cfdata->show_desk_names));
    e_widget_framelist_object_append(of, ow);
-   e_widget_list_object_append(ol, of, 1, 0, 0.5);
+   e_widget_list_object_append(ol, of, 1, 0, 0.0);
 
    of = e_widget_framelist_add(evas, _("Popup"), 0);
    ow = e_widget_check_add(evas, _("Show popup on desktop change"),
@@ -139,7 +139,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    ow = e_widget_check_add(evas, _("Show popup for urgent windows"),
                            &(cfdata->popup.urgent_show));
    e_widget_framelist_object_append(of, ow);
-   e_widget_list_object_append(ol, of, 1, 0, 0.5);
+   e_widget_list_object_append(ol, of, 1, 0, 0.0);
 
    return ol;
 }
@@ -209,8 +209,8 @@ _adv_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    cfdata->gui.ob3 = ow;
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
    _update_btns(cfdata);
-   e_widget_toolbook_page_append(otb, NULL, _("General"), ol, 1, 0, 1, 0,
-                                 0.5, 0.0);
+   e_widget_toolbook_page_append(otb, NULL, _("General"), ol, 1, 1, 1, 0,
+                                 0.0, 0.0);
 
    /* Popup Page */
    ol = e_widget_list_add(evas, 0, 0);
@@ -244,8 +244,8 @@ _adv_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    ow = e_widget_slider_add(evas, 1, 0, _("%.0f pixels"), 20.0, 200.0, 1.0, 0, NULL,
                             &(cfdata->popup.act_height), 100);
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
-   e_widget_toolbook_page_append(otb, NULL, _("Popup"), ol, 1, 0, 1, 0,
-                                 0.5, 0.0);
+   e_widget_toolbook_page_append(otb, NULL, _("Popup"), ol, 1, 1, 1, 0,
+                                 0.0, 0.0);
 
    /* Urgent Page */
    ol = e_widget_list_add(evas, 0, 0);
@@ -277,7 +277,7 @@ _adv_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    e_widget_on_change_hook_set(uc, _cb_disable_check_list,
                                cfdata->gui.urgent_list);
    e_widget_toolbook_page_append(otb, NULL, _("Urgent Windows"), ol,
-                                 1, 0, 1, 0, 0.5, 0.0);
+                                 1, 1, 1, 0, 0.0, 0.0);
 
    e_widget_toolbook_page_show(otb, 0);
    return otb;

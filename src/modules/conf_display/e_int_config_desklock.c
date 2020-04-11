@@ -286,7 +286,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Locking"), ol,
-                                 1, 0, 1, 0, 0.5, 0.0);
+                                 1, 1, 1, 0, 0.0, 0.0);
 
    /* Keyboard Layout */
    cfdata->gui.kbd_list = ol = e_widget_ilist_add(evas, 32 * e_scale, 32 * e_scale, &cfdata->desklock_layout);
@@ -324,7 +324,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
         grp++;
      }
    e_widget_toolbook_page_append(otb, NULL, _("Keyboard Layout"), ol,
-                                 1, 1, 1, 1, 0.5, 0.0);
+                                 1, 1, 1, 0, 0.0, 0.0);
 
    /* Login */
    ol = e_widget_list_add(evas, 0, 0);
@@ -350,7 +350,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    e_widget_disabled_set(cfdata->gui.loginbox_slider, (screen_count <= 0));
    e_widget_list_object_append(ol, cfdata->gui.loginbox_slider, 1, 1, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Login Box"), ol,
-                                 1, 0, 1, 0, 0.5, 0.0);
+                                 1, 1, 1, 0, 0.0, 0.0);
 
    /* Timers */
    ol = e_widget_list_add(evas, 0, 0);
@@ -375,7 +375,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Timers"), ol,
-                                 1, 0, 1, 0, 0.5, 0.0);
+                                 1, 1, 1, 0, 0.0, 0.0);
 
    /* Presentation */
    ol = e_widget_list_add(evas, 0, 0);
@@ -387,7 +387,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Presentation Mode"), ol,
-                                 1, 0, 1, 0, 0.5, 0.0);
+                                 1, 1, 1, 0, 0.0, 0.0);
 
    /* Wallpapers */
    ol = e_widget_list_add(evas, 0, 0);
@@ -426,7 +426,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    _cb_method_change(cfdata, NULL, NULL);
    e_widget_list_object_append(ol, cfdata->gui.o_table, 1, 1, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Wallpaper"), ol,
-                                 1, 0, 1, 0, 0.5, 0.0);
+                                 1, 1, 1, 0, 0.0, 0.0);
 
    e_widget_toolbook_page_show(otb, 0);
 
