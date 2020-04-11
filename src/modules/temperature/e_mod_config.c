@@ -242,6 +242,8 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    Evas_Object *otb, *ol, *ow;
    E_Radio_Group *rg;
 
+   e_dialog_resizable_set(cfd->dia, 1);
+
    otb = e_widget_toolbook_add(evas, 24, 24);
 
    if (cfdata->sensors) 
@@ -259,7 +261,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
              n++;
           }
         e_widget_toolbook_page_append(otb, NULL, _("Sensors"), ol, 
-                                      1, 0, 1, 0, 0.5, 0.0);
+                                      1, 1, 1, 0, 0.0, 0.0);
      }
 
    ol = e_widget_list_add(evas, 0, 0);
@@ -271,14 +273,14 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    e_widget_on_change_hook_set(ow, _cb_display_changed, cfdata);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Display Units"), ol, 
-                                 0, 0, 0, 0, 0.5, 0.0);
+                                 1, 1, 1, 0, 0.0, 0.0);
 
    ol = e_widget_list_add(evas, 0, 0);
    ow = e_widget_slider_add(evas, 1, 0, _("%1.0f ticks"), 1, 1024, 4, 0, 
                             NULL, &(cfdata->poll.interval), 150);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Check Interval"), ol, 
-                                 1, 0, 1, 0, 0.5, 0.0);
+                                 1, 1, 1, 0, 0.0, 0.0);
 
    ol = e_widget_list_add(evas, 0, 0);
    ow = e_widget_label_add(evas, _("High Temperature"));
@@ -306,7 +308,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    e_widget_list_object_append(ol, cfdata->o_low, 1, 1, 0.5);
 
    e_widget_toolbook_page_append(otb, NULL, _("Temperatures"), ol, 
-                                 1, 0, 1, 0, 0.5, 0.0);
+                                 1, 1, 1, 0, 0.0, 0.0);
 #ifdef HAVE_EEZE
    ol = e_widget_list_add(evas, 0, 0);
    rg = e_widget_radio_group_new(&(cfdata->backend));
@@ -315,7 +317,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    ow = e_widget_radio_add(evas, _("udev"), UDEV, rg);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Hardware"), ol, 
-                                 0, 0, 0, 0, 0.5, 0.0);
+                                 1, 1, 1, 0, 0.0, 0.0);
 #endif
    e_widget_toolbook_page_show(otb, 0);
    return otb;
