@@ -149,6 +149,8 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    Evas_Object *otb, *ol, *ow;
    E_Radio_Group *rg;
 
+   e_dialog_resizable_set(cfd->dia, 1);
+
    otb = e_widget_toolbook_add(evas, 24, 24);
 
    /* Stacking */
@@ -161,7 +163,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    ow = e_widget_radio_add(evas, _("Below Everything"), E_LAYER_DESKTOP, rg);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
   e_widget_toolbook_page_append(otb, NULL, _("Stacking"), ol,
-                                 1, 0, 1, 0, 0.5, 0.0);
+                                 1, 1, 1, 0, 0.5, 0.0);
 
    /* position */
    ol = e_widget_table_add(e_win_evas_win_get(evas), 1);
@@ -203,7 +205,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
                                 24, 24, E_GADCON_ORIENT_CORNER_RB, rg);
    e_widget_table_object_append(ol, ow, 2, 3, 1, 1, 1, 1, 1, 1);
    e_widget_toolbook_page_append(otb, NULL, _("Position"), ol,
-                                 1, 0, 1, 0, 0.5, 0.0);
+                                 1, 1, 1, 0, 0.5, 0.0);
 
    /* size */
    ol = e_widget_list_add(evas, 0, 0);
@@ -214,7 +216,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
                            &(cfdata->fit_along));
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Size"), ol,
-                                 1, 0, 1, 0, 0.5, 0.0);
+                                 1, 1, 1, 0, 0.5, 0.0);
 
    /* style */
    ol = e_widget_list_add(evas, 0, 0);
@@ -222,7 +224,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    _fill_styles(cfdata, ow);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Style"), ol,
-                                 1, 0, 1, 0, 0.5, 0.0);
+                                 1, 1, 1, 0, 0.5, 0.0);
 
    /* autohide */
    ol = e_widget_list_add(evas, 0, 0);
@@ -266,7 +268,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    cfdata->o_overlap = ow;
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Auto Hide"), ol,
-                                 1, 0, 1, 0, 0.5, 0.0);
+                                 1, 1, 1, 0, 0.5, 0.0);
 
    /* Desktop */
    ol = e_widget_list_add(evas, 0, 0);
@@ -281,7 +283,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    _fill_desks(cfdata);
    e_widget_list_object_append(ol, cfdata->o_desk_list, 1, 1, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Desktop"), ol,
-                                 1, 0, 1, 0, 0.5, 0.0);
+                                 1, 1, 1, 0, 0.5, 0.0);
 
    e_widget_toolbook_page_show(otb, 0);
    return otb;
