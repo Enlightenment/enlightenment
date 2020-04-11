@@ -3727,6 +3727,15 @@ e_client_focus_set_with_pointer(E_Client *ec)
      }
 }
 
+static Eina_Bool
+_e_client_is_in_parents(E_Client *ec, E_Client *ec_find)
+{
+   if (ec == ec_find) return EINA_TRUE;
+   if (e_object_is_del(E_OBJECT(ec))) return EINA_FALSE;
+   if (ec->parent) return _e_client_is_in_parents(ec->parent, ec_find);
+   return EINA_FALSE;
+}
+
 EINTERN void
 e_client_focused_set(E_Client *ec)
 {
@@ -3754,7 +3763,7 @@ e_client_focused_set(E_Client *ec)
                        /* but only if it's the same desk or one of the clients is sticky */
                        if ((desk == ec->desk) || (ec->sticky || ec2->sticky))
                          {
-                            if (!eina_list_data_find(ec->transients, ec2))
+                            if (!_e_client_is_in_parents(ec, ec2))
                               e_client_unfullscreen(ec2);
                          }
                     }
