@@ -57,10 +57,9 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
    Eina_List *objs = NULL;
    Evas_Object *o, *po, *po2, *po3, *win, *parent;
 
-   parent = e_win_evas_win_get(e);
-
    _e_int_theme_preview_clear(preview);
    e = e_widget_preview_evas_get(preview);
+   parent = e_win_evas_win_get(e);
    win = parent;
    if (!win)
      win = elm_win_fake_add(ecore_evas_ecore_evas_get(e));
