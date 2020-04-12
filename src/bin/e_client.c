@@ -2941,6 +2941,7 @@ e_client_desk_set(E_Client *ec, E_Desk *desk)
 
              EINA_LIST_FOREACH(ec->transients, l, child)
                e_client_desk_set(child, ec->desk);
+             e_client_transients_restack(ec);
           }
      }
 
@@ -5705,7 +5706,7 @@ e_client_layout_cb_set(E_Client_Layout_Cb cb)
 E_API void
 e_client_parent_set(E_Client *ec, E_Client *parent)
 {
-   E_Client *prev;
+//   E_Client *prev;
 
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
@@ -5738,7 +5739,7 @@ e_client_parent_set(E_Client *ec, E_Client *parent)
      }
    if (parent)
      {
-        prev = eina_list_last_data_get(parent->transients);
+//        prev = eina_list_last_data_get(parent->transients);
         parent->transients = eina_list_append(parent->transients, ec);
         ec->parent = parent;
      }
@@ -5746,10 +5747,15 @@ e_client_parent_set(E_Client *ec, E_Client *parent)
      {
         evas_object_layer_set(ec->frame, ec->parent->layer);
 
+/* complex stacking right above one dialog after the other hurts the
+ * simple assumptions that the window should be on top by clients so
+ * be dumber and disable this
         if (prev)
           evas_object_stack_above(ec->frame, prev->frame);
         else
           evas_object_stack_above(ec->frame, parent->frame);
+ */
+        evas_object_raise(ec->frame);
 
         if (e_client_util_ignored_get(ec)) return;
         if (e_pixmap_usable_get(ec->pixmap) && (!ec->lock_user_location))
@@ -5761,11 +5767,46 @@ e_client_parent_set(E_Client *ec, E_Client *parent)
      }
 }
 
+static void
+_e_client_stack_top(E_Client *ec_base EINA_UNUSED,
+                    E_Client *ec_stack, E_Client *ec_above)
+{
+/* complex stacking right above one dialog after the other hurts the
+ * simple assumptions that the window should be on top by clients so
+ * be dumber and disable this
+   if (!ec_above)
+     {
+        evas_object_raise(ec_stack->frame);
+        evas_object_stack_above(ec_base->frame, ec_stack->frame);
+     }
+   else
+     {
+        if (ec_above->transients)
+          {
+             e_client_transients_restack(ec_above);
+             E_Client *ec_last = eina_list_last_data_get(ec_above->transients);
+             if (ec_last)
+               evas_object_stack_above(ec_stack->frame, ec_last->frame);
+             else
+               evas_object_stack_above(ec_stack->frame, ec_above->frame);
+          }
+        else
+          evas_object_stack_above(ec_stack->frame, ec_above->frame);
+     }
+ */
+   if (!ec_above) evas_object_raise(ec_stack->frame);
+   else
+     {
+        if (ec_above->transients) e_client_transients_restack(ec_above);
+        evas_object_raise(ec_stack->frame);
+     }
+}
+
 E_API void
 e_client_transients_restack(E_Client *ec)
 {
+   E_Client *child, *below = NULL;
    Eina_List *list;
-   E_Client *child, *below = NULL, *last;
 
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
@@ -5777,22 +5818,7 @@ e_client_transients_restack(E_Client *ec)
         // Don't stack iconic transients. If the user wants these shown,
         // that's another option.
         if (child->iconic) continue;
-        if (below)
-          {
-             if (below->transients)
-               {
-                  e_client_transients_restack(below);
-                  last = eina_list_last_data_get(below->transients);
-                  if (last)
-                    evas_object_stack_above(child->frame, last->frame);
-                  else
-                    evas_object_stack_above(child->frame, below->frame);
-               }
-             else
-               evas_object_stack_above(child->frame, below->frame);
-          }
-        else
-          evas_object_stack_above(child->frame, ec->frame);
+        _e_client_stack_top(ec, child, below);
         below = child;
      }
 }
