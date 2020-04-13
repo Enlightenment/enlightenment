@@ -258,5 +258,5 @@ util_obj_name_get(Obj *o)
    if (o->name) return o->name;
    if (o->alias) return o->alias;
    if (o->address) return o->address;
-   return _("Uknown");
+   return _("Unknown");
 }
