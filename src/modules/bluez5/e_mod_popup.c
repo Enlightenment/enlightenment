@@ -585,7 +585,7 @@ _cb_dev_content_get(void *data, Evas_Object *obj,
                   if ((dev) && (dev->force_connect))
                     {
                        bt = util_button_icon_add(obj, "checkbox-symbolic",
-                                                 _("Stop this device from being forcefullty connected"));
+                                                 _("Stop this device from being forcefully connected"));
                        evas_object_data_set(bt, "genlist", obj);
                        evas_object_smart_callback_add(bt, "clicked", _cb_force_connect_stop, o);
                     }
