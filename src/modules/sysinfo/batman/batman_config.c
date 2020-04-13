@@ -449,7 +449,7 @@ batman_configure(Instance *inst)
    elm_slider_indicator_format_set(slider, "%1.0f min");
    elm_slider_min_max_set(slider, 0, 60);
    elm_slider_value_set(slider, inst->cfg->batman.alert);
-   elm_slider_step_set(slider, 1);
+   elm_slider_step_set(slider, 0.01);
    elm_slider_span_size_set(slider, 100);
    E_ALIGN(slider, 0.0, 0.0);
    E_WEIGHT(slider, EVAS_HINT_EXPAND, 0);
@@ -471,7 +471,7 @@ batman_configure(Instance *inst)
    elm_slider_indicator_format_set(slider, "%1.0f %%");
    elm_slider_min_max_set(slider, 0, 100);
    elm_slider_value_set(slider, inst->cfg->batman.alert_p);
-   elm_slider_step_set(slider, 1);
+   elm_slider_step_set(slider, 0.01);
    elm_slider_span_size_set(slider, 100);
    E_ALIGN(slider, 0.0, 0.0);
    E_WEIGHT(slider, EVAS_HINT_EXPAND, 0);
@@ -493,7 +493,7 @@ batman_configure(Instance *inst)
    elm_slider_indicator_format_set(slider, "%1.0f s");
    elm_slider_min_max_set(slider, 1, 300);
    elm_slider_value_set(slider, inst->cfg->batman.alert_timeout);
-   elm_slider_step_set(slider, 1);
+   elm_slider_step_set(slider, 0.01);
    elm_slider_span_size_set(slider, 100);
    E_ALIGN(slider, 0.0, 0.0);
    E_WEIGHT(slider, EVAS_HINT_EXPAND, 0);

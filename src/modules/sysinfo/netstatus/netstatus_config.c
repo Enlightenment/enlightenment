@@ -305,7 +305,7 @@ netstatus_configure(Instance *inst)
    elm_slider_indicator_format_set(slider, "%1.0f");
    elm_slider_min_max_set(slider, 0, 1000);
    elm_slider_value_set(slider, inst->cfg->netstatus.inmax);
-   elm_slider_step_set(slider, 10);
+   elm_slider_step_set(slider, 0.05);
    elm_slider_span_size_set(slider, 100);
    evas_object_size_hint_align_set(slider, EVAS_HINT_FILL, 0.5);
    evas_object_size_hint_weight_set(slider, EVAS_HINT_EXPAND, 0.0);
@@ -358,7 +358,7 @@ netstatus_configure(Instance *inst)
    elm_slider_indicator_format_set(slider, "%1.0f");
    elm_slider_min_max_set(slider, 0, 1000);
    elm_slider_value_set(slider, inst->cfg->netstatus.outmax);
-   elm_slider_step_set(slider, 10);
+   elm_slider_step_set(slider, 0.05);
    elm_slider_span_size_set(slider, 100);
    evas_object_size_hint_align_set(slider, EVAS_HINT_FILL, 0.5);
    evas_object_size_hint_weight_set(slider, EVAS_HINT_EXPAND, 0.0);

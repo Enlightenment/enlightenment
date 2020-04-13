@@ -445,9 +445,10 @@ _config_create_pages(Evas_Object *parent)
    ow = elm_slider_add(tb);
    elm_object_disabled_set(ow, !pager_config->popup);
    elm_slider_min_max_set(ow, 20, 200);
-   elm_slider_step_set(ow, 1);
+   elm_slider_step_set(ow, 0.0555);
    elm_slider_value_set(ow, pager_config->popup_height);
    elm_slider_unit_format_set(ow, _("%.0f pixels"));
+   elm_slider_indicator_format_set(ow, _("%.0f"));
    elm_table_pack(tb, ow, 0, 2, 1, 1);
    E_ALIGN(ow, EVAS_HINT_FILL, EVAS_HINT_FILL);
    E_WEIGHT(ow, EVAS_HINT_EXPAND, 0);
@@ -467,9 +468,10 @@ _config_create_pages(Evas_Object *parent)
    ow = elm_slider_add(tb);
    elm_object_disabled_set(ow, !pager_config->popup);
    elm_slider_min_max_set(ow, 0.1, 10);
-   elm_slider_step_set(ow, 0.1);
+   elm_slider_step_set(ow, 0.01);
    elm_slider_value_set(ow, pager_config->popup_speed);
    elm_slider_unit_format_set(ow, _("%1.1f seconds"));
+   elm_slider_indicator_format_set(ow, _("%.1f"));
    elm_table_pack(tb, ow, 0, 4, 1, 1);
    E_ALIGN(ow, EVAS_HINT_FILL, EVAS_HINT_FILL);
    E_WEIGHT(ow, EVAS_HINT_EXPAND, 0);
@@ -489,9 +491,10 @@ _config_create_pages(Evas_Object *parent)
    ow = elm_slider_add(tb);
    elm_object_disabled_set(ow, !pager_config->popup);
    elm_slider_min_max_set(ow, 20, 200);
-   elm_slider_step_set(ow, 1);
+   elm_slider_step_set(ow, 0.0555);
    elm_slider_value_set(ow, pager_config->popup_act_height);
    elm_slider_unit_format_set(ow, _("%.0f pixels"));
+   elm_slider_indicator_format_set(ow, _("%.0f"));
    elm_table_pack(tb, ow, 0, 6, 1, 1);
    E_ALIGN(ow, EVAS_HINT_FILL, EVAS_HINT_FILL);
    E_WEIGHT(ow, EVAS_HINT_EXPAND, 0);
@@ -564,9 +567,10 @@ _config_create_pages(Evas_Object *parent)
    ow = elm_slider_add(tb);
    elm_object_disabled_set(ow, !pager_config->popup_urgent);
    elm_slider_min_max_set(ow, 0.1, 10);
-   elm_slider_step_set(ow, 0.1);
+   elm_slider_step_set(ow, 0.01);
    elm_slider_value_set(ow, pager_config->popup_urgent_speed);
    elm_slider_unit_format_set(ow, _("%1.1f seconds"));
+   elm_slider_indicator_format_set(ow, _("%.1f"));
    elm_table_pack(tb, ow, 0, 4, 1, 1);
    E_ALIGN(ow, EVAS_HINT_FILL, EVAS_HINT_FILL);
    E_WEIGHT(ow, EVAS_HINT_EXPAND, 0);
