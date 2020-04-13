@@ -522,8 +522,8 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
 
    e_widget_table_object_align_append(ot, tt, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0);
 
-   mw = 500;
-   mh = (500 * zone->h) / zone->w;
+   mw = 320;
+   mh = (320 * zone->h) / zone->w;
    oa = e_widget_aspect_add(evas, mw, mh);
    ow = e_widget_preview_add(evas, mw, mh);
    evas_object_size_hint_min_set(ow, mw, mh);
@@ -724,8 +724,8 @@ _adv_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *
 
    e_widget_table_object_align_append(ot, tt, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0);
 
-   mw = 500;
-   mh = (500 * zone->h) / zone->w;
+   mw = 320;
+   mh = (320 * zone->h) / zone->w;
    oa = e_widget_aspect_add(evas, mw, mh);
    ow = e_widget_preview_add(evas, mw, mh);
    evas_object_size_hint_min_set(ow, mw, mh);
