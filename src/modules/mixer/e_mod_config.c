@@ -427,16 +427,16 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas,
 
    o = e_widget_list_add(evas, 0, 0);
 
-   l = e_widget_check_add(evas, "Notify on volume change", &cfdata->config.notify);
+   l = e_widget_check_add(evas, _("Notify on volume change"), &cfdata->config.notify);
    e_widget_list_object_append(o, l, 0, 0, 0);
 
-   l = e_widget_check_add(evas, "Mute on lock", &cfdata->config.mute);
+   l = e_widget_check_add(evas, _("Mute on lock"), &cfdata->config.mute);
    e_widget_list_object_append(o, l, 0, 0, 0);
 
-   l = e_widget_check_add(evas, "Remember", &cfdata->config.save);
+   l = e_widget_check_add(evas, _("Remember"), &cfdata->config.save);
    e_widget_list_object_append(o, l, 0, 0, 0);
 
-   l = e_widget_label_add(evas, "Backend to use:");
+   l = e_widget_label_add(evas, _("Backend to use:"));
    e_widget_list_object_append(o, l, 0, 0, 0);
 
    cfdata->list = l = e_widget_ilist_add(evas, 0, 0, NULL);
@@ -488,7 +488,7 @@ emix_config_popup_new(Evas_Object *comp, const char *p EINA_UNUSED)
    v->basic.create_widgets = _basic_create_widgets;
 
    cfd = e_config_dialog_new(comp,
-                             "Emix Configuration",
+                             _("Emix Configuration"),
                              "E", "windows/emix",
                              NULL,
                              0, v, NULL);

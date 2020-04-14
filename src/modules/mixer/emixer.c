@@ -1,6 +1,19 @@
 #include <Elementary.h>
 #include "emix.h"
 
+#   ifdef HAVE_GETTEXT
+#include <libintl.h>
+#define _(str) gettext(str)
+#define d_(str, dom) dgettext(PACKAGE dom, str)
+#define P_(str, str_p, n) ngettext(str, str_p, n)
+#define dP_(str, str_p, n, dom) dngettext(PACKAGE dom, str, str_p, n)
+#   else
+#define _(str) (str)
+#define d_(str, dom) (str)
+#define P_(str, str_p, n) (str_p)
+#define dP_(str, str_p, n, dom) (str_p)
+#   endif
+
 Evas_Object *win;
 Evas_Object *source_scroller, *sink_input_scroller, *sink_scroller, *card_scroller;
 Evas_Object *source_box, *sink_input_box, *sink_box, *card_box;
@@ -1312,7 +1325,7 @@ elm_main(int argc, char **argv)
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
-   win = elm_win_util_standard_add("emix", "Mixer");
+   win = elm_win_util_standard_add("emix", _("Mixer"));
    elm_win_autodel_set(win, EINA_TRUE);
 
 /*
@@ -1336,10 +1349,10 @@ elm_main(int argc, char **argv)
    evas_object_size_hint_weight_set(tbar, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(tbar, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
-   elm_toolbar_item_append(tbar, "media-playback-start", "Playback", _cb_playback, NULL);
-   elm_toolbar_item_append(tbar, "audio-volume-medium", "Outputs", _cb_outputs, NULL);
-   elm_toolbar_item_append(tbar, "audio-input-microphone", "Inputs", _cb_inputs, NULL);
-   elm_toolbar_item_append(tbar, "audio-card", "Cards", _cb_card, NULL);
+   elm_toolbar_item_append(tbar, "media-playback-start", _("Playback"), _cb_playback, NULL);
+   elm_toolbar_item_append(tbar, "audio-volume-medium", _("Outputs"), _cb_outputs, NULL);
+   elm_toolbar_item_append(tbar, "audio-input-microphone", _("Inputs"), _cb_inputs, NULL);
+   elm_toolbar_item_append(tbar, "audio-card", _("Cards"), _cb_card, NULL);
 
    elm_table_pack(tb, tbar, 0, 0, 1, 1);
    evas_object_show(tbar);
