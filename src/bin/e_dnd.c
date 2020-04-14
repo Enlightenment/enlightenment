@@ -985,6 +985,17 @@ _e_drag_update(Ecore_Window root, int x, int y, unsigned int action)
 //   printf("DND UPDATE %3.7f\n", t2); ////
 }
 
+static Eina_Bool
+_drag_timeout(void *data)
+{
+   E_Drag *drag = data;
+
+   drag->timeout = NULL;
+   ERR("Drop finished response timeout...");
+   e_object_del(E_OBJECT(drag));
+   return EINA_FALSE;
+}
+
 static void
 _e_drag_end(int x, int y)
 {
@@ -1025,6 +1036,7 @@ _e_drag_end(int x, int y)
           _drag_current->cb.finished(_drag_current, dropped);
         _drag_current->cb.finished = NULL;
         _drag_current->ended = 1;
+        _drag_current->timeout = ecore_timer_add(2.0, _drag_timeout, _drag_current);
         return;
      }
 
@@ -1141,6 +1153,11 @@ _e_drag_free(E_Drag *drag)
 {
    unsigned int i;
 
+   if (drag->timeout)
+     {
+        ecore_timer_del(drag->timeout);
+        drag->timeout = NULL;
+     }
    if (drag == _drag_current)
      {
         E_Event_Dnd_Leave leave_ev;

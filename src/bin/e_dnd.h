@@ -41,6 +41,7 @@ struct _E_Drag
    Evas              *evas;
    Evas_Object       *comp_object;
    Evas_Object       *object;
+   Ecore_Timer       *timeout;
 
    int                x, y, w, h;
    int                dx, dy;
