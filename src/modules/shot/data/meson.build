@@ -12,9 +12,9 @@ custom_target(edc + '.edj',
               install      : true
               )
 out = join_paths(_dir, edc + '.edj')
-install_data(['BD_Cartoon_Shout.ttf',
-              'ComiquitaSans.ttf',
-              'FuturaHandwritten.ttf',
-              'Suplexmentary_Comic_NC.ttf',
+install_data(['Puk-Regular.ttf',
+              'Yantiq.ttf',
+              'intuitive.ttf',
+              'IndieFlower.ttf',
               'shots.desktop'],
              install_dir: _dir)

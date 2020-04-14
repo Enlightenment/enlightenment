@@ -681,7 +681,7 @@ collections {
     }
   }
   group { name: "e/modules/shot/item/box/text/cloud";
-    data.item: "entry_style" "DEFAULT='font=Suplexmentary_Comic_NC font_size=20 color=#000 align=center'";
+    data.item: "entry_style" "DEFAULT='font=IndieFlower font_size=25 color=#000 align=center'";
     images.image: "shotedit-cloud.png" COMP;
     parts {
       part { name: "box";
@@ -718,7 +718,7 @@ collections {
     }
   }
   group { name: "e/modules/shot/item/box/text/cloud2";
-    data.item: "entry_style" "DEFAULT='font=FuturaHandwritten font_size=20 color=#000 align=center'";
+    data.item: "entry_style" "DEFAULT='font=intuitive font_size=25 color=#000 align=center'";
     images.image: "shotedit-cloud2.png" COMP;
     parts {
       part { name: "box";
@@ -755,7 +755,7 @@ collections {
     }
   }
   group { name: "e/modules/shot/item/box/text/speech";
-    data.item: "entry_style" "DEFAULT='font=ComiquitaSans font_size=20 color=#000 align=center'";
+    data.item: "entry_style" "DEFAULT='font=Yantiq font_size=25 color=#000 align=center'";
     images.image: "shotedit-speech.png" COMP;
     parts {
       part { name: "box";
@@ -792,7 +792,7 @@ collections {
     }
   }
   group { name: "e/modules/shot/item/box/text/speech2";
-    data.item: "entry_style" "DEFAULT='font=ComiquitaSans font_size=20 color=#000 align=center'";
+    data.item: "entry_style" "DEFAULT='font=Yantiq font_size=25 color=#000 align=center'";
     images.image: "shotedit-speech2.png" COMP;
     parts {
       part { name: "box";
@@ -829,7 +829,7 @@ collections {
     }
   }
   group { name: "e/modules/shot/item/box/text/kaboom";
-    data.item: "entry_style" "DEFAULT='font=BD_Cartoon_Shout font_size=30 color=#000 align=center'";
+    data.item: "entry_style" "DEFAULT='font=Puk-Regular font_size=45 color=#000 align=center'";
     images.image: "shotedit-kaboom.png" COMP;
     parts {
       part { name: "box";
@@ -855,7 +855,7 @@ collections {
     }
   }
   group { name: "e/modules/shot/item/box/text/kapow";
-    data.item: "entry_style" "DEFAULT='font=BD_Cartoon_Shout font_size=30 color=#000 align=center'";
+    data.item: "entry_style" "DEFAULT='font=Puk-Regular font_size=45 color=#000 align=center'";
     images.image: "shotedit-kapow.png" COMP;
     parts {
       part { name: "box";
