@@ -58,7 +58,7 @@ win_delay(void)
    elm_slider_span_size_set(o, 240);
    elm_object_text_set(o, _("Delay"));
    elm_slider_indicator_show_set(o, EINA_FALSE);
-   elm_slider_unit_format_set(o, "%1.1f sec");
+   elm_slider_unit_format_set(o, _("%1.1f sec"));
    elm_slider_min_max_set(o, 1, 60);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 1.0);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
