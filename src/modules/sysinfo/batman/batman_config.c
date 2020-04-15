@@ -570,7 +570,7 @@ batman_configure(Instance *inst)
    elm_slider_indicator_format_set(slider, "%1.0f %%");
    elm_slider_min_max_set(slider, 0, 100);
    elm_slider_value_set(slider, inst->cfg->batman.suspend_below);
-   elm_slider_step_set(slider, 1);
+   elm_slider_step_set(slider, 0.05);
    elm_slider_span_size_set(slider, 100);
    E_ALIGN(slider, 0.0, 0.0);
    E_WEIGHT(slider, EVAS_HINT_EXPAND, 0);
