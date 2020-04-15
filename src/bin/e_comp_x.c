@@ -3129,7 +3129,16 @@ _e_comp_x_focus_in(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_W
 
    /* should be equal, maybe some clients don't reply with the proper timestamp ? */
    if (ev->time >= focus_time)
-     evas_object_focus_set(ec->frame, 1);
+     {
+        if (!evas_object_focus_get(ec->frame))
+          {
+             evas_object_focus_set(ec->frame, 1);
+             if (!e_client_focus_policy_click(ec))
+               e_client_pointer_warp_to_center_now(ec);
+          }
+        else
+          evas_object_focus_set(ec->frame, 1);
+     }
    /* handle case of someone trying to benchmark focus handling */
    if ((!e_client_focus_policy_click(ec)) && (focused && (!e_client_focus_policy_click(focused))) &&
        (ev->time - focus_time <= 2))
@@ -4901,8 +4910,8 @@ _e_comp_x_hook_client_focus_set(void *d EINA_UNUSED, E_Client *ec)
      }
    if (ec->override) return;
    focus_job_client = ec;
-   if (!focus_job)
-     focus_job = ecore_job_add(_e_comp_x_hook_client_focus_set_job, NULL);
+   if (focus_job) ecore_job_del(focus_job);
+   focus_job = ecore_job_add(_e_comp_x_hook_client_focus_set_job, NULL);
 }
 
 static void
