@@ -107,7 +107,7 @@ _cb_rfkill_exe_data(void *data, int ev_type EINA_UNUSED, void *event)
         char dev[1024];
 
         id = -1;
-        if (sscanf(ev->lines[i].line, "%i %*s %1023s %*s %*s", &id, dev) == 2)
+        if (sscanf(ev->lines[i].line, "%i: %1023[^:] %*s", &id, dev) == 2)
           {
              if (!strcmp(a->dev, dev))
                {
@@ -135,7 +135,7 @@ _rfkill_do(Eina_Bool block, const char *dev)
                                             _cb_rfkill_exe_data, a);
    if ((!a->handle_del) || (!a->handle_data)) goto err;
    // stage 1 - run to get list of devices and id's to know what id to use
-   a->exe = ecore_exe_pipe_run("rfkill",
+   a->exe = ecore_exe_pipe_run("rfkill list",
                                ECORE_EXE_NOT_LEADER |
                                ECORE_EXE_TERM_WITH_PARENT |
                                ECORE_EXE_PIPE_READ |
