@@ -549,6 +549,7 @@ done:
    return ret;
 }
 
+/*
 static void
 rmrf(const char *path)
 {
@@ -567,6 +568,7 @@ rmrf(const char *path)
      }
    eina_file_unlink(path);
 }
+*/
 
 int
 main(int argc, char **argv)
@@ -577,10 +579,11 @@ main(int argc, char **argv)
    char buf[8192], buf2[4096], **args, *home;
    char valgrind_path[PATH_MAX] = "";
    const char *valgrind_log = NULL;
-   const char *bindir, *s;
+   const char *bindir;
    Eina_Bool really_know = EINA_FALSE;
    struct sigaction action;
-   struct stat st;
+//   struct stat st;
+//   const char *s;
    int ret = -1;
    pid_t child = -1;
    Eina_Bool restart = EINA_TRUE;
@@ -605,6 +608,7 @@ main(int argc, char **argv)
    sigemptyset(&action.sa_mask);
    sigaction(SIGHUP, &action, NULL);
 
+/* leave XDG_RUNTIME_DIR alone - if distro/os doesn't use it - too bad
    s = getenv("XDG_RUNTIME_DIR");
    if ((!s) || (stat(s, &st) != 0) || (!S_ISDIR(st.st_mode)))
      {
@@ -623,7 +627,7 @@ main(int argc, char **argv)
           }
         env_set("XDG_RUNTIME_DIR", dir);
      }
-
+ */
    eina_init();
 
    /* reexcute myself with dbus-launch if dbus-launch is not running yet */
@@ -855,12 +859,14 @@ not_done:
         if (!done) goto not_done;
      }
    // clean up xdg runtime_dir if we created it
+/* leave XDG_RUNTIME_DIR alone - if distro/os doesn't use it - too bad
    s = getenv("XDG_RUNTIME_DIR");
    if ((s) && (stat(s, &st) == 0) && (S_ISDIR(st.st_mode)))
      {
         snprintf(buf, sizeof(buf), "%s/.e-deleteme", s);
         if (stat(buf, &st) == 0) rmrf(s);
      }
+ */
    return ret;
 }
 
