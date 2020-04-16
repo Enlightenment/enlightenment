@@ -79,8 +79,9 @@ wizard_page_hide(E_Wizard_Page *pg EINA_UNUSED)
         e_config->always_click_to_focus = 0;
         e_config->focus_last_focused_per_desktop = 1;
         e_config->pointer_slide = 1;
-        e_config->use_auto_raise = 1;
-        e_config->auto_raise_delay = 0.5;
+// auto raise seems to irritate some people so request - disable in wiz
+//        e_config->use_auto_raise = 1;
+//        e_config->auto_raise_delay = 0.5;
      }
 //   evas_object_del(pg->data);
    return 1;
