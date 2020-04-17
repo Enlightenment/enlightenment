@@ -17,8 +17,12 @@
 # endif
 
 #ifdef HAVE_WAYLAND
-# define EFL_EO_API_SUPPORT
-# define EFL_BETA_API_SUPPORT
+# ifndef EFL_EO_API_SUPPORT
+#  define EFL_EO_API_SUPPORT
+# endif
+# ifndef EFL_BETA_API_SUPPORT
+#  define EFL_BETA_API_SUPPORT
+# endif
 #endif
 
 # define USE_IPC
@@ -111,7 +115,9 @@ void *alloca (size_t);
 # endif
 
 // XXX: FIXME: TMP solution for window stack until api is settled
-#define EFL_BETA_API_SUPPORT
+# ifndef EFL_BETA_API_SUPPORT
+#  define EFL_BETA_API_SUPPORT
+# endif
 
 
 # include <setjmp.h>
