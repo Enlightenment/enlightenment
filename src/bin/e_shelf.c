@@ -159,6 +159,20 @@ _e_shelf_desk_count_handler(void *d EINA_UNUSED, int t EINA_UNUSED, E_Event_Zone
    return ECORE_CALLBACK_RENEW;
 }
 
+static Eina_Bool
+_e_shelf_autohide_timer_extend(E_Shelf *es)
+{
+   if (es->autohide_timer && es->hide_timer)
+     {
+        ecore_timer_loop_reset(es->autohide_timer);
+        ecore_timer_loop_reset(es->hide_timer);
+        return EINA_TRUE;
+     }
+   ecore_timer_del(es->autohide_timer);
+   es->autohide_timer = NULL;
+   return EINA_FALSE;
+}
+
 /* externally accessible functions */
 EINTERN int
 e_shelf_init(void)
@@ -475,8 +489,7 @@ e_shelf_toggle(E_Shelf *es, int show)
    E_OBJECT_TYPE_CHECK(es, E_SHELF_TYPE);
 
    es->toggle = show;
-   if (es->autohide_timer) ecore_timer_del(es->autohide_timer);
-   es->autohide_timer = NULL;
+   if (_e_shelf_autohide_timer_extend(es)) return;
    if (es->locked) return;
    es->interrupted = -1;
    es->urgent_show = 0;

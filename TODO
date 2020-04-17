@@ -4,6 +4,7 @@ TODO:
     * winlist should do the switching with another layout mode...
   * shelf can expamnd/slow down to show more (indicator/notification)
     * gadget bar too... ? or just gad bar?
+  * shelf autohide. Move this to edje.
   * vkbd integrates with proper sizing and layout
     * manual show/hide with various controls (actions, swipes, gadget)
   * finger friendly desklock
