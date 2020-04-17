@@ -125,8 +125,9 @@ params_add(struct wl_client *client, struct wl_resource *params_resource,
      {
         buffer->attributes.modifier[plane_idx] =
           ((uint64_t)modifier_hi << 32) | modifier_lo;
-        buffer->attributes.n_planes++;
      }
+
+   buffer->attributes.n_planes++;
 
 static void
 linux_dmabuf_wl_buffer_destroy(struct wl_client *client, struct wl_resource *resource)
