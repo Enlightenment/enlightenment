@@ -128,6 +128,7 @@ params_add(struct wl_client *client, struct wl_resource *params_resource,
      }
 
    buffer->attributes.n_planes++;
+}
 
 static void
 linux_dmabuf_wl_buffer_destroy(struct wl_client *client, struct wl_resource *resource)
