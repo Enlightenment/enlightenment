@@ -1251,7 +1251,9 @@ dir_has_contents(const char *dir)
 int
 _batman_fallback_start(Instance *inst)
 {
-#if defined(HAVE_CFBASE_H) /* OS X */
+#if defined(__OpenBSD__) || defined(__DragonFly__) || defined(__FreeBSD__) || defined(__NetBSD__)
+   return 0;
+#elif defined(HAVE_CFBASE_H) /* OS X */
    darwin_init();
 #else
    if ((ecore_file_is_dir(sys_power_dir)) && (dir_has_contents(sys_power_dir)))
