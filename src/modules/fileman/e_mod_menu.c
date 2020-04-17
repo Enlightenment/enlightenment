@@ -103,25 +103,29 @@ _e_mod_menu_cleanup_cb(void *obj)
    eina_stringshare_del(e_object_data_get(E_OBJECT(obj)));
 }
 
-static Eina_Bool
-_e_mod_menu_populate_filter(void *data EINA_UNUSED, Eio_File *handler, const Eina_File_Direct_Info *info)
+typedef struct
 {
+   E_Menu *subm;
+   int count;
+} Populate_Data;
+
+static Eina_Bool
+_e_mod_menu_populate_filter(void *data, Eio_File *handler, const Eina_File_Direct_Info *info)
+{
+   Populate_Data *pd = data;
    struct stat st;
-   long count;
 
    if (!handler) return EINA_FALSE;
 
    if (eio_file_check(handler)) return EINA_FALSE;
 
-   count = (long) eio_file_associate_find(handler, "count");
-   if (count > 100)
+   pd->count++;
+   if (pd->count > 100)
      {
         eio_file_cancel(handler);
         return EINA_FALSE;
      }
-   count++;
 
-   eio_file_associate_add(handler, "count", (void*)count, NULL);
    /* don't show .dotfiles */
    if (fileman_config->view.menu_shows_files)
      return (info->path[info->name_start] != '.');
@@ -137,7 +141,8 @@ _e_mod_menu_populate_filter(void *data EINA_UNUSED, Eio_File *handler, const Ein
 static void
 _e_mod_menu_populate_item(void *data, Eio_File *handler EINA_UNUSED, const Eina_File_Direct_Info *info)
 {
-   E_Menu *m = data;
+   Populate_Data *pd = data;
+   E_Menu *m = pd->subm;
    E_Menu_Item *mi;
    const char *dev, *path;
    Efreet_Desktop *ed = NULL;
@@ -255,8 +260,11 @@ _e_mod_menu_populate_sort(E_Menu_Item *a, E_Menu_Item *b)
 static void
 _e_mod_menu_populate_done(void *data, Eio_File *handler EINA_UNUSED)
 {
-   E_Menu *m = data;
-   if (!e_object_unref(data)) return;
+   Populate_Data *pd = data;
+   E_Menu *m = pd->subm;
+
+   free(pd);
+   if (!e_object_unref(E_OBJECT(m))) return;
    if (!m->items)
      {
         E_Menu_Item *mi;
@@ -264,7 +272,7 @@ _e_mod_menu_populate_done(void *data, Eio_File *handler EINA_UNUSED)
 
         mi = e_menu_item_new(m);
         e_menu_item_label_set(mi, _("No listable items"));
-        dev = e_object_data_get(data);
+        dev = e_object_data_get(E_OBJECT(m));
         path = e_object_data_get(E_OBJECT(m->parent_item));
         e_object_data_set(E_OBJECT(mi), eina_stringshare_ref(path));
         if (dev && (dev[0] == '/'))
@@ -289,6 +297,7 @@ _e_mod_menu_populate(void *d, E_Menu *m EINA_UNUSED, E_Menu_Item *mi)
    E_Menu *subm;
    const char *dev, *path, *rp;
    Eio_File *ls;
+   Populate_Data *pd;
 
    subm = mi->submenu;
    if (subm && subm->items) return;
@@ -304,9 +313,22 @@ _e_mod_menu_populate(void *d, E_Menu *m EINA_UNUSED, E_Menu_Item *mi)
         e_menu_item_submenu_set(mi, subm);
         e_menu_freeze(subm);
      }
-   ls = eio_file_stat_ls(rp, _e_mod_menu_populate_filter, _e_mod_menu_populate_item, _e_mod_menu_populate_done, _e_mod_menu_populate_err, subm);
-   EINA_SAFETY_ON_NULL_RETURN(ls);
-   e_object_ref(E_OBJECT(subm));
+   pd = calloc(1, sizeof(Populate_Data));
+   if (pd)
+     {
+        pd->subm = subm;
+        ls = eio_file_stat_ls(rp,
+                              _e_mod_menu_populate_filter,
+                              _e_mod_menu_populate_item,
+                              _e_mod_menu_populate_done,
+                              _e_mod_menu_populate_err, pd);
+        if (!ls)
+          {
+             free(pd);
+             return;
+          }
+        e_object_ref(E_OBJECT(subm));
+     }
    eina_stringshare_del(rp);
 }
 
