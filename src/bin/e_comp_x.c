@@ -2501,13 +2501,8 @@ _e_comp_x_mapping_change(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_E
 static void
 _e_comp_x_mouse_in_job(void *d EINA_UNUSED)
 {
-   E_Client *ec = mouse_client;
-
-   if (ec)
-     {
-        if (!ec->mouse.in)
-          e_client_mouse_in(ec, e_comp_canvas_x_root_adjust(mouse_in_coords.x), e_comp_canvas_y_root_adjust(mouse_in_coords.y));
-     }
+   if (mouse_client)
+     e_client_mouse_in(mouse_client, e_comp_canvas_x_root_adjust(mouse_in_coords.x), e_comp_canvas_y_root_adjust(mouse_in_coords.y));
    mouse_in_job = NULL;
 }
 
@@ -2707,7 +2702,7 @@ _e_comp_x_mouse_move(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mouse_M
                   if (!evas_object_visible_get(tec->frame)) continue;
                   if (E_INSIDE(x, y, tec->x, tec->y, tec->w, tec->h)) return ECORE_CALLBACK_RENEW;
                }
-             if ((!mouse_in_job) && (!mouse_in_fix_check_timer))
+             if (!mouse_in_job)
                e_client_mouse_in(ec, x, y);
           }
         return ECORE_CALLBACK_RENEW;
@@ -3025,7 +3020,7 @@ _e_comp_x_move_resize_request(void *data EINA_UNUSED, int type EINA_UNUSED, Ecor
 static Eina_Bool
 _e_comp_x_focus_timer_cb(void *d EINA_UNUSED)
 {
-   E_Client *focused, *ec;
+   E_Client *focused;
 
    /* if mouse-based focus policy clients exist for [focused] and [mouse_client],
     * [mouse_client] should have focus here.
@@ -3042,20 +3037,15 @@ _e_comp_x_focus_timer_cb(void *d EINA_UNUSED)
     * client as necessary
     */
    focused = e_client_focused_get();
-   ec = mouse_client;
-   if (ec && focused && (ec != focused) &&
-       (!e_client_focus_policy_click(focused)))
+   if (mouse_client && focused && (!e_client_focus_policy_click(focused)) && (mouse_client != focused))
      {
         int x, y;
 
         ecore_evas_pointer_xy_get(e_comp->ee, &x, &y);
-        if (E_INSIDE(x, y, ec->x, ec->y, ec->w, ec->h))
+        if (E_INSIDE(x, y, mouse_client->x, mouse_client->y, mouse_client->w, mouse_client->h))
           {
-             if (!_e_comp_x_client_data_get(ec)->deleted)
-               {
-                  if (!ec->mouse.in)
-                    e_client_mouse_in(ec, x, y);
-               }
+             if (!_e_comp_x_client_data_get(mouse_client)->deleted)
+               e_client_mouse_in(mouse_client, x, y);
           }
      }
    focus_timer = NULL;
@@ -3139,20 +3129,7 @@ _e_comp_x_focus_in(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_W
 
    /* should be equal, maybe some clients don't reply with the proper timestamp ? */
    if (ev->time >= focus_time)
-     {
-        if ((!e_grabinput_mouse_win_get()) && (!e_grabinput_key_win_get()))
-          {
-             if (ecore_x_window_focus_get() != e_client_util_win_get(ec))
-               {
-                  evas_object_focus_set(ec->frame, 1);
-                  if ((!e_client_focus_policy_click(ec)) &&
-                      (!ec->mouse.in))
-                    e_client_pointer_warp_to_center_now(ec);
-               }
-             else
-               evas_object_focus_set(ec->frame, 1);
-          }
-     }
+     evas_object_focus_set(ec->frame, 1);
    /* handle case of someone trying to benchmark focus handling */
    if ((!e_client_focus_policy_click(ec)) && (focused && (!e_client_focus_policy_click(focused))) &&
        (ev->time - focus_time <= 2))
@@ -4924,8 +4901,8 @@ _e_comp_x_hook_client_focus_set(void *d EINA_UNUSED, E_Client *ec)
      }
    if (ec->override) return;
    focus_job_client = ec;
-   if (focus_job) ecore_job_del(focus_job);
-   focus_job = ecore_job_add(_e_comp_x_hook_client_focus_set_job, NULL);
+   if (!focus_job)
+     focus_job = ecore_job_add(_e_comp_x_hook_client_focus_set_job, NULL);
 }
 
 static void
