@@ -9,11 +9,11 @@ static Eina_Bool _e_focus_raise_timer(void *data);
 E_API void
 e_focus_event_mouse_in(E_Client *ec)
 {
-   
    if ((e_config->focus_policy == E_FOCUS_MOUSE) ||
        (e_config->focus_policy == E_FOCUS_SLOPPY))
      {
-        evas_object_focus_set(ec->frame, 1);
+        if (!ec->focused)
+          evas_object_focus_set(ec->frame, 1);
      }
    E_FREE_FUNC(ec->raise_timer, ecore_timer_del);
    if (e_config->use_auto_raise)

@@ -416,7 +416,8 @@ _e_comp_object_cb_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, vo
      }
    if (e_grabinput_mouse_win_get() && (e_grabinput_mouse_win_get() != e_client_util_win_get(cw->ec)))
      return;
-   e_client_mouse_in(cw->ec, ev->output.x, ev->output.y);
+   if (!cw->ec->mouse.in)
+     e_client_mouse_in(cw->ec, ev->output.x, ev->output.y);
 }
 
 /* handle evas mouse-out events on client object */
