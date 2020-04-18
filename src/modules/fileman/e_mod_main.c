@@ -208,7 +208,7 @@ static void
 _e_mod_action_fileman_show_cb(E_Object   *obj EINA_UNUSED,
                               const char *params)
 {
-   const char *dev = NULL, *path = NULL;
+   const char *dev = "/", *path = NULL;
    char *p = NULL;
    E_Zone *zone = NULL;
 
@@ -216,15 +216,9 @@ _e_mod_action_fileman_show_cb(E_Object   *obj EINA_UNUSED,
    if (zone)
      {
         if (params && params[0] == '/')
-          {
-             dev = "/";
-             path = params;
-          }
+          path = params;
         else if (params && params[0] == '~')
-          {
-             dev = "~/";
-             path = params + 1;
-          }
+          path = params + 1;
         else if (params && strcmp(params, "(none)")) /* avoid matching paths that no longer exist */
           {
              p = e_util_shell_env_path_eval(params);
