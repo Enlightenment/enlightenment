@@ -252,6 +252,7 @@ _ddc_probe(void)
         ddc_func.ddca_free_display_info_list(ddc_dlist);
         ddc_dlist = NULL;
         free(ddc_dh);
+        goto err;
      }
    for (i = 0; i < ddc_dlist->ct; i++)
      {
