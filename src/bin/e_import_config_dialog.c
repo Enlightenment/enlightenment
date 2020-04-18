@@ -110,6 +110,7 @@ _import_cb_edje_cc_exit(void *data, EINA_UNUSED int type, void *event)
         if (!p)
           {
              e_object_del(E_OBJECT(import));
+             free(newfile);
              return ECORE_CALLBACK_DONE;
           }
         // strip out the .tmp. before the name
