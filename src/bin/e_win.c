@@ -448,7 +448,7 @@ e_win_centered_get(Evas_Object *obj)
    Elm_Win_Trap_Ctx *ctx = elm_win_trap_data_get(obj);
 
    if (!ctx) return EINA_FALSE;
-   return ctx ? ctx->centered : EINA_FALSE;
+   return ctx->centered;
 }
 
 E_API void
