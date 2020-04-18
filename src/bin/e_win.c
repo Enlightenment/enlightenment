@@ -439,7 +439,7 @@ e_win_pointer_get(Evas_Object *obj)
    Elm_Win_Trap_Ctx *ctx = elm_win_trap_data_get(obj);
 
    if (!ctx) return NULL;
-   return ctx ? ctx->pointer : NULL;
+   return ctx->pointer;
 }
 
 E_API Eina_Bool
