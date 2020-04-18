@@ -99,6 +99,10 @@ elm_main(int argc, char **argv)
    stride    = atoi(argv[4]); // stride per line in bytes
    quality   = atoi(argv[5]); // qwuality to save out as (100 == lossless png)
    if (argc >= 7) out_file = eina_stringshare_add(argv[6]); // out file path
+   if ((w <= 0) || (w > 65535) || (h <= 0) || (h > 65535) ||
+       (stride <= 0) || (stride > (65535 * 4)) ||
+       (quality < 0) || (w > 100))
+     return 1;
 
    // set up buffer window as scratch space
    elm_config_preferred_engine_set("buffer");
