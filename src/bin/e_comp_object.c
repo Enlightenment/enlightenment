@@ -2498,11 +2498,12 @@ _e_comp_object_input_rect_update(E_Comp_Object *cw)
         o = eina_array_data_get(cw->input_objs, i++);
         x = rect->x, y = rect->y, w = rect->w, h = rect->h;
 
-        E_RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, cw->ec->client.w, cw->ec->client.h);
-        evas_object_geometry_set(o,
-            cw->x + x + (!!cw->frame_object * cw->client_inset.l),
-            cw->y + y + (!!cw->frame_object * cw->client_inset.t),
-            w, h);
+        E_RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0,
+                             cw->ec->client.w, cw->ec->client.h);
+        evas_object_geometry_set
+          (o, cw->x + x + (!!cw->frame_object * cw->client_inset.l),
+              cw->y + y + (!!cw->frame_object * cw->client_inset.t),
+              w, h);
      }
    eina_iterator_free(it);
 }
