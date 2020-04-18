@@ -480,7 +480,6 @@ elm_main(int argc, char **argv)
            " }\n"
            "}\n");
    fclose(f);
-   free(mips);
    if (snprintf(cmd_buf, sizeof(cmd_buf),
                 "%s -fastdecomp -id %s -fd %s -sd %s -vd %s -dd %s -md %s "
                 "%s/bg.edc %s",
@@ -492,6 +491,7 @@ elm_main(int argc, char **argv)
      }
    ret = system(cmd_buf);
 cleanup:
+   free(mips);
    ecore_file_recursive_rm(dir);
    evas_object_del(win);
    return ret;
