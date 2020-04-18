@@ -419,6 +419,7 @@ pkgconfig.generate(name             : proj,
                                         'modules=@0@/enlightenment/modules'.format(dir_lib),
                                         'pkgdatadir=${datarootdir}/' + proj + '/data',
                                         'themes=${pkgdatadir}/themes',
+                                        'module_arch=@0@'.format(module_arch),
                                         'backgrounds=${pkgdatadir}/backgrounds',
                                         'release=@0@'.format(release),
                                         'wayland=@0@'.format(wayland)
