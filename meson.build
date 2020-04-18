@@ -183,8 +183,6 @@ if cc.has_header('netinet/in.h') == true
 endif
 if cc.has_header('execinfo.h') == true
   config_h.set('HAVE_EXECINFO_H'       , '1')
-elif cc.has_function('backtrace_symbols_fd', dependencies: 'execinfo') == false
-  execinfo_dep = dependency('execinfo', required: false)
 endif
 if cc.has_function('explicit_bzero') == true
   config_h.set('HAVE_EXPLICIT_BZERO'   , '1')
