@@ -150,6 +150,7 @@ save_to(const char *file)
                     }
                   else
                     {
+                       free(data);
                        free(thdat->path);
                        free(thdat->outfile);
                        free(thdat);
