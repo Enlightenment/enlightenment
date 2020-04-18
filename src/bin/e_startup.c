@@ -168,7 +168,7 @@ _e_startup_event_cb(void *data, int ev_type EINA_UNUSED, void *ev)
    if ((e) && (e->error))
      {
         fprintf(stderr, "E: efreet couldn't build cache\n");
-        _e_startup_error_dialog("E: Efreetd cannot be connected to"
+        _e_startup_error_dialog("E: Efreetd cannot be connected to.<br>"
                                 "Please check:<br>"
                                 "$XDG_RUTIME_DIR/.ecore/efreetd/0<br>"
                                 "or<br>"
@@ -193,7 +193,7 @@ static Eina_Bool
 _e_startup_time_exceeded(void *data EINA_UNUSED)
 {
    fprintf(stderr, "E: efreet didn't notify about cache update\n");
-   _e_startup_error_dialog("E: Efreet did not update cache"
+   _e_startup_error_dialog("E: Efreet did not update cache.<br>"
                            "Please check your Efreet setup.<br>"
                            "Is efreetd running?<br>"
                            "Can ~/.cache/efreet be written to?");
