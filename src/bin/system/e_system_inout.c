@@ -28,7 +28,7 @@ _stdout_off(void)
    fflush(stdout);
    fd_supress = dup(1);
    if (fd_null == -1) fd_null = open("/dev/null", O_WRONLY);
-   dup2(fd_null, 1);
+   if (fd_null != -1) dup2(fd_null, 1);
 }
 
 static void
