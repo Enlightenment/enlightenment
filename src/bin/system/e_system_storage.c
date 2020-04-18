@@ -223,7 +223,6 @@ _cb_store_eject_exe_del(void *data, int ev_type EINA_UNUSED, void *event)
              if (!_store_action_do(a))
                {
                   _pending_actions = eina_list_remove(_pending_actions, a);
-                  _store_action_free(a);
                   _store_pending_action_next();
                }
           }
