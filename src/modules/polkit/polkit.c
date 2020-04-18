@@ -179,6 +179,7 @@ cb_agent_begin_authentication(const Eldbus_Service_Interface *iface EINA_UNUSED,
    session_show(ps);
    return NULL;
 err:
+   if (ps) session_free(ps);
    return eldbus_message_method_return_new(msg);
 }
 
