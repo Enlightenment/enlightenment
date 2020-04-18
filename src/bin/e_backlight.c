@@ -146,9 +146,13 @@ _backlight_devices_zone_device_find(E_Zone *zone)
         if ((bd->output) && (!strcmp(out, bd->output)))
           {
              if ((edid[0] && (!strcmp(edid, bd->edid))) || (!edid[0]))
-               return bd;
+               {
+                  free(tmp);
+                  return bd;
+               }
           }
      }
+   free(tmp);
    return NULL;
 }
 
