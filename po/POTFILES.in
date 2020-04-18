@@ -128,9 +128,11 @@ src/modules/appmenu/e_mod_main.c
 src/modules/backlight/e_mod_main.c
 src/modules/battery/e_mod_config.c
 src/modules/battery/e_mod_main.c
-src/modules/bluez4/agent.c
-src/modules/bluez4/e_mod_main.c
-src/modules/bluez4/ebluez4.c
+src/modules/bluez5/bz_agent.c
+src/modules/bluez5/e_mod_agent.c
+src/modules/bluez5/e_mod_main.c
+src/modules/bluez5/e_mod_popup.c
+src/modules/bluez5/e_mod_util.c
 src/modules/clock/e_mod_config.c
 src/modules/clock/e_mod_main.c
 src/modules/conf/e_conf.c
@@ -199,7 +201,6 @@ src/modules/connman/e_mod_config.c
 src/modules/connman/e_mod_main.c
 src/modules/cpufreq/e_mod_config.c
 src/modules/cpufreq/e_mod_main.c
-src/modules/cpufreq/freqset.c
 src/modules/everything/e_mod_main.c
 src/modules/everything/evry.c
 src/modules/everything/evry_config.c
@@ -249,8 +250,6 @@ src/modules/packagekit/e_mod_main.c
 src/modules/packagekit/e_mod_packagekit.c
 src/modules/pager/e_mod_config.c
 src/modules/pager/e_mod_main.c
-src/modules/pager_plain/e_mod_config.c
-src/modules/pager_plain/e_mod_main.c
 src/modules/quickaccess/e_mod_config.c
 src/modules/quickaccess/e_mod_main.c
 src/modules/quickaccess/e_mod_quickaccess.c
