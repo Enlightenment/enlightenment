@@ -38,7 +38,7 @@ out:
 E_API int
 e_auth_polkit_begin(char *passwd, const char *cookie, unsigned int uid)
 {
-   char buf[PATH_MAX], *p;
+   char buf[PATH_MAX];
    Ecore_Exe *exe = NULL;
    int ret = 0;
    size_t pwlen, buflen = 0;
@@ -67,14 +67,7 @@ e_auth_polkit_begin(char *passwd, const char *cookie, unsigned int uid)
 out:
    if (exe) ecore_exe_free(exe);
 
-   /* security - null out passwd string once we are done with it */
-   for (p = passwd; *p; p++) *p = 0;
-   if (passwd[rand() % pwlen]) fprintf(stderr, "ACK!\n");
-   /* security - null out buf string once we are done with it */
-   if (buflen > 0)
-     {
-        for (p = buf; *p; p++) *p = 0;
-        if (buf[rand() % buflen]) fprintf(stderr, "ACK!\n");
-     }
+   e_util_memclear(passwd, pwlen);
+   e_util_memclear(buf, buflen);
    return ret;
 }
