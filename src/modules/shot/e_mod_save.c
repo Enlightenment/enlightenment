@@ -158,10 +158,7 @@ save_to(const char *file)
                     }
                }
              else
-               {
-                  close(fd);
-                  free(data);
-               }
+               free(data);
           }
         if (!thdat) close(fd);
         eina_tmpstr_del(path);
