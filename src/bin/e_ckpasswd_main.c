@@ -296,6 +296,11 @@ main(int argc, char **argv)
         for (;;) // cookie
           {
              rd = read(0, pw + pos, 1);
+             if (rd < 0)
+               {
+                  fprintf(stderr, "Error. Can't read polkit cookie on stdin\n");
+                  goto err;
+               }
              if (pw[pos] == ' ')
                {
                   memcpy(polkit_cookie, pw, pos);
@@ -317,6 +322,11 @@ main(int argc, char **argv)
         for (;;) // uid
           {
              rd = read(0, pw + pos, 1);
+             if (rd < 0)
+               {
+                  fprintf(stderr, "Error. Can't read polkit uid on stdin\n");
+                  goto err;
+               }
              if (pw[pos] == ' ')
                {
                   pw[pos] = 0;
