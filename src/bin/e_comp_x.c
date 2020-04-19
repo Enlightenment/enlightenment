@@ -5450,22 +5450,6 @@ _e_comp_x_del(E_Comp *c)
 {
    unsigned int i;
 
-   if (restart)
-     {
-        Ecore_X_Atom a;
-        Ecore_X_Window blackwin;
-
-        a = ecore_x_atom_get("E_COMP_BLACK_WIN");
-        blackwin = ecore_x_window_permanent_new(c->root, a);
-        ecore_x_window_ignore_set(blackwin, 1);
-        ecore_x_window_override_set(blackwin, EINA_TRUE);
-        ecore_x_window_move_resize(blackwin, 0, 0, e_comp->w, e_comp->h);
-        ecore_x_window_background_color_set(blackwin, 0, 0, 0);
-        ecore_x_window_show(blackwin);
-        ecore_x_window_prop_window_set(c->root, a, &blackwin, 1);
-        ecore_x_sync();
-     }
-
    if (!e_comp_wl)
      ecore_x_window_key_ungrab(c->root, "F", ECORE_EVENT_MODIFIER_SHIFT |
                                ECORE_EVENT_MODIFIER_CTRL |
@@ -5476,6 +5460,23 @@ _e_comp_x_del(E_Comp *c)
           {
              c->grabbed = 0;
              ecore_x_ungrab();
+             ecore_x_sync();
+          }
+
+        if (restart)
+          {
+             Ecore_X_Atom a;
+             Ecore_X_Window blackwin;
+
+             a = ecore_x_atom_get("E_COMP_BLACK_WIN");
+             blackwin = ecore_x_window_permanent_new(c->root, a);
+             ecore_x_window_ignore_set(blackwin, 1);
+             ecore_x_window_override_set(blackwin, EINA_TRUE);
+             ecore_x_window_move_resize(blackwin, 0, 0, e_comp->w, e_comp->h);
+             ecore_x_window_background_color_set(blackwin, 0, 0, 0);
+             ecore_x_window_show(blackwin);
+             ecore_x_window_prop_window_set(c->root, a, &blackwin, 1);
+             ecore_x_sync();
           }
 
         for (i = e_comp_canvas_layer_map(E_LAYER_CLIENT_DESKTOP); i <= e_comp_canvas_layer_map(E_LAYER_CLIENT_PRIO); i++)
