@@ -208,7 +208,7 @@ static void
 _e_mod_action_fileman_show_cb(E_Object   *obj EINA_UNUSED,
                               const char *params)
 {
-   const char *dev = "/", *path = NULL;
+   const char *dev = "/", *path = "/";
    char *p = NULL;
    E_Zone *zone = NULL;
 
