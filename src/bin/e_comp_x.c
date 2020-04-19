@@ -4705,6 +4705,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
 
    if (ec->e.state.profile.set)
      {
+        printf("E: sent profile set req to 0x%x [%s]\n", win, ec->e.state.profile.set);
         ecore_x_e_window_profile_change_request_send(win,
                                                      ec->e.state.profile.set);
         eina_stringshare_replace(&ec->e.state.profile.wait, ec->e.state.profile.set);
