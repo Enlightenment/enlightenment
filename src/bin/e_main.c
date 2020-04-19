@@ -1595,47 +1595,65 @@ _e_main_screens_shutdown(void)
 static void
 _e_main_desk_save(void)
 {
-   const Eina_List *l;
-   char env[1024], name[1024];
-   E_Zone *zone;
-
-   EINA_LIST_FOREACH(e_comp->zones, l, zone)
+#ifndef HAVE_WAYLAND_ONLY
+   if (e_comp_util_has_x())
      {
-        snprintf(name, sizeof(name), "DESK_%d_%d", 0, zone->num);
-        snprintf(env, sizeof(env), "%d,%d", zone->desk_x_current, zone->desk_y_current);
-        e_util_env_set(name, env);
+        const Eina_List *l;
+        E_Zone *zone;
+        char buf[256];
+        unsigned int desk[2];
+        Ecore_X_Atom a;
+
+        EINA_LIST_FOREACH(e_comp->zones, l, zone)
+          {
+             desk[0] = zone->desk_x_current;
+             desk[1] = zone->desk_y_current;
+             snprintf(buf, sizeof(buf), "E_DESK_%i", zone->num);
+             a = ecore_x_atom_get(buf);
+             ecore_x_window_prop_card32_set(e_comp->root, a, desk, 2);
+          }
      }
+#endif
 }
 
 static void
 _e_main_desk_restore(void)
 {
-   const Eina_List *l;
-   E_Zone *zone;
-   E_Client *ec;
-   char *env;
-   char name[1024];
-
-   EINA_LIST_FOREACH(e_comp->zones, l, zone)
+#ifndef HAVE_WAYLAND_ONLY
+   if (e_comp_util_has_x())
      {
+        const Eina_List *l;
+        E_Zone *zone;
+        E_Client *ec;
         E_Desk *desk;
-        int desk_x, desk_y;
+        int ret;
+        char buf[256];
+        unsigned int desks[2];
+        Ecore_X_Atom a;
 
-        snprintf(name, sizeof(name), "DESK_%d_%d", 0, zone->num);
-        env = getenv(name);
-        if (!env) continue;
-        if (!sscanf(env, "%d,%d", &desk_x, &desk_y)) continue;
-        desk = e_desk_at_xy_get(zone, desk_x, desk_y);
-        if (!desk) continue;
-        e_desk_show(desk);
+        EINA_LIST_FOREACH(e_comp->zones, l, zone)
+          {
+             snprintf(buf, sizeof(buf), "E_DESK_%i", zone->num);
+             a = ecore_x_atom_get(buf);
+             ret = ecore_x_window_prop_card32_get(e_comp->root, a, desks, 2);
+             if (ret == 2)
+               {
+                  desk = e_desk_at_xy_get(zone, desks[0], desks[1]);
+                  if (!desk) continue;
+                  e_desk_show(desk);
+               }
+          }
+        E_CLIENT_REVERSE_FOREACH(ec)
+          {
+             if ((!e_client_util_ignored_get(ec)) &&
+                 e_client_util_desk_visible(ec, e_desk_current_get(ec->zone)))
+               {
+                  ec->want_focus = ec->take_focus = 1;
+                  break;
+               }
+          }
      }
-
-   E_CLIENT_REVERSE_FOREACH(ec)
-     if ((!e_client_util_ignored_get(ec)) && e_client_util_desk_visible(ec, e_desk_current_get(ec->zone)))
-       {
-          ec->want_focus = ec->take_focus = 1;
-          break;
-       }
+#endif
 }
 
 static void
