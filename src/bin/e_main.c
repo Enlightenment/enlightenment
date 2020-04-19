@@ -240,8 +240,7 @@ main(int argc, char **argv)
    Eina_Bool safe_mode = EINA_FALSE;
    Eina_Bool waslocked = EINA_FALSE;
    Eina_Stringshare *strshare;
-   double t = 0.0, tstart = 0.0;
-   char *s = NULL, buff[32];
+   char *s = NULL;
    struct sigaction action;
 
 #ifdef __linux__
@@ -291,17 +290,6 @@ main(int argc, char **argv)
 	sigaction(SIGABRT, &action, NULL);
 	TS("Signal Trap Done");
      }
-
-   t = ecore_time_unix_get();
-   s = getenv("E_START_TIME");
-   if ((s) && (!getenv("E_RESTART_OK")))
-     {
-        tstart = atof(s);
-        if ((t - tstart) < 5.0) safe_mode = EINA_TRUE;
-     }
-   tstart = t;
-   snprintf(buff, sizeof(buff), "%1.1f", tstart);
-   e_util_env_set("E_START_TIME", buff);
 
    TS("Eina Init");
    if (!eina_init())
