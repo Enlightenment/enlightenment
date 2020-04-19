@@ -2848,7 +2848,7 @@ e_client_desk_set(E_Client *ec, E_Desk *desk)
      {
         const char *profile = desk->window_profile;
 
-        // XXX: have default profile config
+        if (!profile) profile = elm_config_profile_get();
         if (!profile) profile = "standard";
         if (e_util_strcmp(ec->e.state.profile.name, profile))
           {
