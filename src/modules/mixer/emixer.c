@@ -45,8 +45,8 @@ _cb_sink_port_change(void *data,
                      void *event_info EINA_UNUSED)
 {
    Emix_Port *port = data;
-   Evas_Object *bxv = evas_object_data_get(obj, "parent");
-   Emix_Sink *sink = evas_object_data_get(bxv, "sink");
+   Evas_Object *fr = evas_object_data_get(obj, "parent");
+   Emix_Sink *sink = evas_object_data_get(fr, "sink");
    elm_object_text_set(obj, port->description);
    emix_sink_port_set(sink, port);
 }
@@ -56,8 +56,8 @@ _cb_sink_volume_change(void *data,
                        Evas_Object *obj,
                        void *event_info EINA_UNUSED)
 {
-   Evas_Object *bxv = data;
-   Emix_Sink *sink = evas_object_data_get(bxv, "sink");
+   Evas_Object *fr = data;
+   Emix_Sink *sink = evas_object_data_get(fr, "sink");
    double vol = elm_slider_value_get(obj);
    VOLSET(vol, sink->volume, sink, emix_sink_volume_set);
    elm_slider_value_set(obj, vol);
@@ -68,8 +68,8 @@ _cb_sink_volume_channel_change(void *data,
                        Evas_Object *obj,
                        void *event_info EINA_UNUSED)
 {
-   Evas_Object *bxv = data;
-   Emix_Sink *sink = evas_object_data_get(bxv, "sink");
+   Evas_Object *fr = data;
+   Emix_Sink *sink = evas_object_data_get(fr, "sink");
    double vol = elm_slider_value_get(obj);
    sink->volume.volumes[(uintptr_t)evas_object_data_get(obj, "channel")] = vol;
    elm_slider_value_set(obj, vol);
@@ -82,16 +82,16 @@ _cb_sink_mute_change(void *data,
                      Evas_Object *obj,
                      void *event_info EINA_UNUSED)
 {
-   Evas_Object *bxv = data;
-   Emix_Sink *sink = evas_object_data_get(bxv, "sink");
-   Evas_Object *lock = evas_object_data_get(bxv, "lock");
+   Evas_Object *fr = data;
+   Emix_Sink *sink = evas_object_data_get(fr, "sink");
+   Evas_Object *lock = evas_object_data_get(fr, "lock");
    Eina_Bool mute = elm_check_state_get(obj);
    Eina_List *l;
    Evas_Object *o;
 
    if (lock && !elm_check_state_get(lock))
      {
-        EINA_LIST_FOREACH(evas_object_data_get(bxv, "volumes"), l, o)
+        EINA_LIST_FOREACH(evas_object_data_get(fr, "volumes"), l, o)
           {
              elm_object_disabled_set(o, mute);
              o = evas_object_data_get(o, "lb");
@@ -100,7 +100,7 @@ _cb_sink_mute_change(void *data,
      }
    else
      {
-        o = evas_object_data_get(bxv, "volume");
+        o = evas_object_data_get(fr, "volume");
         elm_object_disabled_set(o, mute);
      }
    emix_sink_mute_set(sink, mute);
@@ -111,24 +111,24 @@ _cb_sink_lock_change(void *data,
                      Evas_Object *obj,
                      void *event_info EINA_UNUSED)
 {
-   Evas_Object *bxv = data;
-   Emix_Sink *sink = evas_object_data_get(bxv, "sink");
-   Evas_Object *bx = evas_object_data_get(bxv, "volume_bx");
+   Evas_Object *fr = data;
+   Emix_Sink *sink = evas_object_data_get(fr, "sink");
+   Evas_Object *bx = evas_object_data_get(fr, "volume_bx");
    Eina_Bool lock = elm_check_state_get(obj);
    if (lock)
      VOLSET(sink->volume.volumes[0], sink->volume,
             sink, emix_sink_volume_set);
-   _emix_sink_volume_fill(sink, bxv, bx, lock);
+   _emix_sink_volume_fill(sink, fr, bx, lock);
 }
 
 static void
-_emix_sink_volume_fill(Emix_Sink *sink, Evas_Object *bxv, Evas_Object *bx, Eina_Bool locked)
+_emix_sink_volume_fill(Emix_Sink *sink, Evas_Object *fr, Evas_Object *bx, Eina_Bool locked)
 {
    Evas_Object *bxhv, *sl, *ck, *lb;
    Eina_List *sls = NULL;
    unsigned int i;
 
-   eina_list_free(evas_object_data_get(bxv, "volumes"));
+   eina_list_free(evas_object_data_get(fr, "volumes"));
    elm_box_clear(bx);
 
    bxhv = elm_box_add(bx);
@@ -140,7 +140,7 @@ _emix_sink_volume_fill(Emix_Sink *sink, Evas_Object *bxv, Evas_Object *bx, Eina_
    if (locked)
      {
         sl = elm_slider_add(bx);
-        evas_object_data_set(bxv, "volume", sl);
+        evas_object_data_set(fr, "volume", sl);
         elm_slider_min_max_set(sl, 0.0, emix_max_volume_get());
         elm_slider_span_size_set(sl, emix_max_volume_get() * elm_config_scale_get());
         elm_slider_unit_format_set(sl, "%1.0f");
@@ -150,7 +150,7 @@ _emix_sink_volume_fill(Emix_Sink *sink, Evas_Object *bxv, Evas_Object *bx, Eina_
         elm_slider_value_set(sl, sink->volume.volumes[0]);
         elm_box_pack_end(bxhv, sl);
         evas_object_show(sl);
-        evas_object_smart_callback_add(sl, "changed", _cb_sink_volume_change, bxv);
+        evas_object_smart_callback_add(sl, "changed", _cb_sink_volume_change, fr);
         elm_object_disabled_set(sl, sink->mute);
      }
    else
@@ -184,34 +184,34 @@ _emix_sink_volume_fill(Emix_Sink *sink, Evas_Object *bxv, Evas_Object *bx, Eina_
              elm_slider_value_set(sl, sink->volume.volumes[i]);
              elm_box_pack_end(bxhv, sl);
              evas_object_show(sl);
-             evas_object_smart_callback_add(sl, "changed", _cb_sink_volume_channel_change, bxv);
+             evas_object_smart_callback_add(sl, "changed", _cb_sink_volume_channel_change, fr);
              elm_object_disabled_set(sl, sink->mute);
              sls = eina_list_append(sls, sl);
           }
      }
-   evas_object_data_set(bxv, "volumes", sls);
+   evas_object_data_set(fr, "volumes", sls);
 
    bxhv = elm_box_add(bx);
    elm_box_pack_end(bx, bxhv);
    evas_object_show(bxhv);
 
    ck = elm_check_add(bx);
-   evas_object_data_set(bxv, "mute", ck);
+   evas_object_data_set(fr, "mute", ck);
    elm_object_text_set(ck, "Mute");
    elm_check_state_set(ck, sink->mute);
    elm_box_pack_end(bxhv, ck);
    evas_object_show(ck);
-   evas_object_smart_callback_add(ck, "changed", _cb_sink_mute_change, bxv);
+   evas_object_smart_callback_add(ck, "changed", _cb_sink_mute_change, fr);
 
    if (sink->volume.channel_count > 1)
      {
         ck = elm_check_add(bx);
         elm_object_text_set(ck, "Lock");
-        evas_object_data_set(bxv, "lock", ck);
+        evas_object_data_set(fr, "lock", ck);
         elm_check_state_set(ck, locked);
         elm_box_pack_end(bxhv, ck);
         evas_object_show(ck);
-        evas_object_smart_callback_add(ck, "changed", _cb_sink_lock_change, bxv);
+        evas_object_smart_callback_add(ck, "changed", _cb_sink_lock_change, fr);
      }
 }
 
@@ -220,15 +220,20 @@ _emix_sink_volume_fill(Emix_Sink *sink, Evas_Object *bxv, Evas_Object *bx, Eina_
 static void
 _emix_sink_add(Emix_Sink *sink)
 {
-   Evas_Object *bxv, *bx, *lb, *hv, *sep;
+   Evas_Object *bxv, *bx, *lb, *hv, *sep, *fr;
    const Eina_List *l;
    Emix_Port *port;
    Eina_Bool locked = EINA_TRUE;
    unsigned int i;
 
+   fr = elm_frame_add(win);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, 0.0);
+   elm_object_style_set(fr, "pad_medium");
+   sink_list = eina_list_append(sink_list, fr);
+   evas_object_data_set(fr, "sink", sink);
+
    bxv = elm_box_add(win);
-   sink_list = eina_list_append(sink_list, bxv);
-   evas_object_data_set(bxv, "sink", sink);
    evas_object_size_hint_weight_set(bxv, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bxv, EVAS_HINT_FILL, 0.0);
 
@@ -247,8 +252,8 @@ _emix_sink_add(Emix_Sink *sink)
    evas_object_show(lb);
 
    hv = elm_hoversel_add(win);
-   evas_object_data_set(hv, "parent", bxv);
-   evas_object_data_set(bxv, "port", hv);
+   evas_object_data_set(hv, "parent", fr);
+   evas_object_data_set(fr, "port", hv);
    elm_hoversel_hover_parent_set(hv, win);
    EINA_LIST_FOREACH(sink->ports, l, port)
      {
@@ -274,7 +279,7 @@ _emix_sink_add(Emix_Sink *sink)
      }
 
    bx = elm_box_add(bxv);
-   evas_object_data_set(bxv, "volume_bx", bx);
+   evas_object_data_set(fr, "volume_bx", bx);
    elm_box_horizontal_set(bx, EINA_TRUE);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, 0.5);
@@ -282,30 +287,35 @@ _emix_sink_add(Emix_Sink *sink)
    evas_object_show(bx);
 
 
-   _emix_sink_volume_fill(sink, bxv, bx, locked);
+   _emix_sink_volume_fill(sink, fr, bx, locked);
+
+   elm_object_content_set(fr, bxv);
+   evas_object_show(bxv);
+
+   elm_box_pack_end(sink_box, fr);
+   evas_object_show(fr);
 
    sep = elm_separator_add(win);
+   evas_object_data_set(fr, "extra", sep);
    elm_separator_horizontal_set(sep, EINA_TRUE);
    evas_object_size_hint_weight_set(sep, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(sep, EVAS_HINT_FILL, 0.0);
-   elm_box_pack_end(bxv, sep);
+   elm_box_pack_end(sink_box, sep);
    evas_object_show(sep);
-
-   elm_box_pack_end(sink_box, bxv);
-   evas_object_show(bxv);
 }
 
 static void
 _emix_sink_del(Emix_Sink *sink)
 {
    Eina_List *l;
-   Evas_Object *bxv;
-   EINA_LIST_FOREACH(sink_list, l, bxv)
+   Evas_Object *fr;
+   EINA_LIST_FOREACH(sink_list, l, fr)
      {
-        if (evas_object_data_get(bxv, "sink") == sink)
+        if (evas_object_data_get(fr, "sink") == sink)
           {
              sink_list = eina_list_remove_list(sink_list, l);
-             evas_object_del(bxv);
+             evas_object_del(evas_object_data_get(fr, "extra"));
+             evas_object_del(fr);
              return;
           }
      }
@@ -316,15 +326,15 @@ _emix_sink_change(Emix_Sink *sink)
 {
    const Eina_List *l;
    Eina_List *ll;
-   Evas_Object *bxv, *hv, *ck, *sl, *lb;
+   Evas_Object *fr, *hv, *ck, *sl, *lb;
    Emix_Port *port;
 
-   EINA_LIST_FOREACH(sink_list, l, bxv)
+   EINA_LIST_FOREACH(sink_list, l, fr)
      {
-        if (evas_object_data_get(bxv, "sink") == sink) break;
+        if (evas_object_data_get(fr, "sink") == sink) break;
      }
    if (!l) return;
-   hv = evas_object_data_get(bxv, "port");
+   hv = evas_object_data_get(fr, "port");
    elm_hoversel_clear(hv);
    EINA_LIST_FOREACH(sink->ports, l, port)
      {
@@ -333,13 +343,13 @@ _emix_sink_change(Emix_Sink *sink)
                               _cb_sink_port_change, port);
         if (port->active) elm_object_text_set(hv, port->description);
      }
-   ck = evas_object_data_get(bxv, "lock");
+   ck = evas_object_data_get(fr, "lock");
 
    if (ck && !elm_check_state_get(ck))
      {
-        ck = evas_object_data_get(bxv, "mute");
+        ck = evas_object_data_get(fr, "mute");
         elm_check_state_set(ck, sink->mute);
-        EINA_LIST_FOREACH(evas_object_data_get(bxv, "volumes"), ll, sl)
+        EINA_LIST_FOREACH(evas_object_data_get(fr, "volumes"), ll, sl)
           {
              elm_slider_value_set(sl,
                                   sink->volume.volumes[(uintptr_t)evas_object_data_get(sl, "channel")]);
@@ -350,10 +360,10 @@ _emix_sink_change(Emix_Sink *sink)
      }
    else
      {
-        ck = evas_object_data_get(bxv, "mute");
+        ck = evas_object_data_get(fr, "mute");
         elm_check_state_set(ck, sink->mute);
 
-        sl = evas_object_data_get(bxv, "volume");
+        sl = evas_object_data_get(fr, "volume");
         elm_slider_value_set(sl, sink->volume.volumes[0]);
         elm_object_disabled_set(sl, sink->mute);
      }
@@ -361,7 +371,7 @@ _emix_sink_change(Emix_Sink *sink)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-static void _emix_sink_input_volume_fill(Emix_Sink_Input *input, Evas_Object *bxv, Evas_Object *bx, Eina_Bool locked);
+static void _emix_sink_input_volume_fill(Emix_Sink_Input *input, Evas_Object *fr, Evas_Object *bx, Eina_Bool locked);
 
 static void
 _cb_sink_input_port_change(void *data,
@@ -369,8 +379,8 @@ _cb_sink_input_port_change(void *data,
                            void *event_info EINA_UNUSED)
 {
    Emix_Sink *sink = data;
-   Evas_Object *bxv = evas_object_data_get(obj, "parent");
-   Emix_Sink_Input *input = evas_object_data_get(bxv, "input");
+   Evas_Object *fr = evas_object_data_get(obj, "parent");
+   Emix_Sink_Input *input = evas_object_data_get(fr, "input");
    elm_object_text_set(obj, sink->name);
    emix_sink_input_sink_change(input, sink);
 }
@@ -380,8 +390,8 @@ _cb_sink_input_volume_change(void *data,
                              Evas_Object *obj,
                              void *event_info EINA_UNUSED)
 {
-   Evas_Object *bxv = data;
-   Emix_Sink_Input *input = evas_object_data_get(bxv, "input");
+   Evas_Object *fr = data;
+   Emix_Sink_Input *input = evas_object_data_get(fr, "input");
    double vol = elm_slider_value_get(obj);
    VOLSET(vol, input->volume, input, emix_sink_input_volume_set);
    elm_slider_value_set(obj, vol);
@@ -392,8 +402,8 @@ _cb_sink_input_volume_channel_change(void *data,
                                      Evas_Object *obj,
                                      void *event_info EINA_UNUSED)
 {
-   Evas_Object *bxv = data;
-   Emix_Sink_Input *input = evas_object_data_get(bxv, "input");
+   Evas_Object *fr = data;
+   Emix_Sink_Input *input = evas_object_data_get(fr, "input");
    double vol = elm_slider_value_get(obj);
    input->volume.volumes[(uintptr_t)evas_object_data_get(obj, "channel")] = vol;
    elm_slider_value_set(obj, vol);
@@ -405,8 +415,8 @@ _cb_sink_input_volume_drag_stop(void *data,
                                 Evas_Object *obj,
                                 void *event EINA_UNUSED)
 {
-   Evas_Object *bxv = data;
-   Emix_Sink_Input *input = evas_object_data_get(bxv, "input");
+   Evas_Object *fr = data;
+   Emix_Sink_Input *input = evas_object_data_get(fr, "input");
    int vol = input->volume.volumes[0];
    elm_slider_value_set(obj, vol);
 }
@@ -416,8 +426,8 @@ _cb_sink_input_volume_channel_drag_stop(void *data,
                                         Evas_Object *obj,
                                         void *event EINA_UNUSED)
 {
-   Evas_Object *bxv = data;
-   Emix_Sink_Input *input = evas_object_data_get(bxv, "input");
+   Evas_Object *fr = data;
+   Emix_Sink_Input *input = evas_object_data_get(fr, "input");
    int vol = input->volume.volumes[(uintptr_t)evas_object_data_get(obj, "channel")];
    elm_slider_value_set(obj, vol);
 }
@@ -427,17 +437,17 @@ _cb_sink_input_mute_change(void *data,
                            Evas_Object *obj,
                            void *event_info EINA_UNUSED)
 {
-   Evas_Object *bxv = data;
-   Emix_Sink_Input *input = evas_object_data_get(bxv, "input");
+   Evas_Object *fr = data;
+   Emix_Sink_Input *input = evas_object_data_get(fr, "input");
    Evas_Object *sl;
-   Evas_Object *lock = evas_object_data_get(bxv, "lock");
+   Evas_Object *lock = evas_object_data_get(fr, "lock");
    Eina_Bool mute = elm_check_state_get(obj);
    Evas_Object *lb;
    Eina_List *l;
 
    if (lock && !elm_check_state_get(lock))
      {
-        EINA_LIST_FOREACH(evas_object_data_get(bxv, "volumes"), l, sl)
+        EINA_LIST_FOREACH(evas_object_data_get(fr, "volumes"), l, sl)
           {
              elm_object_disabled_set(sl, mute);
              lb = evas_object_data_get(sl, "lb");
@@ -446,7 +456,7 @@ _cb_sink_input_mute_change(void *data,
      }
    else
      {
-        sl = evas_object_data_get(bxv, "volume");
+        sl = evas_object_data_get(fr, "volume");
         elm_object_disabled_set(sl, mute);
      }
    emix_sink_input_mute_set(input, mute);
@@ -457,24 +467,24 @@ _cb_sink_input_lock_change(void *data,
                            Evas_Object *obj,
                            void *event_info EINA_UNUSED)
 {
-   Evas_Object *bxv = data;
-   Emix_Sink_Input *input = evas_object_data_get(bxv, "input");
-   Evas_Object *bx = evas_object_data_get(bxv, "volume_bx");
+   Evas_Object *fr = data;
+   Emix_Sink_Input *input = evas_object_data_get(fr, "input");
+   Evas_Object *bx = evas_object_data_get(fr, "volume_bx");
    Eina_Bool lock = elm_check_state_get(obj);
    if (lock)
      VOLSET(input->volume.volumes[0], input->volume,
             input, emix_sink_input_volume_set);
-   _emix_sink_input_volume_fill(input, bxv, bx, lock);
+   _emix_sink_input_volume_fill(input, fr, bx, lock);
 }
 
 static void
-_emix_sink_input_volume_fill(Emix_Sink_Input *input, Evas_Object *bxv, Evas_Object *bx, Eina_Bool locked)
+_emix_sink_input_volume_fill(Emix_Sink_Input *input, Evas_Object *fr, Evas_Object *bx, Eina_Bool locked)
 {
    Evas_Object *bxhv, *lb, *sl = NULL, *ck;
    unsigned int i;
    Eina_List *sls = NULL, *l;
 
-   eina_list_free(evas_object_data_get(bxv, "volumes"));
+   eina_list_free(evas_object_data_get(fr, "volumes"));
    elm_box_clear(bx);
 
    bxhv = elm_box_add(bx);
@@ -486,7 +496,7 @@ _emix_sink_input_volume_fill(Emix_Sink_Input *input, Evas_Object *bxv, Evas_Obje
    if (locked)
      {
         sl = elm_slider_add(bx);
-        evas_object_data_set(bxv, "volume", sl);
+        evas_object_data_set(fr, "volume", sl);
         elm_slider_min_max_set(sl, 0.0, emix_max_volume_get());
         elm_slider_span_size_set(sl, (emix_max_volume_get()) * elm_config_scale_get());
         elm_slider_unit_format_set(sl, "%1.0f");
@@ -497,9 +507,9 @@ _emix_sink_input_volume_fill(Emix_Sink_Input *input, Evas_Object *bxv, Evas_Obje
         elm_box_pack_end(bxhv, sl);
         evas_object_show(sl);
         evas_object_smart_callback_add(sl, "changed",
-                                       _cb_sink_input_volume_change, bxv);
+                                       _cb_sink_input_volume_change, fr);
         evas_object_smart_callback_add(sl, "slider,drag,stop",
-                                       _cb_sink_input_volume_drag_stop, bxv);
+                                       _cb_sink_input_volume_drag_stop, fr);
 
      }
    else
@@ -534,22 +544,22 @@ _emix_sink_input_volume_fill(Emix_Sink_Input *input, Evas_Object *bxv, Evas_Obje
              elm_box_pack_end(bxhv, sl);
              evas_object_show(sl);
              evas_object_smart_callback_add(sl, "changed",
-                                            _cb_sink_input_volume_channel_change, bxv);
+                                            _cb_sink_input_volume_channel_change, fr);
              evas_object_smart_callback_add(sl, "slider,drag,stop",
-                                            _cb_sink_input_volume_channel_drag_stop, bxv);
+                                            _cb_sink_input_volume_channel_drag_stop, fr);
              elm_object_disabled_set(sl, input->mute);
              sls = eina_list_append(sls, sl);
           }
         sl = NULL;
      }
-   evas_object_data_set(bxv, "volumes", sls);
+   evas_object_data_set(fr, "volumes", sls);
 
    bxhv = elm_box_add(bx);
    elm_box_pack_end(bx, bxhv);
    evas_object_show(bxhv);
 
    ck = elm_check_add(bx);
-   evas_object_data_set(bxv, "mute", ck);
+   evas_object_data_set(fr, "mute", ck);
    elm_object_text_set(ck, "Mute");
    elm_check_state_set(ck, input->mute);
    if (sl) elm_object_disabled_set(sl, input->mute);
@@ -563,18 +573,18 @@ _emix_sink_input_volume_fill(Emix_Sink_Input *input, Evas_Object *bxv, Evas_Obje
    elm_box_pack_end(bxhv, ck);
    evas_object_show(ck);
    evas_object_smart_callback_add(ck, "changed",
-                                  _cb_sink_input_mute_change, bxv);
+                                  _cb_sink_input_mute_change, fr);
 
    if (input->volume.channel_count > 1)
      {
         ck = elm_check_add(bx);
-        evas_object_data_set(bxv, "lock", ck);
+        evas_object_data_set(fr, "lock", ck);
         elm_object_text_set(ck, "Lock");
         elm_check_state_set(ck, locked);
         elm_box_pack_end(bxhv, ck);
         evas_object_show(ck);
         evas_object_smart_callback_add(ck, "changed",
-                                       _cb_sink_input_lock_change, bxv);
+                                       _cb_sink_input_lock_change, fr);
      }
 }
 
@@ -582,15 +592,20 @@ _emix_sink_input_volume_fill(Emix_Sink_Input *input, Evas_Object *bxv, Evas_Obje
 static void
 _emix_sink_input_add(Emix_Sink_Input *input)
 {
-   Evas_Object *bxv, *bx, *lb, *hv, *sep, *ic;
+   Evas_Object *bxv, *bx, *lb, *hv, *sep, *ic, *fr;
    const Eina_List *l;
    Emix_Sink *sink;
    Eina_Bool locked = EINA_TRUE;
    unsigned int i;
 
+   fr = elm_frame_add(win);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, 0.0);
+   elm_object_style_set(fr, "pad_medium");
+   sink_input_list = eina_list_append(sink_input_list, fr);
+   evas_object_data_set(fr, "input", input);
+
    bxv = elm_box_add(win);
-   sink_input_list = eina_list_append(sink_input_list, bxv);
-   evas_object_data_set(bxv, "input", input);
    evas_object_size_hint_weight_set(bxv, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bxv, EVAS_HINT_FILL, 0.0);
 
@@ -617,8 +632,8 @@ _emix_sink_input_add(Emix_Sink_Input *input)
    evas_object_show(lb);
 
    hv = elm_hoversel_add(win);
-   evas_object_data_set(hv, "parent", bxv);
-   evas_object_data_set(bxv, "port", hv);
+   evas_object_data_set(hv, "parent", fr);
+   evas_object_data_set(fr, "port", hv);
    elm_hoversel_hover_parent_set(hv, win);
    EINA_LIST_FOREACH(emix_sinks_get(), l, sink)
      {
@@ -633,7 +648,7 @@ _emix_sink_input_add(Emix_Sink_Input *input)
    evas_object_show(hv);
 
    bx = elm_box_add(win);
-   evas_object_data_set(bxv, "volume_bx", bx);
+   evas_object_data_set(fr, "volume_bx", bx);
    elm_box_horizontal_set(bx, EINA_TRUE);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, 0.5);
@@ -651,30 +666,35 @@ _emix_sink_input_add(Emix_Sink_Input *input)
           }
      }
 
-   _emix_sink_input_volume_fill(input, bxv, bx, locked);
+   _emix_sink_input_volume_fill(input, fr, bx, locked);
+
+   elm_object_content_set(fr, bxv);
+   evas_object_show(bxv);
+
+   elm_box_pack_end(sink_input_box, fr);
+   evas_object_show(fr);
 
    sep = elm_separator_add(win);
+   evas_object_data_set(fr, "extra", sep);
    elm_separator_horizontal_set(sep, EINA_TRUE);
    evas_object_size_hint_weight_set(sep, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(sep, EVAS_HINT_FILL, 0.0);
-   elm_box_pack_end(bxv, sep);
+   elm_box_pack_end(sink_input_box, sep);
    evas_object_show(sep);
-
-   elm_box_pack_end(sink_input_box, bxv);
-   evas_object_show(bxv);
 }
 
 static void
 _emix_sink_input_del(Emix_Sink_Input *input)
 {
    Eina_List *l;
-   Evas_Object *bxv;
-   EINA_LIST_FOREACH(sink_input_list, l, bxv)
+   Evas_Object *fr;
+   EINA_LIST_FOREACH(sink_input_list, l, fr)
      {
-        if (evas_object_data_get(bxv, "input") == input)
+        if (evas_object_data_get(fr, "input") == input)
           {
              sink_input_list = eina_list_remove_list(sink_input_list, l);
-             evas_object_del(bxv);
+             evas_object_del(evas_object_data_get(fr, "extra"));
+             evas_object_del(fr);
              return;
           }
      }
@@ -685,15 +705,15 @@ _emix_sink_input_change(Emix_Sink_Input *input)
 {
    const Eina_List *l;
    Eina_List *ll;
-   Evas_Object *bxv, *hv, *ck, *sl, *lb;
+   Evas_Object *fr, *hv, *ck, *sl, *lb;
    Emix_Sink *sink;
 
-   EINA_LIST_FOREACH(sink_input_list, l, bxv)
+   EINA_LIST_FOREACH(sink_input_list, l, fr)
      {
-        if (evas_object_data_get(bxv, "input") == input) break;
+        if (evas_object_data_get(fr, "input") == input) break;
      }
    if (!l) return;
-   hv = evas_object_data_get(bxv, "port");
+   hv = evas_object_data_get(fr, "port");
    elm_hoversel_clear(hv);
    EINA_LIST_FOREACH(emix_sinks_get(), l, sink)
      {
@@ -703,13 +723,13 @@ _emix_sink_input_change(Emix_Sink_Input *input)
         if (input->sink == sink) elm_object_text_set(hv, sink->name);
      }
 
-   ck = evas_object_data_get(bxv, "lock");
+   ck = evas_object_data_get(fr, "lock");
 
    if (ck && !elm_check_state_get(ck))
      {
-        ck = evas_object_data_get(bxv, "mute");
+        ck = evas_object_data_get(fr, "mute");
         elm_check_state_set(ck, input->mute);
-        EINA_LIST_FOREACH(evas_object_data_get(bxv, "volumes"), ll, sl)
+        EINA_LIST_FOREACH(evas_object_data_get(fr, "volumes"), ll, sl)
           {
              elm_slider_value_set(sl,
                                   input->volume.volumes[(uintptr_t)evas_object_data_get(sl, "channel")]);
@@ -720,25 +740,25 @@ _emix_sink_input_change(Emix_Sink_Input *input)
      }
    else
      {
-        ck = evas_object_data_get(bxv, "mute");
+        ck = evas_object_data_get(fr, "mute");
         elm_check_state_set(ck, input->mute);
 
-        sl = evas_object_data_get(bxv, "volume");
+        sl = evas_object_data_get(fr, "volume");
         elm_slider_value_set(sl, input->volume.volumes[0]);
         elm_object_disabled_set(sl, input->mute);
      }
 }
 
 //////////////////////////////////////////////////////////////////////////////
-static void _emix_source_volume_fill(Emix_Source *source, Evas_Object *bxv, Evas_Object *bx, Eina_Bool locked);
+static void _emix_source_volume_fill(Emix_Source *source, Evas_Object *fr, Evas_Object *bx, Eina_Bool locked);
 
 static void
 _cb_source_volume_change(void *data,
                          Evas_Object *obj,
                          void *event_info EINA_UNUSED)
 {
-   Evas_Object *bxv = data;
-   Emix_Source *source = evas_object_data_get(bxv, "source");
+   Evas_Object *fr = data;
+   Emix_Source *source = evas_object_data_get(fr, "source");
    double vol = elm_slider_value_get(obj);
    VOLSET(vol, source->volume, source, emix_source_volume_set);
    elm_slider_value_set(obj, vol);
@@ -749,8 +769,8 @@ _cb_source_volume_channel_change(void *data,
                          Evas_Object *obj,
                          void *event_info EINA_UNUSED)
 {
-   Evas_Object *bxv = data;
-   Emix_Source *source = evas_object_data_get(bxv, "source");
+   Evas_Object *fr = data;
+   Emix_Source *source = evas_object_data_get(fr, "source");
    double vol = elm_slider_value_get(obj);
    source->volume.volumes[(uintptr_t)evas_object_data_get(obj, "channel")] = vol;
    elm_slider_value_set(obj, vol);
@@ -763,8 +783,8 @@ _cb_source_volume_drag_stop(void *data,
                             Evas_Object *obj,
                             void *event EINA_UNUSED)
 {
-   Evas_Object *bxv = data;
-   Emix_Source *source = evas_object_data_get(bxv, "source");
+   Evas_Object *fr = data;
+   Emix_Source *source = evas_object_data_get(fr, "source");
    int vol = source->volume.volumes[0];
    elm_slider_value_set(obj, vol);
 }
@@ -774,8 +794,8 @@ _cb_source_volume_channel_drag_stop(void *data,
                             Evas_Object *obj,
                             void *event EINA_UNUSED)
 {
-   Evas_Object *bxv = data;
-   Emix_Source *source = evas_object_data_get(bxv, "source");
+   Evas_Object *fr = data;
+   Emix_Source *source = evas_object_data_get(fr, "source");
    int vol = source->volume.volumes[(uintptr_t)evas_object_data_get(obj, "channel")];
    elm_slider_value_set(obj, vol);
 }
@@ -785,17 +805,17 @@ _cb_source_mute_change(void *data,
                        Evas_Object *obj,
                        void *event_info EINA_UNUSED)
 {
-   Evas_Object *bxv = data;
-   Emix_Source *source = evas_object_data_get(bxv, "source");
+   Evas_Object *fr = data;
+   Emix_Source *source = evas_object_data_get(fr, "source");
    Evas_Object *sl;
-   Evas_Object *lock = evas_object_data_get(bxv, "lock");
+   Evas_Object *lock = evas_object_data_get(fr, "lock");
    Eina_Bool mute = elm_check_state_get(obj);
    Evas_Object *lb;
    Eina_List *l;
 
    if (lock && !elm_check_state_get(lock))
      {
-        EINA_LIST_FOREACH(evas_object_data_get(bxv, "volumes"), l, sl)
+        EINA_LIST_FOREACH(evas_object_data_get(fr, "volumes"), l, sl)
           {
              elm_object_disabled_set(sl, mute);
              lb = evas_object_data_get(sl, "lb");
@@ -804,7 +824,7 @@ _cb_source_mute_change(void *data,
      }
    else
      {
-        sl = evas_object_data_get(bxv, "volume");
+        sl = evas_object_data_get(fr, "volume");
         elm_object_disabled_set(sl, mute);
      }
    emix_source_mute_set(source, mute);
@@ -815,24 +835,24 @@ _cb_source_lock_change(void *data,
                        Evas_Object *obj,
                        void *event_info EINA_UNUSED)
 {
-   Evas_Object *bxv = data;
-   Emix_Source *source = evas_object_data_get(bxv, "source");
-   Evas_Object *bx = evas_object_data_get(bxv, "volume_bx");
+   Evas_Object *fr = data;
+   Emix_Source *source = evas_object_data_get(fr, "source");
+   Evas_Object *bx = evas_object_data_get(fr, "volume_bx");
    Eina_Bool lock = elm_check_state_get(obj);
    if (lock)
      VOLSET(source->volume.volumes[0], source->volume,
             source, emix_source_volume_set);
-   _emix_source_volume_fill(source, bxv, bx, lock);
+   _emix_source_volume_fill(source, fr, bx, lock);
 }
 
 static void
-_emix_source_volume_fill(Emix_Source *source, Evas_Object *bxv, Evas_Object *bx, Eina_Bool locked)
+_emix_source_volume_fill(Emix_Source *source, Evas_Object *fr, Evas_Object *bx, Eina_Bool locked)
 {
    Evas_Object *bxhv, *lb, *sl, *ck;
    Eina_List *sls = NULL;
    unsigned int i;
 
-   eina_list_free(evas_object_data_get(bxv, "volumes"));
+   eina_list_free(evas_object_data_get(fr, "volumes"));
    elm_box_clear(bx);
 
    bxhv = elm_box_add(bx);
@@ -844,7 +864,7 @@ _emix_source_volume_fill(Emix_Source *source, Evas_Object *bxv, Evas_Object *bx,
    if (locked)
      {
         sl = elm_slider_add(bx);
-        evas_object_data_set(bxv, "volume", sl);
+        evas_object_data_set(fr, "volume", sl);
         elm_slider_min_max_set(sl, 0.0, emix_max_volume_get());
         elm_slider_span_size_set(sl, (emix_max_volume_get()) * elm_config_scale_get());
         elm_slider_unit_format_set(sl, "%1.0f");
@@ -855,9 +875,9 @@ _emix_source_volume_fill(Emix_Source *source, Evas_Object *bxv, Evas_Object *bx,
         elm_box_pack_end(bxhv, sl);
         evas_object_show(sl);
         evas_object_smart_callback_add(sl, "changed",
-                                       _cb_source_volume_change, bxv);
+                                       _cb_source_volume_change, fr);
         evas_object_smart_callback_add(sl, "slider,drag,stop",
-                                       _cb_source_volume_drag_stop, bxv);
+                                       _cb_source_volume_drag_stop, fr);
         elm_object_disabled_set(sl, source->mute);
      }
    else
@@ -892,38 +912,38 @@ _emix_source_volume_fill(Emix_Source *source, Evas_Object *bxv, Evas_Object *bx,
              elm_box_pack_end(bxhv, sl);
              evas_object_show(sl);
              evas_object_smart_callback_add(sl, "changed",
-                                            _cb_source_volume_channel_change, bxv);
+                                            _cb_source_volume_channel_change, fr);
              evas_object_smart_callback_add(sl, "slider,drag,stop",
-                                            _cb_source_volume_channel_drag_stop, bxv);
+                                            _cb_source_volume_channel_drag_stop, fr);
              elm_object_disabled_set(sl, source->mute);
              sls = eina_list_append(sls, sl);
           }
      }
-   evas_object_data_set(bxv, "volumes", sls);
+   evas_object_data_set(fr, "volumes", sls);
 
    bxhv = elm_box_add(bx);
    elm_box_pack_end(bx, bxhv);
    evas_object_show(bxhv);
 
    ck = elm_check_add(bx);
-   evas_object_data_set(bxv, "mute", ck);
+   evas_object_data_set(fr, "mute", ck);
    elm_object_text_set(ck, "Mute");
    elm_check_state_set(ck, source->mute);
    elm_box_pack_end(bxhv, ck);
    evas_object_show(ck);
    evas_object_smart_callback_add(ck, "changed",
-                                  _cb_source_mute_change, bxv);
+                                  _cb_source_mute_change, fr);
 
    if (source->volume.channel_count > 1)
      {
         ck = elm_check_add(bx);
-        evas_object_data_set(bxv, "lock", ck);
+        evas_object_data_set(fr, "lock", ck);
         elm_object_text_set(ck, "Lock");
         elm_check_state_set(ck, locked);
         elm_box_pack_end(bxhv, ck);
         evas_object_show(ck);
         evas_object_smart_callback_add(ck, "changed",
-                                       _cb_source_lock_change, bxv);
+                                       _cb_source_lock_change, fr);
      }
 }
 
@@ -931,13 +951,18 @@ _emix_source_volume_fill(Emix_Source *source, Evas_Object *bxv, Evas_Object *bx,
 static void
 _emix_source_add(Emix_Source *source)
 {
-   Evas_Object *bxv, *bx, *lb, *sep;
+   Evas_Object *bxv, *bx, *lb, *sep, *fr;
    unsigned int i;
    Eina_Bool locked = EINA_TRUE;
 
+   fr = elm_frame_add(win);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, 0.0);
+   elm_object_style_set(fr, "pad_medium");
+   source_list = eina_list_append(source_list, fr);
+   evas_object_data_set(fr, "source", source);
+
    bxv = elm_box_add(win);
-   source_list = eina_list_append(source_list, bxv);
-   evas_object_data_set(bxv, "source", source);
    evas_object_size_hint_weight_set(bxv, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bxv, EVAS_HINT_FILL, 0.0);
 
@@ -956,7 +981,7 @@ _emix_source_add(Emix_Source *source)
    evas_object_show(lb);
 
    bx = elm_box_add(win);
-   evas_object_data_set(bxv, "volume_bx", bx);
+   evas_object_data_set(fr, "volume_bx", bx);
    elm_box_horizontal_set(bx, EINA_TRUE);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, 0.5);
@@ -974,31 +999,36 @@ _emix_source_add(Emix_Source *source)
           }
      }
 
-   _emix_source_volume_fill(source, bxv, bx, locked);
+   _emix_source_volume_fill(source, fr, bx, locked);
 
+
+   elm_object_content_set(fr, bxv);
+   evas_object_show(bxv);
+
+   elm_box_pack_end(source_box, fr);
+   evas_object_show(fr);
 
    sep = elm_separator_add(win);
+   evas_object_data_set(fr, "extra", sep);
    elm_separator_horizontal_set(sep, EINA_TRUE);
    evas_object_size_hint_weight_set(sep, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(sep, EVAS_HINT_FILL, 0.0);
-   elm_box_pack_end(bxv, sep);
+   elm_box_pack_end(source_box, sep);
    evas_object_show(sep);
-
-   elm_box_pack_end(source_box, bxv);
-   evas_object_show(bxv);
 }
 
 static void
 _emix_source_del(Emix_Source *source)
 {
    Eina_List *l;
-   Evas_Object *bxv;
-   EINA_LIST_FOREACH(source_list, l, bxv)
+   Evas_Object *fr;
+   EINA_LIST_FOREACH(source_list, l, fr)
      {
-        if (evas_object_data_get(bxv, "source") == source)
+        if (evas_object_data_get(fr, "source") == source)
           {
              source_list = eina_list_remove_list(source_list, l);
-             evas_object_del(bxv);
+             evas_object_del(evas_object_data_get(fr, "extra"));
+             evas_object_del(fr);
              return;
           }
      }
@@ -1009,21 +1039,21 @@ _emix_source_change(Emix_Source *source)
 {
    const Eina_List *l;
    Eina_List *ll;
-   Evas_Object *bxv, *ck, *sl, *lb;
+   Evas_Object *fr, *ck, *sl, *lb;
 
-   EINA_LIST_FOREACH(source_list, l, bxv)
+   EINA_LIST_FOREACH(source_list, l, fr)
      {
-        if (evas_object_data_get(bxv, "source") == source) break;
+        if (evas_object_data_get(fr, "source") == source) break;
      }
    if (!l) return;
 
-   ck = evas_object_data_get(bxv, "lock");
+   ck = evas_object_data_get(fr, "lock");
 
    if (ck && !elm_check_state_get(ck))
      {
-        ck = evas_object_data_get(bxv, "mute");
+        ck = evas_object_data_get(fr, "mute");
         elm_check_state_set(ck, source->mute);
-        EINA_LIST_FOREACH(evas_object_data_get(bxv, "volumes"), ll, sl)
+        EINA_LIST_FOREACH(evas_object_data_get(fr, "volumes"), ll, sl)
           {
              elm_slider_value_set(sl,
                                   source->volume.volumes[(uintptr_t)evas_object_data_get(sl, "channel")]);
@@ -1034,10 +1064,10 @@ _emix_source_change(Emix_Source *source)
      }
    else
      {
-        ck = evas_object_data_get(bxv, "mute");
+        ck = evas_object_data_get(fr, "mute");
         elm_check_state_set(ck, source->mute);
 
-        sl = evas_object_data_get(bxv, "volume");
+        sl = evas_object_data_get(fr, "volume");
         elm_slider_value_set(sl, source->volume.volumes[0]);
         elm_object_disabled_set(sl, source->mute);
      }
@@ -1050,8 +1080,8 @@ _cb_card_profile_change(void *data,
                         void *event_info EINA_UNUSED)
 {
    Emix_Profile *profile = data;
-   Evas_Object *bxv = evas_object_data_get(obj, "parent");
-   Emix_Card *card = evas_object_data_get(bxv, "card");
+   Evas_Object *fr = evas_object_data_get(obj, "parent");
+   Emix_Card *card = evas_object_data_get(fr, "card");
    elm_object_text_set(obj, profile->description);
    emix_card_profile_set(card, profile);
 }
@@ -1059,13 +1089,18 @@ _cb_card_profile_change(void *data,
 static void
 _emix_card_add(Emix_Card *card)
 {
-   Evas_Object *bxv, *bx, *lb, *hv, *sep;
+   Evas_Object *bxv, *bx, *lb, *hv, *sep, *fr;
    Eina_List *l;
    Emix_Profile *profile;
 
+   fr = elm_frame_add(win);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, 0.0);
+   elm_object_style_set(fr, "pad_medium");
+   card_list = eina_list_append(card_list, fr);
+   evas_object_data_set(fr, "card", card);
+
    bxv = elm_box_add(win);
-   card_list = eina_list_append(card_list, bxv);
-   evas_object_data_set(bxv, "card", card);
    evas_object_size_hint_weight_set(bxv, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bxv, EVAS_HINT_FILL, 0.0);
 
@@ -1084,8 +1119,8 @@ _emix_card_add(Emix_Card *card)
    evas_object_show(lb);
 
    hv = elm_hoversel_add(win);
-   evas_object_data_set(hv, "parent", bxv);
-   evas_object_data_set(bxv, "profile", hv);
+   evas_object_data_set(hv, "parent", fr);
+   evas_object_data_set(fr, "profile", hv);
    elm_hoversel_hover_parent_set(hv, win);
    EINA_LIST_FOREACH(card->profiles, l, profile)
      {
@@ -1100,30 +1135,34 @@ _emix_card_add(Emix_Card *card)
    elm_box_pack_end(bx, hv);
    evas_object_show(hv);
 
+   elm_object_content_set(fr, bxv);
+   evas_object_show(bxv);
+
+   elm_box_pack_end(card_box, fr);
+   evas_object_show(fr);
+
    sep = elm_separator_add(win);
+   evas_object_data_set(fr, "extra", sep);
    elm_separator_horizontal_set(sep, EINA_TRUE);
    evas_object_size_hint_weight_set(sep, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(sep, EVAS_HINT_FILL, 0.0);
-   elm_box_pack_end(bxv, sep);
+   elm_box_pack_end(card_box, sep);
    evas_object_show(sep);
-
-   elm_box_pack_end(card_box, bxv);
-   evas_object_show(bxv);
 }
 
 static void
 _emix_card_change(Emix_Card *card)
 {
    const Eina_List *l;
-   Evas_Object *bxv, *hv;
+   Evas_Object *fr, *hv;
    Emix_Profile *profile;
 
-   EINA_LIST_FOREACH(card_list, l, bxv)
+   EINA_LIST_FOREACH(card_list, l, fr)
      {
-        if (evas_object_data_get(bxv, "card") == card) break;
+        if (evas_object_data_get(fr, "card") == card) break;
      }
    if (!l) return;
-   hv = evas_object_data_get(bxv, "profile");
+   hv = evas_object_data_get(fr, "profile");
    elm_hoversel_clear(hv);
    EINA_LIST_FOREACH(card->profiles, l, profile)
      {
@@ -1140,13 +1179,14 @@ static void
 _emix_card_del(Emix_Card *card)
 {
    Eina_List *l;
-   Evas_Object *bxv;
-   EINA_LIST_FOREACH(card_list, l, bxv)
+   Evas_Object *fr;
+   EINA_LIST_FOREACH(card_list, l, fr)
      {
-        if (evas_object_data_get(bxv, "card") == card)
+        if (evas_object_data_get(fr, "card") == card)
           {
              card_list = eina_list_remove_list(card_list, l);
-             evas_object_del(bxv);
+             evas_object_del(evas_object_data_get(fr, "extra"));
+             evas_object_del(fr);
              return;
           }
      }
