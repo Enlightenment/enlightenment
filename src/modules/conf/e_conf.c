@@ -76,9 +76,10 @@ e_configure_show(const char *params)
 
         eco = _e_configure;
         ec = e_win_client_get(eco->win);
+        ec->hidden = 0;
+        e_client_desk_set(ec, e_desk_current_get(ec->zone));
         evas_object_show(eco->win);
         elm_win_raise(eco->win);
-        e_client_desk_set(ec, e_desk_current_get(ec->zone));
         e_client_unshade(ec, ec->shade_dir);
         if ((e_config->focus_setting == E_FOCUS_NEW_DIALOG) ||
             (e_config->focus_setting == E_FOCUS_NEW_WINDOW) ||
