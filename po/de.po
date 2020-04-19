@@ -26,7 +26,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-18 14:45+0200\n"
+"POT-Creation-Date: 2020-04-19 16:15+0200\n"
 "PO-Revision-Date: 2020-04-18 14:50+0200\n"
 "Last-Translator: Simon Tischer <simon@t-tischer.de>\n"
 "Language-Team: E17-de\n"
@@ -469,7 +469,7 @@ msgstr "Paarung mit Gerät aufheben"
 #: src/modules/connman/agent.c:253
 #: src/modules/quickaccess/e_mod_quickaccess.c:334
 #: src/modules/quickaccess/e_mod_quickaccess.c:396 src/bin/e_fm_prop.c:641
-#: src/bin/e_import_config_dialog.c:360 src/bin/e_entry_dialog.c:68
+#: src/bin/e_import_config_dialog.c:361 src/bin/e_entry_dialog.c:68
 #: src/bin/e_import_dialog.c:197 src/bin/e_color_dialog.c:68
 #: src/bin/e_desktop_editor.c:909 src/bin/e_desktop_editor.c:973
 #: src/bin/e_fm.c:10213
@@ -1511,7 +1511,7 @@ msgstr "Thema auswählen..."
 #: src/modules/conf_intl/e_int_config_imc_import.c:119 src/bin/e_update.c:70
 #: src/bin/e_fm_prop.c:640 src/bin/e_config.c:2067 src/bin/e_config.c:2718
 #: src/bin/e_int_client_remember.c:358 src/bin/e_int_client_remember.c:553
-#: src/bin/e_utils.c:401 src/bin/e_import_config_dialog.c:359
+#: src/bin/e_utils.c:401 src/bin/e_import_config_dialog.c:360
 #: src/bin/e_entry_dialog.c:67 src/bin/e_sys.c:909
 #: src/bin/e_desktop_editor.c:907 src/bin/e_desktop_editor.c:971
 #: src/bin/e_fm.c:10212 src/bin/e_fm.c:10969 src/bin/e_module.c:480
@@ -1561,7 +1561,7 @@ msgstr "Hintergrundwechsel"
 
 #: src/modules/conf_theme/e_int_config_transitions.c:214
 #: src/modules/conf_theme/e_int_config_xsettings.c:505 src/bin/e_fm_prop.c:496
-#: src/bin/e_import_config_dialog.c:298 src/bin/e_widget_fsel.c:348
+#: src/bin/e_import_config_dialog.c:299 src/bin/e_widget_fsel.c:348
 msgid "Preview"
 msgstr "Vorschau"
 
@@ -4803,11 +4803,11 @@ msgstr "Verzögerung"
 msgid "%1.1f sec"
 msgstr "%1.1f sek"
 
-#: src/modules/shot/e_mod_save.c:203
+#: src/modules/shot/e_mod_save.c:201
 msgid "Error - No Filemanager"
 msgstr "Fehler - Kein Dateimanager"
 
-#: src/modules/shot/e_mod_save.c:204
+#: src/modules/shot/e_mod_save.c:202
 msgid ""
 "No filemanager action and/or module was found.<br>Cannot show the location "
 "of your screenshots."
@@ -5235,7 +5235,7 @@ msgstr "Verzeichnis anzeigen"
 msgid "Navigate"
 msgstr "Navigiere"
 
-#: src/modules/fileman/e_mod_main.c:316
+#: src/modules/fileman/e_mod_main.c:310
 msgid "Fileman"
 msgstr "Dateimanager"
 
@@ -5692,12 +5692,12 @@ msgid "Shrink"
 msgstr "Schrumpfen"
 
 #: src/modules/vkbd/e_kbd_cfg.c:40 src/modules/vkbd/e_kbd_cfg.c:101
-#: src/modules/vkbd/e_kbd_cfg.c:105 src/bin/e_import_config_dialog.c:314
+#: src/modules/vkbd/e_kbd_cfg.c:105 src/bin/e_import_config_dialog.c:315
 msgid "Stretch"
 msgstr "Dehnen"
 
 #: src/modules/vkbd/e_kbd_cfg.c:41 src/modules/vkbd/e_kbd_cfg.c:102
-#: src/modules/vkbd/e_kbd_cfg.c:106 src/bin/e_import_config_dialog.c:331
+#: src/modules/vkbd/e_kbd_cfg.c:106 src/bin/e_import_config_dialog.c:332
 msgid "Fill"
 msgstr "Füllen"
 
@@ -9077,18 +9077,18 @@ msgid ""
 msgstr ""
 "Enlightenment konnte das Bild wegen<ps/>Umwandlungsfehlern nicht importieren."
 
-#: src/bin/e_import_config_dialog.c:174 src/bin/e_import_config_dialog.c:184
+#: src/bin/e_import_config_dialog.c:175 src/bin/e_import_config_dialog.c:185
 #: src/bin/e_import_dialog.c:73 src/bin/e_import_dialog.c:83
 msgid "Import Error"
 msgstr "Importfehler"
 
-#: src/bin/e_import_config_dialog.c:175 src/bin/e_import_dialog.c:74
+#: src/bin/e_import_config_dialog.c:176 src/bin/e_import_dialog.c:74
 msgid "Enlightenment was unable to import the image<ps/>due to a copy error."
 msgstr ""
 "Enlightenment war wegen eines Kopierfehlers<ps/>nicht in der Lage, das Bild "
 "zu importieren."
 
-#: src/bin/e_import_config_dialog.c:185 src/bin/e_import_dialog.c:84
+#: src/bin/e_import_config_dialog.c:186 src/bin/e_import_dialog.c:84
 msgid ""
 "Enlightenment was unable to import the image.<ps/><ps/>Are you sure this is "
 "a valid image?"
@@ -9096,42 +9096,42 @@ msgstr ""
 "Enlightenment war nicht im Stande, das Thema zu importieren.<ps/><ps/>Sind "
 "Sie sicher, dass dies ein gültiges Thema ist?"
 
-#: src/bin/e_import_config_dialog.c:282
+#: src/bin/e_import_config_dialog.c:283
 msgid "Import Settings..."
 msgstr "Importeinstellungen..."
 
-#: src/bin/e_import_config_dialog.c:312
+#: src/bin/e_import_config_dialog.c:313
 msgid "Fill and Stretch Options"
 msgstr "Füll- und Streckoptionen"
 
-#: src/bin/e_import_config_dialog.c:318 src/bin/e_int_client_prop.c:240
+#: src/bin/e_import_config_dialog.c:319 src/bin/e_int_client_prop.c:240
 #: src/bin/e_int_client_menu.c:1196
 #, c-format
 msgid "Center"
 msgstr "Zentrieren"
 
-#: src/bin/e_import_config_dialog.c:322
+#: src/bin/e_import_config_dialog.c:323
 msgid "Tile"
 msgstr "Kacheln"
 
-#: src/bin/e_import_config_dialog.c:327
+#: src/bin/e_import_config_dialog.c:328
 msgid "Within"
 msgstr "Innerhalb"
 
-#: src/bin/e_import_config_dialog.c:335
+#: src/bin/e_import_config_dialog.c:336
 msgid "Pan"
 msgstr "Schwenken"
 
-#: src/bin/e_import_config_dialog.c:343
+#: src/bin/e_import_config_dialog.c:344
 msgid "File Quality"
 msgstr "Dateiqualität"
 
-#: src/bin/e_import_config_dialog.c:344
+#: src/bin/e_import_config_dialog.c:345
 #, c-format
 msgid "%3.0f%%"
 msgstr "%3.0f%%"
 
-#: src/bin/e_import_config_dialog.c:349
+#: src/bin/e_import_config_dialog.c:350
 msgid "Fill Color"
 msgstr "Füllfarbe"
 
@@ -9151,11 +9151,11 @@ msgstr ""
 "Falle zurück zur Software-Engine.<ps/><ps/>Sie brauchen eine OpenGL 2.0 "
 "(oder OpenGL ES 2.0) fähige<ps/>GPU um OpenGL mit Compositing zu nutzen."
 
-#: src/bin/e_comp_x.c:5662
+#: src/bin/e_comp_x.c:5663
 msgid "Lock Failed"
 msgstr "Sperrung schlug fehl"
 
-#: src/bin/e_comp_x.c:5663
+#: src/bin/e_comp_x.c:5664
 msgid ""
 "Locking the desktop failed because some application<ps/>has grabbed either "
 "the keyboard or the mouse or both<ps/>and their grab is unable to be broken."
@@ -9164,11 +9164,11 @@ msgstr ""
 "Tastatur oder Maus in Beschlag nimmt<ps/>und eine Aufhebung dessen nicht "
 "möglich ist."
 
-#: src/bin/e_comp_x.c:5679
+#: src/bin/e_comp_x.c:5680
 msgid "Another compositor is already running on your display server."
 msgstr "Ein anderer Compositor läuft bereits<br>auf Ihrem Bildausgabe-Server."
 
-#: src/bin/e_comp_x.c:5698
+#: src/bin/e_comp_x.c:5699
 msgid ""
 "Your display server does not support the compositor overlay window.\n"
 "This is needed for Enlightenment to function."
@@ -9177,12 +9177,12 @@ msgstr ""
 "übergelagerte Fenster<br>des Compositors nicht. Dies wird jedoch "
 "benötigt<br>damit letzterer funktioniert."
 
-#: src/bin/e_comp_x.c:5825
+#: src/bin/e_comp_x.c:5826
 #, c-format
 msgid "Enlightenment cannot initialize X Connection...\n"
 msgstr "Enlightenment kann keine Verbindung zu X initialisieren!\n"
 
-#: src/bin/e_comp_x.c:5837
+#: src/bin/e_comp_x.c:5838
 msgid ""
 "Your display server does not support XComposite, or Ecore-X was built "
 "without XComposite support. Note that for composite support you will also "
@@ -9192,7 +9192,7 @@ msgstr ""
 "XComposite-Unterstützung gebaut.<br>Weiterhin benötigen sie für Composite-"
 "Unterstützung<br>XRender- und XFixes-Unterstützung in X11 und Ecore."
 
-#: src/bin/e_comp_x.c:5846
+#: src/bin/e_comp_x.c:5847
 msgid ""
 "Your display server does not support XDamage or Ecore was built without "
 "XDamage support."
@@ -9200,7 +9200,7 @@ msgstr ""
 "Ihr Grafiktreiber unterstützt die XDamage-Erweiterung nicht,<br>oder Ecore "
 "wurde ohne XDamage-Unterstützung gebaut."
 
-#: src/bin/e_comp_x.c:5951
+#: src/bin/e_comp_x.c:5952
 msgid "Enlightenment cannot initialize the XSettings system.\n"
 msgstr "Enlightenment kann sein XSettings-System nicht initialisieren.\n"
 
@@ -9310,13 +9310,13 @@ msgstr ""
 "Enlightenment kann sein <br> enlightenment_start Dienst nicht erfolgreich "
 "starten."
 
-#: src/bin/e_comp_wl.c:3012
+#: src/bin/e_comp_wl.c:3013
 #, c-format
 msgid "Enlightenment cannot initialize Wayland client connection.\n"
 msgstr ""
 "Enlightenment kann die Wayland-Clientverbindung nicht initialisieren.\n"
 
-#: src/bin/e_comp_wl.c:3027
+#: src/bin/e_comp_wl.c:3028
 #, c-format
 msgid "Enlightenment cannot create a Wayland Compositor.\n"
 msgstr "Enlightenment kann keinen Wayland Compositor erstellen.\n"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-18 13:59+0200\n"
+"POT-Creation-Date: 2020-04-19 16:15+0200\n"
 "PO-Revision-Date: 2020-04-18 16:21+0200\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: General\n"
@@ -305,14 +305,18 @@ msgstr "Associabile"
 
 #: src/modules/bluez5/e_mod_popup.c:497
 msgid "Allow this adapter to have other devices request to pair with it"
-msgstr "Consenti ad altri dispositivi di richiedere associazione con questo adattatore"
+msgstr ""
+"Consenti ad altri dispositivi di richiedere associazione con questo "
+"adattatore"
 
 #: src/modules/bluez5/e_mod_popup.c:530
 #, c-format
 msgid ""
 "Address: %s (%s)<br>Services: %s%s%s%s%s%s%s%s%s<br>Trusted: %s<br>Blocked: "
 "%s<br>"
-msgstr "Indirizzo: %s (%s)<br>Servizi: %s%s%s%s%s%s%s%s%s<br>Fidato: %s<br>Bloccato: %s<br>"
+msgstr ""
+"Indirizzo: %s (%s)<br>Servizi: %s%s%s%s%s%s%s%s%s<br>Fidato: %s<br>Bloccato: "
+"%s<br>"
 
 #: src/modules/bluez5/e_mod_popup.c:536 src/modules/bluez5/e_mod_popup.c:537
 #: src/modules/bluez5/e_mod_util.c:261
@@ -390,7 +394,9 @@ msgstr "Impedisci a questo di essere un dispositivo sbloccato"
 
 #: src/modules/bluez5/e_mod_popup.c:578
 msgid "Make this auto unlock when detected (and lock when not)"
-msgstr "Rendi questo sbloccato automaticamente quando rilevato (e bloccato quando non rilevato)"
+msgstr ""
+"Rendi questo sbloccato automaticamente quando rilevato (e bloccato quando "
+"non rilevato)"
 
 #: src/modules/bluez5/e_mod_popup.c:588
 msgid "Stop this device from being forcefully connected"
@@ -439,7 +445,7 @@ msgstr "Dissocia da questo dispositivo"
 #: src/modules/connman/agent.c:253
 #: src/modules/quickaccess/e_mod_quickaccess.c:334
 #: src/modules/quickaccess/e_mod_quickaccess.c:396 src/bin/e_fm_prop.c:641
-#: src/bin/e_import_config_dialog.c:360 src/bin/e_entry_dialog.c:68
+#: src/bin/e_import_config_dialog.c:361 src/bin/e_entry_dialog.c:68
 #: src/bin/e_import_dialog.c:197 src/bin/e_color_dialog.c:68
 #: src/bin/e_desktop_editor.c:909 src/bin/e_desktop_editor.c:973
 #: src/bin/e_fm.c:10213
@@ -468,7 +474,11 @@ msgid ""
 "installed? Check sysactions.conf<br>to ensure the command is right and your "
 "user is<br>permitted to use the rfkill unblock action. Check the<br>users "
 "and groups there to be sure."
-msgstr "Il tentativo di sblocco rfkill dell'adattatore bluetooth è fallito<br>Rfkill è installato? Controllare sysactions.conf per essere sicuri<br>che il comando sia corretto e che all'utente sia consentito usare<br>l'azione di sblocco di rfkill. Controllare utenti e gruppi per sicurezza."
+msgstr ""
+"Il tentativo di sblocco rfkill dell'adattatore bluetooth è fallito<br>Rfkill "
+"è installato? Controllare sysactions.conf per essere sicuri<br>che il "
+"comando sia corretto e che all'utente sia consentito usare<br>l'azione di "
+"sblocco di rfkill. Controllare utenti e gruppi per sicurezza."
 
 #: src/modules/bluez5/bz_agent.c:115 src/modules/bluez5/bz_agent.c:131
 #: src/modules/bluez5/bz_agent.c:285 src/modules/wireless/wireless.c:1045
@@ -1311,7 +1321,10 @@ msgid ""
 "This module wants to execute an external application<ps/> that does not "
 "exist.<ps/>Please install <b>extra</b> application.<ps/>https://git."
 "enlightenment.org/apps/extra.git/"
-msgstr "Questo modulo vuole eseguire un'applicazione esterna che non esiste.<ps/>Si prega di installare l'applicazione <b>extra</b>.<ps/>https://git.enlightenment.org/apps/extra.git/"
+msgstr ""
+"Questo modulo vuole eseguire un'applicazione esterna che non esiste.<ps/>Si "
+"prega di installare l'applicazione <b>extra</b>.<ps/>https://git."
+"enlightenment.org/apps/extra.git/"
 
 #: src/modules/conf_theme/e_int_config_theme.c:611
 msgid "Theme File Error"
@@ -1473,7 +1486,7 @@ msgstr "Selezionare un tema..."
 #: src/modules/conf_intl/e_int_config_imc_import.c:119 src/bin/e_update.c:70
 #: src/bin/e_fm_prop.c:640 src/bin/e_config.c:2067 src/bin/e_config.c:2718
 #: src/bin/e_int_client_remember.c:358 src/bin/e_int_client_remember.c:553
-#: src/bin/e_utils.c:401 src/bin/e_import_config_dialog.c:359
+#: src/bin/e_utils.c:401 src/bin/e_import_config_dialog.c:360
 #: src/bin/e_entry_dialog.c:67 src/bin/e_sys.c:909
 #: src/bin/e_desktop_editor.c:907 src/bin/e_desktop_editor.c:971
 #: src/bin/e_fm.c:10212 src/bin/e_fm.c:10969 src/bin/e_module.c:480
@@ -1523,7 +1536,7 @@ msgstr "Cambio sfondo"
 
 #: src/modules/conf_theme/e_int_config_transitions.c:214
 #: src/modules/conf_theme/e_int_config_xsettings.c:505 src/bin/e_fm_prop.c:496
-#: src/bin/e_import_config_dialog.c:298 src/bin/e_widget_fsel.c:348
+#: src/bin/e_import_config_dialog.c:299 src/bin/e_widget_fsel.c:348
 msgid "Preview"
 msgstr "Anteprima"
 
@@ -4753,15 +4766,17 @@ msgstr "Ritardo"
 msgid "%1.1f sec"
 msgstr "%1.1f s"
 
-#: src/modules/shot/e_mod_save.c:203
+#: src/modules/shot/e_mod_save.c:201
 msgid "Error - No Filemanager"
 msgstr "Errore - Nessun file manager"
 
-#: src/modules/shot/e_mod_save.c:204
+#: src/modules/shot/e_mod_save.c:202
 msgid ""
 "No filemanager action and/or module was found.<br>Cannot show the location "
 "of your screenshots."
-msgstr "Non sono stati trovati moduli o azioni per filemanager.<br>Impossibile mostrare la posizione dell'istantanea."
+msgstr ""
+"Non sono stati trovati moduli o azioni per filemanager.<br>Impossibile "
+"mostrare la posizione dell'istantanea."
 
 #: src/modules/time/config.c:8
 msgid "Numeric"
@@ -5183,7 +5198,7 @@ msgstr "Mostra directory"
 msgid "Navigate"
 msgstr "Esplora"
 
-#: src/modules/fileman/e_mod_main.c:316
+#: src/modules/fileman/e_mod_main.c:310
 msgid "Fileman"
 msgstr "File manager"
 
@@ -5472,7 +5487,9 @@ msgstr "Servizio bluetooth BlueZ non trovato"
 #: src/modules/wizard/page_115.c:19
 msgid ""
 "Install/Enable BlueZ 5 / bluetoothd service for network management support"
-msgstr "Installare/abilitare il servizio Bluez5/bluetoothd per il supporto alla gestione della rete"
+msgstr ""
+"Installare/abilitare il servizio Bluez5/bluetoothd per il supporto alla "
+"gestione della rete"
 
 #: src/modules/wizard/page_115.c:21
 msgid "Bluez5 module disabled"
@@ -5564,7 +5581,9 @@ msgstr "Servizio di rete Connman non trovato"
 
 #: src/modules/wizard/page_110.c:19
 msgid "Install/Enable Connman service for network management support"
-msgstr "Installare/abilitare il servizio Connman per il supporto alla gestione della rete"
+msgstr ""
+"Installare/abilitare il servizio Connman per il supporto alla gestione della "
+"rete"
 
 #: src/modules/wizard/page_110.c:21
 msgid "Connman and Wireless modules disabled"
@@ -5643,12 +5662,12 @@ msgid "Shrink"
 msgstr "Riduci"
 
 #: src/modules/vkbd/e_kbd_cfg.c:40 src/modules/vkbd/e_kbd_cfg.c:101
-#: src/modules/vkbd/e_kbd_cfg.c:105 src/bin/e_import_config_dialog.c:314
+#: src/modules/vkbd/e_kbd_cfg.c:105 src/bin/e_import_config_dialog.c:315
 msgid "Stretch"
 msgstr "Stira"
 
 #: src/modules/vkbd/e_kbd_cfg.c:41 src/modules/vkbd/e_kbd_cfg.c:102
-#: src/modules/vkbd/e_kbd_cfg.c:106 src/bin/e_import_config_dialog.c:331
+#: src/modules/vkbd/e_kbd_cfg.c:106 src/bin/e_import_config_dialog.c:332
 msgid "Fill"
 msgstr "Riempi"
 
@@ -5751,7 +5770,10 @@ msgid ""
 "Enlightenment has now entered <b>presentation</b> mode.<ps/>During "
 "presentation mode, screen saver, lock and power saving will be disabled so "
 "you are not interrupted."
-msgstr "Enlightenment è entrato in modalità <b>presentazione</b>.<ps/>Durante la modalità presentazione vengono disabilitati lo screensaver, il bloccaschermo e il risparmio energetico in modo da non essere interrotti."
+msgstr ""
+"Enlightenment è entrato in modalità <b>presentazione</b>.<ps/>Durante la "
+"modalità presentazione vengono disabilitati lo screensaver, il bloccaschermo "
+"e il risparmio energetico in modo da non essere interrotti."
 
 #: src/modules/notification/e_mod_main.c:68
 msgid "Exited Presentation Mode"
@@ -5761,7 +5783,9 @@ msgstr "Uscita da modalità presentazione"
 msgid ""
 "Presentation mode has been exited.<ps/>Now screen saver, lock and power "
 "saving settings will be restored."
-msgstr "Si è usciti dalla modalità presentazione.<ps/>Adesso verranno riabilitati lo screensaver, il bloccaschermo e le impostazioni del risparmio energetico."
+msgstr ""
+"Si è usciti dalla modalità presentazione.<ps/>Adesso verranno riabilitati lo "
+"screensaver, il bloccaschermo e le impostazioni del risparmio energetico."
 
 #: src/modules/notification/e_mod_main.c:84
 msgid "Enter Offline Mode"
@@ -6313,7 +6337,9 @@ msgstr "Stato energetico massimo"
 #: src/modules/cpufreq/e_mod_main.c:506
 msgid ""
 "There was an error trying to modify CPU<br>frequency control parameters."
-msgstr "C'è stato un errore nel tentativo di<br>impostare i parametri di controllo<br>della frequenza della cpu."
+msgstr ""
+"C'è stato un errore nel tentativo di<br>impostare i parametri di "
+"controllo<br>della frequenza della cpu."
 
 #: src/modules/cpufreq/e_mod_main.c:572
 msgid ""
@@ -6519,7 +6545,9 @@ msgstr "Localizzazione"
 #: src/modules/teamwork/e_mod_tw.c:175
 msgid ""
 "Target URI could not be shown.<ps/>Hold [Ctrl] to disable link fetching."
-msgstr "La uri di destinazione non può essere mostrata.<ps/>Tenere premuto [Ctrl] per disabilitare ricerca."
+msgstr ""
+"La uri di destinazione non può essere mostrata.<ps/>Tenere premuto [Ctrl] "
+"per disabilitare ricerca."
 
 #: src/modules/teamwork/e_mod_config.c:80
 msgid "Disable remote media fetching"
@@ -6736,7 +6764,9 @@ msgstr "Servizio Connman mancante"
 msgid ""
 "The Connman service is not able to be found.<br>Is <b>connmand</b> daemon "
 "running?"
-msgstr "Impossibile trovare il servizio Connman.<br>Il demone <b>connmand</b> è in esecuzione?"
+msgstr ""
+"Impossibile trovare il servizio Connman.<br>Il demone <b>connmand</b> è in "
+"esecuzione?"
 
 #: src/modules/connman/e_mod_main.c:191
 msgid ""
@@ -7479,7 +7509,10 @@ msgid ""
 "You cannot use the right mouse button in the<ps/>gadget for this as it is "
 "already taken by internal<ps/>code for context menus.<ps/>This button only "
 "works in the popup."
-msgstr "Non potete usare il tasto destro del mouse<ps/>per questo poichè è già usato dal codice<ps/>interno per il menù contestuale.<ps/>Questo tasto funziona solo nel popup."
+msgstr ""
+"Non potete usare il tasto destro del mouse<ps/>per questo poichè è già usato "
+"dal codice<ps/>interno per il menù contestuale.<ps/>Questo tasto funziona "
+"solo nel popup."
 
 #: src/modules/pager/gadget/config.c:316
 msgid "Configure virtual deskstops"
@@ -7600,7 +7633,10 @@ msgid ""
 "You seem to have an ACPI based system, but<br><hilight>acpid</hilight> does "
 "not seem to be running or<br>contactable. Perhaps enable the <hilight>acpid</"
 "hilight><br>service on your system?"
-msgstr "Sembra che il sistema sia basato su Acpi, ma<br><hilight>acpid</hilight> non sembra in esecuzione o contattabile.<br>Forse occorre abilitare il servizio <hilight>acpid</hilight><br>del sistema?"
+msgstr ""
+"Sembra che il sistema sia basato su Acpi, ma<br><hilight>acpid</hilight> non "
+"sembra in esecuzione o contattabile.<br>Forse occorre abilitare il servizio "
+"<hilight>acpid</hilight><br>del sistema?"
 
 #: src/bin/e_hints.c:186
 msgid ""
@@ -8691,11 +8727,14 @@ msgstr ""
 
 #: src/bin/e_main.c:778
 msgid "Enlightenment cannot initialize the Privelege System access system.\n"
-msgstr "Enlightenment non riesce a inizializzare il sistema di accessi Privelege System.\n"
+msgstr ""
+"Enlightenment non riesce a inizializzare il sistema di accessi Privelege "
+"System.\n"
 
 #: src/bin/e_main.c:787
 msgid "Enlightenment cannot set up its powersave modes.\n"
-msgstr "Enlightenment non riesce a configurare le modalità di risparmio energetico.\n"
+msgstr ""
+"Enlightenment non riesce a configurare le modalità di risparmio energetico.\n"
 
 #: src/bin/e_main.c:796
 msgid ""
@@ -8744,7 +8783,8 @@ msgstr ""
 
 #: src/bin/e_main.c:894
 msgid "Enlightenment cannot initialize the System Command system.\n"
-msgstr "Enlightenment non riesce a inizializzare il sistema di comandi di sistema.\n"
+msgstr ""
+"Enlightenment non riesce a inizializzare il sistema di comandi di sistema.\n"
 
 #: src/bin/e_main.c:903
 msgid "Enlightenment cannot set up its exec system.\n"
@@ -9006,7 +9046,9 @@ msgstr "Segnala bug"
 msgid ""
 "A gadget .desktop file was found,</ps>but no [Name] entry was specified!</ps>"
 "%s"
-msgstr "È stato trovato un file .desktop del gadget</ps>ma senza nessuna voce [Name] dentro!</ps>%s"
+msgstr ""
+"È stato trovato un file .desktop del gadget</ps>ma senza nessuna voce [Name] "
+"dentro!</ps>%s"
 
 #: src/bin/e_gadget_runner.c:1063 src/bin/e_gadget_runner.c:1074
 #: src/bin/e_gadget_runner.c:1085 src/bin/e_gadget_runner.c:1096
@@ -9018,21 +9060,27 @@ msgstr "Errore del gadget"
 msgid ""
 "A gadget .desktop file was found,</ps>but [Type] is not set to Application!</"
 "ps>%s"
-msgstr "È stato trovato un file .desktop del gadget</ps>ma la voce [Type] non è impostata!</ps>%s"
+msgstr ""
+"È stato trovato un file .desktop del gadget</ps>ma la voce [Type] non è "
+"impostata!</ps>%s"
 
 #: src/bin/e_gadget_runner.c:1081
 #, c-format
 msgid ""
 "A gadget .desktop file was found,</ps>but [X-Gadget-Version] is missing!</ps>"
 "%s"
-msgstr "È stato trovato un file .desktop del gadget</ps>ma manca la voce [X-Gadget-Version]!</ps>%s"
+msgstr ""
+"È stato trovato un file .desktop del gadget</ps>ma manca la voce [X-Gadget-"
+"Version]!</ps>%s"
 
 #: src/bin/e_gadget_runner.c:1092
 #, c-format
 msgid ""
 "A gadget .desktop file was found,</ps>but [X-Gadget-Bugreport] is missing!</"
 "ps>%s"
-msgstr "È stato trovato un file .desktop del gadget</ps>ma manca la voce [X-Gadget-Bugreport]!</ps>%s"
+msgstr ""
+"È stato trovato un file .desktop del gadget</ps>ma manca la voce [X-Gadget-"
+"Bugreport]!</ps>%s"
 
 #: src/bin/e_import_config_dialog.c:94
 msgid "Picture Import Error"
@@ -9045,18 +9093,18 @@ msgstr ""
 "Enlightenment non ha potuto importare la foto<ps/>a causa di errori di "
 "conversione."
 
-#: src/bin/e_import_config_dialog.c:174 src/bin/e_import_config_dialog.c:184
+#: src/bin/e_import_config_dialog.c:175 src/bin/e_import_config_dialog.c:185
 #: src/bin/e_import_dialog.c:73 src/bin/e_import_dialog.c:83
 msgid "Import Error"
 msgstr "Errore d'importazione"
 
-#: src/bin/e_import_config_dialog.c:175 src/bin/e_import_dialog.c:74
+#: src/bin/e_import_config_dialog.c:176 src/bin/e_import_dialog.c:74
 msgid "Enlightenment was unable to import the image<ps/>due to a copy error."
 msgstr ""
 "Enlightenment non ha potuto importare l'immagine<ps/>a causa di un errore di "
 "copia."
 
-#: src/bin/e_import_config_dialog.c:185 src/bin/e_import_dialog.c:84
+#: src/bin/e_import_config_dialog.c:186 src/bin/e_import_dialog.c:84
 msgid ""
 "Enlightenment was unable to import the image.<ps/><ps/>Are you sure this is "
 "a valid image?"
@@ -9064,42 +9112,42 @@ msgstr ""
 "Enlightenment non ha potuto importare l'immagine.<ps/>Siete sicuri che sia "
 "un'immagine valida?"
 
-#: src/bin/e_import_config_dialog.c:282
+#: src/bin/e_import_config_dialog.c:283
 msgid "Import Settings..."
 msgstr "Impostazioni importazione..."
 
-#: src/bin/e_import_config_dialog.c:312
+#: src/bin/e_import_config_dialog.c:313
 msgid "Fill and Stretch Options"
 msgstr "Opzioni riempimento"
 
-#: src/bin/e_import_config_dialog.c:318 src/bin/e_int_client_prop.c:240
+#: src/bin/e_import_config_dialog.c:319 src/bin/e_int_client_prop.c:240
 #: src/bin/e_int_client_menu.c:1196
 #, c-format
 msgid "Center"
 msgstr "Centra"
 
-#: src/bin/e_import_config_dialog.c:322
+#: src/bin/e_import_config_dialog.c:323
 msgid "Tile"
 msgstr "Affianca"
 
-#: src/bin/e_import_config_dialog.c:327
+#: src/bin/e_import_config_dialog.c:328
 msgid "Within"
 msgstr "Adatta"
 
-#: src/bin/e_import_config_dialog.c:335
+#: src/bin/e_import_config_dialog.c:336
 msgid "Pan"
 msgstr "Ritaglia"
 
-#: src/bin/e_import_config_dialog.c:343
+#: src/bin/e_import_config_dialog.c:344
 msgid "File Quality"
 msgstr "Qualità file"
 
-#: src/bin/e_import_config_dialog.c:344
+#: src/bin/e_import_config_dialog.c:345
 #, c-format
 msgid "%3.0f%%"
 msgstr "%3.0f%%"
 
-#: src/bin/e_import_config_dialog.c:349
+#: src/bin/e_import_config_dialog.c:350
 msgid "Fill Color"
 msgstr "Colore riempimento"
 
@@ -9120,11 +9168,11 @@ msgstr ""
 "compositing è necessaria<ps/>una GPU in grado di supportare OpenGL 2.0 (o "
 "OpenGL<ps/>ES 2.0)."
 
-#: src/bin/e_comp_x.c:5662
+#: src/bin/e_comp_x.c:5663
 msgid "Lock Failed"
 msgstr "Blocco fallito"
 
-#: src/bin/e_comp_x.c:5663
+#: src/bin/e_comp_x.c:5664
 msgid ""
 "Locking the desktop failed because some application<ps/>has grabbed either "
 "the keyboard or the mouse or both<ps/>and their grab is unable to be broken."
@@ -9133,11 +9181,11 @@ msgstr ""
 "catturato la tastiera e/o il<ps/>mouse e questa cattura non può essere "
 "sciolta."
 
-#: src/bin/e_comp_x.c:5679
+#: src/bin/e_comp_x.c:5680
 msgid "Another compositor is already running on your display server."
 msgstr "Un altro compositor è già in esecuzione sul vostro server grafico."
 
-#: src/bin/e_comp_x.c:5698
+#: src/bin/e_comp_x.c:5699
 msgid ""
 "Your display server does not support the compositor overlay window.\n"
 "This is needed for Enlightenment to function."
@@ -9145,12 +9193,12 @@ msgstr ""
 "Il vostro server grafico non supporta la finestra overlay del compositor. "
 "Ciò è necessario per il funzionamento di Enlightenment."
 
-#: src/bin/e_comp_x.c:5825
+#: src/bin/e_comp_x.c:5826
 #, c-format
 msgid "Enlightenment cannot initialize X Connection...\n"
 msgstr "Enlightenment non riesce ad inizializzare la connessione con X...\n"
 
-#: src/bin/e_comp_x.c:5837
+#: src/bin/e_comp_x.c:5838
 msgid ""
 "Your display server does not support XComposite, or Ecore-X was built "
 "without XComposite support. Note that for composite support you will also "
@@ -9160,7 +9208,7 @@ msgstr ""
 "compilato senza supporto per XComposite. Notare che il supporto per il "
 "compositing richiede anche il supporto per XRender e XFixes in X11 ed Ecore."
 
-#: src/bin/e_comp_x.c:5846
+#: src/bin/e_comp_x.c:5847
 msgid ""
 "Your display server does not support XDamage or Ecore was built without "
 "XDamage support."
@@ -9168,7 +9216,7 @@ msgstr ""
 "Il vostro server grafico non supporta XDamage o Ecore è stato compilato "
 "senza il supporto per XDamage."
 
-#: src/bin/e_comp_x.c:5951
+#: src/bin/e_comp_x.c:5952
 msgid "Enlightenment cannot initialize the XSettings system.\n"
 msgstr "Enlightenment non riesce a inizializzare il suo sistema XSettings.\n"
 
@@ -9275,14 +9323,17 @@ msgstr "Errore nel servizio di sistema Enlightenment"
 #: src/bin/e_system.c:31
 msgid ""
 "Enlightenment cannot successfully start<br>the enlightenment_system service."
-msgstr "Enlightenment non riesce ad avviare il<br>servizio enlightenment_system."
+msgstr ""
+"Enlightenment non riesce ad avviare il<br>servizio enlightenment_system."
 
-#: src/bin/e_comp_wl.c:3012
+#: src/bin/e_comp_wl.c:3013
 #, c-format
 msgid "Enlightenment cannot initialize Wayland client connection.\n"
-msgstr "Enlightenment non riesce ad inizializzare la connessione client con Wayland.\n"
+msgstr ""
+"Enlightenment non riesce ad inizializzare la connessione client con "
+"Wayland.\n"
 
-#: src/bin/e_comp_wl.c:3027
+#: src/bin/e_comp_wl.c:3028
 #, c-format
 msgid "Enlightenment cannot create a Wayland Compositor.\n"
 msgstr "Enlightenment non riesce a creare un compositor Wayland.\n"
@@ -9499,14 +9550,19 @@ msgstr "ERRORE: NOME NON FORNITO"
 msgid ""
 "The current binding to move gadgets and this dialog is %s+<hilight>Mouse %d</"
 "hilight>"
-msgstr "L'associazione corrente per spostare i gadget e questa finestra è %s+<hilight>Mouse %d</hilight>"
+msgstr ""
+"L'associazione corrente per spostare i gadget e questa finestra è %s"
+"+<hilight>Mouse %d</hilight>"
 
 #: src/bin/e_gadget.c:3431
 msgid ""
 "Press <hilight>Escape</hilight> or click the background to exit.<ps/>Use "
 "<hilight>Backspace</hilight> or <hilight>Delete</hilight> to remove all "
 "gadgets from this screen"
-msgstr "Premere <hilight>Esc</hilight> o cliccare sullo sfondo per uscire.<ps/>Usare <hilight>Backspace</hilight> o <hilight>Canc</hilight> per eliminare tutti i gadget di questo schermo"
+msgstr ""
+"Premere <hilight>Esc</hilight> o cliccare sullo sfondo per uscire.<ps/>Usare "
+"<hilight>Backspace</hilight> o <hilight>Canc</hilight> per eliminare tutti i "
+"gadget di questo schermo"
 
 #: src/bin/e_color_dialog.c:25
 msgid "Color Selector"
