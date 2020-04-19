@@ -84,7 +84,7 @@ _e_policy_wl_aux_hint_apply(E_Client *ec)
    EINA_LIST_FOREACH(ec->comp_data->aux_hint.hints, l, hint)
      {
         if (!hint->changed) continue;
-        send = EINA_FALSE;
+        send = EINA_TRUE;
         hint->changed = EINA_FALSE;
         if (!strcmp(hint->hint, hint_names[E_POLICY_HINT_MSG_USE]))
           {
@@ -155,8 +155,8 @@ _e_policy_wl_aux_hint_apply(E_Client *ec)
              tec = ec->stack.next;
              if (tec) e_policy_wl_aux_message_send(tec, "stack_del", "1", NULL);
           }
-        if (send)
-          _e_policy_wl_allowed_aux_hint_send(ec, hint->id);
+        else send = EINA_FALSE;
+        if (send) _e_policy_wl_allowed_aux_hint_send(ec, hint->id);
      }
 }
 
