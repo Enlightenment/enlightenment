@@ -73,7 +73,6 @@ find_tmpfile(int quality, char *buf, size_t buf_size)
              close(fd);
              return EINA_TRUE;
           }
-        close(fd);
      }
    return EINA_FALSE;
 }
