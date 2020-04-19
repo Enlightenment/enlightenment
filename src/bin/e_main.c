@@ -1092,6 +1092,11 @@ main(int argc, char **argv)
    if (e_config->show_splash && (!after_restart))
      ecore_timer_add(2.0, _e_main_cb_startup_fake_end, NULL);
 
+   if (after_restart)
+     {
+        E_LIST_FOREACH(e_comp->zones, e_comp_canvas_zone_restarted);
+     }
+
    TS("MAIN LOOP AT LAST");
    if (!setjmp(x_fatal_buff))
      ecore_main_loop_begin();

@@ -5450,6 +5450,22 @@ _e_comp_x_del(E_Comp *c)
 {
    unsigned int i;
 
+   if (restart)
+     {
+        Ecore_X_Atom a;
+        Ecore_X_Window blackwin;
+
+        a = ecore_x_atom_get("E_COMP_BLACK_WIN");
+        blackwin = ecore_x_window_permanent_new(c->root, a);
+        ecore_x_window_ignore_set(blackwin, 1);
+        ecore_x_window_override_set(blackwin, EINA_TRUE);
+        ecore_x_window_move_resize(blackwin, 0, 0, 32000, 32000);
+        ecore_x_window_background_color_set(blackwin, 0, 0, 0);
+        ecore_x_window_show(blackwin);
+        ecore_x_window_prop_window_set(c->root, a, &blackwin, 1);
+        ecore_x_sync();
+     }
+
    if (!e_comp_wl)
      ecore_x_window_key_ungrab(c->root, "F", ECORE_EVENT_MODIFIER_SHIFT |
                                ECORE_EVENT_MODIFIER_CTRL |
@@ -5671,6 +5687,8 @@ static Eina_Bool
 _e_comp_x_setup(Ecore_X_Window root, int w, int h)
 {
    Ecore_X_Window_Attributes att;
+   Ecore_X_Atom a;
+   Ecore_X_Window blackwin = 0;
    Eina_Bool res;
    unsigned int i;
 
@@ -5681,6 +5699,12 @@ _e_comp_x_setup(Ecore_X_Window root, int w, int h)
         return EINA_FALSE;
      }
    if (!ecore_x_window_manage(root)) return EINA_FALSE;
+
+   a = ecore_x_atom_get("E_COMP_BLACK_WIN");
+   if (ecore_x_window_prop_window_get(root, a, &blackwin, 1) == 1)
+     {
+        ecore_x_window_ignore_set(blackwin, 1);
+     }
 
    e_comp_x = e_comp->x_comp_data = E_NEW(E_Comp_X_Data, 1);
    ecore_x_e_window_profile_supported_set(root, EINA_TRUE);
@@ -5784,6 +5808,13 @@ _e_comp_x_setup(Ecore_X_Window root, int w, int h)
    else
      e_pointer_window_add(e_comp->pointer, e_comp->root);
    _e_comp_x_manage_windows();
+
+   if (blackwin)
+     {
+        ecore_x_window_free(blackwin);
+        ecore_x_window_prop_property_del(root, a);
+        ecore_x_window_ignore_set(blackwin, 0);
+     }
 
    return !!e_comp->canvas->resize_object;
 }

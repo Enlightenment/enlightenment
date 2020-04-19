@@ -17,6 +17,7 @@ E_API E_Zone * e_comp_zone_xy_get(Evas_Coord x, Evas_Coord y);
 E_API E_Zone * e_comp_zone_number_get(int num);
 E_API E_Zone * e_comp_zone_id_get(int id);
 E_API E_Desk * e_comp_desk_window_profile_get(const char *profile);
+E_API void e_comp_canvas_zone_restarted(E_Zone *zone);
 E_API void e_comp_canvas_zone_update(E_Zone *zone);
 E_API void e_comp_canvas_update(void);
 E_API void e_comp_canvas_fake_layers_init(void);

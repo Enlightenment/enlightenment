@@ -64,6 +64,7 @@ E_API int E_EVENT_SYS_RESUME = -1;
 static Eina_Bool
 _e_sys_comp_done2_cb(void *data)
 {
+   printf("_e_sys_comp_done2_cb %p\n", data);
    e_sys_action_raw_do((E_Sys_Action)(long)data, NULL);
    return EINA_FALSE;
 }
@@ -83,8 +84,11 @@ _e_sys_comp_done_cb(void *data, Evas_Object *obj, const char *sig, const char *s
 #ifndef HAVE_WAYLAND_ONLY
    if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      {
-        ecore_x_screensaver_suspend();
-        ecore_x_dpms_force(EINA_TRUE);
+        if (_e_sys_action_after != E_SYS_RESTART)
+          {
+             ecore_x_screensaver_suspend();
+             ecore_x_dpms_force(EINA_TRUE);
+          }
      }
 #endif
 #ifdef HAVE_WAYLAND
@@ -94,8 +98,15 @@ _e_sys_comp_done_cb(void *data, Evas_Object *obj, const char *sig, const char *s
           e_comp->screen->dpms(3);
      }
 #endif
-   edje_freeze();
-   ecore_timer_add(0.5, _e_sys_comp_done2_cb, data);
+   if (_e_sys_action_after != E_SYS_RESTART)
+     {
+        edje_freeze();
+        ecore_timer_add(0.5, _e_sys_comp_done2_cb, data);
+     }
+   else
+     {
+        ecore_timer_add(0.3, _e_sys_comp_done2_cb, data);
+     }
    E_FREE_FUNC(action_timeout, ecore_timer_del);
 }
 
@@ -110,6 +121,9 @@ _e_sys_comp_action_timeout(void *data)
    if (_e_sys_comp_waiting == 1) _e_sys_comp_waiting--;
    switch (a)
      {
+      case E_SYS_RESTART:
+        sig = "e,state,sys,logout,done";
+        break;
       case E_SYS_LOGOUT:
         sig = "e,state,sys,logout,done";
         break;
@@ -205,6 +219,19 @@ static void
 _e_sys_comp_logout(void)
 {
    _e_sys_comp_emit_cb_wait(E_SYS_LOGOUT, "e,state,sys,logout", "e,state,sys,logout,done", EINA_TRUE);
+}
+
+static void
+_e_sys_comp_restart(void)
+{
+   E_Zone *zone;
+
+   resume_backlight = e_config->backlight.normal;
+   zone = eina_list_data_get(e_comp->zones);
+   if ((zone) && (edje_object_data_get(zone->over, "restarted")))
+     _e_sys_comp_emit_cb_wait(E_SYS_RESTART, "e,state,sys,restart", "e,state,sys,restart,done", EINA_TRUE);
+   else
+     _e_sys_comp_emit_cb_wait(E_SYS_RESTART, "e,state,sys,logout", "e,state,sys,logout,done", EINA_TRUE);
 }
 
 static Eina_Bool
@@ -476,6 +503,7 @@ e_sys_action_raw_do(E_Sys_Action a, char *param)
         _e_sys_current_action();
         return 0;
      }
+
    ret = _e_sys_action_do(a, param, EINA_TRUE);
 
    if (ret) _e_sys_action_current = a;
@@ -858,6 +886,13 @@ _e_sys_logout_begin(E_Sys_Action a_after, Eina_Bool raw)
 }
 
 static void
+_e_sys_restart_begin(E_Sys_Action a_after, Eina_Bool raw)
+{
+   _e_sys_action_after = a_after;
+   _e_sys_action_after_raw = raw;
+}
+
+static void
 _e_sys_current_action(void)
 {
    /* display dialog that currently an action is in progress */
@@ -961,10 +996,17 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
         // XXX TODO: check for e_fm_op_registry entries and confirm
         // FIXME: we don't share out immortal info to restarted e. :(
 //	if (!e_util_immortal_check())
+        if (raw)
           {
              e_fm2_die();
              restart = 1;
              ecore_main_loop_quit();
+          }
+        else
+          {
+             _e_sys_restart_begin(E_SYS_RESTART, raw);
+             _e_sys_comp_restart();
+             return 0;
           }
 //        else
 //          return 0;

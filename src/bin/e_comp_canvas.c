@@ -542,6 +542,15 @@ e_comp_desk_window_profile_get(const char *profile)
 }
 
 E_API void
+e_comp_canvas_zone_restarted(E_Zone *zone)
+{
+   if (edje_object_data_get(zone->over, "restarted"))
+     {
+        edje_object_signal_emit(zone->over, "e,state,sys,restarted,show", "e");
+     }
+}
+
+E_API void
 e_comp_canvas_zone_update(E_Zone *zone)
 {
    Evas_Object *o;
@@ -579,6 +588,12 @@ e_comp_canvas_zone_update(E_Zone *zone)
    evas_object_resize(o, zone->w, zone->h);
    evas_object_raise(o);
    evas_object_show(o);
+   if (starting && after_restart &&
+       (edje_object_data_get(zone->over, "restarted")))
+     {
+        edje_object_signal_emit(zone->over, "e,state,sys,restarted", "e");
+        edje_object_message_signal_process(zone->over);
+     }
 }
 
 E_API void
