@@ -1092,6 +1092,7 @@ _emix_card_add(Emix_Card *card)
    Evas_Object *bxv, *bx, *lb, *hv, *sep, *fr;
    Eina_List *l;
    Emix_Profile *profile;
+   int cards = 0;
 
    fr = elm_frame_add(win);
    evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
@@ -1130,6 +1131,7 @@ _emix_card_add(Emix_Card *card)
                               _cb_card_profile_change, profile);
         if (profile->active) elm_object_text_set(hv, profile->description);
      }
+    if (cards == 0) elm_object_text_set(hv, "Not Connected");
    evas_object_size_hint_weight_set(hv, 0.0, 0.5);
    evas_object_size_hint_align_set(hv, EVAS_HINT_FILL, 0.5);
    elm_box_pack_end(bx, hv);
