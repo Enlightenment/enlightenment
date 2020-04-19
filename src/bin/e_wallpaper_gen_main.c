@@ -278,8 +278,6 @@ elm_main(int argc, char **argv)
                      "  image {\n");
              if (mips[i].last)
                {
-                  imw = w;
-                  imh = h;
                   fprintf(f,
                           "   image: \"img.png\" %s;\n",
                           quality_string);
