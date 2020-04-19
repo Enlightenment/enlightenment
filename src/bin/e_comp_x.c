@@ -5459,7 +5459,7 @@ _e_comp_x_del(E_Comp *c)
         blackwin = ecore_x_window_permanent_new(c->root, a);
         ecore_x_window_ignore_set(blackwin, 1);
         ecore_x_window_override_set(blackwin, EINA_TRUE);
-        ecore_x_window_move_resize(blackwin, 0, 0, 32000, 32000);
+        ecore_x_window_move_resize(blackwin, 0, 0, e_comp->w, e_comp->h);
         ecore_x_window_background_color_set(blackwin, 0, 0, 0);
         ecore_x_window_show(blackwin);
         ecore_x_window_prop_window_set(c->root, a, &blackwin, 1);
