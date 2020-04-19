@@ -1130,6 +1130,7 @@ _emix_card_add(Emix_Card *card)
                               NULL, ELM_ICON_NONE,
                               _cb_card_profile_change, profile);
         if (profile->active) elm_object_text_set(hv, profile->description);
+        cards++;
      }
     if (cards == 0) elm_object_text_set(hv, "Not Connected");
    evas_object_size_hint_weight_set(hv, 0.0, 0.5);
