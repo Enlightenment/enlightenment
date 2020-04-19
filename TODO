@@ -1,4 +1,9 @@
 TODO:
+* clean up e profiles, elm profiles and per screen profiles
+  * move to a new profile method which has a fallback profile
+    * also has to include scaling options like manual or based on dpi
+  * then per screen profiles + scaling too  but do this all via the per
+    screen profile infra - always go that path
 * illume: work on this again given pinephone + librem5 appeared
   * single app at a time with switching mode
     * winlist should do the switching with another layout mode...
