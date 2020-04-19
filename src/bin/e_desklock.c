@@ -84,8 +84,6 @@ e_desklock_shutdown(void)
    if (!x_fatal)
      e_desklock_hide();
 
-//   if (waslocked) e_util_env_set("E_DESKLOCK_LOCKED", "locked");
-
    ecore_event_handler_del(_e_desklock_run_handler);
    _e_desklock_run_handler = NULL;
    ecore_event_handler_del(_e_desklock_randr_handler);
