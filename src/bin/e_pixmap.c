@@ -70,7 +70,8 @@ _e_pixmap_cb_deferred_buffer_destroy(struct wl_listener *listener, void *data EI
    E_Comp_Wl_Buffer *buffer;
 
    buffer = container_of(listener, E_Comp_Wl_Buffer, deferred_destroy_listener);
-   buffer->discarding_pixmap->free_buffers = eina_list_remove(buffer->discarding_pixmap->free_buffers, buffer);
+   buffer->discarding_pixmap->free_buffers =
+     eina_list_remove(buffer->discarding_pixmap->free_buffers, buffer);
    buffer->discarding_pixmap = NULL;
 }
 
@@ -164,8 +165,10 @@ _e_pixmap_wayland_buffer_release(E_Pixmap *cp, E_Comp_Wl_Buffer *buffer)
         if (buffer->discarding_pixmap) return;
 
         buffer->discarding_pixmap = cp;
-        buffer->deferred_destroy_listener.notify = _e_pixmap_cb_deferred_buffer_destroy;
-        wl_signal_add(&buffer->destroy_signal, &buffer->deferred_destroy_listener);
+        buffer->deferred_destroy_listener.notify =
+          _e_pixmap_cb_deferred_buffer_destroy;
+        wl_signal_add(&buffer->destroy_signal,
+                      &buffer->deferred_destroy_listener);
         cp->free_buffers = eina_list_append(cp->free_buffers, buffer);
         return;
      }
@@ -216,7 +219,10 @@ _e_pixmap_free(E_Pixmap *cp)
 #ifndef HAVE_WAYLAND_ONLY
         if (!cp->images_cache) break;
         if (cp->client)
-          evas_object_event_callback_add(cp->client->frame, EVAS_CALLBACK_FREE, _e_pixmap_image_clear_x, cp->images_cache);
+          evas_object_event_callback_add(cp->client->frame,
+                                         EVAS_CALLBACK_FREE,
+                                         _e_pixmap_image_clear_x,
+                                         cp->images_cache);
         else
           {
              void *i;
@@ -348,7 +354,8 @@ e_pixmap_new(E_Pixmap_Type type, ...)
    int64_t id;
 #endif
 
-   EINA_SAFETY_ON_TRUE_RETURN_VAL((type != E_PIXMAP_TYPE_WL) && (type != E_PIXMAP_TYPE_X), NULL);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL((type != E_PIXMAP_TYPE_WL) &&
+                                  (type != E_PIXMAP_TYPE_X), NULL);
    va_start(l, type);
    switch (type)
      {
@@ -511,7 +518,9 @@ e_pixmap_refresh(E_Pixmap *cp)
                 cp->failures++;
                 return EINA_FALSE;
              }
-           pixmap = ecore_x_composite_name_window_pixmap_get(cp->parent ?: (Ecore_X_Window)cp->win);
+           pixmap =
+             ecore_x_composite_name_window_pixmap_get(cp->parent ?:
+                                                      (Ecore_X_Window)cp->win);
            if (cp->client)
              {
                 cd = (E_Comp_X_Client_Data*)cp->client->comp_data;
@@ -533,7 +542,9 @@ e_pixmap_refresh(E_Pixmap *cp)
                      ecore_x_pixmap_free(cp->pixmap);
                      cp->pixmap = pixmap;
                      cp->w = pw, cp->h = ph;
-                     ecore_x_e_comp_pixmap_set(cp->parent ?: (Ecore_X_Window)cp->win, cp->pixmap);
+                     ecore_x_e_comp_pixmap_set(cp->parent ?:
+                                               (Ecore_X_Window)cp->win,
+                                               cp->pixmap);
                      e_pixmap_image_clear(cp, 0);
                   }
                 else
@@ -565,7 +576,11 @@ e_pixmap_refresh(E_Pixmap *cp)
            else if (buffer->dmabuf_buffer)
              format = buffer->dmabuf_buffer->attributes.format;
            else
-             e_comp_wl->wl.glapi->evasglQueryWaylandBuffer(e_comp_wl->wl.gl, buffer->resource, EGL_TEXTURE_FORMAT, &format);
+             {
+                e_comp_wl->wl.glapi->evasglQueryWaylandBuffer
+                  (e_comp_wl->wl.gl, buffer->resource, EGL_TEXTURE_FORMAT,
+                      &format);
+             }
 
            switch (format)
              {
@@ -808,7 +823,8 @@ e_pixmap_native_surface_init(E_Pixmap *cp, Evas_Native_Surface *ns)
                }
              if (use_hw_planes)
                {
-                  ns->data.wl_dmabuf.scanout.handler = _e_pixmap_scanout_handler;
+                  ns->data.wl_dmabuf.scanout.handler =
+                    _e_pixmap_scanout_handler;
                   ns->data.wl_dmabuf.scanout.data = cp->buffer;
                }
              ret = EINA_TRUE;
@@ -875,6 +891,7 @@ e_pixmap_image_clear(E_Pixmap *cp, Eina_Bool cache)
              Eina_List *free_list;
 
              if ((!cp->client) || (!cp->client->comp_data)) return;
+
              cd = (E_Comp_Wl_Client_Data *)cp->client->comp_data;
 
              /* The destroy callback will remove items from the frame list
@@ -917,7 +934,8 @@ e_pixmap_image_refresh(E_Pixmap *cp)
 #ifndef HAVE_WAYLAND_ONLY
         if (cp->image) return EINA_TRUE;
         if ((!cp->visual) || (!cp->client->depth)) return EINA_FALSE;
-        cp->image = ecore_x_image_new(cp->w, cp->h, cp->visual, cp->client->depth);
+        cp->image =
+          ecore_x_image_new(cp->w, cp->h, cp->visual, cp->client->depth);
         if (cp->image)
           cp->image_argb = ecore_x_image_is_argb32_get(cp->image);
         return !!cp->image;
@@ -940,11 +958,13 @@ e_pixmap_image_refresh(E_Pixmap *cp)
            cp->held_buffer = cp->buffer;
            if (!cp->held_buffer) return EINA_TRUE;
 
-           cp->held_buffer->pool = wl_shm_buffer_ref_pool(cp->held_buffer->shm_buffer);
+           cp->held_buffer->pool =
+             wl_shm_buffer_ref_pool(cp->held_buffer->shm_buffer);
            cp->held_buffer->busy++;
            cp->data = wl_shm_buffer_get_data(cp->buffer->shm_buffer);
+           cp->held_buffer_destroy_listener.notify =
+             _e_pixmap_cb_held_buffer_destroy;
 
-           cp->held_buffer_destroy_listener.notify = _e_pixmap_cb_held_buffer_destroy;
            wl_signal_add(&cp->held_buffer->destroy_signal,
                          &cp->held_buffer_destroy_listener);
            return EINA_TRUE;
@@ -969,7 +989,8 @@ e_pixmap_image_exists(const E_Pixmap *cp)
 #endif
 #ifdef HAVE_WAYLAND
    return (!!cp->data) ||
-     (cp->buffer && ((e_comp->gl && (!cp->buffer->shm_buffer)) || cp->buffer->dmabuf_buffer));
+     (cp->buffer && ((e_comp->gl && (!cp->buffer->shm_buffer)) ||
+                     cp->buffer->dmabuf_buffer));
 #endif
 
    return EINA_FALSE;
