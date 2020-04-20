@@ -570,7 +570,7 @@ e_pixmap_refresh(E_Pixmap *cp)
            cp->h = buffer->h;
 
            if (buffer->shm_buffer)
-             format = wl_shm_buffer_get_format(shm_buffer);
+             format = wl_shm_buffer_get_format(buffer->shm_buffer);
            else if (buffer->dmabuf_buffer)
              format = buffer->dmabuf_buffer->attributes.format;
            else
@@ -754,6 +754,8 @@ static void
 _e_pixmap_scanout_handler(void *data, Evas_Native_Surface_Status status)
 {
    E_Comp_Wl_Buffer *buffer;
+
+   printf("EWL: %s, Status: %d\n", __FUNCTION__, status);
 
    buffer = data;
    switch (status)
