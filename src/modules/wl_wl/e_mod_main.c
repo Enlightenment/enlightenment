@@ -21,6 +21,7 @@ _cb_sync_done(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    e_comp_wl_output_init(NULL, NULL, NULL,
                0, 0, w * 2 / 3, h * 2 / 3,
                0, 0, 0, 0, 0, 0);
+
    it = ecore_wl2_display_inputs_get(ecore_wl2_window_display_get(ecore_evas_wayland2_window_get(e_comp->ee)));
    EINA_ITERATOR_FOREACH(it, input)
      ecore_wl2_input_pointer_set(input, NULL, 0, 0);
@@ -60,7 +61,8 @@ e_modapi_init(E_Module *m)
              return NULL;
           }
      }
-   ecore_wl2_window_type_set(ecore_evas_wayland2_window_get(e_comp->ee), ECORE_WL2_WINDOW_TYPE_TOPLEVEL);
+   ecore_wl2_window_type_set(ecore_evas_wayland2_window_get(e_comp->ee),
+                             ECORE_WL2_WINDOW_TYPE_TOPLEVEL);
 
    ecore_evas_data_set(e_comp->ee, "comp", e_comp);
    ecore_evas_title_set(e_comp->ee, "Enlightenment: WL-WL");
@@ -75,8 +77,6 @@ e_modapi_init(E_Module *m)
    e_comp_wl_input_keyboard_enabled_set(EINA_TRUE);
    e_comp_wl_input_touch_enabled_set(EINA_TRUE);
 
-   /* e_comp->pointer =  */
-   /*   e_pointer_window_new(ecore_evas_window_get(e_comp->ee), EINA_TRUE); */
    e_comp->pointer = e_pointer_canvas_new(e_comp->ee, EINA_TRUE);
    e_comp->pointer->color = EINA_TRUE;
 
