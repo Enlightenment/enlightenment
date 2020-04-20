@@ -559,7 +559,6 @@ e_pixmap_refresh(E_Pixmap *cp)
 #ifdef HAVE_WAYLAND
         {
            E_Comp_Wl_Buffer *buffer = cp->buffer;
-           struct wl_shm_buffer *shm_buffer;
            int format;
 
            cp->w = cp->h = 0;
@@ -567,11 +566,10 @@ e_pixmap_refresh(E_Pixmap *cp)
 
            if (!buffer) return EINA_FALSE;
 
-           shm_buffer = buffer->shm_buffer;
            cp->w = buffer->w;
            cp->h = buffer->h;
 
-           if (shm_buffer)
+           if (buffer->shm_buffer)
              format = wl_shm_buffer_get_format(shm_buffer);
            else if (buffer->dmabuf_buffer)
              format = buffer->dmabuf_buffer->attributes.format;
