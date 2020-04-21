@@ -96,6 +96,8 @@ void *alloca (size_t);
 
 #define ERR(args...) do { fprintf(stderr, "E_SYSTEM_ERR: "); fprintf(stderr, ##args); } while (0)
 
+extern Eina_Bool alert_backlight_reset;
+
 extern uid_t uid;
 extern gid_t gid;
 

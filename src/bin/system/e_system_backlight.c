@@ -160,6 +160,14 @@ _light_add(const char *dev)
    lig->max = 100;
 #endif
    _devices = eina_list_append(_devices, lig);
+   if (alert_backlight_reset)
+     {  // set brightness to max if alert mode is on
+        eina_lock_take(&_devices_lock);
+        lig->val_set = lig->max;
+        lig->set = EINA_TRUE;
+        eina_semaphore_release(&_worker_sem, 1);
+        eina_lock_release(&_devices_lock);
+     }
 }
 
 #ifdef HAVE_EEZE
@@ -176,7 +184,7 @@ _light_device_include(const char *dev)
 #endif
 
 static void
-_light_refresh_devices(void)
+_light_refresh_devices()
 {
    Light *lig;
 
@@ -260,9 +268,12 @@ _cb_bklight_list(void *data EINA_UNUSED, const char *params EINA_UNUSED)
 static void
 _cb_bklight_refresh(void *data EINA_UNUSED, const char *params EINA_UNUSED)
 {
+   Eina_Bool tmp = alert_backlight_reset;
+   alert_backlight_reset = EINA_FALSE;
    eina_lock_take(&_devices_lock);
    _light_refresh_devices();
    eina_lock_release(&_devices_lock);
+   alert_backlight_reset = tmp;
 }
 
 static void
@@ -302,9 +313,9 @@ done:
 void
 e_system_backlight_init(void)
 {
-   _light_refresh_devices();
    eina_lock_new(&_devices_lock);
    eina_semaphore_new(&_worker_sem, 0);
+   _light_refresh_devices();
    ecore_thread_feedback_run(_cb_worker, _cb_worker_message,
                              _cb_worker_end, _cb_worker_cancel,
                              NULL, EINA_TRUE);

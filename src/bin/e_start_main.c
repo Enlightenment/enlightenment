@@ -576,7 +576,7 @@ main(int argc, char **argv)
    int i, valgrind_mode = 0;
    int valgrind_tool = 0;
    int valgrind_gdbserver = 0;
-   char buf[8192], buf2[4096], **args, *home;
+   char buf[8192], buf2[4096], buf3[4096], **args, *home;
    char valgrind_path[PATH_MAX] = "";
    const char *valgrind_log = NULL;
    const char *bindir;
@@ -709,6 +709,9 @@ main(int argc, char **argv)
    snprintf(buf2, sizeof(buf2),
             "E_ALERT_FONT_DIR=%s/data/fonts", eina_prefix_data_get(pfx));
    putenv(buf2);
+   snprintf(buf3, sizeof(buf3),
+            "E_ALERT_SYSTEM_BIN=%s/enlightenment/utils/enlightenment_system", eina_prefix_lib_get(pfx));
+   putenv(buf3);
 
    if ((valgrind_mode || valgrind_tool) &&
        !find_valgrind(valgrind_path, sizeof(valgrind_path)))

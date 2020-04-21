@@ -279,12 +279,17 @@ _ddc_probe(void)
              if (d->edid)
                {
                   for (j = 0; j < 128; j++)
-                  snprintf(&(d->edid[j * 2]), 3, "%02x", dinfo->edid_bytes[j]);
+                    snprintf(&(d->edid[j * 2]), 3, "%02x", dinfo->edid_bytes[j]);
                   d->edid[j * 2] = 0;
                   d->screen = i;
                   eina_lock_take(&_devices_lock);
                   _devices = eina_list_append(_devices, d);
                   eina_lock_release(&_devices_lock);
+                  if (alert_backlight_reset)
+                    {  // set brightness to max if alert mode is on
+                       ddc_func.ddca_set_non_table_vcp_value
+                         (ddc_dh[i], 0x10, 0, 100);
+                    }
                }
              else free(d);
           }

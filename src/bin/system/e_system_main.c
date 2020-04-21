@@ -1,5 +1,7 @@
 #include "e_system.h"
 
+Eina_Bool alert_backlight_reset = EINA_FALSE;
+
 uid_t uid = -1; // uid of person running me
 gid_t gid = -1; // gid of person running me
 
@@ -275,6 +277,14 @@ _cb_idle_enterer(void *data EINA_UNUSED)
 int
 main(int argc EINA_UNUSED, const char **argv EINA_UNUSED)
 {
+   const char *s;
+
+   // special mode to reset all newly found bl devices to max on
+   // discovery because we were run by the e alert crash handler and
+   // the user needs to see it...
+   s = getenv("E_ALERT_BACKLIGHT_RESET");
+   if ((s) && (s[0]  == '1')) alert_backlight_reset = EINA_TRUE;
+
    setuid_setup();
 
    ecore_app_no_system_modules();

@@ -243,7 +243,6 @@ main(int argc, char **argv)
         else if (i == 3) exit_gdb      = atoi(argv[i]);
         else if (i == 4) backtrace_str = argv[i];
      }
-
    fprintf(stderr, "exit_gdb: %i\n", exit_gdb);
 
    s = getenv("E_TAINTED");
@@ -252,7 +251,20 @@ main(int argc, char **argv)
 
    ecore_app_no_system_modules();
    elm_init(argc, argv);
-   if (setup_display()) elm_run();
+
+   if (setup_display())
+     {
+        s = getenv("E_ALERT_SYSTEM_BIN");
+        if (s && s[0])
+          {
+             putenv("E_ALERT_BACKLIGHT_RESET=1");
+             ecore_exe_pipe_run
+               (s, ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_WRITE |
+                ECORE_EXE_NOT_LEADER | ECORE_EXE_TERM_WITH_PARENT, NULL);
+          }
+
+        elm_run();
+     }
 
    return ret;
 }
