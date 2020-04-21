@@ -16,7 +16,6 @@ if get_option(m) == true
     'page_040',
     'page_050',
     'page_060',
-    'page_065',
     'page_070',
     'page_080',
     'page_090',
