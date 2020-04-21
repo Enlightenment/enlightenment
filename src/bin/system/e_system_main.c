@@ -93,18 +93,35 @@ deny:
 static void
 setuid_setup(void)
 {
+   struct passwd *pwent;
+   static char buf[4096];
+
    uid = getuid();
    gid = getgid();
 
    if (setuid(0) != 0)
      {
-        ERR("Unable to assume root user privileges\n");
+        fprintf(stderr, "Unable to assume root user privileges\n");
         exit(5);
      }
    if (setgid(0) != 0)
      {
-        ERR("Unable to assume root group privileges\n");
+        fprintf(stderr, "Unable to assume root group privileges\n");
         exit(7);
+     }
+
+   pwent = getpwuid(getuid());
+   if (!pwent)
+     {
+        fprintf(stderr, "Unable to obtain passwd entry\n");
+        exit(1);
+     }
+
+   snprintf(buf, sizeof(buf), "HOME=%s", pwent->pw_dir);
+   if (putenv(buf) == -1)
+     {
+        fprintf(stderr, "Unable to set $HOME environment\n");
+        exit(1);
      }
 
    // die with parent - special as this is setuid
