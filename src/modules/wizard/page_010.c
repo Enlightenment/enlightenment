@@ -225,7 +225,7 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
           found = 1;
         elm_genlist_item_append(ob, &itc, pair, NULL, 0, _lang_select, pair);
      }
-   if (!found)
+   if (found)
      elm_genlist_item_prepend(ob, &itc, NULL, NULL, 0, _lang_select, NULL);
    if ((!found) && (elm_genlist_items_count(ob) == 2)) // default and one other
      elm_genlist_item_selected_set(elm_genlist_last_item_get(ob), 1);
