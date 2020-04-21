@@ -74,24 +74,39 @@ image_load(const char *name, const char *path, uint32_t *imgdata, int w, int h, 
       ".jpg",
       NULL
    };
-   if (path && path[0])
+   if (path && path[0] && name)
      {
         char buf[PATH_MAX];
-        const char **theme, *themes[] = { e_config->icon_theme, "hicolor", NULL };
+        const char **theme, *themes[] =
+          {
+             e_config->icon_theme,
+             "hicolor",
+// hmm sometimes this is there
+//             "emblems",
+             NULL
+          };
 
         for (theme = themes; *theme; theme++)
           {
-             struct stat st;
-             unsigned int *i, sizes[] = { 16, 22, 24, 32, 36, 40, 48, 64, 72, 96, 128, 192, 256, 512, 0 };
+             unsigned int *i, sizes[] =
+               {
+                  512, 256, 192, 128, 96, 72, 64, 48, 40, 36, 32, 24, 22, 16, 0
+               };
 
              snprintf(buf, sizeof(buf), "%s/%s", path, *theme);
-             if (stat(buf, &st)) continue;
+             if (!ecore_file_is_dir(buf)) continue;
              for (i = sizes; *i; i++)
                {
                   snprintf(buf, sizeof(buf), "%s/%s/%ux%u", path, *theme, *i, *i);
-                  if (stat(buf, &st)) continue;
+                  if (!ecore_file_is_dir(buf)) continue;
                   for (ext = exts; *ext; ext++)
                     {
+                       snprintf(buf, sizeof(buf), "%s/%s/%ux%u/status/%s%s", path, *theme, *i, *i, name, *ext);
+                       if (ecore_file_exists(buf))
+                         {
+                            e_icon_file_set(image, buf);
+                            return;
+                         }
                        snprintf(buf, sizeof(buf), "%s/%s/%ux%u/apps/%s%s", path, *theme, *i, *i, name, *ext);
                        if (ecore_file_exists(buf))
                          {
@@ -99,6 +114,15 @@ image_load(const char *name, const char *path, uint32_t *imgdata, int w, int h, 
                             return;
                          }
                     }
+               }
+          }
+        for (ext = exts; *ext; ext++)
+          {
+             snprintf(buf, sizeof(buf), "%s/%s%s", path, name, *ext);
+             if (ecore_file_exists(buf))
+               {
+                  e_icon_file_set(image, buf);
+                  return;
                }
           }
      }
