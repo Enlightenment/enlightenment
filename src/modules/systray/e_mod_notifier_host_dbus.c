@@ -74,6 +74,7 @@ icon_pixmap_deserialize(Eldbus_Message_Iter *variant, uint32_t **data, int *w, i
              uint32_t *img;
              int len;
 
+             printf("SYSTRAY: serialized image data is %ix%i\n", tmpw, tmph);
              //only take this img if it has a higher resolution
              if ((tmpw > *w) || (tmph > *h))
                {
@@ -90,18 +91,30 @@ icon_pixmap_deserialize(Eldbus_Message_Iter *variant, uint32_t **data, int *w, i
                             if (tmp)
                               {
                                  uint32_t *s, *d, *e;
+                                 int r, g, b, a;
 
                                  if (*data) free(*data);
                                  *data = tmp;
                                  *w = tmpw;
                                  *h = tmph;
+                                 printf("SYSTRAY: fetching/converting serialized data...\n");
                                  for (s = img, e = img + sz, d = *data;
                                       s < e; s++, d++)
+                                   {
 #if (defined __BYTE_ORDER && __BYTE_ORDER == __LITTLE_ENDIAN) || (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
-                                 *d = eina_swap32(*s);
+                                      *d = eina_swap32(*s);
 #else
-                                 *d = *s;
+                                      *d = *s;
 #endif
+                                      a = ((d[0] >> 24) & 0xff);
+                                      r = ((d[0] >> 16) & 0xff);
+                                      g = ((d[0] >>  0) & 0xff);
+                                      b = ((d[0]      ) & 0xff);
+                                      r = (r * a) / 255;
+                                      g = (g * a) / 255;
+                                      b = (b * a) / 255;
+                                      *d = (a << 24) | (r << 16) | (g << 8) | b;
+                                   }
                               }
                          }
                     }
@@ -120,21 +133,25 @@ item_prop_get(void *data, const void *key, Eldbus_Message_Iter *var)
         const char *category;
         eldbus_message_iter_arguments_get(var, "s", &category);
         item->category = id_find(category, Category_Names);
+        printf("SYSTRAY: %s [%s]\n", (const char *)key, category);
      }
    else if (!strcmp(key, "IconName"))
      {
         const char *name;
         eldbus_message_iter_arguments_get(var, "s", &name);
         eina_stringshare_replace(&item->icon_name, name);
+        printf("SYSTRAY: %s [%s]\n", (const char *)key, name);
      }
    else if (!strcmp(key, "IconPixmap"))
      {
         free(item->imgdata);
+        printf("SYSTRAY: %s ...\n", (const char *)key);
         icon_pixmap_deserialize(var, &item->imgdata, &item->imgw, &item->imgh);
      }
    else if (!strcmp(key, "AttentionIconPixmap"))
      {
         free(item->attnimgdata);
+        printf("SYSTRAY: %s ...\n", (const char *)key);
         icon_pixmap_deserialize(var, &item->attnimgdata, &item->attnimgw, &item->attnimgh);
      }
    else if (!strcmp(key, "AttentionIconName"))
@@ -142,36 +159,42 @@ item_prop_get(void *data, const void *key, Eldbus_Message_Iter *var)
         const char *name;
         eldbus_message_iter_arguments_get(var, "s", &name);
         eina_stringshare_replace(&item->attention_icon_name, name);
+        printf("SYSTRAY: %s [%s]\n", (const char *)key, name);
      }
    else if (!strcmp(key, "IconThemePath"))
      {
         const char *path;
         eldbus_message_iter_arguments_get(var, "s", &path);
         eina_stringshare_replace(&item->icon_path, path);
+        printf("SYSTRAY: %s [%s]\n", (const char *)key, path);
      }
    else if (!strcmp(key, "Menu"))
      {
         const char *path;
         eldbus_message_iter_arguments_get(var, "o", &path);
         eina_stringshare_replace(&item->menu_path, path);
+        printf("SYSTRAY: %s [%s]\n", (const char *)key, path);
      }
    else if (!strcmp(key, "Status"))
      {
         const char *status;
         eldbus_message_iter_arguments_get(var, "s", &status);
         item->status = id_find(status, Status_Names);
+        printf("SYSTRAY: %s [%s]\n", (const char *)key, status);
      }
    else if (!strcmp(key, "Id"))
      {
         const char *id;
         eldbus_message_iter_arguments_get(var, "s", &id);
         eina_stringshare_replace(&item->id, id);
+        printf("SYSTRAY: %s [%s]\n", (const char *)key, id);
      }
    else if (!strcmp(key, "Title"))
      {
         const char *title;
         eldbus_message_iter_arguments_get(var, "s", &title);
         eina_stringshare_replace(&item->title, title);
+        printf("SYSTRAY: %s [%s]\n", (const char *)key, title);
      }
 }
 
@@ -262,6 +285,7 @@ attention_icon_pixmap_get_cb(void *data, const Eldbus_Message *msg, Eldbus_Pendi
 
    if (!eldbus_message_arguments_get(msg, "v", &variant)) return;
    free(item->attnimgdata);
+   printf("SYSTRAY: %s ...\n", "AttentionIconPixmap");
    icon_pixmap_deserialize(variant, &item->attnimgdata, &item->attnimgw, &item->attnimgh);
    systray_notifier_item_update(item);
 }
@@ -293,6 +317,7 @@ icon_pixmap_get_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pendin
 
    if (!eldbus_message_arguments_get(msg, "v", &variant)) return;
    free(item->imgdata);
+   printf("SYSTRAY: %s ...\n", "IconPixmap");
    icon_pixmap_deserialize(variant, &item->imgdata, &item->imgw, &item->imgh);
    systray_notifier_item_update(item);
 }
@@ -342,6 +367,7 @@ new_icon_theme_path_cb(void *data, const Eldbus_Message *msg)
         ERR("Error reading message.");
         return;
      }
+   printf("SYSTRAY: new icon theme path [%s]\n", path);
    eina_stringshare_replace(&item->icon_path, path);
    systray_notifier_item_update(item);
 }
@@ -356,6 +382,7 @@ new_status_cb(void *data, const Eldbus_Message *msg)
         ERR("Error reading message.");
         return;
      }
+   printf("SYSTRAY: new status [%s]\n", status);
    item->status = id_find(status, Status_Names);
    systray_notifier_item_update(item);
 }

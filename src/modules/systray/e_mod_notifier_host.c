@@ -74,6 +74,7 @@ image_load(const char *name, const char *path, uint32_t *imgdata, int w, int h, 
       ".jpg",
       NULL
    };
+   printf("SYSTRAY: load image name=[%s] path=[%s] imgdata=[%p] size=[%ix%i]\n", name, path, imgdata, w, h);
    if (path && path[0] && name)
      {
         char buf[PATH_MAX];
