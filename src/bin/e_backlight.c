@@ -377,11 +377,21 @@ _backlight_devices_lid_register(const char *dev, Eina_Bool force)
    bd = _backlight_devices_edid_find(sc->info.edid);
    if (!bd)
      {
+        E_Zone *zone;
+
         bd = calloc(1, sizeof(Backlight_Device));
         if (!bd) return;
         bd->edid = eina_stringshare_add(sc->info.edid);
         bd->output = eina_stringshare_add(sc->info.name);
         _devices = eina_list_append(_devices, bd);
+        zone = _backlight_devices_device_zone_get(bd);
+        if (zone)
+          {
+             double bl = zone->bl;
+
+             zone->bl = 0.0;
+             e_backlight_level_set(zone, bl, -1.0);
+          }
      }
    if (bd->dev)
      {
@@ -403,11 +413,21 @@ _backlight_devices_edid_register(const char *dev, const char *edid)
    bd = _backlight_devices_edid_find(sc->info.edid);
    if (!bd)
      {
+        E_Zone *zone;
+
         bd = calloc(1, sizeof(Backlight_Device));
         if (!bd) return;
         bd->edid = eina_stringshare_add(sc->info.edid);
         bd->output = eina_stringshare_add(sc->info.name);
         _devices = eina_list_append(_devices, bd);
+        zone = _backlight_devices_device_zone_get(bd);
+        if (zone)
+          {
+             double bl = zone->bl;
+
+             zone->bl = 0.0;
+             e_backlight_level_set(zone, bl, -1.0);
+          }
      }
    if (bd->dev)
      {
@@ -658,6 +678,9 @@ e_backlight_level_set(E_Zone *zone, double val, double tim)
           e_backlight_level_set(zone, val, tim);
         return;
      }
+   bl_now = zone->bl;
+   zone->bl = val;
+
    bd = _backlight_devices_zone_device_find(zone);
    if (!bd) return;
    // set backlight associated with zone to val over period of tim
@@ -666,10 +689,7 @@ e_backlight_level_set(E_Zone *zone, double val, double tim)
    if ((!e_comp->screen) || (!e_comp->screen->backlight_enabled)) return;
    if (val < 0.0) val = 0.0;
    else if (val > 1.0) val = 1.0;
-   if ((fabs(val - zone->bl) < DBL_EPSILON) && (!bd->anim)) return;
-   bl_now = zone->bl;
-
-   zone->bl = val;
+   if ((fabs(val - bl_now) < DBL_EPSILON) && (!bd->anim)) return;
 
    if (fabs(tim) < DBL_EPSILON)
      {
