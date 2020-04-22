@@ -94,7 +94,7 @@ static void
 setuid_setup(void)
 {
    struct passwd *pwent;
-   static char buf[4096];
+   static char buf[PATH_MAX];
 
    uid = getuid();
    gid = getgid();
@@ -124,6 +124,16 @@ setuid_setup(void)
    if (strlen(pwent->pw_dir) > (sizeof(buf) - 8))
      {
         fprintf(stderr, "Root homedir too long\n");
+        exit(1);
+     }
+   if (pwent->pw_dir[0] != '/')
+     {
+        fprintf(stderr, "Root homedir %s is not a full path\n", pwent->pw_dir);
+        exit(1);
+     }
+   if (!realpath(pwent->pw_dir, buf))
+     {
+        fprintf(stderr, "Root homedir %s does not resolve\n", pwent->pw_dir);
         exit(1);
      }
    snprintf(buf, sizeof(buf), "HOME=%s", pwent->pw_dir);
