@@ -72,6 +72,11 @@ _cb_stdio_in_read(void *data EINA_UNUSED, Ecore_Fd_Handler *fd_handler EINA_UNUS
              ERR("Invalid message payload size (less than 0)\n");
              abort();
           }
+        if (head.size > (1024 * 1024))
+          {
+             ERR("Invalid message payload size (more than 1M)\n");
+             abort();
+          }
         buf = NULL;
         if (head.size > 0)
           {
