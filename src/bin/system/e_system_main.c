@@ -4,6 +4,8 @@ Eina_Bool alert_backlight_reset = EINA_FALSE;
 
 uid_t uid = -1; // uid of person running me
 gid_t gid = -1; // gid of person running me
+char *user_name = NULL;
+char *group_name = NULL;
 
 static int
 _conf_allow_deny(const char *cmd, const char *glob)
@@ -110,10 +112,46 @@ static void
 setuid_setup(void)
 {
    struct passwd *pwent;
+   struct group *grent;
    static char buf[PATH_MAX];
 
    uid = getuid();
    gid = getgid();
+
+   pwent = getpwuid(uid);
+   if (!pwent)
+     {
+        ERR("Unable to obtain passwd entry for calling user\n");
+        exit(1);
+     }
+   if (!pwent->pw_name)
+     {
+        ERR("Blank username for user\n");
+        exit(1);
+     }
+   user_name = strdup(pwent->pw_name);
+   if (!user_name)
+     {
+        ERR("Unable to allocate memory for username\n");
+        exit(1);
+     }
+   grent = getgrgid(gid);
+   if (!grent)
+     {
+        ERR("Unable to obtain group entry for calling group\n");
+        exit(1);
+     }
+   if (!grent->gr_name)
+     {
+        ERR("Blank groupname for group\n");
+        exit(1);
+     }
+   group_name = strdup(grent->gr_name);
+   if (!group_name)
+     {
+        ERR("Unable to allocate memory for groupname\n");
+        exit(1);
+     }
 
    if (setuid(0) != 0)
      {

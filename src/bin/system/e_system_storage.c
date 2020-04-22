@@ -87,7 +87,7 @@ _mkdir(const char *path, uid_t u, gid_t g)
      }
    if (chown(path, u, g) != 0)
      {
-        ERR("Can't own [%s] to uid.gid %i.%i\n", path, uid, gid);
+        ERR("Can't own [%s] to uid.gid %i.%i\n", path, u, g);
         return EINA_FALSE;
      }
    return EINA_TRUE;
@@ -96,7 +96,7 @@ _mkdir(const char *path, uid_t u, gid_t g)
 static Eina_Bool
 _store_mount_verify(const char *mnt)
 {
-   char *tmnt, *p;
+   char *tmnt, *p, *pp;
    const char *s;
    struct stat st;
 
@@ -133,6 +133,10 @@ _store_mount_verify(const char *mnt)
         p = strchr(p + 1, '/');
         if (!p) goto malformed;
         *p = '\0';
+        pp = strrchr(tmnt, '/');
+        if (!pp) goto err;
+        // check if dir name is name of user...
+        if (strcmp(p + 1, user_name)) goto err;
         if (!_mkdir(tmnt, 0, 0)) goto err;
         *p = '/';
 

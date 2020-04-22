@@ -100,6 +100,8 @@ extern Eina_Bool alert_backlight_reset;
 
 extern uid_t uid;
 extern gid_t gid;
+extern char *user_name;
+extern char *group_name;
 
 void e_system_inout_init(void);
 void e_system_inout_shutdown(void);
