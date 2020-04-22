@@ -261,6 +261,7 @@ _backlight_devices_device_zone_get(Backlight_Device *bd)
    snprintf(buf, sizeof(buf), "%s/%s", bd->output? bd->output: "", bd->edid ? bd->edid : "");
    EINA_LIST_FOREACH(e_comp->zones, l, zone)
      {
+        if (!zone->randr2_id) continue;
         if (!strcmp(zone->randr2_id, buf)) return zone;
      }
    return NULL;

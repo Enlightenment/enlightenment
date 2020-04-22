@@ -1493,6 +1493,7 @@ e_randr2_screen_id_find(const char *id)
    Eina_List *l;
    E_Randr2_Screen *s;
 
+   if (!id) return NULL;
    EINA_LIST_FOREACH(e_randr2->screens, l, s)
      {
         if (!strcmp(id, s->id)) return s;
