@@ -123,6 +123,8 @@ setuid_setup(void)
         fprintf(stderr, "Unable to set $HOME environment\n");
         exit(1);
      }
+   // change CWD to / to avoid path search dlopens finding libs in ./
+   chdir("/");
 
    // die with parent - special as this is setuid
 #ifdef HAVE_PRCTL
