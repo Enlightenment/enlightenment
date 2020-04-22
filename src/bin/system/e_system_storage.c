@@ -100,16 +100,24 @@ _store_mount_verify(const char *mnt)
    const char *s;
    struct stat st;
 
+   // XXX: we should use /run/media - possibly make this adapt
    if (!(!strncmp(mnt, "/media/", 7))) return EINA_FALSE;
    for (s = mnt; *s; s++)
      {
         if (*s == '\\') return EINA_FALSE;
+        if ((*s <= '*') || (*s == '`') || (*s == ';') || (*s == '<') ||
+            (*s == '>') || (*s == '?') || (*s >= '{') ||
+            ((*s >= '[') && (*s <= '^')))
+          return EINA_FALSE;
      }
    if (strstr(mnt, "/..")) return EINA_FALSE;
+   if (strstr(mnt, "/./")) return EINA_FALSE;
+   if (strstr(mnt, "//")) return EINA_FALSE;
    if (stat(mnt, &st) == 0)
      {
         if (!S_ISDIR(st.st_mode)) return EINA_FALSE;
-        if (st.st_uid != uid) return EINA_FALSE;
+        if (st.st_uid != 0) return EINA_FALSE;
+        if (st.st_gid != 0) return EINA_FALSE;
      }
    tmnt = strdup(mnt);
    if (tmnt)
@@ -121,15 +129,15 @@ _store_mount_verify(const char *mnt)
         if (!_mkdir(tmnt, 0, 0)) goto err;
         *p = '/';
 
-        // /media/username <- owned by uid.gid
+        // /media/username <- owned by root
         p = strchr(p + 1, '/');
         if (!p) goto malformed;
         *p = '\0';
-        if (!_mkdir(tmnt, uid, gid)) goto err;
+        if (!_mkdir(tmnt, 0, 0)) goto err;
         *p = '/';
 
         // /media/username/dirname <- owned by root
-        if (!_mkdir(tmnt, uid, gid)) goto err;
+        if (!_mkdir(tmnt, 0, 0)) goto err;
         free(tmnt);
      }
    return EINA_TRUE;
@@ -147,6 +155,7 @@ _store_umount_verify(const char *mnt)
    const char *s;
    struct stat st;
 
+   // XXX: we should use /run/media - possibly make this adapt
    if (!(!strncmp(mnt, "/media/", 7))) return EINA_FALSE;
    for (s = mnt; *s; s++)
      {
@@ -160,7 +169,8 @@ _store_umount_verify(const char *mnt)
    if (!p) goto err;
    *p = '\0';
    if (stat(tmnt, &st) != 0) goto err;
-   if (st.st_uid != uid) goto err;
+   if (st.st_uid != 0) goto err;
+   if (st.st_gid != 0) goto err;
    free(tmnt);
    return EINA_TRUE;
 err:
