@@ -37,7 +37,10 @@ _store_device_verify(const char *dev)
      }
    // must exist as a file - if not - nope
    if (stat(dev, &st) != 0) return EINA_FALSE;
-   return EINA_TRUE;
+   // XXX: must check it's a block device, that is removable etc. etc.
+   // XXX: for now we have no code for this so always fail until we do
+   return EINA_FALSE;
+//   return EINA_TRUE;
 }
 
 static Eina_Bool
