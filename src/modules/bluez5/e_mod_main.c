@@ -290,7 +290,8 @@ _cb_rfkill_unblock(void *datam EINA_UNUSED, const char *params)
 {
    int ret_code = 0;
 
-   sscanf(params, "%i %*s", &ret_code);
+   if (sscanf(params, "%i %*s", &ret_code) != 1) return;
+
    if (ret_code == 0) return;
 
    e_util_dialog_show
