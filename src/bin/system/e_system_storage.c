@@ -164,17 +164,26 @@ _store_umount_verify(const char *mnt)
    for (s = mnt; *s; s++)
      {
         if (*s == '\\') return EINA_FALSE;
+        if ((*s <= '*') || (*s == '`') || (*s == ';') || (*s == '<') ||
+            (*s == '>') || (*s == '?') || (*s >= '{') ||
+            ((*s >= '[') && (*s <= '^')))
+          return EINA_FALSE;
      }
+   if (strstr(mnt, "/..")) return EINA_FALSE;
+   if (strstr(mnt, "/./")) return EINA_FALSE;
+   if (strstr(mnt, "//")) return EINA_FALSE;
    if (stat(mnt, &st) != 0) return EINA_FALSE;
    if (!S_ISDIR(st.st_mode)) return EINA_FALSE;
    tmnt = strdup(mnt);
    if (!tmnt) return EINA_FALSE;
-   p = strchr(tmnt + 8, '/');
+   p = strchr(tmnt + 7, '/');
    if (!p) goto err;
    *p = '\0';
    if (stat(tmnt, &st) != 0) goto err;
    if (st.st_uid != 0) goto err;
    if (st.st_gid != 0) goto err;
+   p = tmnt + 7; // after /media/ (so username)
+   if (strcmp(p + 1, user_name)) goto err; // not user named dir
    free(tmnt);
    return EINA_TRUE;
 err:
