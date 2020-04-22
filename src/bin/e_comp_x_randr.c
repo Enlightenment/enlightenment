@@ -433,6 +433,20 @@ _mode_screen_find(Ecore_X_Window root, E_Randr2_Screen *s, Ecore_X_Randr_Output 
    return mode;
 }
 
+static Eina_Bool
+_cb_no_outputs_timer(void *data EINA_UNUSED)
+{
+   e_util_dialog_show(_("Screen setup Error"),
+                      _("You seem to have no screens configured to<br>"
+                        "be on given the outputs you have. This should<br>"
+                        "be fixed by going to:<br>"
+                        "<br>"
+                        "<b>Settings -> Screen -> Screen Setup</><br>"
+                        "<br>"
+                        "And configure at least one screen to be on."));
+   return EINA_FALSE;
+}
+
 E_API void
 e_comp_x_randr_init(void)
 {
@@ -626,6 +640,7 @@ e_comp_x_randr_config_apply(void)
         else
           {
              printf("RRR: EERRRRRROOOORRRRRRR no outputs to configure!\n");
+             ecore_timer_add(5.0, _cb_no_outputs_timer, NULL);
              ecore_x_root_screen_barriers_set(NULL, 0);
           }
      }
