@@ -79,10 +79,13 @@ _etc_enlightenment_system_conf(void)
                        for (i = 0; i < gn; i++)
                          {
                             gp = getgrgid(gl[i]);
-                            if (!fnmatch(usergroup, gp->gr_name, 0))
+                            if (gp)
                               {
-                                 in_usergroup = EINA_TRUE;
-                                 break;
+                                 if (!fnmatch(usergroup, gp->gr_name, 0))
+                                   {
+                                      in_usergroup = EINA_TRUE;
+                                      break;
+                                   }
                               }
                          }
                     }
