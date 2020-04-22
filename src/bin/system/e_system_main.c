@@ -25,7 +25,7 @@ _etc_enlightenment_system_conf(void)
 #define MAXGROUPS 1024
    int gn, i;
    gid_t gl[MAXGROUPS];
-   char type[32], usergroup[256], cmd[32], glob[256];
+   char type[32], usergroup[256], cmd[32], glob[256], buf[1024];
    Eina_Bool in_usergroup;
    FILE *f = fopen("/etc/enlightenment/system.conf", "r");
    if (!f) return;
@@ -36,48 +36,64 @@ _etc_enlightenment_system_conf(void)
         ERR("User %i member of too many groups\n", uid);
         exit(9);
      }
-   if (fscanf(f, "%31s %255s %31s %255s\n", type, usergroup, cmd, glob) == 4)
+   while (fgets(buf, sizeof(buf), f))
      {
-        if (!strcmp(type, "user:"))
-          {
-             struct passwd *pw = getpwuid(uid);
+        int num;
 
-             in_usergroup = EINA_FALSE;
-             if (pw)
-               {
-                  if (!fnmatch(usergroup, pw->pw_name, 0))
-                    in_usergroup = EINA_TRUE;
-               }
-             if (in_usergroup)
-               {
-                  int ok = _conf_allow_deny(cmd, glob);
-                  if (ok == 1) goto allow;
-                  else if (ok == -1) goto deny;
-               }
-          }
-        else if (!strcmp(type, "group:"))
+        if (buf[0] == '#') continue;
+        num = sscanf(buf, "%31s %255s %31s %255s\n",
+                     type, usergroup, cmd, glob);
+        if (num == 4)
           {
-             struct group *gp;
-
-             in_usergroup = EINA_FALSE;
-             gp = getgrgid(gid);
-             if (gp)
+             if (!strcmp(type, "user:"))
                {
-                  for (i = 0; i < gn; i++)
+                  struct passwd *pw = getpwuid(uid);
+
+                  in_usergroup = EINA_FALSE;
+                  if (pw)
                     {
-                       gp = getgrgid(gl[i]);
-                       if (!fnmatch(usergroup, gp->gr_name, 0))
+                       if (!fnmatch(usergroup, pw->pw_name, 0))
+                       in_usergroup = EINA_TRUE;
+                    }
+                  if (in_usergroup)
+                    {
+                       int ok = _conf_allow_deny(cmd, glob);
+                       if (ok == 1) goto allow;
+                       else if (ok == -1)
                          {
-                            in_usergroup = EINA_TRUE;
-                            break;
+                            ERR("Denied by rule:\n%s\n", buf);
+                            goto deny;
                          }
                     }
                }
-             if (in_usergroup)
+             else if (!strcmp(type, "group:"))
                {
-                  int ok = _conf_allow_deny(cmd, glob);
-                  if (ok == 1) goto allow;
-                  else if (ok == -1) goto deny;
+                  struct group *gp;
+
+                  in_usergroup = EINA_FALSE;
+                  gp = getgrgid(gid);
+                  if (gp)
+                    {
+                       for (i = 0; i < gn; i++)
+                         {
+                            gp = getgrgid(gl[i]);
+                            if (!fnmatch(usergroup, gp->gr_name, 0))
+                              {
+                                 in_usergroup = EINA_TRUE;
+                                 break;
+                              }
+                         }
+                    }
+                  if (in_usergroup)
+                    {
+                       int ok = _conf_allow_deny(cmd, glob);
+                       if (ok == 1) goto allow;
+                       else if (ok == -1)
+                         {
+                            ERR("Denied by rule:\n%s\n", buf);
+                            goto deny;
+                         }
+                    }
                }
           }
      }
