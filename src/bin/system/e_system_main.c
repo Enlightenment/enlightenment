@@ -116,13 +116,23 @@ setuid_setup(void)
         fprintf(stderr, "Unable to obtain passwd entry\n");
         exit(1);
      }
-
+   if (!pwent->pw_dir)
+     {
+        fprintf(stderr, "No home dir for root\n");
+        exit(1);
+     }
+   if (strlen(pwent->pw_dir) > (sizeof(buf) - 8))
+     {
+        fprintf(stderr, "Root homedir too long\n");
+        exit(1);
+     }
    snprintf(buf, sizeof(buf), "HOME=%s", pwent->pw_dir);
    if (putenv(buf) == -1)
      {
         fprintf(stderr, "Unable to set $HOME environment\n");
         exit(1);
      }
+
    // change CWD to / to avoid path search dlopens finding libs in ./
    chdir("/");
 
