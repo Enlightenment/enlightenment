@@ -199,6 +199,7 @@ _cb_l2ping_ping(void *data EINA_UNUSED, const char *params)
    char dev[1024];
    Action *a;
 
+   if (! params) return;
    if (sscanf(params, "%1023s %i", dev, &timeout) != 2) return;
    if (timeout < 1) timeout = 1;
    else if (timeout > (1000 * 600)) timeout = 1000 * 600;
