@@ -8,21 +8,23 @@ char *user_name = NULL;
 char *group_name = NULL;
 
 static int
-_conf_allow_deny(const char *cmd, const char *glob)
+_conf_allow_deny(const char *cmd, const char *glob, const char *sys)
 {
    if (!strcmp(cmd, "allow:"))
      {
         if (!strcmp(glob, "*")) return 1; // allow
+        if (!fnmatch(glob, sys, 0)) return 1; // allow this sys
      }
    else if (!strcmp(cmd, "deny:"))
      {
         if (!strcmp(glob, "*")) return -1; // deny
+        if (!fnmatch(glob, sys, 0)) return -1; // deny this sys
      }
    return 0; // unknown
 }
 
-static void
-_etc_enlightenment_system_conf(void)
+static int
+_etc_enlightenment_system_conf_check(const char *sys)
 {
 #define MAXGROUPS 1024
    int gn, i;
@@ -30,13 +32,13 @@ _etc_enlightenment_system_conf(void)
    char type[32], usergroup[256], cmd[32], glob[256], buf[1024];
    Eina_Bool in_usergroup;
    FILE *f = fopen("/etc/enlightenment/system.conf", "r");
-   if (!f) return;
+   if (!f) return 1; // if the config doesnt exist - allow by policy
 
    gn = getgroups(MAXGROUPS, gl);
    if (gn < 0)
      {
         ERR("User %i member of too many groups\n", uid);
-        exit(9);
+        return 0;
      }
    while (fgets(buf, sizeof(buf), f))
      {
@@ -55,15 +57,17 @@ _etc_enlightenment_system_conf(void)
                   if (pw)
                     {
                        if (!fnmatch(usergroup, pw->pw_name, 0))
-                       in_usergroup = EINA_TRUE;
+                         {
+                            in_usergroup = EINA_TRUE;
+                         }
                     }
                   if (in_usergroup)
                     {
-                       int ok = _conf_allow_deny(cmd, glob);
+                       int ok = _conf_allow_deny(cmd, glob, sys);
                        if (ok == 1) goto allow;
                        else if (ok == -1)
                          {
-                            ERR("Denied by rule:\n%s\n", buf);
+                            INF("Deny rule: %s\n", buf);
                             goto deny;
                          }
                     }
@@ -91,11 +95,11 @@ _etc_enlightenment_system_conf(void)
                     }
                   if (in_usergroup)
                     {
-                       int ok = _conf_allow_deny(cmd, glob);
+                       int ok = _conf_allow_deny(cmd, glob, sys);
                        if (ok == 1) goto allow;
                        else if (ok == -1)
                          {
-                            ERR("Denied by rule:\n%s\n", buf);
+                            INF("Deny rule: %s\n", buf);
                             goto deny;
                          }
                     }
@@ -104,11 +108,10 @@ _etc_enlightenment_system_conf(void)
      }
 allow:
    fclose(f);
-   return;
+   return 1;
 deny:
    fclose(f);
-   ERR("Permission denied to use this tool\n");
-   exit(11);
+   return 0;
 }
 
 static void
@@ -321,7 +324,6 @@ setuid_setup(void)
    // pass 3 - set path and ifs to minimal defaults
    putenv("PATH=/bin:/usr/bin:/sbin:/usr/sbin");
    putenv("IFS= \t\n");
-   _etc_enlightenment_system_conf();
 }
 
 // no singleton mode - this is not really a bonus, just painful, so disable
@@ -378,6 +380,7 @@ int
 main(int argc EINA_UNUSED, const char **argv EINA_UNUSED)
 {
    const char *s;
+   int systems = 0;
 
    // special mode to reset all newly found bl devices to max on
    // discovery because we were run by the e alert crash handler and
@@ -397,28 +400,46 @@ main(int argc EINA_UNUSED, const char **argv EINA_UNUSED)
 #endif
    eet_init();
 
-//   singleton_setup();
-
    e_system_inout_init();
-   e_system_backlight_init();
-   e_system_ddc_init();
-   e_system_storage_init();
-   e_system_power_init();
-   e_system_rfkill_init();
-   e_system_l2ping_init();
-   e_system_cpufreq_init();
+
+#define CONF_INIT_CHECK(sys, fn, flag) \
+   Eina_Bool flag = EINA_FALSE; \
+   do { \
+      if (_etc_enlightenment_system_conf_check(sys)) { \
+         fn(); \
+         flag = EINA_TRUE; \
+         systems++; \
+      } \
+   } while (0)
+#define CONF_SHUTDOWN(fn, flag) \
+   if (flag) fn()
+
+   CONF_INIT_CHECK("backlight", e_system_backlight_init, init_backlight);
+   CONF_INIT_CHECK("ddc",       e_system_ddc_init,       init_ddc);
+   CONF_INIT_CHECK("storage",   e_system_storage_init,   init_storage);
+   CONF_INIT_CHECK("power",     e_system_power_init,     init_power);
+   CONF_INIT_CHECK("rfkill",    e_system_rfkill_init,    init_rfkill);
+   CONF_INIT_CHECK("l2ping",    e_system_l2ping_init,    init_l2ping);
+   CONF_INIT_CHECK("cpufreq",   e_system_cpufreq_init,   init_cpufreq);
+
+   if (systems == 0)
+     {
+        ERR("Permission denied to use this tool\n");
+        exit(11);
+     }
 
    ecore_idle_enterer_add(_cb_idle_enterer, NULL);
 
    ecore_main_loop_begin();
 
-   e_system_cpufreq_shutdown();
-   e_system_l2ping_shutdown();
-   e_system_rfkill_shutdown();
-   e_system_power_shutdown();
-   e_system_storage_shutdown();
-   e_system_ddc_shutdown();
-   e_system_backlight_shutdown();
+   CONF_SHUTDOWN(e_system_cpufreq_shutdown,   init_cpufreq);
+   CONF_SHUTDOWN(e_system_l2ping_shutdown,    init_l2ping);
+   CONF_SHUTDOWN(e_system_rfkill_shutdown,    init_rfkill);
+   CONF_SHUTDOWN(e_system_power_shutdown,     init_power);
+   CONF_SHUTDOWN(e_system_storage_shutdown,   init_storage);
+   CONF_SHUTDOWN(e_system_ddc_shutdown,       init_ddc);
+   CONF_SHUTDOWN(e_system_backlight_shutdown, init_backlight);
+
    e_system_inout_shutdown();
 
    eet_shutdown();
