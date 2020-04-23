@@ -1747,16 +1747,26 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
    int ox, oy, ow, oh;
    int x, y, w, h;
 
+//   printf("configure request {0x%08x}  %4i,%4i %4ix%4i b=%i [%c%c%c%c]\n",
+//          ev->win, ev->x, ev->y, ev->w, ev->h, ev->border,
+//          ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_X ? 'x' : ' ',
+//          ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_Y ? 'y' : ' ',
+//          ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_W ? 'w' : ' ',
+//          ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_H ? 'h' : ' ');
    if (e_comp_find_by_window(ev->win)) return ECORE_CALLBACK_RENEW;
    ec = _e_comp_x_client_find_by_window(ev->win);
 
    /* pass through requests for windows we haven't/won't reparent yet */
    if (ec && (!_e_comp_x_client_data_get(ec)->need_reparent) && (!_e_comp_x_client_data_get(ec)->reparented))
      {
-        _e_comp_x_client_data_get(ec)->initial_attributes.x = ev->x;
-        _e_comp_x_client_data_get(ec)->initial_attributes.y = ev->y;
-        ec->w = ec->client.w = _e_comp_x_client_data_get(ec)->initial_attributes.w = ev->w;
-        ec->h = ec->client.h = _e_comp_x_client_data_get(ec)->initial_attributes.h = ev->h;
+        if (ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_X)
+          _e_comp_x_client_data_get(ec)->initial_attributes.x = ev->x;
+        if (ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_Y)
+          _e_comp_x_client_data_get(ec)->initial_attributes.y = ev->y;
+        if (ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_W)
+          ec->w = ec->client.w = _e_comp_x_client_data_get(ec)->initial_attributes.w = ev->w;
+        if (ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_H)
+          ec->h = ec->client.h = _e_comp_x_client_data_get(ec)->initial_attributes.h = ev->h;
         ec->border_size = ev->border;
         ec->changes.size = 1;
         ec = NULL;
@@ -1778,7 +1788,7 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
                                  ev->abovewin, ev->detail);
         return ECORE_CALLBACK_PASS_ON;
      }
-   
+
    x = ox = ec->client.x;
    y = oy = ec->client.y;
    w = ow = ec->client.w;
