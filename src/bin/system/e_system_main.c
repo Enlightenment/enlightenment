@@ -201,7 +201,11 @@ setuid_setup(void)
      }
 
    // change CWD to / to avoid path search dlopens finding libs in ./
-   chdir("/");
+   if (chdir("/") != 0)
+     {
+        ERR("Unable to change working dir to /\n");
+        exit(1);
+     }
 
    // die with parent - special as this is setuid
 #ifdef HAVE_PRCTL
