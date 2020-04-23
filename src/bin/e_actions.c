@@ -2688,10 +2688,13 @@ _delayed_action_cb_timer(void *data)
 
    da = data;
    da->timer = NULL;
-   act = e_action_find(da->delayed.action);
-   if (act)
+   if (da->delayed.action)
      {
-        if (act->func.go) act->func.go(da->obj, da->delayed.params);
+        act = e_action_find(da->delayed.action);
+        if (act)
+          {
+             if (act->func.go) act->func.go(da->obj, da->delayed.params);
+          }
      }
    _delayed_actions = eina_list_remove(_delayed_actions, da);
    _delayed_action_free(da);
@@ -2703,10 +2706,13 @@ _delayed_action_do(Delayed_Action *da)
 {
    E_Action *act;
 
-   act = e_action_find(da->def.action);
-   if (act)
+   if (da->def.action)
      {
-        if (act->func.go) act->func.go(da->obj, da->def.params);
+        act = e_action_find(da->def.action);
+        if (act)
+          {
+             if (act->func.go) act->func.go(da->obj, da->def.params);
+          }
      }
 }
 
@@ -2718,7 +2724,7 @@ _delayed_action_list_parse_action(const char *str, double *delay, const char **a
    const char *p;
 
    buf[0] = 0;
-   sscanf(str, "%10s %1000s", fbuf, buf);
+   if (sscanf(str, "%10s %1000s", fbuf, buf) != 2) return;
    *action = eina_stringshare_add(buf);
    *delay = atof(fbuf);
    p = strchr(str, ' ');
