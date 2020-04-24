@@ -118,24 +118,16 @@ _e_mod_menu_populate_filter(void *data, Eio_File *handler, const Eina_File_Direc
    if (!handler) return EINA_FALSE;
 
    if (eio_file_check(handler)) return EINA_FALSE;
-
-   pd->count++;
-   if (pd->count > 100)
-     {
-        eio_file_cancel(handler);
-        return EINA_FALSE;
-     }
-
-   /* don't show .dotfiles */
-   if (fileman_config->view.menu_shows_files)
-     return (info->path[info->name_start] != '.');
-
+   // don't show links to prevent infinte submenus (recursive links)
    if (lstat(info->path, &st)) return EINA_FALSE;
-   /* don't show links to prevent infinite submenus */
-
-   return (info->path[info->name_start] != '.') &&
-          ((info->type == EINA_FILE_DIR) || eina_str_has_extension(info->path + info->name_start, "desktop")) &&
-          (!S_ISLNK(st.st_mode));
+   // don't show dotfiles
+   if (info->path[info->name_start] == '.') return EINA_FALSE;
+   // limit to only showing up to 100 items
+   pd->count++;
+   if (pd->count > 100) return EINA_FALSE;
+   // if it's a dir or a .desktop file... then include
+   return ((info->type == EINA_FILE_DIR) ||
+           eina_str_has_extension(info->path + info->name_start, "desktop"));
 }
 
 static void
