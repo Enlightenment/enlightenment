@@ -266,7 +266,8 @@ e_bg_zone_update(E_Zone *zone, E_Bg_Transition transition)
             (eina_str_has_extension(bgfile, ".bmp")))
      {
         o = e_icon_add(e_comp->evas);
-        e_icon_preload_set(o, EINA_TRUE);
+        if (!(eina_str_has_extension(bgfile, ".gif")))
+          e_icon_preload_set(o, EINA_TRUE);
         e_icon_scale_size_set(o, 0);
         e_icon_fill_inside_set(o, 0);
         e_icon_file_key_set(o, bgfile, NULL);
