@@ -335,6 +335,8 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, prop.res_y, INT);
    E_CONFIG_VAL(D, T, prop.pos_w, INT);
    E_CONFIG_VAL(D, T, prop.pos_h, INT);
+   E_CONFIG_VAL(D, T, prop.frame_w, INT);
+   E_CONFIG_VAL(D, T, prop.frame_h, INT);
    E_CONFIG_VAL(D, T, prop.w, INT);
    E_CONFIG_VAL(D, T, prop.h, INT);
    E_CONFIG_VAL(D, T, prop.layer, INT);

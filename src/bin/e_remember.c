@@ -330,39 +330,44 @@ e_remember_apply(E_Remember *rem, E_Client *ec)
                e_desk_show(desk);
           }
      }
+   if (rem->apply & E_REMEMBER_APPLY_BORDER)
+     {
+        eina_stringshare_replace(&ec->bordername, NULL);
+        ec->bordername = eina_stringshare_ref(rem->prop.border);
+        ec->border.changed = 1;
+        EC_CHANGED(ec);
+     }
    if (rem->apply & E_REMEMBER_APPLY_SIZE)
      {
         int w, h;
+        int uzx = 0, uzy = 0, uzw = 0, uzh = 0;
+
+        e_zone_useful_geometry_get(ec->zone, &uzx, &uzy, &uzw, &uzh);
 
         w = ec->client.w;
         h = ec->client.h;
-        if (rem->prop.pos_w)
-          ec->client.w = rem->prop.pos_w;
-        if (rem->prop.pos_h)
-          ec->client.h = rem->prop.pos_h;
-        /* we can trust internal windows */
-        if (ec->internal)
+        if (rem->prop.pos_w) ec->client.w = rem->prop.pos_w;
+        if (rem->prop.pos_h) ec->client.h = rem->prop.pos_h;
+        if (ec->zone->w != rem->prop.res_x)
           {
-             if (ec->zone->w != rem->prop.res_x)
-               {
-                  if (ec->client.w > (ec->zone->w - 64))
-                    ec->client.w = ec->zone->w - 64;
-               }
-             if (ec->zone->h != rem->prop.res_y)
-               {
-                  if (ec->client.h > (ec->zone->h - 64))
-                    ec->client.h = ec->zone->h - 64;
-               }
-             if (ec->icccm.min_w > ec->client.w)
-               ec->client.w = ec->icccm.min_w;
-             if ((ec->icccm.max_w > 0) && (ec->icccm.max_w < ec->client.w))
-               ec->client.w = ec->icccm.max_w;
-             if (ec->icccm.min_h > ec->client.h)
-               ec->client.h = ec->icccm.min_h;
-             if ((ec->icccm.max_h > 0) && (ec->icccm.max_h < ec->client.h))
-               ec->client.h = ec->icccm.max_h;
+             if (ec->client.w > (uzw - rem->prop.frame_w))
+               ec->client.w = uzw - rem->prop.frame_w;
           }
-        e_comp_object_frame_wh_adjust(ec->frame, ec->client.w, ec->client.h, &ec->w, &ec->h);
+        if (ec->zone->h != rem->prop.res_y)
+          {
+             if (ec->client.h > (uzh - rem->prop.frame_h))
+               ec->client.h = uzh - rem->prop.frame_h;
+          }
+        if (ec->icccm.min_w > ec->client.w)
+          ec->client.w = ec->icccm.min_w;
+        if ((ec->icccm.max_w > 0) && (ec->icccm.max_w < ec->client.w))
+          ec->client.w = ec->icccm.max_w;
+        if (ec->icccm.min_h > ec->client.h)
+          ec->client.h = ec->icccm.min_h;
+        if ((ec->icccm.max_h > 0) && (ec->icccm.max_h < ec->client.h))
+          ec->client.h = ec->icccm.max_h;
+        e_comp_object_frame_wh_adjust(ec->frame, ec->client.w, ec->client.h,
+                                      &ec->w, &ec->h);
         if (rem->prop.maximize)
           {
              ec->saved.x = rem->prop.pos_x;
@@ -381,14 +386,19 @@ e_remember_apply(E_Remember *rem, E_Client *ec)
      }
    if ((rem->apply & E_REMEMBER_APPLY_POS) && (!ec->re_manage))
      {
+        int uzx = 0, uzy = 0, uzw = 0, uzh = 0;
+
+        e_zone_useful_geometry_get(ec->zone, &uzx, &uzy, &uzw, &uzh);
         ec->x = rem->prop.pos_x;
         ec->y = rem->prop.pos_y;
         if (ec->zone->w != rem->prop.res_x)
           {
              int px;
 
-             px = ec->x + (ec->w / 2);
-             if (px < ((rem->prop.res_x * 1) / 3))
+             px = ec->zone->w - (ec->w + rem->prop.frame_w);
+             if (px < 1) px = 0;
+             else px = (3 * ec->x) / px;
+             if (px < 1)
                {
                   if (ec->zone->w >= (rem->prop.res_x / 3))
                     ec->x = rem->prop.pos_x;
@@ -396,7 +406,7 @@ e_remember_apply(E_Remember *rem, E_Client *ec)
                     ec->x = ((rem->prop.pos_x - 0) * ec->zone->w) /
                       (rem->prop.res_x / 3);
                }
-             else if (px < ((rem->prop.res_x * 2) / 3))
+             else if (px == 1)
                {
                   if (ec->zone->w >= (rem->prop.res_x / 3))
                     ec->x = (ec->zone->w / 2) +
@@ -408,7 +418,7 @@ e_remember_apply(E_Remember *rem, E_Client *ec)
                        (rem->prop.res_x / 3)) -
                       (ec->w / 2);
                }
-             else
+             else // >= 2
                {
                   if (ec->zone->w >= (rem->prop.res_x / 3))
                     ec->x = ec->zone->w +
@@ -423,15 +433,17 @@ e_remember_apply(E_Remember *rem, E_Client *ec)
              if ((rem->prop.pos_x >= 0) && (ec->x < 0))
                ec->x = 0;
              else if (((rem->prop.pos_x + rem->prop.w) < rem->prop.res_x) &&
-                      ((ec->x + ec->w) > ec->zone->w))
-               ec->x = ec->zone->w - ec->w;
+                      ((ec->x + ec->client.w + rem->prop.frame_w) > (uzw - (uzx - ec->zone->x))))
+               ec->x = (uzw - (uzx - ec->zone->x)) - ec->client.w - rem->prop.frame_w;
           }
         if (ec->zone->h != rem->prop.res_y)
           {
              int py;
 
-             py = ec->y + (ec->h / 2);
-             if (py < ((rem->prop.res_y * 1) / 3))
+             py = ec->zone->h - (ec->h + rem->prop.frame_h);
+             if (py < 1) py = 0;
+             else py = (3 * ec->y) / py;
+             if (py < 1)
                {
                   if (ec->zone->h >= (rem->prop.res_y / 3))
                     ec->y = rem->prop.pos_y;
@@ -439,7 +451,7 @@ e_remember_apply(E_Remember *rem, E_Client *ec)
                     ec->y = ((rem->prop.pos_y - 0) * ec->zone->h) /
                       (rem->prop.res_y / 3);
                }
-             else if (py < ((rem->prop.res_y * 2) / 3))
+             else if (py == 1)
                {
                   if (ec->zone->h >= (rem->prop.res_y / 3))
                     ec->y = (ec->zone->h / 2) +
@@ -451,7 +463,7 @@ e_remember_apply(E_Remember *rem, E_Client *ec)
                        (rem->prop.res_y / 3)) -
                       (ec->h / 2);
                }
-             else
+             else // >= 2
                {
                   if (ec->zone->h >= (rem->prop.res_y / 3))
                     ec->y = ec->zone->h +
@@ -466,8 +478,8 @@ e_remember_apply(E_Remember *rem, E_Client *ec)
              if ((rem->prop.pos_y >= 0) && (ec->y < 0))
                ec->y = 0;
              else if (((rem->prop.pos_y + rem->prop.h) < rem->prop.res_y) &&
-                      ((ec->y + ec->h) > ec->zone->h))
-               ec->y = ec->zone->h - ec->h;
+                      ((ec->y + ec->client.h + rem->prop.frame_h) > (uzh - (uzy - ec->zone->y))))
+               ec->y = (uzh - (uzy - ec->zone->y)) - ec->client.h - rem->prop.frame_h;
           }
         //		  if (ec->zone->w != rem->prop.res_x)
         //		    ec->x = (rem->prop.pos_x * ec->zone->w) / rem->prop.res_x;
@@ -485,10 +497,11 @@ e_remember_apply(E_Remember *rem, E_Client *ec)
           )
           {
              e_comp_object_util_center_pos_get(ec->frame, &ec->x, &ec->y);
-             rem->prop.pos_x = ec->x, rem->prop.pos_y = ec->y;
+             rem->prop.pos_x = ec->x;
+             rem->prop.pos_y = ec->y;
           }
-        ec->x += ec->zone->x;
-        ec->y += ec->zone->y;
+        ec->x += uzx;
+        ec->y += uzy;
         ec->placed = 1;
         ec->changes.pos = 1;
         EC_CHANGED(ec);
@@ -496,13 +509,6 @@ e_remember_apply(E_Remember *rem, E_Client *ec)
    if (rem->apply & E_REMEMBER_APPLY_LAYER)
      {
         evas_object_layer_set(ec->frame, rem->prop.layer);
-     }
-   if (rem->apply & E_REMEMBER_APPLY_BORDER)
-     {
-        eina_stringshare_replace(&ec->bordername, NULL);
-        ec->bordername = eina_stringshare_ref(rem->prop.border);
-        ec->border.changed = 1;
-        EC_CHANGED(ec);
      }
    if (rem->apply & E_REMEMBER_APPLY_FULLSCREEN)
      {
@@ -724,6 +730,8 @@ _e_remember_update(E_Client *ec, E_Remember *rem)
              rem->prop.pos_y = ec->saved.y;
              rem->prop.pos_w = ec->saved.w;
              rem->prop.pos_h = ec->saved.h;
+             rem->prop.frame_w = ec->w - ec->client.w;
+             rem->prop.frame_h = ec->h - ec->client.h;
           }
         else
           {
@@ -735,6 +743,8 @@ _e_remember_update(E_Client *ec, E_Remember *rem)
              rem->prop.pos_h = ec->client.h;
              rem->prop.w = ec->client.w;
              rem->prop.h = ec->client.h;
+             rem->prop.frame_w = ec->w - ec->client.w;
+             rem->prop.frame_h = ec->h - ec->client.h;
           }
         rem->prop.maximize = ec->maximized & E_MAXIMIZE_DIRECTION;
      }

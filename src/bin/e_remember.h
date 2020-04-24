@@ -67,6 +67,7 @@ struct _E_Remember
       int           res_x, res_y;
       int           pos_w, pos_h;
       int           w, h;
+      int           frame_w, frame_h;
       int           layer;
       unsigned int maximize; //just direction
 
