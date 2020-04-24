@@ -83,6 +83,14 @@ static void         _e_menu_category_free_cb(E_Menu_Category *cat);
 static void         _e_menu_cb_mouse_evas_down(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED);
 static void         _e_menu_hide_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 
+typedef enum
+{
+   NAV_BY_NONE,
+   NAV_BY_MOUSE,
+   NAV_BY_WHEEL,
+   NAV_BY_KEY
+} Nav_By;
+
 /* local subsystem globals */
 static Ecore_Window _e_menu_win = UINT_MAX;
 static Eina_Bool _e_menu_grabbed = EINA_FALSE;
@@ -104,6 +112,7 @@ static int _e_menu_autoscroll_x = 0;
 static int _e_menu_autoscroll_y = 0;
 static Eina_List *handlers = NULL;
 static Eina_Bool _e_menu_lock = EINA_FALSE;
+static Nav_By _e_menu_nav_by = NAV_BY_NONE;
 
 static Eina_Bool pending_feed;
 static unsigned int pending_activate_time;
@@ -245,6 +254,7 @@ e_menu_activate_key(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int dir
         e_menu_deactivate(m);
         return;
      }
+   _e_menu_nav_by = NAV_BY_KEY;
    switch (dir)
      {
       case E_MENU_POP_DIRECTION_LEFT:
@@ -324,6 +334,7 @@ e_menu_activate_mouse(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int d
         e_object_unref(E_OBJECT(m));
         return;
      }
+   _e_menu_nav_by = NAV_BY_MOUSE;
    switch (dir)
      {
       case E_MENU_POP_DIRECTION_LEFT:
@@ -393,6 +404,7 @@ e_menu_activate(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int dir)
         e_menu_deactivate(m);
         return;
      }
+   _e_menu_nav_by = NAV_BY_NONE;
    switch (dir)
      {
       case E_MENU_POP_DIRECTION_LEFT:
@@ -2047,10 +2059,8 @@ _e_menu_reposition(E_Menu *m)
      }
    else
      {
-        /* menu is smaller than screen */
-        if (((parent_item_bottom + m->cur.h) > (m->zone->y + m->zone->h)) &&
-            (parent_item_bottom > (m->zone->y + (m->zone->h / 2))))
-          /* menu is partially out of screen and more is shown if menu goes up */
+        /* menu is on top or bottom half of screen */
+        if (parent_item_bottom > (m->zone->y + (m->zone->h / 2)))
           m->cur.y = parent_item_bottom - m->cur.h + m->parent_item->h;
         else
           m->cur.y = parent_item_bottom;
@@ -2683,6 +2693,8 @@ _e_menu_cb_item_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNU
    E_Menu_Item *mi = data;
 
    if (_e_menu_lock) return;
+   // ignore in/out not due to deliberate mouse move by user
+   if (_e_menu_nav_by != NAV_BY_MOUSE) return;
    /* this can be triggered when creating menus if the new menu is on top of its parent */
    if (!mi->menu->realized) return;
    e_menu_item_active_set(mi, 1);
@@ -2692,6 +2704,8 @@ static void
 _e_menu_cb_item_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Menu_Item *mi = data;
+   // ignore in/out not due to deliberate mouse move by user
+   if (_e_menu_nav_by != NAV_BY_MOUSE) return;
    /* this can be triggered when creating menus if the new menu is on top of its parent */
    if (!mi->menu->realized) return;
    e_menu_item_active_set(mi, 0);
@@ -2700,6 +2714,7 @@ _e_menu_cb_item_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UN
 static Eina_Bool
 _e_menu_cb_key_down(void *data EINA_UNUSED, Ecore_Event_Key *ev)
 {
+   _e_menu_nav_by = NAV_BY_KEY;
    if ((!strcmp(ev->key, "Up")) || (!strcmp(ev->key, "KP_Up")))
      _e_menu_item_activate_previous();
    else if ((!strcmp(ev->key, "Down")) || (!strcmp(ev->key, "KP_Down")))
@@ -2767,6 +2782,7 @@ _e_menu_cb_mouse_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    Ecore_Event_Mouse_Button *ev;
 
    ev = event;
+   _e_menu_nav_by = NAV_BY_MOUSE;
    if (ev->window != _e_menu_win)
      {
         if (_e_menu_active_get())
@@ -2802,6 +2818,7 @@ _e_menu_cb_mouse_up(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    ev = event;
    if (ev->window != _e_menu_win) return ECORE_CALLBACK_RENEW;
 
+   _e_menu_nav_by = NAV_BY_MOUSE;
    if (!_e_menu_activate_floating)
      {
         EINA_LIST_FOREACH(_e_active_menus, l, m)
@@ -2868,6 +2885,7 @@ _e_menu_cb_mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 
    ev = event;
    if (ev->window != _e_menu_win) return ECORE_CALLBACK_PASS_ON;
+   _e_menu_nav_by = NAV_BY_MOUSE;
    fast_move_threshold = e_config->menus_fast_mouse_move_threshhold;
    dx = ev->x - _e_menu_x;
    dy = ev->y - _e_menu_y;
@@ -2936,6 +2954,7 @@ _e_menu_cb_mouse_wheel(void *data EINA_UNUSED, int type EINA_UNUSED, void *event
 
    ev = event;
    if (ev->window != _e_menu_win) return ECORE_CALLBACK_PASS_ON;
+   _e_menu_nav_by = NAV_BY_WHEEL;
    if (ev->z < 0) /* up */
      {
         int i;
