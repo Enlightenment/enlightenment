@@ -107,11 +107,11 @@ preview_dialog_show(E_Zone *zone, E_Client *ec, const char *params, void *dst,
 
    ///////////////////////////////////////////////////////////////////////
 
+   crop.x = crop.y = crop.w = crop.h = 0;
+
    if ((params) &&
        (sscanf(params, "%100s %100s %100s", smode, squal, sscreen) == 3))
      {
-        crop.x = crop.y = crop.w = crop.h = 0;
-
         if ((zone) && (!strcmp(sscreen, "current")))
           {
              E_Zone *z = e_zone_current_get();
