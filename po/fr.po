@@ -16,10 +16,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Enlightenment DR23\n"
+"Project-Id-Version: Enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-19 16:15+0200\n"
-"PO-Revision-Date: 2020-04-11 07:31+0200\n"
+"PO-Revision-Date: 2020-04-26 13:50+0200\n"
 "Last-Translator: Philippe Jean Guillaumie <similar@orange.fr>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -257,51 +257,46 @@ msgstr "Informations EFM"
 
 #: src/modules/bluez5/e_mod_agent.c:43
 msgid "Supply PIN"
-msgstr ""
+msgstr "Fournir PIN"
 
 #: src/modules/bluez5/e_mod_agent.c:59
 #, c-format
 msgid "Pair? PIN: <hilight>%s</hilight>"
-msgstr ""
+msgstr "Appairer ? PIN : <hilight>%s</hilight>"
 
 #: src/modules/bluez5/e_mod_agent.c:75
 msgid "Enter PIN"
-msgstr ""
+msgstr "Saisir PIN"
 
 #: src/modules/bluez5/e_mod_agent.c:93 src/modules/bluez5/e_mod_agent.c:111
 #, c-format
 msgid "Pair? PIN: <hilight>%06u</hilight>"
-msgstr ""
+msgstr "Appairer ? PIN : <hilight>%06u</hilight>"
 
 #: src/modules/bluez5/e_mod_agent.c:127
-#, fuzzy
 msgid "Connect?"
-msgstr "Connecter"
+msgstr "Connecter ?"
 
 #: src/modules/bluez5/e_mod_popup.c:420
-#, fuzzy
 msgid "Adapters"
-msgstr "Adaptateur secteur"
+msgstr "Adaptateurs"
 
 #: src/modules/bluez5/e_mod_popup.c:421
-#, fuzzy
 msgid "Devices"
-msgstr "Périphérique"
+msgstr "Périphériques"
 
 #: src/modules/bluez5/e_mod_popup.c:456
-#, fuzzy
 msgid "Unknown Address"
-msgstr "Inconnu"
+msgstr "Adresse inconnue"
 
 #: src/modules/bluez5/e_mod_popup.c:479
 #: src/modules/sysinfo/batman/batman_config.c:303
-#, fuzzy
 msgid "Power"
-msgstr "Alimenté"
+msgstr "Alimentation"
 
 #: src/modules/bluez5/e_mod_popup.c:479
 msgid "Enable power for this adapter"
-msgstr ""
+msgstr "Activer l'alimentation pour cet adaptateur"
 
 #: src/modules/bluez5/e_mod_popup.c:485 src/bin/e_comp.c:1243
 msgid "Visible"
@@ -309,24 +304,24 @@ msgstr "Visible"
 
 #: src/modules/bluez5/e_mod_popup.c:485
 msgid "Make this adapter visible to other devices"
-msgstr ""
+msgstr "Rendre cet adaptateur visible aux autres appareils"
 
 #: src/modules/bluez5/e_mod_popup.c:491
 msgid "Scan"
-msgstr ""
+msgstr "Recherche"
 
 #: src/modules/bluez5/e_mod_popup.c:491
-#, fuzzy
 msgid "Scan for other devices"
-msgstr "Fenêtres minimisées des autres bureaux"
+msgstr "Rechercher d'autres appareils"
 
 #: src/modules/bluez5/e_mod_popup.c:497
 msgid "Pairable"
-msgstr "Appariable"
+msgstr "Appairable"
 
 #: src/modules/bluez5/e_mod_popup.c:497
 msgid "Allow this adapter to have other devices request to pair with it"
 msgstr ""
+"Accepter les requêtes d'appairage d'autres appareils pour cet adaptateur"
 
 #: src/modules/bluez5/e_mod_popup.c:530
 #, c-format
@@ -334,6 +329,8 @@ msgid ""
 "Address: %s (%s)<br>Services: %s%s%s%s%s%s%s%s%s<br>Trusted: %s<br>Blocked: "
 "%s<br>"
 msgstr ""
+"Addresse : %s (%s)<br>Services : %s%s%s%s%s%s%s%s%s<br>De confiance : "
+"%s<br>Bloqués : %s<br>"
 
 #: src/modules/bluez5/e_mod_popup.c:536 src/modules/bluez5/e_mod_popup.c:537
 #: src/modules/bluez5/e_mod_util.c:261
@@ -353,44 +350,39 @@ msgstr "Inconnu"
 
 #: src/modules/bluez5/e_mod_popup.c:538
 msgid "Limited-Discoverable "
-msgstr ""
+msgstr "Découverte limitée "
 
 #: src/modules/bluez5/e_mod_popup.c:539
-#, fuzzy
 msgid "Positioning "
-msgstr "Position"
+msgstr "Localisation "
 
 #: src/modules/bluez5/e_mod_popup.c:540
-#, fuzzy
 msgid "Networking "
-msgstr "Gestion du réseau"
+msgstr "Réseau "
 
 #: src/modules/bluez5/e_mod_popup.c:541
-#, fuzzy
 msgid "Rendering "
-msgstr "Rendu en cours"
+msgstr "Rendering "
 
 #: src/modules/bluez5/e_mod_popup.c:542
-#, fuzzy
 msgid "Capture "
-msgstr "Capture"
+msgstr "Capture "
 
 #: src/modules/bluez5/e_mod_popup.c:543
 msgid "OBEX "
-msgstr ""
+msgstr "OBEX "
 
 #: src/modules/bluez5/e_mod_popup.c:544
 msgid "Audio "
-msgstr ""
+msgstr "Audio "
 
 #: src/modules/bluez5/e_mod_popup.c:545
 msgid "Telephony "
-msgstr ""
+msgstr "Téléphonie "
 
 #: src/modules/bluez5/e_mod_popup.c:546
-#, fuzzy
 msgid "Information "
-msgstr "Information"
+msgstr "Information "
 
 #: src/modules/bluez5/e_mod_popup.c:547 src/modules/bluez5/e_mod_popup.c:548
 #: src/modules/quickaccess/e_mod_quickaccess.c:1308 src/bin/e_desklock.c:673
@@ -412,46 +404,45 @@ msgstr "Non"
 
 #: src/modules/bluez5/e_mod_popup.c:571
 msgid "Stop this from being an unlock device"
-msgstr ""
+msgstr "Oublier le déverrouillage du périphérique"
 
 #: src/modules/bluez5/e_mod_popup.c:578
 msgid "Make this auto unlock when detected (and lock when not)"
 msgstr ""
+"Déverrouillage auto. à la détection (verrouillage dans le cas contraire)"
 
 #: src/modules/bluez5/e_mod_popup.c:588
 msgid "Stop this device from being forcefully connected"
-msgstr ""
+msgstr "Oublier la connexion forcée du périphérique"
 
 #: src/modules/bluez5/e_mod_popup.c:595
 msgid "Force this device to be connected when detected"
-msgstr ""
+msgstr "Forcer la connexion du périphérique à la détection"
 
 #: src/modules/bluez5/e_mod_popup.c:605
-#, fuzzy
 msgid "Disconnect this device"
-msgstr "Déconnecter"
+msgstr "Déconnecter cet appareil"
 
 #: src/modules/bluez5/e_mod_popup.c:612
-#, fuzzy
 msgid "Connect this device"
-msgstr "Impossible d'éjecter le périphérique"
+msgstr "Connecter cet appareil"
 
 #: src/modules/bluez5/e_mod_popup.c:622
 msgid "Disrust this device"
-msgstr ""
+msgstr "Ne pas faire confiance à cet appareil"
 
 #: src/modules/bluez5/e_mod_popup.c:629
 msgid "Trust this device"
-msgstr ""
+msgstr "Faire confiance à cet appareil"
 
 #: src/modules/bluez5/e_mod_popup.c:641 src/modules/bluez5/e_mod_popup.c:702
 #: src/modules/bluez5/e_mod_popup.c:724
 msgid "Pair with this device"
-msgstr ""
+msgstr "Associer cet appareil"
 
 #: src/modules/bluez5/e_mod_popup.c:651
 msgid "Unpair with this device"
-msgstr ""
+msgstr "Dissocier cet appareil"
 
 #: src/modules/bluez5/e_mod_popup.c:659
 #: src/modules/conf_theme/e_int_config_theme_import.c:122
@@ -475,22 +466,20 @@ msgid "Cancel"
 msgstr "Annuler"
 
 #: src/modules/bluez5/e_mod_popup.c:710 src/modules/bluez5/e_mod_popup.c:731
-#, fuzzy
 msgid "Reject pairing"
-msgstr "Rendu en cours"
+msgstr "Refuser l'association"
 
 #: src/modules/bluez5/e_mod_popup.c:740
 msgid "Options for device like connect, pair etc."
-msgstr ""
+msgstr "Options de l'appareil telles que la connexion, l'association, etc."
 
 #: src/modules/bluez5/e_mod_main.c:215
-#, fuzzy
 msgid "Bluez5"
-msgstr "Bluez4"
+msgstr "Bluez5"
 
 #: src/modules/bluez5/e_mod_main.c:297
 msgid "Bluetooth rfkill run Error"
-msgstr ""
+msgstr "Erreur d'exécution de rfkill Bluetooth"
 
 #: src/modules/bluez5/e_mod_main.c:298
 msgid ""
@@ -499,25 +488,30 @@ msgid ""
 "user is<br>permitted to use the rfkill unblock action. Check the<br>users "
 "and groups there to be sure."
 msgstr ""
+"Échec de la tentative de déblocage de l'adaptateur.<br>rfkill est-il "
+"installé ? Vérifiez le fichier sysactions.conf pour vous<br>assurer que la "
+"commande est correcte et que votre utilisateur<br>est autorisé à utiliser "
+"rfkill pour le déblocage.<br>Vérifiez les utilisateurs et groupes pour ce "
+"fichier."
 
 #: src/modules/bluez5/bz_agent.c:115 src/modules/bluez5/bz_agent.c:131
 #: src/modules/bluez5/bz_agent.c:285 src/modules/wireless/wireless.c:1045
 msgid "Bluetooth"
-msgstr ""
+msgstr "Bluetooth"
 
 #: src/modules/bluez5/bz_agent.c:116
 #, c-format
 msgid "Could not register default agent:<br>%s %s"
-msgstr ""
+msgstr "Enregistrement de l'agent par défaut impossible :<br>%s %s"
 
 #: src/modules/bluez5/bz_agent.c:132
 #, c-format
 msgid "Could not register agent:<br>%s %s\n"
-msgstr ""
+msgstr "Enregistrement de l'agent impossible :<br>%s %s\n"
 
 #: src/modules/bluez5/bz_agent.c:286
 msgid "Could not call RegisterAgent\n"
-msgstr ""
+msgstr "Appel de RegisterAgent impossible\n"
 
 #: src/modules/gadman/e_mod_config.c:21 src/modules/gadman/e_mod_config.c:229
 #: src/modules/time/config.c:534
@@ -980,7 +974,7 @@ msgstr "Extrême"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:375
 msgid "Connected standby instead of suspend"
-msgstr "Veille connectée plutôt que veille prolongée"
+msgstr "Veille connectée plutôt que sommeil"
 
 #: src/modules/conf_performance/e_mod_main.c:18
 msgid "Performance"
@@ -1337,14 +1331,14 @@ msgstr "Application manquante"
 
 #: src/modules/conf_theme/e_int_config_theme.c:530
 #: src/modules/conf_theme/e_int_config_wallpaper.c:332
-#, fuzzy
 msgid ""
 "This module wants to execute an external application<ps/> that does not "
 "exist.<ps/>Please install <b>extra</b> application.<ps/>https://git."
 "enlightenment.org/apps/extra.git/"
 msgstr ""
-"Ce module veut exécuter l'application externe EConnMan qui n'existe pas.<ps/"
-">Veuillez installer l'application <b>EConnMan</b>."
+"Ce module veut exécuter une application<ps/>externe qui n'existe pas.<ps/"
+">Veuillez installer l'application <b>Extra.</b>https://git.enlightenment.org/"
+"apps/extra.git/"
 
 #: src/modules/conf_theme/e_int_config_theme.c:611
 msgid "Theme File Error"
@@ -1356,14 +1350,12 @@ msgid "The listed files are probably not E themes:<ps/>%s"
 msgstr "Les fichiers listés ne semblent pas être des thèmes pour E :<ps/>%s"
 
 #: src/modules/conf_theme/e_int_config_theme.c:769
-#, fuzzy
 msgid " Import File..."
-msgstr " Importer…"
+msgstr " Importer un fichier…"
 
 #: src/modules/conf_theme/e_int_config_theme.c:775
-#, fuzzy
 msgid " Import Online..."
-msgstr " Importer…"
+msgstr " Importer un fichier en ligne…"
 
 #: src/modules/conf_theme/e_int_config_theme.c:780
 msgid "Show startup splash"
@@ -1492,11 +1484,11 @@ msgstr "Maximum"
 
 #: src/modules/conf_theme/e_int_config_scale.c:376
 msgid "Constraints"
-msgstr "Limites"
+msgstr "Contraintes"
 
 #: src/modules/conf_theme/e_int_config_theme_import.c:65
 msgid "Select a Theme..."
-msgstr "Sélectionner un thème…"
+msgstr "Choisir un thème…"
 
 #: src/modules/conf_theme/e_int_config_theme_import.c:118
 #: src/modules/xkbswitch/e_mod_config.c:1433
@@ -1577,15 +1569,13 @@ msgstr "Utiliser le fond d'écran du thème"
 
 #: src/modules/conf_theme/e_int_config_wallpaper.c:510
 #: src/modules/conf_theme/e_int_config_wallpaper.c:709
-#, fuzzy
 msgid "Import File..."
-msgstr "Importer…"
+msgstr "Importer un fichier…"
 
 #: src/modules/conf_theme/e_int_config_wallpaper.c:517
 #: src/modules/conf_theme/e_int_config_wallpaper.c:717
-#, fuzzy
 msgid "Import Online..."
-msgstr "Importer…"
+msgstr "Importer un fichier en ligne…"
 
 #: src/modules/conf_theme/e_int_config_wallpaper.c:740
 msgid "Where to place the Wallpaper"
@@ -2038,7 +2028,7 @@ msgstr "Rétroéclairage diminué"
 
 #: src/modules/conf_display/e_int_config_dpms.c:155
 msgid "Idle Fade Time"
-msgstr "Délai avant diminution"
+msgstr "Délai d'inactivité avant diminution"
 
 #: src/modules/conf_display/e_int_config_dpms.c:157
 #: src/modules/conf_display/e_int_config_dpms.c:166
@@ -2047,13 +2037,12 @@ msgid "%1.0f second(s)"
 msgstr "%1.0f seconde(s)"
 
 #: src/modules/conf_display/e_int_config_dpms.c:162
-#, fuzzy
 msgid "Fade Time on Battery"
-msgstr "Durée du fondu"
+msgstr "Délai avant atténuation sur batterie"
 
 #: src/modules/conf_display/e_int_config_dpms.c:172
 msgid "Fade Time"
-msgstr "Durée du fondu"
+msgstr "Délai avant atténuation"
 
 #: src/modules/conf_display/e_int_config_dpms.c:174
 #, c-format
@@ -2066,24 +2055,21 @@ msgstr "Atténuation"
 
 #: src/modules/sysinfo/cpuclock/cpuclock.c:241
 #: src/modules/sysinfo/cpuclock/cpuclock.c:415
-#, fuzzy
 msgid "MHz"
-msgstr "%i MHz"
+msgstr "MHz"
 
 #: src/modules/sysinfo/cpuclock/cpuclock.c:247
 #: src/modules/sysinfo/cpuclock/cpuclock.c:421
 msgid "GHz"
-msgstr ""
+msgstr "GHz"
 
 #: src/modules/sysinfo/cpuclock/cpuclock.c:263
-#, fuzzy
 msgid "Frequency"
-msgstr "Fréquence du CPU"
+msgstr "Fréquence"
 
 #: src/modules/sysinfo/cpuclock/cpuclock_config.c:263
-#, fuzzy
 msgid "CpuClock Configuration"
-msgstr "Configuration de Tâches"
+msgstr "Configuration de CpuClock"
 
 #: src/modules/sysinfo/cpuclock/cpuclock_config.c:273
 #: src/modules/sysinfo/cpuclock/cpuclock_config.c:290
@@ -2103,36 +2089,31 @@ msgstr "Général"
 
 #: src/modules/sysinfo/cpuclock/cpuclock_config.c:276
 #: src/modules/sysinfo/cpuclock/cpuclock_config.c:388
-#, fuzzy
 msgid "Power Policy"
-msgstr "Profil énergétique du CPU"
+msgstr "Profil énergétique"
 
 #: src/modules/sysinfo/cpuclock/cpuclock_config.c:278
 #: src/modules/sysinfo/cpuclock/cpuclock_config.c:448
-#, fuzzy
 msgid "Power Saving"
-msgstr "Puissance min."
+msgstr "Économie d'énergie"
 
 #: src/modules/sysinfo/cpuclock/cpuclock_config.c:281
 #: src/modules/sysinfo/cpuclock/cpuclock_config.c:512
-#, fuzzy
 msgid "Power State"
-msgstr "Puissance min."
+msgstr "Mode de puissance"
 
 #: src/modules/sysinfo/cpuclock/cpuclock_config.c:284
 #: src/modules/sysinfo/cpuclock/cpuclock_config.c:559
-#, fuzzy
 msgid "Frequencies"
-msgstr "Fréquence du CPU"
+msgstr "Fréquences"
 
 #: src/modules/sysinfo/cpuclock/cpuclock_config.c:305
 #: src/modules/sysinfo/thermal/thermal_config.c:208
 #: src/modules/sysinfo/memusage/memusage_config.c:74
 #: src/modules/sysinfo/cpumonitor/cpumonitor_config.c:74
 #: src/modules/sysinfo/netstatus/netstatus_config.c:192
-#, fuzzy
 msgid "Update Poll Interval"
-msgstr "Fréquence de l'actualisation"
+msgstr "Intervalle d'actualisation"
 
 #: src/modules/sysinfo/cpuclock/cpuclock_config.c:313
 #: src/modules/sysinfo/thermal/thermal_config.c:223
@@ -2152,7 +2133,7 @@ msgstr "Rapide (4 tics)"
 #: src/modules/sysinfo/netstatus/netstatus_config.c:218
 #: src/modules/cpufreq/e_mod_config.c:95 src/modules/cpufreq/e_mod_main.c:200
 msgid "Medium (8 ticks)"
-msgstr "Moyenne (8 tics)"
+msgstr "Moyen (8 tics)"
 
 #: src/modules/sysinfo/cpuclock/cpuclock_config.c:334
 #: src/modules/sysinfo/thermal/thermal_config.c:244
@@ -2162,7 +2143,7 @@ msgstr "Moyenne (8 tics)"
 #: src/modules/sysinfo/netstatus/netstatus_config.c:228
 #: src/modules/cpufreq/e_mod_config.c:97 src/modules/cpufreq/e_mod_main.c:207
 msgid "Normal (32 ticks)"
-msgstr "Normale (32 tics)"
+msgstr "Normal (32 tics)"
 
 #: src/modules/sysinfo/cpuclock/cpuclock_config.c:344
 #: src/modules/sysinfo/thermal/thermal_config.c:254
@@ -2172,7 +2153,7 @@ msgstr "Normale (32 tics)"
 #: src/modules/sysinfo/netstatus/netstatus_config.c:237
 #: src/modules/cpufreq/e_mod_config.c:99 src/modules/cpufreq/e_mod_main.c:214
 msgid "Slow (64 ticks)"
-msgstr "Lente (64 tics)"
+msgstr "Lent (64 tics)"
 
 #: src/modules/sysinfo/cpuclock/cpuclock_config.c:354
 #: src/modules/sysinfo/thermal/thermal_config.c:264
@@ -2182,7 +2163,7 @@ msgstr "Lente (64 tics)"
 #: src/modules/sysinfo/netstatus/netstatus_config.c:247
 #: src/modules/cpufreq/e_mod_config.c:101 src/modules/cpufreq/e_mod_main.c:221
 msgid "Very Slow (256 ticks)"
-msgstr "Très lente (256 tics)"
+msgstr "Très lent (256 tics)"
 
 #: src/modules/sysinfo/cpuclock/cpuclock_config.c:410
 #: src/modules/sysinfo/cpuclock/cpuclock_config.c:479
@@ -2214,19 +2195,16 @@ msgid "Restore CPU Power Policy"
 msgstr "Restaurer le profil énergétique"
 
 #: src/modules/sysinfo/cpuclock/cpuclock_config.c:461
-#, fuzzy
 msgid "Automatic Powersaving"
-msgstr "Mode économie d'énergie"
+msgstr "Économie d'énergie automatique"
 
 #: src/modules/sysinfo/cpuclock/cpuclock_config.c:525
-#, fuzzy
 msgid "Maximum Power State:"
-msgstr "Puissance maximale plafond"
+msgstr "Puissance maximale plafond :"
 
 #: src/modules/sysinfo/cpuclock/cpuclock_config.c:540
-#, fuzzy
 msgid "Minimum Power State:"
-msgstr "Puissance minimale plancher"
+msgstr "Puissance minimale plancher :"
 
 #: src/modules/sysinfo/cpuclock/cpuclock_config.c:587
 #: src/modules/cpufreq/e_mod_main.c:322
@@ -2241,14 +2219,12 @@ msgid "%'.1f GHz"
 msgstr "%'.1f GHz"
 
 #: src/modules/sysinfo/thermal/thermal_config.c:155
-#, fuzzy
 msgid "Thermal Configuration"
-msgstr "Configuration de Tâches"
+msgstr "Configuration de Thermal"
 
 #: src/modules/sysinfo/thermal/thermal_config.c:160
-#, fuzzy
 msgid "Temperature Units"
-msgstr "Températures"
+msgstr "Unités de température"
 
 #: src/modules/sysinfo/thermal/thermal_config.c:175
 #: src/modules/temperature/e_mod_config.c:269
@@ -2261,19 +2237,16 @@ msgid "Fahrenheit"
 msgstr "Fahrenheit"
 
 #: src/modules/sysinfo/thermal/thermal_config.c:298
-#, fuzzy
 msgid "Temperature Limits"
-msgstr "Températures"
+msgstr "Limites de températures"
 
 #: src/modules/sysinfo/thermal/thermal_config.c:310
-#, fuzzy
 msgid "High Temperature:"
-msgstr "Température élevée"
+msgstr "Température élevée :"
 
 #: src/modules/sysinfo/thermal/thermal_config.c:334
-#, fuzzy
 msgid "Low Temperature:"
-msgstr "Température basse"
+msgstr "Température basse :"
 
 #: src/modules/sysinfo/thermal/thermal.c:199
 #: src/modules/temperature/e_mod_main.c:205
@@ -2283,70 +2256,65 @@ msgstr "Température"
 #: src/modules/sysinfo/memusage/memusage.c:146
 #, c-format
 msgid "Memory Usage (Available %ld MB)"
-msgstr ""
+msgstr "Mémoire (disponible %ld Mo)"
 
 #: src/modules/sysinfo/memusage/memusage.c:158
-#, fuzzy
 msgid "Used"
-msgstr "Utilisé :"
+msgstr "Utilisée"
 
 #: src/modules/sysinfo/memusage/memusage.c:172
 msgid "Buffers"
-msgstr ""
+msgstr "Tampons"
 
 #: src/modules/sysinfo/memusage/memusage.c:186
-#, fuzzy
 msgid "Cached"
-msgstr "Cache"
+msgstr "Cachée"
 
 #: src/modules/sysinfo/memusage/memusage.c:200
-#, fuzzy
 msgid "Shared"
-msgstr "Partager"
+msgstr "Partagée"
 
 #: src/modules/sysinfo/memusage/memusage.c:212
 #, c-format
 msgid "Swap Usage (Available %ld MB)"
-msgstr ""
+msgstr "Espace d'échange (disponible %ld Mo)"
 
 #: src/modules/sysinfo/memusage/memusage_config.c:69
-#, fuzzy
 msgid "MemUsage Configuration"
-msgstr "Configuration de Tâches"
+msgstr "Configuration de MemUsage"
 
 #: src/modules/sysinfo/cpumonitor/cpumonitor_config.c:69
-#, fuzzy
 msgid "CpuMonitor Configuration"
-msgstr "Tables"
+msgstr "Configuration de CpuMonitor"
 
 #: src/modules/sysinfo/cpumonitor/cpumonitor.c:91
 msgid "Total CPU Usage"
-msgstr ""
+msgstr "Utilisation du CPU"
 
 #: src/modules/sysinfo/batman/batman.c:102
-#, fuzzy, c-format
+#, c-format
 msgid "No Battery Found"
-msgstr "Bouton de la batterie"
+msgstr "Batterie non présente"
 
 #: src/modules/sysinfo/batman/batman.c:104
-#, fuzzy, c-format
+#, c-format
 msgid "Battery Charging"
-msgstr "Surveillance de la batterie"
+msgstr "Batterie en charge"
 
 #: src/modules/sysinfo/batman/batman.c:106
 #, c-format
 msgid "Battery Fully Charged"
-msgstr ""
+msgstr "Batterie complètement chargée"
 
 #: src/modules/sysinfo/batman/batman.c:108
 #, c-format
 msgid "Time Remaining: %i:%02i"
-msgstr ""
+msgstr "Temps restant : %i:%02i"
 
 #: src/modules/sysinfo/batman/batman.c:488
-#, fuzzy, c-format
+#, c-format
 msgid "AC power is recommended. %i:%02i Remaining"
-msgstr "Branchement sur le secteur recommandé."
+msgstr "Branchement sur le secteur recommandé. %i:%02i restants"
 
 #: src/modules/sysinfo/batman/batman.c:494
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:354
@@ -2361,9 +2329,8 @@ msgid "Your battery is low!"
 msgstr "La batterie est faible !"
 
 #: src/modules/sysinfo/batman/batman_config.c:288
-#, fuzzy
 msgid "Batman Configuration"
-msgstr "Configuration de Tâches"
+msgstr "Configuration de Batman"
 
 #: src/modules/sysinfo/batman/batman_config.c:301
 #: src/modules/sysinfo/batman/batman_config.c:407
@@ -2372,9 +2339,8 @@ msgid "Alert"
 msgstr "Alerte"
 
 #: src/modules/sysinfo/batman/batman_config.c:322
-#, fuzzy
 msgid "Update Poll Interval:"
-msgstr "Fréquence de l'actualisation"
+msgstr "Intervalle d'actualisation :"
 
 #: src/modules/sysinfo/batman/batman_config.c:420
 #: src/modules/battery/e_mod_config.c:247
@@ -2382,24 +2348,20 @@ msgid "Show low battery alert"
 msgstr "Afficher une alerte de batterie faible"
 
 #: src/modules/sysinfo/batman/batman_config.c:430
-#, fuzzy
 msgid "Show alert as a desktop notification"
 msgstr "Utiliser une notification du bureau pour alerter"
 
 #: src/modules/sysinfo/batman/batman_config.c:441
-#, fuzzy
 msgid "Alert when time left is at:"
-msgstr "Alerte quand le niveau est à :"
+msgstr "Alerter quand le temps restant est à :"
 
 #: src/modules/sysinfo/batman/batman_config.c:463
-#, fuzzy
 msgid "Alert when percent left is at:"
-msgstr "Alerte quand le niveau est à :"
+msgstr "Alerte quand le pourcentage restant est à :"
 
 #: src/modules/sysinfo/batman/batman_config.c:485
-#, fuzzy
 msgid "Alert timeout:"
-msgstr "Délai avant élimination :"
+msgstr "Durée de l'alerte :"
 
 #: src/modules/sysinfo/batman/batman_config.c:524
 #: src/modules/battery/e_mod_config.c:230
@@ -2419,20 +2381,19 @@ msgstr "Arrêt en dessous de :"
 #: src/modules/sysinfo/batman/batman_config.c:588
 #: src/modules/battery/e_mod_main.c:184
 msgid "Power Management Timing"
-msgstr "Économie d'énergie"
+msgstr "Minutage de la gestion d'énergie"
 
 #: src/modules/sysinfo/netstatus/netstatus.c:112
 msgid "Network Throughput"
-msgstr ""
+msgstr "Activité du réseau"
 
 #: src/modules/sysinfo/netstatus/netstatus.c:122
 msgid "Receiving"
-msgstr ""
+msgstr "Réception"
 
 #: src/modules/sysinfo/netstatus/netstatus.c:142
-#, fuzzy
 msgid "Sending"
-msgstr "Mise en veille"
+msgstr "Envoi"
 
 #: src/modules/sysinfo/netstatus/netstatus_config.c:82
 #: src/modules/sysinfo/netstatus/netstatus_config.c:112
@@ -2440,9 +2401,8 @@ msgstr "Mise en veille"
 #: src/modules/sysinfo/netstatus/netstatus_config.c:324
 #: src/modules/sysinfo/netstatus/netstatus_config.c:374
 #: src/modules/sysinfo/netstatus/netstatus_config.c:377
-#, fuzzy
 msgid "Bytes"
-msgstr "Bytecode"
+msgstr "Octets"
 
 #: src/modules/sysinfo/netstatus/netstatus_config.c:87
 #: src/modules/sysinfo/netstatus/netstatus_config.c:117
@@ -2450,9 +2410,8 @@ msgstr "Bytecode"
 #: src/modules/sysinfo/netstatus/netstatus_config.c:330
 #: src/modules/sysinfo/netstatus/netstatus_config.c:380
 #: src/modules/sysinfo/netstatus/netstatus_config.c:383
-#, fuzzy
 msgid "KB"
-msgstr "B"
+msgstr "Ko"
 
 #: src/modules/sysinfo/netstatus/netstatus_config.c:92
 #: src/modules/sysinfo/netstatus/netstatus_config.c:122
@@ -2460,9 +2419,8 @@ msgstr "B"
 #: src/modules/sysinfo/netstatus/netstatus_config.c:336
 #: src/modules/sysinfo/netstatus/netstatus_config.c:386
 #: src/modules/sysinfo/netstatus/netstatus_config.c:389
-#, fuzzy
 msgid "MB"
-msgstr "B"
+msgstr "Mo"
 
 #: src/modules/sysinfo/netstatus/netstatus_config.c:97
 #: src/modules/sysinfo/netstatus/netstatus_config.c:127
@@ -2470,32 +2428,28 @@ msgstr "B"
 #: src/modules/sysinfo/netstatus/netstatus_config.c:342
 #: src/modules/sysinfo/netstatus/netstatus_config.c:392
 #: src/modules/sysinfo/netstatus/netstatus_config.c:395
-#, fuzzy
 msgid "GB"
-msgstr "V"
+msgstr "Go"
 
 #: src/modules/sysinfo/netstatus/netstatus_config.c:187
-#, fuzzy
 msgid "NetStatus Configuration"
-msgstr "Configuration de Tâches"
+msgstr "Configuration de NetStatus"
 
 #: src/modules/sysinfo/netstatus/netstatus_config.c:281
-#, fuzzy
 msgid "Maximum Throughput"
-msgstr "Hauteur maximale"
+msgstr "Débit maximum"
 
 #: src/modules/sysinfo/netstatus/netstatus_config.c:293
 msgid "Use Automatic Maximums"
-msgstr ""
+msgstr "Utiliser les maximums automatiques"
 
 #: src/modules/sysinfo/netstatus/netstatus_config.c:303
-#, fuzzy
 msgid "Receive:"
-msgstr "Documents récents"
+msgstr "Réception :"
 
 #: src/modules/sysinfo/netstatus/netstatus_config.c:356
 msgid "Send:"
-msgstr ""
+msgstr "Envoi :"
 
 #: src/modules/winlist/e_mod_main.c:28 src/modules/tiling/e_mod_tiling.c:1903
 #: src/modules/conf_window_manipulation/e_mod_main.c:17
@@ -2706,7 +2660,7 @@ msgstr "Alignement"
 
 #: src/modules/winlist/e_winlist.c:178
 msgid "Select a window"
-msgstr "Sélectionner une fenêtre"
+msgstr "Choisir une fenêtre"
 
 #: src/modules/xkbswitch/e_mod_config.c:140
 msgid "Keyboard Settings"
@@ -2898,11 +2852,11 @@ msgstr "Erreur"
 
 #: src/modules/xwayland/e_mod_main.c:272
 msgid "Could not open X11 socket connection."
-msgstr ""
+msgstr "Impossible d'établir une connexion avec une socket X11."
 
 #: src/modules/xwayland/e_mod_main.c:347
 msgid "Cannot launch XWayland from X11 display."
-msgstr ""
+msgstr "Impossible de lancer XWayland depuis l'affichage X11."
 
 #: src/modules/clock/e_mod_config.c:36
 msgid "Clock Settings"
@@ -3033,7 +2987,7 @@ msgstr "Profils disponibles"
 #: src/modules/conf_dialogs/e_int_config_profiles.c:123
 #: src/modules/wizard/page_020.c:157
 msgid "Select a profile"
-msgstr "Sélectionnez un profil"
+msgstr "Choisir un profil"
 
 #: src/modules/conf_dialogs/e_int_config_profiles.c:139
 msgid "Scratch"
@@ -3081,9 +3035,8 @@ msgid "Profiles"
 msgstr "Profils"
 
 #: src/modules/wireless/wireless.c:17
-#, fuzzy
 msgid "Disabled"
-msgstr "Tablette désactivée"
+msgstr "Désactivé"
 
 #: src/modules/wireless/wireless.c:18 src/modules/wireless/wireless.c:26
 #: src/modules/wireless/wireless.c:35 src/modules/cpufreq/e_mod_main.c:237
@@ -3093,7 +3046,7 @@ msgstr "Manuel"
 #: src/modules/wireless/wireless.c:20 src/modules/wireless/wireless.c:29
 #: src/modules/wireless/wireless.c:731
 msgid "Fixed"
-msgstr ""
+msgstr "Statique"
 
 #: src/modules/wireless/wireless.c:25 src/modules/wireless/wireless.c:1090
 #: src/modules/time/config.c:415 src/modules/everything/evry_config.c:493
@@ -3107,87 +3060,80 @@ msgid "Auto"
 msgstr "Auto"
 
 #: src/modules/wireless/wireless.c:34
-#, fuzzy
 msgid "Direct"
-msgstr "Dossier"
+msgstr "Direct"
 
 #: src/modules/wireless/wireless.c:273
 msgid "Proxy Servers"
-msgstr ""
+msgstr "Serveurs Proxy"
 
 #: src/modules/wireless/wireless.c:276
 msgid "Proxy Excludes"
-msgstr ""
+msgstr "Exclusions du proxy"
 
 #: src/modules/wireless/wireless.c:283
 msgid "Proxy Address"
-msgstr ""
+msgstr "Adresse du proxy"
 
 #: src/modules/wireless/wireless.c:551
 msgid "Proxy Type"
-msgstr ""
+msgstr "Type de proxy"
 
 #: src/modules/wireless/wireless.c:577
-#, fuzzy
 msgid "Nameservers"
-msgstr "Noms"
+msgstr "Serveurs de noms"
 
 #: src/modules/wireless/wireless.c:581
-#, fuzzy
 msgid "Timeservers"
-msgstr "Minuteurs"
+msgstr "Serveurs de temps"
 
 #: src/modules/wireless/wireless.c:585
-#, fuzzy
 msgid "Search Domains"
-msgstr "Recherche de dossiers"
+msgstr "Recherche de domaines"
 
 #: src/modules/wireless/wireless.c:641
 msgid "Hide Service Types"
-msgstr ""
+msgstr "Masquer les types de services"
 
 #: src/modules/wireless/wireless.c:653
-#, fuzzy
 msgid "Hide Wifi"
-msgstr "Masquer la liste"
+msgstr "Masquer Wi-Fi"
 
 #: src/modules/wireless/wireless.c:665
-#, fuzzy
 msgid "Hide Bluetooth"
-msgstr "Délai avant masquage"
+msgstr "Masquer Bluetooth"
 
 #: src/modules/wireless/wireless.c:677
 msgid "Hide Cellular"
-msgstr ""
+msgstr "Masquer mobile"
 
 #: src/modules/wireless/wireless.c:709
 msgid "Method"
-msgstr ""
+msgstr "Méthode"
 
 #: src/modules/wireless/wireless.c:738
 msgid "Address"
-msgstr ""
+msgstr "Adresse"
 
 #: src/modules/wireless/wireless.c:745
-#, fuzzy
 msgid "PrefixLength"
-msgstr "Taille :"
+msgstr "Longueur du préfixe"
 
 #: src/modules/wireless/wireless.c:751
 msgid "Netmask"
-msgstr ""
+msgstr "Masque de sous-réseau"
 
 #: src/modules/wireless/wireless.c:757
 msgid "Gateway"
-msgstr ""
+msgstr "Passerelle"
 
 #: src/modules/wireless/wireless.c:883
 msgid "Edit Connection Details: <b>Ethernet</b>"
-msgstr ""
+msgstr "Modifier les détails de connexion : <b>Ethernet</b>"
 
 #: src/modules/wireless/wireless.c:885
 msgid "Edit Connection Details"
-msgstr ""
+msgstr "Modifier les détails de connexion"
 
 #: src/modules/wireless/wireless.c:904 src/bin/e_desktop_editor.c:759
 #: src/bin/e_config_dialog.c:251
@@ -3196,33 +3142,31 @@ msgstr "Basique"
 
 #: src/modules/wireless/wireless.c:906
 msgid "Proxy"
-msgstr ""
+msgstr "Proxy"
 
 #: src/modules/wireless/wireless.c:907
 msgid "DNS/Time"
-msgstr ""
+msgstr "DNS / Temps"
 
 #: src/modules/wireless/wireless.c:908
-#, fuzzy
 msgid "Services"
-msgstr "Périphérique"
+msgstr "Services"
 
 #: src/modules/wireless/wireless.c:922
 msgid "Deal with it"
-msgstr ""
+msgstr "Débrouilles-toi"
 
 #: src/modules/wireless/wireless.c:930
-#, fuzzy
 msgid "Forget Network"
-msgstr "Oublier"
+msgstr "Oublier le réseau"
 
 #: src/modules/wireless/wireless.c:986
 msgid "<SSID hidden>"
-msgstr ""
+msgstr "<SSID caché>"
 
 #: src/modules/wireless/wireless.c:1043
 msgid "Ethernet"
-msgstr ""
+msgstr "Ethernet"
 
 #: src/modules/wireless/wireless.c:1044
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:377
@@ -3231,19 +3175,19 @@ msgstr "Wi-Fi"
 
 #: src/modules/wireless/wireless.c:1046
 msgid "Cellular"
-msgstr ""
+msgstr "Mobile"
 
 #: src/modules/wireless/wireless.c:1166
 msgid "Error: Connman not detected!"
-msgstr ""
+msgstr "Erreur : Connman introuvable !"
 
 #: src/modules/wireless/wireless.c:1176
 msgid "Method:"
-msgstr ""
+msgstr "Méthode :"
 
 #: src/modules/wireless/wireless.c:1178
 msgid "Address:"
-msgstr ""
+msgstr "Adresse :"
 
 #: src/modules/wireless/wireless.c:1180
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:637
@@ -3251,29 +3195,27 @@ msgid "Signal:"
 msgstr "Signal :"
 
 #: src/modules/wireless/wireless.c:1566
-#, fuzzy
 msgid "Authentication Required"
-msgstr "Erreur du système d'authentification"
+msgstr "Authentification requise"
 
 #: src/modules/wireless/wireless.c:1584
-#, fuzzy, c-format
+#, c-format
 msgid "Show %s"
-msgstr "Afficher le greffon %s"
+msgstr "Afficher %s"
 
 #: src/modules/wireless/wireless.c:1647
 #, c-format
 msgid "Ethernet connection wants to open a url:<ps/>%s"
-msgstr ""
+msgstr "La connexion Ethernet souhaite ouvrir une URL :<ps/>%s"
 
 #: src/modules/wireless/wireless.c:1649
 #, c-format
 msgid "Network '%s' wants to open a url:<ps/>%s"
-msgstr ""
+msgstr "Le réseau « %s » souhaite ouvrir une URL :<ps/>%s"
 
 #: src/modules/wireless/connman.c:1024
-#, fuzzy
 msgid "Connection Error"
-msgstr "Gestionnaire de connexion"
+msgstr "Erreur de connexion"
 
 #: src/modules/systray/e_mod_main.c:87
 msgid "Systray Settings"
@@ -3354,7 +3296,7 @@ msgstr "Réarranger les boîtes de dialogue"
 
 #: src/modules/tiling/e_mod_config.c:175
 msgid "Enable floating split-mode"
-msgstr "Activer le mode de séparation fluctuant"
+msgstr "Activer le mode de séparation flottante"
 
 #: src/modules/tiling/e_mod_config.c:180
 msgid "Enable/disable tiling per desktop."
@@ -3386,15 +3328,15 @@ msgstr "Pavage"
 
 #: src/modules/tiling/e_mod_tiling.c:879
 msgid "Window cannot be tiled"
-msgstr "Préserver cette fenêtre"
+msgstr "Cette fenêtre ne peut être juxtaposée"
 
 #: src/modules/tiling/e_mod_tiling.c:1588
 msgid "Floating"
-msgstr "Fluctuant"
+msgstr "Flottant"
 
 #: src/modules/tiling/e_mod_tiling.c:1879
 msgid "Toggle floating"
-msgstr "(Dés)Activer la fluctuation"
+msgstr "(Dés)Activer le mode flottant"
 
 #: src/modules/tiling/e_mod_tiling.c:1882
 msgid "Move the focused window up"
@@ -3414,11 +3356,11 @@ msgstr "Déplacer la fenêtre focalisée à droite"
 
 #: src/modules/tiling/e_mod_tiling.c:1891
 msgid "Toggle split mode for new windows."
-msgstr "(Dés)Activer le mode séparation pour les nouvelles fenêtres."
+msgstr "Changer le mode pour les nouvelles fenêtres."
 
 #: src/modules/tiling/e_mod_tiling.c:1893
 msgid "Swap window"
-msgstr "Interchanger la fenêtre"
+msgstr "Interchanger la position de la fenêtre"
 
 #: src/modules/ibox/e_mod_config.c:49
 msgid "IBox Settings"
@@ -3609,11 +3551,11 @@ msgstr "Garder les fenêtres dans les limites de l'écran visible"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:294
 msgid "Allow windows partly out of the visual screen limits"
-msgstr "Autoriser les fenêtres en partie hors de la limite d'affichage"
+msgstr "Autoriser les fenêtres en partie hors des limites d'affichage"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:297
 msgid "Allow windows completely out of visual screen limits"
-msgstr "Autoriser les fenêtres entièrement en dehors de la limite d'affichage"
+msgstr "Autoriser les fenêtres entièrement en dehors des limites d'affichage"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:300
 msgid "Screen Limits"
@@ -4122,7 +4064,7 @@ msgstr "Bouton de veille"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:373
 msgid "Thermal"
-msgstr "Température"
+msgstr "Zone thermique"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:375
 msgid "Video"
@@ -4331,8 +4273,8 @@ msgid ""
 "action.<ps/>Please choose another edge to bind."
 msgstr ""
 "La séquence de raccourci que vous avez choisie est déjà utilisée<ps/>par "
-"l'action <hilight>%s</hilight>.<ps/>Veuillez choisir une autre séquence pour "
-"ce raccourci de bord."
+"l'action <hilight>%s</hilight>.<ps/>Veuillez choisir un autre bord auquel "
+"attribuer un raccourci."
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:1371
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1125
@@ -4403,7 +4345,7 @@ msgid ""
 "conflict with existing edje signal bindings.<ps/>FIXME!!!"
 msgstr ""
 "Impossible de définir un raccourci avec la molette sans modificateurs :<ps/"
-">il se produirait un signal edje conflictuel avec les raccourcis existants."
+">il se produirait un signal conflictuel avec les raccourcis edje existants."
 "<ps/>À CORRIGER !"
 
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:246
@@ -4635,9 +4577,9 @@ msgid "No selection"
 msgstr "Aucune sélection"
 
 #: src/modules/shot/e_mod_share.c:71
-#, fuzzy, c-format
+#, c-format
 msgid "Uploaded %i%%"
-msgstr "%s / %s envoyés"
+msgstr "%i%% téléversés"
 
 #: src/modules/shot/e_mod_share.c:85
 msgid "Error - Upload Failed"
@@ -4674,123 +4616,112 @@ msgid ""
 "This image will be uploaded<ps/>to enlightenment.org. It will be publicly "
 "visible."
 msgstr ""
-"Cette image va être téléversée sur enlightenment.org. Elle sera visible par "
-"tous."
+"Cette image va être téléversée sur enlightenment.org.<ps/>Elle sera visible "
+"par tous."
 
 #: src/modules/shot/e_mod_share.c:199
 msgid "Confirm"
 msgstr "Confirmer"
 
 #: src/modules/shot/e_mod_edit.c:1933
-#, fuzzy
 msgid "Tools"
-msgstr "Infobulles"
+msgstr "Outils"
 
 #: src/modules/shot/e_mod_edit.c:1945
-#, fuzzy
 msgid "Select crop area"
-msgstr "Choisissez"
+msgstr "Choisir la zone à recadrer"
 
 #: src/modules/shot/e_mod_edit.c:1946
-#, fuzzy
 msgid "Modify objects"
-msgstr "Modifier"
+msgstr "Modifier des objets"
 
 #: src/modules/shot/e_mod_edit.c:1947
-#, fuzzy
 msgid "Delete objects"
-msgstr "Suppression terminée"
+msgstr "Supprimer des objets"
 
 #: src/modules/shot/e_mod_edit.c:1956
 msgid "Single arrow line"
-msgstr ""
+msgstr "Ligne à flèche unique"
 
 #: src/modules/shot/e_mod_edit.c:1957
 msgid "Double arrow line"
-msgstr ""
+msgstr "Ligne à flèche double"
 
 #: src/modules/shot/e_mod_edit.c:1958
-#, fuzzy
 msgid "Plain line"
-msgstr "En plein"
+msgstr "Ligne simple"
 
 #: src/modules/shot/e_mod_edit.c:1959
 msgid "Solid box"
-msgstr ""
+msgstr "Rectangle plein"
 
 #: src/modules/shot/e_mod_edit.c:1961
 msgid "Malloc"
-msgstr ""
+msgstr "Malloc"
 
 #: src/modules/shot/e_mod_edit.c:1962
 msgid "Malloc (evil)"
-msgstr ""
+msgstr "Malloc (mauvais)"
 
 #: src/modules/shot/e_mod_edit.c:1963
-#, fuzzy
 msgid "Pointing finger"
-msgstr "Pointeur"
+msgstr "Doigt pointé"
 
 #: src/modules/shot/e_mod_edit.c:1964
-#, fuzzy
 msgid "Enlightenment logo"
-msgstr "Enlightenment"
+msgstr "Logo Enlightenment"
 
 #: src/modules/shot/e_mod_edit.c:1966
 msgid "Foot"
-msgstr ""
+msgstr "Pied"
 
 #: src/modules/shot/e_mod_edit.c:1967
 msgid "Silly walk"
-msgstr ""
+msgstr "Démarche ridicule"
 
 #: src/modules/shot/e_mod_edit.c:1968
-#, fuzzy
 msgid "Box outline"
-msgstr "Contour :"
+msgstr "Contour rectangulaire"
 
 #: src/modules/shot/e_mod_edit.c:1969
 msgid "Circle outline"
-msgstr ""
+msgstr "Contour circulaire"
 
 #: src/modules/shot/e_mod_edit.c:1971
-#, fuzzy
 msgid "Plain text"
-msgstr "En plein"
+msgstr "Texte simple"
 
 #: src/modules/shot/e_mod_edit.c:1972
-#, fuzzy
 msgid "Text box"
-msgstr "Texte"
+msgstr "Encadrement"
 
 #: src/modules/shot/e_mod_edit.c:1973
 msgid "Text thought bubble"
-msgstr ""
+msgstr "Bulle pensée"
 
 #: src/modules/shot/e_mod_edit.c:1974
 msgid "Text thought bubble 2"
-msgstr ""
+msgstr "Bulle pensée 2"
 
 #: src/modules/shot/e_mod_edit.c:1976
 msgid "Speech bubble"
-msgstr ""
+msgstr "Bulle parlée"
 
 #: src/modules/shot/e_mod_edit.c:1977
 msgid "Speech bubble 2"
-msgstr ""
+msgstr "Bulle parlée 2"
 
 #: src/modules/shot/e_mod_edit.c:1978
 msgid "Kaboom splat"
-msgstr ""
+msgstr "Splash"
 
 #: src/modules/shot/e_mod_edit.c:1979
 msgid "Pow explode"
-msgstr ""
+msgstr "Explosion"
 
 #: src/modules/shot/e_mod_edit.c:1987
-#, fuzzy
 msgid "Color"
-msgstr "Couleurs"
+msgstr "Couleur"
 
 #: src/modules/shot/e_mod_main.c:312 src/modules/shot/e_mod_main.c:366
 msgid "Take Shot"
@@ -4810,9 +4741,8 @@ msgid "Cannot initialize network"
 msgstr "Impossible d'initialiser le réseau"
 
 #: src/modules/shot/e_mod_main.c:358
-#, fuzzy
 msgid "Take Screenshot with Delay"
-msgstr "Capture d'écran"
+msgstr "Capture d'écran avec délai"
 
 #: src/modules/shot/e_mod_main.c:366 src/bin/e_actions.c:3263
 #: src/bin/e_actions.c:3274 src/bin/e_actions.c:3293 src/bin/e_actions.c:3298
@@ -4825,7 +4755,7 @@ msgstr "Fenêtres : actions"
 
 #: src/modules/shot/e_mod_preview.c:58 src/modules/shot/e_mod_delay.c:47
 msgid "Select action to take with screenshot"
-msgstr ""
+msgstr "Choix de l'action associée à la capture"
 
 #: src/modules/shot/e_mod_preview.c:71
 msgid "Quality"
@@ -4841,79 +4771,72 @@ msgstr "Partager"
 
 #: src/modules/shot/e_mod_preview.c:93 src/modules/shot/e_mod_delay.c:59
 msgid "Delay"
-msgstr ""
+msgstr "Delai"
 
 #: src/modules/shot/e_mod_delay.c:61
-#, fuzzy, c-format
+#, c-format
 msgid "%1.1f sec"
 msgstr "%1.1f s"
 
 #: src/modules/shot/e_mod_save.c:201
-#, fuzzy
 msgid "Error - No Filemanager"
-msgstr "Gestionnaire de fichiers"
+msgstr "Erreur : pas de gestionnaire de fichiers"
 
 #: src/modules/shot/e_mod_save.c:202
 msgid ""
 "No filemanager action and/or module was found.<br>Cannot show the location "
 "of your screenshots."
 msgstr ""
+"Aucune action et/ou module de gestion de fichiers n'est disponible."
+"<br>Impossible d'afficher l'emplacement de vos captures."
 
 #: src/modules/time/config.c:8
 msgid "Numeric"
-msgstr ""
+msgstr "Numérique"
 
 #: src/modules/time/config.c:9
-#, fuzzy
 msgid "Date-only"
 msgstr "Date seule"
 
 #: src/modules/time/config.c:203
 msgid "strftime() format string"
-msgstr ""
+msgstr "Format de chaîne strftime()"
 
 #: src/modules/time/config.c:377
 msgid "Time string:"
-msgstr ""
+msgstr "Chaîne pour le temps :"
 
 #: src/modules/time/config.c:397
-#, fuzzy
 msgid "24-hour Display:"
-msgstr "Affichage"
+msgstr "Format 24 heures :"
 
 #: src/modules/time/config.c:409
-#, fuzzy
 msgid "Show Seconds:"
-msgstr "Secondes"
+msgstr "Afficher les secondes :"
 
 #: src/modules/time/config.c:464
 msgid "Simple"
-msgstr ""
+msgstr "Simple"
 
 #: src/modules/time/config.c:473
-#, fuzzy
 msgid "Date Display:"
-msgstr "Affichage"
+msgstr "Affichage de la date :"
 
 #: src/modules/time/config.c:500
-#, fuzzy
 msgid "Weekend Start:"
-msgstr "Week-end"
+msgstr "Début du week-end :"
 
 #: src/modules/time/config.c:511
-#, fuzzy
 msgid "Weekend End:"
-msgstr "Week-end"
+msgstr "Fin du week-end :"
 
 #: src/modules/time/config.c:522
-#, fuzzy
 msgid "Timezone:"
-msgstr "Temporisation"
+msgstr "Fuseau horaire :"
 
 #: src/modules/time/config.c:535
-#, fuzzy
 msgid "Foreground"
-msgstr "Fond"
+msgstr "Premier plan"
 
 #: src/modules/packagekit/e_mod_config.c:72
 msgid "Refresh Packages"
@@ -5206,7 +5129,7 @@ msgstr "%1.1f"
 
 #: src/modules/fileman/e_mod_config.c:479
 msgid "Tooltip size (Screen percentage)"
-msgstr "Taille de l'infobulle (pourcentage de l'écran)"
+msgstr "Taille de l'infobulle (en pourcentage de l'écran)"
 
 #: src/modules/fileman/e_mod_config.c:481
 #, c-format
@@ -5236,7 +5159,7 @@ msgstr "Afficher"
 
 #: src/modules/fileman/e_mod_menu.c:382
 msgid "GTK Bookmarks"
-msgstr "Marques-pages GTK"
+msgstr "Signets GTK"
 
 #: src/modules/fileman/e_mod_menu.c:476
 msgid "Current Directory"
@@ -5280,9 +5203,8 @@ msgid "Launch"
 msgstr "Lancer"
 
 #: src/modules/fileman/e_mod_main.c:68
-#, fuzzy
 msgid "Show Dir"
-msgstr "Afficher la boîte de dialogue"
+msgstr "Afficher répertoire"
 
 #: src/modules/fileman/e_mod_main.c:71
 msgid "Navigate"
@@ -5359,7 +5281,7 @@ msgstr "Copier le chemin"
 
 #: src/modules/fileman/e_fwin.c:2251
 msgid "Run"
-msgstr "Executer"
+msgstr "Exécuter"
 
 #: src/modules/fileman/e_fwin.c:2258 src/modules/fileman/e_fwin.c:2637
 msgid "Open"
@@ -5474,9 +5396,8 @@ msgid "%2.2f s"
 msgstr "%2.2f s"
 
 #: src/modules/polkit/auth_ui.c:88
-#, fuzzy
 msgid "Please enter password"
-msgstr "Veuillez saisir le mot de passe de déverrouillage"
+msgstr "Veuillez saisir le mot de passe"
 
 #: src/modules/wizard/page_011.c:189 src/modules/wizard/page_020.c:115
 #: src/modules/wizard/page_010.c:216
@@ -5564,40 +5485,35 @@ msgid "Hardware Accelerated (OpenGL)"
 msgstr "Accélération matérielle (OpenGL)"
 
 #: src/modules/wizard/page_150.c:90
-#, fuzzy
 msgid "Tear-free Rendering"
-msgstr "Rendu sans déchirure (OpenGL uniquement)"
+msgstr "Rendu sans déchirure"
 
 #: src/modules/wizard/page_115.c:10
-#, fuzzy
 msgid "Bluetooth Management"
-msgstr "Gestion du réseau"
+msgstr "Gestion du Bluetooth"
 
 #: src/modules/wizard/page_115.c:16
-#, fuzzy
 msgid "BlueZ Bluetooth service not found"
-msgstr "Service réseau Connman introuvable"
+msgstr "Service Bluetooth BlueZ introuvable"
 
 #: src/modules/wizard/page_115.c:19
-#, fuzzy
 msgid ""
 "Install/Enable BlueZ 5 / bluetoothd service for network management support"
-msgstr "Installer / Activer Connman pour le support de la gestion du réseau"
+msgstr ""
+"Installer / Activer BlueZ 5 / service bluetoothd pour le support de la "
+"gestion du réseau"
 
 #: src/modules/wizard/page_115.c:21
-#, fuzzy
 msgid "Bluez5 module disabled"
-msgstr "Les modules Connman et Sans fil sont désactivés"
+msgstr "Le module Bluez5 est désactivé"
 
 #: src/modules/wizard/page_115.c:22
-#, fuzzy
 msgid "Install it for Bluetooth management support"
-msgstr "Installez l'un de ces modules pour le support de la gestion du réseau"
+msgstr "Installez-le pour le support de la gestion du réseau Bluetooth"
 
 #: src/modules/wizard/page_115.c:154
-#, fuzzy
 msgid "Checking to see if BlueZ exists"
-msgstr "Vérification de la présence de Connman"
+msgstr "Vérification de la présence de BlueZ"
 
 #: src/modules/wizard/page_180.c:24 src/bin/e_int_client_menu.c:1653
 msgid "Taskbar"
@@ -5743,18 +5659,17 @@ msgid "Default Action"
 msgstr "Action par défaut"
 
 #: src/modules/vkbd/e_mod_main.c:70 src/modules/vkbd/e_mod_main.c:109
-#, fuzzy
 msgid "Show"
-msgstr "Afficher le menu"
+msgstr "Afficher"
 
 #: src/modules/vkbd/e_mod_main.c:84 src/modules/vkbd/e_mod_main.c:119
 msgid "Toggle"
-msgstr ""
+msgstr "(Dés)Activer"
 
 #: src/modules/vkbd/e_kbd_cfg.c:39 src/modules/vkbd/e_kbd_cfg.c:100
 #: src/modules/vkbd/e_kbd_cfg.c:104
 msgid "Shrink"
-msgstr ""
+msgstr "Réduire"
 
 #: src/modules/vkbd/e_kbd_cfg.c:40 src/modules/vkbd/e_kbd_cfg.c:101
 #: src/modules/vkbd/e_kbd_cfg.c:105 src/bin/e_import_config_dialog.c:315
@@ -5772,19 +5687,16 @@ msgid "Float"
 msgstr "Flottant"
 
 #: src/modules/vkbd/e_kbd_cfg.c:69
-#, fuzzy
 msgid "Virtual Keyboard Settings"
-msgstr "Paramètres du clavier"
+msgstr "Paramètres du clavier virtuel"
 
 #: src/modules/vkbd/e_kbd_cfg.c:91
-#, fuzzy
 msgid "Layout Mode"
-msgstr "Présentation"
+msgstr "Mode de présentation"
 
 #: src/modules/vkbd/e_kbd_cfg.c:114
-#, fuzzy
 msgid "Dictionary"
-msgstr "Direction"
+msgstr "Dictionnaire"
 
 #: src/modules/notification/e_mod_config.c:51
 msgid "Notification Settings"
@@ -5931,68 +5843,56 @@ msgstr ""
 "est correctement installé et fonctionne."
 
 #: src/modules/luncher/config.c:172
-#, fuzzy
 msgid "Create new Luncher source"
 msgstr "Créer une nouvelle source"
 
 #: src/modules/luncher/config.c:312
-#, fuzzy
 msgid "Luncher Configuration"
-msgstr "Tables"
+msgstr "Configuration de Luncher"
 
 #: src/modules/luncher/config.c:343
-#, fuzzy
 msgid "Luncher Type:"
-msgstr "Autre lanceur"
+msgstr "Type de Luncher :"
 
 #: src/modules/luncher/config.c:353
 msgid "Launcher and Taskbar"
-msgstr ""
+msgstr "Lanceur et barre des tâches"
 
 #: src/modules/luncher/config.c:364
-#, fuzzy
 msgid "Launcher Only"
-msgstr "Lanceur"
+msgstr "Lanceur uniquement"
 
 #: src/modules/luncher/config.c:374
-#, fuzzy
 msgid "Taskbar Only"
-msgstr "Barre des tâches"
+msgstr "Barre des tâches uniquement"
 
 #: src/modules/luncher/config.c:402
-#, fuzzy
 msgid "Tooltips:"
-msgstr "Infobulles"
+msgstr "Infobulles :"
 
 #: src/modules/luncher/config.c:409
-#, fuzzy
 msgid "Hide tooltips"
-msgstr "Masquer la liste"
+msgstr "Masquer les infobulles"
 
 #: src/modules/luncher/config.c:425
-#, fuzzy
 msgid "Preview Size:"
-msgstr "Aperçu"
+msgstr "Taille de l'aperçu :"
 
 #: src/modules/luncher/config.c:535
-#, fuzzy
 msgid "Create New Icon"
 msgstr "Créer une nouvelle icône"
 
 #: src/modules/luncher/bar.c:549
-#, fuzzy
 msgid "Icon Properties"
-msgstr "Propriétés"
+msgstr "Propriétés de l'icône"
 
 #: src/modules/luncher/bar.c:556
-#, fuzzy
 msgid "Remove Icon"
-msgstr "Supprimer"
+msgstr "Supprimer l'icône"
 
 #: src/modules/luncher/bar.c:563
-#, fuzzy
 msgid "Add Icon"
-msgstr "Éditer l'icône"
+msgstr "Ajouter une icône"
 
 #: src/modules/everything/evry_plug_text.c:63
 #: src/modules/everything/evry_plug_text.c:66
@@ -6401,15 +6301,15 @@ msgstr "Retour"
 
 #: src/modules/cpufreq/e_mod_config.c:38
 msgid "Cpu Frequency Control Settings"
-msgstr "Paramètres de contrôle de la fréquence du processeur"
+msgstr "Paramètres du contrôle de fréquence du processeur"
 
 #: src/modules/cpufreq/e_mod_config.c:88 src/modules/cpufreq/e_mod_main.c:298
 msgid "Automatic powersaving"
-msgstr "Mode économie d'énergie"
+msgstr "Économie d'énergie automatique"
 
 #: src/modules/cpufreq/e_mod_config.c:91
 msgid "Update poll interval"
-msgstr "Fréquence de l'actualisation"
+msgstr "Intervalle d'actualisation"
 
 #: src/modules/cpufreq/e_mod_config.c:107
 msgid "Minimum Power State"
@@ -6421,7 +6321,7 @@ msgstr "Puissance maximale plafond"
 
 #: src/modules/cpufreq/e_mod_main.c:137
 msgid "Cpufreq"
-msgstr "FréqCPU"
+msgstr "Cpufreq"
 
 #: src/modules/cpufreq/e_mod_main.c:388
 msgid "Time Between Updates"
@@ -6429,11 +6329,11 @@ msgstr "Périodicité des mises à jour"
 
 #: src/modules/cpufreq/e_mod_main.c:394
 msgid "Set CPU Power Policy"
-msgstr "Profil énergétique du CPU"
+msgstr "Définir le profil énergétique du CPU"
 
 #: src/modules/cpufreq/e_mod_main.c:401
 msgid "Set CPU Speed"
-msgstr "Déterminer la fréquence du CPU"
+msgstr "Définir la fréquence du CPU"
 
 #: src/modules/cpufreq/e_mod_main.c:407
 msgid "Powersaving behavior"
@@ -6448,12 +6348,11 @@ msgid "Power State Max"
 msgstr "Puissance max."
 
 #: src/modules/cpufreq/e_mod_main.c:506
-#, fuzzy
 msgid ""
 "There was an error trying to modify CPU<br>frequency control parameters."
 msgstr ""
-"Une erreur s'est produite lors de la tentative<ps/>de modification du "
-"régulateur de fréquence du CPU<ps/>via l'utilitaire setfreq du module."
+"Une erreur s'est produite lors de la tentative de<br>modification des "
+"paramètres de fréquence du CPU."
 
 #: src/modules/cpufreq/e_mod_main.c:572
 msgid ""
@@ -6473,69 +6372,67 @@ msgstr "Fréquence du CPU"
 #: src/modules/geolocation/e_mod_main.c:141
 #, c-format
 msgid "Latitude:  %f"
-msgstr ""
+msgstr "Latitude :  %f"
 
 #: src/modules/geolocation/e_mod_main.c:80
 #: src/modules/geolocation/e_mod_main.c:145
 #, c-format
 msgid "Longitude:  %f"
-msgstr ""
+msgstr "Longitude :  %f"
 
 #: src/modules/geolocation/e_mod_main.c:84
 #: src/modules/geolocation/e_mod_main.c:150
 #, c-format
 msgid "Altitude:  %f"
-msgstr ""
+msgstr "Altitude :  %f"
 
 #: src/modules/geolocation/e_mod_main.c:86
 #: src/modules/geolocation/e_mod_main.c:152
 #, c-format
 msgid "Altitude:  N/A"
-msgstr ""
+msgstr "Altitude:  N/A"
 
 #: src/modules/geolocation/e_mod_main.c:91
 #: src/modules/geolocation/e_mod_main.c:158
 #, c-format
 msgid "Speed:  %f"
-msgstr ""
+msgstr "Vitesse :  %f"
 
 #: src/modules/geolocation/e_mod_main.c:93
 #: src/modules/geolocation/e_mod_main.c:160
 #, c-format
 msgid "Speed: N/A"
-msgstr ""
+msgstr "Vitesse : N/A"
 
 #: src/modules/geolocation/e_mod_main.c:98
 #: src/modules/geolocation/e_mod_main.c:166
 #, c-format
 msgid "Heading:  %f"
-msgstr ""
+msgstr "Direction :  %f"
 
 #: src/modules/geolocation/e_mod_main.c:100
 #: src/modules/geolocation/e_mod_main.c:168
 #, c-format
 msgid "Heading: N/A"
-msgstr ""
+msgstr "Direction : N/A"
 
 #: src/modules/geolocation/e_mod_main.c:104
 #: src/modules/geolocation/e_mod_main.c:173
 #, c-format
 msgid "Accuracy:  %.1f m"
-msgstr ""
+msgstr "Précision :  %.1f m"
 
 #: src/modules/geolocation/e_mod_main.c:138
-#, fuzzy
 msgid "Location information:"
-msgstr "Information sur le lien"
+msgstr "Informations de position :"
 
 #: src/modules/geolocation/e_mod_main.c:532
-#, fuzzy
 msgid "Geolocation"
-msgstr "Emplacement :"
+msgstr "Géolocalisation"
 
 #: src/modules/conf_intl/e_int_config_imc_import.c:66
 msgid "Select an Input Method Settings..."
-msgstr "Sélectionner une configuration de la méthode de saisie…"
+msgstr "Choisir une configuration de la méthode de saisie…"
 
 #: src/modules/conf_intl/e_int_config_imc_import.c:263
 #: src/modules/conf_intl/e_int_config_imc_import.c:279
@@ -6659,6 +6556,8 @@ msgstr "Localisation"
 msgid ""
 "Target URI could not be shown.<ps/>Hold [Ctrl] to disable link fetching."
 msgstr ""
+"L'URI de destination ne peut être affichée.<ps/>Maintenir [Ctrl] pour "
+"désactiver la récupération des liens."
 
 #: src/modules/teamwork/e_mod_config.c:80
 msgid "Disable remote media fetching"
@@ -6869,13 +6768,15 @@ msgstr "Gestionnaire de connexion"
 
 #: src/modules/connman/e_connman.c:904
 msgid "Connman Service Missing"
-msgstr ""
+msgstr "Service Connman introuvable"
 
 #: src/modules/connman/e_connman.c:905
 msgid ""
 "The Connman service is not able to be found.<br>Is <b>connmand</b> daemon "
 "running?"
 msgstr ""
+"Le service Connman est introuvable.<br>Le démon <b>connmand</b> est-il en "
+"cours d'exécution ?"
 
 #: src/modules/connman/e_mod_main.c:191
 msgid ""
@@ -6887,7 +6788,7 @@ msgstr ""
 
 #: src/modules/connman/e_mod_main.c:282
 msgid "Wifi On"
-msgstr "Wi-Fi Actif"
+msgstr "Wi-Fi actif"
 
 #: src/modules/connman/agent.c:225
 msgid "Show password"
@@ -6955,7 +6856,7 @@ msgstr "Environnements de bureau"
 
 #: src/modules/conf_applications/e_mod_main.c:62
 msgid "Launcher Other"
-msgstr "Autre lanceur"
+msgstr "Lanceur autres"
 
 #: src/modules/conf_applications/e_int_config_defapps.c:297
 msgid "Custom Browser Command"
@@ -7327,24 +7228,20 @@ msgid "quick access name/identifier"
 msgstr "nom / identifiant de l'accès rapide"
 
 #: src/modules/mixer/e_mod_config.c:430
-#, fuzzy
 msgid "Notify on volume change"
-msgstr "Volume modifié"
+msgstr "Notification en cas de changement de volume"
 
 #: src/modules/mixer/e_mod_config.c:433
-#, fuzzy
 msgid "Mute on lock"
-msgstr "Muet"
+msgstr "Rendre muet au verrouillage"
 
 #: src/modules/mixer/e_mod_config.c:439
-#, fuzzy
 msgid "Backend to use:"
-msgstr "Options du fond"
+msgstr "Moteur à utiliser :"
 
 #: src/modules/mixer/e_mod_config.c:491
-#, fuzzy
 msgid "Emix Configuration"
-msgstr "Tables"
+msgstr "Configuration de Emix"
 
 #: src/modules/mixer/e_mod_main.c:274 src/modules/mixer/e_mod_main.c:473
 #: src/modules/mixer/gadget/backend.c:126 src/modules/mixer/gadget/mixer.c:241
@@ -7398,9 +7295,8 @@ msgid "Playback"
 msgstr "Lecture"
 
 #: src/modules/mixer/emixer.c:1355
-#, fuzzy
 msgid "Inputs"
-msgstr "Entrée"
+msgstr "Entrées"
 
 #: src/modules/mixer/emixer.c:1356
 msgid "Cards"
@@ -7582,13 +7478,12 @@ msgid "Pager"
 msgstr "Miniature des bureaux"
 
 #: src/modules/pager/e_mod_main.c:904
-#, fuzzy
 msgid "All desktop settings"
-msgstr "Paramètres des bureaux virtuels"
+msgstr "Paramétrage d'ensemble pour les bureaux"
 
 #: src/modules/pager/e_mod_main.c:915
 msgid "This desktop name and wallpaper settings"
-msgstr ""
+msgstr "Paramétrage du nom et du fond d'écran pour ce bureau"
 
 #: src/modules/pager/e_mod_main.c:2089
 msgid "Pager module cannot be loaded at the same time as Pager Plain!"
@@ -7625,30 +7520,28 @@ msgid "Popup Desk Previous"
 msgstr "Bureau précédent dans le pop-up"
 
 #: src/modules/pager/gadget/config.c:226
-#, fuzzy
 msgid ""
 "You cannot use the right mouse button in the<ps/>gadget for this as it is "
 "already taken by internal<ps/>code for context menus.<ps/>This button only "
 "works in the popup."
 msgstr ""
-"Vous ne pouvez pas utiliser le bouton droit de la souris<ps/>sur le rayon "
+"Vous ne pouvez pas utiliser le bouton droit de la souris<ps/>dans le gadget "
 "pour cette action car il est déjà utilisé<ps/>par le code interne, pour les "
 "menus contextuels.<ps/>Ce bouton fonctionne uniquement dans le pop-up."
 
 #: src/modules/pager/gadget/config.c:316
-#, fuzzy
 msgid "Configure virtual deskstops"
-msgstr "Paramétrer les bureaux"
+msgstr "Configurer les bureaux virtuels"
 
 #: src/modules/pager/gadget/config.c:451 src/modules/pager/gadget/config.c:497
-#, fuzzy, c-format
+#, c-format
 msgid "%.0f"
-msgstr "%.0f sec"
+msgstr "%.0f"
 
 #: src/modules/pager/gadget/config.c:474 src/modules/pager/gadget/config.c:573
 #, c-format
 msgid "%.1f"
-msgstr ""
+msgstr "%.1f"
 
 #: src/modules/pager/gadget/config.c:511 src/modules/pager/gadget/config.c:664
 #: src/bin/e_int_client_prop.c:479
@@ -7656,30 +7549,27 @@ msgid "Urgent"
 msgstr "Urgent"
 
 #: src/modules/pager/gadget/config.c:560
-#, fuzzy
 msgid "Urgent Popup Duration"
 msgstr "Durée du pop-up urgent"
 
 #: src/modules/pager/gadget/config.c:598
 msgid "Always Use Plain Style"
-msgstr ""
+msgstr "Toujours utiliser le style ordinaire"
 
 #: src/modules/pager/gadget/config.c:610
 msgid "Switch to Plain Style When Saving Power"
-msgstr ""
+msgstr "Appliquer le style ordinaire pour l'économie d'énergie"
 
 #: src/modules/pager/gadget/config.c:650
-#, fuzzy
 msgid "Pager Configuration"
-msgstr "Configuration de Tâches"
+msgstr "Configuration de la miniature des bureaux (Pager)"
 
 #: src/modules/pager/gadget/pager.c:2970 src/modules/pager/gadget/pager.c:2977
 #: src/modules/pager/gadget/pager.c:2979 src/modules/pager/gadget/pager.c:2981
 #: src/modules/pager/gadget/pager.c:2983 src/modules/pager/gadget/pager.c:2985
 #: src/modules/pager/gadget/pager.c:2987
-#, fuzzy
 msgid "Pager Gadget"
-msgstr "Gérer les gadgets"
+msgstr "Gadget miniature des bureaux"
 
 #: src/modules/battery/e_mod_config.c:62
 msgid "Battery Monitor Settings"
@@ -7750,9 +7640,8 @@ msgid "Battery Meter"
 msgstr "Surveillance de la batterie"
 
 #: src/bin/e_acpi.c:132
-#, fuzzy
 msgid "ACPI Error"
-msgstr "Erreur"
+msgstr "Erreur ACPI"
 
 #: src/bin/e_acpi.c:133
 msgid ""
@@ -7760,6 +7649,10 @@ msgid ""
 "not seem to be running or<br>contactable. Perhaps enable the <hilight>acpid</"
 "hilight><br>service on your system?"
 msgstr ""
+"Il semble que le système soit basé sur l'ACPI, mais que<br><hilight>acpid</"
+"hilight> ne soit pas en cours d'exécution ou<br>non découvrable. Vous "
+"devriez peut-être activer le service <hilight>acpid </hilight><br>sur votre "
+"système ?"
 
 #: src/bin/e_hints.c:186
 msgid ""
@@ -7818,7 +7711,7 @@ msgstr "Propriétés du fichier"
 #: src/bin/e_fm_prop.c:255
 #, c-format
 msgid "Cannot change permissions: %s"
-msgstr "Impossible de changer les permissions : %s"
+msgstr "Impossible de modifier les permissions : %s"
 
 #: src/bin/e_fm_prop.c:402
 msgid "Location:"
@@ -8375,7 +8268,7 @@ msgid ""
 msgstr ""
 "La configuration a dû être mise à jour. Votre ancienne configuration<ps/>a "
 "été supprimée et de nouveaux paramètres par défaut sont en place.<ps/>Cela "
-"risque d'arriver en phase de développement, ainsi il est inutile<ps/>de "
+"risque d'arriver en phase de développement, alors il est inutile<ps/>de "
 "faire un rapport de bogue. Cela signifie simplement que le module a "
 "besoin<ps/>de cette mise à niveau pour être à nouveau fonctionnel.<ps/>Vous "
 "pouvez maintenant tout reconfigurer selon votre goût.<ps/>Désolé pour la "
@@ -8428,7 +8321,7 @@ msgstr[1] "%li mois"
 msgid "One week"
 msgid_plural "%li Weeks"
 msgstr[0] "Une semaine"
-msgstr[1] "%li semaine"
+msgstr[1] "%li semaines"
 
 #: src/bin/e_utils.c:1003
 #, c-format
@@ -8453,7 +8346,7 @@ msgstr[1] "%li minutes"
 
 #: src/bin/e_gadcon.c:1459
 msgid "Gadget error"
-msgstr "Erreur : Gadget"
+msgstr "Erreur du gadget"
 
 #: src/bin/e_gadcon.c:1459
 #, c-format
@@ -8470,7 +8363,7 @@ msgstr "Défilement automatique"
 
 #: src/bin/e_gadcon.c:2591
 msgid "Stop moving"
-msgstr "Insérer"
+msgstr "Figer"
 
 #: src/bin/e_gadcon.c:3238
 msgid "Insufficent gadcon support"
@@ -8843,11 +8736,10 @@ msgid "Enlightenment cannot set up its actions system.\n"
 msgstr "Enlightenment ne parvient pas à initialiser son système d'actions.\n"
 
 #: src/bin/e_main.c:778
-#, fuzzy
 msgid "Enlightenment cannot initialize the Privelege System access system.\n"
 msgstr ""
-"Enlightenment ne parvient pas à initialiser son gestionnaire de commandes "
-"système.\n"
+"Enlightenment ne parvient pas à initialiser son système d'accès système "
+"privilégié.\n"
 
 #: src/bin/e_main.c:787
 msgid "Enlightenment cannot set up its powersave modes.\n"
@@ -8972,7 +8864,8 @@ msgstr ""
 #: src/bin/e_main.c:1045
 msgid "Enlightenment cannot set up its order file system.\n"
 msgstr ""
-"Enlightenment ne parvient pas à initialiser son classement de fichiers.\n"
+"Enlightenment ne parvient pas à initialiser son système de classement de "
+"fichiers.\n"
 
 #: src/bin/e_main.c:1234
 #, c-format
@@ -9108,18 +9001,16 @@ msgstr ""
 "Enlightenment a planté en phase d'initialisation et a été redémarré.<ps/"
 ">Tous les modules ont été désactivés et ne seront pas chargés pour vous<ps/"
 ">aider à supprimer les modules problématiques de votre configuration.<ps/"
-"><ps/>Le dialogue de configuration des modules vous permettra<ps>de "
+"><ps/>Le dialogue de configuration des modules vous permettra<ps/>de "
 "recharger vos modules."
 
 #: src/bin/e_gadget_runner.c:250
-#, fuzzy
 msgid "Command:"
-msgstr "Commande"
+msgstr "Commande :"
 
 #: src/bin/e_gadget_runner.c:260
-#, fuzzy
 msgid "On Exit:"
-msgstr "Quitter"
+msgstr "En quittant :"
 
 #: src/bin/e_gadget_runner.c:264 src/bin/e_int_menus.c:275
 #: src/bin/e_actions.c:3731
@@ -9127,14 +9018,13 @@ msgid "Restart"
 msgstr "Relancer"
 
 #: src/bin/e_gadget_runner.c:837
-#, fuzzy, c-format
+#, c-format
 msgid "Version: %s"
-msgstr "Version : %s\n"
+msgstr "Version : %s"
 
 #: src/bin/e_gadget_runner.c:851
-#, fuzzy
 msgid "Report bug"
-msgstr "Rapport de bogue"
+msgstr "Signaler le bogue"
 
 #: src/bin/e_gadget_runner.c:1059
 #, c-format
@@ -9142,12 +9032,13 @@ msgid ""
 "A gadget .desktop file was found,</ps>but no [Name] entry was specified!</ps>"
 "%s"
 msgstr ""
+"Un fichier .desktop de gadget a bien été trouvé,</ps>mais aucune entrée "
+"[Name] n'est spécifiée !</ps>%s"
 
 #: src/bin/e_gadget_runner.c:1063 src/bin/e_gadget_runner.c:1074
 #: src/bin/e_gadget_runner.c:1085 src/bin/e_gadget_runner.c:1096
-#, fuzzy
 msgid "Gadget Error"
-msgstr "Erreur : Gadget"
+msgstr "Erreur du gadget"
 
 #: src/bin/e_gadget_runner.c:1070
 #, c-format
@@ -9155,6 +9046,8 @@ msgid ""
 "A gadget .desktop file was found,</ps>but [Type] is not set to Application!</"
 "ps>%s"
 msgstr ""
+"Un fichier .desktop de gadget a bien été trouvé,</ps>mais aucun [Type] n'est "
+"défini pour l'application !</ps>%s"
 
 #: src/bin/e_gadget_runner.c:1081
 #, c-format
@@ -9162,6 +9055,8 @@ msgid ""
 "A gadget .desktop file was found,</ps>but [X-Gadget-Version] is missing!</ps>"
 "%s"
 msgstr ""
+"Un fichier .desktop de gadget a bien été trouvé,</ps>mais [X-Gadget-Version] "
+"est manquant !</ps>%s"
 
 #: src/bin/e_gadget_runner.c:1092
 #, c-format
@@ -9169,6 +9064,8 @@ msgid ""
 "A gadget .desktop file was found,</ps>but [X-Gadget-Bugreport] is missing!</"
 "ps>%s"
 msgstr ""
+"Un fichier .desktop de gadget a bien été trouvé,</ps>mais [X-Gadget-"
+"Bugreport] est manquant !</ps>%s"
 
 #: src/bin/e_import_config_dialog.c:94
 msgid "Picture Import Error"
@@ -9407,23 +9304,26 @@ msgstr "ARGH ! ça ne devrait pas se produire…"
 
 #: src/bin/e_system.c:30
 msgid "Error in Enlightenment System Service"
-msgstr ""
+msgstr "Erreur du service Enlightenment system"
 
 #: src/bin/e_system.c:31
-#, fuzzy
 msgid ""
 "Enlightenment cannot successfully start<br>the enlightenment_system service."
-msgstr "Enlightenment ne parvient pas à initialiser son système de thèmes.\n"
+msgstr ""
+"Enlightenment ne parvient pas à lancer le<br>service enlightenment_system "
+"avec succès."
 
 #: src/bin/e_comp_wl.c:3013
-#, fuzzy, c-format
+#, c-format
 msgid "Enlightenment cannot initialize Wayland client connection.\n"
-msgstr "Enlightenment ne parvient pas à initialiser une connexion à X...\n"
+msgstr ""
+"Enlightenment ne parvient pas à initialiser une connexion au client "
+"Wayland.\n"
 
 #: src/bin/e_comp_wl.c:3028
-#, fuzzy, c-format
+#, c-format
 msgid "Enlightenment cannot create a Wayland Compositor.\n"
-msgstr "Enlightenment est incapable de créer un compositeur.\n"
+msgstr "Enlightenment est incapable de créer un compositeur Wayland.\n"
 
 #: src/bin/e_widget_fsel.c:334
 msgid "Add to Favorites"
@@ -9484,7 +9384,7 @@ msgstr "Rayon n°%d"
 
 #: src/bin/e_shelf.c:916
 msgid "Shelf Autohide Error"
-msgstr "Erreur : auto-masquage du rayon"
+msgstr "Erreur d'auto-masquage du rayon"
 
 #: src/bin/e_shelf.c:916
 msgid ""
@@ -9505,7 +9405,7 @@ msgstr "Erreur : Rayon"
 
 #: src/bin/e_shelf.c:1124
 msgid "A shelf with that name already exists!"
-msgstr "Il existe déjà un rayon avec ce nom !"
+msgstr "Il existe déjà un rayon de ce nom !"
 
 #: src/bin/e_shelf.c:1610 src/bin/e_shelf.c:2415
 msgid "Stop Moving Gadgets"
@@ -9529,7 +9429,7 @@ msgstr ""
 
 #: src/bin/e_shelf.c:2272
 msgid "A shelf with that name and id already exists!"
-msgstr "Un rayon avec ce nom et id existe déjà !"
+msgstr "Un rayon avec ces nom et ID existe déjà !"
 
 #: src/bin/e_shelf.c:2291
 msgid "Rename Shelf"
@@ -9580,66 +9480,56 @@ msgid "Use"
 msgstr "Utiliser"
 
 #: src/bin/e_bryce.c:786 src/bin/e_bryce.c:847
-#, fuzzy
 msgid "Gadget Bar"
-msgstr "Erreur : Gadget"
+msgstr "Barre de gadgets"
 
 #: src/bin/e_bryce.c:807
-#, fuzzy
 msgid "Autosize"
-msgstr "Auto-masquage"
+msgstr "Taille automatique"
 
 #: src/bin/e_bryce.c:819
-#, fuzzy
 msgid "Bar Settings"
-msgstr "Paramètres de l'IBar"
+msgstr "Paramètres de la barre"
 
 #: src/bin/e_bryce.c:823
-#, fuzzy
 msgid "Add Gadget"
-msgstr "Gadgets chargés"
+msgstr "Ajouter un gadget"
 
 #: src/bin/e_bryce.c:827
-#, fuzzy
 msgid "Delete Bar"
-msgstr "Supprimer"
+msgstr "Supprimer la barre"
 
 #: src/bin/e_bryce.c:1393
-#, fuzzy
 msgid "Bryces"
-msgstr "Configuration des Bryces"
+msgstr "Bryces"
 
 #: src/bin/e_bryce.c:1393
-#, fuzzy
 msgid "Resize Gadget Bar"
-msgstr "Géométrie en redimensionnement"
+msgstr "Redimensionner la barre de gadgets"
 
 #: src/bin/e_gadget.c:2569
 msgid "Deny"
-msgstr ""
+msgstr "Refuser"
 
 #: src/bin/e_gadget.c:2577
 msgid "Allow"
-msgstr ""
+msgstr "Autoriser"
 
 #: src/bin/e_gadget.c:2674 src/bin/e_gadget.c:2728
-#, fuzzy
 msgid "Move gadget"
-msgstr "Texte de déplacement"
+msgstr "Déplacer le gadget"
 
 #: src/bin/e_gadget.c:2678 src/bin/e_gadget.c:2729
-#, fuzzy
 msgid "Resize gadget"
-msgstr "Texte de redimensionnement"
+msgstr "Redimensionner le gadget"
 
 #: src/bin/e_gadget.c:2683 src/bin/e_gadget.c:2730
-#, fuzzy
 msgid "Configure gadget"
-msgstr "Configurer la couche"
+msgstr "Configurer le gadget"
 
 #: src/bin/e_gadget.c:3000
 msgid "ERROR: NO NAME PROVIDED"
-msgstr ""
+msgstr "ERREUR : AUCUN NOM N'EST FOURNI"
 
 #: src/bin/e_gadget.c:3423
 #, c-format
@@ -9647,6 +9537,8 @@ msgid ""
 "The current binding to move gadgets and this dialog is %s+<hilight>Mouse %d</"
 "hilight>"
 msgstr ""
+"Le raccourci actuel pour déplacer des gadgets et cette boîte de dialogue est "
+"%s+<hilight>Souris%d</hilight>"
 
 #: src/bin/e_gadget.c:3431
 msgid ""
@@ -9654,6 +9546,9 @@ msgid ""
 "<hilight>Backspace</hilight> or <hilight>Delete</hilight> to remove all "
 "gadgets from this screen"
 msgstr ""
+"Appuyer sur <hilight>Échap</hilight> ou cliquer sur le fond d'écran pour "
+"quitter.<ps/>Utiliser <hilight>Retour arrière</hilight> or <hilight>Suppr</"
+"hilight> pour supprimer tous les gadgets de cet écran"
 
 #: src/bin/e_color_dialog.c:25
 msgid "Color Selector"
@@ -9665,7 +9560,7 @@ msgstr "Aperçu de la couleur"
 
 #: src/bin/e_color_dialog.c:67
 msgid "Select"
-msgstr "Sélectionner"
+msgstr "Choisir"
 
 #: src/bin/e_theme.c:14
 msgid "Set As Theme"
@@ -9689,7 +9584,7 @@ msgstr "Définir l'opacité de la fenêtre"
 
 #: src/bin/e_comp.c:1078
 msgid "Toggle focused client's redirect state"
-msgstr "(Dés)Activer l'état de redirection du client"
+msgstr "(Dés)Activer l'état de redirection du client focalisé"
 
 #: src/bin/e_comp.c:1248
 msgid "Focus-Out"
@@ -9754,7 +9649,7 @@ msgstr "Choisir une icône pour « %s »"
 
 #: src/bin/e_desktop_editor.c:935
 msgid "Select an Executable"
-msgstr "Sélectionner un exécutable"
+msgstr "Choisir un exécutable"
 
 #: src/bin/e_widget_filepreview.c:93 src/bin/e_widget_filepreview.c:415
 #: src/bin/e_widget_filepreview.c:532
@@ -10135,8 +10030,8 @@ msgid ""
 "There was an error loading the module named: %s<ps/>The full path to this "
 "module is:<ps/>%s<ps/>The error reported was:<ps/>%s<ps/>"
 msgstr ""
-"Erreur de chargement du module %s.<ps/>Le chemin absolu vers le module est "
-"<ps/>%s<ps/>L'erreur rapportée est :<ps/>%s<ps/>"
+"Erreur de chargement du module %s.<ps/>Le chemin absolu vers le module est : "
+"<ps/>%s<ps/>L'erreur signalée est :<ps/>%s<ps/>"
 
 #: src/bin/e_module.c:237
 msgid "Module does not contain all needed functions"
@@ -10179,41 +10074,39 @@ msgstr "Module instable détecté"
 
 #: src/bin/e_module.c:708
 msgid "I know"
-msgstr "Je suis au courrant"
+msgstr "Je suis au courant"
 
 #: src/bin/e_bryce_editor.c:156
 msgid "Finishing touches... (4/4)"
-msgstr ""
+msgstr "La touche finale... (4/4)"
 
 #: src/bin/e_bryce_editor.c:164
-#, fuzzy
 msgid "Automatically size based on contents"
-msgstr "Défilement automatique"
+msgstr "Redimensionner selon le contenu"
 
 #: src/bin/e_bryce_editor.c:177
-#, fuzzy
 msgid "Automatically hide"
-msgstr "Automatique"
+msgstr "Auto-masquage"
 
 #: src/bin/e_bryce_editor.c:190
 msgid "Do not stack above windows"
-msgstr ""
+msgstr "Ne pas se superposer aux fenêtres"
 
 #: src/bin/e_bryce_editor.c:206
 msgid "Finish!"
-msgstr ""
+msgstr "Terminé !"
 
 #: src/bin/e_bryce_editor.c:224
 msgid "Choose style (3/4)"
-msgstr ""
+msgstr "Choisir le style (3/4)"
 
 #: src/bin/e_bryce_editor.c:289
 msgid "Choose position (2/4)"
-msgstr ""
+msgstr "Choisir la position (2/4)"
 
 #: src/bin/e_bryce_editor.c:344
 msgid "Choose screen edge (1/4)"
-msgstr ""
+msgstr "Choisir le bord d'écran (1/4)"
 
 #: src/bin/e_toolbar.c:128
 msgid "EFM Toolbar"
@@ -11293,7 +11186,7 @@ msgstr "Non utilisé"
 
 #: src/bin/e_int_config_comp_match.c:81 src/bin/e_int_config_comp_match.c:416
 msgid "Combo"
-msgstr "Combiné"
+msgstr "Combo"
 
 #: src/bin/e_int_config_comp_match.c:85 src/bin/e_int_config_comp_match.c:420
 #: src/bin/e_int_config_comp_match.c:487
@@ -11344,7 +11237,7 @@ msgstr "Effet :"
 
 #: src/bin/e_int_config_comp_match.c:352
 msgid "Edit E_Comp_Match"
-msgstr "Éditer E_Comp_Match"
+msgstr "Modifier E_Comp_Match"
 
 #: src/bin/e_int_config_comp_match.c:390 src/bin/e_int_client_prop.c:451
 msgid "Class"
@@ -11592,7 +11485,7 @@ msgstr "Enrouler"
 
 #: src/bin/e_int_client_menu.c:232
 msgid "Unredirected"
-msgstr "Non réorientée"
+msgstr "Non redirigé"
 
 #: src/bin/e_int_client_menu.c:496
 msgid "Unmaximize"
@@ -11670,7 +11563,7 @@ msgstr "Désépingler du bureau"
 
 #: src/bin/e_int_client_menu.c:1535
 msgid "Select Border Style"
-msgstr "Sélectionner un style de bordure"
+msgstr "Choisir un style de bordure"
 
 #: src/bin/e_int_client_menu.c:1547
 msgid "Use Enlightenment Default Icon Preference"
