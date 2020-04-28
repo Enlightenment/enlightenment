@@ -38,7 +38,7 @@ _etc_enlightenment_system_conf_check(const char *sys)
    if (gn < 0)
      {
         ERR("User %i member of too many groups\n", uid);
-        return 0;
+        goto deny;
      }
    while (fgets(buf, sizeof(buf), f))
      {
