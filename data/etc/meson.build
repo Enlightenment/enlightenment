@@ -27,6 +27,8 @@ if get_option('install-enlightenment-menu')
               )
 endif
 
-install_data('system.conf',
-             install_dir: join_paths(dir_sysconf, 'enlightenment')
-             )
+if get_option('install-system')
+  install_data('system.conf',
+               install_dir: join_paths(dir_sysconf, 'enlightenment')
+              )
+endif

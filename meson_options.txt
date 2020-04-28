@@ -2,6 +2,10 @@ option('install-sysactions',
 	type: 'boolean',
 	value: true,
 	description: 'install /etc/enlightenment/sysactions.conf: (default=true)')
+option('install-system',
+	type: 'boolean',
+	value: true,
+	description: 'install /etc/enlightenment/system.conf: (default=true)')
 option('install-enlightenment-menu',
 	type: 'boolean',
 	value: true,
