@@ -3774,6 +3774,8 @@ e_client_focused_set(E_Client *ec)
 
    while ((ec_unfocus) && (ec_unfocus->zone))
      {
+        Eina_Bool is_popup, is_child;
+
         ec_unfocus->want_focus = ec_unfocus->focused = 0;
         if (!e_object_is_del(E_OBJECT(ec_unfocus)))
           e_focus_event_focus_out(ec_unfocus);
@@ -3783,8 +3785,26 @@ e_client_focused_set(E_Client *ec)
 
         E_FREE_FUNC(ec_unfocus->raise_timer, ecore_timer_del);
 
+        is_popup = EINA_FALSE;
+        is_child = EINA_FALSE;
+        if ((ec) &&
+            ((ec->netwm.type == E_WINDOW_TYPE_MENU) ||
+             (ec->netwm.type == E_WINDOW_TYPE_TOOLBAR) ||
+             (ec->netwm.type == E_WINDOW_TYPE_DOCK) ||
+             (ec->netwm.type == E_WINDOW_TYPE_SPLASH) ||
+             (ec->netwm.type == E_WINDOW_TYPE_TOOLTIP) ||
+             (ec->netwm.type == E_WINDOW_TYPE_DROPDOWN_MENU) ||
+             (ec->netwm.type == E_WINDOW_TYPE_POPUP_MENU) ||
+             (ec->netwm.type == E_WINDOW_TYPE_COMBO) ||
+             (ec->netwm.type == E_WINDOW_TYPE_DND) ||
+             (ec->netwm.type == E_WINDOW_TYPE_NOTIFICATION)))
+          is_popup = EINA_TRUE;
+        if ((ec) && _e_client_is_in_parents(ec, ec_unfocus))
+          is_child = EINA_TRUE;
+
         /* if there unfocus client is fullscreen and visible */
-        if ((!e_config->allow_above_fullscreen) &&
+        if ((!is_popup) && (!is_child) &&
+            (!e_config->allow_above_fullscreen) &&
             (ec_unfocus->fullscreen) && (!ec_unfocus->iconic) && (!ec_unfocus->hidden) &&
             (ec_unfocus->zone == e_zone_current_get()) &&
             ((ec_unfocus->desk == e_desk_current_get(ec_unfocus->zone)) || (ec_unfocus->sticky)))
