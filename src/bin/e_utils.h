@@ -5,12 +5,12 @@
 #define E_UTILS_H
 
 #define e_util_dialog_show(title, args...) \
-{ \
+do { \
    char __tmpbuf[4096]; \
    \
    snprintf(__tmpbuf, sizeof(__tmpbuf), ##args); \
    e_util_dialog_internal(title, __tmpbuf); \
-}
+} while (0)
 
 E_API void         e_util_wakeup(void);
 E_API void         e_util_env_set(const char *var, const char *val);

@@ -128,86 +128,86 @@ setuid_setup(void)
    if (!pwent)
      {
         ERR("Unable to obtain passwd entry for calling user\n");
-        exit(1);
+        exit(31);
      }
    if (!pwent->pw_name)
      {
         ERR("Blank username for user\n");
-        exit(1);
+        exit(32);
      }
    user_name = strdup(pwent->pw_name);
    if (!user_name)
      {
         ERR("Unable to allocate memory for username\n");
-        exit(1);
+        exit(33);
      }
    grent = getgrgid(gid);
    if (!grent)
      {
         ERR("Unable to obtain group entry for calling group\n");
-        exit(1);
+        exit(34);
      }
    if (!grent->gr_name)
      {
         ERR("Blank groupname for group\n");
-        exit(1);
+        exit(35);
      }
    group_name = strdup(grent->gr_name);
    if (!group_name)
      {
         ERR("Unable to allocate memory for groupname\n");
-        exit(1);
+        exit(36);
      }
 
    if (setuid(0) != 0)
      {
         ERR("Unable to assume root user privileges\n");
-        exit(5);
+        exit(37);
      }
    if (setgid(0) != 0)
      {
         ERR("Unable to assume root group privileges\n");
-        exit(7);
+        exit(38);
      }
 
    pwent = getpwuid(getuid());
    if (!pwent)
      {
         ERR("Unable to obtain passwd entry\n");
-        exit(1);
+        exit(39);
      }
    if (!pwent->pw_dir)
      {
         ERR("No home dir for root\n");
-        exit(1);
+        exit(40);
      }
    if (strlen(pwent->pw_dir) > (sizeof(buf) - 8))
      {
         ERR("Root homedir too long\n");
-        exit(1);
+        exit(41);
      }
    if (pwent->pw_dir[0] != '/')
      {
         ERR("Root homedir %s is not a full path\n", pwent->pw_dir);
-        exit(1);
+        exit(42);
      }
    if (!realpath(pwent->pw_dir, buf))
      {
         ERR("Root homedir %s does not resolve\n", pwent->pw_dir);
-        exit(1);
+        exit(43);
      }
    snprintf(buf, sizeof(buf), "HOME=%s", pwent->pw_dir);
    if (putenv(buf) == -1)
      {
         ERR("Unable to set $HOME environment\n");
-        exit(1);
+        exit(44);
      }
 
    // change CWD to / to avoid path search dlopens finding libs in ./
    if (chdir("/") != 0)
      {
         ERR("Unable to change working dir to /\n");
-        exit(1);
+        exit(45);
      }
 
    // die with parent - special as this is setuid
@@ -425,7 +425,7 @@ main(int argc EINA_UNUSED, const char **argv EINA_UNUSED)
    if (systems == 0)
      {
         ERR("Permission denied to use this tool\n");
-        exit(11);
+        exit(46);
      }
 
    ecore_idle_enterer_add(_cb_idle_enterer, NULL);

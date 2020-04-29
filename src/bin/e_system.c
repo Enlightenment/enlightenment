@@ -24,20 +24,102 @@ static double _last_spawn = 0.0;
 static int _respawn_count = 0;
 
 static Eina_Bool
-_cb_dialog_timer(void *data EINA_UNUSED)
+_cb_dialog_timer(void *data)
 {
+   int exit_code = (int)(long)data;
+
    _error_dialog_timer = NULL;
-   e_util_dialog_show(_("Error in Enlightenment System Service"),
-                      _("Enlightenment cannot successfully start<br>"
-                        "the enlightenment_system service."));
+
+        if (exit_code ==  0) // can't even do ecore_exe_run...
+     e_util_dialog_show(_("Error in Enlightenment System Service"),
+                        _("Enlightenment cannot successfully start<br>"
+                          "the enlightenment_system service<br>"
+                          "because ecore_exe_run() failed."));
+   else if (exit_code == 31) // can't get passwd entry for user
+     e_util_dialog_show(_("Error in Enlightenment System Service"),
+                        _("Enlightenment cannot successfully start<br>"
+                          "the enlightenment_system service<br>"
+                          "because your user has no passwd file entry."));
+   else if (exit_code == 32) // username is blank in passwd entry
+     e_util_dialog_show(_("Error in Enlightenment System Service"),
+                        _("Enlightenment cannot successfully start<br>"
+                          "the enlightenment_system service<br>"
+                          "because your username is blank in the passwd file."));
+   else if (exit_code == 33) // can't alloc mem for username
+     e_util_dialog_show(_("Error in Enlightenment System Service"),
+                        _("Enlightenment cannot successfully start<br>"
+                          "the enlightenment_system service<br>"
+                          "because it could not allocate memory."));
+   else if (exit_code == 34) // can't get group entry for user's group
+     e_util_dialog_show(_("Error in Enlightenment System Service"),
+                        _("Enlightenment cannot successfully start<br>"
+                          "the enlightenment_system service<br>"
+                          "because it can't find your user group entry."));
+   else if (exit_code == 35) // group name is blank
+     e_util_dialog_show(_("Error in Enlightenment System Service"),
+                        _("Enlightenment cannot successfully start<br>"
+                          "the enlightenment_system service<br>"
+                          "because your user group entry is blank."));
+   else if (exit_code == 36) // can't setuid to 0
+     e_util_dialog_show(_("Error in Enlightenment System Service"),
+                        _("Enlightenment cannot successfully start<br>"
+                          "the enlightenment_system service<br>"
+                          "since it can't become root. Missing setuid bit?"));
+   else if (exit_code == 37) // can't setgid to 0
+     e_util_dialog_show(_("Error in Enlightenment System Service"),
+                        _("Enlightenment cannot successfully start<br>"
+                          "the enlightenment_system service<br>"
+                          "since it can't become group root. Missing setuid bit?"));
+   else if (exit_code == 38) // can't get passwd entry for uid 0
+     e_util_dialog_show(_("Error in Enlightenment System Service"),
+                        _("Enlightenment cannot successfully start<br>"
+                          "the enlightenment_system service<br>"
+                          "because the passwd file entry for root isn't found."));
+   else if (exit_code == 39) // root has no homedir
+     e_util_dialog_show(_("Error in Enlightenment System Service"),
+                        _("Enlightenment cannot successfully start<br>"
+                          "the enlightenment_system service<br>"
+                          "because the root home directory is blank."));
+   else if (exit_code == 40) // root homedir is not a full path
+     e_util_dialog_show(_("Error in Enlightenment System Service"),
+                        _("Enlightenment cannot successfully start<br>"
+                          "the enlightenment_system service<br>"
+                          "because the root home directory is not a full path."));
+   else if (exit_code == 41) // root homedir does not resolve to a path
+     e_util_dialog_show(_("Error in Enlightenment System Service"),
+                        _("Enlightenment cannot successfully start<br>"
+                          "the enlightenment_system service<br>"
+                          "because the root home directory can't be found."));
+   else if (exit_code == 42) // can't change HOME to root homedir
+     e_util_dialog_show(_("Error in Enlightenment System Service"),
+                        _("Enlightenment cannot successfully start<br>"
+                          "the enlightenment_system service<br>"
+                          "because it can't change the HOME environment."));
+   else if (exit_code == 43) // can't change dir to root homedir
+     e_util_dialog_show(_("Error in Enlightenment System Service"),
+                        _("Enlightenment cannot successfully start<br>"
+                          "the enlightenment_system service<br>"
+                          "because it cannot change working directory to root's home."));
+   else if (exit_code == 46)    // user denied to all subsystems
+     e_util_dialog_show(_("Error in Enlightenment System Service"),
+                        _("Enlightenment cannot successfully start<br>"
+                          "the enlightenment_system service<br>"
+                          "because your user is denied access to all services.<br>"
+                          "Please see /etc/enlightenment/system.conf."));
+   else
+     e_util_dialog_show(_("Error in Enlightenment System Service"),
+                        _("Enlightenment cannot successfully start<br>"
+                          "the enlightenment_system service for<br>"
+                          "some unknown reason."));
    return EINA_FALSE;
 }
 
 static void
-_system_spawn_error(void)
+_system_spawn_error(int exit_code)
 {
    if (_error_dialog_timer) ecore_timer_del(_error_dialog_timer);
-   _error_dialog_timer = ecore_timer_add(5.0, _cb_dialog_timer, NULL);
+   _error_dialog_timer = ecore_timer_add(5.0, _cb_dialog_timer,
+                                         (void *)(long)exit_code);
 }
 
 static void
@@ -54,7 +136,7 @@ _system_spawn(void)
    _system_exe = ecore_exe_pipe_run
      (buf, ECORE_EXE_NOT_LEADER | ECORE_EXE_TERM_WITH_PARENT |
       ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_WRITE, NULL);
-   if (!_system_exe) _system_spawn_error();
+   if (!_system_exe) _system_spawn_error(0);
 }
 
 static Eina_Bool
@@ -131,12 +213,24 @@ _cb_exe_del(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *event)
    Ecore_Exe_Event_Del *ev = event;
 
    if (ev->exe != _system_exe) return ECORE_CALLBACK_PASS_ON;
-   if ((ev->exit_code == 3) || (ev->exit_code == 5) ||
-       (ev->exit_code == 7) || (ev->exit_code == 9) ||
-       (ev->exit_code == 11))
+   if ((ev->exit_code == 31) || // can't get passwd entry for user
+       (ev->exit_code == 32) || // username is blank in passwd entry
+       (ev->exit_code == 33) || // can't alloc mem for username
+       (ev->exit_code == 34) || // can't get group entry for user's group
+       (ev->exit_code == 35) || // group name is blank
+       (ev->exit_code == 36) || // can't setuid to 0
+       (ev->exit_code == 37) || // can't setgid to 0
+       (ev->exit_code == 38) || // can't get passwd entry for uid 0
+       (ev->exit_code == 39) || // root has no homedir
+       (ev->exit_code == 40) || // root homedir is not a full path
+       (ev->exit_code == 41) || // root homedir does not resolve to a path
+       (ev->exit_code == 42) || // can't change HOME to root homedir
+       (ev->exit_code == 43) || // can't change dir to root homedir
+       (ev->exit_code == 46)    // user denied to all subsystems
+      )
      {
         // didn't run because it literally refused....
-        _system_spawn_error();
+        _system_spawn_error(ev->exit_code);
      }
    else
      {
