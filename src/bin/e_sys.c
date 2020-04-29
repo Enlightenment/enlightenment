@@ -153,13 +153,19 @@ _e_sys_comp_action_timeout(void *data)
 }
 
 static void
-_e_sys_comp_zones_fade(const char *sig, Eina_Bool out)
+_e_sys_comp_zones_fade(E_Sys_Action a, const char *sig, Eina_Bool out)
 {
    const Eina_List *l;
    E_Zone *zone;
    EINA_LIST_FOREACH(e_comp->zones, l, zone)
      {
-        e_zone_fade_handle(zone, out, 0.5);
+        // XXX:
+        // don't fade backlight if we are exiting or logging out
+        // in future detect if e is the login manager and then
+        // we can assume it can manage backlight right anyway... then disable
+        // this if below when that happens
+        if ((a != E_SYS_EXIT) &&  (a != E_SYS_EXIT_NOW) && (a != E_SYS_LOGOUT))
+          e_zone_fade_handle(zone, out, 0.5);
         edje_object_signal_emit(zone->base, sig, "e");
         edje_object_signal_emit(zone->over, sig, "e");
      }
@@ -174,7 +180,7 @@ _e_sys_comp_emit_cb_wait(E_Sys_Action a, const char *sig, const char *rep, Eina_
    if (nocomp_push) e_comp_override_add();
    else e_comp_override_timed_pop();
 
-   _e_sys_comp_zones_fade(sig, nocomp_push);
+   _e_sys_comp_zones_fade(a, sig, nocomp_push);
 #ifndef HAVE_WAYLAND_ONLY
    if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      _e_comp_x_screensaver_on();
@@ -268,7 +274,7 @@ _e_sys_comp_resume2(void *data EINA_UNUSED)
 #endif
    EINA_LIST_FOREACH(e_comp->zones, l, zone)
      e_backlight_level_set(zone, resume_backlight, -1.0);
-   _e_sys_comp_zones_fade("e,state,sys,resume", EINA_FALSE);
+   _e_sys_comp_zones_fade(E_SYS_SUSPEND, "e,state,sys,resume", EINA_FALSE);
    if (e_acpi_lid_is_closed())
      {
         if (_e_sys_phantom_wake_check_timer)
