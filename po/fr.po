@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: Enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-19 16:15+0200\n"
-"PO-Revision-Date: 2020-04-26 13:50+0200\n"
+"PO-Revision-Date: 2020-04-29 10:50+0200\n"
 "Last-Translator: Philippe Jean Guillaumie <similar@orange.fr>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -329,8 +329,8 @@ msgid ""
 "Address: %s (%s)<br>Services: %s%s%s%s%s%s%s%s%s<br>Trusted: %s<br>Blocked: "
 "%s<br>"
 msgstr ""
-"Addresse : %s (%s)<br>Services : %s%s%s%s%s%s%s%s%s<br>De confiance : "
-"%s<br>Bloqués : %s<br>"
+"Adresse : %s (%s)<br>Services : %s%s%s%s%s%s%s%s%s<br>De confiance : "
+"%s<br>Bloqué : %s<br>"
 
 #: src/modules/bluez5/e_mod_popup.c:536 src/modules/bluez5/e_mod_popup.c:537
 #: src/modules/bluez5/e_mod_util.c:261
@@ -362,7 +362,7 @@ msgstr "Réseau "
 
 #: src/modules/bluez5/e_mod_popup.c:541
 msgid "Rendering "
-msgstr "Rendering "
+msgstr "Rendu "
 
 #: src/modules/bluez5/e_mod_popup.c:542
 msgid "Capture "
@@ -408,8 +408,7 @@ msgstr "Oublier le déverrouillage du périphérique"
 
 #: src/modules/bluez5/e_mod_popup.c:578
 msgid "Make this auto unlock when detected (and lock when not)"
-msgstr ""
-"Déverrouillage auto. à la détection (verrouillage dans le cas contraire)"
+msgstr "Déverrouillage auto. à la détection (sinon verrouillage)"
 
 #: src/modules/bluez5/e_mod_popup.c:588
 msgid "Stop this device from being forcefully connected"
@@ -1668,7 +1667,7 @@ msgstr "Ignorer"
 #: src/modules/conf_randr/e_int_config_randr2.c:755
 #: src/modules/conf_randr/e_int_config_randr2.c:1116
 msgid "Extend"
-msgstr "étendre"
+msgstr "Étendre"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:757
 #: src/modules/conf_randr/e_int_config_randr2.c:1117
@@ -2042,7 +2041,7 @@ msgstr "Délai avant atténuation sur batterie"
 
 #: src/modules/conf_display/e_int_config_dpms.c:172
 msgid "Fade Time"
-msgstr "Délai avant atténuation"
+msgstr "Durée de la transition"
 
 #: src/modules/conf_display/e_int_config_dpms.c:174
 #, c-format
@@ -4641,11 +4640,11 @@ msgstr "Supprimer des objets"
 
 #: src/modules/shot/e_mod_edit.c:1956
 msgid "Single arrow line"
-msgstr "Ligne à flèche unique"
+msgstr "Ligne à flèche directionnelle"
 
 #: src/modules/shot/e_mod_edit.c:1957
 msgid "Double arrow line"
-msgstr "Ligne à flèche double"
+msgstr "Ligne à flèche bidirectionnelle"
 
 #: src/modules/shot/e_mod_edit.c:1958
 msgid "Plain line"
@@ -4742,7 +4741,7 @@ msgstr "Impossible d'initialiser le réseau"
 
 #: src/modules/shot/e_mod_main.c:358
 msgid "Take Screenshot with Delay"
-msgstr "Capture d'écran avec délai"
+msgstr "Capture d'écran en différé"
 
 #: src/modules/shot/e_mod_main.c:366 src/bin/e_actions.c:3263
 #: src/bin/e_actions.c:3274 src/bin/e_actions.c:3293 src/bin/e_actions.c:3298
@@ -4755,7 +4754,7 @@ msgstr "Fenêtres : actions"
 
 #: src/modules/shot/e_mod_preview.c:58 src/modules/shot/e_mod_delay.c:47
 msgid "Select action to take with screenshot"
-msgstr "Choix de l'action associée à la capture"
+msgstr "Choisir l'action à appliquer à la capture"
 
 #: src/modules/shot/e_mod_preview.c:71
 msgid "Quality"
@@ -5129,7 +5128,7 @@ msgstr "%1.1f"
 
 #: src/modules/fileman/e_mod_config.c:479
 msgid "Tooltip size (Screen percentage)"
-msgstr "Taille de l'infobulle (en pourcentage de l'écran)"
+msgstr "Taille de l'infobulle"
 
 #: src/modules/fileman/e_mod_config.c:481
 #, c-format
@@ -5204,7 +5203,7 @@ msgstr "Lancer"
 
 #: src/modules/fileman/e_mod_main.c:68
 msgid "Show Dir"
-msgstr "Afficher répertoire"
+msgstr "Afficher un dossier"
 
 #: src/modules/fileman/e_mod_main.c:71
 msgid "Navigate"
@@ -9538,7 +9537,7 @@ msgid ""
 "hilight>"
 msgstr ""
 "Le raccourci actuel pour déplacer des gadgets et cette boîte de dialogue est "
-"%s+<hilight>Souris%d</hilight>"
+"%s+<hilight>Souris %d</hilight>"
 
 #: src/bin/e_gadget.c:3431
 msgid ""
