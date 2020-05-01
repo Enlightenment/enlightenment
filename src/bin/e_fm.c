@@ -2027,11 +2027,9 @@ _e_fm2_icon_thumb_get(Evas *evas, const E_Fm2_Icon *ic, const char *group, Evas_
    if (!o)
      return NULL;
 
-   e_thumb_icon_file_set(o, buf, group);
-   e_thumb_icon_size_set(o, 128, 128);
-
    if (cb) evas_object_smart_callback_add(o, "e_thumb_gen", cb, data);
-
+   e_thumb_icon_size_set(o, 256, 256);
+   e_thumb_icon_file_set(o, buf, group);
    _e_fm2_icon_thumb(ic, o, force_gen);
    if (type_ret) *type_ret = "THUMB";
    return o;
