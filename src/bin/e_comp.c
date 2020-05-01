@@ -158,10 +158,14 @@ _e_comp_fullscreen_check(void)
 {
    E_Client *ec;
 
+//   printf("------------------------\n");
    E_CLIENT_REVERSE_FOREACH(ec)
      {
         Evas_Object *o = ec->frame;
 
+//        printf("FSCK %p [%i %i %ix%i] [%s]\n",
+//               ec, ec->x, ec->y, ec->w, ec->h,
+//               e_client_util_name_get(ec));
         if (ec->ignored || ec->input_only || (!evas_object_visible_get(ec->frame)))
           continue;
         if (!e_comp_util_client_is_fullscreen(ec))
