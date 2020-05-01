@@ -11,7 +11,7 @@ src = [
   'e_system.h',
 ]
 executable('enlightenment_system', src,
-           include_directories: include_directories('../../..'),
+           include_directories: include_directories('..', '../../..'),
            dependencies       : [ dep_eina, dep_ecore, dep_ecore_file,
                                   dep_m, dep_dl,
                                   dep_eet, dep_eeze,

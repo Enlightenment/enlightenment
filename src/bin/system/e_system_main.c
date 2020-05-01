@@ -1,3 +1,5 @@
+#include "e_util_suid.h"
+
 #include "e_system.h"
 
 Eina_Bool alert_backlight_reset = EINA_FALSE;
@@ -114,257 +116,6 @@ deny:
    return 0;
 }
 
-static void
-setuid_setup(void)
-{
-   struct passwd *pwent;
-   struct group *grent;
-   static char buf[PATH_MAX];
-
-   uid = getuid();
-   gid = getgid();
-
-   pwent = getpwuid(uid);
-   if (!pwent)
-     {
-        ERR("Unable to obtain passwd entry for calling user\n");
-        exit(31);
-     }
-   if (!pwent->pw_name)
-     {
-        ERR("Blank username for user\n");
-        exit(32);
-     }
-   user_name = strdup(pwent->pw_name);
-   if (!user_name)
-     {
-        ERR("Unable to allocate memory for username\n");
-        exit(33);
-     }
-   grent = getgrgid(gid);
-   if (!grent)
-     {
-        ERR("Unable to obtain group entry for calling group\n");
-        exit(34);
-     }
-   if (!grent->gr_name)
-     {
-        ERR("Blank groupname for group\n");
-        exit(35);
-     }
-   group_name = strdup(grent->gr_name);
-   if (!group_name)
-     {
-        ERR("Unable to allocate memory for groupname\n");
-        exit(36);
-     }
-
-   if (setuid(0) != 0)
-     {
-        ERR("Unable to assume root user privileges\n");
-        exit(37);
-     }
-   if (setgid(0) != 0)
-     {
-        ERR("Unable to assume root group privileges\n");
-        exit(38);
-     }
-
-   pwent = getpwuid(getuid());
-   if (!pwent)
-     {
-        ERR("Unable to obtain passwd entry\n");
-        exit(39);
-     }
-   if (!pwent->pw_dir)
-     {
-        ERR("No home dir for root\n");
-        exit(40);
-     }
-   if (strlen(pwent->pw_dir) > (sizeof(buf) - 8))
-     {
-        ERR("Root homedir too long\n");
-        exit(41);
-     }
-   if (pwent->pw_dir[0] != '/')
-     {
-        ERR("Root homedir %s is not a full path\n", pwent->pw_dir);
-        exit(42);
-     }
-   if (!realpath(pwent->pw_dir, buf))
-     {
-        ERR("Root homedir %s does not resolve\n", pwent->pw_dir);
-        exit(43);
-     }
-   snprintf(buf, sizeof(buf), "HOME=%s", pwent->pw_dir);
-   if (putenv(buf) == -1)
-     {
-        ERR("Unable to set $HOME environment\n");
-        exit(44);
-     }
-
-   // change CWD to / to avoid path search dlopens finding libs in ./
-   if (chdir("/") != 0)
-     {
-        ERR("Unable to change working dir to /\n");
-        exit(45);
-     }
-
-   // die with parent - special as this is setuid
-#ifdef HAVE_PRCTL
-   prctl(PR_SET_PDEATHSIG, SIGTERM);
-#elif defined(HAVE_PROCCTL)
-   int sig = SIGTERM;
-   procctl(P_PID, 0, PROC_PDEATHSIG_CTL, &sig);
-#endif
-
-#ifdef HAVE_UNSETENV
-# define NOENV(x) unsetenv(x)
-   // pass 1 - just nuke known dangerous env vars brutally if possible via
-   // unsetenv(). if you don't have unsetenv... there's pass 2 and 3
-   NOENV("IFS");
-   NOENV("CDPATH");
-   NOENV("LOCALDOMAIN");
-   NOENV("RES_OPTIONS");
-   NOENV("HOSTALIASES");
-   NOENV("NLSPATH");
-   NOENV("PATH_LOCALE");
-   NOENV("COLORTERM");
-   NOENV("LANG");
-   NOENV("LANGUAGE");
-   NOENV("LINGUAS");
-   NOENV("TERM");
-   NOENV("LD_PRELOAD");
-   NOENV("LD_LIBRARY_PATH");
-   NOENV("SHLIB_PATH");
-   NOENV("LIBPATH");
-   NOENV("AUTHSTATE");
-   NOENV("DYLD_*");
-   NOENV("KRB_CONF*");
-   NOENV("KRBCONFDIR");
-   NOENV("KRBTKFILE");
-   NOENV("KRB5_CONFIG*");
-   NOENV("KRB5_KTNAME");
-   NOENV("VAR_ACE");
-   NOENV("USR_ACE");
-   NOENV("DLC_ACE");
-   NOENV("TERMINFO");
-   NOENV("TERMINFO_DIRS");
-   NOENV("TERMPATH");
-   NOENV("TERMCAP");
-   NOENV("ENV");
-   NOENV("BASH_ENV");
-   NOENV("PS4");
-   NOENV("GLOBIGNORE");
-   NOENV("SHELLOPTS");
-   NOENV("JAVA_TOOL_OPTIONS");
-   NOENV("PERLIO_DEBUG");
-   NOENV("PERLLIB");
-   NOENV("PERL5LIB");
-   NOENV("PERL5OPT");
-   NOENV("PERL5DB");
-   NOENV("FPATH");
-   NOENV("NULLCMD");
-   NOENV("READNULLCMD");
-   NOENV("ZDOTDIR");
-   NOENV("TMPPREFIX");
-   NOENV("PYTHONPATH");
-   NOENV("PYTHONHOME");
-   NOENV("PYTHONINSPECT");
-   NOENV("RUBYLIB");
-   NOENV("RUBYOPT");
-# ifdef HAVE_ENVIRON
-   if (environ)
-     {
-        Eina_Bool again;
-        // go over environment array again and again... safely
-        do
-          {
-             again = EINA_FALSE;
-             // walk through and find first entry that we don't like */
-             for (i = 0; environ[i]; i++)
-               {
-                  // if it begins with any of these, it's possibly nasty */
-                  if ((!strncmp(environ[i], "LD_",   3)) ||
-                      (!strncmp(environ[i], "_RLD_", 5)) ||
-                      (!strncmp(environ[i], "LC_",   3)) ||
-                      (!strncmp(environ[i], "LDR_",  3)))
-                    {
-                       // unset it
-                       char *tmp, *p;
-
-                       tmp = strdup(environ[i]);
-                       if (!tmp) abort();
-                       p = strchr(tmp, '=');
-                       if (!p) abort();
-                       *p = 0;
-                       NOENV(tmp);
-                       free(tmp);
-                       // and mark our do to try again from the start in case
-                       // unsetenv changes environ ptr
-                       again = EINA_TRUE;
-                       break;
-                    }
-               }
-          }
-        while (again);
-     }
-# endif
-#endif
-   // pass 2 - clear entire environment so it doesn't exist at all. if you
-   // can't do this... you're possibly in trouble... but the worst is still
-   // fixed in pass 3
-#ifdef HAVE_CLEARENV
-   clearenv();
-#else
-# ifdef HAVE_ENVIRON
-   environ = NULL;
-# endif
-#endif
-   // pass 3 - set path and ifs to minimal defaults
-   putenv("PATH=/bin:/usr/bin:/sbin:/usr/sbin");
-   putenv("IFS= \t\n");
-}
-
-// no singleton mode - this is not really a bonus, just painful, so disable
-// but keep code aroun for future possible use
-/*
-static void
-_cb_die(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
-{
-   char buf[256];
-   int f;
-
-   snprintf(buf, sizeof(buf), "/var/run/enlightenment_sys-%u.lck", uid);
-   f = open(buf, O_RDONLY);
-   if (f < 0) exit(0);
-   exit(0);
-}
-
-static void
-singleton_setup(void)
-{ // only one per uid - kill existing and replace...
-   char buf[256];
-   int f;
-   mode_t um;
-
-   snprintf(buf, sizeof(buf), "/var/run/enlightenment_sys-%u.lck", uid);
-   f = open(buf, O_WRONLY | O_NONBLOCK);
-   if (f >= 0)
-     {
-        if (write(f, buf, 1) == 1)
-          ERR("Replacing previous enlightenment_system\n");
-        close(f);
-     }
-   unlink(buf);
-   um = umask(0);
-   mkfifo(buf, S_IRUSR | S_IWUSR);
-   umask(um);
-
-   ecore_thread_feedback_run(_cb_die, NULL, NULL, NULL, NULL, EINA_TRUE);
-}
-*/
-
 static Eina_Bool
 _cb_idle_enterer(void *data EINA_UNUSED)
 {
@@ -380,7 +131,7 @@ int
 main(int argc EINA_UNUSED, const char **argv EINA_UNUSED)
 {
    const char *s;
-   int systems = 0;
+   int ok, systems = 0;
 
    // special mode to reset all newly found bl devices to max on
    // discovery because we were run by the e alert crash handler and
@@ -388,7 +139,8 @@ main(int argc EINA_UNUSED, const char **argv EINA_UNUSED)
    s = getenv("E_ALERT_BACKLIGHT_RESET");
    if ((s) && (s[0]  == '1')) alert_backlight_reset = EINA_TRUE;
 
-   setuid_setup();
+   ok = e_setuid_setup(&uid, &gid, &user_name, &group_name);
+   if (ok != 0) exit(ok);
 
    ecore_app_no_system_modules();
 

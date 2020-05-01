@@ -1,8 +1,6 @@
-#include "config.h"
+#include "e_util_suid.h"
 
-#define __USE_MISC
-#define _SVID_SOURCE
-#define _DEFAULT_SOURCE
+#include "config.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,23 +8,28 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <pwd.h>
 #ifdef HAVE_ALLOCA_H
-#include <alloca.h>
+# include <alloca.h>
 #endif
+#include <sys/types.h>
 
 #include <Eina.h>
 #include <Ecore.h>
 #include <Eldbus.h>
 
+uid_t uid = -1; // uid of person running me
+gid_t gid = -1; // gid of person running me
+char *user_name = NULL;
+char *group_name = NULL;
+
 #if defined(__OpenBSD__)
 
 static int
-_check_auth(uid_t uid, const char *guess)
+_check_auth(uid_t id, const char *guess)
 {
    struct passwd *pwent;
 
-   pwent = getpwuid_shadow(uid);
+   pwent = getpwuid_shadow(id);
    if (!pwent) return -1;
    if (!pwent->pw_passwd) return -1;
 
@@ -41,9 +44,9 @@ _check_auth(uid_t uid, const char *guess)
 #include <security/pam_constants.h>
 
 static int
-_check_auth(uid_t uid, const char *pw)
+_check_auth(uid_t id, const char *pw)
 {
-   struct passwd *pwent = getpwuid(uid);
+   struct passwd *pwent = getpwuid(id);
 
    if (!pwent) return -1;
    if (!pwent->pw_passwd) return -1;
@@ -102,7 +105,7 @@ _conv_cb(int num, const struct pam_message **msg, struct pam_response **resp, vo
 }
 
 static int
-_check_auth(uid_t uid, const char *pw)
+_check_auth(uid_t id, const char *pw)
 {
    Authinfo ai;
    struct passwd *pwent;
@@ -114,7 +117,7 @@ _check_auth(uid_t uid, const char *pw)
    int pamerr;
    struct pam_conv conv;
 
-   pwent = getpwuid(uid);
+   pwent = getpwuid(id);
    if (!pwent) return -1;
    user = pwent->pw_name;
    if (!user) return -1;
@@ -155,7 +158,7 @@ _check_auth(uid_t uid, const char *pw)
 #else
 
 static int
-_check_auth(uid_t uid, const char *pw)
+_check_auth(uid_t id, const char *pw)
 {
    return -1;
 }
@@ -251,7 +254,6 @@ int
 main(int argc, char **argv)
 {
    ssize_t rd;
-   uid_t id;
    char pw[4096], *p;
    int polkit_mode = 0;
    char polkit_cookie[4096];
@@ -265,9 +267,6 @@ main(int argc, char **argv)
      }
    if      (!strcmp(argv[1], "pw")) polkit_mode = 0;
    else if (!strcmp(argv[1], "pk")) polkit_mode = 1;
-
-   // get uid who ran this
-   id = getuid();
 
    // read passwd from stdin
    if (polkit_mode == 0)
@@ -363,15 +362,10 @@ main(int argc, char **argv)
           }
      }
 
-   // If we are setuid root then try become root - we can work without though
-   // if pam etc. can work without being root
-   if (setuid(0) != 0)
-     fprintf(stderr,
-             "Warning. Can't become user root. If password auth requires root then this will fail\n");
-   if (setgid(0) != 0)
-     fprintf(stderr,
-             "Warning. Can't become group root. If password auth requires root then this will fail\n");
-   if (_check_auth(id, pw) == 0)
+   // ok to fail - auth will just possibly fail then
+   e_setuid_setup(&uid, &gid, &user_name, &group_name);
+
+   if (_check_auth(uid, pw) == 0)
      {
         fprintf(stderr, "Password OK\n");
         if (polkit_mode == 1)

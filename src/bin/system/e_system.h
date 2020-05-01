@@ -57,7 +57,6 @@ void *alloca (size_t);
 # include <ctype.h>
 # include <time.h>
 # include <dirent.h>
-# include <pwd.h>
 # include <grp.h>
 # include <glob.h>
 # include <locale.h>
@@ -74,12 +73,6 @@ void *alloca (size_t);
 
 #if defined (__FreeBSD__) || defined (__OpenBSD__)
 # include <sys/sysctl.h>
-#endif
-
-#ifdef HAVE_PRCTL
-# include <sys/prctl.h>
-#elif defined(HAVE_PROCCTL)
-# include <sys/procctl.h>
 #endif
 
 # ifndef _POSIX_HOST_NAME_MAX
