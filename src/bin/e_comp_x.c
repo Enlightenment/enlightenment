@@ -3309,7 +3309,7 @@ _e_comp_x_client_shape_rects_check(E_Client *ec, Ecore_X_Rectangle *rects, int n
                }
           }
      }
-   if (changed)
+   if ((changed) && (rects))
      {
         E_FREE(ec->shape_rects);
         ec->shape_rects = (Eina_Rectangle*)rects;
@@ -4323,6 +4323,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
           {
              ec->shaped = 1;
              E_FREE(ec->shape_rects);
+             ec->shape_rects_num = 0;
              E_FREE(ec->shape_input_rects);
              ec->shape_input_rects_num = 0;
              e_comp_object_frame_theme_set(ec->frame, E_COMP_OBJECT_FRAME_RESHADOW);

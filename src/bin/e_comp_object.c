@@ -3850,7 +3850,7 @@ e_comp_object_shape_apply(Evas_Object *obj)
         _e_comp_object_alpha_set(cw);
         return;
      }
-   if (cw->ec->shaped)
+   if ((cw->ec->shaped) && (cw->ec->shape_rects))
      {
         unsigned char *spix, *sp;
 
