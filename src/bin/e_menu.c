@@ -459,9 +459,18 @@ e_menu_activate(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int dir)
 E_API void
 e_menu_deactivate(E_Menu *m)
 {
+   Eina_List *l;
+   E_Menu_Item *mi;
+
    E_OBJECT_CHECK(m);
    E_OBJECT_TYPE_CHECK(m, E_MENU_TYPE);
    if (!m->active) return;
+
+   EINA_LIST_FOREACH(m->items, l, mi)
+     {
+        if (mi->submenu) e_menu_deactivate(mi->submenu);
+     }
+
    m->cur.visible = 0;
    m->active = 0;
    if (m->post_deactivate_cb.func)
