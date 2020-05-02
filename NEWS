@@ -1,3 +1,28 @@
+Release 0.24.0:
+---------------------
+Hilights:
+      * New and improved shot module with editor and cropper
+      * Reduced number of setuid tools (merged many into single system tool)
+      * External monitor backlight and brightness controls via (lib)ddctil
+      * Improved resolution of EFM thumbnails to 256x256 by default
+      * New and improved crash handling guru meditation
+      * Restarts are now seamless with fade in and out and zero glitches
+      * Wallpaper import generates multiple resolutions for better efficiency
+      * Regularly malloc_trim if available to keep mem down
+      * All restarts are now handled by enlightenment_start, not e itself
+      * Enforce pointer lock to screen in X to stop pointer out-of-bounds
+      * Pager plain is gone - use the regular "miniature preview" pager
+      * Music control auto-runs your selected media player if not there
+      * Handle exception for steam games to find the right desktop file
+      * Polkit auth agent support as new core module - no extra daemons
+      * Drop comp fast effects - Should be edje transition factor + theme tags
+      * Easier config of specific desktop wallpaper straight from pager
+      * Startup should be smoother with IO prefetch thread
+      * New special blanking timeout for when locked that can be shorter
+      * Bluez4 gone now as Bluez5 is done and working fine
+      * Down to zero outstanding coverity issues
+      * The usual batches of bug fixes and minor improvements
+
 Release 0.23.0:
 ---------------------
 Hilights:

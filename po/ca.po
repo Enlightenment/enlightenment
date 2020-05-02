@@ -9334,7 +9334,7 @@ msgstr "Quant a Enlightenment"
 #: src/bin/e_about.c:26
 #, fuzzy
 msgid ""
-"<title>Copyright &copy; 2000-2019, by the Enlightenment Development Team</"
+"<title>Copyright &copy; 2000-2020, by the Enlightenment Development Team</"
 "><ps/><ps/>We hope you enjoy using this software as much as we enjoyed "
 "writing it.<ps/><ps/>To contact us please visit:<ps/><hilight>http://www."
 "enlightenment.org</><ps/><ps/>"
