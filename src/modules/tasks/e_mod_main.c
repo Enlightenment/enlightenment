@@ -424,16 +424,13 @@ _tasks_refill(Tasks *tasks)
           edje_object_size_min_restricted_calc(item->o_item, &w, &h, 0, th);
         else
           edje_object_size_min_restricted_calc(item->o_item, &w, &h, tw, 0);
-        if (!tasks->config->icon_only)
+        if (tasks->horizontal)
           {
-             if (tasks->horizontal)
-               {
-                  if (w < tasks->config->minw) w = tasks->config->minw;
-               }
-             else
-               {
-                  if (h < tasks->config->minh) h = tasks->config->minh;
-               }
+             if (w < tasks->config->minw) w = tasks->config->minw;
+          }
+        else
+          {
+             if (h < tasks->config->minh) h = tasks->config->minh;
           }
         if (!tasks->gcc->resizable)
           {
