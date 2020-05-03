@@ -65,6 +65,14 @@ e_order_new(const char *path)
    eo = E_OBJECT_ALLOC(E_Order, E_ORDER_TYPE, _e_order_free);
    if (!eo) return NULL;
 
+   if (!path)
+     {
+        ERR("null order");
+     }
+   if (path[0] != '/')
+     {
+        ERR("not full");
+     }
    if (path) eo->path = eina_stringshare_add(path);
    _e_order_read(eo);
    eo->monitor = ecore_file_monitor_add(path, _e_order_cb_monitor, eo);
@@ -257,48 +265,81 @@ _e_order_cb_monitor(void *data, Ecore_File_Monitor *em EINA_UNUSED, Ecore_File_E
 static void
 _e_order_read(E_Order *eo)
 {
+   char *dir, *s, *s2, buf[4096], buf2[8192];
+   Efreet_Desktop *desktop;
+   Eina_List *files, *l;
+   size_t len;
    FILE *f;
-   char *dir;
 
    E_FREE_LIST(eo->desktops, efreet_desktop_free);
    if (!eo->path) return;
 
+   // eo->path = /path/to/dir/.order ...
    dir = ecore_file_dir_get(eo->path);
+   if (!dir) return;
+
+   files = ecore_file_ls(dir);
+
    f = fopen(eo->path, "rb");
-   if (f)
+   if (!f) goto err;
+
+   while (fgets(buf, sizeof(buf), f))
      {
-        char buf[4096];
-
-        while (fgets(buf, sizeof(buf), f))
+        len = strlen(buf);
+        if (len == 0) continue;
+        if (buf[len - 1] == '\n')
           {
-             int len;
-
-             len = strlen(buf);
-             if (len > 0)
+             buf[len - 1] = 0;
+             len--;
+          }
+        if (len == 0) continue;
+        // if full path - use that first
+        desktop = NULL;
+        if (buf[0] == '/')
+          desktop = efreet_desktop_get(buf);
+        else
+          {
+             // /path/to/dir/filename.desktop (buf)
+             snprintf(buf2, sizeof(buf2), "%s/%s", dir, buf);
+             // remove file if its in the dir already
+             EINA_LIST_FOREACH(files, l, s)
                {
-                  if (buf[len - 1] == '\n')
+                  if ((!strcmp(s, buf)) || (!strcmp(s, buf2)))
                     {
-                       buf[len - 1] = 0;
-                       len--;
-                    }
-                  if (len > 0)
-                    {
-                       Efreet_Desktop *desktop = NULL;
-
-                       if (buf[0] == '/')
-                         desktop = efreet_desktop_get(buf);
-                       if (!desktop)
-                         desktop = efreet_desktop_get(ecore_file_file_get(buf));
-                       if (!desktop)
-                         desktop = efreet_util_desktop_file_id_find(ecore_file_file_get(buf));
-                       if (desktop)
-                         eo->desktops = eina_list_append(eo->desktops, desktop);
+                       files = eina_list_remove_list(files, l);
+                       free(s);
+                       break;
                     }
                }
+             // desktop file in the order dir first
+             if (!desktop)
+               desktop = efreet_desktop_get(buf2);
+             // ignore any path elements and look up just filename
+             if (!desktop)
+               desktop = efreet_desktop_get(ecore_file_file_get(buf));
+             // look uop by id
+             if (!desktop)
+               desktop = efreet_util_desktop_file_id_find(ecore_file_file_get(buf));
           }
-        fclose(f);
+        // if we found it - append.
+        if (desktop)
+          eo->desktops = eina_list_append(eo->desktops, desktop);
      }
-   if (dir) free(dir);
+   fclose(f);
+err:
+   EINA_LIST_FOREACH(files, l, s)
+     {
+        if (s[0] == '.') continue;
+        s2 = strchr(s, '.');
+        if (!s2) continue;
+        if (!(!strcasecmp(s2, ".desktop"))) continue;
+        snprintf(buf2, sizeof(buf2), "%s/%s", dir, s);
+        desktop = efreet_desktop_get(buf2);
+        if (desktop)
+          eo->desktops = eina_list_append(eo->desktops, desktop);
+     }
+   free(dir);
+   EINA_LIST_FREE(files, s) free(s);
 }
 
 static void

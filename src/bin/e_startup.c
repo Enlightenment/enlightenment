@@ -18,6 +18,7 @@ static Ecore_Event_Handler *desktop_cache_update_handler = NULL;
 static Ecore_Timer *timer = NULL;
 static Eina_Bool desktop_cache_update = EINA_FALSE;
 static Eina_Bool started = EINA_FALSE;
+static E_Startup_Mode startup_mode = 0;
 
 /* externally accessible functions */
 
@@ -25,24 +26,10 @@ static Eina_Bool started = EINA_FALSE;
 E_API void
 e_startup_mode_set(E_Startup_Mode mode)
 {
-   char buf[PATH_MAX];
-
-   if (mode == E_STARTUP_START)
-     {
-        e_user_dir_concat_static(buf, "applications/startup/.order");
-        if (!ecore_file_exists(buf))
-          e_prefix_data_concat_static(buf, "data/applications/startup/.order");
-     }
-   else if (mode == E_STARTUP_RESTART)
-     {
-        e_user_dir_concat_static(buf, "applications/restart/.order");
-        if (!ecore_file_exists(buf))
-          e_prefix_data_concat_static(buf, "data/applications/restart/.order");
-     }
+   startup_mode = mode;
    desktop_cache_update_handler =
      ecore_event_handler_add(EFREET_EVENT_DESKTOP_CACHE_BUILD,
-                             _e_startup_event_cb,
-                             strdup(buf));
+                             _e_startup_event_cb, NULL);
    if (timer) ecore_timer_del(timer);
    timer = ecore_timer_add(10.0, _e_startup_time_exceeded, NULL);
    e_init_undone();
@@ -155,10 +142,23 @@ _e_startup_error_dialog(const char *msg)
    e_dialog_show(dia);
 }
 
-static Eina_Bool
-_e_startup_event_cb(void *data, int ev_type EINA_UNUSED, void *ev)
+static E_Order *
+_e_startup_load(const char *file)
 {
-   char *buf;
+   E_Order *o = e_order_new(file);
+   if (!o) return NULL;
+   if (!o->desktops)
+     {
+        e_object_del(E_OBJECT(o));
+        o = NULL;
+     }
+   return o;
+}
+
+static Eina_Bool
+_e_startup_event_cb(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev)
+{
+   char buf[PATH_MAX];
    Efreet_Event_Cache_Update *e;
 
    if (timer) ecore_timer_del(timer);
@@ -179,13 +179,29 @@ _e_startup_event_cb(void *data, int ev_type EINA_UNUSED, void *ev)
      }
    desktop_cache_update = EINA_TRUE;
    E_FREE_FUNC(desktop_cache_update_handler, ecore_event_handler_del);
-   buf = data;
-   startup_apps = e_order_new(buf);
-   if (startup_apps)
-     start_app_pos = 0;
-   free(buf);
-   if (started)
-     _e_startup();
+
+   if (startup_mode == E_STARTUP_START)
+     {
+        e_user_dir_concat_static(buf, "applications/startup/.order");
+        startup_apps = _e_startup_load(buf);
+        if (!startup_apps)
+          {
+             e_prefix_data_concat_static(buf, "data/applications/startup/.order");
+             startup_apps = e_order_new(buf);
+          }
+     }
+   else if (startup_mode == E_STARTUP_RESTART)
+     {
+        e_user_dir_concat_static(buf, "applications/restart/.order");
+        startup_apps = _e_startup_load(buf);
+        if (!startup_apps)
+          {
+             e_prefix_data_concat_static(buf, "data/applications/restart/.order");
+             startup_apps = e_order_new(buf);
+          }
+     }
+   if (startup_apps) start_app_pos = 0;
+   if (started) _e_startup();
    return ECORE_CALLBACK_PASS_ON;
 }
 
