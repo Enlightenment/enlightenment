@@ -13,3 +13,9 @@ install_data([ 'xterm.png',
 install_data('enlightenment-askpass.png',
              install_dir: join_paths(dir_data, 'pixmaps')
             )
+install_data('enlightenment.svg',
+             install_dir: join_paths(dir_data, 'icons/hicolor/scalable/places')
+            )
+install_data('enlightenment.png',
+             install_dir: join_paths(dir_data, 'icons/hicolor/512x512/places')
+            )
