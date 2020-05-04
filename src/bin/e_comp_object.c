@@ -2832,7 +2832,6 @@ _e_comp_object_util_moveresize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
         evas_object_geometry_get(obj, NULL, NULL, &w, &h);
         e_zoomap_child_resize(data, w, h);
      }
-     
    if (evas_object_visible_get(obj))
      e_comp_shape_queue();
 }
