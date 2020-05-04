@@ -276,11 +276,26 @@ e_shelf_zone_dummy_new(E_Zone *zone, Evas_Object *obj, int id)
 
    return es;
 }
+
 static void
 _e_shelf_hidden(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Shelf *es = data;
    es->hiding = 0;
+}
+
+static Eina_Bool
+_shelf_content_fix(void *data)
+{
+   // I really don't know how it gets here but objects and thier geometry are
+   // wrong - something to do woith zoomap as well as geometry changing
+   // at the same time so things going weird with child size and thus
+   // position etc.
+   E_Shelf *es = data;
+   es->fix_timer = NULL;
+   e_shelf_resize(es, es->w + 1, es->h + 1);
+   e_shelf_resize(es, es->w, es->h);
+   return EINA_FALSE;
 }
 
 E_API E_Shelf *
@@ -311,6 +326,7 @@ e_shelf_zone_new(E_Zone *zone, const char *name, const char *style, E_Layer laye
    evas_object_event_callback_add(es->o_base, EVAS_CALLBACK_MOUSE_DOWN,
                                   _e_shelf_cb_mouse_down, es);
    es->name = eina_stringshare_add(name);
+   printf("SHELF1: %p z=%i name=[%s] %4i,%4i %4ix%4i\n", es, es->zone->num, es->name, es->x, es->y, es->w, es->h);
    evas_object_resize(es->o_base, es->w, es->h);
 
    e_shelf_style_set(es, style);
@@ -379,6 +395,7 @@ e_shelf_zone_new(E_Zone *zone, const char *name, const char *style, E_Layer laye
       ecore_event_add(E_EVENT_SHELF_ADD, ev, NULL, NULL);
    }
 
+   es->fix_timer = ecore_timer_add(0.1, _shelf_content_fix, es);
    return es;
 }
 
@@ -596,8 +613,9 @@ e_shelf_move_resize(E_Shelf *es, int x, int y, int w, int h)
    es->y = y;
    es->w = w;
    es->h = h;
-   evas_object_move(es->comp_object, es->zone->x + es->x, es->zone->y + es->y);
-   evas_object_resize(es->comp_object, es->w, es->h);
+   evas_object_geometry_set(es->comp_object,
+                            es->zone->x + es->x, es->zone->y + es->y,
+                            es->w, es->h);
    _e_shelf_obstacles_update(es);
    if (!es->hide_animator)
      _e_shelf_remaximize(es);
@@ -1218,6 +1236,7 @@ _e_shelf_free(E_Shelf *es)
    E_FREE_FUNC(es->hide_timer, ecore_timer_del);
    E_FREE_FUNC(es->instant_timer, ecore_timer_del);
    E_FREE_FUNC(es->module_init_end_timer, ecore_timer_del);
+   E_FREE_FUNC(es->fix_timer, ecore_timer_del);
    if (es->menu)
      {
         e_menu_post_deactivate_callback_set(es->menu, NULL, NULL);

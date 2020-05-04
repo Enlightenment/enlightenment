@@ -208,7 +208,7 @@ _e_zoomap_smart_reconfigure(E_Smart_Data *sd)
         Evas *e = evas_object_evas_get(sd->child_obj);
         Evas_Coord cx = 0, cy = 0;
         int r = 0, g = 0, b = 0, a = 0;
-        
+
         evas_object_geometry_get(sd->child_obj, &cx, &cy, NULL, NULL);
         if (sd->recurse != 1)
           {
@@ -227,7 +227,7 @@ _e_zoomap_smart_reconfigure(E_Smart_Data *sd)
           }
         evas_object_color_get(sd->child_obj, &r, &g, &b, &a);
         m = evas_map_new(4);
-        evas_map_util_points_populate_from_geometry(m, sd->x, sd->y, 
+        evas_map_util_points_populate_from_geometry(m, sd->x, sd->y,
                                                     sd->w, sd->h, 0);
         evas_map_point_image_uv_set(m, 0, 0,           0);
         evas_map_point_image_uv_set(m, 1, sd->child_w, 0);
@@ -239,7 +239,7 @@ _e_zoomap_smart_reconfigure(E_Smart_Data *sd)
         evas_map_point_color_set(m, 2, r, g, b, a);
         evas_map_point_color_set(m, 3, r, g, b, a);
         if (a >= 255) evas_map_alpha_set(m, !sd->solid);
-        else evas_map_alpha_set(m, EINA_TRUE); 
+        else evas_map_alpha_set(m, EINA_TRUE);
         evas_object_map_set(sd->child_obj, m);
         evas_object_map_enable_set(sd->child_obj, EINA_TRUE);
         evas_map_free(m);
@@ -269,7 +269,7 @@ _e_zoomap_smart_del(Evas_Object *obj)
    if (sd->child_obj)
      {
         Evas_Object *o = sd->child_obj;
-        
+
         sd->child_obj = NULL;
         evas_object_event_callback_del(o, EVAS_CALLBACK_DEL,
                                        _e_zoomap_smart_child_del_hook);

@@ -39,6 +39,7 @@ struct _E_Shelf
    Ecore_Timer         *instant_timer;
    Ecore_Timer         *autohide_timer;
    Ecore_Timer         *module_init_end_timer;
+   Ecore_Timer         *fix_timer;
    Eina_List           *handlers;
    Ecore_Event_Handler *autohide;
    Eina_List           *zone_obstacles;
