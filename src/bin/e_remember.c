@@ -348,12 +348,12 @@ e_remember_apply(E_Remember *rem, E_Client *ec)
         h = ec->client.h;
         if (rem->prop.pos_w) ec->client.w = rem->prop.pos_w;
         if (rem->prop.pos_h) ec->client.h = rem->prop.pos_h;
-        if (ec->zone->w != rem->prop.res_x)
+        if (uzw != rem->prop.res_x)
           {
              if (ec->client.w > (uzw - rem->prop.frame_w))
                ec->client.w = uzw - rem->prop.frame_w;
           }
-        if (ec->zone->h != rem->prop.res_y)
+        if (uzh != rem->prop.res_y)
           {
              if (ec->client.h > (uzh - rem->prop.frame_h))
                ec->client.h = uzh - rem->prop.frame_h;
@@ -391,42 +391,42 @@ e_remember_apply(E_Remember *rem, E_Client *ec)
         e_zone_useful_geometry_get(ec->zone, &uzx, &uzy, &uzw, &uzh);
         ec->x = rem->prop.pos_x;
         ec->y = rem->prop.pos_y;
-        if (ec->zone->w != rem->prop.res_x)
+        if (uzw != rem->prop.res_x)
           {
              int px;
 
-             px = ec->zone->w - (ec->w + rem->prop.frame_w);
+             px = uzw - (ec->w + rem->prop.frame_w);
              if (px < 1) px = 0;
              else px = (3 * ec->x) / px;
              if (px < 1)
                {
-                  if (ec->zone->w >= (rem->prop.res_x / 3))
+                  if (uzw >= (rem->prop.res_x / 3))
                     ec->x = rem->prop.pos_x;
                   else
-                    ec->x = ((rem->prop.pos_x - 0) * ec->zone->w) /
+                    ec->x = ((rem->prop.pos_x - 0) * uzw) /
                       (rem->prop.res_x / 3);
                }
              else if (px == 1)
                {
-                  if (ec->zone->w >= (rem->prop.res_x / 3))
-                    ec->x = (ec->zone->w / 2) +
+                  if (uzw >= (rem->prop.res_x / 3))
+                    ec->x = (uzw / 2) +
                       (px - (rem->prop.res_x / 2)) -
                       (ec->w / 2);
                   else
-                    ec->x = (ec->zone->w / 2) +
-                      (((px - (rem->prop.res_x / 2)) * ec->zone->w) /
+                    ec->x = (uzw / 2) +
+                      (((px - (rem->prop.res_x / 2)) * uzw) /
                        (rem->prop.res_x / 3)) -
                       (ec->w / 2);
                }
              else // >= 2
                {
-                  if (ec->zone->w >= (rem->prop.res_x / 3))
-                    ec->x = ec->zone->w +
+                  if (uzw >= (rem->prop.res_x / 3))
+                    ec->x = uzw +
                       rem->prop.pos_x - rem->prop.res_x +
                       (rem->prop.w - ec->client.w);
                   else
-                    ec->x = ec->zone->w +
-                      (((rem->prop.pos_x - rem->prop.res_x) * ec->zone->w) /
+                    ec->x = uzw +
+                      (((rem->prop.pos_x - rem->prop.res_x) * uzw) /
                        (rem->prop.res_x / 3)) +
                       (rem->prop.w - ec->client.w);
                }
@@ -436,42 +436,42 @@ e_remember_apply(E_Remember *rem, E_Client *ec)
                       ((ec->x + ec->client.w + rem->prop.frame_w) > (uzw - (uzx - ec->zone->x))))
                ec->x = (uzw - (uzx - ec->zone->x)) - ec->client.w - rem->prop.frame_w;
           }
-        if (ec->zone->h != rem->prop.res_y)
+        if (uzh != rem->prop.res_y)
           {
              int py;
 
-             py = ec->zone->h - (ec->h + rem->prop.frame_h);
+             py = uzh - (ec->h + rem->prop.frame_h);
              if (py < 1) py = 0;
              else py = (3 * ec->y) / py;
              if (py < 1)
                {
-                  if (ec->zone->h >= (rem->prop.res_y / 3))
+                  if (uzh >= (rem->prop.res_y / 3))
                     ec->y = rem->prop.pos_y;
                   else
-                    ec->y = ((rem->prop.pos_y - 0) * ec->zone->h) /
+                    ec->y = ((rem->prop.pos_y - 0) * uzh) /
                       (rem->prop.res_y / 3);
                }
              else if (py == 1)
                {
-                  if (ec->zone->h >= (rem->prop.res_y / 3))
-                    ec->y = (ec->zone->h / 2) +
+                  if (uzh >= (rem->prop.res_y / 3))
+                    ec->y = (uzh / 2) +
                       (py - (rem->prop.res_y / 2)) -
                       (ec->h / 2);
                   else
-                    ec->y = (ec->zone->h / 2) +
-                      (((py - (rem->prop.res_y / 2)) * ec->zone->h) /
+                    ec->y = (uzh / 2) +
+                      (((py - (rem->prop.res_y / 2)) * uzh) /
                        (rem->prop.res_y / 3)) -
                       (ec->h / 2);
                }
              else // >= 2
                {
-                  if (ec->zone->h >= (rem->prop.res_y / 3))
-                    ec->y = ec->zone->h +
+                  if (uzh >= (rem->prop.res_y / 3))
+                    ec->y = uzh +
                       rem->prop.pos_y - rem->prop.res_y +
                       (rem->prop.h - ec->client.h);
                   else
-                    ec->y = ec->zone->h +
-                      (((rem->prop.pos_y - rem->prop.res_y) * ec->zone->h) /
+                    ec->y = uzh +
+                      (((rem->prop.pos_y - rem->prop.res_y) * uzh) /
                        (rem->prop.res_y / 3)) +
                       (rem->prop.h - ec->client.h);
                }
@@ -724,10 +724,13 @@ _e_remember_update(E_Client *ec, E_Remember *rem)
    if (rem->apply & E_REMEMBER_APPLY_POS ||
        rem->apply & E_REMEMBER_APPLY_SIZE)
      {
+        int uzx = 0, uzy = 0, uxw = 0, uzh = 0;
+
+        e_zone_useful_geometry_get(ec->zone, &uzx, &uzy, &uxw, &uzh);
         if (ec->fullscreen || ec->maximized)
           {
-             rem->prop.pos_x = ec->saved.x;
-             rem->prop.pos_y = ec->saved.y;
+             rem->prop.pos_x = ec->saved.x - uzx;
+             rem->prop.pos_y = ec->saved.y - uzy;
              rem->prop.pos_w = ec->saved.w;
              rem->prop.pos_h = ec->saved.h;
              rem->prop.frame_w = ec->w - ec->client.w;
@@ -735,10 +738,10 @@ _e_remember_update(E_Client *ec, E_Remember *rem)
           }
         else
           {
-             rem->prop.pos_x = ec->x - ec->zone->x;
-             rem->prop.pos_y = ec->y - ec->zone->y;
-             rem->prop.res_x = ec->zone->w;
-             rem->prop.res_y = ec->zone->h;
+             rem->prop.pos_x = ec->x - uzx;
+             rem->prop.pos_y = ec->y - uzy;
+             rem->prop.res_x = uxw;
+             rem->prop.res_y = uzh;
              rem->prop.pos_w = ec->client.w;
              rem->prop.pos_h = ec->client.h;
              rem->prop.w = ec->client.w;
