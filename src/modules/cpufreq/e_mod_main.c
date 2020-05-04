@@ -103,9 +103,10 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
 
    _cpufreq_face_update_available(inst);
 
-   cpufreq_config->handler =
-     ecore_event_handler_add(E_EVENT_POWERSAVE_UPDATE,
-                             _cpufreq_event_cb_powersave, NULL);
+   if (!cpufreq_config->handler)
+     cpufreq_config->handler =
+       ecore_event_handler_add(E_EVENT_POWERSAVE_UPDATE,
+                               _cpufreq_event_cb_powersave, NULL);
    return gcc;
 }
 
@@ -120,8 +121,14 @@ _gc_shutdown(E_Gadcon_Client *gcc)
    evas_object_del(inst->o_cpu);
    free(inst);
 
-   if (cpufreq_config->handler)
-     ecore_event_handler_del(cpufreq_config->handler);
+   if (!cpufreq_config->instances)
+     {
+        if (cpufreq_config->handler)
+          {
+             ecore_event_handler_del(cpufreq_config->handler);
+             cpufreq_config->handler = NULL;
+          }
+     }
 }
 
 static void
