@@ -599,6 +599,7 @@ _cb_del(void *data, void *data2 EINA_UNUSED)
                e_shelf_hide(cfdata->gc->shelf);
              e_gadcon_unpopulate(cfdata->gc);
              e_gadcon_populate(cfdata->gc);
+             e_shelf_show(cfdata->gc->shelf);
           }
         e_config_save_queue();
      }
