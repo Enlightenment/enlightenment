@@ -891,7 +891,7 @@ static struct Connman_Manager *_manager_new(void)
    return cm;
 }
 
-static inline void _e_connman_system_name_owner_exit(void)
+static inline void _e_connman_system_name_owner_exit(Eina_Bool shutdown)
 {
    if (!connman_manager)
      return;
@@ -901,9 +901,10 @@ static inline void _e_connman_system_name_owner_exit(void)
    connman_manager = NULL;
 
    ecore_event_add(E_CONNMAN_EVENT_MANAGER_OUT, NULL, NULL, NULL);
-   e_util_dialog_show(_("Connman Service Missing"),
-                      _("The Connman service is not able to be found.<br>"
-                        "Is <b>connmand</b> daemon running?"));
+   if (!shutdown)
+     e_util_dialog_show(_("Connman Service Missing"),
+                        _("The Connman service is not able to be found.<br>"
+                          "Is <b>connmand</b> daemon running?"));
 }
 
 static inline void _e_connman_system_name_owner_enter(const char *owner EINA_UNUSED)
@@ -923,7 +924,7 @@ _e_connman_system_name_owner_changed(void *data EINA_UNUSED,
    if (to[0])
      _e_connman_system_name_owner_enter(to);
    else
-     _e_connman_system_name_owner_exit();
+     _e_connman_system_name_owner_exit(EINA_FALSE);
 }
 
 /**
@@ -977,7 +978,7 @@ e_connman_system_shutdown(void)
    eldbus_name_owner_changed_callback_del(conn, CONNMAN_BUS_NAME,
                                          _e_connman_system_name_owner_changed,
                                          NULL);
-   _e_connman_system_name_owner_exit();
+   _e_connman_system_name_owner_exit(EINA_TRUE);
    if (agent)
      econnman_agent_del(agent);
    if (conn)
