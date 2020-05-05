@@ -1386,7 +1386,7 @@ elm_main(int argc, char **argv)
    evas_object_show(tb);
 
    tbar = elm_toolbar_add(win);
-   elm_toolbar_icon_size_set(tbar, 16);
+   elm_toolbar_icon_size_set(tbar, 24 * elm_config_scale_get());
    elm_toolbar_select_mode_set(tbar, ELM_OBJECT_SELECT_MODE_ALWAYS);
    elm_toolbar_homogeneous_set(tbar, EINA_TRUE);
    elm_object_style_set(tbar, "item_horizontal");
