@@ -2518,7 +2518,7 @@ _pager_desk_cb_drag_finished(E_Drag *drag, int dropped)
    evas_object_smart_callback_call(e_gadget_site_get(pd->pager->inst->o_pager), "gadget_site_unlocked", NULL);
    if (!dropped)
      {
-        /* wasn't dropped on pager, switch with current desktop */
+        /* was't dropped on pager, switch with current desktop */
         if (!pd->desk) return;
         zone = e_zone_current_get();
         desk = e_desk_current_get(zone);

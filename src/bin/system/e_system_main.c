@@ -34,7 +34,7 @@ _etc_enlightenment_system_conf_check(const char *sys)
    char type[32], usergroup[256], cmd[32], glob[256], buf[1024];
    Eina_Bool in_usergroup;
    FILE *f = fopen("/etc/enlightenment/system.conf", "r");
-   if (!f) return 1; // if the config doesnt exist - allow by policy
+   if (!f) return 1; // if the config doesn't exist - allow by policy
 
    gn = getgroups(MAXGROUPS, gl);
    if (gn < 0)

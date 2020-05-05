@@ -1377,7 +1377,7 @@ _e_comp_intercept_layer_set(void *data, Evas_Object *obj, int layer)
              E_Client *child;
              Eina_List *list = eina_list_clone(cw->ec->transients);
 
-             /* We need to set raise to one, else the child wont
+             /* We need to set raise to one, else the child won't
               * follow to the new layer. It should be like this,
               * even if the user usually doesn't want to raise
               * the transients.
@@ -4083,7 +4083,7 @@ e_comp_object_dirty(Evas_Object *obj)
      {
         bxx = w - (bx + bxx), byy = h - (by + byy);
         // XXX: FIXME: - keep at least ONE border > 0 to allow cutouts to work
-        // evas doesnt have a good fix for this right now.... also
+        // evas doesn't have a good fix for this right now.... also
         // we still BLEND the center bit anyway as we dont switch to non
         // blend ... so ugh. evas issue tho.
         if (byy < 1) byy = 1;

@@ -288,7 +288,7 @@ _e_comp_canvas_screensaver_active(void *d EINA_UNUSED, Evas_Object *obj EINA_UNU
 static Eina_Bool
 _e_comp_cb_timer_post_screensaver_lock(void *data EINA_UNUSED)
 {
-   // XXX: the below should instntly show desklock and have no transition
+   // XXX: the below should instantly show desklock and have no transition
    // or animation
    e_desklock_show_autolocked();
    timer_post_screensaver_lock = NULL;

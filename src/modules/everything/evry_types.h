@@ -162,7 +162,7 @@ struct _Evry_Plugin
      results when not returning NULL.
      The previous selectors 'item' is passed, i.e. a plugin registered
      as action receives the subject, a plugin registered as object
-     receives the action item. here you can check wheter the plugin
+     receives the action item. here you can check whether the plugin
      should be queried in given context (provided by item) */
   Evry_Plugin *(*begin) (Evry_Plugin *p, const Evry_Item *item);
 

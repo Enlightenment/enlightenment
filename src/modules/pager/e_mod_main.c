@@ -1672,7 +1672,7 @@ _pager_desk_cb_drag_finished(E_Drag *drag, int dropped)
    if (!pd) return;
    if (!dropped)
      {
-        /* wasn't dropped on pager, switch with current desktop */
+        /* was't dropped on pager, switch with current desktop */
         if (!pd->desk) return;
         zone = e_zone_current_get();
         desk = e_desk_current_get(zone);

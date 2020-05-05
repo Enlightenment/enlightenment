@@ -345,7 +345,7 @@ bz_obj_add(const char *path)
                                                              "PropertiesChanged",
                                                              cb_obj_prop_changed, o);
              // disable the filter for discovery later
-             // XXX: this doesnt seem to exist on the bluez daemons i see
+             // XXX: this doesn't seem to exist on the bluez daemons I see
              // so don't do this to avoid error noise and it's useless it seems
              // eldbus_proxy_call
              //  (o->proxy, "SetDiscoveryFilter", cb_obj_discovery_filter, o, -1, "");

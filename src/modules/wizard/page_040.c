@@ -106,7 +106,7 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
      {
         if (_next_timer) ecore_timer_del(_next_timer);
         _next_timer = NULL;
-        return 0; /* we didnt copy anything so advance anyway */
+        return 0; /* we didn't copy anything so advance anyway */
      }
    return 1; /* 1 == show ui, and wait for user, 0 == just continue */
 }

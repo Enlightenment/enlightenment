@@ -4803,7 +4803,7 @@ _e_comp_x_hook_client_new(void *d EINA_UNUSED, E_Client *ec)
         /* UGLY: round trip, but necessary to work around bad clients
          * positioning windows anyway AND libreoffice trying to hack
          * getting its windows across multiple screens this way
-         * which isnt really right either... */
+         * which isn't really right either... */
         ecore_x_icccm_size_pos_hints_get(win,
                                          &request_pos,
                                          &ec->icccm.gravity,

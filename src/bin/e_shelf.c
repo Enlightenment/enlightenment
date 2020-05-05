@@ -287,7 +287,7 @@ _e_shelf_hidden(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
 static Eina_Bool
 _shelf_content_fix(void *data)
 {
-   // I really don't know how it gets here but objects and thier geometry are
+   // I really don't know how it gets here but objects and their geometry are
    // wrong - something to do woith zoomap as well as geometry changing
    // at the same time so things going weird with child size and thus
    // position etc.

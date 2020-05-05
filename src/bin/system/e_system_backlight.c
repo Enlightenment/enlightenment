@@ -132,7 +132,7 @@ _light_add(const char *dev)
    if (!lig) abort();
    lig->dev = strdup(dev);
    if (!lig->dev) abort();
-   lig->val = -1; // uknown
+   lig->val = -1; // unknown
 #ifdef HAVE_EEZE
    const char *s;
 
@@ -173,7 +173,7 @@ _light_add(const char *dev)
 #ifdef HAVE_EEZE
 static Eina_Bool
 _light_device_include(const char *dev)
-{ // filter out known undesireable devices
+{ // filter out known undesirable devices
    if (strstr(dev, "::capslock")) return EINA_FALSE;
    if (strstr(dev, "::numlock")) return EINA_FALSE;
    if (strstr(dev, "::scrolllock")) return EINA_FALSE;

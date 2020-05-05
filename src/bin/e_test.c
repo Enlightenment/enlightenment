@@ -152,7 +152,7 @@ _e_test_internal(void)
    dia = e_dialog_new(c, "E", "_test");
    e_object_del_attach_func_set(E_OBJECT(dia), _e_test_dialog_del);
    e_dialog_title_set(dia, "A Test Dialog");
-   e_dialog_text_set(dia, "A Test Dialog<ps/>And another line<ps/><hilight>Hilighted Text</hilight>");
+   e_dialog_text_set(dia, "A Test Dialog<ps/>And another line<ps/><hilight>Highlighted Text</hilight>");
    e_dialog_icon_set(dia, "preference-plugin", 64);
    e_dialog_button_add(dia, "OK", NULL, NULL, NULL);
    e_dialog_button_add(dia, "Apply", "system-restart", NULL, NULL);
@@ -413,7 +413,7 @@ _e_test_internal(void)
                                  "<title>A title</title>"
                                  "This is some text<ps/>"
                                  "Blah blah<ps/>"
-                                 "<hilight>hilighted text</hilight><ps/>"
+                                 "<hilight>highlighted text</hilight><ps/>"
                                  "<ps/>"
                                  "More lines of text<ps/>"
                                  "And yet more lines of text<ps/>"

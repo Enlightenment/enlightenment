@@ -200,7 +200,7 @@ e_hints_init(Ecore_Window root, Ecore_Window propwin)
 * I don't FUCKING believe it. if we PRETEND we are Kwin - java is happy.
 * why? it expects a double reparenting wm then. java insists on finding this
 * out when it should be irrelevant! stupid code! I can't believe the time we
-* just wasted hunting a bug that wasn't and that is due to sheer stupid
+* just wasted hunting a bug that was't and that is due to sheer stupid
 * coding (in java's awt layer that swing also uses).
 */
 /* Now for more stupidity... Openoffice.org will change its look and feel

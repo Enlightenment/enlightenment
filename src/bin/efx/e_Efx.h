@@ -518,7 +518,7 @@ EAPI Eina_Bool e_efx_queue_effect_attach(E_Efx_Queue_Data *eqd, E_Efx_Effect_Spe
  * a "follower" object as @p obj will cause the object passed as @p follower
  * to be chained to the follower's top-most "owner" object.
  *
- * @note Effects from an "owner" object will supercede any similar effects
+ * @note Effects from an "owner" object will supersede any similar effects
  * explicitly set on a "follower" object, and they will also probably
  * break each other. Don't chain owners to other owners unless you know
  * what you are doing.

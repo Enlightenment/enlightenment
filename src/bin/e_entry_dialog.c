@@ -8,7 +8,7 @@ static void _e_entry_dialog_cancel(void *data, E_Dialog *dia);
 static void _e_entry_dialog_delete(E_Dialog *dia, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 static void _e_entry_cb_key_down(void *data, Evas_Object *obj, void *event_info);
 
-/* Externally accesible functions */
+/* Externally accessible functions */
 E_API E_Entry_Dialog *
 e_entry_dialog_show(const char *title, const char *icon, const char *text,
                     const char *initial_text,

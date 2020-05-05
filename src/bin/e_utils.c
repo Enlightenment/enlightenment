@@ -1506,7 +1506,7 @@ e_util_exe_safe_run(const char *cmd, void *data)
    flags |= ECORE_EXE_ISOLATE_IO;
 #else
    flags |= 1024; // isolate_io is bit 10 .... it will be ignored if
-                  // efl doesnt do it, so harmless
+                  // efl doesn't do it, so harmless
 #endif
    return ecore_exe_pipe_run(cmd, flags, data);
 }

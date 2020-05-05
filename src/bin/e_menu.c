@@ -2278,7 +2278,7 @@ _e_menu_item_activate_char(const char *key_compose)
      {
         ll = m->items;
         mi = eina_list_data_get(ll);
-        /* Only check the current item if it wasn't active before. */
+        /* Only check the current item if it was't active before. */
         if (!mi->separator && mi->label && !strncasecmp(key_compose, mi->label, strlen(key_compose)))
           {
              e_menu_item_active_set(mi, 1);

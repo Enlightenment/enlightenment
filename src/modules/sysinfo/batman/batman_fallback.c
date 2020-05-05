@@ -10,7 +10,7 @@
 # include <ps/IOPowerSources.h>
 #endif
 
-/* supported batery system schemes - irrespective of OS */
+/* supported battery system schemes - irrespective of OS */
 #define CHECK_NONE                   0
 #define CHECK_ACPI                   1
 #define CHECK_APM                    2

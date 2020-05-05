@@ -666,7 +666,7 @@ e_comp_x_randr_config_apply(void)
    // ignore the next batch of randr events - we caused them ourselves
    // XXX: a problem. thew first time we configure the screen we may not
    // get any events back to clear the ignore flag below, so only apply
-   // here if the randr config now doesnt match what we want to set up.
+   // here if the randr config now doesn't match what we want to set up.
 //   event_ignore = EINA_TRUE;
 }
 

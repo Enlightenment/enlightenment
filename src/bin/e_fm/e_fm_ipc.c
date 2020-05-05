@@ -345,7 +345,7 @@ _e_fm_ipc_monitor_start_try(E_Fm_Task *task)
         if (!ped)
           {
              /* if no previous monitoring dir exists - this one
-              * becomes the master monitor enty */
+              * becomes the master monitor entry */
              ed->mon = ecore_file_monitor_add(ed->dir, _e_fm_ipc_cb_file_monitor, ed);
              ed->mon_ref = 1;
           }

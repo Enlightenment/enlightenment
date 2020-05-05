@@ -60,7 +60,7 @@ struct _E_Fm2_Smart_Data
    struct
    {
       Evas_Coord w, h;
-   } max, pmax, min; /* min is actually teh size of the largest icon, updated each placement */
+   } max, pmax, min; /* min is actually the size of the largest icon, updated each placement */
    struct
    {
       Evas_Coord x, y;
