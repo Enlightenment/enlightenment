@@ -37,12 +37,12 @@
 #define EVRY_TYPE_TEXT	     7
 #define NUM_EVRY_TYPES	     8
 
-#define EVRY_EVENT_ITEM_SELECTED       	0
+#define EVRY_EVENT_ITEM_SELECTED	0
 #define EVRY_EVENT_ITEM_CHANGED		1
 #define EVRY_EVENT_ITEMS_UPDATE		2
 #define EVRY_EVENT_ACTION_PERFORMED	3
 #define EVRY_EVENT_PLUGIN_SELECTED	4
-#define NUM_EVRY_EVENTS	                5
+#define NUM_EVRY_EVENTS			5
 
 typedef struct _Evry_API Evry_API;
 typedef struct _Evry_Module Evry_Module;

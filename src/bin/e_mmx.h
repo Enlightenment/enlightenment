@@ -451,7 +451,7 @@ typedef	union {
 	   __asm__ ( \
 		"movq (%1), %%mm0 \n" \
 		"movq 0x8(%1), %%mm1 \n" \
-	 	"movq 0x10(%1), %%mm2 \n" \
+		"movq 0x10(%1), %%mm2 \n" \
 		"movq 0x18(%1), %%mm3 \n" \
 		"movq %%mm0, (%0) \n" \
 		"movq %%mm1, 0x8(%0) \n" \
@@ -465,7 +465,7 @@ typedef	union {
 	   __asm__ ( \
 		"movq (%1), %%mm0 \n" \
 		"movq 0x8(%1), %%mm1 \n" \
-	 	"movq 0x10(%1), %%mm2 \n" \
+		"movq 0x10(%1), %%mm2 \n" \
 		"movq 0x18(%1), %%mm3 \n" \
 		"movq 0x20(%1), %%mm4 \n" \
 		"movq %%mm0, (%0) \n" \
@@ -481,7 +481,7 @@ typedef	union {
 	   __asm__ ( \
 		"movq (%1), %%mm0 \n" \
 		"movq 0x8(%1), %%mm1 \n" \
-	 	"movq 0x10(%1), %%mm2 \n" \
+		"movq 0x10(%1), %%mm2 \n" \
 		"movq 0x18(%1), %%mm3 \n" \
 		"movq 0x20(%1), %%mm4 \n" \
 		"movq 0x28(%1), %%mm5 \n" \
@@ -503,7 +503,7 @@ typedef	union {
 	   __asm__ ( \
 		"movq (%1), %%mm0 \n" \
 		"movq 0x8(%1), %%mm1 \n" \
-	 	"movq 0x10(%1), %%mm2 \n" \
+		"movq 0x10(%1), %%mm2 \n" \
 		"movq 0x18(%1), %%mm3 \n" \
 		"movq 0x20(%1), %%mm4 \n" \
 		"movq 0x28(%1), %%mm5 \n" \
@@ -525,7 +525,7 @@ typedef	union {
 	   __asm__ ( \
 		"movdqu (%1), %%xmm0 \n" \
 		"movdqu 0x10(%1), %%xmm1 \n" \
-	 	"movdqu 0x20(%1), %%xmm2 \n" \
+		"movdqu 0x20(%1), %%xmm2 \n" \
 		"movdqu 0x30(%1), %%xmm3 \n" \
 		"movdqu 0x40(%1), %%xmm4 \n" \
 		"movdqu 0x50(%1), %%xmm5 \n" \
@@ -547,7 +547,7 @@ typedef	union {
 	   __asm__ ( \
 		"movdqa (%1), %%xmm0 \n" \
 		"movdqa 0x10(%1), %%xmm1 \n" \
-	 	"movdqa 0x20(%1), %%xmm2 \n" \
+		"movdqa 0x20(%1), %%xmm2 \n" \
 		"movdqa 0x30(%1), %%xmm3 \n" \
 		"movdqa 0x40(%1), %%xmm4 \n" \
 		"movdqa 0x50(%1), %%xmm5 \n" \
