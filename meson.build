@@ -1,6 +1,6 @@
 ##### project
 project('enlightenment', 'c',
-        version        : '0.24.0',
+        version        : '0.24.0-beta1',
         license        : 'BSD 2 clause',
         default_options: [ 'buildtype=release', 'c_std=gnu99', 'warning_level=2' ],
         meson_version  : '>= 0.47.0')
@@ -20,7 +20,7 @@ config_h = configuration_data()
 e_version   = ver.split('.')
 
 #### FOR RELEASE
-e_version_rev = '.'.join([ver, 'alpha1'])
+e_version_rev = '.'.join([ver, 'beta1'])
 release = '@0@.@1@.@2@'.format(e_version[0], e_version[1], e_version[2])
 config_h.set('E_RELEASE_BUILD'         , '1')
 ####
