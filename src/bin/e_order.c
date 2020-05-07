@@ -62,13 +62,15 @@ e_order_new(const char *path)
 {
    E_Order *eo;
 
-   eo = E_OBJECT_ALLOC(E_Order, E_ORDER_TYPE, _e_order_free);
-   if (!eo) return NULL;
-
    if (!path)
      {
         ERR("null order");
+        return NULL;
      }
+
+   eo = E_OBJECT_ALLOC(E_Order, E_ORDER_TYPE, _e_order_free);
+   if (!eo) return NULL;
+
    if (path[0] != '/')
      {
         ERR("not full");
