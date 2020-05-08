@@ -292,9 +292,13 @@ _shelf_content_fix(void *data)
    // at the same time so things going weird with child size and thus
    // position etc.
    E_Shelf *es = data;
+   int w, h;
+
    es->fix_timer = NULL;
-   e_shelf_resize(es, es->w + 1, es->h + 1);
-   e_shelf_resize(es, es->w, es->h);
+   w = es->w;
+   h = es->h;
+   e_shelf_resize(es, w + 1, h + 1);
+   e_shelf_resize(es, w, h);
    return EINA_FALSE;
 }
 
