@@ -1,4 +1,11 @@
 TODO:
+* need a better "extra" that allows shot-module like sharing of:
+  * themes
+  * wallpapers
+  * ... anything else?
+  * built in tool to listbrowse/preview/download etc.
+  * built in tool should allow for share/upload too
+  * on the www side - nicely show and index themes with previews in html
 * clean up e profiles, elm profiles and per screen profiles
   * move to a new profile method which has a fallback profile
     * also has to include scaling options like manual or based on dpi
