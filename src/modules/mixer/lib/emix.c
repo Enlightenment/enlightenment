@@ -5,12 +5,12 @@
 #include "emix.h"
 
 #ifdef HAVE_PULSE
-E_API Emix_Backend *emix_backend_pulse_get(void);
-E_API const char    *emix_backend_pulse_name;
+E_API Emix_Backend      *emix_backend_pulse_get(void);
+E_API extern const char *emix_backend_pulse_name;
 #endif
 #ifdef HAVE_ALSA
-E_API Emix_Backend *emix_backend_alsa_get(void);
-E_API const char    *emix_backend_alsa_name;
+E_API Emix_Backend      *emix_backend_alsa_get(void);
+E_API extern const char *emix_backend_alsa_name;
 #endif
 
 static int _log_domain;
