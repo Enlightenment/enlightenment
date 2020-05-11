@@ -771,6 +771,7 @@ e_menu_item_submenu_set(E_Menu_Item *mi, E_Menu *sub)
    E_OBJECT_CHECK(mi);
    E_OBJECT_TYPE_CHECK(mi, E_MENU_ITEM_TYPE);
 
+   if (mi->submenu == sub) return;
    tmp = _e_active_menus_copy_ref();
    submenu = !!mi->submenu;
    if (mi->submenu) e_object_unref(E_OBJECT(mi->submenu));
@@ -3034,13 +3035,8 @@ _e_menu_cb_scroll_animator(void *data EINA_UNUSED)
 static void
 _e_menu_cb_item_submenu_post_default(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Menu_Item *mi)
 {
-   E_Menu *subm;
-
    if (!mi->submenu) return;
-
-   subm = mi->submenu;
-   e_menu_item_submenu_set(mi, NULL);
-   e_object_del(E_OBJECT(subm));
+   e_menu_item_submenu_set(mi, NULL); // unis unrefs previous submenu
 }
 
 static void
