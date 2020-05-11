@@ -330,7 +330,6 @@ e_shelf_zone_new(E_Zone *zone, const char *name, const char *style, E_Layer laye
    evas_object_event_callback_add(es->o_base, EVAS_CALLBACK_MOUSE_DOWN,
                                   _e_shelf_cb_mouse_down, es);
    es->name = eina_stringshare_add(name);
-   printf("SHELF1: %p z=%i name=[%s] %4i,%4i %4ix%4i\n", es, es->zone->num, es->name, es->x, es->y, es->w, es->h);
    evas_object_resize(es->o_base, es->w, es->h);
 
    e_shelf_style_set(es, style);
