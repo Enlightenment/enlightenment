@@ -350,6 +350,7 @@ _restore_client(E_Client *ec)
    if (!extra->tiled)
      return NULL;
 
+   _client_untrack(ec);
    if (!ec->maximized && !ec->fullscreen)
      {
         _e_client_move_resize(ec, extra->orig.geom.x, extra->orig.geom.y,
