@@ -3495,12 +3495,13 @@ struct _E_Smart_Data
 {
    Evas_Coord    x, y, w, h;
    Evas_Object  *obj, *clip;
+   Eina_List    *items;
+   Ecore_Job    *job;
+   int           frozen;
+   Evas_Coord    minw, minh, req;
    unsigned char horizontal E_BITFIELD;
    unsigned char doing_config E_BITFIELD;
    unsigned char redo_config E_BITFIELD;
-   Eina_List    *items;
-   int           frozen;
-   Evas_Coord    minw, minh, req;
 };
 
 struct _E_Gadcon_Layout_Item
@@ -4156,6 +4157,8 @@ _e_gadcon_layout_smart_del(Evas_Object *obj)
         child = eina_list_data_get(sd->items);
         e_gadcon_layout_unpack(child);
      }
+   if (sd->job) ecore_job_del(sd->job);
+   sd->job = NULL;
    evas_object_del(sd->clip);
    free(sd);
    evas_object_smart_data_set(obj, NULL);
@@ -4208,6 +4211,15 @@ _e_gadcon_layout_smart_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 }
 
 static void
+_resize_job_cb(void *data)
+{
+   E_Smart_Data *sd = evas_object_smart_data_get(data);
+   if (!sd) return;
+   sd->job = NULL;
+   _e_gadcon_layout_smart_reconfigure(sd);
+}
+
+static void
 _e_gadcon_layout_smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 {
    E_Smart_Data *sd;
@@ -4227,7 +4239,10 @@ _e_gadcon_layout_smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
         sd->h = w;
      }
 
-   _e_gadcon_layout_smart_reconfigure(sd);
+   if (sd->job) ecore_job_del(sd->job);
+   sd->job = ecore_job_add(_resize_job_cb, obj);
+// done in job...
+//   _e_gadcon_layout_smart_reconfigure(sd);
 }
 
 static void
