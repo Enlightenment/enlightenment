@@ -243,11 +243,11 @@ _cb_entry_ok(void *data, char *text)
         f = fopen(buf, "w");
         if (!f) break;
         /* Populate this .order file with some defaults */
-        snprintf(tmp, sizeof(tmp), 
+        snprintf(tmp, sizeof(tmp),
                  "terminology.desktop\n"
                  "sylpheed.desktop\n"
                  "firefox.desktop\n"
-                 "openoffice.desktop\n" 
+                 "openoffice.desktop\n"
                  "xchat.desktop\n"
                  "gimp.desktop\n");
         fwrite(tmp, sizeof(char), strlen(tmp), f);

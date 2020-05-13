@@ -588,7 +588,7 @@ _ibar_fill(IBar *b)
           }
         eina_iterator_free(it);
      }
-   
+
    _ibar_empty_handle(b);
    _ibar_resize_handle(b);
    if (!b->inst->gcc) return;
@@ -1698,7 +1698,7 @@ static Eina_Bool
 _ibar_cb_icon_reset(void *data)
 {
    IBar_Icon *ic = data;
-   
+
    if (ic->focused)
      {
         _ibar_icon_signal_emit(ic, "e,state,focused", "e");
@@ -1780,7 +1780,7 @@ static void
 _ibar_instance_watch(void *data, E_Exec_Instance *inst, E_Exec_Watch_Type type)
 {
    IBar_Icon *ic = data;
-     
+
    switch (type)
      {
       case E_EXEC_WATCH_STARTED:
@@ -1831,7 +1831,7 @@ _ibar_icon_go(IBar_Icon *ic, Eina_Bool keep_going)
         else
           {
              E_Exec_Instance *einst;
-             
+
              einst = e_exec(ic->ibar->inst->gcc->gadcon->zone,
                             ic->app, NULL, NULL, "ibar");
              if (einst)
@@ -1848,7 +1848,7 @@ _ibar_icon_go(IBar_Icon *ic, Eina_Bool keep_going)
         if (!strncasecmp(ic->app->url, "file:", 5))
           {
              E_Action *act;
-             
+
              act = e_action_find("fileman");
              if (act) act->func.go(NULL, ic->app->url + 5);
           }
@@ -2215,7 +2215,7 @@ _ibar_manager_find(void)
    E_Zone *z = e_zone_current_get();
    IBar *b;
    Eina_List *l;
-   
+
    if (!z) return NULL;
    // find iubar on current zone
    EINA_LIST_FOREACH(ibars, l, b)
@@ -2256,7 +2256,7 @@ _ibar_focused_find(void)
 {
    IBar *b;
    Eina_List *l;
-   
+
    EINA_LIST_FOREACH(ibars, l, b)
      {
         if (b->focused) return b;
@@ -2268,7 +2268,7 @@ static int
 _ibar_cb_sort(IBar *b1, IBar *b2)
 {
    E_Zone *z1 = NULL, *z2 = NULL;
-   
+
    if ((b1) && (b1->inst) && (b1->inst->gcc) && (b1->inst->gcc->gadcon))
      z1 = b1->inst->gcc->gadcon->zone;
    if ((b2) && (b2->inst) && (b2->inst->gcc) && (b2->inst->gcc->gadcon))
@@ -2279,7 +2279,7 @@ _ibar_cb_sort(IBar *b1, IBar *b2)
    else
      {
         int id1, id2;
-        
+
         id1 = z1->id;
         id2 = z2->id;
         return id2 - id1;
@@ -2293,7 +2293,7 @@ _ibar_focused_next_find(void)
    IBar *b, *bn = NULL;
    Eina_List *l;
    Eina_List *tmpl = NULL;
-  
+
    EINA_LIST_FOREACH(ibars, l, b)
      {
         if (!b->icons) continue;
@@ -2327,7 +2327,7 @@ _ibar_focused_prev_find(void)
    IBar *b, *bn = NULL;
    Eina_List *l;
    Eina_List *tmpl = NULL;
-  
+
    EINA_LIST_FOREACH(ibars, l, b)
      {
         if (!b->icons) continue;
@@ -2359,7 +2359,7 @@ static void
 _ibar_focus(IBar *b)
 {
    IBar_Icon *ic;
-   
+
    if (b->focused) return;
    b->focused = EINA_TRUE;
    EINA_INLIST_FOREACH(b->icons, ic)
@@ -2395,7 +2395,7 @@ static void
 _ibar_focus_next(IBar *b)
 {
    IBar_Icon *ic, *ic1 = NULL, *ic2 = NULL;
-   
+
    if (!b->focused) return;
    if (!b->icons) return;
    EINA_INLIST_FOREACH(b->icons, ic)
@@ -2420,7 +2420,7 @@ static void
 _ibar_focus_prev(IBar *b)
 {
    IBar_Icon *ic, *ic1 = NULL, *ic2 = NULL;
-   
+
    if (!b->focused) return;
    if (!b->icons) return;
    EINA_INLIST_FOREACH(b->icons, ic)
@@ -2442,7 +2442,7 @@ static void
 _ibar_focus_launch(IBar *b)
 {
    IBar_Icon *ic;
-   
+
    if (!b->focused) return;
    EINA_INLIST_FOREACH(b->icons, ic)
      {
@@ -2459,7 +2459,7 @@ _ibar_focus_cb_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *even
 {
    Ecore_Event_Key *ev;
    IBar *b, *b2;
-   
+
    ev = event;
    if (ev->window != _ibar_focus_win) return ECORE_CALLBACK_PASS_ON;
    b = _ibar_focused_find();
@@ -2467,7 +2467,7 @@ _ibar_focus_cb_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *even
    if (!strcmp(ev->key, "Up"))
      {
         if (b->inst)
-          {  
+          {
              switch (b->inst->orient)
                {
                 case E_GADCON_ORIENT_VERT:
@@ -2487,7 +2487,7 @@ _ibar_focus_cb_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *even
    else if (!strcmp(ev->key, "Down"))
      {
         if (b->inst)
-          {  
+          {
              switch (b->inst->orient)
                {
                 case E_GADCON_ORIENT_VERT:
@@ -2507,7 +2507,7 @@ _ibar_focus_cb_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *even
    else if (!strcmp(ev->key, "Left"))
      {
         if (b->inst)
-          {  
+          {
              switch (b->inst->orient)
                {
                 case E_GADCON_ORIENT_FLOAT:
@@ -2528,7 +2528,7 @@ _ibar_focus_cb_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *even
    else if (!strcmp(ev->key, "Right"))
      {
         if (b->inst)
-          {  
+          {
              switch (b->inst->orient)
                {
                 case E_GADCON_ORIENT_FLOAT:
@@ -2597,7 +2597,7 @@ static void
 _ibar_go_focus(void)
 {
    IBar *b;
-   
+
    if (_ibar_focus_win) return;
    b = _ibar_manager_find();
    if (!b) return;
@@ -2612,7 +2612,7 @@ static void
 _ibar_go_unfocus(void)
 {
    IBar *b;
-   
+
    if (!_ibar_focus_win) return;
    b = _ibar_focused_find();
    if (b) _ibar_unfocus(b);
@@ -2621,7 +2621,7 @@ _ibar_go_unfocus(void)
    ecore_event_handler_del(_ibar_key_down_handler);
    _ibar_key_down_handler = NULL;
 }
-   
+
 static void
 _ibar_cb_action_focus(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED, Ecore_Event_Key *ev EINA_UNUSED)
 {
@@ -2636,7 +2636,7 @@ _ibar_cb_client_prop(void *d EINA_UNUSED, int t EINA_UNUSED, E_Event_Client_Prop
    E_Client *ec;
    Eina_Bool skip = EINA_TRUE;
 
-   if (e_client_util_ignored_get(ev->ec) || (!ev->ec->exe_inst) || 
+   if (e_client_util_ignored_get(ev->ec) || (!ev->ec->exe_inst) ||
        (!ev->ec->exe_inst->desktop)) return ECORE_CALLBACK_RENEW;
    if ((!(ev->property & E_CLIENT_PROPERTY_NETWM_STATE)) && (!(ev->property & E_CLIENT_PROPERTY_ICON)))
      return ECORE_CALLBACK_RENEW;
@@ -2840,7 +2840,7 @@ e_modapi_init(E_Module *m)
    E_CONFIG_VAL(D, T, dont_add_nonorder, INT);
    E_CONFIG_VAL(D, T, dont_track_launch, UCHAR);
    E_CONFIG_VAL(D, T, dont_icon_menu_mouseover, UCHAR);
-   
+
    conf_edd = E_CONFIG_DD_NEW("IBar_Config", Config);
 #undef T
 #undef D
@@ -2885,7 +2885,7 @@ e_modapi_init(E_Module *m)
 
    e_gadcon_provider_register(&_gadcon_class);
    ibar_orders = eina_hash_string_superfast_new(NULL);
-   
+
    act_ibar_focus = e_action_add("ibar_focus");
    if (act_ibar_focus)
      {
@@ -2893,7 +2893,7 @@ e_modapi_init(E_Module *m)
         e_action_predef_name_set(N_("IBar"), N_("Focus IBar"),
                                  "ibar_focus", "<none>", NULL, 0);
      }
-   
+
    return m;
 }
 
@@ -2904,11 +2904,11 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    Config_Item *ci;
 
    _ibar_go_unfocus();
-   
+
    e_action_del("ibar_focus");
    e_action_predef_name_del("IBar", "Focus IBar");
    act_ibar_focus = NULL;
-   
+
    e_gadcon_provider_unregister(&_gadcon_class);
 
    if (ibar_config->config_dialog)

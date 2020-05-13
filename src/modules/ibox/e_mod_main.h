@@ -14,7 +14,7 @@ struct _Config
    Eina_List	   *config_dialog;
 };
 
-struct _Config_Item 
+struct _Config_Item
 {
    const char *id;
    int show_label;

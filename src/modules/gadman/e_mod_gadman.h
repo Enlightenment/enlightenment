@@ -57,12 +57,12 @@ struct _Manager
 
    Eina_List *waiting;
    Ecore_Event_Handler *add;
-   
+
    int             visible;
    Evas_Object     *overlay;
 
    int  width, height;
-   
+
    E_Module                *module;
    E_Config_Dialog         *config_dialog;
    E_Int_Menu_Augmentation *maug;

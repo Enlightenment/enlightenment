@@ -54,7 +54,7 @@ _bar_gadget_configure(Evas_Object *g)
    return config_luncher(e_zone_current_get(), inst, EINA_TRUE);
 }
 
-static void 
+static void
 _bar_popup_dismissed(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    E_FREE_FUNC(obj, evas_object_del);
@@ -64,9 +64,9 @@ static const char *
 _bar_location_get(Instance *inst)
 {
    const char *s = "float";
- 
+
    E_Gadget_Site_Orient orient = e_gadget_site_orient_get(e_gadget_site_get(inst->o_main));
-   E_Gadget_Site_Anchor anchor = e_gadget_site_anchor_get(e_gadget_site_get(inst->o_main)); 
+   E_Gadget_Site_Anchor anchor = e_gadget_site_anchor_get(e_gadget_site_get(inst->o_main));
 
    if (anchor & E_GADGET_SITE_ANCHOR_LEFT)
      {
@@ -152,7 +152,7 @@ _bar_location_get(Instance *inst)
            case E_GADGET_SITE_ORIENT_VERTICAL:
              s = "left";
              break;
-           default: 
+           default:
              s = "bottom";
              break;
           }
@@ -821,7 +821,7 @@ _bar_icon_preview_show(void *data)
    evas_object_size_hint_max_set(ic->preview_scroller, zone->w - 15, zone->h - 15);
    elm_object_style_set(ic->preview_scroller, "no_inset_shadow");
    E_EXPAND(ic->preview_scroller);
-   
+
    ic->preview_box = elm_box_add(ic->preview);
    evas_object_size_hint_align_set(ic->preview_box, 0, 0);
    switch (orient)
@@ -905,10 +905,10 @@ _bar_icon_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *even
    else if (clients && !ic->inst->current_preview)
      ic->mouse_in_timer = ecore_timer_loop_add(0.3, _bar_icon_preview_show, ic);
 }
-  
+
 static void
 _bar_exec_new_show(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_data EINA_UNUSED)
-{ 
+{
    Icon *ic = data;
    E_Client *ec = e_comp_object_client_get(obj);
 
@@ -1207,7 +1207,7 @@ _bar_cb_client_remove(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Clie
                     _bar_icon_del(inst, ic);
                }
              else if (ic->preview && (inst->current_preview == ic->preview))
-               { 
+               {
                   _bar_icon_preview_show(ic);
                }
           }
@@ -1280,7 +1280,7 @@ _bar_cb_exec_client_prop(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_C
    Eina_Bool has_desktop = EINA_TRUE;
 
    if (e_client_util_ignored_get(ev->ec))
-     return ECORE_CALLBACK_RENEW; 
+     return ECORE_CALLBACK_RENEW;
    if ((!(ev->property & E_CLIENT_PROPERTY_NETWM_STATE)) && (!(ev->property & E_CLIENT_PROPERTY_ICON))
        && (!(ev->property & E_CLIENT_PROPERTY_URGENCY)))
      return ECORE_CALLBACK_RENEW;
@@ -1485,7 +1485,7 @@ _bar_fill(Instance *inst)
 {
    const Eina_Hash *execs = e_exec_instances_get();
    Eina_Iterator *it;
-   Eina_List *l, *ll, *lll;   
+   Eina_List *l, *ll, *lll;
    E_Exec_Instance *ex;
    E_Client *ec;
    Icon *ic;
@@ -1770,7 +1770,7 @@ static void
 _bar_drop_enter(void *data, const char *type EINA_UNUSED, void *event_data EINA_UNUSED)
 {
    Instance *inst = data;
-   
+
    inst->inside = EINA_TRUE;
    inst->place_holder = evas_object_rectangle_add(evas_object_evas_get(inst->o_icon_con));
    evas_object_color_set(inst->place_holder, 0, 0, 0, 0);
@@ -1937,7 +1937,7 @@ _bar_recalculate_job(void *data)
           {
              _bar_empty(inst);
              _bar_fill(inst);
-          }   
+          }
         inst->recalc_job = NULL;
      }
 }

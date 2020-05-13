@@ -70,7 +70,7 @@ _config_source_changed(void *data, Evas_Object *obj EINA_UNUSED, void *event_inf
      return;
    if (inst->cfg->dir) eina_stringshare_del(inst->cfg->dir);
    inst->cfg->dir = NULL;
-   inst->cfg->dir = eina_stringshare_ref(dir); 
+   inst->cfg->dir = eina_stringshare_ref(dir);
    bar_reorder(inst);
 }
 
@@ -147,7 +147,7 @@ _config_source_added(void *data, char *text)
         break;
      }
    config_luncher(e_zone_current_get(), inst, luncher_config->bar);
-} 
+}
 
 static void
 _config_source_deleted(void *data)

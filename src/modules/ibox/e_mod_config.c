@@ -26,13 +26,13 @@ static void _cb_disable_check_list(void *data, Evas_Object *obj);
 static void _cb_zone_policy_change(void *data, Evas_Object *obj);
 // unused
 //static void _cb_disable_check(void *data, Evas_Object *obj);
-void 
+void
 _config_ibox_module(Config_Item *ci)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
    char buf[4096];
-   
+
    v = E_NEW(E_Config_Dialog_View, 1);
 
    /* Dialog Methods */
@@ -42,7 +42,7 @@ _config_ibox_module(Config_Item *ci)
    v->basic.create_widgets = _basic_create_widgets;
    v->advanced.apply_cfdata = NULL;
    v->advanced.create_widgets = NULL;
-   
+
    /* Create The Dialog */
    snprintf(buf, sizeof(buf), "%s/e-module-ibox.edj", e_module_dir_get(ibox_config->module));
    cfd = e_config_dialog_new(NULL,
@@ -52,7 +52,7 @@ _config_ibox_module(Config_Item *ci)
    ibox_config->config_dialog = eina_list_append(ibox_config->config_dialog, cfd);
 }
 
-static void 
+static void
 _fill_data(Config_Item *ci, E_Config_Dialog_Data *cfdata)
 {
    cfdata->show_label = ci->show_label;
@@ -66,14 +66,14 @@ _create_data(E_Config_Dialog *cfd)
 {
    E_Config_Dialog_Data *cfdata;
    Config_Item *ci;
-   
+
    ci = cfd->data;
    cfdata = E_NEW(E_Config_Dialog_Data, 1);
    _fill_data(ci, cfdata);
    return cfdata;
 }
 
-static void 
+static void
 _free_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
 {
    show_label_list = eina_list_free(show_label_list);
@@ -170,7 +170,7 @@ static int
 _basic_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
 {
    Config_Item *ci;
-   
+
    ci = cfd->data;
    ci->show_label = cfdata->show_label;
    ci->icon_label = cfdata->icon_label;
@@ -213,7 +213,7 @@ _cb_zone_policy_change(void *data, Evas_Object *obj EINA_UNUSED)
 static void
 _cb_disable_check(void *data, Evas_Object *obj)
 {
-   e_widget_disabled_set((Evas_Object *) data, 
+   e_widget_disabled_set((Evas_Object *) data,
                          !e_widget_check_checked_get(obj));
 }
 #endif

@@ -1191,7 +1191,7 @@ _menu_style_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient)
      {
         w = ow, h = oh;
      }
-   else 
+   else
      {
         /* just flip aspect */
         w = oh;

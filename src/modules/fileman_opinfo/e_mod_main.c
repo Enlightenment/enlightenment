@@ -71,7 +71,7 @@ _opinfo_op_registry_listener(void *data, const E_Fm2_Op_Registry_Entry *ere)
    // Don't show if the operation keep less than 1 second
    if (!ere->needs_attention && (ere->start_time + 1.0 > ecore_loop_time_get()))
      return;
-   
+
    // Update icon
    switch (ere->op)
    {
@@ -228,34 +228,34 @@ static Eina_Bool
 _opinfo_op_registry_free_data_delayed(void *data)
 {
    Evas_Object *o = data;
-   
+
    if (o)
      {
         evas_object_del(o);
      }
-   
+
    return ECORE_CALLBACK_CANCEL;
 }
 
-static void 
+static void
 _opinfo_op_registry_abort_cb(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    int id;
-   
+
    id = (long)data;
    if (!id) return;
-   
+
    e_fm2_operation_abort(id);
 }
 
-static void 
+static void
 _opinfo_op_registry_window_jump_cb(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    int id = (long)data;
    E_Fm2_Op_Registry_Entry *ere;
    Evas_Object *win;
    E_Client *ec;
-   
+
    if (!id) return;
    ere = e_fm2_op_registry_entry_get(id);
    if (!ere) return;
@@ -279,7 +279,7 @@ _opinfo_op_registry_entry_add_cb(void *data, EINA_UNUSED int type, void *event)
    E_Fm2_Op_Registry_Entry *ere = event;
    Instance *inst = data;
    Evas_Object *o;
-   
+
    if (!inst || !ere)
       return ECORE_CALLBACK_RENEW;
 
@@ -287,18 +287,18 @@ _opinfo_op_registry_entry_add_cb(void *data, EINA_UNUSED int type, void *event)
 
    if (!(ere->op == E_FM_OP_COPY || ere->op == E_FM_OP_MOVE || ere->op == E_FM_OP_REMOVE))
       return ECORE_CALLBACK_RENEW;
-   
+
    o = edje_object_add(evas_object_evas_get(inst->o_box));
    e_theme_edje_object_set(o, "base/theme/fileman", "e/fileman/default/progress");
    edje_object_signal_callback_add(o, "e,fm,operation,abort", "",
                                    _opinfo_op_registry_abort_cb, (void*)(long)ere->id);
-   edje_object_signal_callback_add(o, "e,fm,window,jump", "", 
-                                   _opinfo_op_registry_window_jump_cb, (void*)(long)ere->id); 
+   edje_object_signal_callback_add(o, "e,fm,window,jump", "",
+                                   _opinfo_op_registry_window_jump_cb, (void*)(long)ere->id);
    elm_box_pack_end(inst->o_box, o);
-   
+
    e_fm2_op_registry_entry_listener_add(ere, _opinfo_op_registry_listener,
                                         o, _opinfo_op_registry_free_data);
-   
+
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -306,7 +306,7 @@ static Eina_Bool
 _opinfo_op_registry_entry_del_cb(void *data, EINA_UNUSED int type, EINA_UNUSED void *event)
 {
    Instance *inst = data;
-   
+
    if (!inst)
       return ECORE_CALLBACK_RENEW;
 
@@ -329,12 +329,12 @@ _opinfo_op_registry_update_all(Instance *inst)
    _opinfo_op_registry_update_status(inst);
 }
 
-static void 
+static void
 _opinfo_op_registry_update_status(Instance *inst)
 {
    int cnt;
    char buf[256];
-   
+
    cnt = e_fm2_op_registry_count();
    if (cnt)
      {
@@ -445,7 +445,7 @@ _gc_icon(const E_Gadcon_Client_Class *client_class EINA_UNUSED, Evas *evas)
    snprintf(buf, sizeof(buf), "%s/e-module-fileman_opinfo.edj",
 	    e_module_dir_get(opinfo_module));
    edje_object_file_set(o, buf, "icon");
-   
+
    return o;
 }
 
@@ -457,7 +457,7 @@ _gc_id_new(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
 
 /********************   E MODULE   ****************************************/
 
-E_API E_Module_Api e_modapi = 
+E_API E_Module_Api e_modapi =
 {
    E_MODULE_API_VERSION,
    "EFM Info"

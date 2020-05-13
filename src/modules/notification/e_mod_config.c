@@ -188,7 +188,7 @@ static int
 _basic_check_changed(E_Config_Dialog      *cfd EINA_UNUSED,
                      E_Config_Dialog_Data *cfdata)
 {
-   return 
+   return
      (cfdata->show_low != notification_cfg->show_low) ||
      (cfdata->show_normal != notification_cfg->show_normal) ||
      (cfdata->show_critical != notification_cfg->show_critical) ||

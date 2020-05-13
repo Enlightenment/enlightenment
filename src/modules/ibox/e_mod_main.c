@@ -1033,7 +1033,7 @@ _ibox_cb_event_client_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev
    if (!ev->ec->iconic) return ECORE_CALLBACK_RENEW;
    if (!ev->ec->zone) return ECORE_CALLBACK_RENEW;
    desk = e_desk_current_get(ev->ec->zone);
-        
+
    ibox = _ibox_zone_find(ev->ec->zone);
    EINA_LIST_FREE(ibox, b)
      {
