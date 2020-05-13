@@ -80,14 +80,14 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
 {
    Evas_Object *o, *ob, *of;
    E_Radio_Group *rg;
-   
+
    o = e_widget_list_add(evas, 0, 0);
    ob = e_widget_check_add(evas, _("Restore CPU Power Policy"), &cfdata->restore_governor);
    e_widget_list_object_append(o, ob, 1, 0, 0.5);
-   
+
    ob = e_widget_check_add(evas, _("Automatic powersaving"), &cfdata->auto_powersave);
    e_widget_list_object_append(o, ob, 1, 0, 0.5);
-   
+
    of = e_widget_framelist_add(evas, _("Update poll interval"), 0);
    rg = e_widget_radio_group_new(&cfdata->poll_interval);
    ob = e_widget_radio_add(evas, _("Fast (4 ticks)"), 4, rg);

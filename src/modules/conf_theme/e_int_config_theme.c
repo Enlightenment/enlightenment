@@ -65,7 +65,7 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
      win = elm_win_fake_add(ecore_evas_ecore_evas_get(e));
    evas_object_size_hint_min_get(preview, &w, &h);
    w *= 2; h *= 2;
-   
+
    o = edje_object_add(e);
    _e_int_theme_edje_file_set(o, file, "e/desktop/background");
    evas_object_move(o, 0, 0);
@@ -82,7 +82,7 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
    edje_object_signal_emit(o, "e,state,visible,on", "e");
    objs = eina_list_append(objs, o);
    po = o;
-   
+
    o = edje_object_add(e);
    _e_int_theme_edje_file_set(o, file, "e/shelf/default/base");
    evas_object_show(o);
@@ -91,16 +91,16 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
    objs = eina_list_append(objs, o);
    po = o;
    po2 = po;
-   
+
    o = elm_box_add(win);
    elm_box_horizontal_set(o, 1);
    evas_object_show(o);
    edje_object_part_swallow(po, "e.swallow.content", o);
    objs = eina_list_append(objs, o);
    po = o;
-   
+
    mh = 42 * e_scale;
-   
+
    o = edje_object_add(e);
    _e_int_theme_edje_file_set(o, file, "e/modules/start/main");
    evas_object_show(o);
@@ -124,7 +124,7 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
    edje_object_part_swallow(po2, "e.swallow.content", o);
    objs = eina_list_append(objs, o);
    po3 = o;
-   
+
    o = edje_object_add(e);
    _e_int_theme_edje_file_set(o, file, "e/modules/pager/desk");
    evas_object_show(o);
@@ -177,7 +177,7 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
    elm_box_pack_end(po, o);
    evas_object_size_hint_min_set(o, mh, 0);
    objs = eina_list_append(objs, o);
-   
+
    o = edje_object_add(e);
    _e_int_theme_edje_file_set(o, file, "e/modules/clock/main");
    evas_object_show(o);
@@ -185,8 +185,8 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
    elm_box_pack_end(po, o);
    evas_object_size_hint_min_set(o, mh, 0);
    objs = eina_list_append(objs, o);
-   
-   
+
+
    o = edje_object_add(e);
    _e_int_theme_edje_file_set(o, file, "e/comp/frame/default");
    evas_object_move(o, w / 2, h / 9);
@@ -198,7 +198,7 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
    objs = eina_list_append(objs, o);
    po = o;
    po2 = po;
-   
+
    o = edje_object_add(e);
    _e_int_theme_edje_file_set(o, file, "e/widgets/border/default/border");
    edje_object_part_text_set(o, "e.text.title", "Title");
@@ -207,7 +207,7 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
    edje_object_part_swallow(po, "e.swallow.content", o);
    objs = eina_list_append(objs, o);
    po = o;
-   
+
    o = edje_object_add(e);
    _e_int_theme_edje_file_set(o, file, "e/theme/about");
    edje_object_size_min_get(o, &mw, &mh);
@@ -218,9 +218,9 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
    edje_object_part_swallow(po, "e.swallow.client", o);
    objs = eina_list_append(objs, o);
 
-   
-   
-   
+
+
+
    o = edje_object_add(e);
    _e_int_theme_edje_file_set(o, file, "e/comp/frame/default");
    evas_object_move(o, w / 10, h / 5);
@@ -231,7 +231,7 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
    edje_object_signal_emit(o, "e,state,focus,on", "e");
    objs = eina_list_append(objs, o);
    po = o;
-   
+
    o = edje_object_add(e);
    _e_int_theme_edje_file_set(o, file, "e/widgets/border/default/border");
    edje_object_part_text_set(o, "e.text.title", "Title");
@@ -240,7 +240,7 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
    edje_object_part_swallow(po, "e.swallow.content", o);
    objs = eina_list_append(objs, o);
    po = o;
-   
+
    o = edje_object_add(e);
    _e_int_theme_edje_file_set(o, file, "e/widgets/dialog/main");
    evas_object_show(o);
@@ -249,10 +249,10 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
    objs = eina_list_append(objs, o);
    po = o;
    po2 = po;
-   
+
    o = edje_object_add(e);
    _e_int_theme_edje_file_set(o, file, "e/widgets/dialog/text");
-   edje_object_part_text_set(o, "e.textblock.message", 
+   edje_object_part_text_set(o, "e.textblock.message",
                              "<hilight>Welcome to enlightenment.</hilight><ps/>"
                              "<ps/>"
                              "This is a sample set of content for a<ps/>"
@@ -260,7 +260,7 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
    evas_object_show(o);
    edje_object_part_swallow(po, "e.swallow.content", o);
    objs = eina_list_append(objs, o);
-   
+
    o = e_icon_add(e);
    e_util_icon_theme_set(o, "dialog-warning");
    evas_object_show(o);
@@ -275,7 +275,7 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
    edje_object_part_swallow(po, "e.swallow.buttons", o);
    objs = eina_list_append(objs, o);
    po = o;
-   
+
    o = edje_object_add(e);
    _e_int_theme_edje_file_set(o, file, "e/widgets/button");
    evas_object_show(o);
@@ -285,7 +285,7 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
    elm_box_pack_end(po, o);
    evas_object_size_hint_min_set(o, 50, 20);
    objs = eina_list_append(objs, o);
-   
+
    o = edje_object_add(e);
    _e_int_theme_edje_file_set(o, file, "e/widgets/button");
    evas_object_show(o);
@@ -302,7 +302,7 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
    edje_object_part_swallow(po2, "e.swallow.buttons", po);
 
    evas_object_data_set(preview, "objects", objs);
-   
+
 //   e_widget_preview_edje_set(preview, file, "e/desktop/background");
    return EINA_TRUE;
 }

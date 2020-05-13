@@ -92,7 +92,7 @@ _create_data(E_Config_Dialog *cfd EINA_UNUSED)
    cfdata->allow_above_fullscreen = e_config->allow_above_fullscreen;
    if (cfdata->maximize_policy == E_MAXIMIZE_NONE)
      cfdata->maximize_policy = E_MAXIMIZE_FULLSCREEN;
-   cfdata->maximize_direction = 
+   cfdata->maximize_direction =
      (e_config->maximize_policy & E_MAXIMIZE_DIRECTION);
    if (!cfdata->maximize_direction)
      cfdata->maximize_direction = E_MAXIMIZE_BOTH;
@@ -115,7 +115,7 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
    e_config->window_resist = cfdata->window_resist;
    e_config->gadget_resist = cfdata->gadget_resist;
    e_config->geometry_auto_resize_limit = cfdata->geometry_auto_resize_limit;
-   e_config->geometry_auto_move = cfdata->geometry_auto_move;  
+   e_config->geometry_auto_move = cfdata->geometry_auto_move;
    e_config->border_keyboard.timeout = cfdata->border_keyboard.timeout;
    e_config->border_keyboard.move.dx = cfdata->border_keyboard.move.dx;
    e_config->border_keyboard.move.dy = cfdata->border_keyboard.move.dx;
@@ -180,25 +180,25 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    ow = e_widget_label_add(evas, _("Other windows"));
    e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
-   ow = e_widget_slider_add(evas, 1, 0, _("%2.0f pixels"), 0, 64.0, 1.0, 0, 
+   ow = e_widget_slider_add(evas, 1, 0, _("%2.0f pixels"), 0, 64.0, 1.0, 0,
                             NULL, &(cfdata->window_resist), 100);
    e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
    ow = e_widget_label_add(evas, _("Edge of the screen"));
    e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
-   ow = e_widget_slider_add(evas, 1, 0, _("%2.0f pixels"), 0, 64.0, 1.0, 0, 
+   ow = e_widget_slider_add(evas, 1, 0, _("%2.0f pixels"), 0, 64.0, 1.0, 0,
                             NULL, &(cfdata->desk_resist), 100);
    e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
    ow = e_widget_label_add(evas, _("Desktop gadgets"));
    e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
-   ow = e_widget_slider_add(evas, 1, 0, _("%2.0f pixels"), 0, 64.0, 1.0, 0, 
+   ow = e_widget_slider_add(evas, 1, 0, _("%2.0f pixels"), 0, 64.0, 1.0, 0,
                             NULL, &(cfdata->gadget_resist), 100);
    e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
-   e_widget_toolbook_page_append(otb, NULL, _("Resistance"), ol, 
+   e_widget_toolbook_page_append(otb, NULL, _("Resistance"), ol,
                                  1, 1, 1, 0, 0.0, 0.0);
 
    /* Maximization */
@@ -225,49 +225,49 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    e_widget_framelist_object_append(of, ow);
    e_widget_list_object_append(ol, of, 1, 0, 0.5);
    of = e_widget_framelist_add(evas, _("Manipulation"), 0);
-   ow = e_widget_check_add(evas, _("Allow manipulation of maximized windows"), 
+   ow = e_widget_check_add(evas, _("Allow manipulation of maximized windows"),
                            &(cfdata->maximized_allow_manip));
    e_widget_framelist_object_append(of, ow);
    ow = e_widget_check_add(evas, _("Allow windows above fullscreen window"),
                            &(cfdata->allow_above_fullscreen));
    e_widget_framelist_object_append(of, ow);
    e_widget_list_object_append(ol, of, 1, 0, 0.5);
-   e_widget_toolbook_page_append(otb, NULL, _("Maximization"), ol, 
+   e_widget_toolbook_page_append(otb, NULL, _("Maximization"), ol,
                                  1, 1, 1, 0, 0.0, 0.0);
 
    /* Keyboard Move and resize */
    ol = e_widget_list_add(evas, 0, 0);
    ow = e_widget_label_add(evas, _("Automatically accept changes after:"));
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
-   ow = e_widget_slider_add(evas, 1, 0, _("%1.1f s"), 0.0, 9.9, 0.1, 0, 
+   ow = e_widget_slider_add(evas, 1, 0, _("%1.1f s"), 0.0, 9.9, 0.1, 0,
                             &(cfdata->border_keyboard.timeout), NULL, 100);
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
    ow = e_widget_label_add(evas, _("Move by"));
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
-   ow = e_widget_slider_add(evas, 1, 0, _("%2.0f pixels"), 1, 255, 1, 0, NULL, 
+   ow = e_widget_slider_add(evas, 1, 0, _("%2.0f pixels"), 1, 255, 1, 0, NULL,
                             &(cfdata->border_keyboard.move.dx), 100);
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
    ow = e_widget_label_add(evas, _("Resize by"));
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
-   ow = e_widget_slider_add(evas, 1, 0, _("%2.0f pixels"), 1, 255, 1, 0, NULL, 
+   ow = e_widget_slider_add(evas, 1, 0, _("%2.0f pixels"), 1, 255, 1, 0, NULL,
                             &(cfdata->border_keyboard.resize.dx), 100);
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
-   e_widget_toolbook_page_append(otb, NULL, _("Keyboard"), ol, 
+   e_widget_toolbook_page_append(otb, NULL, _("Keyboard"), ol,
                                  1, 1, 1, 0, 0.0, 0.0);
 
 
    /* Automatic Move and resize */
    ol = e_widget_list_add(evas, 0, 0);
-   ow = e_widget_check_add(evas, _("Limit resize to useful geometry"), 
+   ow = e_widget_check_add(evas, _("Limit resize to useful geometry"),
                            &(cfdata->geometry_auto_resize_limit));
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
-   ow = e_widget_check_add(evas, _("Ensure initial placement of windows inside useful geometry"), 
+   ow = e_widget_check_add(evas, _("Ensure initial placement of windows inside useful geometry"),
                            &(cfdata->geometry_auto_move));
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
-   ow = e_widget_check_add(evas, _("Adjust windows on shelf hide"), 
+   ow = e_widget_check_add(evas, _("Adjust windows on shelf hide"),
                            &(cfdata->border_fix_on_shelf_toggle));
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
-   e_widget_toolbook_page_append(otb, NULL, _("Automatic"), ol, 
+   e_widget_toolbook_page_append(otb, NULL, _("Automatic"), ol,
                                  1, 1, 1, 0, 0.0, 0.0);
 
    /* Transient  */
@@ -275,25 +275,25 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    ow = e_widget_check_add(evas, _("Follow Move"),
                            &(cfdata->transient.move));
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
-   ow = e_widget_check_add(evas, _("Follow Resize"), 
+   ow = e_widget_check_add(evas, _("Follow Resize"),
                            &(cfdata->transient.resize));
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
-   ow = e_widget_check_add(evas, _("Follow Raise"), 
+   ow = e_widget_check_add(evas, _("Follow Raise"),
                            &(cfdata->transient.raise));
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
-   ow = e_widget_check_add(evas, _("Follow Lower"), 
+   ow = e_widget_check_add(evas, _("Follow Lower"),
                            &(cfdata->transient.lower));
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
-   ow = e_widget_check_add(evas, _("Follow Layer"), 
+   ow = e_widget_check_add(evas, _("Follow Layer"),
                            &(cfdata->transient.layer));
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
-   ow = e_widget_check_add(evas, _("Follow Desktop"), 
+   ow = e_widget_check_add(evas, _("Follow Desktop"),
                            &(cfdata->transient.desktop));
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
-   ow = e_widget_check_add(evas, _("Follow Iconify"), 
+   ow = e_widget_check_add(evas, _("Follow Iconify"),
                            &(cfdata->transient.iconify));
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
-   
+
    e_widget_toolbook_page_append(otb, NULL, _("Transients"), ol,
                                  1, 1, 1, 0, 0.0, 0.0);
 

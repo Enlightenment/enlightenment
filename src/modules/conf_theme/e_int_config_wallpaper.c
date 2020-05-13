@@ -469,7 +469,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
                             _cb_button_up, cfdata, NULL);
    cfdata->o_up_button = ow;
    e_widget_table_object_append(rt, ow, 2, 0, 1, 1, 0, 0, 0, 0);
-   
+
    e_widget_table_object_align_append(ot, rt, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0);
 
    if (cfdata->fmdir == 1)
@@ -539,7 +539,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
      e_widget_radio_toggle_set(cfdata->o_system, EINA_TRUE);
    else
      e_widget_radio_toggle_set(cfdata->o_personal, EINA_TRUE);
-   
+
    if (cfdata->use_theme_bg)
      _disable_set(cfdata, 1);
 

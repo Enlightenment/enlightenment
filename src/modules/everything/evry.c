@@ -212,7 +212,7 @@ evry_show(E_Zone *zone, E_Zone_Edge edge, const char *params, Eina_Bool popup)
           if (win->grab)
             return NULL;
      }
-   
+
    if (!(win = _evry_window_new(zone, edge)))
      return NULL;
 
@@ -312,7 +312,7 @@ _evry_delay_hide_timer(void *data)
    Evry_Window *win = data;
    win->delay_hide_action = NULL;
 
-   return ECORE_CALLBACK_CANCEL;   
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static void

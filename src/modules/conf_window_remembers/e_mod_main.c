@@ -3,26 +3,26 @@
 
 static E_Module *conf_module = NULL;
 
-E_API E_Module_Api e_modapi = 
+E_API E_Module_Api e_modapi =
 {
    E_MODULE_API_VERSION, "Settings - Window Remembers"
 };
 
 E_API void *
-e_modapi_init(E_Module *m) 
+e_modapi_init(E_Module *m)
 {
-   e_configure_registry_category_add("windows", 50, _("Windows"), NULL, 
+   e_configure_registry_category_add("windows", 50, _("Windows"), NULL,
                                      "preferences-system-windows");
-   e_configure_registry_item_add("windows/window_remembers", 40, 
-                                 _("Window Remembers"), NULL, 
-                                 "preferences-desktop-window-remember", 
+   e_configure_registry_item_add("windows/window_remembers", 40,
+                                 _("Window Remembers"), NULL,
+                                 "preferences-desktop-window-remember",
                                  e_int_config_remembers);
    conf_module = m;
 
    return m;
 }
 
-E_API int 
+E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    E_Config_Dialog *cfd;

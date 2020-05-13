@@ -41,7 +41,7 @@ struct _Evry_Window
 
   unsigned int mouse_button;
   Eina_Bool mouse_out;
-  
+
   Eina_Bool grab;
 
   Evry_State *state_clearing;
@@ -49,7 +49,7 @@ struct _Evry_Window
   struct
   {
       void (*hide) (Evry_Window *win, int finished);
-  } func;    
+  } func;
 
   /* only to be used by creator of win */
   void *data;
@@ -188,7 +188,7 @@ struct _Config
   int cycle_mode;
 
   Eina_List *gadgets;
-  
+
   unsigned char first_run;
   /* not saved data */
   Eina_List *actions;
@@ -204,7 +204,7 @@ struct _Gadget_Config
   int hide_after_action;
   int popup;
 };
-  
+
 struct _History
 {
   int version;

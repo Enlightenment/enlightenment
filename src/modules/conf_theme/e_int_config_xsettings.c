@@ -304,7 +304,7 @@ _fill_files_ilist(void *data)
                        strcat(label, " (v3)");
                        len -= 5;
                     }
-                  
+
                   /* value pointer will exist as long as ilist item
                      so val remains valid */
                   e_widget_ilist_append(o, NULL, label, NULL, NULL, value);
@@ -490,7 +490,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
 #endif
    e_widget_check_widget_disable_on_unchecked_add(oc, ilist);
    e_widget_check_widget_disable_on_unchecked_add(oc, ow);
-   e_widget_toolbook_page_append(otb, NULL, _("GTK Applications"), ol, 
+   e_widget_toolbook_page_append(otb, NULL, _("GTK Applications"), ol,
                                  1, 1, 1, 1, 0.5, 0.0);
 
    ol = e_widget_list_add(evas, 0, 0);
@@ -530,7 +530,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
                            &(cfdata->icon_overrides));
    e_widget_list_object_append(ol, ow, 0, 0, 0.0);
 
-   e_widget_toolbook_page_append(otb, NULL, _("Icons"), ol, 
+   e_widget_toolbook_page_append(otb, NULL, _("Icons"), ol,
                                  1, 1, 1, 1, 0.5, 0.0);
 
    e_widget_toolbook_page_show(otb, 0);

@@ -87,7 +87,7 @@ struct _Evry_API
   void (*plugin_unregister)(Evry_Plugin *p);
   void (*plugin_update)(Evry_Plugin *plugin, int state);
   Evry_Plugin *(*plugin_find)(const char *name);
-  
+
   Evry_Action *(*action_new)(const char *name, const char *label,
 				  Evry_Type type1, Evry_Type type2,
 				  const char *icon,

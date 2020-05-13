@@ -448,12 +448,12 @@ _button_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
         int cx, cy;
 
         m = e_menu_new();
-        
+
         mi = e_menu_item_new(m);
         e_menu_item_label_set(mi, _("Settings"));
         e_util_menu_item_theme_icon_set(mi, "configure");
         e_menu_item_callback_set(mi, _cpufreq_cb_menu_configure, NULL);
-        
+
         m = e_gadcon_client_util_menu_items_append(inst->gcc, m, 0);
 
         e_gadcon_canvas_zone_geometry_get(inst->gcc->gadcon,
@@ -797,7 +797,7 @@ _cpufreq_status_check_available(Cpu_Status *s)
      {
         char *gov;
         int len;
-        
+
         if (s->governors)
           {
              for (l = s->governors; l; l = l->next)
@@ -1292,7 +1292,7 @@ _cpufreq_menu_pstate_max(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA
    cpufreq_config->pstate_max = max + 1;
    if (cpufreq_config->pstate_min > cpufreq_config->pstate_max)
      cpufreq_config->pstate_min = cpufreq_config->pstate_max;
-   _cpufreq_set_pstate(cpufreq_config->pstate_min - 1, 
+   _cpufreq_set_pstate(cpufreq_config->pstate_min - 1,
                        cpufreq_config->pstate_max - 1);
    e_config_save_queue();
 }
@@ -1499,7 +1499,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    _cpufreq_response_shutdown();
    e_configure_registry_item_del("advanced/cpufreq");
    e_configure_registry_category_del("advanced");
-   
+
    e_gadcon_provider_unregister(&_gadcon_class);
 
    if (cpufreq_config->frequency_check_thread)

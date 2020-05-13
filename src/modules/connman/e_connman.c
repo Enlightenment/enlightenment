@@ -464,7 +464,7 @@ bool econnman_service_remove(struct Connman_Service *cs,
             cs->pending.disconnect, cs->pending.remov);
         return false;
      }
-   
+
    cd = calloc(1, sizeof(*cd));
    EINA_SAFETY_ON_NULL_GOTO(cd, fail);
 
@@ -813,7 +813,7 @@ static void _manager_powered_cb(void *data, const Eldbus_Message *msg,
    Eldbus_Pending *p;
    struct Connman_Manager *cm = data;
    const char *error_name, *error_msg;
-   
+
    cm->pending.set_powered = NULL;
 
    if (eldbus_message_error_get(msg, &error_name, &error_msg))
@@ -871,7 +871,7 @@ static struct Connman_Manager *_manager_new(void)
                                   _manager_services_changed, cm);
    eldbus_proxy_signal_handler_add(cm->technology_iface, "PropertyChanged",
                                   _manager_wifi_prop_changed, cm);
-   
+
    /*
     * PropertyChanged signal in service's path is guaranteed to arrive only
     * after ServicesChanged above. So we only add the handler later, in a per
