@@ -15,7 +15,7 @@ _recommend_connman(E_Wizard_Page *pg EINA_UNUSED)
 #if defined(USE_MODULE_CONNMAN) || defined(USE_MODULE_WIRELESS)
    elm_object_text_set(of, _("Connman network service not found"));
 
-   
+
    elm_object_text_set(ob, _("Install/Enable Connman service for network management support"));
 #else
    elm_object_text_set(of, _("Connman and Wireless modules disabled"));
@@ -93,7 +93,7 @@ _check_connman_owner(void *data, const Eldbus_Message *msg,
    api->wizard_button_next_enable_set(1);
    ecore_idler_add(_page_next_call, NULL);
    return;
-   
+
 fail:
    _connman_fail(data);
 }

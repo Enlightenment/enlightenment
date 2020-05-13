@@ -15,7 +15,7 @@ _recommend_bluez5(E_Wizard_Page *pg EINA_UNUSED)
 #if defined(USE_MODULE_BLUEZ5)
    elm_object_text_set(of, _("BlueZ Bluetooth service not found"));
 
-   
+
    elm_object_text_set(ob, _("Install/Enable BlueZ 5 / bluetoothd service for network management support"));
 #else
    elm_object_text_set(of, _("Bluez5 module disabled"));
@@ -93,7 +93,7 @@ _check_bluez5_owner(void *data, const Eldbus_Message *msg,
    api->wizard_button_next_enable_set(1);
    ecore_idler_add(_page_next_call, NULL);
    return;
-   
+
 fail:
    _bluez5_fail(data);
 }

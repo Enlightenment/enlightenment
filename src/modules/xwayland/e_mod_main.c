@@ -24,7 +24,7 @@ struct _E_XWayland_Server
    Ecore_Fd_Handler *abs_hdlr, *unx_hdlr;
    Ecore_Event_Handler *sig_hdlr;
 
-   struct 
+   struct
      {
         pid_t pid;
         /* cleanup_func func; */
@@ -95,7 +95,7 @@ _lock_create(int lock)
    return 1;
 }
 
-static int 
+static int
 _abstract_socket_bind(int disp)
 {
    struct sockaddr_un addr;
@@ -103,13 +103,13 @@ _abstract_socket_bind(int disp)
    int fd;
 
    /* try to create a local socket */
-   if ((fd = socket(PF_LOCAL, (SOCK_STREAM | SOCK_CLOEXEC), 0)) < 0) 
+   if ((fd = socket(PF_LOCAL, (SOCK_STREAM | SOCK_CLOEXEC), 0)) < 0)
      return -1;
 
    ecore_file_mkpath("/tmp/.X11-unix");
 
    addr.sun_family = AF_LOCAL;
-   nsize = snprintf(addr.sun_path, sizeof(addr.sun_path), 
+   nsize = snprintf(addr.sun_path, sizeof(addr.sun_path),
                     "%c/tmp/.X11-unix/X%d", 0, disp);
    size = offsetof(struct sockaddr_un, sun_path) + nsize;
 
@@ -121,7 +121,7 @@ _abstract_socket_bind(int disp)
      }
 
    /* try to listen on the bound socket */
-   if (listen(fd, 1) < 0) 
+   if (listen(fd, 1) < 0)
      {
         ERR("Failed to listen to abstract fd: %d", fd);
         goto err;
@@ -134,7 +134,7 @@ err:
    return -1;
 }
 
-static int 
+static int
 _unix_socket_bind(int disp)
 {
    struct sockaddr_un addr;
@@ -142,11 +142,11 @@ _unix_socket_bind(int disp)
    int fd;
 
    /* try to create a local socket */
-   if ((fd = socket(PF_LOCAL, (SOCK_STREAM | SOCK_CLOEXEC), 0)) < 0) 
+   if ((fd = socket(PF_LOCAL, (SOCK_STREAM | SOCK_CLOEXEC), 0)) < 0)
      return -1;
 
    addr.sun_family = AF_LOCAL;
-   nsize = snprintf(addr.sun_path, sizeof(addr.sun_path), 
+   nsize = snprintf(addr.sun_path, sizeof(addr.sun_path),
                     "/tmp/.X11-unix/X%d", disp) + 1;
    size = offsetof(struct sockaddr_un, sun_path) + nsize;
 
@@ -160,7 +160,7 @@ _unix_socket_bind(int disp)
      }
 
    /* try to listen on the bound socket */
-   if (listen(fd, 1) < 0) 
+   if (listen(fd, 1) < 0)
      {
         ERR("Failed to listen to unix fd: %d", fd);
         goto err;
@@ -173,7 +173,7 @@ err:
    return -1;
 }
 
-static Eina_Bool 
+static Eina_Bool
 _cb_xserver_event(void *data EINA_UNUSED, Ecore_Fd_Handler *hdlr EINA_UNUSED)
 {
    int socks[2], wms[2], fd;
@@ -298,7 +298,7 @@ xinit(void *d, Ecore_Thread *eth)
 static void
 xend(){}
 
-static Eina_Bool 
+static Eina_Bool
 _cb_signal_event(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Event_Signal_User *ev;
@@ -307,7 +307,7 @@ _cb_signal_event(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    ev = event;
    if (ev->number != 1) return ECORE_CALLBACK_RENEW;
 
-   /* NB: SIGUSR1 comes from XWayland Server when it has finished 
+   /* NB: SIGUSR1 comes from XWayland Server when it has finished
     * initialized. */
 
    DBG("XWayland Finished Init");
@@ -411,15 +411,15 @@ xwl_init(void *d EINA_UNUSED)
    ecore_event_add(E_EVENT_COMPOSITOR_XWAYLAND_INIT, NULL, NULL, NULL);
 
    /* setup ecore_fd handlers for abstract and unix socket fds */
-   exs->abs_hdlr = 
-     ecore_main_fd_handler_add(exs->abs_fd, ECORE_FD_READ, 
+   exs->abs_hdlr =
+     ecore_main_fd_handler_add(exs->abs_fd, ECORE_FD_READ,
                                _cb_xserver_event, NULL, NULL, NULL);
-   exs->unx_hdlr = 
-     ecore_main_fd_handler_add(exs->unx_fd, ECORE_FD_READ, 
+   exs->unx_hdlr =
+     ecore_main_fd_handler_add(exs->unx_fd, ECORE_FD_READ,
                                _cb_xserver_event, NULL, NULL, NULL);
 
    /* setup listener for SIGUSR1 */
-   exs->sig_hdlr = 
+   exs->sig_hdlr =
      ecore_event_handler_add(ECORE_EVENT_SIGNAL_USER, _cb_signal_event, exs);
    return EINA_FALSE;
 }
@@ -464,7 +464,7 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-E_API int 
+E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    xwl_shutdown();

@@ -54,7 +54,7 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-E_API int 
+E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    /* delete handler for keymap change */

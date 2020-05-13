@@ -151,7 +151,7 @@ wizard_page_show(Evas_Object *obj)
    if (!obj) return;
    elm_box_pack_end(o_box, obj);
    evas_object_show(obj);
-   
+
    elm_object_focus_set(obj, 1);
    edje_object_signal_emit(o_bg, "e,action,page,new", "e");
 }

@@ -16,7 +16,7 @@ test_state(void *d EINA_UNUSED)
 int
 main(void)
 {
-   
+
 
    ecore_x_init(NULL);
 

@@ -467,7 +467,7 @@ _wireless_edit_send()
             break;
            default: break;
           }
-        
+
      }
    else
      proxy = EINA_TRUE;
@@ -734,7 +734,7 @@ _wireless_gadget_edit_basic(void)
         elm_object_text_set(hoversel, methods[wc->method]);
         evas_object_smart_callback_add(hoversel, "clicked", _wireless_gadget_edit_method_open, NULL);
      }
-   
+
    ent = entry = _wireless_popup_table_entry_row(tb, _("Address"), NULL, NULL, &row);
    elm_object_disabled_set(ent, disabled);
    wireless_popup.entries = eina_list_append(wireless_popup.entries, ent);

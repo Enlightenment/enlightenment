@@ -37,13 +37,13 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
    api->wizard_title_set(_("Adding missing App files"));
    api->wizard_button_next_enable_set(0);
    api->wizard_page_show(NULL);
-   
+
    snprintf(buf, sizeof(buf), "%s/extra_desktops", api->wizard_dir_get());
    extra_desks = ecore_file_ls(buf);
 
    /* advance in 1 sec */
    _next_timer = ecore_timer_loop_add(1.0, _next_page, NULL);
-   
+
    EINA_LIST_FREE(extra_desks, file)
      {
         snprintf(buf, sizeof(buf), "%s/extra_desktops/%s",

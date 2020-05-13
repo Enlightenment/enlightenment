@@ -196,7 +196,7 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
    EINA_LIST_FOREACH(layouts, l, lay)
      {
         void *it;
-        
+
         it = elm_genlist_item_append(ob, &itc, lay, NULL, 0, _layout_select, lay);
         if (eina_streq(lay->name, "us"))
           sel_it = it;

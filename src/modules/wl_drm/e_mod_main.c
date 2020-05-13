@@ -105,7 +105,7 @@ _info_unconf_primary_find(E_Randr2 *r)
 
    EINA_LIST_FOREACH(r->screens, l, s)
      {
-        if (!((s->config.enabled) && 
+        if (!((s->config.enabled) &&
               (s->config.mode.w > 0) && (s->config.mode.h > 0) &&
               (s->config.geom.w > 0) && (s->config.geom.h > 0)))
           continue;
@@ -331,7 +331,7 @@ _drm2_randr_create(void)
         type = MIN(ecore_drm2_output_connector_type_get(output),
                    EINA_C_ARRAY_LENGTH(conn_types) - 1);
         s->info.connector = rtype[type];
-        s->info.is_lid = ((type == DRM_MODE_CONNECTOR_LVDS) || 
+        s->info.is_lid = ((type == DRM_MODE_CONNECTOR_LVDS) ||
                           (type == DRM_MODE_CONNECTOR_eDP));
         s->info.lid_closed = (s->info.is_lid && e_acpi_lid_is_closed());
         printf("DRM2 RRR: ...... lid_closed = %i (%i && %i)\n",
@@ -411,7 +411,7 @@ _drm2_randr_create(void)
                   s->config.mode.w = s->config.geom.w;
                   s->config.mode.h = s->config.geom.h;
                   s->config.mode.refresh = refresh;
-                  s->config.enabled = 
+                  s->config.enabled =
                     ((s->config.mode.w != 0) && (s->config.mode.h != 0));
 
                   printf("DRM2 RRR: '%s' %i %i %ix%i\n", s->info.name,

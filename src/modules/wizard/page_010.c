@@ -162,7 +162,7 @@ _lang_content_get(E_Intl_Pair *pair, Evas_Object *obj, const char *part)
      e_prefix_data_snprintf(buf, sizeof(buf), "data/flags/%s", pair->locale_icon);
    else
      e_prefix_data_snprintf(buf, sizeof(buf), "data/flags/%s", "lang-system.png");
-   
+
    ic = elm_icon_add(obj);
    elm_image_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 20, 10);
