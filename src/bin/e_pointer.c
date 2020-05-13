@@ -22,7 +22,7 @@ _e_pointer_theme_buf(E_Pointer *ptr, char cursor[1024])
      snprintf(cursor, 1024, "e/pointer/enlightenment/%s/mono", ptr->type);
 }
 
-static inline void 
+static inline void
 _e_pointer_hot_update(E_Pointer *ptr, int x, int y)
 {
    if ((ptr->hot.x != x) || (ptr->hot.y != y))
@@ -33,7 +33,7 @@ _e_pointer_hot_update(E_Pointer *ptr, int x, int y)
      }
 }
 
-static void 
+static void
 _e_pointer_active(E_Pointer *ptr)
 {
    if (!ptr->idle) return;
@@ -42,7 +42,7 @@ _e_pointer_active(E_Pointer *ptr)
    ptr->idle = EINA_FALSE;
 }
 
-static void 
+static void
 _e_pointer_idle(E_Pointer *ptr)
 {
    if (ptr->idle) return;
@@ -51,7 +51,7 @@ _e_pointer_idle(E_Pointer *ptr)
    ptr->idle = EINA_TRUE;
 }
 
-static Eina_Bool 
+static Eina_Bool
 _e_pointer_cb_idle_poller(void *data)
 {
    E_Pointer *ptr;
@@ -59,7 +59,7 @@ _e_pointer_cb_idle_poller(void *data)
 
    if (!(ptr = data)) return ECORE_CALLBACK_RENEW;
 
-   if ((e_powersave_mode_get() >= E_POWERSAVE_MODE_MEDIUM) || 
+   if ((e_powersave_mode_get() >= E_POWERSAVE_MODE_MEDIUM) ||
        (!e_config->idle_cursor))
      {
         ptr->idle_poll = NULL;
@@ -86,14 +86,14 @@ _e_pointer_cb_idle_poller(void *data)
    return ECORE_CALLBACK_RENEW;
 }
 
-static Eina_Bool 
+static Eina_Bool
 _e_pointer_cb_idle_wait(void *data)
 {
    E_Pointer *ptr;
 
    if (!(ptr = data)) return ECORE_CALLBACK_RENEW;
    ptr->idle_tmr = NULL;
-   if ((e_powersave_mode_get() >= E_POWERSAVE_MODE_MEDIUM) || 
+   if ((e_powersave_mode_get() >= E_POWERSAVE_MODE_MEDIUM) ||
        (!e_config->idle_cursor))
      {
         E_FREE_FUNC(ptr->idle_poll, ecore_poller_del);
@@ -101,13 +101,13 @@ _e_pointer_cb_idle_wait(void *data)
      }
 
    if (!ptr->idle_poll)
-     ptr->idle_poll = ecore_poller_add(ECORE_POLLER_CORE, 64, 
+     ptr->idle_poll = ecore_poller_add(ECORE_POLLER_CORE, 64,
                                        _e_pointer_cb_idle_poller, ptr);
 
    return ECORE_CALLBACK_CANCEL;
 }
 
-static Eina_Bool 
+static Eina_Bool
 _e_pointer_cb_idle_pre(void *data)
 {
    E_Pointer *ptr;
@@ -126,7 +126,7 @@ _e_pointer_cb_idle_pre(void *data)
    return ECORE_CALLBACK_CANCEL;
 }
 
-static void 
+static void
 _e_pointer_active_handle(E_Pointer *ptr)
 {
    _e_pointer_active(ptr);
@@ -141,7 +141,7 @@ _e_pointer_active_handle(E_Pointer *ptr)
      }
 }
 
-static Eina_Bool 
+static Eina_Bool
 _e_pointer_cb_mouse_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    Eina_List *l;
@@ -160,7 +160,7 @@ _e_pointer_cb_mouse_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *eve
    return ECORE_CALLBACK_PASS_ON;
 }
 
-static Eina_Bool 
+static Eina_Bool
 _e_pointer_cb_mouse_up(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    Eina_List *l;
@@ -179,7 +179,7 @@ _e_pointer_cb_mouse_up(void *data EINA_UNUSED, int type EINA_UNUSED, void *event
    return ECORE_CALLBACK_PASS_ON;
 }
 
-static Eina_Bool 
+static Eina_Bool
 _e_pointer_cb_mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    Eina_List *l;
@@ -198,7 +198,7 @@ _e_pointer_cb_mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *eve
    return ECORE_CALLBACK_PASS_ON;
 }
 
-static Eina_Bool 
+static Eina_Bool
 _e_pointer_cb_mouse_wheel(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    Eina_List *l;
@@ -261,7 +261,7 @@ _e_pointer_pointer_canvas_init(E_Pointer *ptr, Evas *e, Evas_Object **o_ptr, Eva
    evas_object_resize(*o_ptr, ptr->w, ptr->h);
 }
 
-static void 
+static void
 _e_pointer_canvas_del(E_Pointer *ptr)
 {
    E_FREE_FUNC(ptr->buffer_o_hot, evas_object_del);
@@ -270,7 +270,7 @@ _e_pointer_canvas_del(E_Pointer *ptr)
    E_FREE(ptr->pixels);
 }
 
-static void 
+static void
 _e_pointer_canvas_add(E_Pointer *ptr)
 {
    Evas_Engine_Info_Buffer *einfo;
@@ -318,7 +318,7 @@ err:
    _e_pointer_canvas_del(ptr);
 }
 
-static void 
+static void
 _e_pointer_canvas_resize(E_Pointer *ptr, int w, int h)
 {
    Evas_Engine_Info_Buffer *einfo;
@@ -343,14 +343,14 @@ _e_pointer_canvas_resize(E_Pointer *ptr, int w, int h)
    evas_object_resize(ptr->buffer_o_ptr, ptr->w, ptr->h);
 }
 
-static void 
+static void
 _e_pointer_stack_free(E_Pointer_Stack *stack)
 {
    if (stack->type) eina_stringshare_del(stack->type);
    free(stack);
 }
 
-static void 
+static void
 _e_pointer_cb_free(E_Pointer *ptr)
 {
    _ptrs = eina_list_remove(_ptrs, ptr);
@@ -436,7 +436,7 @@ _e_pointer_x11_setup(E_Pointer *ptr, const char *cursor)
 #endif
 }
 
-static void 
+static void
 _e_pointer_type_set(E_Pointer *ptr, const char *type)
 {
    /* check if pointer type is already set */
@@ -490,22 +490,22 @@ _e_pointer_type_set(E_Pointer *ptr, const char *type)
      _e_pointer_x11_setup(ptr, NULL);
 }
 
-EINTERN int 
+EINTERN int
 e_pointer_init(void)
 {
-   E_LIST_HANDLER_APPEND(_hdlrs, ECORE_EVENT_MOUSE_BUTTON_DOWN, 
+   E_LIST_HANDLER_APPEND(_hdlrs, ECORE_EVENT_MOUSE_BUTTON_DOWN,
                          _e_pointer_cb_mouse_down, NULL);
-   E_LIST_HANDLER_APPEND(_hdlrs, ECORE_EVENT_MOUSE_BUTTON_UP, 
+   E_LIST_HANDLER_APPEND(_hdlrs, ECORE_EVENT_MOUSE_BUTTON_UP,
                          _e_pointer_cb_mouse_up, NULL);
-   E_LIST_HANDLER_APPEND(_hdlrs, ECORE_EVENT_MOUSE_MOVE, 
+   E_LIST_HANDLER_APPEND(_hdlrs, ECORE_EVENT_MOUSE_MOVE,
                          _e_pointer_cb_mouse_move, NULL);
-   E_LIST_HANDLER_APPEND(_hdlrs, ECORE_EVENT_MOUSE_WHEEL, 
+   E_LIST_HANDLER_APPEND(_hdlrs, ECORE_EVENT_MOUSE_WHEEL,
                          _e_pointer_cb_mouse_wheel, NULL);
    init = EINA_FALSE;
    return 1;
 }
 
-EINTERN int 
+EINTERN int
 e_pointer_shutdown(void)
 {
    E_FREE_LIST(_hdlrs, ecore_event_handler_del);
@@ -573,7 +573,7 @@ e_pointer_canvas_new(Ecore_Evas *ee, Eina_Bool filled)
    return ptr;
 }
 
-E_API void 
+E_API void
 e_pointers_size_set(int size)
 {
    Eina_List *l;
@@ -600,7 +600,7 @@ e_pointers_size_set(int size)
 #endif
 }
 
-E_API void 
+E_API void
 e_pointer_hide(E_Pointer *ptr)
 {
    if (ptr->buffer_evas)
@@ -613,7 +613,7 @@ e_pointer_hide(E_Pointer *ptr)
 #endif
 }
 
-E_API void 
+E_API void
 e_pointer_show(E_Pointer *ptr)
 {
    if ((!ptr->buffer_evas) && ptr->win) _e_pointer_canvas_add(ptr);
@@ -636,7 +636,7 @@ e_pointer_type_push(E_Pointer *ptr, void *obj, const char *type)
    ptr->stack = eina_list_prepend(ptr->stack, stack);
 }
 
-E_API void 
+E_API void
 e_pointer_type_pop(E_Pointer *ptr, void *obj, const char *type)
 {
    Eina_List *l, *ll;
@@ -646,7 +646,7 @@ e_pointer_type_pop(E_Pointer *ptr, void *obj, const char *type)
 
    EINA_LIST_FOREACH_SAFE(ptr->stack, l, ll, stack)
      {
-        if ((stack->obj == obj) && 
+        if ((stack->obj == obj) &&
             ((!type) || (!e_util_strcmp(stack->type, type))))
           {
              _e_pointer_stack_free(stack);
@@ -669,7 +669,7 @@ e_pointer_type_pop(E_Pointer *ptr, void *obj, const char *type)
    eina_stringshare_replace(&ptr->type, stack->type);
 }
 
-E_API void 
+E_API void
 e_pointer_mode_push(void *obj, E_Pointer_Mode mode)
 {
    switch (mode)
@@ -714,7 +714,7 @@ e_pointer_mode_push(void *obj, E_Pointer_Mode mode)
      }
 }
 
-E_API void 
+E_API void
 e_pointer_mode_pop(void *obj, E_Pointer_Mode mode)
 {
    switch (mode)
@@ -759,7 +759,7 @@ e_pointer_mode_pop(void *obj, E_Pointer_Mode mode)
      }
 }
 
-E_API void 
+E_API void
 e_pointer_idler_before(void)
 {
    Eina_List *l;
@@ -773,7 +773,7 @@ e_pointer_idler_before(void)
 
         if (ptr->hot.update)
           _e_pointer_type_set(ptr, ptr->type);
- 
+
         if (ptr->buffer_evas)
           {
              Eina_List *updates;
@@ -783,7 +783,7 @@ e_pointer_idler_before(void)
 #ifndef HAVE_WAYLAND_ONLY
                   Ecore_X_Cursor cur;
 
-                  cur = ecore_x_cursor_new(ptr->win, ptr->pixels, ptr->w, 
+                  cur = ecore_x_cursor_new(ptr->win, ptr->pixels, ptr->w,
                                            ptr->h, ptr->hot.x, ptr->hot.y);
                   ecore_x_window_cursor_set(ptr->win, cur);
                   ecore_x_cursor_free(cur);
