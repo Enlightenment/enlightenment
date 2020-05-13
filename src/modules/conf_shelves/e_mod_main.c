@@ -18,13 +18,13 @@ E_API E_Module_Api e_modapi =
 E_API void *
 e_modapi_init(E_Module *m)
 {
-   e_configure_registry_category_add("extensions", 90, _("Extensions"), NULL, 
+   e_configure_registry_category_add("extensions", 90, _("Extensions"), NULL,
                                      "preferences-extensions");
-   e_configure_registry_item_add("extensions/shelves", 20, _("Shelves"), NULL, 
-                                 "preferences-desktop-shelf", 
+   e_configure_registry_item_add("extensions/shelves", 20, _("Shelves"), NULL,
+                                 "preferences-desktop-shelf",
                                  e_int_config_shelf);
-   maug = 
-     e_int_menus_menu_augmentation_add_sorted("config/1", _("Shelves"), 
+   maug =
+     e_int_menus_menu_augmentation_add_sorted("config/1", _("Shelves"),
                                               _e_mod_menu_add, NULL, NULL, NULL);
 
    conf_module = m;
@@ -43,7 +43,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
 	e_int_menus_menu_augmentation_del("config/1", maug);
 	maug = NULL;
      }
-   while ((cfd = e_config_dialog_get("E", "extensions/shelves"))) 
+   while ((cfd = e_config_dialog_get("E", "extensions/shelves")))
      e_object_del(E_OBJECT(cfd));
    e_configure_registry_item_del("extensions/shelves");
    e_configure_registry_category_del("extensions");
@@ -59,7 +59,7 @@ e_modapi_save(E_Module *m EINA_UNUSED)
 }
 
 /* menu item callback(s) */
-static void 
+static void
 _e_mod_run_cb(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    e_configure_registry_call("extensions/shelves", NULL, NULL);

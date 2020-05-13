@@ -113,7 +113,7 @@ _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 static int
 _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
-   Eina_Bool remch = ((cfdata->remember_border && 
+   Eina_Bool remch = ((cfdata->remember_border &&
                        !((cfdata->client->remember) &&
                          (cfdata->client->remember->apply & E_REMEMBER_APPLY_BORDER))) ||
                       (!cfdata->remember_border && cfdata->client &&

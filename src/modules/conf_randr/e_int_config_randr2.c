@@ -474,7 +474,7 @@ _basic_screen_info_fill(E_Config_Dialog_Data *cfdata, E_Config_Randr2_Screen *cs
           {
              elm_check_state_set(cfdata->scale_custom_obj, EINA_TRUE);
              elm_object_disabled_set(cfdata->scale_value_obj, EINA_FALSE);
-             elm_slider_value_set(cfdata->scale_value_obj, 
+             elm_slider_value_set(cfdata->scale_value_obj,
                                   _scale_for_multiplier(cs->scale_multiplier));
           }
         else

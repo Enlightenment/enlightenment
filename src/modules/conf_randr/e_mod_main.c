@@ -31,12 +31,12 @@ E_API void *
 e_modapi_init(E_Module *m)
 {
    /* create Screen configuration category
-    * 
+    *
     * NB: If the category already exists, this function just returns */
    e_configure_registry_category_add("screen", 30, _("Screen"),
                                      NULL, "preferences-desktop-display");
 
-   /* add the randr dialog to the screen category and provide 
+   /* add the randr dialog to the screen category and provide
     * the configure category with the function to call */
    e_configure_registry_item_add("screen/screen_setup", 20, _("Screen Setup"),
                                  NULL, "preferences-system-screen-resolution",

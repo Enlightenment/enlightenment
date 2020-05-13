@@ -42,7 +42,7 @@ _scale_preview_sel_set(Evas_Object *ob, int sel)
    int v;
    Eina_List *l;
    E_Config_Dialog_Data *cfdata;
-   
+
    cfdata = evas_object_data_get(ob, "cfdata");
    rc = evas_object_data_get(ob, "rec");
    if (sel)
@@ -80,7 +80,7 @@ static void
 _scale_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *ob = data;
-   
+
    _scale_preview_sel_set(ob, 1);
 }
 
@@ -91,12 +91,12 @@ _scale_preview_new(E_Config_Dialog_Data *cfdata, Evas *e, double sc, double *scp
    const char *file;
    char buf[64];
    int v;
-   
+
 #define SZW 160
 #define SZH 100
    ob = e_widget_preview_add(e, SZW, SZH);
    e_widget_preview_vsize_set(ob, SZW, SZH);
-   
+
    bg = edje_object_add(e_widget_preview_evas_get(ob));
    file = e_bg_file_get(0, 0, 0);
    edje_object_file_set(bg, file, "e/desktop/background");
@@ -104,23 +104,23 @@ _scale_preview_new(E_Config_Dialog_Data *cfdata, Evas *e, double sc, double *scp
    evas_object_move(bg, 0, 0);
    evas_object_resize(bg, 640, 480);
    evas_object_show(bg);
-   
+
    cm = edje_object_add(e_widget_preview_evas_get(ob));
    e_theme_edje_object_set(cm, "base/theme/borders", "e/comp/frame/default");
    evas_object_move(cm, 16, 16);
    evas_object_resize(cm, 180 * sc, 70);
    evas_object_show(cm);
-   
+
    bd = edje_object_add(e_widget_preview_evas_get(ob));
    e_theme_edje_object_set(bd, "base/theme/borders", "e/widgets/border/default/border");
    edje_object_part_swallow(cm, "e.swallow.content", bd);
    evas_object_show(bd);
-   
+
    wb = edje_object_add(e_widget_preview_evas_get(ob));
    e_theme_edje_object_set(wb, "base/theme/dialog", "e/widgets/dialog/main");
    edje_object_part_swallow(bd, "e.swallow.client", wb);
    evas_object_show(wb);
-   
+
    rc = evas_object_rectangle_add(e_widget_preview_evas_get(ob));
    evas_object_move(rc, 0, 0);
    evas_object_resize(rc, 640, 480);
@@ -136,27 +136,27 @@ _scale_preview_new(E_Config_Dialog_Data *cfdata, Evas *e, double sc, double *scp
      edje_object_part_text_set(bd, "e.text.title", tit);
    edje_object_signal_emit(bd, "e,state,focused", "e");
    edje_object_signal_emit(bd, "e,state,shadow,on", "e");
-   
+
    edje_object_signal_emit(cm, "e,state,visible", "e");
    edje_object_signal_emit(cm, "e,state,focus,on", "e");
-   
+
    edje_object_scale_set(bd, sc);
    edje_object_scale_set(cm, sc);
    edje_object_scale_set(bg, sc);
    edje_object_scale_set(wb, sc);
-   
+
    evas_object_data_set(ob, "rec", rc);
    v = sc * 1000;
    evas_object_data_set(ob, "scale", (void *)(unsigned long)v);
    evas_object_data_set(ob, "scalep", scp);
    evas_object_data_set(ob, "dpi", (void *)(unsigned long)dpi);
    evas_object_data_set(ob, "cfdata", cfdata);
-   
+
    evas_object_event_callback_add(rc,
                                   EVAS_CALLBACK_MOUSE_DOWN,
                                   _scale_down, ob);
    cfdata->obs = eina_list_append(cfdata->obs, ob);
-   
+
    return ob;
 }
 
@@ -243,14 +243,14 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
 
    if ((dpi > 0) && (cfdata->base_dpi > 0))
      sc = (double)dpi / (double)cfdata->base_dpi;
-   
+
    ob = _scale_preview_new(cfdata, evas, sc, &(cfdata->factor), _("DPI Scaling"), EINA_TRUE);
    e_widget_table_object_align_append(o, ob, 0, 0, 1, 1, 0, 0, 0, 0, 0.5, 0.5);
    if (cfdata->use_dpi) _scale_preview_sel_set(ob, 1);
-   
+
    x = 1;
 
-#define COL 3   
+#define COL 3
 #define SCALE_OP(v) do { \
    ob = _scale_preview_new(cfdata, evas, v, &(cfdata->factor), NULL, EINA_FALSE); \
    e_widget_table_object_align_append(o, ob, x, y, 1, 1, 0, 0, 0, 0, 0.5, 0.5); \
@@ -274,7 +274,7 @@ static int
 _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    E_Action *a;
-   
+
    if (cfdata->use_dpi) cfdata->use_mode = 1;
    else cfdata->use_mode = 0;
 
@@ -296,7 +296,7 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 
    a = e_action_find("restart");
    if ((a) && (a->func.go)) a->func.go(NULL, NULL);
-   
+
    return 1;
 }
 
@@ -385,7 +385,7 @@ static int
 _adv_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
 {
    E_Action *a;
-   
+
    cfdata->use_custom = 0;
    cfdata->use_dpi = 0;
    if (cfdata->use_mode == 1)
@@ -403,10 +403,10 @@ _adv_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
    e_win_no_reopen_set(cfd->dia->win, 1);
    e_remember_update(e_win_client_get(cfd->dia->win));
    e_config_save_queue();
-   
+
    a = e_action_find("restart");
    if ((a) && (a->func.go)) a->func.go(NULL, NULL);
-   
+
    return 1;
 }
 

@@ -720,7 +720,7 @@ _advanced_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_
 
    ob = e_widget_font_preview_add
      (evas, _("English 012 #!? 日本語 にほんご ソフト 中文 華語 한국"));
-   
+
    cfdata->gui.preview = ob;
    e_widget_table_object_append(ot, ob, 0, 2, 3, 1, 1, 0, 1, 0);
 
@@ -920,7 +920,7 @@ _adv_enabled_font_cb_change(void *data, Evas_Object *obj EINA_UNUSED)
            icon = e_icon_add(cfdata->evas);
            e_util_icon_theme_set(icon, "enlightenment");
         }
-      
+
       e_widget_ilist_nth_icon_set(cfdata->gui.class_list, e_widget_ilist_selected_get(cfdata->gui.class_list), icon);
    }
 }

@@ -111,14 +111,14 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    Evas_Object *ob, *ol;
    E_Radio_Group *rmin, *rmax;
    int y;
-   
+
    cfdata->powersave_min = e_config->powersave.min;
    cfdata->powersave_max = e_config->powersave.max;
    rmin = e_widget_radio_group_new((int*) &(cfdata->powersave_min));
    rmax = e_widget_radio_group_new((int*) &(cfdata->powersave_max));
 
    ol = e_widget_table_add(e_win_evas_win_get(evas), 0);
-   
+
    y = 0;
    ob = e_widget_label_add(evas,
                            _("Levels Allowed"));
@@ -139,7 +139,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
                                       0.5, 0.5 //align
                                       );
 
-   
+
    y++;
    ob = e_widget_label_add(evas, _("Min"));
    e_widget_table_object_align_append(ol, ob,
@@ -176,7 +176,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
                                       0.5, 0.5 //align
                                       );
    y++;
-   
+
    ob = e_widget_radio_add(evas, "", E_POWERSAVE_MODE_NONE, rmin);
    e_widget_table_object_align_append(ol, ob,
                                       0, y,    //place
@@ -215,7 +215,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
                                       0.5, 0.5 //align
                                       );
    y++;
-   
+
    ob = e_widget_radio_add(evas, "", E_POWERSAVE_MODE_LOW, rmin);
    e_widget_table_object_align_append(ol, ob,
                                       0, y,    //place
@@ -254,7 +254,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
                                       0.0, 0.5 //align
                                       );
    y++;
-   
+
    ob = e_widget_radio_add(evas, "", E_POWERSAVE_MODE_MEDIUM, rmin);
    e_widget_table_object_align_append(ol, ob,
                                       0, y,    //place
@@ -293,7 +293,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
                                       0.0, 0.5 //align
                                      );
    y++;
-   
+
    ob = e_widget_radio_add(evas, "", E_POWERSAVE_MODE_HIGH, rmin);
    e_widget_table_object_align_append(ol, ob,
                                       0, y,    //place
@@ -332,7 +332,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
                                       0.0, 0.5 //align
                                       );
    y++;
-   
+
    ob = e_widget_radio_add(evas, "", E_POWERSAVE_MODE_EXTREME, rmin);
    e_widget_table_object_align_append(ol, ob,
                                       0, y,    //place
