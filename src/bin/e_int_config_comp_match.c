@@ -941,7 +941,7 @@ e_int_config_comp_match(Evas_Object *parent, const char *params EINA_UNUSED)
    v->free_cfdata = _free_data;
    v->basic.apply_cfdata = _basic_apply_data;
    v->basic.create_widgets = _basic_create_widgets;
-   
+
    cfd = e_config_dialog_new(parent, _("Composite Match Settings"),
                              "E", "_comp_matches", "preferences-composite", 0, v, NULL);
    e_dialog_resizable_set(cfd->dia, 1);

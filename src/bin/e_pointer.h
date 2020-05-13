@@ -2,7 +2,7 @@
 
 typedef struct _E_Pointer E_Pointer;
 
-typedef enum 
+typedef enum
 {
    /* These are compatible with netwm */
    E_POINTER_RESIZE_TL = 0,
@@ -47,7 +47,7 @@ struct _E_Pointer
    const char *type;
    const char *deferred_type;
 
-   struct 
+   struct
      {
         int x, y;
         Eina_Bool update E_BITFIELD;

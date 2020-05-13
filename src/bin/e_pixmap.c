@@ -75,7 +75,7 @@ _e_pixmap_cb_deferred_buffer_destroy(struct wl_listener *listener, void *data EI
    buffer->discarding_pixmap = NULL;
 }
 
-static void 
+static void
 _e_pixmap_cb_buffer_destroy(struct wl_listener *listener, void *data EINA_UNUSED)
 {
    E_Pixmap *cp;
@@ -119,7 +119,7 @@ _e_pixmap_clear(E_Pixmap *cp, Eina_Bool cache)
         e_pixmap_image_clear(cp, cache);
 #endif
         break;
-      default: 
+      default:
         break;
      }
 }

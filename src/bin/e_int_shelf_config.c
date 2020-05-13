@@ -466,7 +466,7 @@ _cb_autohide_change(void *data, Evas_Object *obj EINA_UNUSED)
    if (!(cfdata = data)) return;
    EINA_LIST_FOREACH(cfdata->autohide_list, l, ow)
      e_widget_disabled_set(ow, !cfdata->autohide);
-   
+
    e_widget_disabled_set(cfdata->o_overlap, ((!cfdata->autohide) || (!e_config->border_fix_on_shelf_toggle)));
 }
 

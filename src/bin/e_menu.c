@@ -1277,7 +1277,7 @@ static void
 _e_menu_dangling_cb(void *data)
 {
    E_Menu *m = data;
-   
+
    WRN("DANGLING SUBMENU: REF(%d)||MENU(%p)", e_object_ref_get(data), data);
    m->dangling_job = NULL;
 }

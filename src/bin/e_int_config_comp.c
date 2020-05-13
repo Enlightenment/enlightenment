@@ -80,7 +80,7 @@ e_int_config_comp(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSE
    v->basic.create_widgets = _basic_create_widgets;
    v->advanced.apply_cfdata = _advanced_apply_data;
    v->advanced.create_widgets = _advanced_create_widgets;
-   
+
    cfd = e_config_dialog_new(NULL, _("Composite Settings"),
                              "E", "appearance/comp", "preferences-composite", 0, v, NULL);
    return cfd;
@@ -286,7 +286,7 @@ _advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data 
              cfdata->swap_triple_radio = ob;
              e_widget_disabled_set(ob, (cfdata->engine == E_COMP_ENGINE_SW));
 
-// lets not offer this anymore             
+// lets not offer this anymore
 //             ob = e_widget_check_add(evas, _("Indirect OpenGL (EXPERIMENTAL)"), &(cfdata->indirect));
 //             e_widget_framelist_object_append(of, ob);
           }
@@ -321,7 +321,7 @@ _advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data 
    e_widget_toolbook_page_append(otb, NULL, _("Misc"), ol, 0, 0, 0, 0, 0.5, 0.0);
 
    ///////////////////////////////////////////
-/*   
+/*
    ol = e_widget_list_add(evas, 0, 0);
    ol2 = e_widget_list_add(evas, 1, 1);
    of = e_widget_framelist_add(evas, _("Min hidden"), 0);
@@ -470,7 +470,7 @@ static void
 _basic_comp_style_toggle(void *data, Evas_Object *o)
 {
    E_Config_Dialog_Data *cfdata = data;
-   
+
    e_widget_disabled_set(cfdata->styles_il, e_widget_check_checked_get(o));
    cfdata->match.toggle_changed = 1;
 }
@@ -496,7 +496,7 @@ _basic_create_widgets(E_Config_Dialog *cfd,
 
    ob = e_widget_check_add(evas, _("Don't fade backlight"), &(cfdata->nofade));
    e_widget_list_object_append(ol, ob, 1, 0, 0.5);
-   
+
    of = e_widget_frametable_add(evas, _("Select default style"), 0);
    e_widget_frametable_content_align_set(of, 0.5, 0.5);
    cfdata->styles_il = oi = e_comp_style_selector_create(evas, &(cfdata->shadow_style));
@@ -541,7 +541,7 @@ _basic_create_widgets(E_Config_Dialog *cfd,
    evas_object_smart_callback_add(ob, "changed", _comp_engine_toggle, cfdata);
 
    e_widget_list_object_append(ol, of, 1, 0, 0.5);
-   
+
    e_widget_toolbook_page_append(otb, NULL, _("Rendering"), ol, 0, 0, 0, 0, 0.5, 0.0);
 
    e_widget_toolbook_page_show(otb, 0);

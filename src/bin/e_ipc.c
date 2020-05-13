@@ -40,7 +40,7 @@ e_ipc_init(void)
         else
           ERR("XDG_RUNTIME_DIR of '%s' cannot be accessed", tmp);
      }
-   
+
    tmp = getenv("SD_USER_SOCKETS_DIR");
    if (tmp)
      {
