@@ -236,7 +236,7 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata
 
    EINA_LIST_FOREACH_SAFE(cfdata->binding.wheel, l, l2, bw)
      {
-        if ((!bw->modifiers) && 
+        if ((!bw->modifiers) &&
             (bw->direction == 0) &&
             ((bw->context == E_BINDING_CONTEXT_WINDOW) || (bw->context == E_BINDING_CONTEXT_ANY)))
           {
@@ -1184,13 +1184,13 @@ _helper_wheel_name_get(E_Config_Binding_Wheel *bw)
    switch (bw->direction)
      {
       case 0:
-	 if (bw->z < 0) 
+	 if (bw->z < 0)
 	   name = strdup(_("Mouse Wheel Up"));
 	 else
 	   name = strdup(_("Mouse Wheel Down"));
 	 break;
       default:
-	 if (bw->z < 0) 
+	 if (bw->z < 0)
 	   snprintf(buf, sizeof(buf), _("Extra Wheel (%d) Up"), bw->direction);
 	 else
 	   snprintf(buf, sizeof(buf), _("Extra Wheel (%d) Down"), bw->direction);
@@ -1414,7 +1414,7 @@ _grab_mouse_wheel_cb(void *data, int type EINA_UNUSED, void *event)
    if (ev->modifiers & ECORE_EVENT_MODIFIER_ALT)
      mod |= E_BINDING_MODIFIER_ALT;
    if (ev->modifiers & ECORE_EVENT_MODIFIER_WIN)
-     mod |= E_BINDING_MODIFIER_WIN; 
+     mod |= E_BINDING_MODIFIER_WIN;
 
    if (cfdata->locals.add)
      {

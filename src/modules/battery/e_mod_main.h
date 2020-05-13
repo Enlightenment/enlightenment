@@ -97,7 +97,7 @@ struct _Battery
    Eldbus_Proxy *proxy;
    int * mib;
 #if defined(__FreeBSD__) || defined(__DragonFly__)
-   int * mib_state; 
+   int * mib_state;
    int * mib_units;
    int * mib_time;
    int batteries;
@@ -141,7 +141,7 @@ E_API int   e_modapi_shutdown (E_Module *m);
 E_API int   e_modapi_save     (E_Module *m);
 
 E_Config_Dialog *e_int_config_battery_module(Evas_Object *parent, const char *params EINA_UNUSED);
-    
+
 void _battery_config_updated(void);
 extern Config *battery_config;
 

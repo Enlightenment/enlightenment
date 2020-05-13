@@ -111,8 +111,8 @@ _battery_udev_battery_add(const char *syspath)
      }
    bat->last_update = ecore_time_get();
    bat->udi = eina_stringshare_add(syspath);
-   bat->poll = ecore_poller_add(ECORE_POLLER_CORE, 
-                                battery_config->poll_interval, 
+   bat->poll = ecore_poller_add(ECORE_POLLER_CORE,
+                                battery_config->poll_interval,
                                 _battery_udev_battery_update_poll, bat);
    device_batteries = eina_list_append(device_batteries, bat);
    _battery_udev_battery_update(syspath, bat);
@@ -178,7 +178,7 @@ _battery_udev_ac_del(const char *syspath)
    free(ac);
 }
 
-static Eina_Bool 
+static Eina_Bool
 _battery_udev_battery_update_poll(void *data)
 {
    _battery_udev_battery_update(NULL, data);

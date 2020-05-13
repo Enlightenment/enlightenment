@@ -633,7 +633,7 @@ _signal_add_show(E_Config_Dialog_Data *cfdata)
    entry = o = e_widget_entry_add(cfdata->locals.dia->win, &cfdata->locals.dia_source, NULL, NULL, NULL);
    e_widget_framelist_object_append(ol, o);
    e_widget_list_object_append(obg, ol, 1, 0, 0.5);
-   
+
    ol = e_widget_framelist_add(evas, _("Signal:"), 0);
    o = e_widget_entry_add(cfdata->locals.dia->win, &cfdata->locals.dia_signal, NULL, NULL, NULL);
    e_widget_framelist_object_append(ol, o);
@@ -650,7 +650,7 @@ static void
 _add_signal_binding_cb(void *data, void *data2 EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata = data;
-   
+
    _auto_apply_changes(cfdata);
    _signal_add_show(cfdata);
 }

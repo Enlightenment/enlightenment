@@ -83,7 +83,7 @@ _battery_sysctl_start(void)
 
           bat->mib = malloc(sizeof(int) * 4);
           if (!bat->mib) return 0;
-          sysctlnametomib("hw.acpi.battery.life", bat->mib, &len); 
+          sysctlnametomib("hw.acpi.battery.life", bat->mib, &len);
 
           bat->mib_state = malloc(sizeof(int) * 4);
           if (!bat->mib_state) return 0;
@@ -203,7 +203,7 @@ _battery_sysctl_battery_update()
             charge = (double)s.value;
          }
 
-       /* This is a workaround because there's an ACPI bug */ 
+       /* This is a workaround because there's an ACPI bug */
        if ((EINA_FLT_EQ(charge, 0.0)) || (EINA_FLT_EQ(bat->last_full_charge, 0.0)))
          {
            /* last full capacity */

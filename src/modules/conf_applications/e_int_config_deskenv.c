@@ -135,7 +135,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    int cde = 0;
 
    o = e_widget_list_add(evas, 0, 0);
-   
+
    fr = e_widget_framelist_add(evas, _("Execution"), 0);
    ob = e_widget_check_add(evas, _("Only launch single instances"),
                            &(cfdata->exe_always_single_instance));
@@ -155,7 +155,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
         e_widget_list_object_append(o, fr, 1, 0, 0.0);
      }
 #endif
-   
+
    fr = e_widget_framelist_add(evas, _("Major Desktops"), 0);
    ob = e_widget_check_add(evas, _("Start GNOME services on login"),
                            &(cfdata->load_gnome));

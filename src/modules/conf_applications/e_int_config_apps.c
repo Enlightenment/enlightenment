@@ -488,7 +488,7 @@ _list_items_icon_set_cb(E_Config_App_List *apps)
    EINA_LIST_FREE(apps->icons, o)
      {
        if (count++ == 5) break;
-       
+
        _list_item_icon_set(o, evas_object_data_get(o, "deskicon"));
      }
    if (!apps->icons) apps->idler = NULL;

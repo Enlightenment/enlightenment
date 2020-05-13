@@ -10,7 +10,7 @@ static int _advanced_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfda
 static Evas_Object *_advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata);
 #endif
 
-struct _E_Config_Dialog_Data 
+struct _E_Config_Dialog_Data
 {
    int cnfmdlg_disabled;
    int cfgdlg_auto_apply;
@@ -20,21 +20,21 @@ struct _E_Config_Dialog_Data
 };
 
 E_Config_Dialog *
-e_int_config_dialogs(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED) 
+e_int_config_dialogs(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
-   
+
    if (e_config_dialog_find("E", "settings/dialogs")) return NULL;
    v = E_NEW(E_Config_Dialog_View, 1);
-   
+
    v->create_cfdata = _create_data;
    v->free_cfdata = _free_data;
    v->basic.apply_cfdata = _basic_apply_data;
    v->basic.create_widgets = _basic_create_widgets;
    v->basic.check_changed = _basic_check_changed;
    v->override_auto_apply = 1;
-   
+
    cfd = e_config_dialog_new(NULL, _("Dialog Settings"),
 			     "E", "settings/dialogs",
 			     "preferences-system", 0, v, NULL);
@@ -78,7 +78,7 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata
      e_config->remember_internal_windows |= E_REMEMBER_INTERNAL_DIALOGS;
    else
      e_config->remember_internal_windows &= ~E_REMEMBER_INTERNAL_DIALOGS;
-   
+
    e_config_save_queue();
    return 1;
 }
@@ -103,7 +103,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
 {
    Evas_Object *o, *of, *ob;
    E_Radio_Group *rg;
-   
+
    o = e_widget_list_add(evas, 0, 0);
 
    of = e_widget_framelist_add(evas, _("General Settings"), 0);
@@ -126,7 +126,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    e_widget_list_object_append(o, of, 1, 0, 0.5);
 
    of = e_widget_framelist_add(evas, _("Remember"), 0);
-   ob = e_widget_check_add(evas, _("Remember size and position of dialogs"), 
+   ob = e_widget_check_add(evas, _("Remember size and position of dialogs"),
                            &(cfdata->remember_windows));
    e_widget_framelist_object_append(of, ob);
    e_widget_list_object_append(o, of, 1, 0, 0.5);
@@ -136,7 +136,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
 
 #if 0
 static int
-_advanced_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata) 
+_advanced_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
 {
    /* Auto Apply is disabled in E for now */
    /* (e_config->cfgdlg_auto_apply = cfdata->auto_apply; */
@@ -148,18 +148,18 @@ _advanced_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
 }
 
 static Evas_Object *
-_advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata) 
+_advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    Evas_Object *o, *ob, *of;
    E_Radio_Group *rg;
-   
+
    o = e_widget_list_add(evas, 0, 0);
 
 //   of = e_widget_framelist_add(evas, _("General Settings"), 0);
 //   ob = e_widget_check_add(evas, _("Auto-Apply Settings Changes"), &(cfdata->auto_apply));
 //   e_widget_framelist_object_append(of, ob);
-//   e_widget_list_object_append(o, of, 1, 1, 0.5);   
-   
+//   e_widget_list_object_append(o, of, 1, 1, 0.5);
+
    of = e_widget_framelist_add(evas, _("Default Dialog Mode"), 0);
    rg = e_widget_radio_group_new(&(cfdata->default_mode));
 
@@ -167,8 +167,8 @@ _advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data 
    e_widget_framelist_object_append(of, ob);
    ob = e_widget_radio_add(evas, _("Advanced Mode"), E_CONFIG_DIALOG_CFDATA_TYPE_ADVANCED, rg);
    e_widget_framelist_object_append(of, ob);
-   
-   e_widget_list_object_append(o, of, 1, 1, 0.5);   
+
+   e_widget_list_object_append(o, of, 1, 1, 0.5);
    return o;
 }
 #endif

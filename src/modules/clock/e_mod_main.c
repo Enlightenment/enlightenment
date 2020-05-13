@@ -490,7 +490,7 @@ e_int_clock_instances_redo(Eina_Bool all)
         edje_object_part_text_set(o, "e.text.today", todaystr);
         edje_object_message_signal_process(o);
         _eval_instance_size(inst);
-        
+
         if (inst->o_popclock)
           {
              o = inst->o_popclock;
@@ -619,7 +619,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    inst->cfg = _conf_item_get(id);
 
    _todaystr_eval(inst, todaystr, sizeof(todaystr) - 1);
-   
+
    o = edje_object_add(gc->evas);
    edje_object_signal_callback_add(o, "e,state,sizing,changed", "*",
                                    _clock_sizing_changed_cb, inst);

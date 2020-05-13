@@ -237,14 +237,14 @@ _device_type_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending E
      goto error;
 
    eldbus_message_iter_arguments_get(variant, "u", &type);
-   if (type == 1) 
+   if (type == 1)
      {
         obj = eldbus_object_get(conn, BUS, path);
         EINA_SAFETY_ON_FALSE_RETURN(obj);
         upower_proxy_ac = eldbus_proxy_get(obj, IFACE_PROPERTIES);
         _process_ac(proxy);
      }
-   else if (type == 2) 
+   else if (type == 2)
      {
         obj = eldbus_object_get(conn, BUS, path);
         EINA_SAFETY_ON_FALSE_RETURN(obj);
@@ -366,14 +366,14 @@ _battery_upower_stop(void)
    obj = eldbus_proxy_object_get(upower_proxy);
    eldbus_proxy_unref(upower_proxy);
    eldbus_object_unref(obj);
-   if (upower_proxy_ac) 
+   if (upower_proxy_ac)
      {
         obj_ac = eldbus_proxy_object_get(upower_proxy_ac);
         eldbus_proxy_unref(upower_proxy_ac);
         eldbus_object_unref(obj_ac);
         upower_proxy_ac = NULL;
      }
-   if (upower_proxy_bat) 
+   if (upower_proxy_bat)
      {
         obj_bat = eldbus_proxy_object_get(upower_proxy_bat);
         eldbus_proxy_unref(upower_proxy_bat);

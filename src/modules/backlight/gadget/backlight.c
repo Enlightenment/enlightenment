@@ -36,10 +36,10 @@ _backlight_level_set(Instance *inst, double val, Eina_Bool set_slider)
    if (val > 1.0) val = 1.0;
    if (val < 0.0) val = 0.0;
    inst->val = val;
-   
+
    if (set_slider)
      elm_slider_value_set(inst->o_slider, inst->val * 100);
-   
+
    e_backlight_mode_set(e_comp_object_util_zone_get(inst->o_main), E_BACKLIGHT_MODE_NORMAL);
    e_backlight_level_set(e_comp_object_util_zone_get(inst->o_main), inst->val, 0.0);
    e_config->backlight.normal = inst->val;

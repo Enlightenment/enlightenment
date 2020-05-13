@@ -94,11 +94,11 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED,
    e_widget_frametable_object_append(of, ob, 0, 3, 1, 1, 1, 1, 0, 0);
    ob = e_widget_radio_add(evas, _("24 h"), 1, rg);
    e_widget_frametable_object_append(of, ob, 0, 4, 1, 1, 1, 1, 0, 0);
-   
+
    e_widget_table_object_append(tab, of, 0, 0, 1, 1, 1, 1, 1, 1);
 
    of = e_widget_frametable_add(evas, _("Date"), 0);
-   
+
    rg = e_widget_radio_group_new(&(cfdata->cfg.show_date));
    ob = e_widget_radio_add(evas, _("None"), 0, rg);
    e_widget_frametable_object_append(of, ob, 0, 0, 1, 1, 1, 1, 0, 0);
@@ -112,7 +112,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED,
    e_widget_frametable_object_append(of, ob, 0, 4, 1, 1, 1, 1, 0, 0);
 
    e_widget_table_object_append(tab, of, 0, 1, 1, 1, 1, 1, 1, 1);
-   
+
    of = e_widget_frametable_add(evas, _("Week"), 0);
 
    ob = e_widget_label_add(evas, _("Start"));

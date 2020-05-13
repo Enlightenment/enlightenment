@@ -112,7 +112,7 @@ _gad_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient)
    inst->o_bluez5 = o = elm_layout_add(parent);
    _mod_icon_set(o, EINA_TRUE);
    evas_object_size_hint_aspect_set(o, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
-// XXX: fill in later when we have gotten this far   
+// XXX: fill in later when we have gotten this far
 //   e_gadget_configure_cb_set(o, _gad_config);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP, _gad_mouse_up, inst);
    if (*id != -1)

@@ -8,7 +8,7 @@
 #define MOD_CONFIG_FILE_VERSION    ((MOD_CONFIG_FILE_EPOCH * 1000000) + MOD_CONFIG_FILE_GENERATION)
 
 typedef struct _Config Config;
-struct _Config 
+struct _Config
 {
    E_Module *module;
    E_Config_Dialog *cfd;

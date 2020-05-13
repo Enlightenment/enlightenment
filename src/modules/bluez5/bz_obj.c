@@ -195,10 +195,10 @@ cb_obj_prop_entry(void *data, const void *key, Eldbus_Message_Iter *var)
    // dict ServiceData [readonly, optional]
    //  Service advertisement data. Keys are the UUIDs in
    //  string format followed by its byte array value.
-   // 
+   //
    // array{byte} AdvertisingFlags [readonly, experimental]
    //  The Advertising Data Flags of the remote device.
-   // 
+   //
    // dict AdvertisingData [readonly, experimental]
    //  The Advertising Data of the remote device. Keys are
    //  are 8 bits AD Type followed by data as byte array.
