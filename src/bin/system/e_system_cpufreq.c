@@ -159,5 +159,5 @@ e_system_cpufreq_init(void)
 void
 e_system_cpufreq_shutdown(void)
 {
-   // only shutdown things we really have to - no need to free mem etc.   
+   // only shutdown things we really have to - no need to free mem etc.
 }

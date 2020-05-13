@@ -121,7 +121,7 @@ e_efx_zoom(Evas_Object *obj, E_Efx_Effect_Speed speed, double starting_zoom, dou
 {
    E_EFX *e;
    E_Efx_Zoom_Data *ezd;
- 
+
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
    if (ending_zoom <= 0.0) return EINA_FALSE;
    if (starting_zoom < 0.0) return EINA_FALSE;

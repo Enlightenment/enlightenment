@@ -361,7 +361,7 @@ e_efx_pan(Evas_Object *obj, E_Efx_Effect_Speed speed, const Evas_Point *distance
    E_EFX *e;
    E_Efx_Pan_Data *epd;
    Evas_Coord x = 0, y = 0;
- 
+
    if (!distance) return EINA_FALSE;
    if (total_time < 0.0) return EINA_FALSE;
    if (speed > E_EFX_EFFECT_SPEED_SINUSOIDAL) return EINA_FALSE;

@@ -135,7 +135,7 @@ e_efx_move(Evas_Object *obj, E_Efx_Effect_Speed speed, const Evas_Point *end_poi
    E_EFX *e;
    E_Efx_Move_Data *emd;
    Evas_Coord x, y;
- 
+
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
    if (!end_point) return EINA_FALSE;
    if (total_time < 0.0) return EINA_FALSE;
@@ -179,7 +179,7 @@ e_efx_move_circle(Evas_Object *obj, E_Efx_Effect_Speed speed, const Evas_Point *
    E_EFX *e;
    E_Efx_Move_Data *emd;
    Evas_Coord x, y;
- 
+
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
    if (!degrees) return EINA_FALSE;
    if (!center) return EINA_FALSE;
