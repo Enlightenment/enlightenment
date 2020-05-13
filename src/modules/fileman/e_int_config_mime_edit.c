@@ -15,7 +15,7 @@ static void         _cb_fsel_cancel (void *data, E_Dialog *dia);
 static void         _cb_file_change (void *data);
 
 typedef enum _Icon_Type Icon_Type;
-enum _Icon_Type 
+enum _Icon_Type
 {
      THUMB,
      THEME,
@@ -24,14 +24,14 @@ enum _Icon_Type
      DEFAULT
 };
 
-struct _E_Config_Dialog_Data 
+struct _E_Config_Dialog_Data
 {
    char *mime;
    char *icon;
    int type;
 
    char *file;
-   struct 
+   struct
      {
 	Evas_Object *icon;
 	Evas_Object *icon_wid, *fsel_wid;
@@ -45,18 +45,18 @@ struct _E_Config_Dialog_Data
 #define IFFREE(src) if (src) free(src); src = NULL;
 
 E_Config_Dialog *
-e_int_config_mime_edit(E_Config_Mime_Icon *data, void *data2) 
+e_int_config_mime_edit(E_Config_Mime_Icon *data, void *data2)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
    E_Config_Dialog_Data *cfdata;
-   
+
    if (e_config_dialog_find("E", "fileman/mime_edit_dialog")) return NULL;
 
    cfdata = E_NEW(E_Config_Dialog_Data, 1);
    cfdata->data = data;
    cfdata->data2 = data2;
-   
+
    v = E_NEW(E_Config_Dialog_View, 1);
    v->create_cfdata = _create_data;
    v->free_cfdata = _free_data;
@@ -64,21 +64,21 @@ e_int_config_mime_edit(E_Config_Mime_Icon *data, void *data2)
    v->basic.check_changed = _basic_check;
    v->basic.apply_cfdata = _basic_apply;
 
-   cfd = e_config_dialog_new(NULL, _("File Icon"), "E", 
+   cfd = e_config_dialog_new(NULL, _("File Icon"), "E",
 			     "fileman/mime_edit_dialog",
 			     "preferences-file-icons", 0, v, cfdata);
    return cfd;
 }
 
 static void *
-_create_data(E_Config_Dialog *cfd) 
+_create_data(E_Config_Dialog *cfd)
 {
    _fill_data(cfd, cfd->data);
    return cfd->data;
 }
 
 static void
-_fill_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata) 
+_fill_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    E_Config_Mime_Icon *mi;
 
@@ -87,19 +87,19 @@ _fill_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
    IFDUP(mi->mime, cfdata->mime);
    IFDUP(mi->icon, cfdata->icon);
    IFDUP(mi->icon, cfdata->file);
-   
+
    if (!cfdata->icon)
      cfdata->type = DEFAULT;
-   else 
+   else
      {
 	if (!strcmp(cfdata->icon, "THUMB"))
 	  cfdata->type = THUMB;
 	else if (!strncmp(cfdata->icon, "e/icons/fileman/mime", 20))
 	  cfdata->type = THEME;
-	else 
+	else
 	  {
 	     char *p;
-	     
+	
 	     p = strrchr(cfdata->icon, '.');
 	     if ((p) && (!strcmp(p, ".edj")))
 	       cfdata->type = EDJ;
@@ -110,11 +110,11 @@ _fill_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 }
 
 static void
-_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata) 
+_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
-   if (cfdata->gui.fsel) 
+   if (cfdata->gui.fsel)
      e_object_del(E_OBJECT(cfdata->gui.fsel));
-   
+
    IFFREE(cfdata->file);
    IFFREE(cfdata->mime);
    IFFREE(cfdata->icon);
@@ -123,12 +123,12 @@ _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 }
 
 static Evas_Object *
-_basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata) 
+_basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    Evas_Object *o, *of;
    Evas_Object *ob, *oi, *icon;
    E_Radio_Group *rg;
-   
+
    o = e_widget_list_add(evas, 0, 0);
 
    of = e_widget_frametable_add(evas, _("Basic Info"), 0);
@@ -139,7 +139,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    e_widget_size_min_set(ob, 100, 1);
    e_widget_frametable_object_append(of, ob, 1, 0, 1, 1, 1, 1, 1, 1);
    e_widget_list_object_append(o, of, 1, 1, 0.5);
-      
+
    of = e_widget_frametable_add(evas, _("Icon"), 0);
    rg = e_widget_radio_group_new(&cfdata->type);
    ob = e_widget_radio_add(evas, _("Use Generated Thumbnail"), 0, rg);
@@ -160,17 +160,17 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 
    oi = e_widget_button_add(evas, "", NULL, _cb_icon_sel, cfdata, cfd);
    cfdata->gui.icon_wid = oi;
-   if (cfdata->icon) 
+   if (cfdata->icon)
      {
 	icon = _get_icon(cfdata);
-	if (icon) 
+	if (icon)
 	  e_widget_button_icon_set(oi, icon);
      }
    e_widget_size_min_set(oi, 48, 48);
    e_widget_frametable_object_append(of, oi, 1, 5, 1, 1, 1, 1, 1, 1);
    e_widget_list_object_append(o, of, 1, 1, 0.5);
 
-   switch (cfdata->type) 
+   switch (cfdata->type)
      {
       case EDJ:
       case IMG:
@@ -180,7 +180,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 	e_widget_disabled_set(cfdata->gui.icon_wid, 1);
 	break;
      }
-   
+
    return o;
 }
 
@@ -203,14 +203,14 @@ _basic_check(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 }
 
 static int
-_basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata) 
+_basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    Eina_List *l;
    E_Config_Mime_Icon *mi;
    char buf[4096];
    int found = 0;
-   
-   for (l = e_config->mime_icons; l; l = l->next) 
+
+   for (l = e_config->mime_icons; l; l = l->next)
      {
 	mi = l->data;
 	if (!mi) continue;
@@ -218,20 +218,20 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 	found = 1;
 	break;
      }
-   
-   if (found) 
+
+   if (found)
      {
 	if (mi->icon)
 	  eina_stringshare_del(mi->icon);
      }
-   else 
+   else
      {
 	if (cfdata->type == DEFAULT) return 1;
 	mi = E_NEW(E_Config_Mime_Icon, 1);
 	mi->mime = eina_stringshare_add(cfdata->mime);
      }
 
-   switch (cfdata->type) 
+   switch (cfdata->type)
      {
       case THUMB:
 	mi->icon = eina_stringshare_add("THUMB");
@@ -257,7 +257,7 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 
    if (!found)
      e_config->mime_icons = eina_list_append(e_config->mime_icons, mi);
-   
+
    e_config_save_queue();
    e_fm_mime_icon_cache_flush();
    e_fm2_all_icons_update();
@@ -275,22 +275,22 @@ _dia_del(void *data)
    cfdata->gui.fsel = NULL;
 }
 
-static void 
-_cb_icon_sel(void *data, void *data2) 
+static void
+_cb_icon_sel(void *data, void *data2)
 {
    E_Config_Dialog_Data *cfdata;
    E_Config_Dialog *cfd;
    E_Dialog *dia;
    Evas_Object *o;
    Evas_Coord w, h;
-   
+
    cfdata = data;
    if (!cfdata) return;
    if (cfdata->gui.fsel) return;
 
    cfd = data2;
    if (!cfd) return;
-   
+
    dia = e_dialog_new(NULL, "E", "_mime_icon_select_dialog");
    if (!dia) return;
    if (cfdata->type == EDJ)
@@ -299,7 +299,7 @@ _cb_icon_sel(void *data, void *data2)
      e_dialog_title_set(dia, _("Select an image"));
 
    e_dialog_resizable_set(dia, 1);
-     
+
    dia->data = cfdata;
    e_object_del_attach_func_set(E_OBJECT(dia), _dia_del);
    o = e_widget_fsel_add(evas_object_evas_get(dia->win), "~/", "/", NULL, NULL,
@@ -309,24 +309,24 @@ _cb_icon_sel(void *data, void *data2)
    evas_object_show(o);
    e_widget_size_min_get(o, &w, &h);
    e_dialog_content_set(dia, o, w, h);
-   
+
    e_dialog_button_add(dia, _("OK"), NULL, _cb_fsel_ok, cfdata);
    e_dialog_button_add(dia, _("Cancel"), NULL, _cb_fsel_cancel, cfdata);
    elm_win_center(dia->win, 1, 1);
    e_dialog_show(dia);
    e_dialog_border_icon_set(dia, "enlightenment/file_icons");
-   
+
    cfdata->gui.fsel = dia;
 }
 
 static Evas_Object *
-_get_icon(void *data) 
+_get_icon(void *data)
 {
    Evas *evas;
    E_Config_Dialog_Data *cfdata;
    Evas_Object *icon = NULL;
    char buf[4096];
-   
+
    cfdata = data;
    if (!cfdata) return NULL;
 
@@ -334,11 +334,11 @@ _get_icon(void *data)
    if (cfdata->gui.icon)
      evas_object_del(cfdata->gui.icon);
    cfdata->gui.icon = NULL;
-   
+
    if (cfdata->type == DEFAULT) return NULL;
 
    evas = evas_object_evas_get(cfdata->gui.icon_wid);
-   switch (cfdata->type) 
+   switch (cfdata->type)
      {
       case THUMB:
 	icon = edje_object_add(evas);
@@ -362,19 +362,19 @@ _get_icon(void *data)
       default:
 	break;
      }
-   
+
    cfdata->gui.icon = icon;
    return icon;
 }
 
-static void 
-_cb_type(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED) 
+static void
+_cb_type(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
-   
+
    cfdata = data;
    if (!cfdata) return;
-   switch (cfdata->type) 
+   switch (cfdata->type)
      {
       case EDJ:
       case IMG:
@@ -386,24 +386,24 @@ _cb_type(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
      }
 }
 
-static void 
-_cb_fsel_sel(void *data, Evas_Object *obj EINA_UNUSED) 
+static void
+_cb_fsel_sel(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
-   
+
    cfdata = data;
    if (!cfdata) return;
 }
 
-static void 
-_cb_fsel_ok(void *data, E_Dialog *dia) 
+static void
+_cb_fsel_ok(void *data, E_Dialog *dia)
 {
    E_Config_Dialog_Data *cfdata;
    const char *file;
-   
+
    cfdata = data;
    if (!cfdata) return;
-   
+
    file = e_widget_fsel_selection_path_get(cfdata->gui.fsel_wid);
    IFFREE(cfdata->file);
    IFDUP(file, cfdata->file);
@@ -412,26 +412,26 @@ _cb_fsel_ok(void *data, E_Dialog *dia)
      _cb_file_change(cfdata);
 }
 
-static void 
-_cb_fsel_cancel(void *data, E_Dialog *dia) 
+static void
+_cb_fsel_cancel(void *data, E_Dialog *dia)
 {
    E_Config_Dialog_Data *cfdata;
-   
+
    cfdata = data;
    e_object_del(E_OBJECT(dia));
    cfdata->gui.fsel = NULL;
 }
 
-static void 
-_cb_file_change(void *data) 
+static void
+_cb_file_change(void *data)
 {
    E_Config_Dialog_Data *cfdata;
    Evas_Object *icon;
-   
+
    cfdata = data;
    if (!cfdata) return;
    if (!cfdata->file) return;
-   switch (cfdata->type) 
+   switch (cfdata->type)
      {
       case EDJ:
 	if (!strstr(cfdata->file, ".edj")) return;
@@ -443,10 +443,10 @@ _cb_file_change(void *data)
    IFFREE(cfdata->icon);
    IFDUP(cfdata->file, cfdata->icon);
 
-   if (cfdata->icon) 
+   if (cfdata->icon)
      {
 	icon = _get_icon(cfdata);
-	if (icon) 
+	if (icon)
 	  e_widget_button_icon_set(cfdata->gui.icon_wid, icon);
      }
 }

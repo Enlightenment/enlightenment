@@ -87,7 +87,7 @@ e_modapi_init(E_Module *m)
    e_fileman_dbus_init();
 
    e_fwin_nav_init();
-   
+
    return m;
 }
 
@@ -108,7 +108,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
      e_fwin_zone_shutdown(zone);
 
    e_fwin_nav_shutdown();
-   
+
    /* remove module-supplied menu additions */
    if (maug)
      {
@@ -139,7 +139,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
       e_object_del(E_OBJECT(cfd));
    while ((cfd = e_config_dialog_get("E", "fileman/fileman")))
       e_object_del(E_OBJECT(cfd));
-   
+
    e_configure_registry_item_del("fileman/file_icons");
    e_configure_registry_item_del("fileman/fileman");
    e_configure_registry_category_del("fileman");

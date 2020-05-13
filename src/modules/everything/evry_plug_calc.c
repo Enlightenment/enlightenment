@@ -79,16 +79,16 @@ _finish(Evry_Plugin *plugin)
 
         if (it == cur_item)
           cur_item = NULL;
-        
+
         EVRY_ITEM_FREE(it);
      }
 
    if (cur_item)
      {
         EVRY_ITEM_FREE(cur_item);
-        cur_item = NULL;        
+        cur_item = NULL;
      }
-   
+
    EINA_LIST_FREE (handlers, h)
      ecore_event_handler_del(h);
 
@@ -177,7 +177,7 @@ _fetch(Evry_Plugin *plugin, const char *input)
              eina_stringshare_del(result);
           }
      }
-   
+
    if (!strncmp(input, "scale=", 6))
      snprintf(buf, 1024, "%s\n", input);
    else

@@ -51,7 +51,7 @@ struct _Evry_Item
 
   /* optional */
   Evry_Type subtype;
-  
+
   Evas_Object *(*icon_get) (Evry_Item *it, Evas *e);
   void (*free) (Evry_Item *it);
 
@@ -71,7 +71,7 @@ struct _Evry_Action
 
   /* identifier */
   const char *name;
-  
+
   struct
   {
     /* requested type for action */
@@ -186,7 +186,7 @@ struct _Evry_Plugin
 
   /* optional: list of Evry_Action that are specific for items of this plugin */
   Eina_List *actions;
-  
+
   /* optional: set type which the plugin can handle in 'begin' */
   Evry_Type input_type;
 

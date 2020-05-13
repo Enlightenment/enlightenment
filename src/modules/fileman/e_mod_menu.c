@@ -177,7 +177,7 @@ _e_mod_menu_populate_item(void *data, Eio_File *handler EINA_UNUSED, const Eina_
              return;
           }
      }
-     
+
    if (eina_str_has_extension(info->path + info->name_start, "desktop"))
      ed = efreet_desktop_get(info->path);
    if (ed)

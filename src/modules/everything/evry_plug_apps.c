@@ -1512,7 +1512,7 @@ _scan_idler(void *data EINA_UNUSED)
           {
              E_Exe *ee;
              Eina_List *l, *l2 = exe_files;
-             
+
              EINA_LIST_FOREACH(exe_list, l ,ee)
                {
                   if (ee->path != l2->data)
@@ -1558,7 +1558,7 @@ _scan_idler(void *data EINA_UNUSED)
 
              e_config_domain_save(_exebuf_cache_file, exelist_edd, el);
              INF("plugin exebuf save: %s, %d", _exebuf_cache_file, eina_list_count(el->list));
-             
+
              exe_list = el->list;
              free(el);
           }
@@ -1578,7 +1578,7 @@ _scan_idler(void *data EINA_UNUSED)
         dir = exe_path->data;
         exe_dir = eina_file_direct_ls(dir);
         INF("scan dir: %s", dir);
-        
+
      }
    /* if we have an opened dir - scan the next item */
    if (exe_dir)
@@ -1658,7 +1658,7 @@ _exe_path_list()
           }
         if (pp > last)
           exe_path = eina_list_append(exe_path, strdup(last));
-        
+
         free(path);
      }
 
@@ -1681,7 +1681,7 @@ _scan_executables()
      {
         exe_list = el->list;
         INF("plugin exebuf load: %s, %d", _exebuf_cache_file, eina_list_count(el->list));
-             
+
         free(el);
      }
 

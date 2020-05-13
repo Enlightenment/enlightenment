@@ -52,7 +52,7 @@ struct _E_Fwin
    Ecore_Timer *spring_close_timer;
    E_Fwin *spring_parent;
    E_Fwin *spring_child;
-   
+
    Ecore_Event_Handler *zone_handler;
    Ecore_Event_Handler *zone_del_handler;
 };
@@ -547,7 +547,7 @@ e_fwin_zone_shutdown(E_Zone *zone)
 {
    Eina_List *f, *fn;
    E_Fwin *fwin;
-   
+
 
    EINA_LIST_FOREACH_SAFE(fwins, f, fn, fwin)
      {
@@ -746,7 +746,7 @@ _e_fwin_new(const char *dev,
 //   o = e_icon_add(evas_object_evas_get(fwin->win));
 //   e_icon_scale_size_set(o, 0);
 //   e_icon_fill_inside_set(o, 0);
-   edje_object_part_swallow(e_scrollframe_edje_object_get(page->scr), 
+   edje_object_part_swallow(e_scrollframe_edje_object_get(page->scr),
                             "e.swallow.overlay", o);
    evas_object_pass_events_set(o, 1);
    fwin->over_obj = o;
@@ -940,14 +940,14 @@ _e_fwin_icon_popup(void *data)
    mw = zone->w * fileman_config->tooltip.size / 100.0;
    mh = zone->h * fileman_config->tooltip.size / 100.0;
 
-   edje_object_part_text_set(bg, "e.text.title", 
+   edje_object_part_text_set(bg, "e.text.title",
                              popup_icon->label ?
                              popup_icon->label : popup_icon->file);
-   
+
    list = e_widget_list_add(e_comp->evas, 0, 0);
    if (fwin->win)
      evas_object_event_callback_add(fwin->win, EVAS_CALLBACK_DEL, _e_fwin_popup_del, list);
-   
+
    o = e_widget_filepreview_add(e_comp->evas, mw, mh, 0);
    e_widget_filepreview_clamp_video_set(o, fileman_config->tooltip.clamp_size);
    e_widget_filepreview_path_set(o, buf, popup_icon->mime);
@@ -1065,7 +1065,7 @@ _e_fwin_page_favorites_add(E_Fwin_Page *page)
                                     e_fm2_pan_get,
                                     e_fm2_pan_max_get,
                                     e_fm2_pan_child_size_get);
-   e_scrollframe_custom_theme_set(e_widget_scrollframe_object_get(o), 
+   e_scrollframe_custom_theme_set(e_widget_scrollframe_object_get(o),
                                   "base/theme/fileman",
                                   "e/fileman/default/scrollframe");
    evas_object_propagate_events_set(page->flist, 0);
@@ -1385,7 +1385,7 @@ _e_fwin_desktop_run(Efreet_Desktop *desktop,
    E_Fwin *fwin = page->fwin;
    E_Fm2_Icon_Info *ici;
    char *file;
-   
+
    skip_history = EINA_FALSE;
 
    selected = e_fm2_selected_list_get(page->fm_obj);
@@ -1868,7 +1868,7 @@ _e_fwin_changed(void *data,
         evas_object_hide(fwin->over_obj);
         if (fwin->overlay_file)
           {
-             edje_object_file_set(fwin->over_obj, fwin->overlay_file, 
+             edje_object_file_set(fwin->over_obj, fwin->overlay_file,
                                   "e/desktop/background");
 //             ext = strrchr(fwin->overlay_file, '.');
 //             if (ext && !strcasecmp(ext, ".edj"))
@@ -2238,7 +2238,7 @@ _e_fwin_cb_menu_extend_start(void *data,
 
    mi = e_menu_item_new_relative(subm, mi);
    e_menu_item_separator_set(mi, EINA_TRUE);
-   
+
    mi = e_menu_item_new(m);
    e_menu_item_separator_set(mi, EINA_TRUE);
 #endif
@@ -2247,7 +2247,7 @@ _e_fwin_cb_menu_extend_start(void *data,
    while (eina_list_count(selected) == 1)
      {
         if (_e_fwin_file_is_exec(eina_list_data_get(selected)) == E_FWIN_EXEC_NONE) break;
-        
+
         e_menu_item_label_set(mi, _("Run"));
         e_util_menu_item_theme_icon_set(mi, "system-run");
         set = EINA_TRUE;
@@ -2493,7 +2493,7 @@ _e_fwin_open(E_Fwin_Page *page, E_Fm2_Icon_Info *ici, E_Fwin_Win_Mode win_mode, 
         return NULL;
      }
    _e_fwin_border_set(page, fwin, ici);
-        
+
    return fwin;
 }
 
@@ -2629,9 +2629,9 @@ _e_fwin_file_open_dialog(E_Fwin_Page *page,
      dia = e_dialog_new(NULL,
                         "E", "_fwin_open_apps");
    else return;  /* make clang happy */
-   
+
    e_dialog_resizable_set(dia, 1);
-   
+
    fad = E_NEW(E_Fwin_Apps_Dialog, 1);
    e_dialog_title_set(dia, _("Open with..."));
    e_dialog_button_add(dia, _("Open"), "document-open",
@@ -2812,7 +2812,7 @@ _e_fwin_file_open_dialog_cb_key_down(void *data,
    if (!strcmp(ev->key, "Escape"))
      _e_fwin_cb_close(fwin->fad, fwin->fad->dia);
    else if ((!strcmp(ev->key, "Return")) ||
-            (!strcmp(ev->key, "KP_Enter"))) 
+            (!strcmp(ev->key, "KP_Enter")))
      _e_fwin_cb_open(fwin->fad, fwin->fad->dia);
 }
 
@@ -3032,7 +3032,7 @@ _e_fwin_op_registry_listener_cb(void *data,
    char *total;
    int mw, mh;
    Edje_Message_Float msg;
-   
+
    // Don't show if the operation keep less than 1 second
    if (ere->start_time + 1.0 > ecore_loop_time_get()) return;
 
@@ -3146,7 +3146,7 @@ _e_fwin_op_registry_listener_cb(void *data,
              edje_object_signal_emit(o, "e,state,busy,start", "e");
           }
      }
-   
+
    // Update element
    edje_object_part_drag_size_set(o, "e.gauge.bar",
                                   ((double)(ere->percent)) / 100.0, 1.0);

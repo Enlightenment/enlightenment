@@ -504,13 +504,13 @@ _e_smart_reconfigure_do(void *data)
         sd->idle_enter = NULL;
         return ECORE_CALLBACK_CANCEL;
      }
-   
+
    if (sd->view->hiding)
      {
         sd->idle_enter = NULL;
         return ECORE_CALLBACK_CANCEL;
      }
-   
+
    if (sd->cx > (sd->cw - sd->w)) sd->cx = sd->cw - sd->w;
    if (sd->cy > (sd->ch - sd->h)) sd->cy = sd->ch - sd->h;
    if (sd->cx < 0) sd->cx = 0;
@@ -958,9 +958,9 @@ _update_frame(Evas_Object *obj)
         ecore_idle_enterer_del(sd->idle_enter);
         sd->idle_enter = NULL;
      }
-   
+
    sd->place = EINA_TRUE;
-   
+
    _e_smart_reconfigure_do(obj);
 
    _pan_item_select(obj, sd->cur_item, 0);
@@ -1471,7 +1471,7 @@ _view_cb_mouse_wheel(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *o
      }
 }
 
-// FIXME: 'drag into' make mouse input hang after some trials 
+// FIXME: 'drag into' make mouse input hang after some trials
 #if 0
 static void
 _view_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
@@ -1526,7 +1526,7 @@ _view_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSE
         edje_object_signal_emit(sd->view->bg, "e,action,hide,back", "e");
         goto end;
      }
-   
+
    if ((sel->states->next) || (sel != sel->win->selectors[0]))
      edje_object_signal_emit(sd->view->bg, "e,action,show,back", "e");
 

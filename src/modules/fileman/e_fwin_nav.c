@@ -97,7 +97,7 @@ _event_deleted(Nav_Item *ni, int type, void *e)
      }
    else
      dir = ev->filename;
-   
+
    if (ni->path != dir) return ECORE_CALLBACK_RENEW;
    if (ni == ni->inst->sel_ni)
      {
