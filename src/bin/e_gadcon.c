@@ -1791,7 +1791,7 @@ e_gadcon_client_util_menu_items_append(E_Gadcon_Client *gcc, E_Menu *menu_gadget
              e_menu_item_callback_set(mi, _e_gadcon_client_cb_menu_edit, gcc);
           }
         mi = e_menu_item_new(menu_gadget);
-        e_menu_item_label_set(mi, _("Resizeable"));
+        e_menu_item_label_set(mi, _("Resizable"));
         e_util_menu_item_theme_icon_set(mi, "transform-scale");
         e_menu_item_check_set(mi, 1);
         if (gcc->resizable) e_menu_item_toggle_set(mi, 1);
@@ -3235,7 +3235,7 @@ _e_gadcon_client_class_feature_check(const E_Gadcon_Client_Class *cc, const char
 {
    if (!feature)
      {
-        e_util_dialog_show(_("Insufficent gadcon support"),
+        e_util_dialog_show(_("Insufficient gadcon support"),
                            _("Module %s needs to support %s"),
                            cc->name, name);
         return 0;

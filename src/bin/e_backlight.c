@@ -473,7 +473,7 @@ _backlight_system_list_cb(void *data EINA_UNUSED, const char *params)
                        devnum++;
                        // XXX: find bed bl dev for screens not supporting randr
                        // note that this is a vallback and ddc should take precedence
-                       // it matched up to a screen over this, but randr shoule be
+                       // it matched up to a screen over this, but randr should be
                        // the top priority if found
                     }
                   else break;

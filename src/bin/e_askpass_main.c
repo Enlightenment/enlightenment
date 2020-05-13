@@ -49,7 +49,7 @@ elm_main(int argc, char **argv)
         /* as long as the string is unchanged. */
         if (!strncmp(argv[1], "Username", sizeof("Username") - 1))
           askpass = EINA_FALSE;
-        /* Sudo prompt [sudo] at the begining of line */
+        /* Sudo prompt [sudo] at the beginning of line */
         if (!strncmp(argv[1], SUDO_LBL, sizeof(SUDO_LBL) - 1))
           txt = &argv[1][sizeof(SUDO_LBL)];
         else

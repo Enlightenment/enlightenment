@@ -719,7 +719,7 @@ _cb_screen_change_delay(void *data EINA_UNUSED)
    Eina_Bool change = EINA_FALSE;
    _screen_delay_timer = NULL;
    printf("RRR: ... %i %i\n", event_screen, event_ignore);
-   // if we had a screen plug/unplug etc. event and we shouldnt ignore it...
+   // if we had a screen plug/unplug etc. event and we shouldn't ignore it...
    if ((event_screen) && (!event_ignore))
      {
         Eina_List *l;

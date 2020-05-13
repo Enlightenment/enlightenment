@@ -154,7 +154,7 @@ e_screensaver_update(void)
              // wake of the screen e.g. on lid open/close we have to toggle
              // it for x to stop thinking the monitor is off when it's
              // actually on and this causes later dpms issues where the
-             // screen doesnt turn off at all because x thinks interanlly
+             // screen doesn't turn off at all because x thinks internally
              // that the monitor is still off... so this is odd, but it's
              // necessary on some hardware.
              if (!e_config->screensaver_dpms_off)

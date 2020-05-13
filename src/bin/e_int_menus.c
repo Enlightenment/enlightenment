@@ -827,7 +827,7 @@ _e_int_menus_app_finder(const char *exec)
 }
 
 /*
- * This function initalises E_Int_Menu_Applications and adds
+ * This function initialises E_Int_Menu_Applications and adds
  * our data.
  */
 static E_Int_Menu_Applications*

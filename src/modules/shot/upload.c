@@ -117,7 +117,7 @@ elm_main(int argc, char **argv)
         if (find_tmpfile(quality, buf, sizeof(buf)))
           out_file = eina_stringshare_add(buf);
      }
-   // open raw rgba data file which we willl mmap
+   // open raw rgba data file which we will mmap
    infile = eina_file_open(rgba_file, EINA_FALSE);
    if (!infile) return 2;
    fsize = eina_file_size_get(infile);

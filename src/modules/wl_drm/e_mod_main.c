@@ -430,7 +430,7 @@ _drm2_randr_create(void)
                s->config.rotation = 270;
              else
                {
-                  printf("DRM2 RRR: caution - rotation flags empty - assum 0\n");
+                  printf("DRM2 RRR: caution - rotation flags empty - assume 0\n");
                   s->config.rotation = 0;
                }
 

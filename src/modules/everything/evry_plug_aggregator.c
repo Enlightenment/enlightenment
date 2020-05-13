@@ -151,7 +151,7 @@ _fetch(Evry_Plugin *plugin, const char *input)
                   if (!strcmp(pp->name, "Actions"))
                     continue;
 
-                  /* items MUST only conatin plugins here ! */
+                  /* items MUST only contain plugins here ! */
                   EINA_LIST_FOREACH (items, ll, pp2)
                     if (pp2->name == pp->name) break;
                   if (pp2)

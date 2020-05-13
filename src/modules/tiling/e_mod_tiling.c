@@ -140,7 +140,7 @@ static const E_Gadcon_Client_Class _gc_class =
 /* }}} */
 /* Utils {{{ */
 
-/* I wonder why noone has implemented the following one yet? */
+/* I wonder why no one has implemented the following one yet? */
 static E_Desk *
 get_current_desk(void)
 {
@@ -674,7 +674,7 @@ _calculate_position_preference(E_Client *ec)
 }
 
 static void
-_insert_client_prefered(E_Client *ec)
+_insert_client_preferred(E_Client *ec)
 {
    Window_Tree *parent;
    Tiling_Split_Type type = TILING_SPLIT_VERTICAL;
@@ -717,7 +717,7 @@ _insert_client(E_Client *ec, Tiling_Split_Type type)
 
    if (ec_focused == ec)
      {
-        _insert_client_prefered(ec);
+        _insert_client_preferred(ec);
      }
    else
      {
@@ -1743,7 +1743,7 @@ _client_drag_terminate(E_Client *ec)
    //insert the client at the position where the up was
    if (desk_should_tile_check(get_current_desk()))
      {
-        _insert_client_prefered(ec);
+        _insert_client_preferred(ec);
         extra->tiled = EINA_TRUE;
      }
 

@@ -126,7 +126,7 @@ _e_wid_focus_steal(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
  * Creates a check box widget
  *
  * @param evas pointer
- * @param label the text to asign to check widget
+ * @param label the text to assign to check widget
  * @param val pointer to int where changes are stored
  * @return the newly created evas object
  */
@@ -276,10 +276,10 @@ e_widget_check_widget_disable_on_unchecked_add(Evas_Object *check, Evas_Object *
  * Creates a check box widget with icon
  *
  * @param evas pointer
- * @param label the text to asign to check widget
+ * @param label the text to assign to check widget
  * @param icon the path to the icon file
  * @param icon_w the minimum wdith of the icon
- * @param icon_h the minumum height of the icon
+ * @param icon_h the minimum height of the icon
  * @param val pointer to int where changes are stored
  * @return the newly created evas object
  */

@@ -324,7 +324,7 @@ _econnman_mod_manager_update_inst(E_Connman_Module_Context *ctxt EINA_UNUSED,
    msg = malloc(sizeof(*msg) + sizeof(int));
    msg->count = 2;
    msg->val[0] = state;
-   /* FIXME check if it's possible to receive strenght as props of cm */
+   /* FIXME check if it's possible to receive strength as props of cm */
    if (type == -1)
        msg->val[1] = 0;
    else

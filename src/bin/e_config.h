@@ -430,7 +430,7 @@ struct _E_Config
        * -zmike, 31 January 2013
        */
       const char *cur_layout; // whatever the current layout is
-      const char *selected_layout; // whatever teh current layout that the user has selected is
+      const char *selected_layout; // whatever the current layout that the user has selected is
       const char *desklock_layout;
       Eina_Bool use_cache;
    } xkb;

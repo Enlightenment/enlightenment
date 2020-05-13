@@ -564,7 +564,7 @@ _e_fm_op_stdin_data(void *data EINA_UNUSED, Ecore_Fd_Handler *fd_handler)
                }
              buf += sizeof(int);
 
-             /* Read indentifying data. */
+             /* Read identifying data. */
              memcpy(&identity, buf, sizeof(int));
              buf += sizeof(int);
 

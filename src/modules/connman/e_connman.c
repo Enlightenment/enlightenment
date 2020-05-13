@@ -933,7 +933,7 @@ _e_connman_system_name_owner_changed(void *data EINA_UNUSED,
  * This will connect to ConnMan through DBus and watch for it going in and out.
  *
  * Interesting events are:
- *   - E_CONNMAN_EVENT_MANAGER_IN: issued when connman is avaiable.
+ *   - E_CONNMAN_EVENT_MANAGER_IN: issued when connman is available.
  *   - E_CONNMAN_EVENT_MANAGER_OUT: issued when connman connection is lost.
  */
 unsigned int

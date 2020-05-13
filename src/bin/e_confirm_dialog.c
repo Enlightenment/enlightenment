@@ -14,7 +14,7 @@ _dia_del(void *data)
    e_object_del(dia->data);
 }
 
-/********** externally accesible functions ****************/
+/********** externally accessible functions ****************/
 E_API E_Confirm_Dialog *
 e_confirm_dialog_show(const char *title, const char *icon, const char *text,
                       const char *button_text, const char *button2_text,

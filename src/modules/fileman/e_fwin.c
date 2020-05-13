@@ -1204,7 +1204,7 @@ _e_fwin_custom_file_path_eval(E_Fwin *fwin,
    char buf[PATH_MAX];
    const char *res, *ret = NULL;
 
-   /* get a X-something custom tage from the .desktop for the dir */
+   /* get a X-something custom stage from the .desktop for the dir */
    res = efreet_desktop_x_field_get(ef, key);
    /* free the old path */
    if (prev_path) eina_stringshare_del(prev_path);
