@@ -415,7 +415,7 @@ void
 systray_notifier_host_shutdown(void)
 {
    Eldbus_Pending *p;
-   
+
    EINA_LIST_FREE(ctx->pending, p) eldbus_pending_cancel(p);
    systray_notifier_dbus_shutdown(ctx);
    free(ctx);

@@ -162,7 +162,7 @@ e_modapi_init(E_Module *m)
    /* register config panel entry */
    e_configure_registry_category_add("extensions", 90, _("Extensions"), NULL,
                                      "preferences-extensions");
-   e_configure_registry_item_add("extensions/notification", 30, 
+   e_configure_registry_item_add("extensions/notification", 30,
                                  _("Notification"), NULL,
                                  buf, e_int_config_notification_module);
 

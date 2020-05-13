@@ -267,7 +267,7 @@ _cpuclock_popup_create(Instance *inst)
    E_ALIGN(label, 0.5, 0.5);
    elm_object_text_set(label, text);
    elm_table_pack(table, label, 0, 0, 2, 1);
-   evas_object_show(label);    
+   evas_object_show(label);
 
    snprintf(buf, sizeof(buf), "%1.1f %s (%d %%%%)", f, u,
                  inst->cfg->cpuclock.percent);

@@ -449,7 +449,7 @@ _notification_popup_refresh(Popup_Data *popup)
                   unsigned int size;
 
                   size = e_util_icon_size_normalize(width * e_scale);
-                  new_path = efreet_icon_path_find(e_config->icon_theme, 
+                  new_path = efreet_icon_path_find(e_config->icon_theme,
                                                    icon_path, size);
                   if (new_path)
                     icon_path = new_path;
@@ -492,16 +492,16 @@ _notification_popup_refresh(Popup_Data *popup)
      {
         char buf[PATH_MAX];
 
-        snprintf(buf, sizeof(buf), "%s/e-module-notification.edj", 
+        snprintf(buf, sizeof(buf), "%s/e-module-notification.edj",
                  notification_mod->dir);
         popup->app_icon = edje_object_add(popup->e);
-        if (!e_theme_edje_object_set(popup->app_icon, 
+        if (!e_theme_edje_object_set(popup->app_icon,
                                      "base/theme/modules/notification",
                                      "e/modules/notification/logo"))
-          if (!e_theme_edje_object_set(popup->app_icon, 
+          if (!e_theme_edje_object_set(popup->app_icon,
                                        "base/theme/modules/notification",
                                        "modules/notification/logo"))
-            edje_object_file_set(popup->app_icon, buf, 
+            edje_object_file_set(popup->app_icon, buf,
                                  "modules/notification/logo");
         w = width;
         h = height;
@@ -518,7 +518,7 @@ _notification_popup_refresh(Popup_Data *popup)
    evas_object_size_hint_min_set(popup->app_icon, w, h);
    evas_object_size_hint_max_set(popup->app_icon, w, h);
 
-   edje_object_part_swallow(popup->theme, "notification.swallow.app_icon", 
+   edje_object_part_swallow(popup->theme, "notification.swallow.app_icon",
                             popup->app_icon);
    edje_object_signal_emit(popup->theme, "notification,icon", "notification");
 

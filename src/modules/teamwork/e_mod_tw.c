@@ -1209,7 +1209,7 @@ e_tw_init(void)
         E_FREE_FUNC(media[MEDIA_CACHE_TYPE_IMAGE], eet_close);
         return 0;
      }
-        
+
    cache_edd = media_cache_edd_new();
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Media_Cache_List);
    cleaner_edd = eet_data_descriptor_file_new(&eddc);

@@ -222,7 +222,7 @@ static void
 _e_qa_entry_border_props_apply(E_Quick_Access_Entry *entry)
 {
    if (!entry->client) return;
-   
+
    if (entry->config.autohide && (!entry->client->focused))
      _e_qa_border_deactivate(entry);
 #define SET(X) \
@@ -1011,7 +1011,7 @@ _e_qa_help5(void *data EINA_UNUSED)
         ecore_job_add(_e_qa_help5, NULL);
         return;
      }
-   snprintf(buf, sizeof(buf), "%s/e-module-quickaccess.edj", e_module_dir_get(qa_mod->module));   
+   snprintf(buf, sizeof(buf), "%s/e-module-quickaccess.edj", e_module_dir_get(qa_mod->module));
    qa_mod->help_dia = (E_Object*)e_confirm_dialog_show(_("Quickaccess Help"), buf,
                                                         _("You deleted it on your own, you rascal!<ps/>"
                                                           "Way to go!"),
@@ -1068,7 +1068,7 @@ _e_qa_help4(void *data EINA_UNUSED)
 {
    char buf[PATH_MAX];
 
-   snprintf(buf, sizeof(buf), "%s/e-module-quickaccess.edj", e_module_dir_get(qa_mod->module));   
+   snprintf(buf, sizeof(buf), "%s/e-module-quickaccess.edj", e_module_dir_get(qa_mod->module));
    qa_mod->help_dia = (E_Object*)e_util_dialog_internal(_("Quickaccess Help"),
                                                          _("The demo dialog has been bound to the keys you pressed.<ps/>"
                                                            "Try pressing the same keys!"));
@@ -1113,7 +1113,7 @@ _e_qa_help_bd_menu2_del(void *data EINA_UNUSED)
    qa_mod->demo_state = 0;
    qa_mod->help_timer = NULL;
    if (!qa_config->transient_entries) return;
-   _e_qa_help_timeout(NULL);   
+   _e_qa_help_timeout(NULL);
 }
 
 static Eina_Bool
@@ -1263,7 +1263,7 @@ _e_qa_help2(void *data EINA_UNUSED)
         ecore_job_add(_e_qa_help2, NULL);
         return;
      }
-   snprintf(buf, sizeof(buf), "%s/e-module-quickaccess.edj", e_module_dir_get(qa_mod->module));   
+   snprintf(buf, sizeof(buf), "%s/e-module-quickaccess.edj", e_module_dir_get(qa_mod->module));
    qa_mod->help_dia = (E_Object*)e_confirm_dialog_show(_("Quickaccess Help"), buf,
                                                         _("Quickaccess entries can be created from<ps/>"
                                                           "the border menu of any window.<ps/>"
@@ -1284,7 +1284,7 @@ _e_qa_help(void *data)
         return;
      }
    if (qa_mod->help_dia) return;
-   snprintf(buf, sizeof(buf), "%s/e-module-quickaccess.edj", e_module_dir_get(qa_mod->module));   
+   snprintf(buf, sizeof(buf), "%s/e-module-quickaccess.edj", e_module_dir_get(qa_mod->module));
    qa_mod->help_dia = (E_Object*)e_confirm_dialog_show(_("Quickaccess Help"), buf,
                                                         _("Quickaccess is a way of binding user-selected<ps/>"
                                                           "windows and applications to keyboard shortcuts.<ps/>"
@@ -1349,7 +1349,7 @@ e_qa_init(void)
    _e_qa_del->func.go = _e_qa_del_cb;
    e_action_predef_name_set(_e_qa_name, _lbl_del, _act_del, NULL, NULL, 0);
    INF("loaded qa module, registered %s action.", _act_toggle);
-   
+
    border_hook = e_int_client_menu_hook_add(_e_qa_bd_menu_hook, NULL);
    if (!qa_config->first_run) _e_qa_first_run();
    else

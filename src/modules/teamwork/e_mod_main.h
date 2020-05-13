@@ -69,7 +69,7 @@ extern Teamwork_Signal_Cb tw_signal_link_invalid[E_PIXMAP_TYPE_NONE];
 extern Teamwork_Signal_Progress_Cb tw_signal_link_progress[E_PIXMAP_TYPE_NONE];
 extern Teamwork_Signal_Cb tw_signal_link_downloading[E_PIXMAP_TYPE_NONE];
 
-EINTERN E_Config_Dialog *e_int_config_teamwork_module(Evas_Object *parent, const char *params EINA_UNUSED); 
+EINTERN E_Config_Dialog *e_int_config_teamwork_module(Evas_Object *parent, const char *params EINA_UNUSED);
 
 E_API int e_modapi_shutdown(E_Module *m EINA_UNUSED);
 

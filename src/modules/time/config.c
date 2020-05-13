@@ -405,7 +405,7 @@ _config_digital_rows_setup(Config_Item *ci, Evas_Object *tb)
         evas_object_smart_callback_add(o, "changed", _config_changed, ci);
         elm_table_pack(tb, o, 1, row++, 1, 1);
      }
-     
+
    _config_label_add(tb, _("Show Seconds:"), row);
    o = elm_check_add(tb);
    E_FILL(o);
@@ -549,7 +549,7 @@ config_clock(Config_Item *ci, E_Zone *zone)
         if (!ccname) ccname = ccnames[i];
         edje_color_class_get(ccname, &r, &g, &b, &a,
           NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-          
+
         it = elm_colorselector_palette_color_add(cs, r, g, b, a);
         o = elm_button_add(tb);
         elm_object_text_set(o, names[i]);

@@ -29,7 +29,7 @@ typedef enum
    POPUP_DISPLAY_POLICY_MULTI
 } Popup_Display_Policy;
 
-struct _Config 
+struct _Config
 {
   E_Config_Dialog *cfd;
 
@@ -48,7 +48,7 @@ struct _Config
     Eina_Bool presentation;
     Eina_Bool offline;
   } last_config_mode;
-  
+
   Ecore_Event_Handler  *handler;
   Eina_List  *popups;
   unsigned int         next_id;

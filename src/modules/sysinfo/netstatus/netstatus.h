@@ -21,7 +21,7 @@ EINTERN void _netstatus_proc_getstatus(Eina_Bool automax, time_t *last_checked,
     unsigned long *prev_in, unsigned long *prev_incurrent, unsigned long *prev_inmax,
     int *prev_inpercent, unsigned long *prev_out, unsigned long *prev_outcurrent,
     unsigned long *prev_outmax, int *prev_outpercent);
-EINTERN void _netstatus_sysctl_getstatus(Eina_Bool automax, time_t *last_checked, 
+EINTERN void _netstatus_sysctl_getstatus(Eina_Bool automax, time_t *last_checked,
     unsigned long *prev_in, unsigned long *prev_incurrent, unsigned long *prev_inmax,
     int *prev_inpercent, unsigned long *prev_out, unsigned long *prev_outcurrent,
     unsigned long *prev_outmax, int *prev_outpercent);

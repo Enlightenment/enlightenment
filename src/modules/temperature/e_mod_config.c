@@ -4,9 +4,9 @@
 #define FAR_2_CEL(x) ((x - 32) / 9.0) * 5.0
 #define CEL_2_FAR(x) (x * 9.0 / 5.0) + 32
 
-struct _E_Config_Dialog_Data 
+struct _E_Config_Dialog_Data
 {
-   struct 
+   struct
      {
         int interval;
      } poll;
@@ -15,7 +15,7 @@ struct _E_Config_Dialog_Data
 #ifdef HAVE_EEZE
    int backend;
 #endif
-   struct 
+   struct
      {
         int low, high;
      } temp;
@@ -81,8 +81,8 @@ temperature_get_bus_files(const char *bus)
 }
 
 
-void 
-config_temperature_module(Config_Face *inst) 
+void
+config_temperature_module(Config_Face *inst)
 {
    E_Config_Dialog_View *v;
    char buff[PATH_MAX];
@@ -93,17 +93,17 @@ config_temperature_module(Config_Face *inst)
    v->basic.create_widgets = _basic_create;
    v->basic.apply_cfdata = _basic_apply;
 
-   snprintf(buff, sizeof(buff), 
+   snprintf(buff, sizeof(buff),
             "%s/e-module-temperature.edj", inst->module->dir);
-   inst->config_dialog = 
-     e_config_dialog_new(NULL, 
-                         _("Temperature Settings"), "E", 
+   inst->config_dialog =
+     e_config_dialog_new(NULL,
+                         _("Temperature Settings"), "E",
                          "_e_mod_temperature_config_dialog", buff, 0, v, inst);
 }
 
 /* local function prototypes */
 static void *
-_create_data(E_Config_Dialog *cfd) 
+_create_data(E_Config_Dialog *cfd)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -113,8 +113,8 @@ _create_data(E_Config_Dialog *cfd)
    return cfdata;
 }
 
-static void 
-_fill_data_tempget(E_Config_Dialog_Data *cfdata) 
+static void
+_fill_data_tempget(E_Config_Dialog_Data *cfdata)
 {
    cfdata->unit_method = cfdata->inst->units;
    cfdata->poll.interval = cfdata->inst->poll_interval;
@@ -126,7 +126,7 @@ _fill_data_tempget(E_Config_Dialog_Data *cfdata)
    if (cfdata->backend == TEMPGET)
      {
 #endif
-        switch (cfdata->inst->sensor_type) 
+        switch (cfdata->inst->sensor_type)
           {
            case SENSOR_TYPE_NONE:
            case SENSOR_TYPE_FREEBSD:
@@ -141,7 +141,7 @@ _fill_data_tempget(E_Config_Dialog_Data *cfdata)
            case SENSOR_TYPE_LINUX_PCI:
              _fill_sensors(cfdata, "pci");
              break;
-           case SENSOR_TYPE_LINUX_ACPI: 
+           case SENSOR_TYPE_LINUX_ACPI:
                {
                   Eina_List *l;
 
@@ -150,9 +150,9 @@ _fill_data_tempget(E_Config_Dialog_Data *cfdata)
                        char *name;
                        int n = 0;
 
-                       EINA_LIST_FREE(l, name) 
+                       EINA_LIST_FREE(l, name)
                          {
-                            cfdata->sensors = 
+                            cfdata->sensors =
                               eina_list_append(cfdata->sensors, name);
                             if (!strcmp(cfdata->inst->sensor_name, name))
                               cfdata->sensor = n;
@@ -161,20 +161,20 @@ _fill_data_tempget(E_Config_Dialog_Data *cfdata)
                     }
                   break;
                }
-           case SENSOR_TYPE_LINUX_SYS: 
+           case SENSOR_TYPE_LINUX_SYS:
                {
                   Eina_List *l;
-                  
+
                   if ((l = ecore_file_ls("/sys/class/thermal")))
                     {
                        char *name;
                        int n = 0;
-                       
-                       EINA_LIST_FREE(l, name) 
+
+                       EINA_LIST_FREE(l, name)
                          {
                             if (!strncmp(name, "thermal", 7))
                               {
-                                 cfdata->sensors = 
+                                 cfdata->sensors =
                                     eina_list_append(cfdata->sensors, name);
                                  if (!strcmp(cfdata->inst->sensor_name, name))
                                     cfdata->sensor = n;
@@ -192,8 +192,8 @@ _fill_data_tempget(E_Config_Dialog_Data *cfdata)
 #endif
 }
 
-static void 
-_fill_sensors(E_Config_Dialog_Data *cfdata, const char *name) 
+static void
+_fill_sensors(E_Config_Dialog_Data *cfdata, const char *name)
 {
    Eina_List *therms, *l;
    char *n;
@@ -203,30 +203,30 @@ _fill_sensors(E_Config_Dialog_Data *cfdata, const char *name)
      {
         char path[PATH_MAX];
 
-        EINA_LIST_FREE(therms, n) 
+        EINA_LIST_FREE(therms, n)
           {
-             if (ecore_file_exists(n)) 
+             if (ecore_file_exists(n))
                {
                   int len;
 
                   sprintf(path, "%s", ecore_file_file_get(n));
                   len = strlen(path);
                   if (len > 6) path[len - 6] = '\0';
-                  cfdata->sensors = 
+                  cfdata->sensors =
                     eina_list_append(cfdata->sensors, strdup(path));
                }
              free(n);
           }
      }
-   EINA_LIST_FOREACH(cfdata->sensors, l, n) 
+   EINA_LIST_FOREACH(cfdata->sensors, l, n)
      {
         if (!strcmp(cfdata->inst->sensor_name, n)) break;
         cfdata->sensor++;
      }
 }
 
-static void 
-_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata) 
+static void
+_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    char *sensor;
 
@@ -237,7 +237,7 @@ _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 }
 
 static Evas_Object *
-_basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata) 
+_basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    Evas_Object *otb, *ol, *ow;
    E_Radio_Group *rg;
@@ -246,7 +246,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
 
    otb = e_widget_toolbook_add(evas, 24, 24);
 
-   if (cfdata->sensors) 
+   if (cfdata->sensors)
      {
         Eina_List *l;
         char *name;
@@ -254,13 +254,13 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
 
         ol = e_widget_list_add(evas, 0, 0);
         rg = e_widget_radio_group_new(&(cfdata->sensor));
-        EINA_LIST_FOREACH(cfdata->sensors, l, name) 
+        EINA_LIST_FOREACH(cfdata->sensors, l, name)
           {
              ow = e_widget_radio_add(evas, _(name), n, rg);
              e_widget_list_object_append(ol, ow, 1, 0, 0.5);
              n++;
           }
-        e_widget_toolbook_page_append(otb, NULL, _("Sensors"), ol, 
+        e_widget_toolbook_page_append(otb, NULL, _("Sensors"), ol,
                                       1, 1, 1, 0, 0.0, 0.0);
      }
 
@@ -272,42 +272,42 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    ow = e_widget_radio_add(evas, _("Fahrenheit"), FAHRENHEIT, rg);
    e_widget_on_change_hook_set(ow, _cb_display_changed, cfdata);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
-   e_widget_toolbook_page_append(otb, NULL, _("Display Units"), ol, 
+   e_widget_toolbook_page_append(otb, NULL, _("Display Units"), ol,
                                  1, 1, 1, 0, 0.0, 0.0);
 
    ol = e_widget_list_add(evas, 0, 0);
-   ow = e_widget_slider_add(evas, 1, 0, _("%1.0f ticks"), 1, 1024, 4, 0, 
+   ow = e_widget_slider_add(evas, 1, 0, _("%1.0f ticks"), 1, 1024, 4, 0,
                             NULL, &(cfdata->poll.interval), 150);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
-   e_widget_toolbook_page_append(otb, NULL, _("Check Interval"), ol, 
+   e_widget_toolbook_page_append(otb, NULL, _("Check Interval"), ol,
                                  1, 1, 1, 0, 0.0, 0.0);
 
    ol = e_widget_list_add(evas, 0, 0);
    ow = e_widget_label_add(evas, _("High Temperature"));
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
    if (cfdata->unit_method == FAHRENHEIT)
-     cfdata->o_high = 
-     e_widget_slider_add(evas, 1, 0, _("%1.0f F"), 0, 230, 5, 0, 
+     cfdata->o_high =
+     e_widget_slider_add(evas, 1, 0, _("%1.0f F"), 0, 230, 5, 0,
                          NULL, &(cfdata->temp.high), 150);
    else
-     cfdata->o_high = 
-     e_widget_slider_add(evas, 1, 0, _("%1.0f C"), 0, 110, 5, 0, 
+     cfdata->o_high =
+     e_widget_slider_add(evas, 1, 0, _("%1.0f C"), 0, 110, 5, 0,
                          NULL, &(cfdata->temp.high), 150);
    e_widget_list_object_append(ol, cfdata->o_high, 1, 1, 0.5);
 
    ow = e_widget_label_add(evas, _("Low Temperature"));
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
    if (cfdata->unit_method == FAHRENHEIT)
-     cfdata->o_low = 
-     e_widget_slider_add(evas, 1, 0, _("%1.0f F"), 0, 200, 5, 0, 
+     cfdata->o_low =
+     e_widget_slider_add(evas, 1, 0, _("%1.0f F"), 0, 200, 5, 0,
                          NULL, &(cfdata->temp.low), 150);
    else
-     cfdata->o_low = 
-     e_widget_slider_add(evas, 1, 0, _("%1.0f C"), 0, 95, 5, 0, 
+     cfdata->o_low =
+     e_widget_slider_add(evas, 1, 0, _("%1.0f C"), 0, 95, 5, 0,
                          NULL, &(cfdata->temp.low), 150);
    e_widget_list_object_append(ol, cfdata->o_low, 1, 1, 0.5);
 
-   e_widget_toolbook_page_append(otb, NULL, _("Temperatures"), ol, 
+   e_widget_toolbook_page_append(otb, NULL, _("Temperatures"), ol,
                                  1, 1, 1, 0, 0.0, 0.0);
 #ifdef HAVE_EEZE
    ol = e_widget_list_add(evas, 0, 0);
@@ -316,15 +316,15 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
    ow = e_widget_radio_add(evas, _("udev"), UDEV, rg);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
-   e_widget_toolbook_page_append(otb, NULL, _("Hardware"), ol, 
+   e_widget_toolbook_page_append(otb, NULL, _("Hardware"), ol,
                                  1, 1, 1, 0, 0.0, 0.0);
 #endif
    e_widget_toolbook_page_show(otb, 0);
    return otb;
 }
 
-static int 
-_basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata) 
+static int
+_basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    cfdata->inst->poll_interval = cfdata->poll.interval;
    cfdata->inst->units = cfdata->unit_method;
@@ -334,7 +334,7 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
    cfdata->inst->backend = cfdata->backend;
 #endif
 
-   eina_stringshare_replace(&cfdata->inst->sensor_name, 
+   eina_stringshare_replace(&cfdata->inst->sensor_name,
                             eina_list_nth(cfdata->sensors, cfdata->sensor));
 
    e_config_save_queue();
@@ -342,8 +342,8 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
    return 1;
 }
 
-static void 
-_cb_display_changed(void *data, Evas_Object *obj EINA_UNUSED) 
+static void
+_cb_display_changed(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
    int val;

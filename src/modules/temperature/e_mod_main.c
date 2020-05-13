@@ -384,7 +384,7 @@ temperature_face_update_config(Config_Face *inst)
 }
 
 /* module setup */
-E_API E_Module_Api e_modapi = 
+E_API E_Module_Api e_modapi =
 {
    E_MODULE_API_VERSION,
      "Temperature"

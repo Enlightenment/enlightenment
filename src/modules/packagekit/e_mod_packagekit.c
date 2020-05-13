@@ -205,7 +205,7 @@ _install_button_cb(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 static void
-_run_button_cb(void *data, Evas_Object *obj EINA_UNUSED, 
+_run_button_cb(void *data, Evas_Object *obj EINA_UNUSED,
                void *event EINA_UNUSED)
 {
    E_PackageKit_Instance *inst = data;
@@ -250,11 +250,11 @@ packagekit_popup_update(E_PackageKit_Instance *inst, Eina_Bool rebuild_list)
    EINA_LIST_FOREACH(ctxt->packages, l, pkg)
      {
         if (rebuild_list)
-          elm_genlist_item_append(inst->popup_genlist, inst->popup_genlist_itc, 
+          elm_genlist_item_append(inst->popup_genlist, inst->popup_genlist_itc,
                                   pkg, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
         num_updates++;
      }
-   
+
    // show the progress bar if an operation is in progress
    if (ctxt->transaction)
      {
@@ -275,7 +275,7 @@ packagekit_popup_update(E_PackageKit_Instance *inst, Eina_Bool rebuild_list)
      snprintf(buf, sizeof(buf), _("Your system is updated"));
    elm_object_text_set(inst->popup_title_entry, buf);
    elm_object_text_set(inst->popup_error_label, "");
-   
+
    // update the status of the install button
    selected = elm_genlist_selected_items_get(inst->popup_genlist);
    if (ctxt->transaction)
@@ -290,7 +290,7 @@ packagekit_popup_update(E_PackageKit_Instance *inst, Eina_Bool rebuild_list)
      }
    else if ((selected == NULL) || (eina_list_count(selected) == 0))
      {
-        elm_object_text_set(inst->popup_install_button, 
+        elm_object_text_set(inst->popup_install_button,
                            _("Install all available updates"));
         elm_object_disabled_set(inst->popup_install_button, EINA_FALSE);
      }
@@ -306,18 +306,18 @@ packagekit_popup_update(E_PackageKit_Instance *inst, Eina_Bool rebuild_list)
 }
 
 void
-packagekit_all_popups_update(E_PackageKit_Module_Context *ctxt, 
+packagekit_all_popups_update(E_PackageKit_Module_Context *ctxt,
                              Eina_Bool rebuild_list)
 {
    E_PackageKit_Instance *inst;
    Eina_List *l;
-   
+
    EINA_LIST_FOREACH(ctxt->instances, l, inst)
      packagekit_popup_update(inst, rebuild_list);
 }
 
-void 
-packagekit_progress_percentage_update(E_PackageKit_Module_Context *ctxt, 
+void
+packagekit_progress_percentage_update(E_PackageKit_Module_Context *ctxt,
                                       int percent)
 {
    E_PackageKit_Instance *inst;
@@ -426,7 +426,7 @@ _gl_item_content_get(void *data, Evas_Object *obj, const char *part)
 }
 
 static void
-_genlist_selunsel_cb(void *data, Evas_Object *obj EINA_UNUSED, 
+_genlist_selunsel_cb(void *data, Evas_Object *obj EINA_UNUSED,
                      void *event EINA_UNUSED)
 {
    packagekit_popup_update(data, EINA_FALSE);
@@ -481,7 +481,7 @@ packagekit_popup_new(E_PackageKit_Instance *inst, Eina_Bool is_gadcon)
 
    // refresh button
    ic = elm_icon_add(table);
-   evas_object_size_hint_min_set(ic, 16 * elm_config_scale_get(), 
+   evas_object_size_hint_min_set(ic, 16 * elm_config_scale_get(),
                                      16 * elm_config_scale_get());
    elm_icon_standard_set(ic, "view-refresh");
    bt = elm_button_add(table);
@@ -492,7 +492,7 @@ packagekit_popup_new(E_PackageKit_Instance *inst, Eina_Bool is_gadcon)
 
    // help button
    ic = elm_icon_add(table);
-   evas_object_size_hint_min_set(ic, 16 * elm_config_scale_get(), 
+   evas_object_size_hint_min_set(ic, 16 * elm_config_scale_get(),
                                      16 * elm_config_scale_get());
    elm_icon_standard_set(ic, "help-contents");
    bt = elm_button_add(table);
@@ -692,9 +692,9 @@ packagekit_refresh_cache(E_PackageKit_Module_Context *ctxt, const char *transact
         _store_error(ctxt, "could not call RefreshCache()");
         return;
      }
-   eldbus_proxy_signal_handler_add(proxy, "Finished", 
+   eldbus_proxy_signal_handler_add(proxy, "Finished",
                                    _signal_cache_finished_cb, ctxt);
-   eldbus_proxy_signal_handler_add(proxy, "RepoDetail", 
+   eldbus_proxy_signal_handler_add(proxy, "RepoDetail",
                                    _signal_repo_detail_cb, ctxt);
    ctxt->transaction = proxy;
 }
@@ -838,7 +838,7 @@ _signal_update_error_code_cb(void *data, const Eldbus_Message *msg)
         _store_error(ctxt, "could not get error code arguments");
         return;
      }
-   
+
    if (details)
      _store_error(ctxt, details);
 }
@@ -876,8 +876,8 @@ packagekit_update_packages(E_PackageKit_Module_Context *ctxt, const char *transa
    proxy = eldbus_proxy_get(obj, "org.freedesktop.PackageKit.Transaction");
    msg = eldbus_proxy_method_call_new(proxy, "UpdatePackages");
    iter = eldbus_message_iter_get(msg);
-   eldbus_message_iter_arguments_append(iter, "tas", 
-                                        PK_TRANSACTION_FLAG_ENUM_ONLY_TRUSTED, 
+   eldbus_message_iter_arguments_append(iter, "tas",
+                                        PK_TRANSACTION_FLAG_ENUM_ONLY_TRUSTED,
                                         &array_of_string);
    EINA_LIST_FOREACH(ctxt->packages, l, pkg)
      {
@@ -895,16 +895,16 @@ packagekit_update_packages(E_PackageKit_Module_Context *ctxt, const char *transa
         _store_error(ctxt, "could not call UpdatePackages()");
         return;
      }
-   eldbus_proxy_signal_handler_add(proxy, "ErrorCode", 
+   eldbus_proxy_signal_handler_add(proxy, "ErrorCode",
                                    _signal_update_error_code_cb, ctxt);
-   eldbus_proxy_signal_handler_add(proxy, "Finished", 
+   eldbus_proxy_signal_handler_add(proxy, "Finished",
                                    _signal_update_finished_cb, ctxt);
    ctxt->transaction = proxy;
 }
 
 /* CreateTransaction() */
 static void
-_transaction_changed_props_iter(void *data, const void *key, 
+_transaction_changed_props_iter(void *data, const void *key,
                                 Eldbus_Message_Iter *val)
 {
    E_PackageKit_Module_Context *ctxt = data;
@@ -933,7 +933,7 @@ _signal_transaction_props_changed_cb(void *data, const Eldbus_Message *msg)
      }
 
    ret = eldbus_message_arguments_get(msg, "sa{sv}as", &interface_name,
-                                      &changed_properties, 
+                                      &changed_properties,
                                       &invalidated_properties);
    if (!ret)
      {
@@ -941,7 +941,7 @@ _signal_transaction_props_changed_cb(void *data, const Eldbus_Message *msg)
         return;
      }
 
-   eldbus_message_iter_dict_iterate(changed_properties, "sv", 
+   eldbus_message_iter_dict_iterate(changed_properties, "sv",
                                     _transaction_changed_props_iter, ctxt);
 }
 
@@ -974,13 +974,13 @@ _transaction_created_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *p
    // monitor the "Percentage" property to update the progress bar
    obj = eldbus_object_get(ctxt->conn, "org.freedesktop.PackageKit", trans_path);
    proxy = eldbus_proxy_get(obj, "org.freedesktop.DBus.Properties");
-   eldbus_proxy_signal_handler_add(proxy, "PropertiesChanged", 
+   eldbus_proxy_signal_handler_add(proxy, "PropertiesChanged",
                                    _signal_transaction_props_changed_cb, ctxt);
 
    // call the operation function
    func = eldbus_pending_data_get(pending, "func");
    func(ctxt, trans_path);
-   
+
    // update all the faces
    packagekit_icon_update(ctxt, EINA_TRUE);
    packagekit_all_popups_update(ctxt, EINA_FALSE);

@@ -159,7 +159,7 @@ _netstatus_sysctl_getstatus(Eina_Bool automax,
           percent = 0;
         *prev_inpercent = percent;
      }
-   
+
    percent = 0;
 
    diffout = tot_out - *prev_out;

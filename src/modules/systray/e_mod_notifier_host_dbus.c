@@ -568,7 +568,7 @@ void
 systray_notifier_dbus_init(Context_Notifier_Host *ctx)
 {
    Eldbus_Pending *p;
-   
+
    ctx->conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    if (!ctx->conn) return;
    p = eldbus_name_request(ctx->conn,

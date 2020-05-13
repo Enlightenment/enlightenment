@@ -180,7 +180,7 @@ _connman_service_connect_cb(void *data, const Eldbus_Message *msg, Eldbus_Pendin
    eldbus_message_error_get(msg, NULL, &error);
 }
 
-static Eina_Bool 
+static Eina_Bool
 _connman_service_connect(Wireless_Network *wn)
 {
    Connman_Service *cs;

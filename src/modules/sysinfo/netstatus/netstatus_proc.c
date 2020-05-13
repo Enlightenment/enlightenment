@@ -82,7 +82,7 @@ _netstatus_proc_getstatus(Eina_Bool automax,
           }
         *prev_outcurrent = diffout;
         if (*prev_outcurrent > 0)
-          percent = 100 * ((float)*prev_outcurrent / (float)*prev_outmax); 
+          percent = 100 * ((float)*prev_outcurrent / (float)*prev_outmax);
         if (percent > 100) percent = 100;
         else if (percent < 0)
           percent = 0;

@@ -1960,7 +1960,7 @@ _pager_popup_cb_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *eve
         if (pp)
           {
              E_Desk *desk;
-             
+
              desk = e_desk_at_xy_get(pp->pager->zone,
                                      current_desk->x, current_desk->y);
              if (desk) e_desk_show(desk);
