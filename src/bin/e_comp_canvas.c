@@ -615,7 +615,7 @@ e_comp_canvas_update(void)
           {
              zone = NULL;
 
-             printf("@ match screens %p[%i] = %i %i %ix%i -- %i\n", 
+             printf("@ match screens %p[%i] = %i %i %ix%i -- %i\n",
                     scr, scr->escreen, scr->x, scr->y, scr->w, scr->h, scr->escreen);
              EINA_LIST_FOREACH(zones, ll, zone)
                {

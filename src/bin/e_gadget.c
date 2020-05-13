@@ -2817,7 +2817,7 @@ _editor_pointer_button(Gadget_Item *active, int t EINA_UNUSED, Ecore_Event_Mouse
      {
         E_Gadget_Config *zgc, *z;
         Eina_List *l;
-        
+
         if (ev->buttons == 1)
           {
              EINA_LIST_FOREACH(sites->sites, l, zgs)
@@ -2856,7 +2856,7 @@ _editor_pointer_button(Gadget_Item *active, int t EINA_UNUSED, Ecore_Event_Mouse
              evas_object_smart_callback_call(zzgs->layout, "gadget_site_dropped", pointer_site);
              _gadget_free(zgc);
           }
-          
+
      }
    E_FREE_FUNC(pointer_site, evas_object_del);
    return ECORE_CALLBACK_RENEW;

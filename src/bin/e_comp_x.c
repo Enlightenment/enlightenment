@@ -416,7 +416,7 @@ _e_comp_x_client_new_helper(E_Client *ec)
         ec->comp_data->ph = ec->h;
      }
    ec->changes.size = 1;
-   
+
 
    e_pixmap_visual_cmap_set(ec->pixmap, ec->comp_data->initial_attributes.visual, ec->comp_data->initial_attributes.colormap);
    if (ec->override && (!ec->internal))
@@ -613,7 +613,7 @@ _e_comp_x_client_new_helper(E_Client *ec)
                                        deskxy[1]);
 
              if (desk) e_client_desk_set(ec, desk);
-             
+
           }
      }
 
@@ -758,7 +758,7 @@ _e_comp_x_post_client_idler_cb(void *d EINA_UNUSED)
              parent = ec->e.state.video_parent_client;
              twin = _e_comp_x_client_window_get(parent);
              ecore_x_window_move(twin,
-                                 parent->client.x + 
+                                 parent->client.x +
                                  ec->e.state.video_position.x,
                                  parent->client.y +
                                  ec->e.state.video_position.y);
@@ -806,7 +806,7 @@ _e_comp_x_post_client_idler_cb(void *d EINA_UNUSED)
                                                        ec->netwm.sync.serial++);
                     }
                }
-             
+
              if (ec->post_move || ec->post_resize)
                _e_comp_x_client_move_resize_send(ec);
           }
@@ -1817,7 +1817,7 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
                y = ev->y;
           }
      }
-   
+
    if ((ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_W) ||
        (ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_H))
      {
@@ -1826,7 +1826,7 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
         if (ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_H)
           h = ev->h, _e_comp_x_client_data_get(ec)->initial_attributes.h = ev->h;
      }
-   
+
    e_comp_object_frame_xy_adjust(ec->frame, x, y, &x, &y);
    e_comp_object_frame_wh_adjust(ec->frame, w, h, &w, &h);
 
@@ -3257,7 +3257,7 @@ _e_comp_x_grab_replay(void *data EINA_UNUSED, int type, void *event)
    E_Client *ec;
 
    if (type != ECORE_EVENT_MOUSE_BUTTON_DOWN) return ECORE_CALLBACK_DONE;
-   if ((!e_config->pass_click_on) && 
+   if ((!e_config->pass_click_on) &&
        (!e_config->always_click_to_raise) && // this works even if not on click-to-focus
        (!e_config->always_click_to_focus) // this works even if not on click-to-focus
        )
@@ -3588,7 +3588,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
         ec->icccm.name = eina_stringshare_add(nname);
         ec->icccm.class = eina_stringshare_add(nclass);
         ec->hacks.mapping_change =
-          ((!e_util_strcasecmp(ec->icccm.class, "vmplayer")) || 
+          ((!e_util_strcasecmp(ec->icccm.class, "vmplayer")) ||
            (!e_util_strcasecmp(ec->icccm.class, "vmware")));
         if (ec->hacks.mapping_change)
           _e_comp_x_mapping_change_disabled++;
@@ -4535,7 +4535,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
      {
         E_Exec_Instance *inst;
 
-        if (((!ec->lock_border) || (!ec->border.name)) && 
+        if (((!ec->lock_border) || (!ec->border.name)) &&
             (ec->internal || cd->reparented))
           {
              ec->border.changed = 1;

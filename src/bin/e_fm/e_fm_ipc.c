@@ -1357,7 +1357,7 @@ _e_fm_ipc_timer_cb(void *d EINA_UNUSED)
    ecore_ipc_server_send(_e_fm_ipc_server,
                          6 /*E_IPC_DOMAIN_FM*/,
                          E_FM_OP_VOLUME_LIST_DONE,
-                         0, 0, 0, "", 1);   
+                         0, 0, 0, "", 1);
    _init_timer_run = EINA_TRUE;
    return EINA_FALSE;
 }

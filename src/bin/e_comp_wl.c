@@ -3321,7 +3321,7 @@ e_comp_wl_output_init(const char *id, const char *make, const char *model,
 
         e_comp_wl->outputs = eina_list_append(e_comp_wl->outputs, output);
 
-        output->global = 
+        output->global =
           wl_global_create(e_comp_wl->wl.disp, &wl_output_interface,
                            2, output, _e_comp_wl_cb_output_bind);
 

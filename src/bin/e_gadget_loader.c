@@ -263,7 +263,7 @@ action_request(void *data, Evas_Object *obj, void *event_info)
         h = eina_hash_pointer_new((Eina_Free_Cb)_ar_bind_del);
         eina_hash_add(display_actions, &d, h);
      }
-   
+
    ar_bind = action_route_bind_action(ar_global, action);
    action_route_bind_add_listener(ar_bind, &_ar_bind_interface, ga);
    wl_display_roundtrip(ecore_wl2_display_get(d));

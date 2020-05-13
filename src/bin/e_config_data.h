@@ -1,7 +1,7 @@
 #ifdef E_TYPEDEFS
 
 /** \def E_CONFIG_DD_NEW(str, typ)
- * is used to create definition of a struct  
+ * is used to create definition of a struct
  * \str str name to give to struct
  * \typ typ the actual struct type
  */
@@ -9,7 +9,7 @@
    e_config_descriptor_new(str, sizeof(typ))
 
 /** \def E_CONFIG_DD_FREE(eed)
- * is used to free definition of a struct  
+ * is used to free definition of a struct
  * \eed eed the pointer created by \link #E_CONFIG_DD_NEW
  */
 #define E_CONFIG_DD_FREE(eed) if (eed) { e_config_descriptor_free((eed)); (eed) = NULL; }
@@ -19,7 +19,7 @@
 
 /** \def E_CONFIG_LIST(edd, type, member, eddtype)
  * declares a struct member to be included definition
- * list type must be Evas_List and not Ecore_List  
+ * list type must be Evas_List and not Ecore_List
  * \edd edd the pointer created by \link #E_CONFIG_DD_NEW
  * \type type struct type
  * \member member member of struct
@@ -29,7 +29,7 @@
 
 /** \def E_CONFIG_HASH(edd, type, member, eddtype)
  * declares a struct member to be included definition
- * list type must be Evas_Hash and not Ecore_Hash  
+ * list type must be Evas_Hash and not Ecore_Hash
  * \edd edd the pointer created by \link #E_CONFIG_DD_NEW
  * \type type struct type
  * \member member member of struct

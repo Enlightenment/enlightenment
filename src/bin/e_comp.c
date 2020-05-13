@@ -67,7 +67,7 @@ _e_comp_visible_object_clip_is(Evas_Object *obj)
 {
    Evas_Object *clip;
    int a;
-   
+
    clip = evas_object_clip_get(obj);
    if (!evas_object_visible_get(clip)) return EINA_FALSE;
    evas_object_color_get(clip, NULL, NULL, NULL, &a);
@@ -93,7 +93,7 @@ _e_comp_visible_object_is(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coo
            )
           {
              int a;
-             
+
              evas_object_color_get(obj, NULL, NULL, NULL, &a);
              if (a > 0)
                {
@@ -112,12 +112,12 @@ _e_comp_visible_object_is(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coo
                   else
                     {
                        Eina_List *children;
-                       
+
                        if ((children = evas_object_smart_members_get(obj)))
                          {
                             Eina_List *l;
                             Evas_Object *o;
-                            
+
                             EINA_LIST_FOREACH(children, l, o)
                               {
                                  if (_e_comp_visible_object_is(o, x, y, w, h))
@@ -144,7 +144,7 @@ static Eina_Bool
 _e_comp_visible_object_is_above(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
    Evas_Object *above;
-   
+
    for (above = evas_object_above_get(obj); above;
         above = evas_object_above_get(above))
      {

@@ -612,7 +612,7 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
                  ((name) && (m->name) && (!e_util_glob_match(name, m->name))))
                continue;
              if (!_e_comp_object_shadow_client_match(cw->ec, m)) continue;
-             
+
              focus = m->focus;
              urgent = m->urgent;
              no_shadow = m->no_shadow;
@@ -1477,7 +1477,7 @@ _e_comp_intercept_stack_helper(E_Comp_Object *cw, Evas_Object *stack, E_Comp_Obj
           }
         if (!o)
           /* top client layer window hasn't been stacked yet. this probably shouldn't happen?
-           * return here since the top client layer window 
+           * return here since the top client layer window
            */
           {
              E_Client *ec;
@@ -2761,7 +2761,7 @@ _e_comp_object_util_show(void *data EINA_UNUSED, Evas_Object *obj)
      }
    else
      e_comp_shape_queue();
-   
+
    evas_object_show(obj);
    if (ref && (!stopping))
      {

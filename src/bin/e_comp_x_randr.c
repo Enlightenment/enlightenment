@@ -75,7 +75,7 @@ _output_screen_get(Ecore_X_Window root, Ecore_X_Randr_Output o)
 static Ecore_X_Randr_Edid_Display_Interface_Type
 _output_conn_type_get(Ecore_X_Window root, Ecore_X_Randr_Output o)
 {
-   // get what kind of connector (hdmi, dvi, displayport etc.) - vga is 
+   // get what kind of connector (hdmi, dvi, displayport etc.) - vga is
    Ecore_X_Randr_Edid_Display_Interface_Type type;
    unsigned long len = 0;
    unsigned char *edid = ecore_x_randr_output_edid_get(root, o, &len);

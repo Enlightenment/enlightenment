@@ -101,7 +101,7 @@ _e_client_cb_config_mode(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev 
    E_Layer layer;
 
    /* move fullscreen borders above everything */
-   
+
    if (e_config->mode.presentation)
      layer = E_LAYER_CLIENT_TOP;
    else if (!e_config->allow_above_fullscreen)
@@ -251,7 +251,7 @@ cleanup:
              if (!warp_client->lock_user_shade)
                e_client_unshade(warp_client, warp_client->shade_dir);
           }
-        
+
         if (!warp_client->lock_focus_out)
           {
              evas_object_focus_set(warp_client->frame, 1);
@@ -557,7 +557,7 @@ _e_client_free(E_Client *ec)
    eina_stringshare_replace(&ec->internal_icon, NULL);
    eina_stringshare_replace(&ec->internal_icon_key, NULL);
    eina_stringshare_replace(&ec->uuid, NULL);
-   
+
    focus_stack = eina_list_remove(focus_stack, ec);
    raise_stack = eina_list_remove(raise_stack, ec);
 
@@ -2422,7 +2422,7 @@ _e_client_frame_update(E_Client *ec)
      bordername = "nofocus";
    else if (ec->urgent)
      bordername = "urgent";
-   else if (((ec->icccm.transient_for && (!ec->netwm.type)) || (ec->dialog)) && 
+   else if (((ec->icccm.transient_for && (!ec->netwm.type)) || (ec->dialog)) &&
             (e_pixmap_is_x(ec->pixmap)))
      bordername = "dialog";
    else if (ec->netwm.state.modal)
@@ -2691,7 +2691,7 @@ e_client_new(E_Pixmap *cp, int first_map, int internal)
    ec->new_client = 1;
    e_comp->new_clients++;
 
-   if (!_e_client_hook_call(E_CLIENT_HOOK_NEW_CLIENT, ec)) 
+   if (!_e_client_hook_call(E_CLIENT_HOOK_NEW_CLIENT, ec))
      {
         /* delete the above allocated object */
         //e_object_del(E_OBJECT(ec));
@@ -3829,7 +3829,7 @@ e_client_focused_set(E_Client *ec)
 
         _e_client_hook_call(E_CLIENT_HOOK_FOCUS_UNSET, ec_unfocus);
         /* only send event here if we're not being deleted */
-        if ((!e_object_is_del(E_OBJECT(ec_unfocus))) && 
+        if ((!e_object_is_del(E_OBJECT(ec_unfocus))) &&
            (e_object_ref_get(E_OBJECT(ec_unfocus)) > 0))
           {
              _e_client_event_simple(ec_unfocus, E_EVENT_CLIENT_FOCUS_OUT);
@@ -4499,7 +4499,7 @@ e_client_fullscreen(E_Client *ec, E_Fullscreen policy)
    if ((eina_list_count(e_comp->zones) > 1) ||
        (policy == E_FULLSCREEN_RESIZE) || (!ecore_x_randr_query()))
 #else
-   if ((eina_list_count(e_comp->zones) > 1) || 
+   if ((eina_list_count(e_comp->zones) > 1) ||
        (policy == E_FULLSCREEN_RESIZE))
 #endif
      {

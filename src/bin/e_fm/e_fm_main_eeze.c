@@ -420,7 +420,7 @@ _e_fm_main_eeze_volume_add(const char *syspath,
              if ((v2) && (v2->partition == 0))
                _e_fm_main_eeze_volume_del(v2->udi);
           }
-   
+
       s = e_storage_find(v->parent);
       INF("++VOL:\n  syspath: %s\n  uuid: %s\n  fstype: %s\n  size: %llu\n label: %s\n"
           "  partition: %d\n  partition_number: %d\n partition_label: %s\n  mounted: %d\n  mount_point: %s",
@@ -542,7 +542,7 @@ _e_fm_main_eeze_volume_mount(E_Volume *v)
 
    _e_fm_main_eeze_mount_point_set(v);
    if (!v->mount_point) goto error;
-   INF("mount %s %s [fs type = %s]", v->udi, v->mount_point, v->fstype);   
+   INF("mount %s %s [fs type = %s]", v->udi, v->mount_point, v->fstype);
    eeze_disk_mountopts_set(v->disk, opts);
    if (!eeze_disk_mount_wrapper_get(v->disk))
      {
@@ -716,27 +716,27 @@ _e_fm_main_eeze_init(void)
    eeze_init();
    eina_log_domain_level_set("eeze_disk", EINA_LOG_LEVEL_DBG);
    eeze_mount_tabs_watch();
-   ecore_event_handler_add(EEZE_EVENT_DISK_MOUNT, 
+   ecore_event_handler_add(EEZE_EVENT_DISK_MOUNT,
                            (Ecore_Event_Handler_Cb)_e_fm_main_eeze_cb_vol_mounted, NULL);
-   ecore_event_handler_add(EEZE_EVENT_DISK_UNMOUNT, 
+   ecore_event_handler_add(EEZE_EVENT_DISK_UNMOUNT,
                            (Ecore_Event_Handler_Cb)_e_fm_main_eeze_cb_vol_unmounted, NULL);
-   ecore_event_handler_add(EEZE_EVENT_DISK_EJECT, 
+   ecore_event_handler_add(EEZE_EVENT_DISK_EJECT,
                            (Ecore_Event_Handler_Cb)_e_fm_main_eeze_cb_vol_ejected, NULL);
-   ecore_event_handler_add(EEZE_EVENT_DISK_ERROR, 
+   ecore_event_handler_add(EEZE_EVENT_DISK_ERROR,
                            (Ecore_Event_Handler_Cb)_e_fm_main_eeze_cb_vol_error, NULL);
 
-   ecore_event_handler_add(ECORE_EXE_EVENT_ADD, 
+   ecore_event_handler_add(ECORE_EXE_EVENT_ADD,
                            (Ecore_Event_Handler_Cb)_scanner_add, pfx);
-   ecore_event_handler_add(ECORE_EXE_EVENT_DEL, 
+   ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
                            (Ecore_Event_Handler_Cb)_scanner_del, pfx);
 
-   ecore_event_handler_add(ECORE_CON_EVENT_SERVER_ADD, 
+   ecore_event_handler_add(ECORE_CON_EVENT_SERVER_ADD,
                            (Ecore_Event_Handler_Cb)_scanner_con, NULL);
-   ecore_event_handler_add(ECORE_CON_EVENT_SERVER_DEL, 
+   ecore_event_handler_add(ECORE_CON_EVENT_SERVER_DEL,
                            (Ecore_Event_Handler_Cb)_scanner_disc, NULL);
-   ecore_event_handler_add(ECORE_CON_EVENT_SERVER_DATA, 
+   ecore_event_handler_add(ECORE_CON_EVENT_SERVER_DATA,
                            (Ecore_Event_Handler_Cb)_scanner_data, NULL);
-   ecore_event_handler_add(ECORE_CON_EVENT_SERVER_ERROR, 
+   ecore_event_handler_add(ECORE_CON_EVENT_SERVER_ERROR,
                            (Ecore_Event_Handler_Cb)_scanner_err, NULL);
 
    eet_setup();

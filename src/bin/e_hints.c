@@ -153,7 +153,7 @@ e_hints_init(Ecore_Window root, Ecore_Window propwin)
         for (;; )
           {
              Ecore_X_Window selfwin = 0;
-             
+
              /* check that supporting wm win points to itself to be valid */
              nwins = ecore_x_window_prop_window_get(twin,
                                                     ECORE_X_ATOM_NET_SUPPORTING_WM_CHECK,
@@ -365,7 +365,7 @@ e_hints_client_stacking_set(void)
                   break;
                }
           }
-        
+
         if (i < c - non_x)
           {
 #ifdef CLIENT_STACK_DEBUG

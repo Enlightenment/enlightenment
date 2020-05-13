@@ -1156,7 +1156,7 @@ window_jump_to(const char *params)
           {
              if (!e_client_focus_policy_click(ec))
                e_client_pointer_warp_to_center_now(ec);
-          }               
+          }
         evas_object_focus_set(ec->frame, 1);
         return 1;
      }
@@ -3447,7 +3447,7 @@ e_actions_init(void)
    e_action_predef_name_set(N_("Desktop"), N_("Switch Desktop To... On Screen..."),
                             "desk_linear_flip_to_screen", NULL,
                             "syntax: D S, example: 0 1", 1);
-   
+
    /* desk_linear_flip_by */
    ACT_GO(desk_linear_flip_by);
    e_action_predef_name_set(N_("Desktop"), N_("Flip Desktop Linearly..."),

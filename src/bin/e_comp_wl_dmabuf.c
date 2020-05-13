@@ -462,7 +462,7 @@ linux_dmabuf_buffer_get_user_data(struct linux_dmabuf_buffer *buffer)
    return buffer->user_data;
 }
 
-static const struct zwp_linux_dmabuf_v1_interface linux_dmabuf_implementation = 
+static const struct zwp_linux_dmabuf_v1_interface linux_dmabuf_implementation =
 {
    linux_dmabuf_destroy,
    linux_dmabuf_create_params

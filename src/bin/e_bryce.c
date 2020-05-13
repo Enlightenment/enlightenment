@@ -97,7 +97,7 @@ _bryce_autohide_coords(Bryce *b, int *x, int *y)
    if (b->parent == e_comp->elm)
      {
         E_Zone *zone;
-        
+
         zone = e_comp_zone_number_get(b->zone);
         ox = zone->x, oy = zone->y, ow = zone->w, oh = zone->h;
      }
@@ -135,7 +135,7 @@ _bryce_position(Bryce *b, int w, int h, int *nx, int *ny)
    if (b->parent == e_comp->elm)
      {
         E_Zone *zone;
-        
+
         zone = e_comp_zone_number_get(b->zone);
         ox = zone->x, oy = zone->y, ow = zone->w, oh = zone->h;
         if (starting)

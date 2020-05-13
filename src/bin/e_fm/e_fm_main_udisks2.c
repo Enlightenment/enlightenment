@@ -143,7 +143,7 @@ _e_fm_main_udisks2_volume_block_add(E_Volume *v, U2_Block *u2)
    eina_stringshare_replace(&v->fstype, u2->IdType);
    eina_stringshare_replace(&v->label, u2->IdLabel);
    if (!v->label) v->label = eina_stringshare_ref(u2->HintName);
-   
+
 }
 
 static void
@@ -886,7 +886,7 @@ _volume_eject_umount_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *p
         vols_ejecting = eina_list_remove(vols_ejecting, v);
         _volume_eject(v->storage->proxy);
      }
-     
+
 }
 
 static Eldbus_Pending *

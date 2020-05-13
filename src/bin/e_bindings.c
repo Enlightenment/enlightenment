@@ -489,7 +489,7 @@ e_bindings_mouse_action_modifiers_text_generate(E_Binding_Context ctxt, const ch
    keys[2].val = &alt;
    keys[3].val = &win;
    keys[4].val = &altgr;
-   
+
    EINA_LIST_FOREACH(e_bindings->mouse_bindings, l, ebm)
      if ((ebm->context == (int)ctxt) && eina_streq(ebm->action, action))
        {

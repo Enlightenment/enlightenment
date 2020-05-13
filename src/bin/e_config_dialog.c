@@ -200,7 +200,7 @@ _e_config_dialog_go(E_Config_Dialog *cfd, E_Config_Dialog_CFData_Type type)
    cfd->dia->data = cfd;
    e_dialog_title_set(cfd->dia, cfd->title);
    cfdata = cfd->cfdata;
-   if (cfd->view->create_cfdata && (!cfd->cfdata)) 
+   if (cfd->view->create_cfdata && (!cfd->cfdata))
      cfd->cfdata = cfd->view->create_cfdata(cfd);
 
    evas = evas_object_evas_get(cfd->dia->win);
