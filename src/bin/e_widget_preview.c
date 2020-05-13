@@ -25,14 +25,14 @@ e_widget_preview_add(Evas *evas, int minw, int minh)
    if (!wd) return NULL;
 
    wd->obj = obj;
-   
+
    wd->o_frame = edje_object_add(evas);
    e_theme_edje_object_set(wd->o_frame, "base/theme/widgets",
                            "e/widgets/preview");
    evas_object_show(wd->o_frame);
    e_widget_sub_object_add(obj, wd->o_frame);
    e_widget_resize_object_set(obj, wd->o_frame);
-   
+
    wd->img = e_livethumb_add(evas);
    e_livethumb_vsize_set(wd->img, minw * 2, minh * 2);
    evas_object_size_hint_min_set(wd->img, minw, minh);
@@ -41,7 +41,7 @@ e_widget_preview_add(Evas *evas, int minw, int minh)
    evas_object_show(wd->img);
    e_widget_sub_object_add(obj, wd->img);
    edje_object_part_swallow(wd->o_frame, "e.swallow.content", wd->img);
-   
+
    e_widget_data_set(obj, wd);
    e_widget_can_focus_set(obj, 0);
    edje_object_size_min_calc(wd->o_frame, &mw, &mh);

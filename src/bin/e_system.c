@@ -273,7 +273,7 @@ EINTERN int
 e_system_init(void)
 {
    // XXX:
-   // 
+   //
    // if exe_data - parse/get data
    //   ... per message - call registered cb's for that msg
    _handler_del = ecore_event_handler_add(ECORE_EXE_EVENT_DEL, _cb_exe_del, NULL);

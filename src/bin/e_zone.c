@@ -1265,7 +1265,7 @@ e_zone_useful_geometry_get(E_Zone *zone,
         zone->useful_geometry[1].h = zh;
         zone->useful_geometry_changed =
           !!memcmp(&zone->useful_geometry[0], &zone->useful_geometry[1], sizeof(Eina_Rectangle));
-        
+
      }
    zone->useful_geometry_dirty = 0;
 

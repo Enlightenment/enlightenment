@@ -577,7 +577,7 @@ static void
 _e_sys_systemd_handle_inhibit(void)
 {
    Eldbus_Message *m;
-   
+
    if (!login1_manger_proxy) return;
    if (!(m = eldbus_proxy_method_call_new(login1_manger_proxy, "Inhibit")))
      return;
@@ -626,7 +626,7 @@ static void
 _e_sys_systemd_exists_cb(void *data EINA_UNUSED, const Eldbus_Message *m, Eldbus_Pending *p EINA_UNUSED)
 {
    const char *id = NULL;
-   
+
    if (eldbus_message_error_get(m, NULL, NULL)) goto fail;
    if (!eldbus_message_arguments_get(m, "s", &id)) goto fail;
    if ((!id) || (id[0] != ':')) goto fail;
@@ -690,7 +690,7 @@ _e_sys_susp_hib_check_timer_cb(void *data EINA_UNUSED)
         _e_sys_susp_hib_check_timer = NULL;
         if (_e_sys_resume_delay_timer)
           ecore_timer_del(_e_sys_resume_delay_timer);
-        _e_sys_resume_delay_timer = 
+        _e_sys_resume_delay_timer =
           ecore_timer_add(0.2, _e_sys_resume_delay, NULL);
         return EINA_FALSE;
      }

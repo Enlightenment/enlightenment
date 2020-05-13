@@ -92,7 +92,7 @@ _e_xsettings_selection_owner_set(void)
    Eina_Bool ret;
 
    atom = _e_xsettings_atom_screen_get(0);
-   ecore_x_selection_owner_set(e_comp->cm_selection, atom, 
+   ecore_x_selection_owner_set(e_comp->cm_selection, atom,
                                ecore_x_current_time_get());
    ecore_x_sync();
    cur_selection = ecore_x_selection_owner_get(atom);
@@ -391,7 +391,7 @@ _e_xsettings_gtk_icon_update(void)
 
    EINA_LIST_FOREACH(e_comp->clients, l, ec)
      if (ec->icccm.state)
-       ecore_x_client_message8_send(e_client_util_win_get(ec), 
+       ecore_x_client_message8_send(e_client_util_win_get(ec),
                                     _atom_gtk_iconthemes, NULL, 0);
 }
 
@@ -403,7 +403,7 @@ _e_xsettings_gtk_rcfiles_update(void)
 
    EINA_LIST_FOREACH(e_comp->clients, l, ec)
      if (ec->icccm.state)
-       ecore_x_client_message8_send(e_client_util_win_get(ec), 
+       ecore_x_client_message8_send(e_client_util_win_get(ec),
                                     _atom_gtk_rcfiles, NULL, 0);
 }
 
@@ -440,9 +440,9 @@ _e_xsettings_error_cb(void *data, Eio_File *handler EINA_UNUSED, int error EINA_
         reset = EINA_FALSE;
         if (l)
           {
-             snprintf(buf, sizeof(buf), "%s/themes/%s", 
+             snprintf(buf, sizeof(buf), "%s/themes/%s",
                       (char *)eina_list_data_get(l), _setting_theme);
-             eio_op = eio_file_direct_stat(buf, _e_xsettings_done_cb, 
+             eio_op = eio_file_direct_stat(buf, _e_xsettings_done_cb,
                                            _e_xsettings_error_cb, l);
              return;
           }
@@ -452,7 +452,7 @@ _e_xsettings_error_cb(void *data, Eio_File *handler EINA_UNUSED, int error EINA_
    _setting_theme = NULL;
 
    if (e_config->xsettings.net_theme_name)
-     _e_xsettings_string_set(_setting_theme_name, 
+     _e_xsettings_string_set(_setting_theme_name,
                              e_config->xsettings.net_theme_name);
    else
      _e_xsettings_string_set(_setting_theme_name, NULL);
@@ -481,7 +481,7 @@ _e_xsettings_theme_set(void)
    if (e_config->xsettings.match_e17_theme)
      {
         const char *file;
-        
+
         file = e_theme_edje_file_get(NULL, "e/desktop/background");
         if (file)
           {
@@ -489,9 +489,9 @@ _e_xsettings_theme_set(void)
                {
                   char buf[PATH_MAX];
 
-                  e_user_homedir_snprintf(buf, sizeof(buf), 
+                  e_user_homedir_snprintf(buf, sizeof(buf),
                                           ".themes/%s", _setting_theme);
-                  eio_op = eio_file_direct_stat(buf, _e_xsettings_done_cb, 
+                  eio_op = eio_file_direct_stat(buf, _e_xsettings_done_cb,
                                                 _e_xsettings_error_cb, NULL);
                   setting = EINA_TRUE;
                   return;
@@ -546,7 +546,7 @@ _e_xsettings_font_set(void)
                   eina_strbuf_append_char(buf, ' ');
                }
              eina_strbuf_append(buf, size_buf);
-             _e_xsettings_string_set(_setting_font_name, 
+             _e_xsettings_string_set(_setting_font_name,
                                      eina_strbuf_string_get(buf));
              eina_strbuf_free(buf);
              e_font_properties_free(efp);
@@ -564,7 +564,7 @@ static void
 _e_xsettings_xft_set(void)
 {
    if (e_config->scale.use_dpi)
-     _e_xsettings_int_set(_setting_xft_dpi, 
+     _e_xsettings_int_set(_setting_xft_dpi,
                           e_config->scale.base_dpi, EINA_TRUE);
    else
      _e_xsettings_int_set(_setting_xft_dpi, 0, EINA_FALSE);

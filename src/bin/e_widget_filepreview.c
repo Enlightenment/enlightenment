@@ -646,7 +646,7 @@ _e_wid_fprev_preview_file(E_Widget_Data *wd)
                          {
                             if (statvfs(mpoint, &stfs) != 0) ok = EINA_FALSE;
                          }
-                       
+
                        fragsz = stfs.f_frsize;
                        blknum = stfs.f_blocks;
                        blkused = stfs.f_blocks - stfs.f_bfree;
@@ -1135,7 +1135,7 @@ _e_wid_fprev_preview_font(E_Widget_Data *wd)
              buf = alloca(strlen(escaped) + 4096);
              snprintf(buf, strlen(wd->path) + 4096,
                       "<font=%s>"
-                      
+
                       "<font_size=28>"
                       "28 - ABC abc 0123 @!?#$*{}<ps/>"
                       "The quick brown fox jumps.<ps/>"
@@ -1143,19 +1143,19 @@ _e_wid_fprev_preview_font(E_Widget_Data *wd)
                       "<font_size=20>"
                       "20 - ABC abc 0123 @!?#$*{}<ps/>"
                       "The quick brown fox jumps.<ps/>"
-                      
+
                       "<font_size=16>"
                       "16 - ABC abc 0123 @!?#$*{}<ps/>"
                       "The quick brown fox jumps.<ps/>"
-                      
+
                       "<font_size=12>"
                       "12 - ABC abc 0123 @!?#$*{}<ps/>"
                       "The quick brown fox jumps.<ps/>"
-                      
+
                       "<font_size=10>"
                       "10 - ABC abc 0123 @!?#$*{}<ps/>"
                       "The quick brown fox jumps.<ps/>"
-                      
+
                       "<font_size=8>"
                       "8 - ABC abc 0123 @!?#$*{}<ps/>"
                       "The quick brown fox jumps.<ps/>"
