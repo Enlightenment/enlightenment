@@ -14,7 +14,6 @@ static void _e_client_volume_object_volume_changed(void *data, Evas_Object *obj,
 static void _e_client_volume_object_volume_drag_stop(void *data, Evas_Object *obj, void *event_info);
 static Eina_Bool _e_client_volume_object_changed(void *data, int type, void *event);
 static void _e_client_volume_object_del_cb(void *data, Evas *evas, Evas_Object *obj, void *event_info);
-static void _e_client_volume_update(E_Client *ec);
 
 static void
 _e_client_volume_event_simple_free(void *d EINA_UNUSED, E_Event_Client *ev)
@@ -177,17 +176,14 @@ e_client_volume_sink_del(E_Client_Volume_Sink *sink)
 {
    E_Client *ec;
 
-   if (sink->in_del > 0) return;
-   sink->in_del++;
    EINA_LIST_FREE(sink->clients, ec)
      {
         ec->sinks = eina_list_remove(ec->sinks, sink);
-        _e_client_volume_update(ec);
+        e_comp_object_frame_volume_update(ec->frame);
         _e_client_volume_sink_event_simple(ec, sink,
                                            E_EVENT_CLIENT_VOLUME_SINK_DEL);
         e_object_unref(E_OBJECT(ec));
      }
-   sink->in_del--;
    free(sink);
 }
 
@@ -289,9 +285,9 @@ _e_client_volume_update(E_Client *ec)
         ec->mute = EINA_FALSE;
         ec->volume_control_enabled = EINA_FALSE;
      }
-   e_comp_object_frame_volume_update(ec->frame);
    if (ec->volume_control_enabled)
      {
+        e_comp_object_frame_volume_update(ec->frame);
         e_client_volume_display_set(ec, ec->volume, ec->mute);
      }
 }
