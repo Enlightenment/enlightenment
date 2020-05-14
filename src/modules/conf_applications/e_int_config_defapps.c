@@ -131,7 +131,7 @@ _create_data(E_Config_Dialog *cfd EINA_UNUSED)
         if (s) cfdata->browser_desktop = eina_stringshare_add(s);
         s = efreet_ini_string_get(myini, "x-scheme-handler/mailto");
         if (s) cfdata->mailto_desktop = eina_stringshare_add(s);
-        s = efreet_ini_string_get(myini, "x-scheme-handler/file");
+        s = efreet_ini_string_get(myini, "inode/directory");
         if (s) cfdata->file_desktop = eina_stringshare_add(s);
         s = efreet_ini_string_get(myini, "x-scheme-handler/trash");
         if (s) cfdata->trash_desktop = eina_stringshare_add(s);
@@ -385,7 +385,7 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
           efreet_ini_string_set(cfdata->ini, "x-scheme-handler/mailto",
                                 cfdata->mailto_desktop);
         if ((cfdata->file_desktop) && (cfdata->file_desktop[0]))
-          efreet_ini_string_set(cfdata->ini, "x-scheme-handler/file",
+          efreet_ini_string_set(cfdata->ini, "inode/directory",
                                 cfdata->file_desktop);
         if ((cfdata->trash_desktop) && (cfdata->trash_desktop[0]))
           efreet_ini_string_set(cfdata->ini, "x-scheme-handler/trash",
