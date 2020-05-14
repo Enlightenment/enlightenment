@@ -45,7 +45,6 @@ static int _sink_input_min_get(void *data);
 static int _sink_input_max_get(void *data);
 static const char *_sink_input_name_get(void *data);
 static pid_t _get_ppid(pid_t pid);
-static E_Client_Volume_Sink *_sink_input_e_client_volume_sink_find(Emix_Sink_Input *input, pid_t *ret_pid);
 static void _sink_input_event(int type, Emix_Sink_Input *input);
 static void _events_cb(void *data, enum Emix_Event type, void *event_info);
 static Eina_Bool _desklock_cb(void *data, int type, void *info);
@@ -524,75 +523,51 @@ _get_ppid(pid_t pid)
    return ppid;
 }
 
-static E_Client_Volume_Sink *
-_sink_input_e_client_volume_sink_find(Emix_Sink_Input *input, pid_t *ret_pid)
-{
-   Eina_List *clients, *l;
-   E_Client *ec;
-   E_Client_Volume_Sink *sink = NULL;
-   pid_t pid;
-   Eina_Bool found = EINA_FALSE;
-
-   pid = input->pid;
-
-   EINA_LIST_FOREACH(_client_sinks, l, sink)
-     {
-        if (sink->data == input)
-          break;
-     }
-
-   for (;;)
-     {
-        if ((pid <= 1) || (pid == getpid())) break;
-        clients = e_client_focus_stack_get();
-        EINA_LIST_FOREACH(clients, l, ec)
-          {
-             if ((ec->netwm.pid == pid) && (!ec->parent))
-               {
-                  DBG("Sink found the client %s",
-                      e_client_util_name_get(ec));
-                  if (!sink)
-                    {
-                       DBG("Create a new client_volume_sink");
-                       sink = e_client_volume_sink_new(_sink_input_get,
-                                                       _sink_input_set,
-                                                       _sink_input_min_get,
-                                                       _sink_input_max_get,
-                                                       _sink_input_name_get,
-                                                       input);
-                    }
-                  e_client_volume_sink_append(ec, sink);
-                  _client_sinks = eina_list_append(_client_sinks, sink);
-                  found = EINA_TRUE;
-               }
-          }
-        if (found) break;
-        pid = _get_ppid(pid);
-     }
-   if (ret_pid) *ret_pid = pid;
-   return found ? sink : NULL;
-}
-
 static void
 _sink_input_event(int type, Emix_Sink_Input *input)
 {
-   Eina_List *l;
+   Eina_List *clients, *l, *ll;
+   E_Client *ec;
    E_Client_Volume_Sink *sink;
+   pid_t pid;
+   Eina_Bool found = EINA_FALSE;
 
    switch (type)
      {
       case EMIX_SINK_INPUT_ADDED_EVENT:
-         _sink_input_e_client_volume_sink_find(input, NULL);
+         pid = input->pid;
+         for (;;)
+           {
+              if ((pid <= 1) || (pid == getpid())) return;
+              clients = e_client_focus_stack_get();
+              EINA_LIST_FOREACH(clients, l, ec)
+                {
+                   if ((ec->netwm.pid == pid) && (!ec->parent))
+                     {
+                        DBG("Sink found the client %s",
+                            e_client_util_name_get(ec));
+                        sink = e_client_volume_sink_new(_sink_input_get,
+                                                        _sink_input_set,
+                                                        _sink_input_min_get,
+                                                        _sink_input_max_get,
+                                                        _sink_input_name_get,
+                                                        input);
+                        e_client_volume_sink_append(ec, sink);
+                        _client_sinks = eina_list_append(_client_sinks, sink);
+                        found = EINA_TRUE;
+                     }
+                }
+              if (found) break;
+              pid = _get_ppid(pid);
+           }
          break;
       case EMIX_SINK_INPUT_REMOVED_EVENT:
-         EINA_LIST_FOREACH(_client_sinks, l, sink)
+         EINA_LIST_FOREACH_SAFE(_client_sinks, l, ll, sink)
            {
               if (sink->data == input)
                 {
-                   DBG("Client sink del");
                    e_client_volume_sink_del(sink);
                    _client_sinks = eina_list_remove_list(_client_sinks, l);
-                   break;
                 }
            }
          break;
@@ -978,33 +953,39 @@ _client_mixer_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 static Eina_Bool
 _e_client_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
-    E_Event_Client *ev;
-    Eina_List *l, *ll;
-    Emix_Sink_Input *input;
-    E_Client *ec;
-    E_Client_Volume_Sink *sink;
-    pid_t pid;
+   E_Event_Client *ev;
+   Eina_List *l;
+   Emix_Sink_Input *input;
+   pid_t pid;
+   E_Client_Volume_Sink *sink;
 
-    ev = event;
+   ev = event;
 
-    if (ev->ec->parent) return ECORE_CALLBACK_PASS_ON;
-    EINA_LIST_FOREACH((Eina_List *)emix_sink_inputs_get(), l, input)
-      {
-         sink = _sink_input_e_client_volume_sink_find(input, &pid);
-         if (sink)
-           {
-              EINA_LIST_FOREACH_SAFE(sink->clients, l, ll, ec)
-                {
-                   if (ec->netwm.pid != pid)
-                     {
-                        DBG("Clean invalid client sink %s",
-                            e_client_util_name_get(ec));
-                        e_client_volume_sink_remove(ec, sink);
-                     }
-                }
-           }
-      }
-    return ECORE_CALLBACK_PASS_ON;
+   if (ev->ec->parent) return ECORE_CALLBACK_PASS_ON;
+   EINA_LIST_FOREACH((Eina_List *)emix_sink_inputs_get(), l, input)
+     {
+        pid = input->pid;
+        while (42)
+          {
+             if (pid <= 1 || pid == getpid()) return ECORE_CALLBACK_PASS_ON;
+             if (ev->ec->netwm.pid == pid)
+               {
+                  DBG("Client(%s) found a sink input",
+                      e_client_util_name_get(ev->ec));
+                  sink = e_client_volume_sink_new(_sink_input_get,
+                                                  _sink_input_set,
+                                                  _sink_input_min_get,
+                                                  _sink_input_max_get,
+                                                  _sink_input_name_get,
+                                                  input);
+                  e_client_volume_sink_append(ev->ec, sink);
+                  _client_sinks = eina_list_append(_client_sinks, sink);
+                  return ECORE_CALLBACK_PASS_ON;
+               }
+             pid = _get_ppid(pid);
+          }
+     }
+   return ECORE_CALLBACK_PASS_ON;
 }
 
 static Eina_Bool
