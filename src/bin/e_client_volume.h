@@ -26,6 +26,7 @@ struct _E_Client_Volume_Sink
    E_Client_Volume_Sink_Name_Get func_name_get;
    void *data;
    Eina_List *clients;
+   int in_del;
 };
 
 struct _E_Event_Client_Volume_Sink

@@ -177,6 +177,8 @@ e_client_volume_sink_del(E_Client_Volume_Sink *sink)
 {
    E_Client *ec;
 
+   if (sink->in_del > 0) return;
+   sink->in_del++;
    EINA_LIST_FREE(sink->clients, ec)
      {
         ec->sinks = eina_list_remove(ec->sinks, sink);
@@ -185,6 +187,7 @@ e_client_volume_sink_del(E_Client_Volume_Sink *sink)
                                            E_EVENT_CLIENT_VOLUME_SINK_DEL);
         e_object_unref(E_OBJECT(ec));
      }
+   sink->in_del--;
    free(sink);
 }
 
