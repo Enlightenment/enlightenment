@@ -2242,7 +2242,7 @@ e_config_binding_key_match(E_Config_Binding_Key *eb_in)
    Eina_List *l;
    E_Config_Binding_Key *eb;
 
-   EINA_LIST_FOREACH(e_bindings->mouse_bindings, l, eb)
+   EINA_LIST_FOREACH(e_bindings->key_bindings, l, eb)
      {
         if ((eb->context == eb_in->context) &&
             (eb->modifiers == eb_in->modifiers) &&
