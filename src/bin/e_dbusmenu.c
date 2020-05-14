@@ -401,6 +401,7 @@ e_dbusmenu_event_send(E_DBusMenu_Item *m, E_DBusMenu_Item_Event event)
    EINA_SAFETY_ON_NULL_RETURN(m);
    EINA_SAFETY_ON_FALSE_RETURN(event < E_DBUSMENU_ITEM_EVENT_LAST);
    EINA_SAFETY_ON_NULL_RETURN(m->ctx);
+   m->ctx->proxy = eldbus_proxy_ref(m->ctx->proxy);
 
    msg = eldbus_proxy_method_call_new(m->ctx->proxy, "Event");
    main_iter = eldbus_message_iter_get(msg);
