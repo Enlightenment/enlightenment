@@ -7,7 +7,7 @@ static int _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 static Evas_Object *_basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata);
 static void _enabled_cb(void *data, Evas_Object *obj, void *event_info);
 
-struct _E_Config_Dialog_Data 
+struct _E_Config_Dialog_Data
 {
    Evas_Object *l1, *l2, *l3, *sl1, *sl2, *sl3;
    int thumbscroll_enable;
@@ -17,15 +17,15 @@ struct _E_Config_Dialog_Data
 };
 
 E_Config_Dialog *
-e_int_config_interaction(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED) 
+e_int_config_interaction(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
-   
-   if (e_config_dialog_find("E", "keyboard_and_mouse/interaction")) 
+
+   if (e_config_dialog_find("E", "keyboard_and_mouse/interaction"))
      return NULL;
    v = E_NEW(E_Config_Dialog_View, 1);
-   
+
    v->create_cfdata = _create_data;
    v->free_cfdata = _free_data;
    v->basic.apply_cfdata = _basic_apply;
@@ -40,33 +40,33 @@ e_int_config_interaction(Evas_Object *parent EINA_UNUSED, const char *params EIN
 }
 
 static void
-_fill_data(E_Config_Dialog_Data *cfdata) 
+_fill_data(E_Config_Dialog_Data *cfdata)
 {
    cfdata->thumbscroll_enable = e_config->thumbscroll_enable;
    cfdata->thumbscroll_threshhold = e_config->thumbscroll_threshhold;
-   cfdata->thumbscroll_momentum_threshhold = 
+   cfdata->thumbscroll_momentum_threshhold =
      e_config->thumbscroll_momentum_threshhold;
    cfdata->thumbscroll_friction = e_config->thumbscroll_friction;
 }
 
 static void *
-_create_data(E_Config_Dialog *cfd EINA_UNUSED) 
+_create_data(E_Config_Dialog *cfd EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
-   
+
    cfdata = E_NEW(E_Config_Dialog_Data, 1);
    _fill_data(cfdata);
    return cfdata;
 }
 
 static void
-_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata) 
+_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    E_FREE(cfdata);
 }
 
 static int
-_basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata) 
+_basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    return ((cfdata->thumbscroll_enable != e_config->thumbscroll_enable) ||
 	   (cfdata->thumbscroll_threshhold != e_config->thumbscroll_threshhold) ||
@@ -75,11 +75,11 @@ _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
 }
 
 static int
-_basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata) 
+_basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    e_config->thumbscroll_enable = cfdata->thumbscroll_enable;
    e_config->thumbscroll_threshhold = cfdata->thumbscroll_threshhold;
-   e_config->thumbscroll_momentum_threshhold = 
+   e_config->thumbscroll_momentum_threshhold =
      cfdata->thumbscroll_momentum_threshhold;
    e_config->thumbscroll_friction = cfdata->thumbscroll_friction;
    e_config_save_queue();
@@ -87,14 +87,14 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 }
 
 static Evas_Object *
-_basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata) 
+_basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    Evas_Object *o, *of, *ob;
 
    o = e_widget_list_add(evas, 0, 0);
    of = e_widget_framelist_add(evas, _("Thumbscroll"), 0);
 
-   ob = e_widget_check_add(evas, _("Enable Thumbscroll"), 
+   ob = e_widget_check_add(evas, _("Enable Thumbscroll"),
                            &(cfdata->thumbscroll_enable));
    e_widget_framelist_object_append(of, ob);
    evas_object_smart_callback_add(ob, "changed", _enabled_cb, cfdata);
@@ -102,7 +102,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    ob = e_widget_label_add(evas, _("Threshold for a thumb drag"));
    e_widget_framelist_object_append(of, ob);
    cfdata->l1 = ob;
-   ob = e_widget_slider_add(evas, 1, 0, _("%1.0f pixels"), 0, 64, 4, 0, NULL, 
+   ob = e_widget_slider_add(evas, 1, 0, _("%1.0f pixels"), 0, 64, 4, 0, NULL,
                             &(cfdata->thumbscroll_threshhold), 100);
    e_widget_framelist_object_append(of, ob);
    cfdata->sl1 = ob;
@@ -110,8 +110,8 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    ob = e_widget_label_add(evas, _("Threshold for applying drag momentum"));
    e_widget_framelist_object_append(of, ob);
    cfdata->l2 = ob;
-   ob = e_widget_slider_add(evas, 1, 0, _("%1.0f pixels/s"), 0, 2000, 20, 0, 
-                            &(cfdata->thumbscroll_momentum_threshhold), 
+   ob = e_widget_slider_add(evas, 1, 0, _("%1.0f pixels/s"), 0, 2000, 20, 0,
+                            &(cfdata->thumbscroll_momentum_threshhold),
                             NULL, 100);
    e_widget_framelist_object_append(of, ob);
    cfdata->sl2 = ob;
@@ -119,7 +119,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    ob = e_widget_label_add(evas, _("Friction slowdown"));
    e_widget_framelist_object_append(of, ob);
    cfdata->l3 = ob;
-   ob = e_widget_slider_add(evas, 1, 0, _("%1.2f s"), 0.00, 5.0, 0.1, 0, 
+   ob = e_widget_slider_add(evas, 1, 0, _("%1.2f s"), 0.00, 5.0, 0.1, 0,
                             &(cfdata->thumbscroll_friction), NULL, 100);
    e_widget_framelist_object_append(of, ob);
    cfdata->sl3 = ob;

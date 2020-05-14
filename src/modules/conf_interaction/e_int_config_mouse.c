@@ -192,7 +192,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    cfdata->gui.idle_cursor = ob;
 
    e_widget_list_object_append(ol, of, 1, 0, 0.5);
-   e_widget_toolbook_page_append(otb, NULL, _("Cursor"), ol, 
+   e_widget_toolbook_page_append(otb, NULL, _("Cursor"), ol,
                                  1, 0, 1, 0, 0.5, 0.0);
 
    /* Mouse */
@@ -243,7 +243,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
 #endif
 
    e_widget_list_object_append(ol, of, 1, 0, 0.5);
-   e_widget_toolbook_page_append(otb, NULL, _("Mouse"), ol, 
+   e_widget_toolbook_page_append(otb, NULL, _("Mouse"), ol,
                                  1, 0, 1, 0, 0.5, 0.0);
 
    e_widget_toolbook_page_show(otb, 0);

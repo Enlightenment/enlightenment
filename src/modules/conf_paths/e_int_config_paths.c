@@ -24,7 +24,7 @@ struct _CFPath_Change_Data
    int			 dirty;
    E_Config_Dialog_Data	*cfdata;
 };
-     
+
 struct _E_Config_Dialog_Data
 {
    E_Config_Dialog *cfd;
@@ -50,12 +50,12 @@ e_int_config_paths(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUS
 
    if (e_config_dialog_find("E", "advanced/search_directories")) return NULL;
    v = E_NEW(E_Config_Dialog_View, 1);
-   
+
    v->create_cfdata           = _create_data;
    v->free_cfdata             = _free_data;
    v->basic.create_widgets    = _basic_create_widgets;
    v->basic.apply_cfdata      = _basic_apply_data;
-   
+
    cfd = e_config_dialog_new(NULL, _("Search Path Settings"),
 			     "E", "advanced/search_directories",
 			     "preferences-directories", 0, v, NULL);
@@ -107,14 +107,14 @@ _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 	while (pcd->new_user_path)
 	  {
 	     const char *dir;
-	     
+	
 	     dir = pcd->new_user_path->data;
 	     eina_stringshare_del(dir);
-	     pcd->new_user_path = 
+	     pcd->new_user_path =
 	       eina_list_remove_list(pcd->new_user_path, pcd->new_user_path);
 	  }
 	free(pcd);
-	cfdata->pcd_list = 
+	cfdata->pcd_list =
 	  eina_list_remove_list(cfdata->pcd_list, cfdata->pcd_list);
      }
    free(cfdata->paths_available);
@@ -123,10 +123,10 @@ _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 
 static int
 _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
-{	 
+{	
    Eina_List *l;
    Eina_List *ll;
-   
+
    _ilist_update(cfdata->gui.user_list, cfdata->cur_pcd, NULL);
 
    for (l = cfdata->pcd_list; l; l = l->next)
@@ -169,7 +169,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    evas_event_freeze(evas_object_evas_get(cfdata->gui.path_list));
    edje_freeze();
    e_widget_ilist_freeze(cfdata->gui.path_list);
-   
+
    /* Fill In Ilist */
    for (i = 0; cfdata->paths_available[i].path; i++)
      {
@@ -179,8 +179,8 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
 	pcd->path = cfdata->paths_available[i].path;
 	pcd->cfdata = cfdata;
 	cfdata->pcd_list = eina_list_append(cfdata->pcd_list, pcd);
-	e_widget_ilist_append(ob, NULL, 
-			      cfdata->paths_available[i].path_description, 
+	e_widget_ilist_append(ob, NULL,
+			      cfdata->paths_available[i].path_description,
 			      _ilist_path_cb_change, pcd, NULL);
      }
 
@@ -200,13 +200,13 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    e_widget_table_object_append(o, of, 0, 1, 1, 1, 0, 1, 0, 1);
 
    of = e_widget_framelist_add(evas, _("User Defined Directories"), 0);
-   ob = e_widget_config_list_add(evas, e_widget_entry_add, 
+   ob = e_widget_config_list_add(evas, e_widget_entry_add,
 				 _("New Directory"), 2);
    e_widget_disabled_set(ob, 1);
    cfdata->gui.user_list = ob;
    e_widget_framelist_object_append(of, ob);
    e_widget_table_object_append(o, of, 1, 0, 1, 2, 1, 1, 1, 1);
-   
+
    return o;
 }
 
@@ -216,7 +216,7 @@ _ilist_path_cb_change(void *data)
    CFPath_Change_Data *pcd;
    Eina_List *default_list;
    Eina_List *l;
-   
+
    pcd = data;
    default_list = pcd->path->default_dir_list;
 
@@ -224,14 +224,14 @@ _ilist_path_cb_change(void *data)
    evas_event_freeze(evas_object_evas_get(pcd->cfdata->gui.default_list));
    edje_freeze();
    e_widget_ilist_freeze(pcd->cfdata->gui.default_list);
-   
+
    e_widget_ilist_clear(pcd->cfdata->gui.default_list);
    for (l = default_list; l; l = l->next)
      {
 	const char *dir;
 
 	dir = ((E_Path_Dir *)l->data)->dir;
-	e_widget_ilist_append(pcd->cfdata->gui.default_list, 
+	e_widget_ilist_append(pcd->cfdata->gui.default_list,
 			      NULL, dir, NULL, NULL, NULL);
      }
    e_widget_ilist_go(pcd->cfdata->gui.default_list);
@@ -239,15 +239,15 @@ _ilist_path_cb_change(void *data)
    e_widget_ilist_thaw(pcd->cfdata->gui.default_list);
    edje_thaw();
    evas_event_thaw(evas_object_evas_get(pcd->cfdata->gui.default_list));
-   
+
    _ilist_update(pcd->cfdata->gui.user_list,
 		 pcd->cfdata->cur_pcd, /* Path data to save */
 		 pcd); /* New Path to show */
-   
+
    pcd->cfdata->cur_pcd = pcd;
 }
 
-static void 
+static void
 _ilist_update(Evas_Object *obj, CFPath_Change_Data *old, CFPath_Change_Data *new)
 {
    /* Save current data to old path */
@@ -259,10 +259,10 @@ _ilist_update(Evas_Object *obj, CFPath_Change_Data *old, CFPath_Change_Data *new
 	while (old->new_user_path)
 	  {
 	     const char *dir;
-	     
+	
 	     dir = old->new_user_path->data;
 	     eina_stringshare_del(dir);
-	     old->new_user_path = 
+	     old->new_user_path =
 	       eina_list_remove_list(old->new_user_path, old->new_user_path);
 	  }
 	
@@ -271,17 +271,17 @@ _ilist_update(Evas_Object *obj, CFPath_Change_Data *old, CFPath_Change_Data *new
 	     const char *dir;
 
 	     dir = e_widget_config_list_nth_get(obj, i);
-	     old->new_user_path = 
+	     old->new_user_path =
 	       eina_list_append(old->new_user_path, eina_stringshare_add(dir));
 	  }
      }
 
    if (!new) return;
-   
+
    /* Fill list with selected data */
    e_widget_disabled_set(obj, 0);
    e_widget_config_list_clear(obj);
-   
+
    if (new->new_user_path)
      {
 	Eina_List *l;
@@ -292,7 +292,7 @@ _ilist_update(Evas_Object *obj, CFPath_Change_Data *old, CFPath_Change_Data *new
 	for (l = user_path; l; l = l->next)
 	  {
 	     const char *dir;
-	     
+	
 	     dir = l->data;
 	     e_widget_config_list_append(obj, dir);
 	  }
@@ -307,9 +307,9 @@ _ilist_update(Evas_Object *obj, CFPath_Change_Data *old, CFPath_Change_Data *new
 	for (l = user_path; l; l = l->next)
 	  {
 	     E_Path_Dir *epd;
-	     
+	
 	     epd = l->data;
 	     e_widget_config_list_append(obj, epd->dir);
 	  }
-     } 
+     }
 }

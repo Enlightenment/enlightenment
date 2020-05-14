@@ -31,10 +31,10 @@ e_int_config_desks(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUS
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
-   
+
    if (e_config_dialog_find("E", "screen/virtual_desktops")) return NULL;
    v = E_NEW(E_Config_Dialog_View, 1);
-   
+
    /* methods */
    v->create_cfdata = _create_data;
    v->free_cfdata = _free_data;
@@ -126,7 +126,7 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata
    if (cfdata->flip_mode)
      e_config->desk_flip_animate_type = eina_stringshare_ref(eina_list_nth(cfdata->comp_effects, cfdata->flip_mode));
    e_config->desk_flip_animate_interpolation = cfdata->flip_interp;
-   
+
    e_config->edge_flip_dragging = cfdata->edge_flip_dragging;
    e_config->desk_flip_wrap = cfdata->flip_wrap;
 
@@ -167,7 +167,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    int mode = 0;
 
    otb = e_widget_toolbook_add(evas, (48 * e_scale), (48 * e_scale));
-   
+
    of = e_widget_frametable_add(evas, _("Number of Desktops"), 0);
    e_widget_frametable_content_align_set(of, 0.5, 0.0);
 
@@ -178,12 +178,12 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    e_widget_frametable_object_append(of, ob, 0, 1, 1, 1, 1, 1, 1, 1);
    cfdata->preview = ob;
 
-   ob = e_widget_slider_add(evas, 0, 0, _("%1.0f"), 1.0, 12.0, 1.0, 0, NULL, 
+   ob = e_widget_slider_add(evas, 0, 0, _("%1.0f"), 1.0, 12.0, 1.0, 0, NULL,
                             &(cfdata->y), 150);
    e_widget_on_change_hook_set(ob, _cb_slider_change, cfdata);
    e_widget_frametable_object_append(of, ob, 1, 1, 1, 1, 1, 1, 0, 1);
 
-   ob = e_widget_slider_add(evas, 1, 0, _("%1.0f"), 1.0, 12.0, 1.0, 0, NULL, 
+   ob = e_widget_slider_add(evas, 1, 0, _("%1.0f"), 1.0, 12.0, 1.0, 0, NULL,
                             &(cfdata->x), 200);
    e_widget_on_change_hook_set(ob, _cb_slider_change, cfdata);
    e_widget_frametable_object_append(of, ob, 0, 2, 1, 1, 1, 1, 1, 0);
@@ -193,11 +193,11 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
 
    o = e_widget_list_add(evas, 0, 0);
 
-   ob = e_widget_check_add(evas, _("Flip when dragging objects to the screen edge"), 
+   ob = e_widget_check_add(evas, _("Flip when dragging objects to the screen edge"),
                            &(cfdata->edge_flip_dragging));
    e_widget_list_object_append(o, ob, 1, 1, 0.);
 
-   ob = e_widget_check_add(evas, _("Wrap desktops around when flipping"), 
+   ob = e_widget_check_add(evas, _("Wrap desktops around when flipping"),
                            &(cfdata->flip_wrap));
    e_widget_list_object_append(o, ob, 1, 0, 0.5);
 

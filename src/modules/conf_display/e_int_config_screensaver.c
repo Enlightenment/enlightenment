@@ -24,7 +24,7 @@ struct _E_Config_Dialog_Data
    double desklock_timeout;
    int ask_presentation;
    double ask_presentation_timeout;
-   
+
    int screensaver_suspend;
    int screensaver_hibernate;
    int screensaver_suspend_on_ac;
@@ -37,7 +37,7 @@ struct _E_Config_Dialog_Data
    int no_dpms_on_fullscreen;
    int use_dpms;
 
-   struct 
+   struct
      {
         Evas_Object *ask_presentation_slider;
         Evas_Object *slider_suspend_seconds;
@@ -144,14 +144,14 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
         e_config->dpms_suspend_timeout = e_config->screensaver_timeout;
         e_config->dpms_off_timeout = e_config->screensaver_timeout;
      }
-   
+
    e_config->no_dpms_on_fullscreen = cfdata->no_dpms_on_fullscreen;
    e_config->screensaver_dpms_off = !cfdata->use_dpms;
-   
+
    /* Apply settings */
    e_screensaver_update();
    e_dpms_update();
-   
+
    e_config_save_queue();
    return 1;
 }
@@ -201,7 +201,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    oc2 = e_widget_check_add(evas, _("Use Power Saving (DPMS)"),
                            &(cfdata->use_dpms));
    e_widget_list_object_append(ol, oc2, 1, 1, 0.5);
-   
+
    ow = e_widget_label_add(evas, _("Timeout"));
    e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
@@ -209,7 +209,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
 			    0.1, 60.0, 0.1, 0, &(cfdata->timeout), NULL, 100);
    e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
-   
+
    ow = e_widget_label_add(evas, _("Special timeout when locked (0 is off)"));
    e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
@@ -217,8 +217,8 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
 			    0.0, 60.0, 1.0, 0, &(cfdata->desklock_timeout), NULL, 100);
    e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
-   
-   ow = e_widget_check_add(evas, _("Suspend on blank"), 
+
+   ow = e_widget_check_add(evas, _("Suspend on blank"),
                            &(cfdata->screensaver_suspend));
    e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
@@ -232,7 +232,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
 
-   
+
    ow = e_widget_label_add(evas, _("Suspend delay"));
    e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
@@ -254,7 +254,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
                            &(cfdata->no_dpms_on_fullscreen));
    e_widget_list_object_append(ol, oc, 1, 1, 0.5);
 
-   e_widget_toolbook_page_append(otb, NULL, _("Blanking"), ol, 
+   e_widget_toolbook_page_append(otb, NULL, _("Blanking"), ol,
                                  1, 1, 1, 0, 0.0, 0.0);
 
    /* Wakeups */
@@ -269,7 +269,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
                                  1, 1, 1, 0, 0.0, 0.0);
    /* Presentation */
    ol = e_widget_list_add(evas, 0, 0);
-   oc2 = e_widget_check_add(evas, _("Suggest if deactivated before"), 
+   oc2 = e_widget_check_add(evas, _("Suggest if deactivated before"),
                            &(cfdata->ask_presentation));
    e_widget_check_widget_disable_on_unchecked_add(oc, oc2);
    e_widget_list_object_append(ol, oc2, 1, 1, 0.5);
@@ -283,7 +283,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Presentation"), ol,
                                  1, 1, 1, 0, 0.0, 0.0);
-   
+
    e_widget_toolbook_page_show(otb, 0);
 
    return otb;
