@@ -4,9 +4,9 @@
 EINTERN Eina_Bool   e_input_panel_init(void);
 EINTERN void        e_input_panel_shutdown(void);
 
-EINTERN Eina_Hash *shell_resources;
-EINTERN Eina_Hash *xdg_shell_resources;
-EINTERN Eina_List *hooks;
+EINTERN extern Eina_Hash *shell_resources;
+EINTERN extern Eina_Hash *xdg_shell_resources;
+EINTERN extern Eina_List *hooks;
 
 
 EINTERN void e_shell_surface_destroy(struct wl_resource *resource);
