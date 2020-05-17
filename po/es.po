@@ -6946,13 +6946,13 @@ msgid "Interaction Settings"
 msgstr "Preferencias de las interacciones"
 
 # https://docs.enlightenment.org/elementary/1.15.0/group__Scrolling.html
-# Eina_Bool elm_config_scroll_thumbscroll_enabled_get 	( 	void  		) 	
+# Eina_Bool elm_config_scroll_thumbscroll_enabled_get 	( 	void  		)
 # Get whether scrollers should be draggable from any point in their views.
 # Returns
 #     the thumb scroll state
 # Note
-#     This is the default behavior for touch screens, in general. 
-#     All other functions namespaced with "thumbscroll" will only have effect if this mode is enabled. 
+#     This is the default behavior for touch screens, in general.
+#     All other functions namespaced with "thumbscroll" will only have effect if this mode is enabled.
 #: src/modules/conf_interaction/e_int_config_interaction.c:95
 msgid "Thumbscroll"
 msgstr "Desplazamiento por dedo"
@@ -6966,10 +6966,10 @@ msgid "Threshold for a thumb drag"
 msgstr "Umbral de arrastre por dedo"
 
 # ¿"fuerza" o "velocidad"?
-# double elm_config_scroll_thumbscroll_momentum_threshold_get 	( 	void  		) 	
+# double elm_config_scroll_thumbscroll_momentum_threshold_get 	( 	void  		)
 # Get the minimum speed of mouse cursor movement which will trigger list self scrolling animation after a mouse up event (pixels/second).
 # Returns
-#     the thumb scroll momentum threshold 
+#     the thumb scroll momentum threshold
 #: src/modules/conf_interaction/e_int_config_interaction.c:110
 msgid "Threshold for applying drag momentum"
 msgstr "Umbral para aplicar la fuerza de arrastre"

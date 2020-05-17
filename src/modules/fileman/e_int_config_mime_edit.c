@@ -99,7 +99,7 @@ _fill_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 	else
 	  {
 	     char *p;
-	
+
 	     p = strrchr(cfdata->icon, '.');
 	     if ((p) && (!strcmp(p, ".edj")))
 	       cfdata->type = EDJ;

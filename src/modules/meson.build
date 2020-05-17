@@ -89,8 +89,6 @@ foreach m: mods
 
   opt = '-'.join(m.split('_'))
 
-  
-
   if get_option(opt) == true
     subdir(m)
   else

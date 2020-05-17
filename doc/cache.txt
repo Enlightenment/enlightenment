@@ -1,7 +1,7 @@
 As part of the .eap to .desktop conversion, raster wants me to redo the
 relevant caching to suit.  He has made many "eap caching needs
 fixing" noises in the recent past, so maybe a fresh start is needed
-at this point.  
+at this point.
 
 This is a discussion and design document.  Major parts of it where sent
 to the devel list but got no response.  Raster said to put it in here,
@@ -148,7 +148,7 @@ USED BY:
 WHEN:
      At startup.  They hardly ever change.
 ISSUES:
-    The use of GNOME and KDE apps to figure out some of the paths. 
+    The use of GNOME and KDE apps to figure out some of the paths.
     They are curently commented out, and guesses are made.
 SOLUTION:
     Go with the guesses, run the apps later to correct the guesses.
@@ -180,7 +180,7 @@ WHEN:
 ISSUES:
     The actual icon theme currently in use is a small amount of info that
     can always be in ram, and is quick to get at startup or theme change.
-    It's the complete list of themes that are currently installed that can 
+    It's the complete list of themes that are currently installed that can
     take ages to find.  The list itself should also be small.
 SOLUTION:
     Find them during idle time, and finish the job async when the dialog
@@ -197,21 +197,21 @@ WHEN:
     On demand.
 ISSUES:
     Combined .edj and FDO searching. FDO searching can take a long time.
-    Things that display lots of icons wont want to wait for all those 
+    Things that display lots of icons wont want to wait for all those
     complex searches.  Searching for icons that don't exist is what
     takes the longest, as the FDO algo means we have to look through all
     the directories, in this theme, and the next theme.
 SOLUTION:
-    e_app_icon_add() should be used everywhere, and it should register a 
+    e_app_icon_add() should be used everywhere, and it should register a
     rectangle for use by the icon.  The caller then shows an empty icon.
-    A thumbnailing style process then does all the searching, and does 
-    the fm2 bouncy icon thing when the icon is found.  raster forbids 
+    A thumbnailing style process then does all the searching, and does
+    the fm2 bouncy icon thing when the icon is found.  raster forbids
     this method.
 
-    The results of the search should be cached somewhere on disk for 
-    future reference.  That needs to be nuked when the user changes 
-    icon theme.  Changing the icon theme currently does not update all 
-    displayed icons, it just does a restart like wm theme changing does. 
+    The results of the search should be cached somewhere on disk for
+    future reference.  That needs to be nuked when the user changes
+    icon theme.  Changing the icon theme currently does not update all
+    displayed icons, it just does a restart like wm theme changing does.
     The X-Enlightenment-IconPath field of the .desktop file could be
     used for the on disk cache.  X-Enlightenment-Icon-Theme and
     X-Enlightenment-Icon-TimeStamp can be used to determine if the icon
@@ -230,12 +230,12 @@ USED BY:
 WHEN:
     Whenever the E_App needs to be read from disk.
 ISSUES:
-    Currently a fairly simple in memory hash of them is kept.  Since 
-    each Ecore_Desktop holds a hash of the fields, this can be 
+    Currently a fairly simple in memory hash of them is kept.  Since
+    each Ecore_Desktop holds a hash of the fields, this can be
     expensive in memory.  Also, we would like a pre parsed binary on
-    disk cache for the sheer speed.  ~/.e/e/applications/all is a 
-    directory with all of them that are for E_Apps, some are just links 
-    to system files. 
+    disk cache for the sheer speed.  ~/.e/e/applications/all is a
+    directory with all of them that are for E_Apps, some are just links
+    to system files.
 SOLUTION:
     Remove after implementing the E_App cache then see if these still
     needs caching.  Note that the menu generation probably reads the
@@ -259,8 +259,8 @@ E_Apps
 USED BY:
     Menus, bars, borders, exebuf, lots of other places.
 WHEN:
-    Currently all read in at startup time.  Should change this to an 
-    idle time task.  Still need to read in them all near startup time 
+    Currently all read in at startup time.  Should change this to an
+    idle time task.  Still need to read in them all near startup time
     though.  We need all of them for searching.
 
     a_actions searches for filename, name, generic, and exe to find an
@@ -275,7 +275,7 @@ WHEN:
 
     e_exebuf searches/lists all apps and most recently used apps based
     on a partially typed in string.  It globs name, exe, generic, and
-    comment.  When actually listing the matches, it searches for exe. 
+    comment.  When actually listing the matches, it searches for exe.
     When showing an icon for the current match, it searches exe, name,
     then generic.  Updates the most recently used list.
 
@@ -288,8 +288,8 @@ WHEN:
     have .order files.
 
 ISSUES:
-    The current eap caching code is not up to scratch, and the .desktop 
-    conversion didn't help.  It does hide some other bugs though, so that 
+    The current eap caching code is not up to scratch, and the .desktop
+    conversion didn't help.  It does hide some other bugs though, so that
     needs to be cleaned up first.
 
     How this all hangs together is complex.
@@ -300,7 +300,7 @@ ISSUES:
     E_App *_e_apps_all = ~/.e/e/applications/all
 	Currently has all the E_Apps as subbapps, but only used as if it was a single E_App.
 	On the other hand, this is scanned at startup time, so is used to preload the caches.
-	
+
     _e_apps_list = Most recently used list / all apps list.
 
     E_App members -

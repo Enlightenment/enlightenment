@@ -3,7 +3,7 @@
 # This is a system configuration for allowing or denying certain users or
 # groups to be able to do certain actions that involve system restricted
 # actions such as halt, reboot, suspend, hibernate etc.
-# 
+#
 # This file is read in order from top to bottom - the first rule to MATCH
 # will be used for a user or a group, and nothing after that is read.
 #
@@ -11,7 +11,7 @@
 # Any action definitons after a rule match has been found will be ignored.
 # This allows actions to be re-defined for different user groups, so matches
 # so the command for an action can change for matches to the rules later on.
-# 
+#
 # Any user or group NOT matched by an allow or a deny will be ALLOWED to
 # perform the action by default (system administrators should be aware of
 # this and implement whatever policies they see fit). Generally speaking
@@ -19,7 +19,7 @@
 # to perform these actions, thus the default of allow. For multi-user systems
 # the system administrator is considered capable enough to restrict what they
 # see they need to.
-# 
+#
 # A WARNING to admins: do NOT allow access for users to this system remotely
 # UNLESS you fully trust them or you have locked down permissions to halt/reboot
 # suspend etc. here first. You have been warned.
@@ -38,7 +38,7 @@
 # etc.
 #
 # user and group name can use glob matches (* == all for example) like the
-# shell. as can action names allowed or denied. 
+# shell. as can action names allowed or denied.
 
 action:   /bin/mount     @MOUNT@
 action:   /bin/umount    @UMOUNT@

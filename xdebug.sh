@@ -78,7 +78,7 @@ for arg in $@; do
 done
 
 
-if [ -z "$dbg_display" ]; then 
+if [ -z "$dbg_display" ]; then
    if [ -z "$DISPLAY" ]; then
       echo "Couldn't read your \$DISPLAY env variable, are you running X?"
 	  exit 1

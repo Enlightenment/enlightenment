@@ -22,12 +22,12 @@ start up.
 
 .desktop.
 
-Some extension fields are defined as allowed by the specification. 
+Some extension fields are defined as allowed by the specification.
 
 X-Enlightenment-IconPath is used to specify an absolute or relative path to
 an icon file.  If it exists it overrides any other icon specifications.
 
-X-Enlightenment-IconClass is used to specify a list of icon classes. 
+X-Enlightenment-IconClass is used to specify a list of icon classes.
 This is the same information that was in .eaps as app/icon/class, and is
 used the same way if it exists.  Obviously any .desktop file that comes
 with packages outside of E is unlikely to have that field.  One further
@@ -48,7 +48,7 @@ path, then it is simply used with no searching.  Converted .eaps should
 just copy the app/icon/class data to the X-Enlightenment-IconClass
 field.
 
-X-Enlightenment-WindowName, X-Enlightenment-WindowTitle, 
+X-Enlightenment-WindowName, X-Enlightenment-WindowTitle,
 X-Enlightenment-WindowRole, and X-Enlightenment-WaitExit are just the same
 as their namesakes in .eaps.
 
@@ -64,23 +64,23 @@ all.
 
 Menus.
 
-The most complex, and thus the most problematic of the specifications. 
+The most complex, and thus the most problematic of the specifications.
 The general philosophy is to err on the side of caution, giving the user
 more apps in their menus rather than less.  Even if that means some
 duplicates and some things that aren't really apps.
 
-There is often a .hidden menu, it contains various types of things. 
+There is often a .hidden menu, it contains various types of things.
 Some of those things are supposed to be moved into proper menus by the
 menu moving part of the spec.  The menu moving code has not been
 implemented yet. Following the above philosophy, it is shown to the
 user.
 
-Slackware and probably other distros use parent style menu merging. 
+Slackware and probably other distros use parent style menu merging.
 Initially I did not write code to support that for two reasons.  The
 specification is confusing, and it takes some digging and cross
 referencing other specs to sort out what it actually means.  The other
 reason is that distros available to me at the time for testing did not
-use parent style menu merging, so there was no way to test it properly. 
+use parent style menu merging, so there was no way to test it properly.
 Now that I know of at least one distro that uses them, it's worthwhile
 writing the code, and installing slackware under QEMU for testing.
 

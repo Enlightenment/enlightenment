@@ -107,7 +107,7 @@ _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 	while (pcd->new_user_path)
 	  {
 	     const char *dir;
-	
+
 	     dir = pcd->new_user_path->data;
 	     eina_stringshare_del(dir);
 	     pcd->new_user_path =
@@ -123,7 +123,7 @@ _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 
 static int
 _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
-{	
+{
    Eina_List *l;
    Eina_List *ll;
 
@@ -132,7 +132,7 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata
    for (l = cfdata->pcd_list; l; l = l->next)
      {
 	CFPath_Change_Data *pcd;
-	
+
 	pcd = l->data;
 	if (pcd->new_user_path)
 	  {
@@ -254,18 +254,18 @@ _ilist_update(Evas_Object *obj, CFPath_Change_Data *old, CFPath_Change_Data *new
    if (old)
      {
 	int i;
-	
+
 	old->dirty = 1;
 	while (old->new_user_path)
 	  {
 	     const char *dir;
-	
+
 	     dir = old->new_user_path->data;
 	     eina_stringshare_del(dir);
 	     old->new_user_path =
 	       eina_list_remove_list(old->new_user_path, old->new_user_path);
 	  }
-	
+
 	for (i = 0; i < e_widget_config_list_count(obj); i++)
 	  {
 	     const char *dir;
@@ -286,13 +286,13 @@ _ilist_update(Evas_Object *obj, CFPath_Change_Data *old, CFPath_Change_Data *new
      {
 	Eina_List *l;
 	Eina_List *user_path;
-	
+
 	user_path = new->new_user_path;
-	
+
 	for (l = user_path; l; l = l->next)
 	  {
 	     const char *dir;
-	
+
 	     dir = l->data;
 	     e_widget_config_list_append(obj, dir);
 	  }
@@ -301,13 +301,13 @@ _ilist_update(Evas_Object *obj, CFPath_Change_Data *old, CFPath_Change_Data *new
      {
 	Eina_List *l;
 	Eina_List *user_path;
-	
+
 	user_path = *(new->path->user_dir_list);
 
 	for (l = user_path; l; l = l->next)
 	  {
 	     E_Path_Dir *epd;
-	
+
 	     epd = l->data;
 	     e_widget_config_list_append(obj, epd->dir);
 	  }

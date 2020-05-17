@@ -73,7 +73,7 @@ maintain a bit of compatibility with possible scripts from the users too.
 The original tool is not (at the date of today) not removed and you can still
 have access to it, it is renamed to enlightenment_remote_old
 
-This tool depends of the command dbus-send, normally included in the main 
+This tool depends of the command dbus-send, normally included in the main
 dbus package
 
 This tool is just a front-end and may be not updated, you should
@@ -89,7 +89,7 @@ run: qdbus org.enlightenment.wm.service /org/enlightenment/wm/RemoteObject
 #          NAME:  ERC
 #   DESCRIPTION:  eremote callback
 #    PARAMETERS:  interface/method call
-#       RETURNS:  
+#       RETURNS:
 #===============================================================================
 ERC(){
    dbus-send --print-reply=literal --dest=org.enlightenment.wm.service /org/enlightenment/wm/RemoteObject "$1"
@@ -99,14 +99,14 @@ ERC(){
 #          NAME:  ERCS
 #   DESCRIPTION:  eremote call with string parameter
 #    PARAMETERS:  interface/method call, string parameter
-#       RETURNS:  
+#       RETURNS:
 #===============================================================================
 ERCS(){
    dbus-send --print-reply=literal --dest=org.enlightenment.wm.service /org/enlightenment/wm/RemoteObject "$1" string:"$2"
 }
 
 #===  FUNCTION  ================================================================
-#          NAME:  ERGS 
+#          NAME:  ERGS
 #   DESCRIPTION:  Get a (single) value (string)
 #    PARAMETERS:  interface/method call
 #       RETURNS:  value (string)
@@ -179,7 +179,7 @@ ERGMST(){
 #          NAME:  ERCIIIS
 #   DESCRIPTION:  eremote call with int, int, int, string parameter
 #    PARAMETERS:  interface/method call, int, int, int, string
-#       RETURNS:  
+#       RETURNS:
 #===============================================================================
 ERCIIIS(){
    dbus-send --print-reply=literal --dest=org.enlightenment.wm.service /org/enlightenment/wm/RemoteObject "$1" int32:"$2" int32:"$3" int32:"$4" string:"$5"
@@ -189,7 +189,7 @@ ERCIIIS(){
 #          NAME:  ERCIII
 #   DESCRIPTION:  eremote call with int, int, int parameter
 #    PARAMETERS:  interface/method call, int, int, int
-#       RETURNS:  
+#       RETURNS:
 #===============================================================================
 ERCIII(){
    dbus-send --print-reply=literal --dest=org.enlightenment.wm.service /org/enlightenment/wm/RemoteObject "$1" int32:"$2" int32:"$3" int32:"$4"
@@ -199,7 +199,7 @@ ERCIII(){
 #          NAME:  ERCII
 #   DESCRIPTION:  eremote call with int, int parameter
 #    PARAMETERS:  interface/method call, int, int
-#       RETURNS:  
+#       RETURNS:
 #===============================================================================
 ERCII(){
    dbus-send --print-reply=literal --dest=org.enlightenment.wm.service /org/enlightenment/wm/RemoteObject "$1" int32:"$2" int32:"$3"
@@ -209,7 +209,7 @@ ERCII(){
 #          NAME:  ERCI
 #   DESCRIPTION:  eremote call with int parameter
 #    PARAMETERS:  interface/method call, int
-#       RETURNS:  
+#       RETURNS:
 #===============================================================================
 ERCI(){
    dbus-send --print-reply=literal --dest=org.enlightenment.wm.service /org/enlightenment/wm/RemoteObject "$1" int32:"$2"
@@ -380,7 +380,7 @@ er_efm_open_dir(){
 	else
 		EFM_DIR="$2"
 	fi
-	
+
    dbus-send --session --type=method_call --print-reply=literal --dest=org.enlightenment.FileManager /org/enlightenment/FileManager org.enlightenment.FileManager.OpenDirectory "string:$EFM_DIR"
 }
 
@@ -465,7 +465,7 @@ case "$1" in
       er_restart
    ;;
    -exit)
-      er_exit 
+      er_exit
    ;;
    -module-list)
       er_module_list
