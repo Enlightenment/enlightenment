@@ -6,13 +6,15 @@ static void _e_xkb_type_reconfig(E_Pixmap_Type comp_type);
 static void _e_xkb_type_update(E_Pixmap_Type comp_type, int cur_group);
 
 static int _e_xkb_cur_group = -1;
-static Ecore_Event_Handler *xkb_state_handler = NULL, *xkb_new_keyboard_handler = NULL;
 
 static Ecore_Exe *cur_exe;
 
 #ifndef HAVE_WAYLAND_ONLY
+static Ecore_Event_Handler *xkb_state_handler = NULL;
+static Ecore_Event_Handler *xkb_new_keyboard_handler = NULL;
+static Ecore_Event_Handler *xkb_keymap_handler = NULL;
 static int skip_new_keyboard = 0;
-static Ecore_Timer *save_group;
+static Ecore_Timer *save_group = NULL;
 #endif
 
 E_API int E_EVENT_XKB_CHANGED = 0;
@@ -41,6 +43,7 @@ _eval_cur_group(void)
    e_config->xkb.cur_group = 0;
 }
 
+#ifndef HAVE_WAYLAND_ONLY
 static Eina_Bool
 _e_xkb_init_timer(void *data EINA_UNUSED)
 {
@@ -49,9 +52,10 @@ _e_xkb_init_timer(void *data EINA_UNUSED)
    _eval_cur_group();
 
    e_xkb_update(e_config->xkb.cur_group);
-
+   ecore_x_xkb_track_state();
    return EINA_FALSE;
 }
+#endif
 
 #ifndef HAVE_WAYLAND_ONLY
 
@@ -64,12 +68,9 @@ _e_xkb_save_group(void *data)
      {
         e_config->xkb.cur_group = group;
         e_config_save_queue();
-
         e_xkb_update(e_config->xkb.cur_group);
      }
-
    save_group = NULL;
-
    return EINA_FALSE;
 }
 
@@ -94,10 +95,15 @@ _xkb_new_state(void* data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_X_Event_Xkb *ev = event;
 
-   ecore_timer_del(save_group);
+   if (save_group) ecore_timer_del(save_group);
+   save_group = ecore_timer_loop_add(0.5, _e_xkb_save_group, (void *)(intptr_t)ev->group);
 
-   save_group = ecore_timer_loop_add(0.5, _e_xkb_save_group, (void*)(intptr_t)ev->group);
+   return ECORE_CALLBACK_PASS_ON;
+}
 
+static Eina_Bool
+_xkb_keymap(void* data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
+{
    return ECORE_CALLBACK_PASS_ON;
 }
 #endif
@@ -124,15 +130,19 @@ e_xkb_init(E_Pixmap_Type comp_type)
      {
         xkb_state_handler = ecore_event_handler_add(ECORE_X_EVENT_XKB_STATE_NOTIFY, _xkb_new_state, NULL);
         xkb_new_keyboard_handler = ecore_event_handler_add(ECORE_X_EVENT_XKB_NEWKBD_NOTIFY, _xkb_new_keyboard, NULL);
+        xkb_keymap_handler = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_KEYMAP, _xkb_keymap, NULL);
      }
 #endif
    if (e_config->xkb.dont_touch_my_damn_keyboard) return 1;
 
    _e_xkb_type_reconfig(comp_type);
 
+#ifndef HAVE_WAYLAND_ONLY
    if (comp_type == E_PIXMAP_TYPE_X)
      ecore_timer_loop_add(1.5, _e_xkb_init_timer, NULL);
-   else if (comp_type == E_PIXMAP_TYPE_WL)
+   else
+#endif
+   if (comp_type == E_PIXMAP_TYPE_WL)
      {
         _eval_cur_group();
         _e_xkb_type_update(comp_type, e_config->xkb.cur_group);
@@ -144,9 +154,10 @@ e_xkb_init(E_Pixmap_Type comp_type)
 E_API int
 e_xkb_shutdown(void)
 {
+#ifndef HAVE_WAYLAND_ONLY
+   E_FREE_FUNC(xkb_keymap_handler, ecore_event_handler_del);
    E_FREE_FUNC(xkb_state_handler, ecore_event_handler_del);
    E_FREE_FUNC(xkb_new_keyboard_handler, ecore_event_handler_del);
-#ifndef HAVE_WAYLAND_ONLY
    ecore_timer_del(save_group);
    save_group = NULL;
 #endif
@@ -247,12 +258,16 @@ _e_x_xkb_update(int cur_group)
    if (e_config->xkb.dont_touch_my_damn_keyboard) return;
    if ((!e_config->xkb.used_layouts) && (!e_config->xkb.used_options) && (!e_config->xkb.default_model)) return;
    if (!getenv("DISPLAY")) return;
-   if (cur_group != -1)
+   if (cur_group != _e_xkb_cur_group)
      {
         _e_xkb_cur_group = cur_group;
 #ifndef HAVE_WAYLAND_ONLY
         if (e_comp->root)
-          ecore_x_xkb_select_group(cur_group);
+          {
+             e_comp_canvas_keys_ungrab();
+             ecore_x_xkb_select_group(cur_group);
+             e_comp_canvas_keys_grab();
+          }
 #endif
         e_deskenv_xmodmap_run();
         _e_xkb_update_event(cur_group);
