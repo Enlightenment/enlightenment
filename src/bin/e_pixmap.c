@@ -62,8 +62,6 @@ struct _E_Pixmap
 
 #ifdef HAVE_WAYLAND
 
-double wayland_time_base;
-
 static void
 _e_pixmap_cb_deferred_buffer_destroy(struct wl_listener *listener, void *data EINA_UNUSED)
 {
@@ -393,7 +391,6 @@ e_pixmap_new(E_Pixmap_Type type, ...)
         else
           {
              pixmaps[type] = eina_hash_int64_new((Eina_Free_Cb)_e_pixmap_free);
-             wayland_time_base = ecore_loop_time_get();
           }
         cp = _e_pixmap_new(type);
         cp->win = id;
@@ -889,6 +886,7 @@ e_pixmap_image_clear(E_Pixmap *cp, Eina_Bool cache)
              E_Comp_Wl_Client_Data *cd;
              struct wl_resource *cb;
              Eina_List *free_list;
+             double t;
 
              if ((!cp->client) || (!cp->client->comp_data)) return;
 
@@ -899,9 +897,9 @@ e_pixmap_image_clear(E_Pixmap *cp, Eina_Bool cache)
               */
              free_list = cd->frames;
              cd->frames = NULL;
+             t = ecore_loop_time_get();
              EINA_LIST_FREE(free_list, cb)
                {
-                  double t = ecore_loop_time_get();
                   wl_callback_send_done(cb, t * 1000);
                   wl_resource_destroy(cb);
                }
