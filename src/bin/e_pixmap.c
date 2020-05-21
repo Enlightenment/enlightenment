@@ -901,7 +901,7 @@ e_pixmap_image_clear(E_Pixmap *cp, Eina_Bool cache)
              cd->frames = NULL;
              EINA_LIST_FREE(free_list, cb)
                {
-                  double t = ecore_loop_time_get() - wayland_time_base;
+                  double t = ecore_loop_time_get();
                   wl_callback_send_done(cb, t * 1000);
                   wl_resource_destroy(cb);
                }
