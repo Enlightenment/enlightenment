@@ -900,6 +900,7 @@ e_pixmap_image_clear(E_Pixmap *cp, Eina_Bool cache)
              t = ecore_loop_time_get();
              EINA_LIST_FREE(free_list, cb)
                {
+//                  printf("E: frame request: %p [%ix%i] %1.5f @ %1.5f\n", cp, cp->w, cp->h, t, ecore_time_get());
                   wl_callback_send_done(cb, t * 1000);
                   wl_resource_destroy(cb);
                }
