@@ -84,8 +84,8 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
                     }
                }
           }
-     }
 #endif
+     }
    check_add(o, _("Hardware Accelerated (OpenGL)"), &do_gl);
    check_add(o, _("Tear-free Rendering"), &do_vsync);
 
