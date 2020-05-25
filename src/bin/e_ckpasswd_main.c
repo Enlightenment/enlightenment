@@ -213,7 +213,7 @@ polkit_auth(const char *cookie, unsigned int auth_uid)
    if (!m) BARF("Cannot get method call: AuthenticationAgentResponse2");
    iter = eldbus_message_iter_get(m);
    if (!iter) BARF("Cannot set iter on proxy");
-   if (!eldbus_message_iter_arguments_append(iter, "us", uid, cookie))
+   if (!eldbus_message_iter_arguments_append(iter, "us", auth_uid, cookie))
      BARF("Cannot append 'us' args");
    if (!eldbus_message_iter_arguments_append(iter, "(sa{sv})", &subj))
      BARF("Cannot append '(sa{sv})' args");
@@ -365,7 +365,7 @@ main(int argc, char **argv)
         fprintf(stderr, "AUTH: Password OK\n");
         if (polkit_mode == 1)
           {
-             if (polkit_auth(polkit_cookie, polkit_uid) == 0)
+             if (polkit_auth(polkit_cookie, uid) == 0)
                {
                   fprintf(stderr, "AUTH: Polkit AuthenticationAgentResponse2 success\n");
                   return 0;

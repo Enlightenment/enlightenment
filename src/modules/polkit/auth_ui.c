@@ -42,6 +42,7 @@ _cb_ok(void *data EINA_UNUSED, Evas_Object *obj,
    if (!ps) return;
    if (ps->exe_exit_handler) return;
    elm_object_disabled_set(evas_object_data_get(obj, "label"), EINA_TRUE);
+   elm_object_disabled_set(evas_object_data_get(obj, "label2"), EINA_TRUE);
    elm_object_disabled_set(evas_object_data_get(obj, "entry"), EINA_TRUE);
    e_dialog_button_disable_num_set(evas_object_data_get(obj, "dia"), 0, 1);
    e_dialog_button_disable_num_set(evas_object_data_get(obj, "dia"), 1, 1);
@@ -86,7 +87,9 @@ void
 auth_ui(Polkit_Session *ps)
 {
    E_Dialog *dia;
-   Evas_Object *o, *win, *box, *fr, *lab, *ent;
+   Evas_Object *o, *win, *box, *fr, *lab, *lab2, *ent;
+   char buf[512];
+   struct passwd *pass;
 
    dia = e_dialog_new(NULL, "E", "_polkit_auth");
    e_dialog_title_set(dia, _("Please enter password"));
@@ -136,6 +139,26 @@ auth_ui(Polkit_Session *ps)
    fr = o = elm_frame_add(win);
    elm_object_style_set(o, "pad_medium");
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, 0.0, 0.0);
+   elm_box_pack_end(box, o);
+   evas_object_show(o);
+
+   pass = getpwuid(ps->target_uid);
+   if ((pass) && (pass->pw_name))
+     snprintf(buf, sizeof(buf), _("Enter password for <b>%s</b>"), pass->pw_name);
+   else
+     snprintf(buf, sizeof(buf), _("Enter passowrd for UID %u"), ps->target_uid);
+   lab2 = o = elm_label_add(win);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
+   elm_object_text_set(o, buf);
+   elm_object_content_set(fr, o);
+   evas_object_show(o);
+   evas_object_data_set(win, "label2", o);
+
+   fr = o = elm_frame_add(win);
+   elm_object_style_set(o, "pad_medium");
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 1.0);
    elm_box_pack_end(box, o);
    evas_object_show(o);
@@ -149,6 +172,7 @@ auth_ui(Polkit_Session *ps)
    elm_object_part_text_set(o, "elm.guide", "Enter Password");
    evas_object_data_set(o, "session", ps);
    evas_object_data_set(o, "label", lab);
+   evas_object_data_set(o, "label2", lab2);
    evas_object_data_set(o, "entry", ent);
    evas_object_data_set(o, "dia", dia);
    evas_object_smart_callback_add(o, "activated", _cb_ok, win);
