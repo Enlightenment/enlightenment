@@ -41,6 +41,10 @@ _cb_ok(void *data EINA_UNUSED, Evas_Object *obj,
 
    if (!ps) return;
    if (ps->exe_exit_handler) return;
+   elm_object_disabled_set(evas_object_data_get(obj, "label"), EINA_TRUE);
+   elm_object_disabled_set(evas_object_data_get(obj, "entry"), EINA_TRUE);
+   e_dialog_button_disable_num_set(evas_object_data_get(obj, "dia"), 0, 1);
+   e_dialog_button_disable_num_set(evas_object_data_get(obj, "dia"), 1, 1);
    ps->exe_exit_handler = ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
                                                   _auth_cb_exit, ps);
    if (str)
@@ -82,7 +86,7 @@ void
 auth_ui(Polkit_Session *ps)
 {
    E_Dialog *dia;
-   Evas_Object *o, *win, *box, *ent;
+   Evas_Object *o, *win, *box, *fr, *lab, *ent;
 
    dia = e_dialog_new(NULL, "E", "_polkit_auth");
    e_dialog_title_set(dia, _("Please enter password"));
@@ -114,25 +118,44 @@ auth_ui(Polkit_Session *ps)
    evas_object_show(o);
  */
 
-   o = elm_label_add(win);
+   fr = o = elm_frame_add(win);
+   elm_object_style_set(o, "pad_medium");
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.0);
+   elm_box_pack_end(box, o);
+   evas_object_show(o);
+
+   lab = o = elm_label_add(win);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
    elm_object_text_set(o, ps->message);
+   elm_object_content_set(fr, o);
+   evas_object_show(o);
+   evas_object_data_set(win, "label", o);
+
+   fr = o = elm_frame_add(win);
+   elm_object_style_set(o, "pad_medium");
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 1.0);
    elm_box_pack_end(box, o);
    evas_object_show(o);
 
    ent = o = elm_entry_add(win);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, -1.0, 1.0);
-   elm_entry_single_line_set(ent, EINA_TRUE);
-   elm_entry_scrollable_set(ent, EINA_TRUE);
-   elm_entry_password_set(ent, EINA_TRUE);
-   elm_object_part_text_set(ent, "elm.guide", "Enter Password");
-   evas_object_data_set(ent, "session", ps);
-   evas_object_smart_callback_add(ent, "activated", _cb_ok, NULL);
-   evas_object_smart_callback_add(ent, "aborted", _cb_cancel, NULL);
-   elm_box_pack_end(box, o);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
+   elm_entry_single_line_set(o, EINA_TRUE);
+   elm_entry_scrollable_set(o, EINA_TRUE);
+   elm_entry_password_set(o, EINA_TRUE);
+   elm_object_part_text_set(o, "elm.guide", "Enter Password");
+   evas_object_data_set(o, "session", ps);
+   evas_object_data_set(o, "label", lab);
+   evas_object_data_set(o, "entry", ent);
+   evas_object_data_set(o, "dia", dia);
+   evas_object_smart_callback_add(o, "activated", _cb_ok, win);
+   evas_object_smart_callback_add(o, "aborted", _cb_cancel, win);
+   elm_object_content_set(fr, o);
    evas_object_show(o);
+   evas_object_data_set(win, "entry", o);
 
    e_dialog_button_add(dia, _("OK"), NULL, _cb_button_ok, ent);
    e_dialog_button_add(dia, _("Cancel"), NULL, _cb_button_cancel, ent);
