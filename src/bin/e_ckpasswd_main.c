@@ -180,11 +180,11 @@ polkit_agent_response(void *data EINA_UNUSED, const Eldbus_Message *msg,
    ecore_main_loop_quit();
    if (eldbus_message_error_get(msg, &name, &text))
      {
-        printf("Could not respond to auth.\n %s:\n %s\n", name, text);
+        fprintf(stderr, "AUTH: Could not respond to auth.\n %s:\n %s\n", name, text);
         return;
      }
    polkit_auth_ok = 0;
-   printf("Auth OK\n");
+   fprintf(stderr, "AUTH: OK\n");
 }
 
 int
@@ -200,46 +200,42 @@ polkit_auth(const char *cookie, unsigned int auth_uid)
    ecore_init();
    eldbus_init();
    c = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
-   if (!c) return -1;
+#define BARF(str) do { \
+   fprintf(stderr, "AUTH: POLKIT: %s\n", str); \
+   return -1; \
+} while (0)
+   if (!c) BARF("Cannot get session dbus");
    obj = eldbus_object_get(c, "org.freedesktop.PolicyKit1",
                            "/org/freedesktop/PolicyKit1/Authority");
-   if (!obj) return -1;
+   if (!obj) BARF("Cannot get obj: org.freedesktop.PolicyKit1 /org/freedesktop/PolicyKit1/Authority");
    proxy = eldbus_proxy_get(obj, "org.freedesktop.PolicyKit1.Authority");
-   if (!proxy) return -1;
+   if (!proxy) BARF("Cannot proxy: org.freedesktop.PolicyKit1.Authority");
    m = eldbus_proxy_method_call_new(proxy, "AuthenticationAgentResponse2");
-   if (!m) return -1;
+   if (!m) BARF("Cannot get method call: AuthenticationAgentResponse2");
    iter = eldbus_message_iter_get(m);
-   if (!iter) return -1;
-   if (eldbus_message_iter_arguments_append(iter, "us", auth_uid, cookie))
-     {
-        if (eldbus_message_iter_arguments_append(iter, "(sa{sv})", &subj))
-          {
-             if (eldbus_message_iter_basic_append(subj, 's', "unix-user"))
-               {
-                  if (eldbus_message_iter_arguments_append(subj, "a{sv}", &array))
-                    {
-                       if (eldbus_message_iter_arguments_append(array, "{sv}", &dict))
-                         {
-                            if (eldbus_message_iter_basic_append(dict, 's', "uid"))
-                              {
-                                 vari = eldbus_message_iter_container_new(dict, 'v', "u");
-                                 if (vari)
-                                   {
-                                      if (eldbus_message_iter_basic_append(vari, 'u', auth_uid))
-                                        {
-                                           eldbus_message_iter_container_close(dict, vari);
-                                        } else return -1;
-                                   } else return -1;
-                              } else return -1;
-                            eldbus_message_iter_container_close(array, dict);
-                         } else return -1;
-                       eldbus_message_iter_container_close(subj, array);
-                    } else return -1;
-               } else return -1;
-             eldbus_message_iter_container_close(iter, subj);
-          } else return -1;
-        eldbus_proxy_send(proxy, m, polkit_agent_response, NULL, -1);
-     } else return -1;
+   if (!iter) BARF("Cannot set iter on proxy");
+   if (!eldbus_message_iter_arguments_append(iter, "us", auth_uid, cookie))
+     BARF("Cannot append 'us' args");
+   if (!eldbus_message_iter_arguments_append(iter, "(sa{sv})", &subj))
+     BARF("Cannot append '(sa{sv})' args");
+   if (!eldbus_message_iter_basic_append(subj, 's', "unix-user"))
+     BARF("Cannot append 's' arg for unix-user");
+   if (!eldbus_message_iter_arguments_append(subj, "a{sv}", &array))
+     BARF("Cannot append 'a{sv}' args");
+   if (!eldbus_message_iter_arguments_append(array, "{sv}", &dict))
+     BARF("Cannot append '{sv}' args");
+   if (!eldbus_message_iter_basic_append(dict, 's', "uid"))
+     BARF("Cannot append 's' arg for uid");
+   vari = eldbus_message_iter_container_new(dict, 'v', "u");
+   if (!vari)
+     BARF("Cannot create new iter container");
+   if (!eldbus_message_iter_basic_append(vari, 'u', auth_uid))
+     BARF("Cannot append 'u' arg for auth_id");
+   eldbus_message_iter_container_close(dict, vari);
+   eldbus_message_iter_container_close(array, dict);
+   eldbus_message_iter_container_close(subj, array);
+   eldbus_message_iter_container_close(iter, subj);
+   eldbus_proxy_send(proxy, m, polkit_agent_response, NULL, -1);
 
    ecore_main_loop_begin();
 
@@ -274,7 +270,7 @@ main(int argc, char **argv)
         rd = read(0, pw, sizeof(pw) - 1);
         if (rd < 0)
           {
-             fprintf(stderr, "Error. Can't read passwd on stdin\n");
+             fprintf(stderr, "AUTH: Error. Can't read passwd on stdin\n");
              goto err;
           }
         pw[rd] = 0;
@@ -297,7 +293,7 @@ main(int argc, char **argv)
              rd = read(0, pw + pos, 1);
              if (rd < 0)
                {
-                  fprintf(stderr, "Error. Can't read polkit cookie on stdin\n");
+                  fprintf(stderr, "AUTH: Error. Can't read polkit cookie on stdin\n");
                   goto err;
                }
              if (pw[pos] == ' ')
@@ -313,7 +309,7 @@ main(int argc, char **argv)
                   pos++;
                   if (pos > 4000)
                     {
-                       fprintf(stderr, "Error. Polkit cookie too long\n");
+                       fprintf(stderr, "AUTH: Error. Polkit cookie too long\n");
                        return -10;
                     }
                }
@@ -323,14 +319,14 @@ main(int argc, char **argv)
              rd = read(0, pw + pos, 1);
              if (rd < 0)
                {
-                  fprintf(stderr, "Error. Can't read polkit uid on stdin\n");
+                  fprintf(stderr, "AUTH: Error. Can't read polkit uid on stdin\n");
                   goto err;
                }
              if (pw[pos] == ' ')
                {
                   pw[pos] = 0;
                   polkit_uid = atoi(pw);
-                  printf("UID: [%u]\n", polkit_uid);
+                  printf("AUTH: UID: [%u]\n", polkit_uid);
                   break;
                }
              else
@@ -338,17 +334,17 @@ main(int argc, char **argv)
                   pos++;
                   if (pos > 4000)
                     {
-                       fprintf(stderr, "Error. Polkit uid too long\n");
+                       fprintf(stderr, "AUTH: Error. Polkit uid too long\n");
                        return -11;
                     }
                }
           }
         // password
-        printf("READPASS...\n");
+        fprintf(stderr, "AUTH: readpass...\n");
         rd = read(0, pw, sizeof(pw) - 1);
         if (rd < 0)
           {
-             fprintf(stderr, "Error. Can't read passwd on stdin\n");
+             fprintf(stderr, "AUTH: Error. Can't read passwd on stdin\n");
              goto err;
           }
         pw[rd] = 0;
@@ -367,20 +363,20 @@ main(int argc, char **argv)
 
    if (_check_auth(uid, pw) == 0)
      {
-        fprintf(stderr, "Password OK\n");
+        fprintf(stderr, "AUTH: Password OK\n");
         if (polkit_mode == 1)
           {
              if (polkit_auth(polkit_cookie, polkit_uid) == 0)
                {
-                  fprintf(stderr, "Polkit AuthenticationAgentResponse2 success\n");
+                  fprintf(stderr, "AUTH: Polkit AuthenticationAgentResponse2 success\n");
                   return 0;
                }
-             fprintf(stderr, "Polkit AuthenticationAgentResponse2 failure\n");
+             fprintf(stderr, "AUTH: Polkit AuthenticationAgentResponse2 failure\n");
              return -2;
           }
         return 0;
      }
 err:
-   fprintf(stderr, "Password auth fail\n");
+   fprintf(stderr, "AUTH: Password auth fail\n");
    return -1;
 }
