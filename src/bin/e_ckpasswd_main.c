@@ -293,14 +293,14 @@ main(int argc, char **argv)
              rd = read(0, pw + pos, 1);
              if (rd < 0)
                {
-                  fprintf(stderr, "AUTH: Error. Can't read polkit cookie on stdin\n");
+                  fprintf(stderr, "AUTH: POLKIT: Error. Can't read polkit cookie on stdin\n");
                   goto err;
                }
              if (pw[pos] == ' ')
                {
                   memcpy(polkit_cookie, pw, pos);
                   polkit_cookie[pos] = 0;
-                  printf("COOKIE: [%s]\n", polkit_cookie);
+                  fprintf(stderr, "AUTH: POLKIT: [%s]\n", polkit_cookie);
                   pos = 0;
                   break;
                }
@@ -309,7 +309,7 @@ main(int argc, char **argv)
                   pos++;
                   if (pos > 4000)
                     {
-                       fprintf(stderr, "AUTH: Error. Polkit cookie too long\n");
+                       fprintf(stderr, "AUTH: POLKIT: Error. Polkit cookie too long\n");
                        return -10;
                     }
                }
@@ -326,7 +326,7 @@ main(int argc, char **argv)
                {
                   pw[pos] = 0;
                   polkit_uid = atoi(pw);
-                  printf("AUTH: UID: [%u]\n", polkit_uid);
+                  fprintf(stderr, "AUTH: UID: [%u]\n", polkit_uid);
                   break;
                }
              else
