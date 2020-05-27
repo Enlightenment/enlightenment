@@ -365,7 +365,7 @@ main(int argc, char **argv)
         fprintf(stderr, "AUTH: Password OK\n");
         if (polkit_mode == 1)
           {
-             if (polkit_auth(polkit_cookie, uid) == 0)
+             if (polkit_auth(polkit_cookie, polkit_uid) == 0)
                {
                   fprintf(stderr, "AUTH: Polkit AuthenticationAgentResponse2 success\n");
                   return 0;
