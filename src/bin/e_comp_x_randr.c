@@ -490,6 +490,8 @@ e_comp_x_randr_config_apply(void)
    int crtcs_num = 0, outputs_num = 0, i, numout;
    Ecore_X_Randr_Crtc_Info *info;
    int top_priority = 0;
+   int px, py;
+   Eina_Bool fix_pointer = EINA_TRUE;
 
    ecore_x_grab();
    // set virtual resolution
@@ -509,6 +511,8 @@ e_comp_x_randr_config_apply(void)
    if (nh < minh) nh = minh;
    ww = nw; if (nw < pw) ww = pw;
    hh = nh; if (nh < ph) hh = ph;
+
+   ecore_x_pointer_xy_get(root, &px, &py);
    ecore_x_randr_screen_current_size_set(root, ww, hh, -1, -1);
      {
         int dww = 0, dhh = 0, dww2 = 0, dhh2 = 0;
@@ -610,6 +614,16 @@ e_comp_x_randr_config_apply(void)
                               screenconf[i]->config.geom.y,
                               mode, orient))
                        printf("RRR:   failed to set crtc!!!!!!\n");
+                       if (E_INSIDE(px, py,
+                                    screenconf[i]->config.geom.x,
+                                    screenconf[i]->config.geom.y,
+                                    screenconf[i]->config.geom.w,
+                                    screenconf[i]->config.geom.h))
+                         fix_pointer = EINA_FALSE;
+                       px = screenconf[i]->config.geom.x +
+                         (screenconf[i]->config.geom.w / 2);
+                       py = screenconf[i]->config.geom.y +
+                         (screenconf[i]->config.geom.h / 2);
                        ecore_x_randr_crtc_panning_area_set
                          (root, crtcs[i],
                           screenconf[i]->config.geom.x,
@@ -643,6 +657,10 @@ e_comp_x_randr_config_apply(void)
              ecore_timer_add(5.0, _cb_no_outputs_timer, NULL);
              ecore_x_root_screen_barriers_set(NULL, 0);
           }
+     }
+   if (fix_pointer)
+     {
+        ecore_x_pointer_warp(root, px, py);
      }
    free(outputs);
    free(crtcs);
