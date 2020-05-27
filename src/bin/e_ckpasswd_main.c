@@ -16,10 +16,10 @@
 #include <Ecore.h>
 #include <Eldbus.h>
 
-uid_t uid = -1; // uid of person running me
-gid_t gid = -1; // gid of person running me
-char *user_name = NULL;
-char *group_name = NULL;
+static uid_t uid = -1; // uid of person running me
+static gid_t gid = -1; // gid of person running me
+static char *user_name = NULL;
+static char *group_name = NULL;
 
 #if defined(__OpenBSD__)
 
@@ -229,7 +229,7 @@ polkit_auth(const char *cookie, unsigned int auth_uid)
    if (!vari)
      BARF("Cannot create new iter container");
    if (!eldbus_message_iter_basic_append(vari, 'u', auth_uid))
-     BARF("Cannot append 'u' arg for auth_id");
+     BARF("Cannot append 'u' arg for auth_uid");
    eldbus_message_iter_container_close(dict, vari);
    eldbus_message_iter_container_close(array, dict);
    eldbus_message_iter_container_close(subj, array);
