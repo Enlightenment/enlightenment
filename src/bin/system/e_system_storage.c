@@ -57,7 +57,7 @@ _store_uuid_verify(const char *dev)
 }
 
 static Eina_Bool
-_mkdir(const char *path, uid_t u, gid_t g)
+_mkdir(const char *path)
 {
    mode_t um;
    int ret, e;
@@ -85,112 +85,168 @@ _mkdir(const char *path, uid_t u, gid_t g)
                        ERR("Path is not a dir [%s]\n", path);
                        return EINA_FALSE;
                     }
+                  if (st.st_uid != 0) return EINA_FALSE;
+                  if (st.st_gid != 0) return EINA_FALSE;
                }
+             else return EINA_FALSE;
           }
-     }
-   if (chown(path, u, g) != 0)
-     {
-        ERR("Can't own [%s] to uid.gid %i.%i\n", path, u, g);
-        return EINA_FALSE;
      }
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_store_mount_verify(const char *mnt)
-{
-   char *tmnt, *p, *pp;
-   const char *s;
-   struct stat st;
+_store_is_triplet(const char *mnt, char *dirs[3])
+{  // check that mnt is "/media/xxx/yyy" and nothing more or less. No special
+   // chars or escapes like \ or * oro ; or { or [ etc.
+   // no ../ or ./ or empty path elements. then break up the 3 elements
+   // into dirs[] is we return true
+   const char *s, *s2;
 
-   // XXX: we should use /run/media - possibly make this adapt
-   if (!(!strncmp(mnt, "/media/", 7))) return EINA_FALSE;
+   dirs[0] = NULL;
+   dirs[1] = NULL;
+   dirs[2] = NULL;
+
+   // phase one sanity check
+   if (!mnt) goto err;
+   if (mnt[0] != '/') goto err;
    for (s = mnt; *s; s++)
      {
-        if (*s == '\\') return EINA_FALSE;
-        if ((*s <= '*') || (*s == '`') || (*s == ';') || (*s == '<') ||
-            (*s == '>') || (*s == '?') || (*s >= '{') ||
+        if ((*s == '\\') ||
+            (*s == '(') || (*s == '$') || (*s <= '*') || (*s == '`') ||
+            (*s == ';') || (*s == '<') || (*s == '>') || (*s == '?') ||
+            (*s >= '{') ||
             ((*s >= '[') && (*s <= '^')))
-          return EINA_FALSE;
+          goto err;
      }
-   if (strstr(mnt, "/..")) return EINA_FALSE;
-   if (strstr(mnt, "/./")) return EINA_FALSE;
-   if (strstr(mnt, "//")) return EINA_FALSE;
-   if (stat(mnt, &st) == 0)
-     {
-        if (!S_ISDIR(st.st_mode)) return EINA_FALSE;
-        if (st.st_uid != 0) return EINA_FALSE;
-        if (st.st_gid != 0) return EINA_FALSE;
-     }
-   tmnt = strdup(mnt);
-   if (tmnt)
-     {
-        // /media <- owned by root
-        p = strchr(tmnt + 1, '/');
-        if (!p) goto malformed;
-        *p = '\0';
-        if (!_mkdir(tmnt, 0, 0)) goto err;
-        *p = '/';
+   if ((strstr(mnt, "/..")) || (strstr(mnt, "/./")) || (strstr(mnt, "//")))
+     goto err;
 
-        // /media/username <- owned by root
-        p = strchr(p + 1, '/');
-        if (!p) goto malformed;
-        *p = '\0';
-        pp = strrchr(tmnt, '/');
-        if (!pp) goto err;
-        // check if dir name is name of user...
-        if (strcmp(p + 1, user_name)) goto err;
-        if (!_mkdir(tmnt, 0, 0)) goto err;
-        *p = '/';
+   // phase 2 - break up into 3 dir components
+   s = mnt + 1;
+   if (*s == '\0') goto err;
+   s2 = strchr(s, '/');
+   if (!s2) goto err;
+   dirs[0] = malloc(s2 - s + 1);
+   if (!dirs[0]) goto err;
+   memcpy(dirs[0], s, s2 - s);
+   dirs[0][s2 - s] = 0;
+   s = s2 + 1;
 
-        // /media/username/dirname <- owned by root
-        if (!_mkdir(tmnt, 0, 0)) goto err;
-        free(tmnt);
-     }
+   if (*s == '\0') goto err;
+   s2 = strchr(s, '/');
+   if (!s2) goto err;
+   dirs[1] = malloc(s2 - s + 1);
+   if (!dirs[1]) goto err;
+   memcpy(dirs[1], s, s2 - s);
+   dirs[1][s2 - s] = 0;
+   s = s2 + 1;
+
+   if (*s == '\0') goto err;
+   s2 = strchr(s, '/');
+   if (s2) goto err; // different - if there is another / - even trailing
+   for (s2 = s; *s2 != '\0'; s2++); // s2 - walk to nul byte end
+   dirs[1] = malloc(s2 - s + 1);
+   if (!dirs[1]) goto err;
+   memcpy(dirs[1], s, s2 - s);
+   dirs[1][s2 - s] = 0;
+   s = s2 + 1;
+
    return EINA_TRUE;
-malformed:
-   ERR("Malformed mount point [%s]\n", mnt);
 err:
-   free(tmnt);
+   free(dirs[0]);
+   free(dirs[1]);
+   free(dirs[2]);
+   dirs[0] = NULL;
+   dirs[1] = NULL;
+   dirs[2] = NULL;
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_store_mount_verify(const char *mnt)
+{
+   char *dirs[3] = { NULL, NULL, NULL };
+   char *tmp = NULL;
+
+   // XXX: we should use /run/media - possibly make this adapt
+   if (!mnt) return EINA_FALSE;
+   if (!(!strncmp(mnt, "/media/", 7))) goto err;
+   if (!_store_is_triplet(mnt, dirs)) goto err;
+   tmp = malloc(strlen(mnt) + 1);
+   if (!tmp)
+     {
+        free(dirs[0]);
+        free(dirs[1]);
+        free(dirs[2]);
+        return EINA_FALSE;
+     }
+   // 2nd path must be username
+   if (!!strcmp(dirs[1], user_name)) goto err;
+
+   tmp[0] = 0;
+   strcat(tmp, "/");
+   strcat(tmp, dirs[0]);
+   if (!_mkdir(tmp)) goto err;
+
+   strcat(tmp, "/");
+   strcat(tmp, dirs[1]);
+   if (!_mkdir(tmp)) goto err;
+
+   strcat(tmp, "/");
+   strcat(tmp, dirs[2]);
+   if (!_mkdir(tmp)) goto err;
+
+   free(tmp);
+   free(dirs[0]);
+   free(dirs[1]);
+   free(dirs[2]);
+   return EINA_TRUE;
+err:
+   ERR("Malformed mount point or create error [%s]\n", mnt);
+   free(tmp);
+   free(dirs[0]);
+   free(dirs[1]);
+   free(dirs[2]);
    return EINA_FALSE;
 }
 
 static Eina_Bool
 _store_umount_verify(const char *mnt)
 {
-   char *tmnt, *p;
-   const char *s;
+   char *dirs[3] = { NULL, NULL, NULL };
+   char *tmp = NULL;
    struct stat st;
 
    // XXX: we should use /run/media - possibly make this adapt
-   if (!(!strncmp(mnt, "/media/", 7))) return EINA_FALSE;
-   for (s = mnt; *s; s++)
+   if (!mnt) return EINA_FALSE;
+   if (!(!strncmp(mnt, "/media/", 7))) goto err;
+   if (!_store_is_triplet(mnt, dirs)) goto err;
+   tmp = malloc(strlen(mnt) + 1);
+   if (!tmp)
      {
-        if (*s == '\\') return EINA_FALSE;
-        if ((*s <= '*') || (*s == '`') || (*s == ';') || (*s == '<') ||
-            (*s == '>') || (*s == '?') || (*s >= '{') ||
-            ((*s >= '[') && (*s <= '^')))
-          return EINA_FALSE;
+        free(dirs[0]);
+        free(dirs[1]);
+        free(dirs[2]);
+        return EINA_FALSE;
      }
-   if (strstr(mnt, "/..")) return EINA_FALSE;
-   if (strstr(mnt, "/./")) return EINA_FALSE;
-   if (strstr(mnt, "//")) return EINA_FALSE;
-   if (stat(mnt, &st) != 0) return EINA_FALSE;
-   if (!S_ISDIR(st.st_mode)) return EINA_FALSE;
-   tmnt = strdup(mnt);
-   if (!tmnt) return EINA_FALSE;
-   p = strchr(tmnt + 7, '/');
-   if (!p) goto err;
-   *p = '\0';
-   if (stat(tmnt, &st) != 0) goto err;
+   // 2nd path must be username
+   if (!!strcmp(dirs[1], user_name)) goto err;
+   if (stat(mnt, &st) != 0) goto err;
+   if (!S_ISDIR(st.st_mode)) goto err;
    if (st.st_uid != 0) goto err;
    if (st.st_gid != 0) goto err;
-   p = tmnt + 7; // after /media/ (so username)
-   if (strcmp(p + 1, user_name)) goto err; // not user named dir
-   free(tmnt);
+
+   free(tmp);
+   free(dirs[0]);
+   free(dirs[1]);
+   free(dirs[2]);
    return EINA_TRUE;
 err:
-   free(tmnt);
+   ERR("Malformed umount point [%s]\n", mnt);
+   free(tmp);
+   free(dirs[0]);
+   free(dirs[1]);
+   free(dirs[2]);
    return EINA_FALSE;
 }
 
