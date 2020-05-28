@@ -64,7 +64,7 @@ E_API int E_EVENT_SYS_RESUME = -1;
 static Eina_Bool
 _e_sys_comp_done2_cb(void *data)
 {
-   printf("_e_sys_comp_done2_cb %p\n", data);
+   printf("SSS: _e_sys_comp_done2_cb %p\n", data);
    e_sys_action_raw_do((E_Sys_Action)(long)data, NULL);
    return EINA_FALSE;
 }
@@ -268,6 +268,7 @@ _e_sys_comp_resume2(void *data EINA_UNUSED)
    Eina_List *l;
    E_Zone *zone;
 
+   _e_sys_action_current = E_SYS_NONE;
 #ifndef HAVE_WAYLAND_ONLY
    if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      _e_comp_x_screensaver_off();
@@ -289,6 +290,7 @@ _e_sys_comp_resume2(void *data EINA_UNUSED)
 static void
 _e_sys_comp_resume(void)
 {
+   printf("SSS: sys resume ... \n");
    edje_thaw();
    ecore_evas_manual_render_set(e_comp->ee, EINA_FALSE);
    evas_damage_rectangle_add(e_comp->evas, 0, 0, e_comp->w, e_comp->h);
@@ -492,6 +494,7 @@ e_sys_action_do(E_Sys_Action a, char *param)
         break;
      }
 
+   printf("SSS: e_sys_ction_do ret=%i a=%i\n", ret, _e_sys_action_current);
    if (ret) _e_sys_action_current = a;
    else _e_sys_action_current = E_SYS_NONE;
 
@@ -512,6 +515,7 @@ e_sys_action_raw_do(E_Sys_Action a, char *param)
 
    ret = _e_sys_action_do(a, param, EINA_TRUE);
 
+   printf("SSS: e_sys_ction_raw_do ret=%i a=%i\n", ret, _e_sys_action_current);
    if (ret) _e_sys_action_current = a;
    else _e_sys_action_current = E_SYS_NONE;
 
@@ -669,9 +673,11 @@ _e_sys_systemd_hibernate(void)
 static Eina_Bool
 _e_sys_resume_delay(void *d EINA_UNUSED)
 {
+   printf("SSS: hib check resume delay...\n");
    _e_sys_resume_delay_timer = NULL;
    if (_e_sys_suspended)
      {
+        printf("SSS: suspended to false\n");
         _e_sys_suspended = EINA_FALSE;
         ecore_event_add(E_EVENT_SYS_RESUME, NULL, NULL, NULL);
         _e_sys_comp_resume();
@@ -687,6 +693,7 @@ _e_sys_susp_hib_check_timer_cb(void *data EINA_UNUSED)
    printf("SSS: hib check @%1.8f (unix %1.8f, delt %1.8f)\n", ecore_time_get(), t, t -  _e_sys_susp_hib_check_last_tick);
    if ((t - _e_sys_susp_hib_check_last_tick) > 0.5)
      {
+        printf("SSS: hib check long gap\n");
         _e_sys_susp_hib_check_timer = NULL;
         if (_e_sys_resume_delay_timer)
           ecore_timer_del(_e_sys_resume_delay_timer);
@@ -865,6 +872,7 @@ after:
 static void
 _e_sys_logout_after(void)
 {
+   printf("SSS: sys action after %i\n", _e_sys_action_after);
    _e_sys_action_current = _e_sys_action_after;
    _e_sys_action_do(_e_sys_action_after, NULL, _e_sys_action_after_raw);
    _e_sys_action_after = E_SYS_NONE;
@@ -993,6 +1001,7 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
           {
              e_fm2_die();
              ecore_main_loop_quit();
+             ret = 1;
           }
         else
           return 0;
@@ -1007,6 +1016,7 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
              e_fm2_die();
              restart = 1;
              ecore_main_loop_quit();
+             ret = 1;
           }
         else
           {
@@ -1048,10 +1058,8 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
                   if (systemd_works)
                     _e_sys_systemd_poweroff();
                   else
-                    {
-                       e_system_send("power-halt", NULL);
-                       ret = 1;
-                    }
+                    e_system_send("power-halt", NULL);
+                  ret = 1;
                }
              else
                {
@@ -1075,18 +1083,14 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
                   if (systemd_works)
                     _e_sys_systemd_reboot();
                   else
-                    {
-                       e_system_send("power-reboot", NULL);
-                       ret = 1;
-                    }
+                    e_system_send("power-reboot", NULL);
                }
              else
                {
-                  ret = 0;
                   _e_sys_begin_time = ecore_time_get();
                   _e_sys_logout_begin(a, EINA_TRUE);
                }
-             /* FIXME: display reboot status */
+             ret = 1;
           }
         break;
 
@@ -1112,8 +1116,8 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
                          {
                             _e_sys_susp_hib_check();
                             e_system_send("power-suspend", NULL);
-                            ret = 1;
                          }
+                       ret = 1;
                     }
                   else
                     {
@@ -1162,8 +1166,8 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
                     {
                        _e_sys_susp_hib_check();
                        e_system_send("power-hibernate", NULL);
-                       ret = 1;
                     }
+                  ret = 1;
                }
              else
                {
