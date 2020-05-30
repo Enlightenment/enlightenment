@@ -55,6 +55,10 @@ static Ecore_Timer *_e_sys_screensaver_unignore_timer = NULL;
 
 static double resume_backlight;
 
+static Ecore_Timer *_e_sys_suspend_delay_timer = NULL;
+static Ecore_Timer *_e_sys_hibernate_delay_timer = NULL;
+static Ecore_Timer *_e_sys_halt_reboot_timer = NULL;
+
 static Eina_Bool on_the_way_out = EINA_FALSE;
 
 E_API int E_EVENT_SYS_SUSPEND = -1;
@@ -396,12 +400,21 @@ e_sys_init(void)
 EINTERN int
 e_sys_shutdown(void)
 {
+   if (_e_sys_halt_reboot_timer)
+     ecore_timer_del(_e_sys_halt_reboot_timer);
+   if (_e_sys_suspend_delay_timer)
+     ecore_timer_del(_e_sys_suspend_delay_timer);
+   if (_e_sys_hibernate_delay_timer)
+     ecore_timer_del(_e_sys_hibernate_delay_timer);
    if (_e_sys_resume_delay_timer)
      ecore_timer_del(_e_sys_resume_delay_timer);
    if (_e_sys_screensaver_unignore_timer)
      ecore_timer_del(_e_sys_screensaver_unignore_timer);
    if (_e_sys_acpi_handler)
      ecore_event_handler_del(_e_sys_acpi_handler);
+   _e_sys_halt_reboot_timer = NULL;
+   _e_sys_suspend_delay_timer = NULL;
+   _e_sys_hibernate_delay_timer = NULL;
    _e_sys_resume_delay_timer = NULL;
    _e_sys_screensaver_unignore_timer = NULL;
    _e_sys_acpi_handler = NULL;
@@ -988,7 +1001,6 @@ _e_sys_cb_acpi_event(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    return ECORE_CALLBACK_PASS_ON;
 }
 
-static Ecore_Timer *_e_sys_suspend_delay_timer = NULL;
 static Eina_Bool
 _e_sys_suspend_delay(void *data EINA_UNUSED)
 {
@@ -1020,7 +1032,6 @@ _e_sys_suspend_delay(void *data EINA_UNUSED)
    return EINA_FALSE;
 }
 
-static Ecore_Timer *_e_sys_hibernate_delay_timer = NULL;
 static Eina_Bool
 _e_sys_hibernate_delay(void *data EINA_UNUSED)
 {
@@ -1032,6 +1043,14 @@ _e_sys_hibernate_delay(void *data EINA_UNUSED)
         _e_sys_susp_hib_check();
         e_system_send("power-hibernate", NULL);
      }
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_e_sys_halt_reboot(void *data EINA_UNUSED)
+{
+   _e_sys_halt_reboot_timer = NULL;
+   ecore_main_loop_quit();
    return EINA_FALSE;
 }
 
@@ -1101,15 +1120,26 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
           {
              if (raw)
                {
+                  printf("SSS: do actual halt...\n");
                   _e_sys_begin_time = ecore_time_get();
                   if (systemd_works)
-                    _e_sys_systemd_poweroff();
+                    {
+                       printf("SSS: tell systemd to halt...\n");
+                       _e_sys_systemd_poweroff();
+                    }
                   else
-                    e_system_send("power-halt", NULL);
+                    {
+                       printf("SSS: tell e system service to halt...\n");
+                       e_system_send("power-halt", NULL);
+                    }
+                  if (!_e_sys_halt_reboot_timer)
+                    _e_sys_halt_reboot_timer = ecore_timer_add
+                      (1.0, _e_sys_halt_reboot, NULL);
                   ret = 1;
                }
              else
                {
+                  printf("SSS: begin halt...\n");
                   ret = 0;
                   _e_sys_begin_time = ecore_time_get();
                   _e_sys_logout_begin(a, EINA_TRUE);
@@ -1126,18 +1156,30 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
           {
              if (raw)
                {
+                  printf("SSS: do actual reboot...\n");
                   _e_sys_begin_time = ecore_time_get();
                   if (systemd_works)
-                    _e_sys_systemd_reboot();
+                    {
+                       printf("SSS: tell systemd to reboot...\n");
+                       _e_sys_systemd_reboot();
+                    }
                   else
-                    e_system_send("power-reboot", NULL);
+                    {
+                       printf("SSS: tell e system service to reboot...\n");
+                       e_system_send("power-reboot", NULL);
+                    }
+                  if (!_e_sys_halt_reboot_timer)
+                    _e_sys_halt_reboot_timer = ecore_timer_add
+                      (1.0, _e_sys_halt_reboot, NULL);
+                  ret = 1;
                }
              else
                {
+                  printf("SSS: begin reboot...\n");
+                  ret = 0;
                   _e_sys_begin_time = ecore_time_get();
                   _e_sys_logout_begin(a, EINA_TRUE);
                }
-             ret = 1;
           }
         break;
 
