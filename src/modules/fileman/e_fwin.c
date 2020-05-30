@@ -1521,6 +1521,7 @@ _e_fwin_file_exec(E_Fwin_Page *page,
 
       case E_FWIN_EXEC_DIRECT:
         snprintf(buf, sizeof(buf), "%s/%s", e_fm2_real_path_get(fwin->cur_page->fm_obj), ici->file);
+        // XXX: exec verify buf
         if (fwin->win)
           e_exec(e_comp_object_util_zone_get(fwin->win), NULL, buf, NULL, "fwin");
         else if (fwin->zone)
@@ -1529,6 +1530,7 @@ _e_fwin_file_exec(E_Fwin_Page *page,
 
       case E_FWIN_EXEC_SH:
         snprintf(buf, sizeof(buf), "/bin/sh %s", e_util_filename_escape(ici->file));
+        // XXX: exec verify buf
         if (fwin->win)
           e_exec(e_comp_object_util_zone_get(fwin->win), NULL, buf, NULL, "fwin");
         else if (fwin->zone)
@@ -1537,6 +1539,7 @@ _e_fwin_file_exec(E_Fwin_Page *page,
 
       case E_FWIN_EXEC_TERMINAL_DIRECT:
         snprintf(buf, sizeof(buf), "%s %s", e_config->exebuf_term_cmd, e_util_filename_escape(ici->file));
+        // XXX: exec verify buf
         if (fwin->win)
           e_exec(e_comp_object_util_zone_get(fwin->win), NULL, buf, NULL, "fwin");
         else if (fwin->zone)
@@ -1545,6 +1548,7 @@ _e_fwin_file_exec(E_Fwin_Page *page,
 
       case E_FWIN_EXEC_TERMINAL_SH:
         snprintf(buf, sizeof(buf), "%s /bin/sh %s", e_config->exebuf_term_cmd, e_util_filename_escape(ici->file));
+        // XXX: exec verify buf
         if (fwin->win)
           e_exec(e_comp_object_util_zone_get(fwin->win), NULL, buf, NULL, "fwin");
         else if (fwin->zone)
@@ -1553,6 +1557,7 @@ _e_fwin_file_exec(E_Fwin_Page *page,
 
       case E_FWIN_EXEC_DESKTOP:
         snprintf(buf, sizeof(buf), "%s/%s", e_fm2_real_path_get(page->fm_obj), ici->file);
+        // XXX: exec verify buf
         desktop = efreet_desktop_new(buf);
         if (desktop)
           {

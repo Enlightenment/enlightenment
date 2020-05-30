@@ -244,7 +244,7 @@ _e_fileman_dbus_daemon_open_file_cb(const Eldbus_Service_Interface *iface EINA_U
              errmsg = "couldn't open desktop file";
              goto error;
           }
-
+        // XXX: exec verify real_file 
         e_exec(zone, desktop, NULL, NULL, NULL);
         efreet_desktop_free(desktop);
         goto end;
@@ -252,11 +252,13 @@ _e_fileman_dbus_daemon_open_file_cb(const Eldbus_Service_Interface *iface EINA_U
    else if ((strcmp(mime, "application/x-executable") == 0) ||
             ecore_file_can_exec(param_file))
      {
+        // XXX: exec verify param_file 
         e_exec(zone, NULL, param_file, NULL, NULL);
         goto end;
      }
    else if (_mime_shell_script_check(mime))
      {
+        // XXX: exec verify param_file 
         Eina_Strbuf *b = eina_strbuf_new();
         const char *shell = getenv("SHELL");
         if (!shell)
