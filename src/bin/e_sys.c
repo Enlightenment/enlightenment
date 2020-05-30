@@ -988,6 +988,53 @@ _e_sys_cb_acpi_event(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    return ECORE_CALLBACK_PASS_ON;
 }
 
+static Ecore_Timer *_e_sys_suspend_delay_timer = NULL;
+static Eina_Bool
+_e_sys_suspend_delay(void *data EINA_UNUSED)
+{
+   _e_sys_suspend_delay_timer = NULL;
+   _e_sys_begin_time = ecore_time_get();
+   if (e_config->suspend_connected_standby == 0)
+     {
+        if (systemd_works) _e_sys_systemd_suspend();
+        else
+          {
+             _e_sys_susp_hib_check();
+             e_system_send("power-suspend", NULL);
+          }
+     }
+   else
+     {
+        if (_e_sys_acpi_handler)
+        ecore_event_handler_del(_e_sys_acpi_handler);
+        _e_sys_acpi_handler =
+        ecore_event_handler_add(E_EVENT_ACPI,
+                                _e_sys_cb_acpi_event,
+                                NULL);
+        e_powersave_mode_force(E_POWERSAVE_MODE_FREEZE);
+        // XXX: need some system way of forcing the system into a very low
+        // power level with as many devices suspended as possible. below is
+        // a simple "freeze the cpu/kernel" which is not what we want actually
+        //   sleep 2 && echo freeze | sudo tee /sys/power/state
+     }
+   return EINA_FALSE;
+}
+
+static Ecore_Timer *_e_sys_hibernate_delay_timer = NULL;
+static Eina_Bool
+_e_sys_hibernate_delay(void *data EINA_UNUSED)
+{
+   _e_sys_hibernate_delay_timer = NULL;
+   _e_sys_begin_time = ecore_time_get();
+   if (systemd_works) _e_sys_systemd_hibernate();
+   else
+     {
+        _e_sys_susp_hib_check();
+        e_system_send("power-hibernate", NULL);
+     }
+   return EINA_FALSE;
+}
+
 static int
 _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
 {
@@ -1107,34 +1154,12 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
                   if (e_config->desklock_on_suspend)
                   // XXX: this desklock - ensure its instant
                     e_desklock_show(EINA_TRUE);
-                  _e_sys_begin_time = ecore_time_get();
-                  if (e_config->suspend_connected_standby == 0)
-                    {
-                       if (systemd_works)
-                         _e_sys_systemd_suspend();
-                       else
-                         {
-                            _e_sys_susp_hib_check();
-                            e_system_send("power-suspend", NULL);
-                         }
-                       ret = 1;
-                    }
-                  else
-                    {
-                       if (_e_sys_acpi_handler)
-                         ecore_event_handler_del(_e_sys_acpi_handler);
-                       _e_sys_acpi_handler =
-                         ecore_event_handler_add(E_EVENT_ACPI,
-                                                 _e_sys_cb_acpi_event,
-                                                 NULL);
-                       e_powersave_mode_force(E_POWERSAVE_MODE_FREEZE);
-                       // XXX: need some system way of forcing the system
-                       // into a very lowe power level with as many
-                       // devices suspended as possible. below is a simple
-                       // "freeze the cpu/kernel" which is not what we
-                       // want actually
-                       //   sleep 2 && echo freeze | sudo tee /sys/power/state
-                    }
+                  if (_e_sys_suspend_delay_timer)
+                    ecore_timer_del(_e_sys_suspend_delay_timer);
+                  if (e_config->suspend_connected_standby == 0) ret = 1;
+                  // XXX: make timer shorter if desklock is instant
+                  _e_sys_suspend_delay_timer =
+                    ecore_timer_add(0.5, _e_sys_suspend_delay, NULL);
                }
              else
                {
@@ -1159,15 +1184,12 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
                   if (e_config->desklock_on_suspend)
                   // XXX: this desklock - ensure its instant
                     e_desklock_show(EINA_TRUE);
-                  _e_sys_begin_time = ecore_time_get();
-                  if (systemd_works)
-                    _e_sys_systemd_hibernate();
-                  else
-                    {
-                       _e_sys_susp_hib_check();
-                       e_system_send("power-hibernate", NULL);
-                    }
+                  if (_e_sys_hibernate_delay_timer)
+                    ecore_timer_del(_e_sys_hibernate_delay_timer);
                   ret = 1;
+                  // XXX: make timer shorter if desklock is instant
+                  _e_sys_hibernate_delay_timer =
+                    ecore_timer_add(0.5, _e_sys_hibernate_delay, NULL);
                }
              else
                {
