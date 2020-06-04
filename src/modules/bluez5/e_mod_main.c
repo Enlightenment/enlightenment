@@ -179,6 +179,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    e_gadcon_client_util_menu_attach(inst->gcc);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN, _ebluez5_cb_mouse_down, inst);
    instances = eina_list_append(instances, inst);
+   ebluez5_instances_update();
    return inst->gcc;
 }
 
