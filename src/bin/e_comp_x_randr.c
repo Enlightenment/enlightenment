@@ -478,7 +478,7 @@ e_comp_x_randr_shutdown(void)
 }
 
 E_API void
-e_comp_x_randr_config_apply(void)
+e_comp_x_randr_config_apply(Eina_Bool can_skip)
 {
    Eina_List *l;
    E_Randr2_Screen *s;
@@ -580,11 +580,13 @@ e_comp_x_randr_config_apply(void)
           {
              Ecore_X_Rectangle *scrs = alloca(crtcs_num * sizeof(Ecore_X_Rectangle));
              int scrs_num;
+             Eina_Bool do_it;
 
              scrs_num = 0;
              // set up a crtc to drive each output (or not)
              for (i = 0; i < crtcs_num; i++)
                {
+                  do_it = EINA_FALSE;
                   // XXX: find clones and set them as outputs in an array
                   if (outconf[i])
                     {
@@ -608,12 +610,6 @@ e_comp_x_randr_config_apply(void)
                               screenconf[i]->config.geom.w,
                               screenconf[i]->config.geom.h,
                               orient, mode, outconf[i]);
-                       if (!ecore_x_randr_crtc_settings_set
-                             (root, crtcs[i], &(outconf[i]), 1,
-                              screenconf[i]->config.geom.x,
-                              screenconf[i]->config.geom.y,
-                              mode, orient))
-                       printf("RRR:   failed to set crtc!!!!!!\n");
                        if (E_INSIDE(px, py,
                                     screenconf[i]->config.geom.x,
                                     screenconf[i]->config.geom.y,
@@ -624,12 +620,54 @@ e_comp_x_randr_config_apply(void)
                          (screenconf[i]->config.geom.w / 2);
                        py = screenconf[i]->config.geom.y +
                          (screenconf[i]->config.geom.h / 2);
-                       ecore_x_randr_crtc_panning_area_set
-                         (root, crtcs[i],
-                          screenconf[i]->config.geom.x,
-                          screenconf[i]->config.geom.y,
-                          screenconf[i]->config.geom.w,
-                          screenconf[i]->config.geom.h);
+                       if (!can_skip) do_it = EINA_TRUE;
+                       else
+                         {
+                            Ecore_X_Randr_Crtc_Info *inf;
+
+                            inf = ecore_x_randr_crtc_info_get(root, crtcs[i]);
+                            if (inf)
+                              {
+                                 // current setup differs
+                                 if ((inf->noutput == 0) ||
+                                     (inf->mode != mode) ||
+                                     (inf->x != screenconf[i]->config.geom.x) ||
+                                     (inf->y != screenconf[i]->config.geom.y) ||
+                                     (inf->width != (unsigned int)screenconf[i]->config.geom.w) ||
+                                     (inf->height != (unsigned int)screenconf[i]->config.geom.h) ||
+                                     (inf->rotation != orient))
+                                   {
+                                      if (inf->noutput != 1)
+                                        do_it = EINA_TRUE;
+                                      else
+                                        {
+                                           if (inf->outputs[0] != outconf[0])
+                                             do_it = EINA_TRUE;
+                                        }
+                                   }
+                                 ecore_x_randr_crtc_info_free(inf);
+                              }
+                             else do_it = EINA_TRUE;
+                         }
+                       if (do_it)
+                         {
+                            printf("RRR: crtc configure: %i ...\n", i);
+                            if (!ecore_x_randr_crtc_settings_set
+                                  (root, crtcs[i], &(outconf[i]), 1,
+                                   screenconf[i]->config.geom.x,
+                                   screenconf[i]->config.geom.y,
+                                   mode, orient))
+                              printf("RRR:   failed to set crtc!!!!!!\n");
+                            ecore_x_randr_crtc_panning_area_set
+                              (root, crtcs[i],
+                               screenconf[i]->config.geom.x,
+                               screenconf[i]->config.geom.y,
+                               screenconf[i]->config.geom.w,
+                               screenconf[i]->config.geom.h);
+                         }
+                       else
+                         printf("RRR: (SKIP) crtc configure: %i\n", i);
+
                        if (screenconf[i]->config.priority == top_priority)
                          {
                             ecore_x_randr_primary_output_set(root, outconf[i]);
@@ -643,10 +681,29 @@ e_comp_x_randr_config_apply(void)
                     }
                   else
                     {
-                       printf("RRR: crtc off: %i\n", i);
-                       ecore_x_randr_crtc_settings_set
-                         (root, crtcs[i], NULL, 0, 0, 0, 0,
-                          ECORE_X_RANDR_ORIENTATION_ROT_0);
+                       if (!can_skip) do_it = EINA_TRUE;
+                       else
+                         {
+                            Ecore_X_Randr_Crtc_Info *inf;
+
+                            inf = ecore_x_randr_crtc_info_get(root, crtcs[i]);
+                            if (inf)
+                              {
+                                 // it's somehow on - we need to turn it off
+                                 if (inf->noutput != 0) do_it = EINA_TRUE;
+                                 ecore_x_randr_crtc_info_free(inf);
+                              }
+                            // else -> already nort enabled
+                         }
+                       if (do_it)
+                         {
+                            printf("RRR: crtc off: %i\n", i);
+                            ecore_x_randr_crtc_settings_set
+                              (root, crtcs[i], NULL, 0, 0, 0, 0,
+                               ECORE_X_RANDR_ORIENTATION_ROT_0);
+                         }
+                       else
+                         printf("RRR: (SKIP) crtc off: %i\n", i);
                     }
                }
              ecore_x_root_screen_barriers_set(scrs, scrs_num);

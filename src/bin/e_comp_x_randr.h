@@ -3,7 +3,7 @@
 
 E_API void e_comp_x_randr_init(void);
 E_API void e_comp_x_randr_shutdown(void);
-E_API void e_comp_x_randr_config_apply(void);
+E_API void e_comp_x_randr_config_apply(Eina_Bool can_ckip);
 E_API Eina_Bool e_comp_x_randr_available(void);
 E_API E_Randr2 *e_comp_x_randr_create(void);
 
