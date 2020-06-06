@@ -33,30 +33,40 @@
 
 #include <Eina.h>
 
-# ifdef E_API
-#  undef E_API
-# endif
-# ifdef WIN32
-#  ifdef BUILDING_DLL
-#   define E_API __declspec(dllexport)
-#  else
-#   define E_API __declspec(dllimport)
-#  endif
+#define myasprintf(__b, __fmt, args...) do { \
+   char __bb[sizeof(__fmt) + 1]; \
+   int __cnt = snprintf(__bb, sizeof(__bb), __fmt, ##args); \
+   printf("cnt=%i\n", __cnt); \
+   if (__cnt >= 0) { \
+      *(__b) = alloca(__cnt + 1); \
+      snprintf(*(__b), __cnt + 1, __fmt, ##args); \
+   } \
+} while (0)
+
+#ifdef E_API
+# undef E_API
+#endif
+#ifdef WIN32
+# ifdef BUILDING_DLL
+#  define E_API __declspec(dllexport)
 # else
-#  ifdef __GNUC__
-#   if __GNUC__ >= 4
+#  define E_API __declspec(dllimport)
+# endif
+#else
+# ifdef __GNUC__
+#  if __GNUC__ >= 4
 /* BROKEN in gcc 4 on amd64 */
-#    if 0
-#     pragma GCC visibility push(hidden)
-#    endif
-#    define E_API __attribute__ ((visibility("default")))
-#   else
-#    define E_API
+#   if 0
+#    pragma GCC visibility push(hidden)
 #   endif
+#   define E_API __attribute__ ((visibility("default")))
 #  else
 #   define E_API
 #  endif
+# else
+#  define E_API
 # endif
+#endif
 
 static Eina_Bool stop_ptrace = EINA_FALSE;
 
@@ -455,26 +465,26 @@ static int
 _e_call_gdb(int child, const char *home, char **backtrace_str)
 {
    int r = 0;
-   char buf[4096];
+   char *buf = NULL;
    /* call e_sys gdb */
-   snprintf(buf, sizeof(buf),
-            "gdb "
-            "--pid=%i "
-            "-batch "
-            "-ex 'set logging file %s/.e-crashdump.txt' "
-            "-ex 'set logging on' "
-            "-ex 'thread apply all backtrace full' "
-            "-ex detach > /dev/null 2>&1 < /dev/zero",
-            child,
-            home);
+   myasprintf(&buf,
+              "gdb "
+              "--pid=%i "
+              "-batch "
+              "-ex 'set logging file %s/.e-crashdump.txt' "
+              "-ex 'set logging on' "
+              "-ex 'thread apply all backtrace full' "
+              "-ex detach > /dev/null 2>&1 < /dev/zero",
+              child,
+              home);
    r = system(buf);
 
    fprintf(stderr, "called gdb with '%s' = %i\n",
            buf, WEXITSTATUS(r));
 
-   snprintf(buf, 4096,
-            "%s/.e-crashdump.txt",
-            home);
+   myasprintf(&buf,
+              "%s/.e-crashdump.txt",
+              home);
 
    *backtrace_str = strdup(buf);
    return WEXITSTATUS(r);
@@ -484,17 +494,17 @@ static int
 _e_call_alert(int child, siginfo_t sig, int exit_gdb, const char *backtrace_str,
               Eina_Bool susr1)
 {
-   char buf[4096];
+   char *buf = NULL;
 
-   snprintf(buf, sizeof(buf),
-            backtrace_str ?
-            "%s/enlightenment/utils/enlightenment_alert %i %i %i '%s'" :
-            "%s/enlightenment/utils/enlightenment_alert %i %i %i",
-            eina_prefix_lib_get(pfx),
-            (sig.si_signo == SIGSEGV && susr1) ? SIGILL : sig.si_signo,
-            child,
-            exit_gdb,
-            backtrace_str);
+   myasprintf(&buf,
+              backtrace_str ?
+              "%s/enlightenment/utils/enlightenment_alert %i %i %i '%s'" :
+              "%s/enlightenment/utils/enlightenment_alert %i %i %i",
+              eina_prefix_lib_get(pfx),
+              (sig.si_signo == SIGSEGV && susr1) ? SIGILL : sig.si_signo,
+              child,
+              exit_gdb,
+              backtrace_str);
    return system(buf);
 }
 
@@ -575,8 +585,8 @@ main(int argc, char **argv)
    int i, valgrind_mode = 0;
    int valgrind_tool = 0;
    int valgrind_gdbserver = 0;
-   char buf[8192], buf2[4096], buf3[4096], **args, *home;
-   char valgrind_path[PATH_MAX] = "";
+   char *buf = NULL, *buf2 = NULL, *buf3 = NULL, **args, *home;
+   char *valgrind_path = NULL;
    const char *valgrind_log = NULL;
    const char *bindir;
    Eina_Bool really_know = EINA_FALSE;
@@ -613,14 +623,14 @@ main(int argc, char **argv)
      {
         const char *dir;
 
-        snprintf(buf, sizeof(buf), "/tmp/xdg-XXXXXX");
+        myasprintf(&buf, "/tmp/xdg-XXXXXX");
         dir = mkdtemp(buf);
         if (!dir) dir = "/tmp";
         else
           {
              FILE *f;
 
-             snprintf(buf2, sizeof(buf2), "%s/.e-deleteme", dir);
+             myasprintf(&buf2, "%s/.e-deleteme", dir);
              f = fopen(buf2, "w");
              if (f) fclose(f);
           }
@@ -705,26 +715,30 @@ main(int argc, char **argv)
         if (really_know) _env_path_append("PATH", bindir);
         else _env_path_prepend("PATH", bindir);
      }
-   snprintf(buf2, sizeof(buf2),
-            "E_ALERT_FONT_DIR=%s/data/fonts", eina_prefix_data_get(pfx));
+   myasprintf(&buf2,
+              "E_ALERT_FONT_DIR=%s/data/fonts",
+              eina_prefix_data_get(pfx));
    putenv(buf2);
-   snprintf(buf3, sizeof(buf3),
-            "E_ALERT_SYSTEM_BIN=%s/enlightenment/utils/enlightenment_system", eina_prefix_lib_get(pfx));
+   myasprintf(&buf3,
+              "E_ALERT_SYSTEM_BIN=%s/enlightenment/utils/enlightenment_system",
+              eina_prefix_lib_get(pfx));
    putenv(buf3);
 
-   if ((valgrind_mode || valgrind_tool) &&
-       !find_valgrind(valgrind_path, sizeof(valgrind_path)))
+   if (valgrind_mode || valgrind_tool)
      {
-        printf("E - valgrind required but no binary found! Ignoring request.\n");
-        valgrind_mode = 0;
+        valgrind_path = alloca(PATH_MAX);
+        if (!find_valgrind(valgrind_path, PATH_MAX))
+          {
+             printf("E - valgrind required but no binary found! Ignoring request.\n");
+             valgrind_mode = 0;
+          }
      }
 
    printf("E - PID=%i, valgrind=%d", getpid(), valgrind_mode);
-   if (valgrind_mode)
+   if (valgrind_mode && valgrind_path)
      {
         printf(" valgrind-command='%s'", valgrind_path);
-        if (valgrind_log)
-          printf(" valgrind-log-file='%s'", valgrind_log);
+        if (valgrind_log) printf(" valgrind-log-file='%s'", valgrind_log);
      }
    putchar('\n');
 
@@ -733,23 +747,20 @@ main(int argc, char **argv)
      {
         const char *tmps = getenv("XDG_DATA_HOME");
 
-        if (tmps)
-          snprintf(buf, sizeof(buf), "%s/Applications/.bin", tmps);
-        else
-          snprintf(buf, sizeof(buf), "%s/Applications/.bin", home);
+        if (tmps) myasprintf(&buf, "%s/Applications/.bin", tmps);
+        else      myasprintf(&buf, "%s/Applications/.bin", home);
 
-        if (really_know)
-          _env_path_append("PATH", buf);
-        else
-          _env_path_prepend("PATH", buf);
+        if (really_know) _env_path_append("PATH", buf);
+        else             _env_path_prepend("PATH", buf);
      }
 
    /* run e directly now */
-   snprintf(buf, sizeof(buf), "%s/enlightenment", eina_prefix_bin_get(pfx));
+   myasprintf(&buf, "%s/enlightenment", eina_prefix_bin_get(pfx));
 
    args = alloca((argc + 2 + VALGRIND_MAX_ARGS) * sizeof(char *));
    i = valgrind_append(args, valgrind_gdbserver, valgrind_mode, valgrind_tool,
                        valgrind_path, valgrind_log);
+   printf("== [%s]\n", buf);
    args[i++] = buf;
    copy_args(args + i, argv + 1, argc - 1);
    args[i + argc - 1] = NULL;
@@ -865,7 +876,7 @@ not_done:
    s = getenv("XDG_RUNTIME_DIR");
    if ((s) && (stat(s, &st) == 0) && (S_ISDIR(st.st_mode)))
      {
-        snprintf(buf, sizeof(buf), "%s/.e-deleteme", s);
+        myasprintf(&buf, "%s/.e-deleteme", s);
         if (stat(buf, &st) == 0) rmrf(s);
      }
  */
