@@ -469,7 +469,7 @@ _e_exec_cb_exec(void *data, Efreet_Desktop *desktop, char *exec, int remaining)
              return NULL;
           }
      }
-   else
+   else if (exec)
      {
         if ((desktop) && (desktop->terminal))
           {
