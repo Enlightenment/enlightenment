@@ -462,7 +462,6 @@ _e_config_edd_init(Eina_Bool old)
    /**/ /* == already configurable via ipc */
    E_CONFIG_VAL(D, T, config_version, INT); /**/
    E_CONFIG_VAL(D, T, config_type, UINT); /**/
-   E_CONFIG_VAL(D, T, show_splash, INT); /**/
    E_CONFIG_VAL(D, T, desktop_default_background, STR); /**/
    E_CONFIG_LIST(D, T, desktop_backgrounds, _e_config_desktop_bg_edd); /**/
    E_CONFIG_LIST(D, T, desktop_names, _e_config_desktop_name_edd); /**/
@@ -1630,7 +1629,6 @@ e_config_load(void)
 
    /* limit values so they are sane */
    E_CONFIG_LIMIT(e_config->menus_scroll_speed, 1.0, 20000.0);
-   E_CONFIG_LIMIT(e_config->show_splash, 0, 1);
    E_CONFIG_LIMIT(e_config->menus_fast_mouse_move_threshhold, 1.0, 2000.0);
    E_CONFIG_LIMIT(e_config->menus_click_drag_timeout, 0.0, 10.0);
    E_CONFIG_LIMIT(e_config->window_maximize_animate, 0, 1);

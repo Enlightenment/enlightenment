@@ -810,18 +810,15 @@ main(int argc, char **argv)
    TS("E_Scale Init Done");
    _e_main_shutdown_push(e_scale_shutdown);
 
-   if (e_config->show_splash)
+   TS("E_Splash Init");
+   if (!e_init_init())
      {
-        TS("E_Splash Init");
-        if (!e_init_init())
-          {
-             e_error_message_show(_("Enlightenment cannot set up its init screen.\n"));
-             _e_main_shutdown(-1);
-          }
-        TS("E_Splash Init Done");
-        _e_main_shutdown_push(e_init_shutdown);
+        e_error_message_show(_("Enlightenment cannot set up its init screen.\n"));
+        _e_main_shutdown(-1);
      }
-   if (!((!e_config->show_splash) || (after_restart)))
+   TS("E_Splash Init Done");
+   _e_main_shutdown_push(e_init_shutdown);
+   if (!after_restart)
      {
         TS("E_Splash Show");
         e_init_show();
@@ -1084,15 +1081,14 @@ main(int argc, char **argv)
 
    _idle_after = ecore_idle_enterer_add(_e_main_cb_idle_after, NULL);
 
-   if (e_config->show_splash)
-     e_init_status_set(_("Welcome to Enlightenment"));
+   e_init_status_set(_("Welcome to Enlightenment"));
 
    starting = EINA_FALSE;
    inloop = EINA_TRUE;
 
    e_util_env_set("E_RESTART", "1");
 
-   if (e_config->show_splash && (!after_restart))
+   if (!after_restart)
      ecore_timer_add(2.0, _e_main_cb_startup_fake_end, NULL);
 
    if (after_restart)

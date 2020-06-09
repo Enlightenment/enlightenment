@@ -31,6 +31,10 @@
 #include <signal.h>
 #include <errno.h>
 
+#ifdef HAVE_MALLOC_H
+# include <malloc.h>
+#endif
+
 #include <Eina.h>
 
 #define myasprintf(__b, __fmt, args...) do { \
@@ -799,6 +803,9 @@ main(int argc, char **argv)
 
         /* now loop until done */
 not_done:
+#ifdef HAVE_MALLOC_TRIM
+        malloc_trim(0);
+#endif
         result = waitpid(child, &status, WNOHANG);
         /* Wait for E */
         if (!result) result = waitpid(-1, &status, 0);

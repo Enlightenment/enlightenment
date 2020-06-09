@@ -23,7 +23,6 @@ struct _E_Config_Dialog_Data
    Eio_File        *init[2];
    Eina_List       *theme_init; /* list of eio ops to load themes */
    Eina_List       *themes; /* eet file refs to work around load locking */
-   int              show_splash;
    Eina_Bool        free E_BITFIELD;
 
    /* Dialog */
@@ -559,7 +558,6 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    char path[PATH_MAX];
    size_t len;
 
-   cfdata->show_splash = e_config->show_splash;
    theme = elm_theme_get(NULL);
    if (theme)
      {
@@ -777,8 +775,6 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
       e_widget_table_object_align_append(il, o, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0);
    }
 
-   o = e_widget_check_add(evas, _("Show startup splash"), &cfdata->show_splash);
-   e_widget_table_object_align_append(il, o, 2, 0, 1, 1, 0, 0, 1, 0, 0, 0);
    e_widget_list_object_append(of, il, 0, 0, 0.0);
 
    {
@@ -812,9 +808,6 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata
 
    file = ecore_file_file_get(cfdata->theme);
    name = ecore_file_strip_ext(file);
-   if (!!e_config->show_splash != !!cfdata->show_splash)
-     e_config_save_queue();
-   e_config->show_splash = cfdata->show_splash;
    if (name)
      {
         const char *theme = elm_theme_get(NULL);

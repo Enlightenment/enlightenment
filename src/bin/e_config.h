@@ -55,7 +55,6 @@ struct _E_Config
 {
    int         config_version; // INTERNAL
    E_Config_Profile_Type config_type; // INTERNAL
-   int         show_splash; // GUI
    const char *desktop_default_background; // GUI
    Eina_List  *desktop_backgrounds; // GUI
    const char *desktop_default_name; // DEAD
