@@ -1010,7 +1010,6 @@ _e_kbd_int_layout_build(E_Kbd_Int *ki)
 
    evas_object_grid_size_set(ki->layout_obj, ki->layout.w, ki->layout.h);
 
-   printf("================ layout build %ix%i\n", ki->layout.w, ki->layout.h);
    EINA_LIST_FOREACH(ki->layout.keys, l, ky)
      {
         E_Kbd_Int_Key_State *st;
