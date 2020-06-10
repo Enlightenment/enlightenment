@@ -130,7 +130,7 @@ _backlight_devices_zone_device_find(E_Zone *zone)
    const char *out, *edid, *id;
 
    id = zone->randr2_id;
-   if (!id) id = "xxx/yyy";
+   if (!id) id = "/";
    tmp = strdup(zone->randr2_id);
    if (!tmp) return NULL;
    sep = strchr(tmp, '/');
@@ -262,8 +262,21 @@ _backlight_devices_device_zone_get(Backlight_Device *bd)
    snprintf(buf, sizeof(buf), "%s/%s", bd->output? bd->output: "", bd->edid ? bd->edid : "");
    EINA_LIST_FOREACH(e_comp->zones, l, zone)
      {
-        if (!zone->randr2_id) continue;
-        if (!strcmp(zone->randr2_id, buf)) return zone;
+        const char *id = zone->randr2_id;
+        fprintf(stderr, "look at %p %s\n", zone, id);
+        if (!id)
+          {
+             const char *id2 = bd->edid;
+             if (!id2) id2 = "";
+             id = "";
+             fprintf(stderr, "cmp1 [%s] == [%s]\n", id, id2);
+             if (!strcmp(id, id2)) return zone;
+          }
+        else
+          {
+             fprintf(stderr, "cmp2 [%s] == [%s]\n", id, buf);
+             if (!strcmp(id, buf)) return zone;
+          }
      }
    return NULL;
 }
@@ -351,7 +364,7 @@ _backlight_devices_screen_edid_get(const char *edid)
    EINA_LIST_FOREACH(e_randr2->screens, l, sc)
      {
         id = sc->info.edid;
-        if (!id) id = "xxx";
+        if (!id) id = "";
         if (!strncmp(id, edid, strlen(edid))) return sc;
      }
    return NULL;
@@ -380,7 +393,7 @@ _backlight_devices_lid_register(const char *dev, Eina_Bool force)
 
    if (!sc) return;
    id = sc->info.edid;
-   if (!id) id = "xxx";
+   if (!id) id = "";
    bd = _backlight_devices_edid_find(id);
    if (!bd)
      {
@@ -426,7 +439,7 @@ _backlight_devices_edid_register(const char *dev, const char *edid)
         bd = calloc(1, sizeof(Backlight_Device));
         if (!bd) return;
         id = sc->info.edid;
-        if (!id) id = "xxx";
+        if (!id) id = "";
         bd->edid = eina_stringshare_add(id);
         bd->output = eina_stringshare_add(sc->info.name);
         _devices = eina_list_append(_devices, bd);
@@ -538,6 +551,7 @@ _backlight_devices_probe(Eina_Bool initial)
              Ecore_X_Window root = e_comp->root;
              Ecore_X_Randr_Output *out;
              int i, num = 0;
+             Eina_Bool found = EINA_FALSE;
 
              bl_devs = eina_list_append(bl_devs, eina_stringshare_add("randr"));
              out = ecore_x_randr_window_outputs_get(root, &num);
@@ -561,6 +575,7 @@ _backlight_devices_probe(Eina_Bool initial)
                                       bd->output = eina_stringshare_add(name);
                                       bd->edid = edid_str;
                                       _devices = eina_list_append(_devices, bd);
+                                      found = EINA_TRUE;
                                    }
                                  else free(bd);
                               }
@@ -569,6 +584,8 @@ _backlight_devices_probe(Eina_Bool initial)
                     }
                }
              free(out);
+             if (found)
+               e_backlight_level_set(NULL, e_config->backlight.normal, -1.0);
           }
      }
 #endif
@@ -713,9 +730,9 @@ e_backlight_level_set(E_Zone *zone, double val, double tim)
 
    E_FREE_FUNC(bd->retry_timer, ecore_timer_del);
    E_FREE_FUNC(bd->anim, ecore_animator_del);
-   bd->anim = ecore_animator_timeline_add(tim, _bl_anim, bd);
    bd->from_val = bl_now;
    bd->to_val = val;
+   bd->anim = ecore_animator_timeline_add(tim, _bl_anim, bd);
 }
 
 E_API double
