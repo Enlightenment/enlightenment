@@ -26,6 +26,7 @@
 #ifdef HAVE_ALLOCA_H
 # include <alloca.h>
 #endif
+#include <signal.h>
 #ifdef HAVE_PRCTL
 # include <sys/prctl.h>
 #elif defined(HAVE_PROCCTL)
