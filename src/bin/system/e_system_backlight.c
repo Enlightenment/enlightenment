@@ -174,6 +174,7 @@ _light_add(const char *dev)
 static Eina_Bool
 _light_device_include(const char *dev)
 { // filter out known undesirable devices
+   fprintf(stderr, "BL: found [%s]\n", dev);
    if (strstr(dev, "::capslock")) return EINA_FALSE;
    if (strstr(dev, "::numlock")) return EINA_FALSE;
    if (strstr(dev, "::scrolllock")) return EINA_FALSE;
@@ -198,12 +199,14 @@ _light_refresh_devices()
    const char *s;
 
    devs = eeze_udev_find_by_filter("backlight", NULL, NULL);
+   fprintf(stderr, "BL: backlight devices...\n");
    EINA_LIST_FREE(devs, s)
      {
         if (_light_device_include(s)) _light_add(s);
         eina_stringshare_del(s);
      }
    devs = eeze_udev_find_by_filter("leds", NULL, NULL);
+   fprintf(stderr, "BL: led devices...\n");
    EINA_LIST_FREE(devs, s)
      {
         if (_light_device_include(s)) _light_add(s);
@@ -301,6 +304,7 @@ _cb_bklight_set(void *data EINA_UNUSED, const char *params)
    if (!params) return;
    if (sscanf(params, "%1023s %i", dev, &val) != 2) return;
    eina_lock_take(&_devices_lock);
+   fprintf(stderr, "BL: set [%s] -> %i\n", dev, val);
    lig = _light_find(dev);
    if (!lig) goto done;
    lig->val_set = val;

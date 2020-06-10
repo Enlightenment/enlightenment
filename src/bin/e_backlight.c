@@ -45,7 +45,7 @@ _backlight_mismatch_retry(Backlight_Device *bd)
        // and the delta between expected and val >= 0.05
        (fabs(bd->expected_val - bd->val) >= 0.05) &&
        // and we retried < 20 times
-       (bd->retries < 20))
+       (bd->retries < 10))
      { // try again
         printf("RETRY backlight set as %1.2f != %1.2f (expected) try=%i\n",
                bd->val, bd->expected_val, bd->retries);
@@ -127,9 +127,10 @@ _backlight_devices_zone_device_find(E_Zone *zone)
    Eina_List *l;
    Backlight_Device *bd;
    char *tmp, *sep;
-   const char *out, *edid;
+   const char *out, *edid, *id;
 
-   if (!zone->randr2_id) return NULL;
+   id = zone->randr2_id;
+   if (!id) id = "xxx/yyy";
    tmp = strdup(zone->randr2_id);
    if (!tmp) return NULL;
    sep = strchr(tmp, '/');
@@ -222,8 +223,8 @@ _backlight_devices_randr_output_get(Ecore_X_Window root, const char *output, con
 static void
 _backlight_devices_device_set(Backlight_Device *bd, double val)
 {
+   if (fabs(bd->expected_val - val) > DBL_EPSILON) bd->retries = 0;
    bd->val = bd->expected_val = val;
-   bd->retries = 0;
 #ifndef HAVE_WAYLAND_ONLY
    if (!strcmp(bd->dev, "randr"))
      {
@@ -344,12 +345,14 @@ _backlight_devices_screen_edid_get(const char *edid)
 {
    Eina_List *l;
    E_Randr2_Screen *sc;
+   const char *id;
 
    if (!e_randr2) return NULL;
    EINA_LIST_FOREACH(e_randr2->screens, l, sc)
      {
-        if (!sc->info.edid) continue;
-        if (!strncmp(sc->info.edid, edid, strlen(edid))) return sc;
+        id = sc->info.edid;
+        if (!id) id = "xxx";
+        if (!strncmp(id, edid, strlen(edid))) return sc;
      }
    return NULL;
 }
@@ -372,17 +375,20 @@ static void
 _backlight_devices_lid_register(const char *dev, Eina_Bool force)
 {
    E_Randr2_Screen *sc = _backlight_devices_screen_lid_get();
-   Backlight_Device *bd;
+   Backlight_Device *bd = NULL;
+   const char *id;
+
    if (!sc) return;
-   if (!sc->info.edid) return;
-   bd = _backlight_devices_edid_find(sc->info.edid);
+   id = sc->info.edid;
+   if (!id) id = "xxx";
+   bd = _backlight_devices_edid_find(id);
    if (!bd)
      {
         E_Zone *zone;
 
         bd = calloc(1, sizeof(Backlight_Device));
         if (!bd) return;
-        bd->edid = eina_stringshare_add(sc->info.edid);
+        bd->edid = eina_stringshare_add(id);
         bd->output = eina_stringshare_add(sc->info.name);
         _devices = eina_list_append(_devices, bd);
         zone = _backlight_devices_device_zone_get(bd);
@@ -415,10 +421,13 @@ _backlight_devices_edid_register(const char *dev, const char *edid)
    if (!bd)
      {
         E_Zone *zone;
+        const char *id;
 
         bd = calloc(1, sizeof(Backlight_Device));
         if (!bd) return;
-        bd->edid = eina_stringshare_add(sc->info.edid);
+        id = sc->info.edid;
+        if (!id) id = "xxx";
+        bd->edid = eina_stringshare_add(id);
         bd->output = eina_stringshare_add(sc->info.name);
         _devices = eina_list_append(_devices, bd);
         zone = _backlight_devices_device_zone_get(bd);
