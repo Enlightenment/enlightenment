@@ -28,6 +28,7 @@
 #endif
 #include <sys/types.h>
 #include <pwd.h>
+#include <signal.h>
 #ifdef HAVE_PRCTL
 # include <sys/prctl.h>
 #elif defined(HAVE_PROCCTL)
