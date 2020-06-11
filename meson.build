@@ -184,6 +184,9 @@ if cc.has_header('netinet/in.h') == true
 endif
 if cc.has_header('execinfo.h') == true
   config_h.set('HAVE_EXECINFO_H'       , '1')
+  dep_execinfo = cc.find_library('execinfo', required: false)
+else
+  dep_execinfo = dependency('', required: false)
 endif
 if cc.has_function('explicit_bzero') == true
   config_h.set('HAVE_EXPLICIT_BZERO'   , '1')

@@ -15,6 +15,7 @@ deps_e = [
   dep_rt,
   dep_m,
   dep_dl,
+  dep_execinfo,
   dep_eina,
   dep_eet,
   dep_eeze,
