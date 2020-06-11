@@ -205,9 +205,7 @@ if cc.has_header('fnmatch.h') == false
   error('fnmatch.h not found')
 endif
 
-if cc.has_function('fnmatch') == false
-  dep_fnmatch = dependency('fnmatch', required: true)
-endif
+dep_fnmatch = cc.find_library('fnmatch', required: false)
 
 add_global_arguments('-DPACKAGE_BIN_DIR="@0@"'.format(dir_bin), language: 'c')
 add_global_arguments('-DPACKAGE_LIB_DIR="@0@"'.format(dir_lib), language: 'c')
