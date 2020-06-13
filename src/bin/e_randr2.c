@@ -9,7 +9,7 @@ static void                    _cb_delay_init_save(void *data);
 static Eina_Bool               _cb_delay_timer(void *data);
 static Eina_Bool               _cb_fade_animator(void *data);
 static void                    _animated_apply(void);
-static void                    _do_apply(Eina_Bool at_init);
+static void                    _do_apply(void);
 static void                    _info_free(E_Randr2 *r);
 static E_Config_Randr2        *_config_load(void);
 static void                    _config_free(E_Config_Randr2 *cfg);
@@ -107,7 +107,7 @@ e_randr2_init(void)
              if (_config_update(e_randr2, e_randr2_cfg, 1))
                e_randr2_config_save();
           }
-        _do_apply(EINA_TRUE);
+        _do_apply();
      }
    else
      {
@@ -226,7 +226,7 @@ _cb_fade_animator(void *data EINA_UNUSED)
         if (_target_to == 255)
           {
              _apply_delay = ecore_timer_loop_add(1.0, _cb_delay_timer, NULL);
-             _do_apply(EINA_FALSE);
+             _do_apply();
           }
         else
           {
@@ -263,7 +263,7 @@ _animated_apply(void)
 }
 
 static void
-_do_apply(Eina_Bool at_init)
+_do_apply(void)
 {
    // take current screen config and apply it to the driver
    printf("RRR: re-get info before applying..\n");
@@ -277,7 +277,7 @@ _do_apply(Eina_Bool at_init)
    printf("RRR: eval config...\n");
    _screen_config_eval();
    printf("RRR: really apply config...\n");
-   e_comp->screen->apply(at_init);
+   e_comp->screen->apply();
    printf("RRR: done config...\n");
 }
 

@@ -574,7 +574,7 @@ _drm2_rotation_exists(Ecore_Drm2_Output *output, int rot)
 }
 
 static void
-_drm2_randr_apply(Eina_Bool can_skip EINA_UNUSED)
+_drm2_randr_apply(void)
 {
    Ecore_Drm2_Device *dev;
    Ecore_Drm2_Output **outconf, *out;

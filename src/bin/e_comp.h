@@ -68,7 +68,7 @@ typedef struct E_Comp_Screen_Iface
    /* gather screen info */
    E_Randr2 *(*create)(void);
    /* apply current config */
-   void (*apply)(Eina_Bool can_skip);
+   void (*apply)(void);
    /* set dpms (on, standby, suspend, off) */
    void (*dpms)(int);
    /* is key event eaten */
