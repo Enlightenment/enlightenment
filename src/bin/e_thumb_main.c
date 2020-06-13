@@ -55,7 +55,7 @@ static Eina_Bool _e_ipc_cb_server_del(void *data,
 static Eina_Bool _e_ipc_cb_server_data(void *data,
                                        int type,
                                        void *event);
-static Eina_Bool _e_cb_timer(void *data);
+static Eina_Bool _e_cb_idle_enterer(void *data);
 static void      _e_thumb_generate(E_Thumb *eth);
 static char     *_e_thumb_file_id(char *file,
                                   char *key,
@@ -66,9 +66,9 @@ static char     *_e_thumb_file_id(char *file,
                                   Eina_List *sigsrc);
 
 /* local subsystem globals */
+static Ecore_Idle_Enterer *_idle_enterer = NULL;
 static Ecore_Ipc_Server *_e_ipc_server = NULL;
 static Eina_List *_thumblist = NULL;
-static Ecore_Timer *_timer = NULL;
 static char _thumbdir[4096] = "";
 
 /* externally accessible functions */
@@ -116,7 +116,13 @@ main(int argc,
    e_user_dir_concat_static(_thumbdir, "fileman/thumbnails");
    ecore_file_mkpath(_thumbdir);
 
-   if (_e_ipc_init()) ecore_main_loop_begin();
+   _idle_enterer = ecore_idle_enterer_add(_e_cb_idle_enterer, NULL);
+   if (_idle_enterer)
+     {
+        if (_e_ipc_init()) ecore_main_loop_begin();
+        ecore_idle_enterer_del(_idle_enterer);
+        _idle_enterer = NULL;
+     }
 
    if (_e_ipc_server)
      {
@@ -240,7 +246,6 @@ _e_ipc_cb_server_data(void *data EINA_UNUSED,
                   eth->sigsrc = sigsrc;
                   if (key) eth->key = strdup(key);
                   _thumblist = eina_list_append(_thumblist, eth);
-                  if (!_timer) _timer = ecore_timer_loop_add(0.001, _e_cb_timer, NULL);
                }
           }
         break;
@@ -271,13 +276,15 @@ _e_ipc_cb_server_data(void *data EINA_UNUSED,
    return ECORE_CALLBACK_PASS_ON;
 }
 
+static void
+_cb_wakeup(void *data EINA_UNUSED)
+{
+}
+
 static Eina_Bool
-_e_cb_timer(void *data EINA_UNUSED)
+_e_cb_idle_enterer(void *data EINA_UNUSED)
 {
    E_Thumb *eth;
-   /*
-      Eina_List *del_list = NULL, *l;
-    */
 
    /* take thumb at head of list */
    if (_thumblist)
@@ -291,13 +298,9 @@ _e_cb_timer(void *data EINA_UNUSED)
         free(eth->file);
         free(eth->key);
         free(eth);
-
-        if (_thumblist) _timer = ecore_timer_loop_add(0.01, _e_cb_timer, NULL);
-        else _timer = NULL;
+        if (_thumblist) ecore_job_add(_cb_wakeup, NULL);
      }
-   else
-     _timer = NULL;
-   return ECORE_CALLBACK_CANCEL;
+   return ECORE_CALLBACK_RENEW;
 }
 
 typedef struct _Color Color;
@@ -322,7 +325,11 @@ _e_thumb_generate(E_Thumb *eth)
    const unsigned int *data = NULL;
    time_t mtime_orig, mtime_thumb;
 
-   id = _e_thumb_file_id(eth->file, eth->key, eth->desk_x, eth->desk_y, eth->desk_x_count, eth->desk_y_count, eth->sigsrc);
+   id = _e_thumb_file_id(eth->file, eth->key,
+                         0, 0, 1, 1,
+//                         eth->desk_x, eth->desk_y,
+//                         eth->desk_x_count, eth->desk_y_count,
+                         eth->sigsrc);
    if (!id) return;
 
    td = strdup(id);
