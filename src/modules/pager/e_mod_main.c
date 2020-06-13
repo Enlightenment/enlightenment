@@ -132,7 +132,7 @@ static void             _pager_desk_cb_mouse_move(void *data, Evas *e EINA_UNUSE
 static void             _pager_desk_cb_drag_finished(E_Drag *drag, int dropped);
 static void             _pager_desk_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info);
 static Eina_Bool        _pager_popup_cb_timeout(void *data);
-static Pager           *_pager_new(Evas *evas, E_Zone *zone, E_Gadcon *gc);
+static Pager           *_pager_new(Evas *evas, E_Zone *zone, E_Gadcon *gc, Instance *inst);
 static void             _pager_free(Pager *p);
 static void             _pager_fill(Pager *p, E_Gadcon *gc);
 static void             _pager_empty(Pager *p);
@@ -169,6 +169,7 @@ static int hold_count = 0;
 static int hold_mod = 0;
 static E_Desk *current_desk = NULL;
 static Eina_List *pagers = NULL;
+static double _pager_start_time = 0.0;
 
 EINTERN E_Module *module;
 EINTERN E_Config_Dialog *config_dialog;
@@ -218,9 +219,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
 
    inst = E_NEW(Instance, 1);
 
-   p = _pager_new(gc->evas, gc->zone, gc);
-   p->inst = inst;
-   inst->pager = p;
+   p = _pager_new(gc->evas, gc->zone, gc, inst);
    o = p->o_table;
    gcc = e_gadcon_client_new(gc, name, id, style, o);
    gcc->data = inst;
@@ -262,7 +261,7 @@ _gc_shutdown(E_Gadcon_Client *gcc)
 }
 
 static void
-_gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient EINA_UNUSED)
+_aspect(E_Gadcon_Client *gcc)
 {
    Instance *inst;
    int aspect_w, aspect_h;
@@ -287,6 +286,12 @@ _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient EINA_UNUSED)
      e_gadcon_client_min_size_set(gcc, 4 * aspect_ratio, 4);
    else
      e_gadcon_client_min_size_set(gcc, 4, 4 * aspect_ratio);
+}
+
+static void
+_gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient EINA_UNUSED)
+{
+   _aspect(gcc);
 }
 
 static const char *
@@ -347,6 +352,7 @@ _pager_recalc(void *data)
           e_gadcon_client_aspect_set(p->inst->gcc, p->ynum * w, p->xnum * h);
         else
           e_gadcon_client_aspect_set(p->inst->gcc, p->xnum * w, p->ynum * h);
+        _aspect(p->inst->gcc);
      }
 }
 
@@ -360,15 +366,16 @@ _pager_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
 }
 
 static Pager *
-_pager_new(Evas *evas, E_Zone *zone, E_Gadcon *gc)
+_pager_new(Evas *evas, E_Zone *zone, E_Gadcon *gc, Instance *inst)
 {
    Pager *p;
 
    p = E_NEW(Pager, 1);
-   p->inst = NULL;
-   p->popup = NULL;
+   p->inst = inst;
+   if (inst) inst->pager = p;
    p->o_table = elm_table_add(e_win_evas_win_get(evas));
-   evas_object_event_callback_add(p->o_table, EVAS_CALLBACK_RESIZE, _pager_resize, p);
+   evas_object_event_callback_add(p->o_table, EVAS_CALLBACK_RESIZE,
+                                  _pager_resize, p);
    elm_table_homogeneous_set(p->o_table, 1);
    p->zone = zone;
    _pager_fill(p, gc);
@@ -760,7 +767,7 @@ _pager_popup_new(E_Zone *zone, int keyaction)
 
    /* Show popup */
 
-   pp->pager = _pager_new(e_comp->evas, zone, NULL);
+   pp->pager = _pager_new(e_comp->evas, zone, NULL, NULL);
 
    pp->pager->popup = pp;
    pp->urgent = 0;
@@ -1040,7 +1047,8 @@ _pager_cb_event_desk_show(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev
           edje_object_part_text_set(p->popup->o_bg, "e.text.label", ev->desk->name);
      }
 
-   if ((pager_config->popup) && (!act_popup))
+   if ((pager_config->popup) && (!act_popup) &&
+       ((ecore_time_get() - _pager_start_time) > 0.5)) //. not at start
      {
         if ((pp = _pager_popup_find(ev->desk->zone)))
           evas_object_show(pp->popup);
@@ -1049,7 +1057,7 @@ _pager_cb_event_desk_show(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev
         if (pp->timer)
           ecore_timer_loop_reset(pp->timer);
         else
-          pp->timer = ecore_timer_loop_add(pager_config->popup_speed,
+          pp->timer = ecore_timer_add(pager_config->popup_speed,
                                       _pager_popup_cb_timeout, pp);
      }
 
@@ -2082,6 +2090,7 @@ e_modapi_init(E_Module *m)
 {
    E_Module *p;
 
+   _pager_start_time = ecore_time_get();
    e_modapi_gadget_init(m);
    p = e_module_find("pager_plain");
    if (p && p->enabled)
