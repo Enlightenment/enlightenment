@@ -207,6 +207,7 @@ _precache_thread(void *data, Eina_Thread thr EINA_UNUSED)
    unsigned int reads = 0;
 
 
+   printf("PRECACHE: BEGIN\n");
    EINA_LIST_FREE(precache_files, path)
      {
         double tt = ecore_time_get();
@@ -666,6 +667,7 @@ main(int argc, char **argv)
           }
         eina_hash_foreach(files, _precache_file, &precache_files);
         eina_hash_free(files);
+        printf("PRECACHE: SPAWN\n");
         if (!eina_thread_create(&thr, EINA_THREAD_BACKGROUND, -1,
                                 _precache_thread, precache_files))
           {
