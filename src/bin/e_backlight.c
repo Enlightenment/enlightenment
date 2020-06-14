@@ -131,7 +131,7 @@ _backlight_devices_zone_device_find(E_Zone *zone)
 
    id = zone->randr2_id;
    if (!id) id = "/";
-   tmp = strdup(zone->randr2_id);
+   tmp = strdup(id);
    if (!tmp) return NULL;
    sep = strchr(tmp, '/');
    if (!sep)
