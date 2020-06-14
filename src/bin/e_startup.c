@@ -31,7 +31,7 @@ e_startup_mode_set(E_Startup_Mode mode)
      ecore_event_handler_add(EFREET_EVENT_DESKTOP_CACHE_BUILD,
                              _e_startup_event_cb, NULL);
    if (timer) ecore_timer_del(timer);
-   timer = ecore_timer_add(10.0, _e_startup_time_exceeded, NULL);
+   timer = ecore_timer_add(20.0, _e_startup_time_exceeded, NULL);
    e_init_undone();
 }
 
