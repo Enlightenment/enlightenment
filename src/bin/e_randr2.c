@@ -72,6 +72,7 @@ e_randr2_init(void)
    E_CONFIG_VAL(D, T, priority, INT);
    E_CONFIG_VAL(D, T, rel_mode, UCHAR);
    E_CONFIG_VAL(D, T, enabled, UCHAR);
+   E_CONFIG_VAL(D, T, ignore_disconnect, UCHAR);
    E_CONFIG_VAL(D, T, profile, STR);
    E_CONFIG_VAL(D, T, scale_multiplier, DOUBLE);
 
@@ -154,12 +155,46 @@ e_randr2_config_apply(void)
    _animated_apply();
 }
 
+static E_Randr2_Screen *
+_randr_screen_find(E_Randr2 *r, E_Randr2_Screen *src)
+{
+   Eina_List *l;
+   E_Randr2_Screen *s;
+
+   EINA_LIST_FOREACH(r->screens, l, s)
+     {
+        if ((s->info.name) && (src->info.name) &&
+            (!strcmp(s->info.name, src->info.name)))
+          return s;
+     }
+   return NULL;
+}
+
+static void
+_randr_screen_props_copyover(E_Randr2 *rold, E_Randr2 *rnew)
+{
+   Eina_List *l;
+   E_Randr2_Screen *s, *s2;
+
+   // copy s->config.ignore_disconnect over from tr to e_randr2
+   EINA_LIST_FOREACH(rnew->screens, l, s)
+     {
+        s2 = _randr_screen_find(rold, s);
+        if (s2) s->config.ignore_disconnect = s2->config.ignore_disconnect;
+     }
+}
+
 E_API void
 e_randr2_screeninfo_update(void)
 {
+   E_Randr2 *tr = e_randr2;
    // re-fetch/update current screen info
-   _info_free(e_randr2);
    e_randr2 = e_comp->screen->create();
+   if ((tr) && (e_randr2))
+     {
+        _randr_screen_props_copyover(tr, e_randr2);
+        _info_free(tr);
+     }
    _screen_config_maxsize();
 }
 
@@ -265,10 +300,16 @@ _animated_apply(void)
 static void
 _do_apply(void)
 {
+   E_Randr2 *tr = e_randr2;
    // take current screen config and apply it to the driver
    printf("RRR: re-get info before applying..\n");
-   _info_free(e_randr2);
+   tr = e_randr2;
    e_randr2 = e_comp->screen->create();
+   if ((tr) && (e_randr2))
+     {
+        _randr_screen_props_copyover(tr, e_randr2);
+        _info_free(tr);
+     }
    _screen_config_maxsize();
    printf("RRR: apply config...\n");
    _config_apply(e_randr2, e_randr2_cfg);
@@ -381,8 +422,13 @@ _config_update(E_Randr2 *r, E_Config_Randr2 *cfg, Eina_Bool update_only)
    printf("--------------------------------------------------\n");
    EINA_LIST_FOREACH(r->screens, l, s)
      {
-        printf("RRR: out id=%s:  connected=%i\n", s->id, s->info.connected);
-        if ((!s->id) || (!s->info.connected) || (_screen_closed(s))) continue;
+        printf("RRR: out id=%s:  connected=%i enabled=%i configured=%i\n",
+               s->id, s->info.connected,
+               s->config.enabled, s->config.configured);
+        if (!s->id) continue;
+        if (!s->info.connected) continue;
+        if (_screen_closed(s)) continue;
+
         cs = e_randr2_config_screen_find(s, cfg);
         if (cs && update_only) continue;
         if (!cs)
@@ -469,6 +515,7 @@ _config_update(E_Randr2 *r, E_Config_Randr2 *cfg, Eina_Bool update_only)
                }
              printf("RRR: store scale mul %1.5f\n", cs->scale_multiplier);
              s->config.scale_multiplier = cs->scale_multiplier;
+             s->config.ignore_disconnect = cs->ignore_disconnect;
              ret = EINA_TRUE;
           }
      }
@@ -498,6 +545,8 @@ _config_really_apply(E_Randr2_Screen *s, E_Config_Randr2_Screen *cs)
         if (cs->profile) s->config.profile = strdup(cs->profile);
         else s->config.profile = NULL;
         s->config.scale_multiplier = cs->scale_multiplier;
+        s->config.ignore_disconnect = cs->ignore_disconnect;
+        printf("RRR: really apply '%s' ignore discon %i\n", s->info.name, s->config.ignore_disconnect);
      }
    else
      {
@@ -519,6 +568,7 @@ _config_really_apply(E_Randr2_Screen *s, E_Config_Randr2_Screen *cs)
         free(s->config.profile);
         s->config.profile = NULL;
         s->config.scale_multiplier = 0.0;
+        s->config.ignore_disconnect = EINA_FALSE;
      }
 }
 
@@ -546,7 +596,10 @@ _config_apply(E_Randr2 *r, E_Config_Randr2 *cfg)
         else
           {
              printf("RRR: ... disabled\n");
-             _config_really_apply(s, NULL);
+             if (!s->config.ignore_disconnect)
+               _config_really_apply(s, NULL);
+             else
+               printf("RRR: ... ignore disconnected\n");
           }
         s->config.configured = EINA_TRUE;
      }
@@ -734,6 +787,7 @@ _cb_screen_change_delay(void *data EINA_UNUSED)
         rtemp = e_comp->screen->create();
         if (rtemp)
           {
+             if (e_randr2) _randr_screen_props_copyover(e_randr2, rtemp);
              if (_screens_differ(e_randr2, rtemp)) change = EINA_TRUE;
              if (e_randr2_cfg->default_policy != E_RANDR2_POLICY_NONE)
                {
@@ -752,7 +806,7 @@ _cb_screen_change_delay(void *data EINA_UNUSED)
                     {
                        printf("RRR: is lid, lid++\n");
                        lid_screens++;
-                       if (s->info.lid_closed)
+                       if ((s->info.lid_closed) && (!s->config.ignore_disconnect))
                          {
                             printf("RRR: is lid, is closed, closed++\n");
                             close_lid_screens++;

@@ -87,6 +87,7 @@ struct _E_Randr2_Screen
       int                   priority; // larger num == more important
       Eina_Bool             enabled E_BITFIELD; // should this monitor be enabled?
       Eina_Bool             configured E_BITFIELD; // has screen been configured by e?
+      Eina_Bool             ignore_disconnect E_BITFIELD; // ignore disconnects for this screen...
 
       char                 *profile; // profile name to use on this screen
       double                scale_multiplier; // if 0.0 - then dont multiply scale
@@ -115,6 +116,7 @@ struct _E_Config_Randr2_Screen
    int            priority;
    unsigned char  rel_mode;
    unsigned char  enabled;
+   unsigned char  ignore_disconnect;
 
    const char    *profile;
    double         scale_multiplier;

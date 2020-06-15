@@ -19,6 +19,7 @@ struct _E_Config_Dialog_Data
    Evas_Object *modes_obj;
    Evas_Object *rotations_obj;
    Evas_Object *enabled_obj;
+   Evas_Object *ignore_disconnect_obj;
    Evas_Object *priority_obj;
    Evas_Object *rel_mode_obj;
    Evas_Object *rel_to_obj;
@@ -442,6 +443,7 @@ _basic_screen_info_fill(E_Config_Dialog_Data *cfdata, E_Config_Randr2_Screen *cs
    elm_list_go(cfdata->rotations_obj);
 
    elm_check_state_set(cfdata->enabled_obj, cs->enabled);
+   elm_check_state_set(cfdata->ignore_disconnect_obj, cs->ignore_disconnect);
 
    elm_slider_value_set(cfdata->priority_obj, cs->priority);
 
@@ -746,6 +748,17 @@ _cb_enabled_changed(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 }
 
 static void
+_cb_ignore_disconnect_changed(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+{
+   E_Config_Dialog_Data *cfdata = data;
+   E_Config_Randr2_Screen *cs = _config_screen_find(cfdata);
+   if (!cs) return;
+   cs->ignore_disconnect = elm_check_state_get(obj);
+   printf("RR: ignore_disconnect = %i\n", cs->ignore_disconnect);
+   e_config_dialog_changed_set(cfdata->cfd, EINA_TRUE);
+}
+
+static void
 _policy_text_update(E_Config_Dialog_Data *cfdata)
 {
    char pbuf[128];
@@ -861,6 +874,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas EINA_UNUSED, E_Config_Dialog_Data
                   cs->priority = s->config.priority;
                   cs->rel_mode = s->config.relative.mode;
                   cs->enabled = s->config.enabled;
+                  cs->ignore_disconnect = s->config.ignore_disconnect;
                   if (s->config.profile)
                     cs->profile = eina_stringshare_add(s->config.profile);
                   cs->scale_multiplier = s->config.scale_multiplier;
@@ -965,6 +979,15 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas EINA_UNUSED, E_Config_Dialog_Data
    evas_object_smart_callback_add(o, "changed", _cb_enabled_changed, cfdata);
    cfdata->enabled_obj = o;
 
+   o = elm_check_add(win);
+   evas_object_size_hint_weight_set(o, 0.0, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+   elm_object_text_set(o, _("Ignore Disconnect"));
+   elm_table_pack(tb, o, 2, 5, 1, 1);
+   evas_object_show(o);
+   evas_object_smart_callback_add(o, "changed", _cb_ignore_disconnect_changed, cfdata);
+   cfdata->ignore_disconnect_obj = o;
+
    o = elm_slider_add(win);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
@@ -972,7 +995,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas EINA_UNUSED, E_Config_Dialog_Data
    elm_slider_unit_format_set(o, "%3.0f");
    elm_slider_span_size_set(o, 100);
    elm_slider_min_max_set(o, 0, 100);
-   elm_table_pack(tb, o, 2, 5, 1, 1);
+   elm_table_pack(tb, o, 2, 6, 1, 1);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed", _cb_priority_changed, cfdata);
    cfdata->priority_obj = o;
@@ -987,7 +1010,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas EINA_UNUSED, E_Config_Dialog_Data
    elm_hoversel_item_add(o, _("Right of"), NULL, ELM_ICON_NONE, _cb_rel_mode_right_of, cfdata);
    elm_hoversel_item_add(o, _("Above"), NULL, ELM_ICON_NONE, _cb_rel_mode_above, cfdata);
    elm_hoversel_item_add(o, _("Below"), NULL, ELM_ICON_NONE, _cb_rel_mode_below, cfdata);
-   elm_table_pack(tb, o, 2, 6, 1, 1);
+   elm_table_pack(tb, o, 2, 7, 1, 1);
    evas_object_show(o);
    cfdata->rel_mode_obj = o;
 
@@ -1007,7 +1030,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas EINA_UNUSED, E_Config_Dialog_Data
              cfdata->screen_items2 = eina_list_append(cfdata->screen_items2, it);
           }
      }
-   elm_table_pack(tb, o, 2, 7, 1, 1);
+   elm_table_pack(tb, o, 2, 8, 1, 1);
    evas_object_show(o);
    cfdata->rel_to_obj = o;
 
@@ -1018,7 +1041,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas EINA_UNUSED, E_Config_Dialog_Data
    elm_slider_unit_format_set(o, "%1.1f");
    elm_slider_span_size_set(o, 100);
    elm_slider_min_max_set(o, 0.0, 1.0);
-   elm_table_pack(tb, o, 2, 8, 1, 1);
+   elm_table_pack(tb, o, 2, 9, 1, 1);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed", _cb_rel_align_changed, cfdata);
    cfdata->rel_align_obj = o;
@@ -1028,14 +1051,14 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas EINA_UNUSED, E_Config_Dialog_Data
    elm_separator_horizontal_set(o, EINA_TRUE);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_table_pack(tb, o, 2, 9, 1, 1);
+   elm_table_pack(tb, o, 2, 10, 1, 1);
    evas_object_show(o);
 
    o = elm_check_add(win);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_object_text_set(o, _("Use Profile"));
-   elm_table_pack(tb, o, 2, 10, 1, 1);
+   elm_table_pack(tb, o, 2, 11, 1, 1);
    evas_object_show(o);
    cfdata->use_profile_obj = o;
    evas_object_smart_callback_add(o, "changed", _cb_profile_enabled_changed, cfdata);
@@ -1043,7 +1066,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas EINA_UNUSED, E_Config_Dialog_Data
    o = elm_list_add(win);
    evas_object_size_hint_weight_set(o, 0.0, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_table_pack(tb, o, 2, 11, 1, 1);
+   elm_table_pack(tb, o, 2, 12, 1, 1);
    evas_object_show(o);
    cfdata->profile_list_obj = o;
 
@@ -1051,7 +1074,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas EINA_UNUSED, E_Config_Dialog_Data
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_object_text_set(o, _("Custom Scale"));
-   elm_table_pack(tb, o, 2, 12, 1, 1);
+   elm_table_pack(tb, o, 2, 13, 1, 1);
    evas_object_show(o);
    cfdata->scale_custom_obj = o;
    evas_object_smart_callback_add(o, "changed", _cb_custom_scale_changed, cfdata);
@@ -1064,7 +1087,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas EINA_UNUSED, E_Config_Dialog_Data
    elm_slider_span_size_set(o, 100);
    elm_slider_min_max_set(o, 0.5, 5.5);
    elm_slider_value_set(o, elm_config_scale_get());
-   elm_table_pack(tb, o, 2, 13, 1, 1);
+   elm_table_pack(tb, o, 2, 14, 1, 1);
    evas_object_show(o);
    cfdata->scale_value_obj = o;
    evas_object_smart_callback_add(o, "changed", _cb_scale_value_changed, cfdata);
@@ -1167,6 +1190,7 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
         cs->scale_multiplier = cs2->scale_multiplier;
         printf("APPLY %s .... rel mode %i\n", cs->id, cs->rel_mode);
         cs->enabled = cs2->enabled;
+        cs->ignore_disconnect = cs2->ignore_disconnect;
      }
    e_randr2_config_save();
    e_randr2_config_apply();

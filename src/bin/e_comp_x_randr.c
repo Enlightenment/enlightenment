@@ -724,6 +724,7 @@ e_comp_x_randr_create(void)
         E_Randr2_Screen *s = calloc(1, sizeof(E_Randr2_Screen));
         if (!s) continue;
 
+        printf("RRR: NEW SCREEN ...\n");
         s->info.name = _output_name_get(root, outputs[i]);
         printf("RRR: .... out %s\n", s->info.name);
         if (!s->info.name)
