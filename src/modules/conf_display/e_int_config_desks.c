@@ -171,7 +171,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    of = e_widget_frametable_add(evas, _("Number of Desktops"), 0);
    e_widget_frametable_content_align_set(of, 0.5, 0.0);
 
-   ob = e_widget_label_add(evas, _("Click to change wallpaper"));
+   ob = e_widget_label_add(evas, _("Click to change wallpaper and name"));
    e_widget_frametable_object_append(of, ob, 0, 0, 1, 1, 1, 1, 1, 1);
 
    ob = e_widget_bgpreview_add(evas, cfdata->x, cfdata->y);
