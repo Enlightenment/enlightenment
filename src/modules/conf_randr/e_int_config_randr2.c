@@ -33,6 +33,7 @@ struct _E_Config_Dialog_Data
    int hotplug;
    int acpi;
    int screen;
+   double hotplug_response;
    E_Randr2_Policy policy;
 };
 
@@ -105,6 +106,7 @@ _create_data(E_Config_Dialog *cfd EINA_UNUSED)
    cfdata->hotplug = !e_randr2_cfg->ignore_hotplug_events;
    cfdata->acpi = !e_randr2_cfg->ignore_acpi_events;
    cfdata->policy = e_randr2_cfg->default_policy;
+   cfdata->hotplug_response = e_randr2_cfg->hotplug_response;
    return cfdata;
 }
 
@@ -126,6 +128,14 @@ _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
    eina_list_free(cfdata->screen_items2);
    EINA_LIST_FREE(cfdata->freelist, dt) free(dt);
    E_FREE(cfdata);
+}
+
+static void
+_cb_hotplug_response_changed(void *data EINA_UNUSED, Evas_Object *obj, void *event EINA_UNUSED)
+{
+   E_Config_Dialog_Data *cfdata = data;
+   cfdata->hotplug_response = elm_slider_value_get(obj);
+   e_config_dialog_changed_set(cfdata->cfd, EINA_TRUE);
 }
 
 static void
@@ -1104,6 +1114,18 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas EINA_UNUSED, E_Config_Dialog_Data
    evas_object_show(o);
    bx2 = o;
 
+   o = elm_slider_add(win);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(o, _("Response"));
+   elm_slider_unit_format_set(o, "%1.1f sec");
+   elm_slider_span_size_set(o, 88);
+   elm_slider_min_max_set(o, 0.2, 9.0);
+   elm_slider_value_set(o, cfdata->hotplug_response);
+   elm_box_pack_end(bx2, o);
+   evas_object_show(o);
+   evas_object_smart_callback_add(o, "changed", _cb_hotplug_response_changed, cfdata);
+
    o = elm_check_add(win);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -1160,6 +1182,7 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
    e_randr2_cfg->ignore_hotplug_events = !cfdata->hotplug;
    e_randr2_cfg->ignore_acpi_events = !cfdata->acpi;
    e_randr2_cfg->default_policy = cfdata->policy;
+   e_randr2_cfg->hotplug_response = cfdata->hotplug_response;
 
    printf("APPLY....................\n");
    EINA_LIST_FOREACH(cfdata->screens, l, cs2)

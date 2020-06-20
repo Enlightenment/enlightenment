@@ -1,6 +1,6 @@
 #include "e.h"
 
-#define E_RANDR_CONFIG_VERSION 2
+#define E_RANDR_CONFIG_VERSION 3
 
 /////////////////////////////////////////////////////////////////////////
 static Eina_Bool               _screen_closed(E_Randr2_Screen *s);
@@ -83,6 +83,7 @@ e_randr2_init(void)
 #define D _e_randr2_cfg_edd
    E_CONFIG_VAL(D, T, version, INT);
    E_CONFIG_LIST(D, T, screens, _e_randr2_cfg_screen_edd);
+   E_CONFIG_VAL(D, T, hotplug_response, DOUBLE);
    E_CONFIG_VAL(D, T, restore, UCHAR);
    E_CONFIG_VAL(D, T, ignore_hotplug_events, UCHAR);
    E_CONFIG_VAL(D, T, ignore_acpi_events, UCHAR);
@@ -349,6 +350,9 @@ _config_upgrade(E_Config_Randr2 *cfg)
 {
    if (cfg->version < 2)
      cfg->default_policy = E_RANDR2_POLICY_EXTEND;
+   if (cfg->version < 3)
+     cfg->hotplug_response = 1.0;
+   cfg->version = E_RANDR_CONFIG_VERSION;
 }
 
 static E_Config_Randr2 *
@@ -362,6 +366,10 @@ _config_load(void)
      {
         if (cfg->version < E_RANDR_CONFIG_VERSION)
           _config_upgrade(cfg);
+        if (cfg->hotplug_response < 0.2)
+          cfg->hotplug_response = 0.2;
+        else if (cfg->hotplug_response > 9.0)
+          cfg->hotplug_response = 9.0;
         printf("RRR: loaded existing config\n");
         return cfg;
      }
@@ -374,6 +382,7 @@ _config_load(void)
    cfg->ignore_hotplug_events = 0;
    cfg->ignore_acpi_events = 0;
    cfg->default_policy = E_RANDR2_POLICY_EXTEND;
+   cfg->hotplug_response = 1.0;
    printf("RRR: fresh config\n");
    return cfg;
 }
@@ -1403,7 +1412,13 @@ e_randr2_screen_refresh_queue(Eina_Bool lid_event)
    if (_screen_delay_timer)
      ecore_timer_loop_reset(_screen_delay_timer);
    else
-     _screen_delay_timer = ecore_timer_loop_add(1.0, _cb_screen_change_delay, NULL);
+     {
+        double t = 1.0;
+
+        if ((e_randr2_cfg) && (e_randr2_cfg->hotplug_response > 0.2))
+          t = e_randr2_cfg->hotplug_response;
+        _screen_delay_timer = ecore_timer_loop_add(t, _cb_screen_change_delay, NULL);
+     }
    event_screen |= !!lid_event;
 }
 

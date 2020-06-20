@@ -102,6 +102,7 @@ struct _E_Config_Randr2
    unsigned char  ignore_hotplug_events;
    unsigned char  ignore_acpi_events;
    E_Randr2_Policy default_policy;
+   double         hotplug_response;
 };
 
 struct _E_Config_Randr2_Screen
