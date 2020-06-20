@@ -9,6 +9,8 @@ E_API E_Module_Api e_modapi =
 
 static Ecore_Event_Handler *randr_event_hand = NULL;
 
+static E_Int_Menu_Augmentation *maug[1] = {0};
+
 static Eina_Bool
 _cb_randr(void *data EINA_UNUSED, int type EINA_UNUSED, void *info EINA_UNUSED)
 {
@@ -27,6 +29,23 @@ _cb_randr(void *data EINA_UNUSED, int type EINA_UNUSED, void *info EINA_UNUSED)
    return EINA_TRUE;
 }
 
+static void
+_e_mod_run_screen_setup_cb(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
+{
+   e_configure_registry_call("screen/screen_setup", NULL, NULL);
+}
+
+static void
+_e_mod_menu_screen_setup_add(void *data EINA_UNUSED, E_Menu *m)
+{
+   E_Menu_Item *mi;
+
+   mi = e_menu_item_new(m);
+   e_menu_item_label_set(mi, _("Screen Setup"));
+   e_util_menu_item_theme_icon_set(mi, "preferences-system-screen-resolution");
+   e_menu_item_callback_set(mi, _e_mod_run_screen_setup_cb, NULL);
+}
+
 E_API void *
 e_modapi_init(E_Module *m)
 {
@@ -43,6 +62,9 @@ e_modapi_init(E_Module *m)
                                  e_int_config_randr2);
    randr_event_hand = ecore_event_handler_add(E_EVENT_RANDR_CHANGE,
                                               _cb_randr, NULL);
+   maug[0] =
+        e_int_menus_menu_augmentation_add_sorted("config/1", _("Screen Setup"),
+                                                 _e_mod_menu_screen_setup_add, NULL, NULL, NULL);
    return m;
 }
 
@@ -50,6 +72,12 @@ E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
+
+   if (maug[0])
+     {
+        e_int_menus_menu_augmentation_del("config/1", maug[0]);
+        maug[0] = NULL;
+     }
 
    if (randr_event_hand)
      {
