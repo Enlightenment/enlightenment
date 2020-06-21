@@ -86,7 +86,7 @@ _e_icon_obj_prepare(Evas_Object *obj, E_Smart_Data *sd)
 {
    if (!sd->obj) return;
 
-   if (sd->edje)
+   if (!sd->edje)
      {
         Evas_Object *pclip;
 
@@ -97,6 +97,7 @@ _e_icon_obj_prepare(Evas_Object *obj, E_Smart_Data *sd)
           evas_object_image_scale_hint_set(sd->obj,
                                            EVAS_IMAGE_SCALE_HINT_STATIC);
         evas_object_smart_member_add(sd->obj, obj);
+        evas_object_stack_below(sd->obj, sd->eventarea);
         evas_object_event_callback_add(sd->obj, EVAS_CALLBACK_IMAGE_PRELOADED,
                                        _e_icon_preloaded, obj);
         evas_object_clip_set(sd->obj, pclip);
@@ -236,7 +237,7 @@ e_icon_file_key_set(Evas_Object *obj, const char *file, const char *key)
         if (sd->preload)
           {
              sd->loading = 1;
-             evas_object_image_preload(sd->obj, 0);
+             evas_object_image_preload(sd->obj, EINA_FALSE);
           }
         else if (evas_object_visible_get(obj))
           evas_object_show(sd->obj);
@@ -317,8 +318,9 @@ e_icon_file_edje_set(Evas_Object *obj, const char *file, const char *part)
    edje_object_file_set(sd->obj, file, part);
 //   if (edje_object_load_error_get(sd->obj) != EDJE_LOAD_ERROR_NONE)
 //     return EINA_FALSE;
-   if (evas_object_visible_get(obj)) evas_object_show(sd->obj);
    evas_object_smart_member_add(sd->obj, obj);
+   evas_object_stack_below(sd->obj, sd->eventarea);
+   if (evas_object_visible_get(obj)) evas_object_show(sd->obj);
    _e_icon_smart_reconfigure(sd);
 }
 
@@ -414,6 +416,7 @@ e_icon_image_object_set(Evas_Object *obj, Evas_Object *o)
    sd->loading = 0;
    sd->obj = o;
    evas_object_smart_member_add(sd->obj, obj);
+   evas_object_stack_below(sd->obj, sd->eventarea);
    if (evas_object_visible_get(obj)) evas_object_show(sd->obj);
    _handle_anim(sd);
    _e_icon_smart_reconfigure(sd);
