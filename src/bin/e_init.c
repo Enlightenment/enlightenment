@@ -111,6 +111,7 @@ _e_init_zone_change_job(void *data EINA_UNUSED)
    Eina_List *l, *ll;
 
    _e_init_update_job = NULL;
+   if (done > 0) return;
    // pass 1 - delete splash objects for zones that have gone OR
    // update the zone obj to have the right clip and geometry
    EINA_LIST_FOREACH_SAFE(splash_objs, l, ll, o)
@@ -181,10 +182,13 @@ e_init_shutdown(void)
    /* if not killed, kill init */
    ecore_event_handler_del(_e_init_event_zone_add);
    ecore_event_handler_del(_e_init_event_zone_del);
-   ecore_event_handler_del(_e_init_event_zone_move_resize);
+   if (_e_init_event_zone_move_resize)
+     {
+        ecore_event_handler_del(_e_init_event_zone_move_resize);
+        _e_init_event_zone_move_resize = NULL;
+     }
    _e_init_event_zone_add = NULL;
    _e_init_event_zone_del = NULL;
-   _e_init_event_zone_move_resize = NULL;
    e_init_hide();
    return 1;
 }
@@ -218,6 +222,11 @@ e_init_show(void)
 E_API void
 e_init_hide(void)
 {
+   if (_e_init_event_zone_move_resize)
+     {
+        ecore_event_handler_del(_e_init_event_zone_move_resize);
+        _e_init_event_zone_move_resize = NULL;
+     }
    E_FREE_LIST(splash_objs, evas_object_del);
    e_comp_shape_queue();
    _e_init_object = NULL;
