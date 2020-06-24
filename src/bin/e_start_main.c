@@ -31,9 +31,11 @@
 #include <signal.h>
 #include <errno.h>
 
-#ifdef HAVE_MALLOC_H
-# include <malloc.h>
-#endif
+# if !defined (__FreeBSD__) && !defined (__OpenBSD__)
+#  ifdef HAVE_MALLOC_H
+#   include <malloc.h>
+#  endif
+# endif
 
 #include <Eina.h>
 
