@@ -437,7 +437,10 @@ e_comp_canvas_init(int w, int h)
    if ((!after_restart) || (!e_comp_x))
      ecore_evas_pointer_warp(e_comp->ee, e_comp->w / 2, e_comp->h / 2);
 
-   e_comp_wl_notidle();
+#ifdef HAVE_WAYLAND
+   if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+     e_comp_wl_notidle();
+#endif
    return EINA_TRUE;
 }
 
