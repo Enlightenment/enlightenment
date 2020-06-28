@@ -1106,6 +1106,16 @@ _e_comp_wl_client_evas_init(E_Client *ec)
                                   _e_comp_wl_evas_cb_color_set, ec);
 
    ec->comp_data->evas_init = EINA_TRUE;
+   E_LIST_HANDLER_APPEND(handlers, E_EVENT_SCREENSAVER_ON, _e_comp_wl_screensaver_on, NULL);
+   E_LIST_HANDLER_APPEND(handlers, E_EVENT_SCREENSAVER_OFF, _e_comp_wl_screensaver_off, NULL);
+   e_comp_wl_notidle();
+
+   e_screensaver_attrs_set(e_screensaver_timeout_get(EINA_TRUE),
+                           e_config->screensaver_blanking,
+                           e_config->screensaver_expose);
+// XXX: maybe later like x work on explicit suspend of compositor stuff?
+//   e_desklock_show_hook_add(_e_comp_x_desklock_show);
+//   e_desklock_hide_hook_add(_e_comp_x_desklock_hide);
 }
 
 static inline int
@@ -1199,7 +1209,7 @@ _e_comp_wl_cb_mouse_move(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mou
 
    e_comp_wl->ptr.x = ev->x;
    e_comp_wl->ptr.y = ev->y;
-   e_screensaver_notidle();
+   e_comp_canvas_notidle();
    if (e_comp_wl->selection.target &&
        (!e_client_has_xwindow(e_comp_wl->selection.target)) &&
        e_comp_wl->drag)
@@ -3405,7 +3415,9 @@ e_comp_wl_key_down(Ecore_Event_Key *ev, E_Client *ec)
        ((ev->modifiers & ECORE_EVENT_MODIFIER_ALT) ||
        (ev->modifiers & ECORE_EVENT_MODIFIER_ALTGR)) &&
        eina_streq(ev->key, "BackSpace"))
-     exit(0);
+     {
+        if (!e_desklock_state_get()) exit(0);
+     }
 #endif
 
    end = (uint32_t *)e_comp_wl->kbd.keys.data + (e_comp_wl->kbd.keys.size / sizeof(*k));
@@ -3681,4 +3693,147 @@ e_comp_wl_grab_client_mouse_button(const Ecore_Event_Mouse_Button *ev)
    evas_event_feed_mouse_move(e_comp->evas, ev->x, ev->y, 0, NULL);
    e_comp_canvas_feed_mouse_up(0);
    return ECORE_CALLBACK_DONE;
+}
+
+static Eina_Bool saver_inhibit = EINA_FALSE;
+static Eina_Bool saver_on = EINA_FALSE;
+static Ecore_Timer *screensaver_eval_timer = NULL;
+static Ecore_Timer *screensaver_idle_timer = NULL;
+
+static Eina_Bool
+_e_comp_wl_creensaver_eval_cb(void *d EINA_UNUSED)
+{
+   screensaver_eval_timer = NULL;
+   if (!saver_on)
+     {
+        if (e_comp->screen && e_comp->screen->dpms)
+          e_comp->screen->dpms(0);
+     }
+   e_screensaver_eval(saver_on);
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_e_comp_wl_screensaver_idle_cb(void *data EINA_UNUSED)
+{
+   screensaver_idle_timer = NULL;
+   if (e_screensaver_ignore_get()) return EINA_FALSE;
+   if (!saver_on)
+     {
+        saver_on = EINA_TRUE;
+        E_FREE_FUNC(screensaver_eval_timer, ecore_timer_del);
+        screensaver_eval_timer = ecore_timer_loop_add
+          (0.3, _e_comp_wl_creensaver_eval_cb, NULL);
+     }
+   return EINA_FALSE;
+}
+
+static void
+_e_comp_cb_pointer_suspend_resume_done(void *data, Evas_Object *obj, const char *emission, const char *source)
+{
+   edje_object_signal_callback_del(obj, emission, source,
+                                   _e_comp_cb_pointer_suspend_resume_done);
+   if (!data)
+     {
+        e_pointer_grab_set(e_comp->pointer, EINA_FALSE);
+     }
+}
+
+EINTERN Eina_Bool
+_e_comp_wl_screensaver_on()
+{
+   const char *s;
+
+   if ((!e_comp->pointer) || (!e_comp->pointer->o_ptr)) return ECORE_CALLBACK_RENEW;
+   s = edje_object_data_get(e_comp->pointer->o_ptr, "can_suspend");
+
+   if ((s) && (atoi(s) == 1))
+     {
+        if (!e_desklock_state_get())
+          {
+             e_pointer_grab_set(e_comp->pointer, EINA_FALSE);
+             e_pointer_grab_set(e_comp->pointer, EINA_TRUE);
+          }
+        edje_object_signal_callback_del(e_comp->pointer->o_ptr,
+                                        "e,state,mouse,suspend,done", "e",
+                                        _e_comp_cb_pointer_suspend_resume_done);
+        edje_object_signal_callback_del(e_comp->pointer->o_ptr,
+                                        "e,state,mouse,resume,done", "e",
+                                        _e_comp_cb_pointer_suspend_resume_done);
+        edje_object_signal_callback_add(e_comp->pointer->o_ptr,
+                                        "e,state,mouse,suspend,done",
+                                        "e",
+                                        _e_comp_cb_pointer_suspend_resume_done,
+                                        e_comp);
+        edje_object_signal_emit(e_comp->pointer->o_ptr,
+                                "e,state,mouse,suspend", "e");
+     }
+   return ECORE_CALLBACK_RENEW;
+}
+
+EINTERN Eina_Bool
+_e_comp_wl_screensaver_off()
+{
+   const char *s;
+
+   e_pointer_grab_set(e_comp->pointer, EINA_FALSE);
+   if ((!e_comp->pointer) || (!e_comp->pointer->o_ptr)) return ECORE_CALLBACK_RENEW;
+   s = edje_object_data_get(e_comp->pointer->o_ptr, "can_suspend");
+
+   if ((s) && (atoi(s) == 1))
+     {
+        if (!e_desklock_state_get())
+          {
+             e_pointer_grab_set(e_comp->pointer, EINA_TRUE);
+          }
+        edje_object_signal_callback_del(e_comp->pointer->o_ptr,
+                                        "e,state,mouse,suspend,done", "e",
+                                        _e_comp_cb_pointer_suspend_resume_done);
+        edje_object_signal_callback_del(e_comp->pointer->o_ptr,
+                                        "e,state,mouse,resume,done", "e",
+                                        _e_comp_cb_pointer_suspend_resume_done);
+        edje_object_signal_callback_add(e_comp->pointer->o_ptr,
+                                        "e,state,mouse,resume,done",
+                                        "e",
+                                        _e_comp_cb_pointer_suspend_resume_done,
+                                        NULL);
+        edje_object_signal_emit(e_comp->pointer->o_ptr,
+                                "e,state,mouse,resume", "e");
+     }
+   return ECORE_CALLBACK_RENEW;
+}
+
+E_API void
+e_comp_wl_notidle(void)
+{
+   if (saver_on)
+     {
+        saver_on = EINA_FALSE;
+        E_FREE_FUNC(screensaver_eval_timer, ecore_timer_del);
+        screensaver_eval_timer = ecore_timer_loop_add
+          (0.3, _e_comp_wl_creensaver_eval_cb, NULL);
+     }
+   E_FREE_FUNC(screensaver_idle_timer, ecore_timer_del);
+   screensaver_idle_timer = ecore_timer_add
+     (e_screensaver_timeout_get(EINA_TRUE),
+      _e_comp_wl_screensaver_idle_cb, NULL);
+}
+
+E_API void
+e_comp_wl_screensaver_activate(void)
+{
+   saver_on = EINA_TRUE;
+   E_FREE_FUNC(screensaver_eval_timer, ecore_timer_del);
+   E_FREE_FUNC(screensaver_idle_timer, ecore_timer_del);
+   e_screensaver_eval(saver_on);
+}
+
+E_API void
+e_comp_wl_screensaver_inhibit(Eina_Bool inhibit)
+{
+   if (inhibit == saver_inhibit) return;
+   saver_inhibit = inhibit;
+   e_comp_wl_notidle();
+   if (inhibit)
+     E_FREE_FUNC(screensaver_idle_timer, ecore_timer_del);
 }

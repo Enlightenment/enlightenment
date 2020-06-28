@@ -1589,7 +1589,7 @@ e_comp_ignore_win_find(Ecore_Window win)
 }
 
 E_API void
-e_comp_override_del()
+e_comp_override_del(void)
 {
    e_comp->nocomp_override--;
    if (e_comp->nocomp_override <= 0)
@@ -1600,7 +1600,7 @@ e_comp_override_del()
 }
 
 E_API void
-e_comp_override_add()
+e_comp_override_add(void)
 {
    e_comp->nocomp_override++;
    if ((e_comp->nocomp_override > 0) && (e_comp->nocomp)) _e_comp_nocomp_end();

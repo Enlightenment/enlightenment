@@ -439,6 +439,12 @@ E_API void e_comp_wl_extension_pointer_unconstrain(E_Client *ec);
 E_API void e_comp_wl_extension_action_route_pid_allowed_set(uint32_t pid, Eina_Bool allow);
 E_API const void *e_comp_wl_extension_action_route_interface_get(int *version);
 
+E_API void e_comp_wl_notidle(void);
+E_API void e_comp_wl_screensaver_activate(void);
+E_API void e_comp_wl_screensaver_inhibit(Eina_Bool inhibit);
+
+EINTERN Eina_Bool _e_comp_wl_screensaver_on();
+EINTERN Eina_Bool _e_comp_wl_screensaver_off();
 
 E_API void
 e_policy_wl_aux_message_send(E_Client *ec,
