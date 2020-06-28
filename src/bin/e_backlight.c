@@ -728,6 +728,8 @@ e_backlight_level_set(E_Zone *zone, double val, double tim)
    if (zone->bl_mode == E_BACKLIGHT_MODE_NORMAL) tim = 0.5;
    else if (tim < 0.0) tim = e_config->backlight.transition;
 
+   if ((bd->anim) && (fabs(bd->to_val - val) < DBL_EPSILON)) return;
+
    E_FREE_FUNC(bd->retry_timer, ecore_timer_del);
    E_FREE_FUNC(bd->anim, ecore_animator_del);
    bd->from_val = bl_now;
