@@ -3701,7 +3701,7 @@ static Ecore_Timer *screensaver_eval_timer = NULL;
 static Ecore_Timer *screensaver_idle_timer = NULL;
 
 static Eina_Bool
-_e_comp_wl_creensaver_eval_cb(void *d EINA_UNUSED)
+_e_comp_wl_screensaver_eval_cb(void *d EINA_UNUSED)
 {
    screensaver_eval_timer = NULL;
    if (!saver_on)
@@ -3723,7 +3723,7 @@ _e_comp_wl_screensaver_idle_cb(void *data EINA_UNUSED)
         saver_on = EINA_TRUE;
         E_FREE_FUNC(screensaver_eval_timer, ecore_timer_del);
         screensaver_eval_timer = ecore_timer_loop_add
-          (0.3, _e_comp_wl_creensaver_eval_cb, NULL);
+          (0.3, _e_comp_wl_screensaver_eval_cb, NULL);
      }
    return EINA_FALSE;
 }
@@ -3811,7 +3811,7 @@ e_comp_wl_notidle(void)
         saver_on = EINA_FALSE;
         E_FREE_FUNC(screensaver_eval_timer, ecore_timer_del);
         screensaver_eval_timer = ecore_timer_loop_add
-          (0.3, _e_comp_wl_creensaver_eval_cb, NULL);
+          (0.3, _e_comp_wl_screensaver_eval_cb, NULL);
      }
    E_FREE_FUNC(screensaver_idle_timer, ecore_timer_del);
    screensaver_idle_timer = ecore_timer_add
