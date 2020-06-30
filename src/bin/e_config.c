@@ -600,8 +600,6 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, desklock_on_suspend, INT);
    E_CONFIG_VAL(D, T, desklock_autolock_screensaver, INT);
    E_CONFIG_VAL(D, T, desklock_post_screensaver_time, DOUBLE);
-   E_CONFIG_VAL(D, T, desklock_autolock_idle, INT);
-   E_CONFIG_VAL(D, T, desklock_autolock_idle_timeout, DOUBLE);
    E_CONFIG_VAL(D, T, desklock_use_custom_desklock, INT);
    E_CONFIG_VAL(D, T, desklock_custom_desklock_cmd, STR);
    E_CONFIG_VAL(D, T, desklock_ask_presentation, UCHAR);
@@ -1714,8 +1712,6 @@ e_config_load(void)
    E_CONFIG_LIMIT(e_config->desklock_login_box_zone, -2, 1000);
    E_CONFIG_LIMIT(e_config->desklock_autolock_screensaver, 0, 1);
    E_CONFIG_LIMIT(e_config->desklock_post_screensaver_time, 0.0, 300.0);
-   E_CONFIG_LIMIT(e_config->desklock_autolock_idle, 0, 1);
-   E_CONFIG_LIMIT(e_config->desklock_autolock_idle_timeout, 1.0, 5400.0);
    E_CONFIG_LIMIT(e_config->desklock_use_custom_desklock, 0, 1);
    E_CONFIG_LIMIT(e_config->desklock_ask_presentation, 0, 1);
    E_CONFIG_LIMIT(e_config->desklock_ask_presentation_timeout, 1.0, 300.0);

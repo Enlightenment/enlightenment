@@ -27,7 +27,6 @@ struct _E_Config_Dialog_Data
    /* Locking */
    int              start_locked;
    int              lock_on_suspend;
-   int              auto_lock;
    int              desklock_auth_method;
    int              login_zone;
    int              zone;
@@ -40,7 +39,6 @@ struct _E_Config_Dialog_Data
 
    /* Timers */
    int              screensaver_lock;
-   double           idle_time;
    double           post_screensaver_time;
 
    /* Adv props */
@@ -54,7 +52,6 @@ struct _E_Config_Dialog_Data
    {
       Evas_Object *kbd_list;
       Evas_Object *loginbox_slider;
-      Evas_Object *auto_lock_slider;
       Evas_Object *o_table;
       Eina_List *bgs;
    } gui;
@@ -165,9 +162,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    cfdata->desklock_layout = e_config->xkb.desklock_layout;
    cfdata->start_locked = e_config->desklock_start_locked;
    cfdata->lock_on_suspend = e_config->desklock_on_suspend;
-   cfdata->auto_lock = e_config->desklock_autolock_idle;
    cfdata->screensaver_lock = e_config->desklock_autolock_screensaver;
-   cfdata->idle_time = e_config->desklock_autolock_idle_timeout / 60;
    cfdata->post_screensaver_time = e_config->desklock_post_screensaver_time;
    if (e_config->desklock_login_box_zone >= 0)
      {
@@ -354,7 +349,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 
    /* Timers */
    ol = e_widget_list_add(evas, 0, 0);
-   oc = e_widget_check_add(evas, _("Lock after screensaver activates"),
+   oc = e_widget_check_add(evas, _("Lock after blanking"),
                            &cfdata->screensaver_lock);
    e_widget_disabled_set(oc, !cfdata->use_xscreensaver);
    e_widget_list_object_append(ol, oc, 1, 1, 0.5);
@@ -366,14 +361,6 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
      e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
 
-   oc = e_widget_check_add(evas, _("Lock when idle time exceeded"),
-                           &cfdata->auto_lock);
-   e_widget_list_object_append(ol, oc, 1, 1, 0.5);
-
-   ow = e_widget_slider_add(evas, 1, 0, _("%1.0f minutes"), 1.0, 90.0, 1.0, 0,
-                            &(cfdata->idle_time), NULL, 100);
-   e_widget_check_widget_disable_on_unchecked_add(oc, ow);
-   e_widget_list_object_append(ol, ow, 1, 1, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Timers"), ol,
                                  1, 1, 1, 0, 0.0, 0.0);
 
@@ -470,10 +457,8 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
      }
    e_config->desklock_start_locked = cfdata->start_locked;
    e_config->desklock_on_suspend = cfdata->lock_on_suspend;
-   e_config->desklock_autolock_idle = cfdata->auto_lock;
    e_config->desklock_post_screensaver_time = cfdata->post_screensaver_time;
    e_config->desklock_autolock_screensaver = cfdata->screensaver_lock;
-   e_config->desklock_autolock_idle_timeout = (cfdata->idle_time * 60);
    e_config->desklock_ask_presentation = cfdata->ask_presentation;
    e_config->desklock_ask_presentation_timeout = cfdata->ask_presentation_timeout;
    if (e_config->xkb.desklock_layout != cfdata->desklock_layout)
@@ -530,16 +515,10 @@ _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
 
    if (e_config->xkb.desklock_layout != cfdata->desklock_layout)
      return 1;
-
    if (e_config->desklock_start_locked != cfdata->start_locked)
      return 1;
-
    if (e_config->desklock_on_suspend != cfdata->lock_on_suspend)
      return 1;
-
-   if (e_config->desklock_autolock_idle != cfdata->auto_lock)
-     return 1;
-
    if (e_config->desklock_auth_method != cfdata->desklock_auth_method)
      return 1;
    if (e_config->desklock_auth_method == E_DESKLOCK_AUTH_METHOD_PERSONAL)
@@ -567,11 +546,7 @@ _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
 
    if (e_config->desklock_autolock_screensaver != cfdata->screensaver_lock)
      return 1;
-
    if (!EINA_DBL_EQ(e_config->desklock_post_screensaver_time, cfdata->post_screensaver_time))
-     return 1;
-
-   if (!EINA_DBL_EQ(e_config->desklock_autolock_idle_timeout, cfdata->idle_time * 60))
      return 1;
 
    if (cfdata->bg_method_prev != (int)cfdata->bg_method) return 1;

@@ -1,6 +1,5 @@
 #include "e.h"
 
-
 /**************************** private data ******************************/
 
 typedef struct _E_Desklock_Run E_Desklock_Run;
@@ -14,9 +13,6 @@ struct _E_Desklock_Run
 
 static Ecore_Exe *_e_custom_desklock_exe = NULL;
 static Ecore_Event_Handler *_e_custom_desklock_exe_handler = NULL;
-static Ecore_Poller *_e_desklock_idle_poller = NULL;
-static int _e_desklock_user_idle = 0;
-static double _e_desklock_autolock_time = 0.0;
 static E_Dialog *_e_desklock_ask_presentation_dia = NULL;
 static int _e_desklock_ask_presentation_count = 0;
 
@@ -41,13 +37,10 @@ static Eina_Bool desklock_manual = EINA_FALSE;
 
 /***********************************************************************/
 static Eina_Bool _e_desklock_cb_custom_desklock_exit(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
-static Eina_Bool _e_desklock_cb_idle_poller(void *data EINA_UNUSED);
 static Eina_Bool _e_desklock_cb_run(void *data, int type, void *event);
 static Eina_Bool _e_desklock_cb_randr(void *data, int type, void *event);
 
 static Eina_Bool _e_desklock_state = EINA_FALSE;
-
-static void      _e_desklock_ask_presentation_mode(void);
 
 E_API int E_EVENT_DESKLOCK = 0;
 
@@ -56,9 +49,6 @@ e_desklock_init(void)
 {
    Eina_List *l;
    E_Config_Desklock_Background *bg;
-   /* A poller to tick every 256 ticks, watching for an idle user */
-   _e_desklock_idle_poller = ecore_poller_add(ECORE_POLLER_CORE, 256,
-                                              _e_desklock_cb_idle_poller, NULL);
 
    EINA_LIST_FOREACH(e_config->desklock_backgrounds, l, bg)
      e_filereg_register(bg->file);
@@ -214,8 +204,6 @@ e_desklock_hide_hook_del(E_Desklock_Hide_Cb cb)
 E_API int
 e_desklock_show_autolocked(void)
 {
-   if (_e_desklock_autolock_time < 1.0)
-     _e_desklock_autolock_time = ecore_loop_time_get();
    return e_desklock_show(EINA_FALSE);
 }
 
@@ -450,23 +438,6 @@ _desklock_hide_internal(void)
         current_iface = NULL;
      }
 
-   if (_e_desklock_autolock_time > 0.0)
-     {
-        if ((e_config->desklock_ask_presentation) &&
-            (e_config->desklock_ask_presentation_timeout > 0.0))
-          {
-             double max, now;
-
-             now = ecore_loop_time_get();
-             max = _e_desklock_autolock_time + e_config->desklock_ask_presentation_timeout;
-             if (now <= max)
-               _e_desklock_ask_presentation_mode();
-          }
-        else
-          _e_desklock_ask_presentation_count = 0;
-
-        _e_desklock_autolock_time = 0.0;
-     }
    if (getenv("E_START_MANAGER")) kill(getppid(), SIGHUP);
 }
 
@@ -541,55 +512,6 @@ _e_desklock_cb_custom_desklock_exit(void *data EINA_UNUSED, int type EINA_UNUSED
    return ECORE_CALLBACK_DONE;
 }
 
-static Eina_Bool
-_e_desklock_cb_idle_poller(void *data EINA_UNUSED)
-{
-   if ((e_config->desklock_autolock_idle) && (!e_config->mode.presentation))
-     {
-        double idle = 0.0, max;
-
-        /* If a desklock is already up, bail */
-        if ((_e_custom_desklock_exe) || (_e_desklock_state)) return ECORE_CALLBACK_RENEW;
-
-#ifndef HAVE_WAYLAND_ONLY
-        if (e_comp->comp_type == E_PIXMAP_TYPE_X)
-          idle = ecore_x_screensaver_idle_time_get();
-#endif
-#ifdef HAVE_WAYLAND
-        if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
-          idle = e_comp_wl_idle_time_get();
-#endif
-
-        max = e_config->desklock_autolock_idle_timeout;
-        if (_e_desklock_ask_presentation_count > 0)
-          max *= (1 + _e_desklock_ask_presentation_count);
-
-        /* If we have exceeded our idle time... */
-        if (idle >= max)
-          {
-             /*
-              * Unfortunately, not all "desklocks" stay up for as long as
-              * the user is idle or until it is unlocked.
-              *
-              * 'xscreensaver-command -lock' for example sends a command
-              * to xscreensaver and then terminates.  So, we have another
-              * check (_e_desklock_user_idle) which lets us know that we
-              * have locked the screen due to idleness.
-              */
-             if (!_e_desklock_user_idle)
-               {
-                  _e_desklock_user_idle = 1;
-                  e_desklock_show_autolocked();
-               }
-          }
-        else
-          _e_desklock_user_idle = 0;
-     }
-
-   /* Make sure our poller persists. */
-   return ECORE_CALLBACK_RENEW;
-}
-
 static void
 _e_desklock_ask_presentation_del(void *data)
 {
@@ -648,44 +570,6 @@ _e_desklock_ask_presentation_key_down(void *data, Evas *e EINA_UNUSED, Evas_Obje
      _e_desklock_ask_presentation_yes(NULL, dia);
    else if (strcmp(ev->key, "Escape") == 0)
      _e_desklock_ask_presentation_no(NULL, dia);
-}
-
-static void
-_e_desklock_ask_presentation_mode(void)
-{
-   E_Dialog *dia;
-
-   if (_e_desklock_ask_presentation_dia) return;
-
-   if (!(dia = e_dialog_new(NULL, "E", "_desklock_ask_presentation"))) return;
-
-   e_dialog_title_set(dia, _("Activate Presentation Mode?"));
-   e_dialog_icon_set(dia, "dialog-ask", 64);
-   e_dialog_text_set(dia,
-                     _("You unlocked your desktop too fast.<ps/><ps/>"
-                       "Would you like to enable <b>presentation</b> mode and "
-                       "temporarily disable screen saver, lock and power saving?"));
-
-   e_object_del_attach_func_set(E_OBJECT(dia),
-                                _e_desklock_ask_presentation_del);
-   e_dialog_button_add(dia, _("Yes"), NULL,
-                       _e_desklock_ask_presentation_yes, NULL);
-   e_dialog_button_add(dia, _("No"), NULL,
-                       _e_desklock_ask_presentation_no, NULL);
-   e_dialog_button_add(dia, _("No, but increase timeout"), NULL,
-                       _e_desklock_ask_presentation_no_increase, NULL);
-   e_dialog_button_add(dia, _("No, and stop asking"), NULL,
-                       _e_desklock_ask_presentation_no_forever, NULL);
-
-   e_dialog_button_focus_num(dia, 0);
-   e_widget_list_homogeneous_set(dia->box_object, 0);
-   elm_win_center(dia->win, 1, 1);
-   e_dialog_show(dia);
-
-   evas_object_event_callback_add(dia->bg_object, EVAS_CALLBACK_KEY_DOWN,
-                                  _e_desklock_ask_presentation_key_down, dia);
-
-   _e_desklock_ask_presentation_dia = dia;
 }
 
 static Eina_Bool

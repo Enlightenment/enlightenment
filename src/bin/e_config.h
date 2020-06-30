@@ -204,8 +204,6 @@ struct _E_Config
    int                       desklock_on_suspend; // GUI
    int                       desklock_autolock_screensaver; // GUI
    double                    desklock_post_screensaver_time; // GUI
-   int                       desklock_autolock_idle; // GUI
-   double                    desklock_autolock_idle_timeout; // GUI
    int                       desklock_use_custom_desklock; // GUI
    const char               *desklock_custom_desklock_cmd; // GUI
    unsigned char             desklock_ask_presentation; // GUI
