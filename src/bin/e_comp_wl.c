@@ -3806,6 +3806,8 @@ _e_comp_wl_screensaver_off()
 E_API void
 e_comp_wl_notidle(void)
 {
+   int timeout;
+
    if (saver_on)
      {
         saver_on = EINA_FALSE;
@@ -3814,9 +3816,10 @@ e_comp_wl_notidle(void)
           (0.3, _e_comp_wl_screensaver_eval_cb, NULL);
      }
    E_FREE_FUNC(screensaver_idle_timer, ecore_timer_del);
-   screensaver_idle_timer = ecore_timer_add
-     (e_screensaver_timeout_get(EINA_TRUE),
-      _e_comp_wl_screensaver_idle_cb, NULL);
+   timeout = e_screensaver_timeout_get(EINA_TRUE);
+   if (timeout > 0)
+     screensaver_idle_timer = ecore_timer_add
+       (timeout, _e_comp_wl_screensaver_idle_cb, NULL);
 }
 
 E_API void
