@@ -805,6 +805,14 @@ _e_exec_startup_id_pid_find(const Eina_Hash *hash EINA_UNUSED, const void *key E
    search = data;
    EINA_LIST_FOREACH(value, l, inst)
      {
+        pid_t exe_pid;
+
+        exe_pid = 0;
+        if (inst->exe)
+          {
+             exe_pid = ecore_exe_pid_get(inst->exe);
+             if (exe_pid <= 0) inst->exe = NULL;
+          }
         if (((search->desktop) &&
              (search->desktop == inst->desktop)) ||
 
@@ -812,7 +820,7 @@ _e_exec_startup_id_pid_find(const Eina_Hash *hash EINA_UNUSED, const void *key E
              (search->startup_id == inst->startup_id)) ||
 
             ((inst->exe) && (search->pid > 1) && (!inst->phony) &&
-             (search->pid == ecore_exe_pid_get(inst->exe))))
+             (search->pid == exe_pid)))
           {
              search->inst = inst;
              return EINA_FALSE;
