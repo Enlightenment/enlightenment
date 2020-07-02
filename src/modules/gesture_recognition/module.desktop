@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Link
+Name=Gesture Recognition
+Comment=Gesture recognition using libinput
+Icon=e-module-start
+X-Enlightenment-ModuleType=utils

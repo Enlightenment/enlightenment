@@ -45,6 +45,7 @@ mods = [
   'tiling',
   'packagekit',
   'vkbd',
+  'gesture_recognition',
 # modules have a custom binary as well
   'battery',
   'cpufreq',

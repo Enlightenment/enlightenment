@@ -35,6 +35,7 @@ typedef struct _E_Binding_Edge   E_Binding_Edge;
 typedef struct _E_Binding_Signal E_Binding_Signal;
 typedef struct _E_Binding_Wheel  E_Binding_Wheel;
 typedef struct _E_Binding_Acpi   E_Binding_Acpi;
+typedef struct _E_Binding_Swipe  E_Binding_Swipe;
 
 typedef struct E_Binding_Event_Mouse_Button E_Binding_Event_Mouse_Button;
 typedef struct E_Binding_Event_Wheel E_Binding_Event_Wheel;
@@ -131,6 +132,15 @@ struct _E_Binding_Acpi
    const char *action, *params;
 };
 
+struct _E_Binding_Swipe
+{
+   E_Binding_Context ctxt;
+   double direction, length, error;
+   unsigned int fingers;
+   const char *action, *params;
+};
+
+
 EINTERN int         e_bindings_init(void);
 EINTERN int         e_bindings_shutdown(void);
 
@@ -139,6 +149,7 @@ E_API void        e_bindings_key_reset(void);
 E_API void        e_bindings_wheel_reset(void);
 E_API void        e_bindings_edge_reset(void);
 E_API void        e_bindings_signal_reset(void);
+E_API void        e_bindings_swipe_reset(void);
 E_API void        e_bindings_reset(void);
 
 E_API void        e_bindings_mouse_add(E_Binding_Context ctxt, int button, E_Binding_Modifier mod, int any_mod, const char *action, const char *params);
@@ -195,6 +206,25 @@ E_API void e_bindings_acpi_add(E_Binding_Context ctxt, int type, int status, con
 E_API void e_bindings_acpi_del(E_Binding_Context ctxt, int type, int status, const char *action, const char *params);
 E_API E_Action *e_bindings_acpi_find(E_Binding_Context ctxt, E_Event_Acpi *ev, E_Binding_Acpi **bind_ret);
 E_API E_Action *e_bindings_acpi_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Event_Acpi *ev);
+
+typedef struct {
+   const char *name;
+   double acceptance; //0 to 1
+} E_Binding_Swipe_Candidate;
+
+typedef void (*E_Bindings_Swipe_Live_Update)(void *data, Eina_Bool end, double direction, double length, double error, unsigned int fingers);
+
+/**
+ * Direction is in radiens, 0 is pointing to the right. Going clockwise. (Only positive range)
+ */
+E_API Eina_Bool     e_bindings_swipe_available(void);
+E_API void          e_bindings_swipe_add(E_Binding_Context ctxt, double direction, double length, unsigned int fingers, double error, const char *action, const char *params);
+E_API void          e_bindings_swipe_del(E_Binding_Context ctxt, double direction, double length, unsigned int fingers, double error, const char *action, const char *params);
+E_API E_Action*     e_bindings_swipe_handle(E_Binding_Context ctxt, E_Object *obj, double direction, double length, unsigned int fingers);
+E_API Eina_Inarray/*<E_Bindings_Swipe_Candidate>*/* e_bindings_swipe_find_candidates(E_Binding_Context ctxt, double direction, double lenght, unsigned int fingers);
+E_API void           e_bindings_swipe_live_update_hook_set(E_Bindings_Swipe_Live_Update update, void *data);
+E_API E_Bindings_Swipe_Live_Update e_bindings_swipe_live_update_hook_get(void);
+E_API void*          e_bindings_swipe_live_update_hook_data_get(void);
 
 E_API int e_bindings_evas_modifiers_convert(Evas_Modifier *modifiers);
 E_API int e_bindings_modifiers_to_ecore_convert(E_Binding_Modifier modifiers);
