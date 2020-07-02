@@ -10,6 +10,7 @@ typedef struct _E_Config_Binding_Edge       E_Config_Binding_Edge;
 typedef struct _E_Config_Binding_Signal     E_Config_Binding_Signal;
 typedef struct _E_Config_Binding_Wheel      E_Config_Binding_Wheel;
 typedef struct _E_Config_Binding_Acpi       E_Config_Binding_Acpi;
+typedef struct _E_Config_Binding_Swipe      E_Config_Binding_Swipe;
 typedef struct _E_Config_Desktop_Background E_Config_Desktop_Background;
 typedef struct _E_Config_Desklock_Background E_Config_Desklock_Background;
 typedef struct _E_Config_Desktop_Name       E_Config_Desktop_Name;
@@ -87,6 +88,7 @@ struct _E_Config
    Eina_List  *signal_bindings; // GUI
    Eina_List  *wheel_bindings; // GUI
    Eina_List  *acpi_bindings; // GUI
+   Eina_List  *swipe_bindings; // GUI
 
    Eina_List  *path_append_data; // GUI
    Eina_List  *path_append_images; // GUI
@@ -452,6 +454,7 @@ struct E_Config_Bindings
    Eina_List  *signal_bindings; // GUI
    Eina_List  *wheel_bindings; // GUI
    Eina_List  *acpi_bindings; // GUI
+   Eina_List  *swipe_bindings;
 };
 
 struct _E_Config_Desklock_Background
@@ -539,6 +542,14 @@ struct _E_Config_Binding_Wheel
 struct _E_Config_Binding_Acpi
 {
    int         context, type, status;
+   const char *action, *params;
+};
+
+struct _E_Config_Binding_Swipe
+{
+   int context;
+   unsigned int fingers;
+   double direction, length, error;
    const char *action, *params;
 };
 
@@ -675,6 +686,7 @@ E_API void e_config_binding_mouse_free(E_Config_Binding_Mouse *ebm);
 E_API void e_config_binding_edge_free(E_Config_Binding_Edge *ebe);
 E_API void e_config_binding_key_free(E_Config_Binding_Key *ebk);
 E_API void e_config_binding_acpi_free(E_Config_Binding_Acpi *eba);
+E_API void e_config_binding_swipe_free(E_Config_Binding_Swipe *eba);
 
 extern E_API E_Config *e_config;
 extern E_API E_Config_Bindings *e_bindings;

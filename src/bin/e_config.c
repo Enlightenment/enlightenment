@@ -28,6 +28,7 @@ static E_Config_DD *_e_config_bindings_edge_edd = NULL;
 static E_Config_DD *_e_config_bindings_signal_edd = NULL;
 static E_Config_DD *_e_config_bindings_wheel_edd = NULL;
 static E_Config_DD *_e_config_bindings_acpi_edd = NULL;
+static E_Config_DD *_e_config_bindings_swipe_edd = NULL;
 static E_Config_DD *_e_config_path_append_edd = NULL;
 static E_Config_DD *_e_config_desktop_bg_edd = NULL;
 static E_Config_DD *_e_config_desklock_bg_edd = NULL;
@@ -460,6 +461,7 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_LIST(D, T, signal_bindings, _e_config_bindings_signal_edd); /**/
    E_CONFIG_LIST(D, T, wheel_bindings, _e_config_bindings_wheel_edd); /**/
    E_CONFIG_LIST(D, T, acpi_bindings, _e_config_bindings_acpi_edd); /**/
+   E_CONFIG_LIST(D, T, swipe_bindings, _e_config_bindings_swipe_edd); /**/
    E_CONFIG_LIST(D, T, path_append_data, _e_config_path_append_edd); /**/
    E_CONFIG_LIST(D, T, path_append_images, _e_config_path_append_edd); /**/
    E_CONFIG_LIST(D, T, path_append_fonts, _e_config_path_append_edd); /**/
@@ -924,6 +926,21 @@ e_config_init(void)
    E_CONFIG_VAL(D, T, action, STR);
    E_CONFIG_VAL(D, T, params, STR);
 
+   _e_config_bindings_swipe_edd = E_CONFIG_DD_NEW("E_Config_Binding_Swipe",
+                                                 E_Config_Binding_Swipe);
+#undef T
+#undef D
+#define T E_Config_Binding_Swipe
+#define D _e_config_bindings_swipe_edd
+
+   E_CONFIG_VAL(D, T, context, INT);
+   E_CONFIG_VAL(D, T, fingers, UINT);
+   E_CONFIG_VAL(D, T, direction, DOUBLE);
+   E_CONFIG_VAL(D, T, length, DOUBLE);
+   E_CONFIG_VAL(D, T, error, DOUBLE);
+   E_CONFIG_VAL(D, T, action, STR);
+   E_CONFIG_VAL(D, T, params, STR);
+
    _e_config_edd_init(EINA_FALSE);
 
    _e_config_binding_edd = E_CONFIG_DD_NEW("E_Config_Bindings", E_Config_Bindings);
@@ -938,6 +955,7 @@ e_config_init(void)
    E_CONFIG_LIST(D, T, signal_bindings, _e_config_bindings_signal_edd); /**/
    E_CONFIG_LIST(D, T, wheel_bindings, _e_config_bindings_wheel_edd); /**/
    E_CONFIG_LIST(D, T, acpi_bindings, _e_config_bindings_acpi_edd); /**/
+   E_CONFIG_LIST(D, T, swipe_bindings, _e_config_bindings_swipe_edd); /**/
 
    e_config_load();
 
@@ -2256,6 +2274,16 @@ e_config_mode_changed(void)
 {
    ecore_event_add(E_EVENT_CONFIG_MODE_CHANGED, NULL, NULL, NULL);
 }
+
+E_API void
+e_config_binding_swipe_free(E_Config_Binding_Swipe *eba)
+{
+   if (!eba) return;
+   eina_stringshare_del(eba->action);
+   eina_stringshare_del(eba->params);
+   free(eba);
+}
+
 
 E_API void
 e_config_binding_acpi_free(E_Config_Binding_Acpi *eba)

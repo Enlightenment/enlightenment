@@ -6,7 +6,7 @@ E_Config_Dialog *e_int_config_keybindings(Evas_Object *parent, const char *param
 E_Config_Dialog *e_int_config_mousebindings(Evas_Object *parent, const char *params EINA_UNUSED);
 E_Config_Dialog *e_int_config_edgebindings(Evas_Object *parent, const char *params EINA_UNUSED);
 E_Config_Dialog *e_int_config_signalbindings(Evas_Object *parent, const char *params);
-
+E_Config_Dialog *e_int_config_swipebindings(Evas_Object *parent EINA_UNUSED, const char *params);
 /**
  * @addtogroup Optional_Conf
  * @{
