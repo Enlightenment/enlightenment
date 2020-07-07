@@ -22,6 +22,7 @@ struct _Config_Item
    int show_desk;
    int icon_label;
    int expand_on_desktop;
+   int show_preview;
    E_Gadcon_Client *gcc;
 };
 

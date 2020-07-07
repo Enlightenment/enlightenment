@@ -8,6 +8,7 @@ struct _E_Config_Dialog_Data
    int	 desk_policy;
    int   icon_label;
    int   expand_on_desktop;
+   int   show_preview;
    struct
      {
 	Evas_Object *o_desk_show_all;
@@ -59,6 +60,8 @@ _fill_data(Config_Item *ci, E_Config_Dialog_Data *cfdata)
    cfdata->zone_policy = ci->show_zone;
    cfdata->desk_policy = ci->show_desk;
    cfdata->icon_label = ci->icon_label;
+   cfdata->expand_on_desktop = ci->expand_on_desktop;
+   cfdata->show_preview = ci->show_preview;
 }
 
 static void *
@@ -93,6 +96,10 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    o = e_widget_list_add(evas, 0, 0);
 
    of = e_widget_framelist_add(evas, _("General Settings"), 0);
+
+   ob = e_widget_check_add(evas, _("Preview"), &(cfdata->show_preview));
+   e_widget_framelist_object_append(of, ob);
+
    ob = e_widget_check_add(evas, _("Expand When On Desktop"), &(cfdata->expand_on_desktop));
    e_widget_framelist_object_append(of, ob);
 
@@ -177,6 +184,7 @@ _basic_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
    ci->show_zone = cfdata->zone_policy;
    ci->show_desk = cfdata->desk_policy;
    ci->expand_on_desktop = cfdata->expand_on_desktop;
+   ci->show_preview = cfdata->show_preview;
 
    _ibox_config_update(ci);
    e_config_save_queue();

@@ -563,7 +563,7 @@ _ibox_icon_free(IBox_Icon *ic)
 }
 
 static void
-_ibox_icon_fill(IBox_Icon *ic)
+_ibox_icon_fill_icon(IBox_Icon *ic)
 {
    ic->o_icon = e_client_icon_add(ic->client, evas_object_evas_get(ic->ibox->o_box));
    edje_object_part_swallow(ic->o_holder, "e.swallow.content", ic->o_icon);
@@ -573,6 +573,39 @@ _ibox_icon_fill(IBox_Icon *ic)
    edje_object_part_swallow(ic->o_holder2, "e.swallow.content", ic->o_icon2);
    evas_object_pass_events_set(ic->o_icon2, 1);
    evas_object_show(ic->o_icon2);
+}
+
+static void
+_ibox_icon_fill_preview(IBox_Icon *ic)
+{
+   E_Client *ec;
+   Evas_Object *img, *img2;
+
+   ec = ic->client;
+
+   img = e_comp_object_util_mirror_add(ec->frame);
+   evas_object_size_hint_aspect_set(img, EVAS_ASPECT_CONTROL_BOTH, ec->client.w, ec->client.h);
+   evas_object_size_hint_max_set(img, ec->client.w, ec->client.h);
+   ic->o_icon = img;
+   edje_object_part_swallow(ic->o_holder, "e.swallow.preview", ic->o_icon);
+   evas_object_pass_events_set(ic->o_icon, 1);
+   evas_object_show(ic->o_icon);
+
+   img2 = e_comp_object_util_mirror_add(ec->frame);
+   evas_object_size_hint_aspect_set(img2, EVAS_ASPECT_CONTROL_BOTH, ec->client.w, ec->client.h);
+   ic->o_icon2 = img2;
+   edje_object_part_swallow(ic->o_holder2, "e.swallow.preview", ic->o_icon2);
+   evas_object_pass_events_set(ic->o_icon2, 1);
+   evas_object_show(ic->o_icon2);
+}
+
+static void
+_ibox_icon_fill(IBox_Icon *ic)
+{
+   if ((ic->ibox->inst->ci->show_preview) && (edje_object_part_exists(ic->o_holder, "e.swallow.preview")))
+     _ibox_icon_fill_preview(ic);
+   else
+     _ibox_icon_fill_icon(ic);
 
    _ibox_icon_fill_label(ic);
 
@@ -1297,6 +1330,7 @@ e_modapi_init(E_Module *m)
    E_CONFIG_VAL(D, T, show_zone, INT);
    E_CONFIG_VAL(D, T, show_desk, INT);
    E_CONFIG_VAL(D, T, icon_label, INT);
+   E_CONFIG_VAL(D, T, show_preview, INT);
 
    conf_edd = E_CONFIG_DD_NEW("IBox_Config", Config);
    #undef T
