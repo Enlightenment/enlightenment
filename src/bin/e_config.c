@@ -59,37 +59,6 @@ typedef struct _E_Color_Class
    int		  r3, g3, b3, a3;
 } E_Color_Class;
 
-static void
-_e_config_binding_mouse_add(E_Binding_Context ctxt, int button, E_Binding_Modifier mod, int any_mod, const char *action, const char *params)
-{
-   E_Config_Binding_Mouse *binding;
-
-   binding = calloc(1, sizeof(E_Config_Binding_Mouse));
-   binding->context = ctxt;
-   binding->button = button;
-   binding->modifiers = mod;
-   binding->any_mod = any_mod;
-   binding->action = eina_stringshare_add(action);
-   binding->params = eina_stringshare_add(params);
-   e_bindings->mouse_bindings = eina_list_append(e_bindings->mouse_bindings, binding);
-}
-
-static void
-_e_config_binding_wheel_add(E_Binding_Context ctxt, int direction, int z, E_Binding_Modifier mod, int any_mod, const char *action, const char *params)
-{
-   E_Config_Binding_Wheel *binding;
-
-   binding = calloc(1, sizeof(E_Config_Binding_Wheel));
-   binding->context = ctxt;
-   binding->direction = direction;
-   binding->z = z;
-   binding->modifiers = mod;
-   binding->any_mod = any_mod;
-   binding->action = eina_stringshare_add(action);
-   binding->params = eina_stringshare_add(params);
-   e_bindings->wheel_bindings = eina_list_append(e_bindings->wheel_bindings, binding);
-}
-
 static Eina_Bool
 _e_config_cb_efreet_cache_update(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev EINA_UNUSED)
 {
@@ -1384,53 +1353,8 @@ e_config_load(void)
           }
         CONFIG_VERSION_CHECK(20)
           {
-             Eina_List *l;
-             E_Config_Binding_Mouse *ebm;
-             E_Config_Module *em, *module;
-
              CONFIG_VERSION_UPDATE_INFO(20);
-
-             EINA_LIST_FOREACH(e_bindings->mouse_bindings, l, ebm)
-               {
-                  if (eina_streq(ebm->action, "window_move"))
-                    {
-                       _e_config_binding_mouse_add(E_BINDING_CONTEXT_ANY, ebm->button, ebm->modifiers,
-                                            ebm->any_mod, "gadget_move", NULL);
-                    }
-                  else if (eina_streq(ebm->action, "window_resize"))
-                    {
-                       _e_config_binding_mouse_add(E_BINDING_CONTEXT_ANY, ebm->button, ebm->modifiers,
-                                            ebm->any_mod, "gadget_resize", NULL);
-                    }
-                  else if (eina_streq(ebm->action, "window_menu"))
-                    {
-                       _e_config_binding_mouse_add(E_BINDING_CONTEXT_ANY, ebm->button, ebm->modifiers,
-                                            ebm->any_mod, "gadget_menu", NULL);
-                       _e_config_binding_mouse_add(E_BINDING_CONTEXT_ANY, ebm->button, ebm->modifiers,
-                                            ebm->any_mod, "bryce_menu", NULL);
-                    }
-               }
-             _e_config_binding_wheel_add(E_BINDING_CONTEXT_ANY, 0, 1, E_BINDING_MODIFIER_CTRL, 0, "bryce_resize", NULL);
-             _e_config_binding_wheel_add(E_BINDING_CONTEXT_ANY, 0, -1, E_BINDING_MODIFIER_CTRL, 0, "bryce_resize", NULL);
-
-             EINA_LIST_FOREACH(e_config->modules, l, em)
-               {
-                  if (!em->enabled) continue;
-                  if (eina_streq(em->name, "connman"))
-                    {
-                       module = E_NEW(E_Config_Module, 1);
-                       module->name = eina_stringshare_add("wireless");
-                       module->enabled = 1;
-                       e_config->modules = eina_list_append(e_config->modules, module);
-                    }
-                  else if (eina_streq(em->name, "clock"))
-                    {
-                       module = E_NEW(E_Config_Module, 1);
-                       module->name = eina_stringshare_add("time");
-                       module->enabled = 1;
-                       e_config->modules = eina_list_append(e_config->modules, module);
-                    }
-               }
+             e_config_save_queue();
           }
 
           CONFIG_VERSION_CHECK(21)
@@ -1558,23 +1482,7 @@ e_config_load(void)
             }
           CONFIG_VERSION_CHECK(28)
             {
-               Eina_List *l, *ll;
-               E_Config_Binding_Mouse *ebm;
-
                CONFIG_VERSION_UPDATE_INFO(28);
-               EINA_LIST_FOREACH_SAFE(e_bindings->mouse_bindings, l, ll, ebm)
-                 {
-                    if ((eina_streq(ebm->action, "gadget_menu")) ||
-                        (eina_streq(ebm->action, "bryce_menu")))
-                      {
-                         e_bindings->mouse_bindings =
-                           eina_list_remove_list
-                             (e_bindings->mouse_bindings, l);
-                         eina_stringshare_del(ebm->action);
-                         eina_stringshare_del(ebm->params);
-                         free(ebm);
-                      }
-                 }
                e_config_save_queue();
             }
           CONFIG_VERSION_CHECK(29)
@@ -2423,16 +2331,11 @@ e_config_bindings_free(E_Config_Bindings *ecb)
 static void
 _e_config_save_cb(void *data EINA_UNUSED)
 {
-   EINTERN void e_gadget_save(void);
-   EINTERN void e_bryce_save(void);
-
    e_config_profile_save();
    e_module_save_all();
    elm_config_save();
    e_config_domain_save("e", _e_config_edd, e_config);
    e_config_domain_save("e_bindings", _e_config_binding_edd, e_bindings);
-   e_gadget_save();
-   e_bryce_save();
    _e_config_save_defer = NULL;
 }
 

@@ -3,10 +3,8 @@ src = files(
   'e_mod_config.c',
   'e_mod_config.h',
   'e_mod_main.h',
-  'gadget/mixer.h',
-  'gadget/mixer.c',
-  'gadget/mod.c',
-  'gadget/backend.c'
+  'backend.c',
+  'backend.h'
  )
 
 mixer_lib = files(

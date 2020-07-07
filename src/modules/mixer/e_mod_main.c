@@ -3,8 +3,8 @@
 #include "emix.h"
 #include "e_mod_main.h"
 #include "e_mod_config.h"
-#include "gadget/mixer.h"
-#include "gadget/backend.h"
+#include "mixer.h"
+#include "backend.h"
 
 EINTERN int _e_emix_log_domain;
 
@@ -444,7 +444,7 @@ _gc_id_new(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
 }
 
 E_API void *
-e_modapi_init(E_Module *m)
+e_modapi_init(E_Module *m EINA_UNUSED)
 {
    char buf[4096];
 
@@ -466,8 +466,6 @@ e_modapi_init(E_Module *m)
    E_LIST_HANDLER_APPEND(_handlers, E_EVENT_MIXER_SINKS_CHANGED,
                          _mixer_sinks_changed, NULL);
 
-   e_modapi_gadget_init(m);
-
    e_configure_registry_category_add("extensions", 90, _("Extensions"), NULL,
                                      "preferences-extensions");
    e_configure_registry_item_add("extensions/emix", 30, _("Mixer"), NULL,
@@ -480,7 +478,7 @@ e_modapi_init(E_Module *m)
 }
 
 E_API int
-e_modapi_shutdown(E_Module *m)
+e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    e_gadcon_provider_unregister((const E_Gadcon_Client_Class *)&_gadcon_class);
 
@@ -491,16 +489,13 @@ e_modapi_shutdown(E_Module *m)
         E_FREE(mixer_context);
      }
 
-   e_modapi_gadget_shutdown(m);
-
    backend_shutdown();
    return 1;
 }
 
 E_API int
-e_modapi_save(E_Module *m)
+e_modapi_save(E_Module *m EINA_UNUSED)
 {
-   e_modapi_gadget_save(m);
    emix_config_save();
    return 1;
 }

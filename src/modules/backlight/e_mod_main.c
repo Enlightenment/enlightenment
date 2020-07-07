@@ -10,7 +10,6 @@
  */
 
 #include "e.h"
-#include "gadget/backlight.h"
 
 /* gadcon requirements */
 static E_Gadcon_Client *_gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style);
@@ -470,8 +469,6 @@ E_API E_Module_Api e_modapi =
 E_API void *
 e_modapi_init(E_Module *m)
 {
-   e_modapi_gadget_init(m);
-
    backlight_module = m;
    e_gadcon_provider_register(&_gadcon_class);
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_BACKLIGHT_CHANGE, _backlight_cb_changed, NULL);
@@ -487,10 +484,8 @@ e_modapi_init(E_Module *m)
 }
 
 E_API int
-e_modapi_shutdown(E_Module *m)
+e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
-   e_modapi_gadget_shutdown(m);
-
    if (act)
      {
         e_action_predef_name_del("Screen", "Backlight Controls");
@@ -499,13 +494,12 @@ e_modapi_shutdown(E_Module *m)
      }
    E_FREE_LIST(handlers, ecore_event_handler_del);
    e_gadcon_provider_unregister(&_gadcon_class);
+   backlight_module = NULL;
    return 1;
 }
 
 E_API int
-e_modapi_save(E_Module *m)
+e_modapi_save(E_Module *m EINA_UNUSED)
 {
-   e_modapi_gadget_save(m);
-
    return 1;
 }

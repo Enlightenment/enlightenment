@@ -4,7 +4,6 @@ protos = [
   '../../protocol/www.xml',
   '../../protocol/efl-aux-hints.xml',
   '../../protocol/action_route.xml',
-  '../../protocol/e-gadget.xml',
   '@0@/unstable/xdg-foreign/xdg-foreign-unstable-v1.xml'.format(dir_wayland_protocols),
   '@0@/unstable/relative-pointer/relative-pointer-unstable-v1.xml'.format(dir_wayland_protocols),
   '@0@/unstable/pointer-constraints/pointer-constraints-unstable-v1.xml'.format(dir_wayland_protocols),
@@ -22,13 +21,6 @@ gadget_loader_protos = [
   '../../protocol/action_route.xml',
   '../../protocol/e-gadget.xml',
 ]
-
-gadget_loader_proto_files = []
-
-foreach p: gadget_loader_protos
-  gadget_loader_proto_files += gen_scanner_client.process(p)
-  gadget_loader_proto_files += gen_scanner_impl.process(p)
-endforeach
 
 wayland_proto_c = proto_c
 wayland_proto_h = proto_h

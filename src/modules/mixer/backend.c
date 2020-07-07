@@ -3,8 +3,7 @@
 #include "emix.h"
 #include "e_mod_main.h"
 #include "e_mod_config.h"
-#include "gadget/mixer.h"
-#include "gadget/backend.h"
+#include "backend.h"
 
 #define VOLUME_STEP 5
 

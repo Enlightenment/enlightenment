@@ -2,7 +2,6 @@
 #include "e_mod_main.h"
 #include "e_mod_packagekit.h"
 
-
 /* GUI */
 void
 packagekit_icon_update(E_PackageKit_Module_Context *ctxt,
@@ -432,34 +431,14 @@ _genlist_selunsel_cb(void *data, Evas_Object *obj EINA_UNUSED,
    packagekit_popup_update(data, EINA_FALSE);
 }
 
-static void
-_ctxpopup_dismissed(void *data, Evas_Object *obj, void *info EINA_UNUSED)
-{
-   E_PackageKit_Instance *inst = data;
-
-   evas_object_del(obj);
-   inst->ctxpopup = NULL;
-}
-
 void
-packagekit_popup_new(E_PackageKit_Instance *inst, Eina_Bool is_gadcon)
+packagekit_popup_new(E_PackageKit_Instance *inst)
 {
    Evas_Object *table, *bt, *ic, *lb, *li, *pb, *fr, *bx, *size_rect;
    const char *p;
 
-   if (is_gadcon)
-     {
-        inst->popup = e_gadcon_popup_new(inst->gcc, EINA_FALSE);
-        table = elm_table_add(e_comp->elm);
-     }
-   else
-     {
-        inst->ctxpopup = elm_ctxpopup_add(e_comp->elm);
-        elm_object_style_set(inst->ctxpopup, "noblock");
-        evas_object_smart_callback_add(inst->ctxpopup, "dismissed",
-                                       _ctxpopup_dismissed, inst);
-        table = elm_table_add(inst->ctxpopup);
-     }
+   inst->popup = e_gadcon_popup_new(inst->gcc, EINA_FALSE);
+   table = elm_table_add(e_comp->elm);
    evas_object_show(table);
 
    // horiz box for title and buttons
@@ -573,19 +552,10 @@ packagekit_popup_new(E_PackageKit_Instance *inst, Eina_Bool is_gadcon)
      }
 
    // setup and show the popup
-   if (is_gadcon)
-     {
-        e_gadcon_popup_content_set(inst->popup, table);
-        e_object_data_set(E_OBJECT(inst->popup), inst);
-        E_OBJECT_DEL_SET(inst->popup, _popup_del_cb);
-        e_gadcon_popup_show(inst->popup);
-     }
-   else
-     {
-        elm_object_content_set(inst->ctxpopup, table);
-        e_gadget_util_ctxpopup_place(inst->gadget, inst->ctxpopup, NULL);
-        evas_object_show(inst->ctxpopup);
-     }
+   e_gadcon_popup_content_set(inst->popup, table);
+   e_object_data_set(E_OBJECT(inst->popup), inst);
+   E_OBJECT_DEL_SET(inst->popup, _popup_del_cb);
+   e_gadcon_popup_show(inst->popup);
 
    // update the popup state and contents
    packagekit_popup_update(inst, EINA_TRUE);
@@ -596,8 +566,6 @@ packagekit_popup_del(E_PackageKit_Instance *inst)
 {
    if (inst->popup)
      E_FREE_FUNC(inst->popup, e_object_del);
-   if (inst->ctxpopup)
-     elm_ctxpopup_dismiss(inst->ctxpopup);
 
    inst->popup_genlist = inst->popup_title_entry = NULL;
    inst->popup_progressbar = inst->popup_progressbar_frame = NULL;

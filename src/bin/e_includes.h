@@ -152,8 +152,6 @@
 #include "e_utils.h"
 #include "e_hints.h"
 #include "e_comp_x_randr.h"
-#include "e_gadget.h"
-#include "e_bryce.h"
 
 #ifdef HAVE_WAYLAND
 # include "e_comp_wl.h"

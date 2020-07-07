@@ -12,11 +12,7 @@ struct _Instance
    // e_gadcon info
    E_Gadcon_Client *gcc;
    E_Gadcon_Popup *popup;
-   // e_gadget info
-   Evas_Object *pop;
-   Evas_Object *popcontent;
    int id;
-   E_Gadget_Site_Orient orient;
 };
 
 typedef struct _Config Config;

@@ -44,16 +44,11 @@ mods = [
   'xkbswitch',
   'tiling',
   'packagekit',
-  'wireless',
-  'time',
-  'luncher',
-  'teamwork',
   'vkbd',
 # modules have a custom binary as well
   'battery',
   'cpufreq',
   'clock',
-  'sysinfo',
 # custyom sub modules and custom data
   'wizard',
 # also standard modules, just with only a desktop file using a generic icon

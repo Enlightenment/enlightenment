@@ -79,7 +79,6 @@ typedef struct _E_PackageKit_Instance
    E_Gadcon_Client *gcc;
    Evas_Object *gadget;
    E_Gadcon_Popup *popup;
-   Evas_Object *ctxpopup;
    Evas_Object *popup_title_entry;
    Evas_Object *popup_error_label;
    Evas_Object *popup_install_button;
@@ -113,7 +112,7 @@ void      packagekit_get_updates(E_PackageKit_Module_Context *ctxt, const char *
 void      packagekit_refresh_cache(E_PackageKit_Module_Context *ctxt, const char *transaction);
 void      packagekit_update_packages(E_PackageKit_Module_Context *ctxt, const char *transaction);
 void      packagekit_icon_update(E_PackageKit_Module_Context *ctxt, Eina_Bool working);
-void      packagekit_popup_new(E_PackageKit_Instance *inst, Eina_Bool is_gadcon);
+void      packagekit_popup_new(E_PackageKit_Instance *inst);
 void      packagekit_popup_del(E_PackageKit_Instance *inst);
 void      packagekit_popup_update(E_PackageKit_Instance *inst, Eina_Bool rebuild_list);
 

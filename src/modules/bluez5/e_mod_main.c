@@ -34,96 +34,6 @@ _mod_icon_set(Evas_Object *base, Eina_Bool gadget)
 /////////////////////////////////////////////////////////////////////////////
 
 static void
-_gad_popup_dismiss(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
-{
-   Instance *inst = data;
-   E_FREE_FUNC(obj, evas_object_del);
-   inst->pop = NULL;
-}
-
-static void
-_gad_popup_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   Instance *inst = data;
-   inst->pop = NULL;
-}
-
-static void
-_gad_popup_do(Instance *inst)
-{
-   Evas_Object *o;
-
-   if (inst->pop) return;
-
-   inst->pop = o = elm_ctxpopup_add(e_comp->elm);
-   elm_object_style_set(o, "noblock");
-   evas_object_smart_callback_add(o, "dismissed", _gad_popup_dismiss, inst);
-   evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _gad_popup_del, inst);
-
-   inst->popcontent = o = ebluez5_popup_content_add(e_comp->elm, inst);
-   elm_object_content_set(inst->pop, o);
-   evas_object_show(o);
-
-   e_gadget_util_ctxpopup_place(inst->o_bluez5, inst->pop, inst->o_bluez5);
-   evas_object_show(inst->pop);
-}
-
-static void
-_gad_mouse_up(void *data, Evas *evas EINA_UNUSED,
-              Evas_Object *obj EINA_UNUSED, void *event)
-{
-   Instance *inst = data;
-   Evas_Event_Mouse_Up *ev = event;
-
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-   if (ev->button != 1) return;
-   if (!inst->pop) _gad_popup_do(inst);
-   else elm_ctxpopup_dismiss(inst->pop);
-}
-
-static void
-_gad_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   Instance *inst = data;
-
-   instances = eina_list_remove(instances, inst);
-   E_FREE(inst);
-}
-
-/* XXX: fill in later when we have gotten this far
-static Evas_Object *
-_gad_config(Evas_Object *g EINA_UNUSED)
-{
-   if (e_configure_registry_exists("extensions/bluez5"))
-     e_configure_registry_call("extensions/bluez5", NULL, NULL);
-   return NULL;
-}
-*/
-
-static Evas_Object *
-_gad_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient)
-{
-   Evas_Object *o;
-   Instance *inst = E_NEW(Instance, 1);
-
-   if (!inst) return NULL;
-   inst->id = *id;
-   inst->orient = orient;
-   inst->o_bluez5 = o = elm_layout_add(parent);
-   _mod_icon_set(o, EINA_TRUE);
-   evas_object_size_hint_aspect_set(o, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
-// XXX: fill in later when we have gotten this far
-//   e_gadget_configure_cb_set(o, _gad_config);
-   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP, _gad_mouse_up, inst);
-   if (*id != -1)
-     evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _gad_del, inst);
-   instances = eina_list_append(instances, inst);
-   return o;
-}
-
-/////////////////////////////////////////////////////////////////////////////
-
-static void
 _popup_del(Instance *inst)
 {
    E_FREE_FUNC(inst->popup, e_object_del);
@@ -278,10 +188,6 @@ ebluez5_popups_show(void)
         if (inst->gcc)
           {
              if (!inst->popup) _popup_new(inst);
-          }
-        else
-          {
-             if (!inst->pop) _gad_popup_do(inst);
           }
      }
 }
@@ -466,7 +372,6 @@ e_modapi_init(E_Module *m)
    bz_init();
 
    e_gadcon_provider_register(&_gc_class);
-   e_gadget_type_add("Bluetooth", _gad_create, NULL);
 
    return m;
 }
@@ -493,9 +398,6 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
 
    bz_shutdown();
    ebluze5_popup_shutdown();
-
-   e_gadget_type_del("Bluetooth");
-   e_gadcon_provider_unregister(&_gc_class);
 
    E_CONFIG_DD_FREE(conf_edd);
    E_CONFIG_DD_FREE(conf_adapter_edd);

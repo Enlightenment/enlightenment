@@ -320,11 +320,8 @@ E_API E_Module_Api e_modapi =
 E_API void *
 e_modapi_init(E_Module *m)
 {
-   EINTERN Evas_Object *start_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient);
-
    start_module = m;
    e_gadcon_provider_register(&_gadcon_class);
-   e_gadget_type_add("Start", start_create, NULL);
    return m;
 }
 
@@ -333,7 +330,6 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    start_module = NULL;
    e_gadcon_provider_unregister(&_gadcon_class);
-   e_gadget_type_del("Start");
    return 1;
 }
 

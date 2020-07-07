@@ -944,11 +944,6 @@ main(int argc, char **argv)
    TS("E_Remember Init Done");
    _e_main_shutdown_push(e_remember_shutdown);
 
-   TS("E_Gadget Init");
-   e_gadget_init();
-   TS("E_Gadget Init Done");
-   _e_main_shutdown_push((void*)e_gadget_shutdown);
-
    TS("E_Gadcon Init");
    if (!e_gadcon_init())
      {
@@ -1063,14 +1058,6 @@ main(int argc, char **argv)
    TS("Load Modules");
    _e_main_modules_load(safe_mode);
    TS("Load Modules Done");
-
-   if (E_EFL_VERSION_MINIMUM(1, 17, 99))
-     {
-        TS("Bryce Init");
-        e_bryce_init();
-        TS("Bryce Init Done");
-        _e_main_shutdown_push((void*)e_bryce_shutdown);
-     }
 
    TS("E_Shelf Init");
    if (!e_shelf_init())

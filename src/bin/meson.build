@@ -74,8 +74,6 @@ src = [
   'e_backlight.c',
   'e_bg.c',
   'e_bindings.c',
-  'e_bryce.c',
-  'e_bryce_editor.c',
   'e_client.c',
   'e_client_volume.c',
   'e_color.c',
@@ -118,7 +116,6 @@ src = [
   'e_font.c',
   'e_gadcon.c',
   'e_gadcon_popup.c',
-  'e_gadget.c',
   'e_grabinput.c',
   'e_grab_dialog.c',
   'e_hints.c',
@@ -248,7 +245,6 @@ hdr = [
   'e_backlight.h',
   'e_bg.h',
   'e_bindings.h',
-  'e_bryce.h',
   'e_client.h',
   'e_client_volume.h',
   'e_client.x',
@@ -295,8 +291,6 @@ hdr = [
   'e_font.h',
   'e_gadcon.h',
   'e_gadcon_popup.h',
-  'e_gadget.h',
-  'e_gadget_types.h',
   'e_grabinput.h',
   'e_grab_dialog.h',
   'e.h',
@@ -411,7 +405,6 @@ if config_h.has('HAVE_WAYLAND') == true
     'e_comp_wl.c',
     'e_comp_wl_extensions.c',
     'e_comp_wl_extensions_tizen.c',
-    'e_gadget_runner.c',
     wayland_proto_c,
     wayland_proto_h
   ]
@@ -559,20 +552,5 @@ executable('enlightenment_ckpasswd',
           )
 suid_exes += join_paths(dir_e_utils, 'enlightenment_ckpasswd')
 
-if config_h.has('HAVE_WAYLAND') == true
-	shared_library('loader',
-			['e_gadget_loader.c', gadget_loader_proto_files],
-		name_prefix: '',
-		include_directories: include_directories('../..'),
-		dependencies: [
-			dep_dl,
-			dependency('uuid'),
-			dependency('elementary'),
-			dependency('ecore-wl2'),
-			dependency('wayland-client'),
-			cc.find_library('uuid')],
-		install_dir: join_paths([dir_lib, 'enlightenment/gadgets/', module_arch]),
-		install: true)
-endif
 subdir('e_fm')
 subdir('system')
