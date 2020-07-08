@@ -13,8 +13,6 @@ struct _E_Desklock_Run
 
 static Ecore_Exe *_e_custom_desklock_exe = NULL;
 static Ecore_Event_Handler *_e_custom_desklock_exe_handler = NULL;
-static E_Dialog *_e_desklock_ask_presentation_dia = NULL;
-static int _e_desklock_ask_presentation_count = 0;
 
 static Ecore_Event_Handler *_e_desklock_run_handler = NULL;
 static Ecore_Event_Handler *_e_desklock_randr_handler = NULL;
@@ -510,66 +508,6 @@ _e_desklock_cb_custom_desklock_exit(void *data EINA_UNUSED, int type EINA_UNUSED
    e_desklock_hide();
 
    return ECORE_CALLBACK_DONE;
-}
-
-static void
-_e_desklock_ask_presentation_del(void *data)
-{
-   if (_e_desklock_ask_presentation_dia == data)
-     _e_desklock_ask_presentation_dia = NULL;
-}
-
-static void
-_e_desklock_ask_presentation_yes(void *data EINA_UNUSED, E_Dialog *dia)
-{
-   e_config->mode.presentation = 1;
-   e_config_mode_changed();
-   e_config_save_queue();
-   e_object_del(E_OBJECT(dia));
-   _e_desklock_ask_presentation_count = 0;
-}
-
-static void
-_e_desklock_ask_presentation_no(void *data EINA_UNUSED, E_Dialog *dia)
-{
-   e_object_del(E_OBJECT(dia));
-   _e_desklock_ask_presentation_count = 0;
-}
-
-static void
-_e_desklock_ask_presentation_no_increase(void *data EINA_UNUSED, E_Dialog *dia)
-{
-   int timeout, blanking, expose;
-
-   _e_desklock_ask_presentation_count++;
-   timeout = e_config->screensaver_timeout * _e_desklock_ask_presentation_count;
-   blanking = e_config->screensaver_blanking;
-   expose = e_config->screensaver_expose;
-
-   e_screensaver_attrs_set(timeout, blanking, expose);
-   e_screensaver_update();
-   e_object_del(E_OBJECT(dia));
-}
-
-static void
-_e_desklock_ask_presentation_no_forever(void *data EINA_UNUSED, E_Dialog *dia)
-{
-   e_config->desklock_ask_presentation = 0;
-   e_config_save_queue();
-   e_object_del(E_OBJECT(dia));
-   _e_desklock_ask_presentation_count = 0;
-}
-
-static void
-_e_desklock_ask_presentation_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event)
-{
-   Evas_Event_Key_Down *ev = event;
-   E_Dialog *dia = data;
-
-   if (strcmp(ev->key, "Return") == 0)
-     _e_desklock_ask_presentation_yes(NULL, dia);
-   else if (strcmp(ev->key, "Escape") == 0)
-     _e_desklock_ask_presentation_no(NULL, dia);
 }
 
 static Eina_Bool
