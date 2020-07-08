@@ -665,6 +665,7 @@ _drm2_randr_apply(void)
                     {
                        Ecore_Drm2_Output_Mode *mode;
                        Ecore_Drm2_Rotation orient = ECORE_DRM2_ROTATION_NORMAL;
+                       Ecore_Drm2_Relative_Mode relmode;
 
                        mode = _drm2_mode_screen_find(screenconf[i], outconf[i]);
                        if (screenconf[i]->config.rotation == 0)
@@ -690,8 +691,19 @@ _drm2_randr_apply(void)
 
                        ecore_drm2_output_relative_to_set(outconf[i],
                                                          screenconf[i]->config.relative.to);
-                       ecore_drm2_output_relative_mode_set(outconf[i],
-                                                           screenconf[i]->config.relative.mode);
+                       relmode = ECORE_DRM2_RELATIVE_MODE_NONE;
+                       switch (screenconf[i]->config.relative.mode)
+                         {
+                          case E_RANDR2_RELATIVE_UNKNOWN:  relmode = ECORE_DRM2_RELATIVE_MODE_UNKNOWN; break;
+                          case E_RANDR2_RELATIVE_NONE:     relmode = ECORE_DRM2_RELATIVE_MODE_NONE; break;
+                          case E_RANDR2_RELATIVE_CLONE:    relmode = ECORE_DRM2_RELATIVE_MODE_CLONE; break;
+                          case E_RANDR2_RELATIVE_TO_LEFT:  relmode = ECORE_DRM2_RELATIVE_MODE_TO_LEFT; break;
+                          case E_RANDR2_RELATIVE_TO_RIGHT: relmode = ECORE_DRM2_RELATIVE_MODE_TO_RIGHT; break;
+                          case E_RANDR2_RELATIVE_TO_ABOVE: relmode = ECORE_DRM2_RELATIVE_MODE_TO_ABOVE; break;
+                          case E_RANDR2_RELATIVE_TO_BELOW: relmode = ECORE_DRM2_RELATIVE_MODE_TO_BELOW; break;
+                          default: break;
+                         }
+                       ecore_drm2_output_relative_mode_set(outconf[i], relmode);
 
                        if (screenconf[i]->config.priority == top_priority)
                          {
@@ -889,7 +901,7 @@ _drm_device_del(void *data EINA_UNUSED, const Efl_Event *event)
    if (efl_input_device_type_get(event->info) == EFL_INPUT_DEVICE_TYPE_SEAT) return;
    seat = efl_input_device_seat_get(event->info);
 
-   if (seat != evas_default_device_get(e_comp->evas, EFL_INPUT_DEVICE_TYPE_SEAT)) return;
+   if (seat != evas_default_device_get(e_comp->evas, EVAS_DEVICE_CLASS_SEAT)) return;
 #ifdef EFL_VERSION_1_23
    if (!efl_input_device_is_pointer_type_get(event->info)) return;
    if (efl_input_device_pointer_device_count_get(seat) == 1)
