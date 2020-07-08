@@ -2108,6 +2108,7 @@ ui_edit(Evas_Object *window, Evas_Object *o_bg, E_Zone *zone,
    evas_object_show(o);
 
    o_img = o = evas_object_image_filled_add(evas2);
+   evas_object_image_smooth_scale_set(o_img, EINA_FALSE);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
                                   _cb_draw_none_mouse_down, NULL);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -2117,6 +2118,7 @@ ui_edit(Evas_Object *window, Evas_Object *o_bg, E_Zone *zone,
    evas_object_image_data_copy_set(o, dst);
    evas_object_image_data_update_add(o, 0, 0, sw, sh);
    evas_object_size_hint_min_set(o, img_w, img_h);
+   evas_object_size_hint_max_set(o, img_w, img_h);
    elm_win_resize_object_add(win2, o);
    evas_object_show(o);
 
