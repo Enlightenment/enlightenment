@@ -188,7 +188,7 @@ _battery_sysctl_battery_update()
        charge = 0;
 
        /* last full capacity */
-       bat->mib[3] = 7;
+       bat->mib[3] = SENSOR_WATTHOUR;
        bat->mib[4] = 0;
        if (sysctl(bat->mib, 5, &s, &slen, NULL, 0) != -1)
          {
@@ -196,31 +196,30 @@ _battery_sysctl_battery_update()
          }
 
        /* remaining capacity */
-       bat->mib[3] = 7;
+       bat->mib[3] = SENSOR_WATTHOUR;
        bat->mib[4] = 3;
        if (sysctl(bat->mib, 5, &s, &slen, NULL, 0) != -1)
          {
             charge = (double)s.value;
          }
 
-       /* This is a workaround because there's an ACPI bug */
        if ((EINA_FLT_EQ(charge, 0.0)) || (EINA_FLT_EQ(bat->last_full_charge, 0.0)))
          {
-           /* last full capacity */
-           bat->mib[3] = 8;
-           bat->mib[4] = 0;
-           if (sysctl(bat->mib, 5, &s, &slen, NULL, 0) != -1)
-             {
-                bat->last_full_charge = (double)s.value;
-             }
+            /* last full capacity */
+            bat->mib[3] = SENSOR_AMPHOUR;
+            bat->mib[4] = 0;
+            if (sysctl(bat->mib, 5, &s, &slen, NULL, 0) != -1)
+              {
+                 bat->last_full_charge = (double)s.value;
+              }
 
-           /* remaining capacity */
-           bat->mib[3] = 8;
-           bat->mib[4] = 3;
-           if (sysctl(bat->mib, 5, &s, &slen, NULL, 0) != -1)
-             {
-                charge = (double)s.value;
-             }
+            /* remaining capacity */
+            bat->mib[3] = SENSOR_AMPHOUR;
+            bat->mib[4] = 3;
+            if (sysctl(bat->mib, 5, &s, &slen, NULL, 0) != -1)
+              {
+                 charge = (double)s.value;
+              }
          }
 
        bat->got_prop = 1;
