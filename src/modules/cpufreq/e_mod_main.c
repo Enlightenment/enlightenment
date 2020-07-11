@@ -62,7 +62,7 @@ static void      _cpufreq_menu_frequency(void *data, E_Menu *m, E_Menu_Item *mi)
 static void      _cpufreq_menu_pstate_min(void *data, E_Menu *m, E_Menu_Item *mi);
 static void      _cpufreq_menu_pstate_max(void *data, E_Menu *m, E_Menu_Item *mi);
 
-#if defined(__FreeBSD__) || defined(__DragonFly__) || defined (__OpenBSD__)
+#if defined (__OpenBSD__)
 #else
 static int       _cpufreq_cb_sort(const void *item1, const void *item2);
 #endif
@@ -586,8 +586,8 @@ _cpufreq_set_frequency(int frequency)
         return;
      }
 
-#ifndef __OpenBSD__
-   /* OpenBSD doesn't have governors */
+#if !defined(__FreeBSD__) && !defined(__OpenBSD__) && !defined(__DragonFly__)
+   /* No governors (yet). */
    _cpufreq_set_governor("userspace");
 #endif
    _cpufreq_response_init();
@@ -634,7 +634,7 @@ _cpufreq_status_free(Cpu_Status *s)
    free(s);
 }
 
-#if defined(__FreeBSD__) || defined(__DragonFly__) || defined (__OpenBSD__)
+#if defined (__OpenBSD__)
 #else
 static int
 _cpufreq_cb_sort(const void *item1, const void *item2)
@@ -678,6 +678,8 @@ _cpufreq_status_check_available(Cpu_Status *s)
    p = 25;
    s->frequencies = eina_list_append(s->frequencies, (void *)(long int)p);
 #elif defined (__FreeBSD__) || defined(__DragonFly__)
+   int freq_min = 0x7fffffff;
+   int freq_max = 0;
    int freq;
    size_t len = sizeof(buf);
    char *pos, *q;
@@ -702,11 +704,20 @@ _cpufreq_status_check_available(Cpu_Status *s)
              *q = '\0';
              freq = atoi(pos);
              freq *= 1000;
+
+             if (freq > freq_max) freq_max = freq;
+             if (freq < freq_min) freq_min = freq;
+
              s->frequencies = eina_list_append(s->frequencies, (void *)(long)freq);
 
              pos = q + 1;
              pos = strchr(pos, ' ');
           }
+        s->cur_min_frequency = freq_min;
+        s->cur_max_frequency = freq_max;
+        s->frequencies = eina_list_sort(s->frequencies,
+                                        eina_list_count(s->frequencies),
+                                        _cpufreq_cb_sort);
      }
 
    /* sort is not necessary because freq_levels is already sorted */
@@ -875,6 +886,8 @@ _cpufreq_status_check_current(Cpu_Status *s)
    size_t len = sizeof(frequency);
    s->active = 0;
 
+   _cpufreq_status_check_available(s);
+
    /* frequency is stored in dev.cpu.0.freq */
    if (sysctlbyname("dev.cpu.0.freq", &frequency, &len, NULL, 0) == 0)
      {
@@ -887,7 +900,6 @@ _cpufreq_status_check_current(Cpu_Status *s)
    /* hardcoded for testing */
    s->can_set_frequency = 1;
    s->cur_governor = NULL;
-
 #else
    char buf[4096];
    FILE *f;
@@ -1043,7 +1055,7 @@ _cpufreq_face_update_available(Instance *inst)
         edje_object_message_send(inst->o_cpu, EDJE_MESSAGE_STRING_SET, 2, governor_msg);
         free(governor_msg);
      }
-#if defined(__OpenBSD__)
+#if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
    _cpufreq_face_update_current(inst);
 #endif
 
