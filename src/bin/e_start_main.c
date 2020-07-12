@@ -814,7 +814,10 @@ not_done:
 
         if (result == child)
           {
-             if (WIFSTOPPED(status) && !stop_ptrace)
+             printf("WIFSTOPPED=%i WIFEXITED=%i WEXITSTATUS=%i stop_ptrace=%i\n",
+                    WIFSTOPPED(status), WIFEXITED(status),
+                    WEXITSTATUS(status), stop_ptrace);
+             if (WIFSTOPPED(status) && (!stop_ptrace))
                {
                   char *backtrace_str = NULL;
 
@@ -855,14 +858,28 @@ not_done:
                   if (getenv("DISPLAY")) kill(child, SIGKILL);
                   if (WEXITSTATUS(r) == 1) restart = EINA_FALSE;
                }
+             else if (!WIFEXITED(status) || (stop_ptrace))
+               {
+                  restart = EINA_TRUE;
+                  done = EINA_TRUE;
+               }
              else if (WEXITSTATUS(status) == 111)
                {
                   putenv("E_RESTART_OK=1");
                   restart = EINA_TRUE;
                   done = EINA_TRUE;
                }
-             else if (!WIFEXITED(status) || stop_ptrace)
-               done = EINA_TRUE;
+             else if (WEXITSTATUS(status) == 0)
+               {
+                  restart = EINA_FALSE;
+                  done = EINA_TRUE;
+               }
+             else
+               {
+                  printf("Invalid exit from enlightenment: code=%i\n", WEXITSTATUS(status));
+                  restart = EINA_TRUE;
+                  done = EINA_TRUE;
+               }
           }
         else if (result == -1)
           {
