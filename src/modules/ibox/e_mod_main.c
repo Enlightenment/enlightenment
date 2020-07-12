@@ -811,17 +811,21 @@ _ibox_cb_icon_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
              d = e_drag_new(x, y, drag_types, 1,
                             ic->client, -1, NULL, _ibox_cb_drag_finished);
              d->button_mask = evas_pointer_button_down_mask_get(e_comp->evas);
-             o = e_client_icon_add(ic->client, e_drag_evas_get(d));
-             e_drag_object_set(d, o);
 
+             if (!ic->ibox->inst->ci->show_preview)
+               o = e_client_icon_add(ic->client, e_drag_evas_get(d));
+             else
+               {
+                  o = e_comp_object_util_mirror_add(ic->client->frame);
+                  evas_object_size_hint_aspect_set(o, EVAS_ASPECT_CONTROL_BOTH, ic->client->w, ic->client->h);
+                  evas_object_size_hint_max_set(o, w, h);
+               }
+             e_drag_object_set(d, o);
              e_drag_resize(d, w, h);
              e_drag_start(d, ic->drag.x, ic->drag.y);
              e_object_ref(E_OBJECT(ic->client));
-             ic->ibox->icons = eina_list_remove(ic->ibox->icons, ic);
-             _ibox_resize_handle(ic->ibox);
              gcc = ic->ibox->inst->gcc;
              _gc_orient(gcc, -1);
-             _ibox_icon_free(ic);
           }
      }
 }
@@ -913,11 +917,11 @@ _ibox_drop_position_update(Instance *inst, Evas_Coord x, Evas_Coord y)
         evas_object_geometry_get(ic->o_holder, &ix, &iy, &iw, &ih);
         if (elm_box_horizontal_get(inst->ibox->o_box))
           {
-             if (x < (ix + (iw / 2))) before = 1;
+             if (x < (ix + iw)) before = 1;
           }
         else
           {
-             if (y < (iy + (ih / 2))) before = 1;
+             if (y < (iy + ih)) before = 1;
           }
         if (before)
           elm_box_pack_before(inst->ibox->o_box, inst->ibox->o_drop, ic->o_holder);
@@ -936,10 +940,16 @@ _ibox_inst_cb_enter(void *data, const char *type EINA_UNUSED, void *event_info)
 {
    E_Event_Dnd_Enter *ev;
    Instance *inst;
+   E_Client *ec;
    Evas_Object *o, *o2;
 
    ev = event_info;
    inst = data;
+
+   ec = ev->data;
+
+   if (_ibox_icon_find(inst->ibox, ec)) return;
+
    o = edje_object_add(evas_object_evas_get(inst->ibox->o_box));
    inst->ibox->o_drop = o;
    E_EXPAND(inst->ibox->o_drop);
@@ -968,6 +978,7 @@ _ibox_inst_cb_move(void *data, const char *type EINA_UNUSED, void *event_info)
 
    ev = event_info;
    inst = data;
+
    _ibox_drop_position_update(inst, ev->x, ev->y);
    e_gadcon_client_autoscroll_update(inst->gcc, ev->x, ev->y);
 }
