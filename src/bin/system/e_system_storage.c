@@ -272,19 +272,19 @@ _store_action_do(Action *a)
      {
         if (a->cmd2)
           {
-             a->exe = ecore_exe_run(a->cmd2, NULL);
+             a->exe = e_system_run(a->cmd2);
              free(a->cmd2);
              a->cmd2 = NULL;
           }
         else if (a->cmd1)
           {
-             a->exe = ecore_exe_run(a->cmd1, NULL);
+             a->exe = e_system_run(a->cmd1);
              free(a->cmd1);
              a->cmd1 = NULL;
           }
         else
           {
-             a->exe = ecore_exe_run(a->cmd, NULL);
+             a->exe = e_system_run(a->cmd);
              free(a->cmd);
              a->cmd = NULL;
           }

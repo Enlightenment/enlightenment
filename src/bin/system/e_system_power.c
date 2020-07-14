@@ -8,25 +8,25 @@ char *_cmd_hibernate = NULL;
 static void
 _cb_power_halt(void *data EINA_UNUSED, const char *params EINA_UNUSED)
 {
-   if (_cmd_halt) ecore_exe_run(_cmd_halt, NULL);
+   if (_cmd_halt) e_system_run(_cmd_halt);
 }
 
 static void
 _cb_power_reboot(void *data EINA_UNUSED, const char *params EINA_UNUSED)
 {
-   if (_cmd_reboot) ecore_exe_run(_cmd_reboot, NULL);
+   if (_cmd_reboot) e_system_run(_cmd_reboot);
 }
 
 static void
 _cb_power_suspend(void *data EINA_UNUSED, const char *params EINA_UNUSED)
 {
-   if (_cmd_suspend) ecore_exe_run(_cmd_suspend, NULL);
+   if (_cmd_suspend) e_system_run(_cmd_suspend);
 }
 
 static void
 _cb_power_hibernate(void *data EINA_UNUSED, const char *params EINA_UNUSED)
 {
-   if (_cmd_hibernate) ecore_exe_run(_cmd_hibernate, NULL);
+   if (_cmd_hibernate) e_system_run(_cmd_hibernate);
 }
 
 static void

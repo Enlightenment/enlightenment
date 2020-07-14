@@ -379,11 +379,11 @@ _e_comp_cb_update(void)
      ecore_animator_freeze(e_comp->render_animator);
    DBG("UPDATE ALL");
    if (e_comp->nocomp) goto nocomp;
-   if (conf->grab && (!e_comp->grabbed))
-     {
-        if (e_comp->grab_cb) e_comp->grab_cb();
-        e_comp->grabbed = 1;
-     }
+//   if (conf->grab && (!e_comp->grabbed))
+//     {
+//        if (e_comp->grab_cb) e_comp->grab_cb();
+//        e_comp->grabbed = 1;
+//     }
    e_comp->updating = 1;
    l = e_comp->updates;
    e_comp->updates = NULL;
@@ -460,11 +460,6 @@ _e_comp_cb_update(void)
         //        if (!e_comp->nocomp) ecore_evas_manual_render(e_comp->ee);
      }
 
-   if (conf->grab && e_comp->grabbed)
-     {
-        if (e_comp->grab_cb) e_comp->grab_cb();
-        e_comp->grabbed = 0;
-     }
    if (e_comp->updates && (!e_comp->update_job))
      ecore_animator_thaw(e_comp->render_animator);
    /*

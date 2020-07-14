@@ -123,5 +123,7 @@ void e_system_cpufreq_shutdown(void);
 void e_system_ddc_init(void);
 void e_system_ddc_shutdown(void);
 
+extern Ecore_Exe *e_system_run(const char *exe);
+
 #endif
 
