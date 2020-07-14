@@ -203,3 +203,16 @@ main(int argc EINA_UNUSED, const char **argv EINA_UNUSED)
    eina_shutdown();
    return 0;
 }
+
+Ecore_Exe *
+e_system_run(const char *cmd)
+{
+   Ecore_Exe_Flags flags = ECORE_EXE_NONE;
+#if (ECORE_VERSION_MAJOR >= 1) && (ECORE_VERSION_MINOR >= 21)
+   flags |= ECORE_EXE_ISOLATE_IO;
+#else
+   flags |= 1024; // isolate_io is bit 10 .... it will be ignored if
+   // efl doesn't do it, so harmless
+#endif
+   return ecore_exe_pipe_run(cmd, flags, NULL);
+}

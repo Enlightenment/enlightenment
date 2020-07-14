@@ -42,6 +42,7 @@ _e_comp_canvas_cb_first_frame(void *data EINA_UNUSED, Evas *e, void *event_info 
 static void
 _e_comp_canvas_render_post(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
 {
+   E_Comp_Config *conf = e_comp_config_get();
    E_Client *ec;
    //Evas_Event_Render_Post *ev = event_info;
    //Eina_List *l;
@@ -64,6 +65,11 @@ _e_comp_canvas_render_post(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *ev
         evas_object_smart_callback_call(ec->frame, "post_render", NULL);
         UNREFD(ec, 111);
         e_object_unref(E_OBJECT(ec));
+     }
+   if (conf->grab && e_comp->grabbed)
+     {
+        if (e_comp->grab_cb) e_comp->grab_cb();
+        e_comp->grabbed = 0;
      }
 }
 
@@ -354,8 +360,15 @@ _e_comp_canvas_prerender(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *even
 {
    E_Comp_Cb cb;
    Eina_List *l;
+   E_Comp_Config *conf = e_comp_config_get();
 
    e_comp->rendering = EINA_TRUE;
+
+   if (conf->grab && (!e_comp->grabbed))
+     {
+        if (e_comp->grab_cb) e_comp->grab_cb();
+        e_comp->grabbed = 1;
+     }
 
    EINA_LIST_FOREACH(e_comp->pre_render_cbs, l, cb)
      cb();
@@ -404,7 +417,7 @@ e_comp_canvas_init(int w, int h)
    //   ecore_evas_manual_render_set(e_comp->ee, conf->lock_fps);
    ecore_evas_show(e_comp->ee);
 
-   evas_event_callback_add(e_comp->evas, EVAS_CALLBACK_RENDER_POST, _e_comp_canvas_render_post, NULL);
+   evas_event_callback_add(e_comp->evas, EVAS_CALLBACK_RENDER_FLUSH_POST, _e_comp_canvas_render_post, NULL);
 
    e_comp->ee_win = ecore_evas_window_get(e_comp->ee);
 
