@@ -50,7 +50,7 @@ _cb_ok(void *data EINA_UNUSED, Evas_Object *obj,
                                                   _auth_cb_exit, ps);
    if (str)
      {
-        char *passwd = strdup(str);
+        char *passwd = elm_entry_markup_to_utf8(str);
         if (passwd)
           {
              ps->auth_pid = e_auth_polkit_begin(passwd, ps->cookie, ps->target_uid);
