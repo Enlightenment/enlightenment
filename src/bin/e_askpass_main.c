@@ -18,7 +18,15 @@ static void
 password_out(void)
 {
    const char *str = elm_object_text_get(entry);
-   if (str) printf("%s\n", str);
+   if (str)
+     {
+        char *plain = elm_entry_markup_to_utf8(str);
+        if (plain)
+          {
+             printf("%s\n", plain);
+             free(plain);
+          }
+     }
 }
 
 static void
