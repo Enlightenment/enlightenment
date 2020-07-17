@@ -1,11 +1,11 @@
 #include "e_mod_notifier_host_private.h"
 
 #define PATH "/StatusNotifierWatcher"
-#define IFACE "org.kde.StatusNotifierWatcher"
+#define IFACE DOMAIN".StatusNotifierWatcher"
 #define PROTOCOL_VERSION 1
 
-#define ERROR_HOST_ALREADY_REGISTERED "org.kde.StatusNotifierWatcher.Host.AlreadyRegistered"
-#define ERROR_ITEM_ALREADY_REGISTERED "org.kde.StatusNotifierWatcher.Item.AlreadyRegistered"
+#define ERROR_HOST_ALREADY_REGISTERED DOMAIN".StatusNotifierWatcher.Host.AlreadyRegistered"
+#define ERROR_ITEM_ALREADY_REGISTERED DOMAIN".StatusNotifierWatcher.Item.AlreadyRegistered"
 
 static Eldbus_Connection *conn = NULL;
 static Eldbus_Service_Interface *iface = NULL;

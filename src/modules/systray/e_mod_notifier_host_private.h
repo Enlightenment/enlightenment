@@ -1,5 +1,10 @@
 #include "e_mod_main.h"
 
+// eventually we need to support this too...
+// https://www.freedesktop.org/wiki/Specifications/StatusNotifierItem
+//#define DOMAIN "org.freedesktop"
+#define DOMAIN "org.kde"
+
 typedef enum {
    CATEGORY_UNKNOWN = 0,
    CATEGORY_SYSTEM_SERVICES,

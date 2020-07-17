@@ -1,10 +1,10 @@
 #include "e_mod_notifier_host_private.h"
 
-#define WATCHER_BUS "org.kde.StatusNotifierWatcher"
+#define WATCHER_BUS DOMAIN".StatusNotifierWatcher"
 #define WATCHER_PATH "/StatusNotifierWatcher"
-#define WATCHER_IFACE "org.kde.StatusNotifierWatcher"
+#define WATCHER_IFACE DOMAIN".StatusNotifierWatcher"
 
-#define ITEM_IFACE "org.kde.StatusNotifierItem"
+#define ITEM_IFACE DOMAIN".StatusNotifierItem"
 
 const char *Category_Names[] = {
    "unknown", "SystemServices", NULL
