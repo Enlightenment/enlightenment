@@ -171,7 +171,7 @@ static Evas_Object *
 _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    Evas_Coord mw, mh;
-   Evas_Object *of, *ol;
+   Evas_Object *of, *ol, *ob, *or;
 
    e_dialog_resizable_set(cfd->dia, 1);
 
@@ -205,10 +205,21 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    e_widget_disabled_set(ol, 1);
    e_widget_table_object_append(of, ol, 1, 2, 1, 1, 1, 1, 1, 0);
 
+   /* Module description. */
+   ob = elm_box_add(cfdata->l_modules);
+   E_FILL(ob); E_EXPAND(ob);
+   elm_box_horizontal_set(ob, 1);
+
+   or = evas_object_rectangle_add(evas);
+   evas_object_size_hint_min_set(or, 0, 40 * e_scale);
+
    ol = e_widget_textblock_add(evas);
-   e_widget_size_min_set(ol, (200 * e_scale), 40 * e_scale);
    cfdata->o_desc = ol;
-   e_widget_table_object_append(of, ol, 0, 3, 2, 1, 1, 0, 1, 0);
+   E_FILL(ol); E_EXPAND(ol);
+
+   elm_box_pack_end(ob, ol);
+   elm_box_pack_end(ob, or);
+   e_widget_table_object_append(of, ob, 0, 3, 2, 1, 1, 0, 1, 0);
 
    e_dialog_resizable_set(cfd->dia, 1);
    e_util_win_auto_resize_fill(cfd->dia->win);
