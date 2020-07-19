@@ -2,8 +2,8 @@
 Type=Link
 Name=Geolocation
 Name[fr]=Géolocalisation
-Comment=Geolocation information
-Comment[fr]=Informations de géolocalisation
-Comment[it]=Informazioni sulla geolocalizzazione
+Comment=Geolocation information.
+Comment[fr]=Informations de géolocalisation.
+Comment[it]=Informazioni sulla geolocalizzazione.
 Icon=e-module-geolocation
 X-Enlightenment-ModuleType=utils
