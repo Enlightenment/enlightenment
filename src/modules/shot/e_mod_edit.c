@@ -1830,9 +1830,10 @@ ui_edit(Evas_Object *window, Evas_Object *o_bg, E_Zone *zone,
           }
      }
    w = (sw * zooms[zoom]) / 1000;
+   if ((zone) && (w > (zone->w / 4))) w = zone->w / 4;
    if (w < ELM_SCALE_SIZE(400)) w = 400;
    h = (w * sh) / sw;
-   if ((zone) && (h > (zone->h / 2))) h = zone->h / 2;
+   if ((zone) && (h > (zone->h / 4))) h = zone->h / 4;
 
    if (!ec)
      {
@@ -1904,9 +1905,10 @@ ui_edit(Evas_Object *window, Evas_Object *o_bg, E_Zone *zone,
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_min_set(o, w, h);
    evas_object_pass_events_set(o, EINA_TRUE);
-   elm_table_pack(tb, o, 0, 0, 10, 10);
+   elm_table_pack(tb, o, 0, 0, 6, 5);
 
    sc = o = elm_scroller_add(win);
+   elm_object_style_set(o, "noclip");
    elm_scroller_gravity_set(o, 0.5, 0.5);
    elm_object_focus_next_object_set(o, o, ELM_FOCUS_PREVIOUS);
    elm_object_focus_next_object_set(o, o, ELM_FOCUS_NEXT);
@@ -1917,13 +1919,13 @@ ui_edit(Evas_Object *window, Evas_Object *o_bg, E_Zone *zone,
    o_scroll = sc;
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_table_pack(tb, o, 0, 0, 10, 10);
+   elm_table_pack(tb, o, 0, 0, 5, 5);
    evas_object_show(o);
 
    bx_ret = bx = o = elm_box_add(win);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(o, 0.0, EVAS_HINT_EXPAND);
-   elm_table_pack(tb, o, 10, 0, 1, 10);
+   elm_table_pack(tb, o, 5, 0, 1, 5);
    evas_object_show(o);
 
    fr = o = elm_frame_add(win);
@@ -2069,18 +2071,18 @@ ui_edit(Evas_Object *window, Evas_Object *o_bg, E_Zone *zone,
 
    o = elm_frame_add(win);
    elm_object_style_set(o, "pad_large");
-   elm_table_pack(tb, o, 9, 0, 1, 1);
+   elm_table_pack(tb, o, 4, 0, 1, 1);
 
    o = ui_icon_button_add(win, "zoom-in");
-   elm_table_pack(tb, o, 8, 1, 1, 1);
+   elm_table_pack(tb, o, 3, 1, 1, 1);
    evas_object_smart_callback_add(o, "clicked", _cb_tool_zoom_plus, NULL);
 
    o = ui_icon_button_add(win, "zoom");
-   elm_table_pack(tb, o, 8, 2, 1, 1);
+   elm_table_pack(tb, o, 3, 2, 1, 1);
    evas_object_smart_callback_add(o, "clicked", _cb_tool_zoom_reset, NULL);
 
    o = ui_icon_button_add(win, "zoom-out");
-   elm_table_pack(tb, o, 8, 3, 1, 1);
+   elm_table_pack(tb, o, 3, 3, 1, 1);
    evas_object_smart_callback_add(o, "clicked", _cb_tool_zoom_minus, NULL);
    evas_object_show(o);
 
