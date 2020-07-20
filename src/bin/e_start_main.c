@@ -850,6 +850,12 @@ not_done:
                   restart = EINA_TRUE;
                   done = EINA_TRUE;
                }
+             else if (WEXITSTATUS(status) == 101)
+               {
+                  printf("Explici error exit from enlightenment\n");
+                  restart = EINA_FALSE;
+                  done = EINA_TRUE;
+               }
              else if (WEXITSTATUS(status) == 0)
                {
                   restart = EINA_FALSE;
