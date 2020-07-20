@@ -191,7 +191,7 @@ _e_ipc_cb_client_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
               break;
 
             case E_ALERT_OP_EXIT:
-              exit(-11);
+              exit(101);
               break;
            }
       }

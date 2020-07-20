@@ -185,7 +185,7 @@ e_hints_init(Ecore_Window root, Ecore_Window propwin)
                {
                   e_error_message_show(_("A previous instance of Enlightenment is still active\n"
                                          "on this screen. Aborting startup.\n"));
-                  exit(1);
+                  exit(101);
                }
              /* get/check agan */
              nwins = ecore_x_window_prop_window_get(root,

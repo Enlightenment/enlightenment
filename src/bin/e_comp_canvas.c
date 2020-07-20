@@ -31,7 +31,7 @@ _e_comp_canvas_cb_first_frame(void *data EINA_UNUSED, Evas *e, void *event_info 
      {
       case 'A': abort();
       case 'E':
-      case 'D': exit(-1);
+      case 'D': exit(101);
       case 'T': fprintf(stderr, "Startup time: '%f' - '%f' = '%f'\n", now, e_first_frame_start_time, now - e_first_frame_start_time);
          break;
      }
