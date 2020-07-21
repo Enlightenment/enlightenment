@@ -2,5 +2,5 @@
 Type=Link
 Name=Gesture Recognition
 Comment=Gesture recognition using libinput
-Icon=e-module-start
+Icon=e-module-gesture_recognition
 X-Enlightenment-ModuleType=utils
