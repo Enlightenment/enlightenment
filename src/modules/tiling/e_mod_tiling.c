@@ -46,7 +46,6 @@ typedef struct Client_Extra
    Eina_Bool floating E_BITFIELD;
    Eina_Bool tiled E_BITFIELD;
    Eina_Bool tracked E_BITFIELD;
-   Eina_Bool being_removed E_BITFIELD;
 } Client_Extra;
 
 typedef struct _Instance
@@ -796,8 +795,6 @@ _client_remove_no_apply(E_Client *ec)
         return EINA_FALSE;
      }
 
-   extra->being_removed = EINA_TRUE;
-
    if (extra->drag.drag)
      {
         _client_drag_terminate(ec);
@@ -844,8 +841,6 @@ toggle_floating(E_Client *ec)
      {
         return;
      }
-
-   if (extra->being_removed) return;
 
    extra->floating = !extra->floating;
 
