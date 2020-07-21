@@ -509,7 +509,7 @@ e_shelf_toggle(E_Shelf *es, int show)
    E_OBJECT_TYPE_CHECK(es, E_SHELF_TYPE);
 
    es->toggle = show;
-   if (_e_shelf_autohide_timer_extend(es)) return;
+   if (!es->hidden && _e_shelf_autohide_timer_extend(es)) return;
    if (es->locked) return;
    es->interrupted = -1;
    es->urgent_show = 0;
