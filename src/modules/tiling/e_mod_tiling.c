@@ -115,6 +115,7 @@ static struct tiling_mod_main_g
                        *act_move_right, *act_toggle_split_mode, *act_swap_window;
 
    Desk_Split_Type     *current_split_type;
+   Ecore_Job           *apply_tree_job;
 
    struct {
         Evas_Object *comp_obj;
@@ -480,7 +481,7 @@ _reapply_tree(void)
         if (zw > 0 && zh > 0)
           tiling_window_tree_apply(_G.tinfo->tree, zx, zy, zw, zh,
                                    tiling_g.config->window_padding,
-                                   EINA_FALSE);
+                                   EINA_TRUE);
         else
           ERR("The zone desk geometry was not useful at all (%d,%d,%d,%d)", zx, zy, zw, zh);
      }
@@ -859,11 +860,22 @@ toggle_floating(E_Client *ec)
      }
 }
 
+static void
+_window_tree_apply_delayed(void *data EINA_UNUSED)
+{
+   _reapply_tree();
+   ecore_job_del(_G.apply_tree_job);
+   _G.apply_tree_job = NULL;
+}
+
 void
 tiling_e_client_does_not_fit(E_Client *ec)
 {
    E_Notification_Notify n;
    Eina_Strbuf *buf;
+   Client_Extra *extra = tiling_entry_no_desk_func(ec);
+
+   EINA_SAFETY_ON_NULL_RETURN(extra);
 
    buf = eina_strbuf_new();
    eina_strbuf_append_printf(buf, _("Window %s cannot be tiled\n"),
@@ -876,9 +888,17 @@ tiling_e_client_does_not_fit(E_Client *ec)
    n.body = eina_strbuf_string_get(buf);
    n.timeout = 8000;
    e_notification_client_send(&n, NULL, NULL);
-   toggle_floating(ec);
-
    eina_strbuf_string_free(buf);
+
+   EINA_SAFETY_ON_TRUE_RETURN(extra->floating);
+
+   //remove the client here without applying the tree again to break maybe possible recursions
+   {
+      extra->floating = EINA_TRUE;
+      _restore_client(ec);
+      _client_remove_no_apply(ec);
+      _G.apply_tree_job = ecore_job_add(_window_tree_apply_delayed, NULL);
+   }
 }
 
 static void
