@@ -85,6 +85,7 @@ static IBox_Icon   *_ibox_icon_new(IBox *b, E_Client *ec);
 static void         _ibox_icon_free(IBox_Icon *ic);
 static void         _ibox_icon_fill(IBox_Icon *ic);
 static void         _ibox_icon_fill_label(IBox_Icon *ic);
+static void         _ibox_icon_fill_preview(IBox_Icon *ic, Eina_Bool is_retry);
 static void         _ibox_icon_empty(IBox_Icon *ic);
 static void         _ibox_icon_signal_emit(IBox_Icon *ic, char *sig, char *src);
 static Eina_List   *_ibox_zone_find(E_Zone *zone);
@@ -575,8 +576,18 @@ _ibox_icon_fill_icon(IBox_Icon *ic)
    evas_object_show(ic->o_icon2);
 }
 
+static Eina_Bool
+_ibox_icon_fill_timer(void *data)
+{
+   IBox_Icon *ic = data;
+
+   _ibox_icon_fill_preview(ic, EINA_TRUE);
+
+   return EINA_FALSE;
+}
+
 static void
-_ibox_icon_fill_preview(IBox_Icon *ic)
+_ibox_icon_fill_preview(IBox_Icon *ic, Eina_Bool is_retry)
 {
    E_Client *ec;
    Evas_Object *img, *img2;
@@ -584,6 +595,11 @@ _ibox_icon_fill_preview(IBox_Icon *ic)
    ec = ic->client;
 
    img = e_comp_object_util_mirror_add(ec->frame);
+   if (!img && !is_retry)
+     {
+        ecore_timer_add(0.5, _ibox_icon_fill_timer, ic);
+        return;
+     }
    evas_object_size_hint_aspect_set(img, EVAS_ASPECT_CONTROL_BOTH, ec->client.w, ec->client.h);
    evas_object_size_hint_max_set(img, ec->client.w, ec->client.h);
    ic->o_icon = img;
@@ -603,7 +619,7 @@ static void
 _ibox_icon_fill(IBox_Icon *ic)
 {
    if ((ic->ibox->inst->ci->show_preview) && (edje_object_part_exists(ic->o_holder, "e.swallow.preview")))
-     _ibox_icon_fill_preview(ic);
+     _ibox_icon_fill_preview(ic, EINA_FALSE);
    else
      _ibox_icon_fill_icon(ic);
 
