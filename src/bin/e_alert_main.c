@@ -61,12 +61,12 @@ mouse_up(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED
 
    if (ev->button == RECOVER_BUTTON)
      {
-        ret = 2;
+        ret = 111;
         elm_exit();
      }
    else if (ev->button == ABORT_BUTTON)
      {
-        ret = 1;
+        ret = 101;
         elm_exit();
      }
 }
@@ -78,12 +78,12 @@ key_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED
 
    if (!strcmp(ev->key, RECOVER_KEY))
      {
-        ret = 2;
+        ret = 111;
         elm_exit();
      }
    else if (!strcmp(ev->key, ABORT_KEY))
      {
-        ret = 1;
+        ret = 101;
         elm_exit();
      }
 }

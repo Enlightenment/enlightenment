@@ -856,7 +856,8 @@ not_done:
                   free(backtrace_str);
 
                   if (getenv("DISPLAY")) kill(child, SIGKILL);
-                  if (WEXITSTATUS(r) == 1) restart = EINA_FALSE;
+                  if (WEXITSTATUS(r) == 101) restart = EINA_FALSE;
+                  done = EINA_TRUE;
                }
              else if (!WIFEXITED(status) || (stop_ptrace))
                {
