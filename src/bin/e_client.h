@@ -240,6 +240,8 @@ struct E_Client
    E_Zone *zone;
    E_Desk *desk;
 
+   const char *restore_zone_id;
+
    Ecore_Poller              *ping_poller;
    Ecore_Timer               *kill_timer;
 

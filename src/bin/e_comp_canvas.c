@@ -264,8 +264,42 @@ _e_comp_cb_mouse_move(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mouse_
 ////////////////////////////////////
 
 static Eina_Bool
-_e_comp_cb_zone_change()
+_e_comp_cb_zone_change(void *d EINA_UNUSED, int type, void *event)
 {
+   if (type == E_EVENT_ZONE_ADD)
+     {
+        E_Event_Zone_Add *ev = event;
+        E_Client *ec;
+
+        E_CLIENT_FOREACH(ec)
+          {
+             if (ec->restore_zone_id)
+               {
+                  E_Zone *restore_zone =
+                    e_zone_for_id_get(ec->restore_zone_id);
+                  if ((restore_zone) && (ev->zone) &&
+                      (restore_zone == ev->zone))
+                    {
+                       int dx, dy;
+                       E_Desk *desk;
+
+                       dx = dy = -1;
+                       if (ec->desk)
+                         {
+                            dx = ec->desk->x;
+                            dy = ec->desk->y;
+                         }
+                       e_client_zone_set(ec, restore_zone);
+                       if ((dx >= 0) && (dy >= 0))
+                         {
+                            desk = e_desk_at_xy_get(restore_zone, dx, dy);
+                            if (desk) e_client_desk_set(ec, desk);
+                         }
+                       e_client_res_change_geometry_restore(ec);
+                    }
+               }
+          }
+     }
    e_comp_canvas_update();
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -687,12 +721,37 @@ e_comp_canvas_update(void)
                     {
                        if (ec->zone == zone)
                          {
+                            const char *tmp;
+
+                            if (ec->restore_zone_id)
+                              tmp = eina_stringshare_add(ec->restore_zone_id);
+                            else
+                              tmp = NULL;
                             if (spare_zone)
-                              e_client_zone_set(ec, spare_zone);
+                              {
+                                 int dx, dy;
+                                 E_Desk *desk;
+
+                                 dx = dy = -1;
+                                 if (ec->desk)
+                                   {
+                                      dx = ec->desk->x;
+                                      dy = ec->desk->y;
+                                   }
+                                 e_client_res_change_geometry_save(ec);
+                                 e_client_zone_set(ec, spare_zone);
+                                 if ((dx >= 0) && (dy >= 0))
+                                   {
+                                      desk = e_desk_at_xy_get(spare_zone, dx, dy);
+                                      if (desk) e_client_desk_set(ec, desk);
+                                   }
+                              }
                             else
                               printf("EEEK! should not be here - but no\n"
                                      "spare zones exist to move this\n"
                                      "window to!!! help!\n");
+                            eina_stringshare_replace(&(ec->restore_zone_id), tmp);
+                            if (tmp) eina_stringshare_del(tmp);
                          }
                     }
                   e_object_del(E_OBJECT(zone));

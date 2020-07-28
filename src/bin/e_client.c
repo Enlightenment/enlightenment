@@ -461,19 +461,22 @@ _e_client_revert_focus(E_Client *ec)
 static void
 _e_client_free(E_Client *ec)
 {
+   if (ec->restore_zone_id)
+     {
+        eina_stringshare_del(ec->restore_zone_id);
+        ec->restore_zone_id = NULL;
+     }
    if (ec->pixmap)
      {
         if (e_pixmap_free(ec->pixmap))
           e_pixmap_client_set(ec->pixmap, NULL);
         ec->pixmap = NULL;
      }
-
    if (ec->frame)
      {
         e_comp_object_redirected_set(ec->frame, 0);
         e_comp_object_render_update_del(ec->frame);
      }
-
    E_OBJECT(ec)->references++;
    if (ec->fullscreen)
      {
@@ -2844,6 +2847,8 @@ e_client_desk_set(E_Client *ec, E_Desk *desk)
    E_OBJECT_CHECK(desk);
    E_OBJECT_TYPE_CHECK(desk, E_DESK_TYPE);
    if (ec->desk == desk) return;
+   if (ec->zone)
+     eina_stringshare_replace(&(ec->restore_zone_id), ec->zone->randr2_id);
    if (ec->e.state.profile.use)
      {
         const char *profile = desk->window_profile;
@@ -3431,6 +3436,7 @@ e_client_zone_set(E_Client *ec, E_Zone *zone)
      }
 
    ec->zone = zone;
+   eina_stringshare_replace(&(ec->restore_zone_id), zone->randr2_id);
 
    if ((!ec->desk) || (ec->desk->zone != ec->zone))
      e_client_desk_set(ec, e_desk_current_get(ec->zone));
