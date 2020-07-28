@@ -610,6 +610,7 @@ struct E_Client
    unsigned int       need_shape_merge E_BITFIELD;
    unsigned int       need_shape_export E_BITFIELD;
    unsigned int       fullscreen E_BITFIELD;
+   unsigned int       unfullscreen_forced E_BITFIELD;
    unsigned int       need_fullscreen E_BITFIELD;
    unsigned int       already_unparented E_BITFIELD;
    unsigned int       need_reparent E_BITFIELD;

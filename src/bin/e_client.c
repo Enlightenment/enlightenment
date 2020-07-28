@@ -3756,19 +3756,29 @@ e_client_focused_set(E_Client *ec)
              for (x = 0; x < total; x++)
                {
                   E_Desk *desk = ec->zone->desks[x];
-                  /* if there's any fullscreen non-parents on this desk, unfullscreen them */
+                  // if there's any fullscreen non-parents on this desk, unfullscreen them
                   EINA_LIST_FOREACH_SAFE(desk->fullscreen_clients, l, ll, ec2)
                     {
                        if (ec2 == ec) continue;
                        if (e_object_is_del(E_OBJECT(ec2))) continue;
-                       /* but only if it's the same desk or one of the clients is sticky */
+                       // but only if it's the same desk or one of the clients is sticky
                        if ((desk == ec->desk) || (ec->sticky || ec2->sticky))
                          {
                             if (!_e_client_is_in_parents(ec, ec2))
-                              e_client_unfullscreen(ec2);
+                              {
+                                 if (ec2->fullscreen)
+                                   {
+                                      e_client_unfullscreen(ec2);
+                                      ec2->unfullscreen_forced = 1;
+                                   }
+                              }
                          }
                     }
                }
+          }
+        if (ec->unfullscreen_forced)
+          {
+             e_client_fullscreen(ec, e_config->fullscreen_policy);
           }
      }
 
@@ -3822,9 +3832,15 @@ e_client_focused_set(E_Client *ec)
                        break;
                     }
                }
-             /* if no children are visible, unfullscreen */
+             // if no children are visible, unfullscreen
              if ((!e_object_is_del(E_OBJECT(ec_unfocus))) && (!have_vis_child))
-               e_client_unfullscreen(ec_unfocus);
+               {
+                  if (ec_unfocus->fullscreen)
+                    {
+                       e_client_unfullscreen(ec_unfocus);
+                       ec_unfocus->unfullscreen_forced = 1;
+                    }
+               }
           }
 
         _e_client_hook_call(E_CLIENT_HOOK_FOCUS_UNSET, ec_unfocus);
@@ -4495,6 +4511,7 @@ e_client_fullscreen(E_Client *ec, E_Fullscreen policy)
      evas_object_layer_set(ec->frame, E_LAYER_CLIENT_TOP);
 
    ec->fullscreen = 1;
+   ec->unfullscreen_forced = 0;
 #ifndef HAVE_WAYLAND_ONLY
    if ((eina_list_count(e_comp->zones) > 1) ||
        (policy == E_FULLSCREEN_RESIZE) || (!ecore_x_randr_query()))
@@ -4534,6 +4551,7 @@ e_client_unfullscreen(E_Client *ec)
    if (!ec->fullscreen) return;
    ec->pre_res_change.valid = 0;
    ec->fullscreen = 0;
+   ec->unfullscreen_forced = 0;
    ec->need_fullscreen = 0;
    ec->desk->fullscreen_clients = eina_list_remove(ec->desk->fullscreen_clients, ec);
 
