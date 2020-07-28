@@ -81,7 +81,9 @@ _start_swipe_gesture_recognizition(struct libinput_device *dev)
 
    if (e_bindings_swipe_available())
      {
-        stats->visuals.win =  elm_notify_add(e_comp->elm);
+        E_Zone *zone = e_zone_current_get();
+
+        stats->visuals.win =  elm_notify_add(zone->base);
         elm_notify_align_set(stats->visuals.win, 0.5, 0.5);
         elm_object_tree_focus_allow_set(stats->visuals.win, EINA_FALSE);
         evas_object_layer_set(stats->visuals.win, E_LAYER_CLIENT_PRIO);
