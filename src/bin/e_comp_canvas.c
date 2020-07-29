@@ -293,7 +293,15 @@ _e_comp_cb_zone_change(void *d EINA_UNUSED, int type, void *event)
                        if ((dx >= 0) && (dy >= 0))
                          {
                             desk = e_desk_at_xy_get(restore_zone, dx, dy);
-                            if (desk) e_client_desk_set(ec, desk);
+                            if (desk)
+                              {
+                                 e_client_desk_set(ec, desk);
+                                 if (desk == e_desk_current_get(restore_zone))
+                                   {
+                                      if ((ec->visible) && (!ec->hidden) && (!ec->iconic))
+                                        evas_object_show(ec->frame);
+                                   }
+                              }
                          }
                        e_client_res_change_geometry_restore(ec);
                     }
