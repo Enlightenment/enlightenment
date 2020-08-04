@@ -242,8 +242,12 @@ systemd_unitdir = ''
 if get_option('systemd') == true
   systemd_unitdir = get_option('systemdunitdir')
   if systemd_unitdir == ''
-    dep_systemd = dependency('systemd', required: true)
-    systemd_unitdir = dep_systemd.get_pkgconfig_variable('systemduserunitdir')
+    dep_systemd = dependency('systemd', required: false)
+    if dep_systemd.found()
+      systemd_unitdir = dep_systemd.get_pkgconfig_variable('systemduserunitdir')
+    else
+      systemd_unitdir = join_paths(dir_lib, 'systemd', 'user')
+    endif
   endif
 endif
 
