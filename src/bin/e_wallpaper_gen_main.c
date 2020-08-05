@@ -85,33 +85,33 @@ _resolutions_calc(int w, int h)
 {
    int i, j = 0;
    int nw, nh, pw = 0, ph = 0;
-   Mip *mips = calloc(1, sizeof(Mip) * MAX_RES_NUM);
+   Mip *mips_ = calloc(1, sizeof(Mip) * MAX_RES_NUM);
 
-   if (!mips) return NULL;
+   if (!mips_) return NULL;
    for (i = 0; resolutions[i]; i += 2)
      {
         nh = resolutions[i + 1];
         nw = (w * nh) / h;
         if ((nh >= h) || (nw >= w))
           {
-             mips[j].from_w = pw;
-             mips[j].from_h = ph;
-             mips[j].to_w = 1000000000;
-             mips[j].to_h = 1000000000;
-             mips[j].last = EINA_TRUE;
+             mips_[j].from_w = pw;
+             mips_[j].from_h = ph;
+             mips_[j].to_w = 1000000000;
+             mips_[j].to_h = 1000000000;
+             mips_[j].last = EINA_TRUE;
              break;
           }
 
-        mips[j].from_w = pw;
-        mips[j].from_h = ph;
-        mips[j].to_w = nw;
-        mips[j].to_h = nh;
+        mips_[j].from_w = pw;
+        mips_[j].from_h = ph;
+        mips_[j].to_w = nw;
+        mips_[j].to_h = nh;
 
         j++;
         pw = nw + 1;
         ph = nh + 1;
      }
-   return mips;
+   return mips_;
 }
 
 EAPI int
@@ -123,7 +123,7 @@ elm_main(int argc, char **argv)
    int bg_b = 64;
    char dir_buf[128], img_buf[256], edc_buf[256], cmd_buf[1024], qual_buf[64];
    const char *dir, *quality_string = NULL, *img_name = NULL;
-   Mip *mips = NULL;
+   Mip *mips_ = NULL;
    int i, imw, imh, w, h, quality;
    int ret = 0, mips_num = 0;
    Eina_Bool alpha;
@@ -207,25 +207,25 @@ elm_main(int argc, char **argv)
        (!strcmp(mode, "scale_out")) ||
        (!strcmp(mode, "pan")))
      { // need to produce multiple scaled versions
-        mips = _resolutions_calc(w, h);
-        if (!mips) return 6;
-        for (i = 0; mips[i].to_w; i++)
+        mips_ = _resolutions_calc(w, h);
+        if (!mips_) return 6;
+        for (i = 0; mips_[i].to_w; i++)
           {
              mips_num++;
-             if (mips[i].last)
+             if (mips_[i].last)
                {
                   imw = w;
                   imh = h;
                }
              else
                {
-                  imw = mips[i].to_w;
-                  imh = mips[i].to_h;
+                  imw = mips_[i].to_w;
+                  imh = mips_[i].to_h;
                }
              evas_object_resize(subwin, imw, imh);
              evas_object_resize(image, imw, imh);
              elm_win_render(subwin);
-             if (mips[i].last)
+             if (mips_[i].last)
                snprintf(img_buf, sizeof(img_buf), "%s/img.png",
                         dir);
              else
@@ -239,7 +239,7 @@ elm_main(int argc, char **argv)
           }
      }
    // no multiple resolutions -0 save out original
-   if (!mips)
+   if (!mips_)
      {
         evas_object_resize(subwin, w, h);
         evas_object_resize(image, w, h);
@@ -267,7 +267,7 @@ elm_main(int argc, char **argv)
    snprintf(edc_buf, sizeof(edc_buf), "%s/bg.edc", dir);
    f = fopen(edc_buf, "w");
    if (!f) goto cleanup;
-   if ((mips) && (mips_num > 1))
+   if ((mips_) && (mips_num > 1))
      {
         fprintf(f,
                 "images {\n"
@@ -276,7 +276,7 @@ elm_main(int argc, char **argv)
           {
              fprintf(f,
                      "  image {\n");
-             if (mips[i].last)
+             if (mips_[i].last)
                {
                   fprintf(f,
                           "   image: \"img.png\" %s;\n",
@@ -284,8 +284,8 @@ elm_main(int argc, char **argv)
                }
              else
                {
-                  imw = mips[i].to_w;
-                  imh = mips[i].to_h;
+                  imw = mips_[i].to_w;
+                  imh = mips_[i].to_h;
                   fprintf(f,
                           "   image: \"img-%ix%i.png\" %s;\n",
                           imw, imh, quality_string);
@@ -293,8 +293,8 @@ elm_main(int argc, char **argv)
              fprintf(f,
                      "   size: %i %i %i %i;\n"
                      "  }\n",
-                     mips[i].from_w, mips[i].from_h,
-                     mips[i].to_w, mips[i].to_h);
+                     mips_[i].from_w, mips_[i].from_h,
+                     mips_[i].to_w, mips_[i].to_h);
           }
         fprintf(f,
                 " }\n"
@@ -489,7 +489,7 @@ elm_main(int argc, char **argv)
      }
    ret = system(cmd_buf);
 cleanup:
-   free(mips);
+   free(mips_);
    ecore_file_recursive_rm(dir);
    evas_object_del(win);
    return ret;
