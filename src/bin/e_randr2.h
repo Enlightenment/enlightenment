@@ -50,6 +50,7 @@ struct _E_Randr2_Mode
 {
    int    w, h; // resolution width and height
    double refresh; // refresh in hz
+   unsigned int flags; // randr mode flags.
    Eina_Bool preferred E_BITFIELD; // is this the preferred mode for the device?
 };
 

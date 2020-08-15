@@ -387,7 +387,10 @@ _basic_screen_info_fill(E_Config_Dialog_Data *cfdata, E_Config_Randr2_Screen *cs
           {
              mode_cbdata->cfdata = cfdata;
              mode_cbdata->mode = *m;
-             snprintf(buf, sizeof(buf), "%ix%i @ %1.2fHz", m->w, m->h, m->refresh);
+             if (m->flags & ECORE_X_RANDR_MODE_DOUBLE_SCAN)
+               snprintf(buf, sizeof(buf), "%ix%i @ %1.2fHz", m->w, m->h, m->refresh / 2);
+             else
+               snprintf(buf, sizeof(buf), "%ix%i @ %1.2fHz", m->w, m->h, m->refresh);
              it = elm_list_item_append(cfdata->modes_obj, buf, NULL, NULL, _cb_mode_set, mode_cbdata);
              cfdata->freelist = eina_list_append(cfdata->freelist, mode_cbdata);
              /* printf("mode add %p %p %p\n", mode_cbdata, cfdata->modes_obj, it); */

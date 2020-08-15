@@ -791,6 +791,7 @@ e_comp_x_randr_create(void)
                             m->refresh =
                             (double)minfo->dotClock /
                             (double)(minfo->hTotal * minfo->vTotal);
+                            m->flags = minfo->modeFlags;
                             if (j == (modes_pref - 1))
                               m->preferred = EINA_TRUE;
                             s->info.modes = eina_list_append(s->info.modes, m);
