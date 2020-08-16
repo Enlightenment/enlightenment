@@ -6,7 +6,6 @@ struct _E_Config_Dialog_Data
    int         indirect;
    int         texture_from_pixmap;
    int         smooth_windows;
-   int         lock_fps;
    int         grab;
    int         vsync;
    int         swap_mode;
@@ -104,7 +103,6 @@ _create_data(E_Config_Dialog *cfd EINA_UNUSED)
    cfdata->indirect = conf->indirect;
    cfdata->texture_from_pixmap = conf->texture_from_pixmap;
    cfdata->smooth_windows = conf->smooth_windows;
-   cfdata->lock_fps = conf->lock_fps;
    cfdata->grab = conf->grab;
    cfdata->vsync = conf->vsync;
    cfdata->swap_mode = conf->swap_mode;
@@ -404,8 +402,7 @@ _advanced_apply_data(E_Config_Dialog *cfd  EINA_UNUSED,
 {
    E_Comp_Config *conf = e_comp_config_get();
 
-   if ((cfdata->lock_fps != conf->lock_fps) ||
-       (cfdata->smooth_windows != conf->smooth_windows) ||
+   if ((cfdata->smooth_windows != conf->smooth_windows) ||
        (cfdata->grab != conf->grab) ||
        (cfdata->keep_unmapped != conf->keep_unmapped) ||
        (cfdata->nocomp_fs != conf->nocomp_fs) ||
@@ -425,7 +422,6 @@ _advanced_apply_data(E_Config_Dialog *cfd  EINA_UNUSED,
      {
         if (conf->enable_advanced_features != cfdata->enable_advanced_features)
           _advanced_features_changed(conf);
-        conf->lock_fps = cfdata->lock_fps;
         conf->smooth_windows = cfdata->smooth_windows;
         conf->grab = cfdata->grab;
         conf->keep_unmapped = cfdata->keep_unmapped;
@@ -558,7 +554,6 @@ _basic_apply_data(E_Config_Dialog *cfd  EINA_UNUSED,
    E_Comp_Config *conf = e_comp_config_get();
 
    if (cfdata->match.toggle_changed ||
-       (cfdata->lock_fps != conf->lock_fps) ||
        (cfdata->smooth_windows != conf->smooth_windows) ||
        (cfdata->grab != conf->grab) ||
        (cfdata->nofade != conf->nofade) ||
@@ -576,7 +571,6 @@ _basic_apply_data(E_Config_Dialog *cfd  EINA_UNUSED,
        (!EINA_DBL_EQ(cfdata->first_draw_delay, conf->first_draw_delay))
        )
      {
-        conf->lock_fps = cfdata->lock_fps;
         conf->smooth_windows = cfdata->smooth_windows;
         conf->grab = cfdata->grab;
         conf->nofade = cfdata->nofade;

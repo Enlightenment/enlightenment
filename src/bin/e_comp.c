@@ -375,8 +375,6 @@ _e_comp_cb_update(void)
    if (!e_comp) return EINA_FALSE;
    if (e_comp->update_job)
      e_comp->update_job = NULL;
-   else
-     ecore_animator_freeze(e_comp->render_animator);
    DBG("UPDATE ALL");
    if (e_comp->nocomp) goto nocomp;
 //   if (conf->grab && (!e_comp->grabbed))
@@ -454,14 +452,6 @@ _e_comp_cb_update(void)
         evas_object_resize(e_comp->canvas->fps_bg, w, h);
         evas_object_move(e_comp->canvas->fps_fg, x + 4, y + 4);
      }
-   if (conf->lock_fps)
-     {
-        DBG("MANUAL RENDER...");
-        //        if (!e_comp->nocomp) ecore_evas_manual_render(e_comp->ee);
-     }
-
-   if (e_comp->updates && (!e_comp->update_job))
-     ecore_animator_thaw(e_comp->render_animator);
    /*
       if (doframeinfo == -1)
       {
@@ -531,12 +521,6 @@ _e_comp_cb_job(void *data EINA_UNUSED)
 {
    DBG("UPDATE ALL JOB...");
    _e_comp_cb_update();
-}
-
-static Eina_Bool
-_e_comp_cb_animator(void *data EINA_UNUSED)
-{
-   return _e_comp_cb_update();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -846,7 +830,6 @@ _e_comp_free(E_Comp *c)
 
    ecore_evas_free(c->ee);
 
-   if (c->render_animator) ecore_animator_del(c->render_animator);
    if (c->update_job) ecore_job_del(c->update_job);
    if (c->nocomp_delay_timer) ecore_timer_del(c->nocomp_delay_timer);
    if (c->nocomp_override_timer) ecore_timer_del(c->nocomp_override_timer);
@@ -894,8 +877,6 @@ _e_comp_screensaver_on(void *data EINA_UNUSED, int type EINA_UNUSED, void *event
    e_comp->saver = EINA_TRUE;
    // XXX: this is not quite right - need to wait for signals from theme
    // before freezing render animator
-   if (e_comp->render_animator)
-     ecore_animator_freeze(e_comp->render_animator);
    EINA_LIST_FOREACH(e_comp->zones, l, zone)
      {
         e_zone_fade_handle(zone, 1, 3.0);
@@ -1406,9 +1387,6 @@ e_comp_new(void)
    e_comp = E_OBJECT_ALLOC(E_Comp, E_COMP_TYPE, _e_comp_free);
    if (!e_comp) return NULL;
    e_comp->canvas = E_NEW(E_Comp_Canvas, 1);
-
-   e_comp->render_animator = ecore_animator_add(_e_comp_cb_animator, NULL);
-   ecore_animator_freeze(e_comp->render_animator);
    return e_comp;
 }
 
@@ -1453,20 +1431,13 @@ e_comp_shutdown(void)
 E_API void
 e_comp_render_queue(void)
 {
-   if (conf->lock_fps)
+   if (e_comp->update_job)
      {
-        ecore_animator_thaw(e_comp->render_animator);
+        DBG("UPDATE JOB DEL...");
+        E_FREE_FUNC(e_comp->update_job, ecore_job_del);
      }
-   else
-     {
-        if (e_comp->update_job)
-          {
-             DBG("UPDATE JOB DEL...");
-             E_FREE_FUNC(e_comp->update_job, ecore_job_del);
-          }
-        DBG("UPDATE JOB ADD...");
-        e_comp->update_job = ecore_job_add(_e_comp_cb_job, e_comp);
-     }
+   DBG("UPDATE JOB ADD...");
+   e_comp->update_job = ecore_job_add(_e_comp_cb_job, e_comp);
 }
 
 E_API void
