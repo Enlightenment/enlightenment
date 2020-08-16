@@ -37,7 +37,6 @@ e_comp_cfdata_edd_init(E_Config_DD **conf_edd, E_Config_DD **match_edd)
    //E_CONFIG_VAL(D, T, max_unmapped_pixels, INT);
    E_CONFIG_VAL(D, T, max_unmapped_time, INT);
    E_CONFIG_VAL(D, T, min_unmapped_time, INT);
-   E_CONFIG_VAL(D, T, fps_average_range, INT);
    E_CONFIG_VAL(D, T, fps_corner, UCHAR);
    E_CONFIG_VAL(D, T, fps_show, UCHAR);
    E_CONFIG_VAL(D, T, indirect, UCHAR);
@@ -74,7 +73,6 @@ e_comp_cfdata_config_new(void)
    cfg->max_unmapped_pixels = 32 * 1024;  // implement
    cfg->max_unmapped_time = 10 * 3600; // implement
    cfg->min_unmapped_time = 5 * 60; // implement
-   cfg->fps_average_range = 30;
    cfg->fps_corner = 0;
    cfg->fps_show = 0;
    cfg->indirect = 0;

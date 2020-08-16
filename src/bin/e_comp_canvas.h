@@ -31,6 +31,8 @@ E_API void e_comp_canvas_keys_ungrab(void);
 E_API void e_comp_canvas_feed_mouse_up(unsigned int activate_time);
 E_API void e_comp_canvas_notidle(void);
 E_API Evas_Object *e_comp_canvas_event_grabber_add(void);
+E_API void e_comp_fps_update(void);
+
 EINTERN void e_comp_canvas_intercept(void);
 
 /* the following functions are used for adjusting root window coordinates

@@ -3800,6 +3800,7 @@ e_comp_object_render_update_add(Evas_Object *obj)
         cw->update = 1;
         e_comp->updates = eina_list_append(e_comp->updates, cw->ec);
      }
+   e_comp_client_frame_add(obj);
    e_comp_render_queue();
 }
 

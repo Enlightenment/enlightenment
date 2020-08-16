@@ -87,6 +87,7 @@ typedef struct E_Comp_Canvas
    Evas_Object *resize_object; //object to monitor for comp canvas resizes
    Evas_Object *fps_bg;
    Evas_Object *fps_fg;
+   Evas_Object *fps_gr;
    Evas_Object *gadget_site; //desktop gadget site
 } E_Comp_Canvas;
 
@@ -146,6 +147,8 @@ struct _E_Comp
    Ecore_Timer    *nocomp_override_timer; //delay before overriding nocomp in x11
    int             animating; //number of animating comp objects
    double          frametimes[122]; //used for calculating fps
+   double          comp_frametimes[122]; //used for calculating fps
+   double          client_frametimes[122]; //used for calculating fps
    int             frameskip;
 
    int             nocomp_override; //number of times nocomp override has been requested
@@ -222,6 +225,7 @@ E_API Eina_Bool e_comp_grab_input(Eina_Bool mouse, Eina_Bool kbd);
 E_API void e_comp_ungrab_input(Eina_Bool mouse, Eina_Bool kbd);
 E_API void e_comp_gl_set(Eina_Bool set);
 E_API Eina_Bool e_comp_gl_get(void);
+E_API void e_comp_client_frame_add(Evas_Object *obj);
 
 E_API void e_comp_button_bindings_grab_all(void);
 E_API void e_comp_button_bindings_ungrab_all(void);

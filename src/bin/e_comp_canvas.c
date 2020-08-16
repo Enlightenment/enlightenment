@@ -39,23 +39,24 @@ _e_comp_canvas_cb_first_frame(void *data EINA_UNUSED, Evas *e, void *event_info 
    evas_event_callback_del_full(e, EVAS_CALLBACK_RENDER_POST, _e_comp_canvas_cb_first_frame, NULL);
 }
 
+static Ecore_Job *_e_comp_update_job = NULL;
+
 static void
-_e_comp_canvas_render_post(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
+_e_comp_canvas_fps_update_job(void *data EINA_UNUSED)
 {
    E_Comp_Config *conf = e_comp_config_get();
+   _e_comp_update_job = NULL;
+   if (conf->fps_show) e_comp_fps_update();
+}
+
+static Ecore_Job *_e_comp_post_render_job = NULL;
+
+static void
+_e_comp_canvas_render_post_job(void *data EINA_UNUSED)
+{
    E_Client *ec;
-   //Evas_Event_Render_Post *ev = event_info;
-   //Eina_List *l;
-   //Eina_Rectangle *r;
 
-   //if (ev)
-     //{
-        //EINA_LIST_FOREACH(ev->updated_area, l, r)
-          //INF("POST RENDER: %d,%d %dx%d", r->x, r->y, r->w, r->h);
-     //}
-
-   e_comp->rendering = EINA_FALSE;
-
+   _e_comp_post_render_job = NULL;
    EINA_LIST_FREE(e_comp->post_updates, ec)
      {
         //INF("POST %p", ec);
@@ -66,6 +67,30 @@ _e_comp_canvas_render_post(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *ev
         UNREFD(ec, 111);
         e_object_unref(E_OBJECT(ec));
      }
+}
+
+static void
+_e_comp_canvas_render_post(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Comp_Config *conf = e_comp_config_get();
+   double t = ecore_time_get();
+   int i;
+
+   // NOTE: don't modify objects here as we may lose updates - defer...
+   for (i = 121; i >= 1; i--)
+     e_comp->comp_frametimes[i] = e_comp->comp_frametimes[i - 1];
+   e_comp->comp_frametimes[0] = t;
+   if (conf->fps_show)
+     {
+        if (_e_comp_update_job) ecore_job_del(_e_comp_update_job);
+        ecore_job_add(_e_comp_canvas_fps_update_job, NULL);
+     }
+
+   e_comp->rendering = EINA_FALSE;
+
+   if (_e_comp_post_render_job) ecore_job_del(_e_comp_post_render_job);
+   _e_comp_post_render_job = ecore_job_add(_e_comp_canvas_render_post_job, NULL);
+
    if (conf->grab && e_comp->grabbed)
      {
         if (e_comp->grab_cb) e_comp->grab_cb();
@@ -507,6 +532,7 @@ e_comp_canvas_clear(void)
 
    E_FREE_FUNC(e_comp->canvas->fps_fg, evas_object_del);
    E_FREE_FUNC(e_comp->canvas->fps_bg, evas_object_del);
+   E_FREE_FUNC(e_comp->canvas->fps_gr, evas_object_del);
    E_FREE_FUNC(e_comp->autoclose.rect, evas_object_del);
    E_FREE_FUNC(e_comp->shape_job, ecore_job_del);
    E_FREE_FUNC(e_comp->pointer, e_object_del);

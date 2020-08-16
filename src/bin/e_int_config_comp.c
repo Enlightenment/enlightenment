@@ -44,7 +44,6 @@ struct _E_Config_Dialog_Data
 
    int          fps_show;
    int          fps_corner;
-   int          fps_average_range;
    double       first_draw_delay;
    int enable_advanced_features;
 };
@@ -119,11 +118,7 @@ _create_data(E_Config_Dialog *cfd EINA_UNUSED)
 
    cfdata->fps_show = conf->fps_show;
    cfdata->fps_corner = conf->fps_corner;
-   cfdata->fps_average_range = conf->fps_average_range;
 
-   if (cfdata->fps_average_range < 1) cfdata->fps_average_range = 12;
-   else if (cfdata->fps_average_range > 120)
-     cfdata->fps_average_range = 120;
    cfdata->first_draw_delay = conf->first_draw_delay;
 
    return cfdata;
@@ -366,11 +361,6 @@ _advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data 
 
    ob = e_widget_check_add(evas, _("Show Framerate"), &(cfdata->fps_show));
    e_widget_list_object_append(ol, ob, 1, 1, 0.5);
-   ob = e_widget_label_add(evas, _("Rolling average frame count"));
-   e_widget_list_object_append(ol, ob, 1, 1, 0.5);
-   ob = e_widget_slider_add(evas, 1, 0, _("%1.0f Frames"), 1, 120, 1, 0,
-                            NULL, &(cfdata->fps_average_range), 240);
-   e_widget_list_object_append(ol, ob, 1, 1, 0.5);
 
    of = e_widget_frametable_add(evas, _("Corner"), 0);
    e_widget_frametable_content_align_set(of, 0.5, 0.5);
@@ -415,7 +405,6 @@ _advanced_apply_data(E_Config_Dialog *cfd  EINA_UNUSED,
        (cfdata->send_dump != conf->send_dump) ||
        (cfdata->fps_show != conf->fps_show) ||
        (cfdata->fps_corner != conf->fps_corner) ||
-       (cfdata->fps_average_range != conf->fps_average_range) ||
        (!EINA_DBL_EQ(cfdata->first_draw_delay, conf->first_draw_delay)) ||
        (conf->enable_advanced_features != cfdata->enable_advanced_features)
        )
@@ -434,7 +423,6 @@ _advanced_apply_data(E_Config_Dialog *cfd  EINA_UNUSED,
         conf->send_dump = cfdata->send_dump;
         conf->fps_show = cfdata->fps_show;
         conf->fps_corner = cfdata->fps_corner;
-        conf->fps_average_range = cfdata->fps_average_range;
         conf->first_draw_delay = cfdata->first_draw_delay;
         if (conf->shadow_style)
           eina_stringshare_del(conf->shadow_style);
@@ -567,7 +555,6 @@ _basic_apply_data(E_Config_Dialog *cfd  EINA_UNUSED,
        (cfdata->send_dump != conf->send_dump) ||
        (cfdata->fps_show != conf->fps_show) ||
        (cfdata->fps_corner != conf->fps_corner) ||
-       (cfdata->fps_average_range != conf->fps_average_range) ||
        (!EINA_DBL_EQ(cfdata->first_draw_delay, conf->first_draw_delay))
        )
      {
@@ -585,7 +572,6 @@ _basic_apply_data(E_Config_Dialog *cfd  EINA_UNUSED,
         conf->send_dump = cfdata->send_dump;
         conf->fps_show = cfdata->fps_show;
         conf->fps_corner = cfdata->fps_corner;
-        conf->fps_average_range = cfdata->fps_average_range;
         conf->first_draw_delay = cfdata->first_draw_delay;
         if (conf->shadow_style)
           eina_stringshare_del(conf->shadow_style);

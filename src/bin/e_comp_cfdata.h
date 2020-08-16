@@ -14,7 +14,6 @@ struct _E_Comp_Config
    int           max_unmapped_pixels;
    int           max_unmapped_time;
    int           min_unmapped_time;
-   int           fps_average_range;
    unsigned char fps_corner;
    unsigned char fps_show;
    unsigned char indirect;
