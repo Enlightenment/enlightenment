@@ -1632,7 +1632,7 @@ _e_shelf_menu_append(E_Shelf *es, E_Menu *mn)
      e_menu_item_label_set(mi, _("Stop Moving Gadgets"));
    else
      e_menu_item_label_set(mi, _("Begin Moving Gadgets"));
-   e_util_menu_item_theme_icon_set(mi, "transform-scale");
+   e_util_menu_item_theme_icon_set(mi, "transform-move");
    e_menu_item_callback_set(mi, _e_shelf_cb_menu_edit, es);
 }
 

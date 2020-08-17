@@ -69,7 +69,7 @@ e_connman_config_dialog_new(Evas_Object *parent EINA_UNUSED,
 
    dialog = e_config_dialog_new(NULL, _("Connection Manager"),
        _e_connman_Name, "e_connman_config_dialog_new",
-       e_connman_theme_path(), 0, view, ctxt);
+       "preferences-network", 0, view, ctxt);
 
    return dialog;
 }

@@ -156,15 +156,13 @@ _notification_cb_close(void *data EINA_UNUSED, unsigned int id)
 E_API void *
 e_modapi_init(E_Module *m)
 {
-   char buf[PATH_MAX];
-
-   snprintf(buf, sizeof(buf), "%s/e-module-notification.edj", m->dir);
    /* register config panel entry */
    e_configure_registry_category_add("extensions", 90, _("Extensions"), NULL,
                                      "preferences-extensions");
    e_configure_registry_item_add("extensions/notification", 30,
                                  _("Notification"), NULL,
-                                 buf, e_int_config_notification_module);
+                                 "preferences-notification",
+                                 e_int_config_notification_module);
 
 
    conf_edd = E_CONFIG_DD_NEW("Notification_Config", Config);

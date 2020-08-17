@@ -261,8 +261,6 @@ E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Conf" };
 E_API void *
 e_modapi_init(E_Module *m)
 {
-   char buf[PATH_MAX];
-
    conf_module = m;
 
    /* add module supplied action */
@@ -276,13 +274,11 @@ e_modapi_init(E_Module *m)
    maug =
      e_int_menus_menu_augmentation_add_sorted("config/0", _("Settings Panel"),
                                               _e_mod_menu_add, NULL, NULL, NULL);
-   snprintf(buf, sizeof(buf), "%s/e-module-conf.edj",
-            e_module_dir_get(conf_module));
 
    e_configure_registry_category_add("advanced", 80, _("Advanced"),
                                      NULL, "preferences-advanced");
    e_configure_registry_item_add("advanced/conf", 110, _("Configuration Panel"),
-                                 NULL, buf, e_int_config_conf_module);
+                                 NULL, "preferences-panel", e_int_config_conf_module);
 
    conf_edd = E_CONFIG_DD_NEW("Config", Config);
 #undef T

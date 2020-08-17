@@ -1435,7 +1435,6 @@ E_API E_Module_Api e_modapi =
 E_API void *
 e_modapi_init(E_Module *m)
 {
-   char buf[PATH_MAX];
    Eina_List *l;
 
    conf_edd = E_CONFIG_DD_NEW("Cpufreq_Config", Config);
@@ -1497,11 +1496,10 @@ e_modapi_init(E_Module *m)
    cpufreq_config->module = m;
 
    e_gadcon_provider_register(&_gadcon_class);
-   snprintf(buf, sizeof(buf), "%s/e-module-cpufreq.edj", e_module_dir_get(m));
    e_configure_registry_category_add("advanced", 80, _("Advanced"), NULL,
                                      "preferences-advanced");
    e_configure_registry_item_add("advanced/cpufreq", 120, _("CPU Frequency"),
-                                 NULL, buf, e_int_config_cpufreq_module);
+                                 NULL, "preferences-cpu-speed", e_int_config_cpufreq_module);
    return m;
 }
 

@@ -604,7 +604,7 @@ _econnman_configure_registry_register(void)
    e_configure_registry_category_add(_reg_cat, 90, _("Extensions"), NULL,
                                      "preferences-extensions");
    e_configure_registry_item_add(_reg_item, 110, _(_e_connman_Name), NULL,
-                                 e_connman_theme_path(),
+                                 "preferences-network",
                                  _econnman_config);
 }
 

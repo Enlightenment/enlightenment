@@ -45,13 +45,10 @@ _e_modapi_shutdown(void)
 E_API void *
 e_modapi_init(E_Module *m)
 {
-   char buf[PATH_MAX];
-
-   snprintf(buf, sizeof(buf), "%s/e-module-quickaccess.edj", e_module_dir_get(m));
    e_configure_registry_category_add("launcher", 80, _("Launcher"), NULL,
                                      "modules-launcher");
    e_configure_registry_item_add("launcher/quickaccess", 1, _("Quickaccess"), NULL,
-                                 buf, e_int_config_qa_module);
+                                 "preferences-applications-personal", e_int_config_qa_module);
 
    qa_mod = E_NEW(Mod, 1);
    qa_mod->module = m;

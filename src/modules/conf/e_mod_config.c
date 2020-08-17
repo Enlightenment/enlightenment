@@ -17,7 +17,6 @@ e_int_config_conf_module(Evas_Object *parent EINA_UNUSED, const char *params EIN
 {
    E_Config_Dialog *cfd = NULL;
    E_Config_Dialog_View *v = NULL;
-   char buf[PATH_MAX];
 
    /* is this config dialog already visible ? */
    if (e_config_dialog_find("Conf", "advanced/conf")) return NULL;
@@ -31,9 +30,8 @@ e_int_config_conf_module(Evas_Object *parent EINA_UNUSED, const char *params EIN
    v->basic.apply_cfdata = _basic_apply;
    v->basic.check_changed = _basic_check_changed;
 
-   snprintf(buf, sizeof(buf), "%s/e-module-conf.edj", conf->module->dir);
    cfd = e_config_dialog_new(NULL, _("Configuration Panel"), "Conf",
-                             "advanced/conf", buf, 0, v, NULL);
+                             "advanced/conf", "preferences-panel", 0, v, NULL);
 
    conf->cfd = cfd;
    return cfd;

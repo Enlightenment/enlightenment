@@ -551,7 +551,6 @@ e_int_config_qa_module(Evas_Object *parent EINA_UNUSED, const char *params EINA_
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
-   char buf[PATH_MAX];
 
    if (qa_mod->cfd) return NULL;
    v = E_NEW(E_Config_Dialog_View, 1);
@@ -565,8 +564,7 @@ e_int_config_qa_module(Evas_Object *parent EINA_UNUSED, const char *params EINA_
    v->advanced.create_widgets = _advanced_create_widgets;
    v->advanced.check_changed = _advanced_check_changed;
 
-   snprintf(buf, sizeof(buf), "%s/e-module-quickaccess.edj", e_module_dir_get(qa_mod->module));
    cfd = e_config_dialog_new(NULL, _("Quickaccess Settings"),
-                             "E", "launcher/quickaccess", buf, 32, v, NULL);
+                             "E", "launcher/quickaccess", "preferences-applications-personal", 32, v, NULL);
    return cfd;
 }

@@ -1062,7 +1062,7 @@ _attach_menu(void *data EINA_UNUSED, E_Gadcon_Client *gcc, E_Menu *menu)
    /* Move / resize*/
    mi = e_menu_item_new(menu);
    e_menu_item_label_set(mi, _("Begin move/resize"));
-   e_util_menu_item_theme_icon_set(mi, "transform-scale");
+   e_util_menu_item_theme_icon_set(mi, "transform-move");
    e_menu_item_callback_set(mi, on_menu_edit, gcc);
 
    /* plain / inset */
