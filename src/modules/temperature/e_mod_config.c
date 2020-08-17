@@ -12,9 +12,6 @@ struct _E_Config_Dialog_Data
      } poll;
 
    int unit_method;
-#ifdef HAVE_EEZE
-   int backend;
-#endif
    struct
      {
         int low, high;
@@ -121,75 +118,67 @@ _fill_data_tempget(E_Config_Dialog_Data *cfdata)
    cfdata->temp.low = cfdata->inst->low;
    cfdata->temp.high = cfdata->inst->high;
    cfdata->sensor = 0;
-#ifdef HAVE_EEZE
-   cfdata->backend = cfdata->inst->backend;
-   if (cfdata->backend == TEMPGET)
+   switch (cfdata->inst->sensor_type)
      {
-#endif
-        switch (cfdata->inst->sensor_type)
+      case SENSOR_TYPE_NONE:
+      case SENSOR_TYPE_FREEBSD:
+      case SENSOR_TYPE_OMNIBOOK:
+      case SENSOR_TYPE_LINUX_MACMINI:
+      case SENSOR_TYPE_LINUX_PBOOK:
+      case SENSOR_TYPE_LINUX_INTELCORETEMP:
+        break;
+      case SENSOR_TYPE_LINUX_I2C:
+        _fill_sensors(cfdata, "i2c");
+        break;
+      case SENSOR_TYPE_LINUX_PCI:
+        _fill_sensors(cfdata, "pci");
+        break;
+      case SENSOR_TYPE_LINUX_ACPI:
           {
-           case SENSOR_TYPE_NONE:
-           case SENSOR_TYPE_FREEBSD:
-           case SENSOR_TYPE_OMNIBOOK:
-           case SENSOR_TYPE_LINUX_MACMINI:
-           case SENSOR_TYPE_LINUX_PBOOK:
-           case SENSOR_TYPE_LINUX_INTELCORETEMP:
-             break;
-           case SENSOR_TYPE_LINUX_I2C:
-             _fill_sensors(cfdata, "i2c");
-             break;
-           case SENSOR_TYPE_LINUX_PCI:
-             _fill_sensors(cfdata, "pci");
-             break;
-           case SENSOR_TYPE_LINUX_ACPI:
+             Eina_List *l;
+
+             if ((l = ecore_file_ls("/proc/acpi/thermal_zone")))
                {
-                  Eina_List *l;
+                  char *name;
+                  int n = 0;
 
-                  if ((l = ecore_file_ls("/proc/acpi/thermal_zone")))
+                  EINA_LIST_FREE(l, name)
                     {
-                       char *name;
-                       int n = 0;
+                       cfdata->sensors =
+                       eina_list_append(cfdata->sensors, name);
+                       if (!strcmp(cfdata->inst->sensor_name, name))
+                       cfdata->sensor = n;
+                       n++;
+                    }
+               }
+             break;
+          }
+      case SENSOR_TYPE_LINUX_SYS:
+          {
+             Eina_List *l;
 
-                       EINA_LIST_FREE(l, name)
+             if ((l = ecore_file_ls("/sys/class/thermal")))
+               {
+                  char *name;
+                  int n = 0;
+
+                  EINA_LIST_FREE(l, name)
+                    {
+                       if (!strncmp(name, "thermal", 7))
                          {
                             cfdata->sensors =
-                              eina_list_append(cfdata->sensors, name);
+                            eina_list_append(cfdata->sensors, name);
                             if (!strcmp(cfdata->inst->sensor_name, name))
-                              cfdata->sensor = n;
+                            cfdata->sensor = n;
                             n++;
                          }
                     }
-                  break;
                }
-           case SENSOR_TYPE_LINUX_SYS:
-               {
-                  Eina_List *l;
-
-                  if ((l = ecore_file_ls("/sys/class/thermal")))
-                    {
-                       char *name;
-                       int n = 0;
-
-                       EINA_LIST_FREE(l, name)
-                         {
-                            if (!strncmp(name, "thermal", 7))
-                              {
-                                 cfdata->sensors =
-                                    eina_list_append(cfdata->sensors, name);
-                                 if (!strcmp(cfdata->inst->sensor_name, name))
-                                    cfdata->sensor = n;
-                                 n++;
-                              }
-                         }
-                    }
-                  break;
-               }
-           default:
              break;
           }
-#ifdef HAVE_EEZE
-   }
-#endif
+      default:
+        break;
+     }
 }
 
 static void
@@ -309,16 +298,6 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
 
    e_widget_toolbook_page_append(otb, NULL, _("Temperatures"), ol,
                                  1, 1, 1, 0, 0.0, 0.0);
-#ifdef HAVE_EEZE
-   ol = e_widget_list_add(evas, 0, 0);
-   rg = e_widget_radio_group_new(&(cfdata->backend));
-   ow = e_widget_radio_add(evas, _("Internal"), TEMPGET, rg);
-   e_widget_list_object_append(ol, ow, 1, 1, 0.5);
-   ow = e_widget_radio_add(evas, _("udev"), UDEV, rg);
-   e_widget_list_object_append(ol, ow, 1, 1, 0.5);
-   e_widget_toolbook_page_append(otb, NULL, _("Hardware"), ol,
-                                 1, 1, 1, 0, 0.0, 0.0);
-#endif
    e_widget_toolbook_page_show(otb, 0);
    return otb;
 }
@@ -330,9 +309,6 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
    cfdata->inst->units = cfdata->unit_method;
    cfdata->inst->low = cfdata->temp.low;
    cfdata->inst->high = cfdata->temp.high;
-#ifdef HAVE_EEZE
-   cfdata->inst->backend = cfdata->backend;
-#endif
 
    eina_stringshare_replace(&cfdata->inst->sensor_name,
                             eina_list_nth(cfdata->sensors, cfdata->sensor));

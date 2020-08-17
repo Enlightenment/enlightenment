@@ -3,11 +3,6 @@
 
 #include "e.h"
 
-#ifdef HAVE_EEZE
-# include <Eeze.h>
-#endif
-
-
 typedef enum _Sensor_Type
 {
    SENSOR_TYPE_NONE,
@@ -43,9 +38,6 @@ struct _Tempthread
    const char *sensor_path;
    void *extn;
    E_Powersave_Sleeper *sleeper;
-#ifdef HAVE_EEZE
-   Eina_List *tempdevs;
-#endif
    Eina_Bool initted E_BITFIELD;
 };
 
@@ -62,11 +54,6 @@ struct _Config_Face
    /* config state */
    E_Gadcon_Client *gcc;
    Evas_Object *o_temp;
-#ifdef HAVE_EEZE
-   Ecore_Poller *poller;
-   Tempthread *tth;
-   int backend;
-#endif
    E_Module *module;
 
    E_Config_Dialog *config_dialog;
@@ -83,16 +70,6 @@ struct _Config
    /* config state */
    E_Module *module;
 };
-
-#ifdef HAVE_EEZE
-typedef enum _Backend
-{
-   TEMPGET,
-   UDEV
-} Backend;
-
-int temperature_udev_get(Tempthread *tth);
-#endif
 
 E_API extern E_Module_Api e_modapi;
 

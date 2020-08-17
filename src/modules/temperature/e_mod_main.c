@@ -50,14 +50,8 @@ static Config *temperature_config = NULL;
 static void
 _temperature_thread_free(Tempthread *tth)
 {
-#if defined(HAVE_EEZE)
-   const char *s;
-#endif
    eina_stringshare_del(tth->sensor_name);
    eina_stringshare_del(tth->sensor_path);
-#if defined(HAVE_EEZE)
-   EINA_LIST_FREE(tth->tempdevs, s) eina_stringshare_del(s);
-#endif
    e_powersave_sleeper_free(tth->sleeper);
    free(tth->extn);
    free(tth);
@@ -114,18 +108,6 @@ _temperature_apply(Config_Face *inst, int temp)
      }
 }
 
-#ifdef HAVE_EEZE
-static Eina_Bool
-_temperature_udev_poll(void *data)
-{
-   Tempthread *tth = data;
-   int temp = temperature_udev_get(tth);
-
-   _temperature_apply(tth->inst, temp);
-   return EINA_TRUE;
-}
-#endif
-
 static E_Gadcon_Client *
 _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
 {
@@ -145,9 +127,6 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
         inst->sensor_name = NULL;
         inst->temp = -900;
         inst->units = CELSIUS;
-#ifdef HAVE_EEZE
-        inst->backend = UDEV;
-#endif
         if (!temperature_config->faces)
           temperature_config->faces = eina_hash_string_superfast_new(NULL);
         eina_hash_direct_add(temperature_config->faces, inst->id, inst);
@@ -157,9 +136,6 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    E_CONFIG_LIMIT(inst->low, 0, 100);
    E_CONFIG_LIMIT(inst->high, 0, 220);
    E_CONFIG_LIMIT(inst->units, CELSIUS, FAHRENHEIT);
-#ifdef HAVE_EEZE
-   E_CONFIG_LIMIT(inst->backend, TEMPGET, UDEV);
-#endif
 
    o = edje_object_add(gc->evas);
    e_theme_edje_object_set(o, "base/theme/modules/temperature",
@@ -234,9 +210,6 @@ _gc_id_new(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
    inst->sensor_type = SENSOR_TYPE_NONE;
    inst->sensor_name = NULL;
    inst->units = CELSIUS;
-#ifdef HAVE_EEZE
-   inst->backend = TEMPGET;
-#endif
    if (!temperature_config->faces)
      temperature_config->faces = eina_hash_string_superfast_new(NULL);
    eina_hash_direct_add(temperature_config->faces, inst->id, inst);
@@ -293,13 +266,6 @@ _temperature_face_shutdown(const Eina_Hash *hash EINA_UNUSED, const void *key EI
    if (inst->th) ecore_thread_cancel(inst->th);
    if (inst->sensor_name) eina_stringshare_del(inst->sensor_name);
    if (inst->id) eina_stringshare_del(inst->id);
-#ifdef HAVE_EEZE
-   if (inst->poller)
-     {
-        ecore_poller_del(inst->poller);
-        _temperature_thread_free(inst->tth);
-     }
-#endif
    E_FREE(inst);
    return EINA_TRUE;
 }
@@ -367,20 +333,11 @@ temperature_face_update_config(Config_Face *inst)
    if (inst->sensor_name)
      tth->sensor_name = eina_stringshare_add(inst->sensor_name);
 
-#ifdef HAVE_EEZE
-   if (inst->backend != TEMPGET)
-     {
-        inst->poller = ecore_poller_add(ECORE_POLLER_CORE, inst->poll_interval,
-                                        _temperature_udev_poll, tth);
-        inst->tth = tth;
-     }
-   else
-#endif
-     inst->th = ecore_thread_feedback_run(_temperature_check_main,
-                                          _temperature_check_notify,
-                                          _temperature_check_done,
-                                          _temperature_check_done,
-                                          tth, EINA_TRUE);
+   inst->th = ecore_thread_feedback_run(_temperature_check_main,
+                                        _temperature_check_notify,
+                                        _temperature_check_done,
+                                        _temperature_check_done,
+                                        tth, EINA_TRUE);
 }
 
 /* module setup */
@@ -403,9 +360,6 @@ e_modapi_init(E_Module *m)
    E_CONFIG_VAL(D, T, low, INT);
    E_CONFIG_VAL(D, T, high, INT);
    E_CONFIG_VAL(D, T, sensor_type, INT);
-#ifdef HAVE_EEZE
-   E_CONFIG_VAL(D, T, backend, INT);
-#endif
    E_CONFIG_VAL(D, T, sensor_name, STR);
    E_CONFIG_VAL(D, T, units, INT);
 
