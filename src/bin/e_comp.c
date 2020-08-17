@@ -447,12 +447,12 @@ e_comp_fps_update(void)
 
                   gw = 500;
                   gh = 3 * 5;
-                  gx = x - gw;
-                  gy = y - h - gh;
+                  gx = x + w - gw;
+                  gy = y - gh - 8;
 
                   bw = (gw > bw) ? gw : bw;
                   bh = h + gh + 8;
-                  bx = (x > bx) ? bx: x;
+                  bx = (x > gx) ? gx: x;
                   by = gy;
                   break;
                 case 2: // bottom-left
@@ -462,7 +462,7 @@ e_comp_fps_update(void)
                   gw = 500;
                   gh = 3 * 5;
                   gx = x;
-                  gy = y - h - gh;
+                  gy = y - gh - 8;
 
                   bw = (gw > bw) ? gw : bw;
                   bh = h + gh + 8;
@@ -475,12 +475,12 @@ e_comp_fps_update(void)
 
                   gw = 500;
                   gh = 3 * 5;
-                  gx = x - gw;
+                  gx = x + w - gw;
                   gy = y + h;
 
                   bw = (gw > bw) ? gw : bw;
                   bh = h + gh + 8;
-                  bx = (x > bx) ? bx: x;
+                  bx = (x > gx) ? gx: x;
                   by = y;
                   break;
                 case 0: // top-left
