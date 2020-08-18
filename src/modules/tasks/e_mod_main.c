@@ -893,24 +893,24 @@ _tasks_item_preview_add(Tasks_Item *item)
    evas_object_size_hint_aspect_set(img, EVAS_ASPECT_CONTROL_BOTH, item->client->w, item->client->h);
    evas_object_show(img);
 
+   or = evas_object_rectangle_add(evas_object_evas_get(o));
+
    size = item->tasks->config->preview_size;
    if (item->client->w > item->client->h)
      {
         n = size * (1.0 / item->client->w);
         evas_object_size_hint_min_set(img, size, n * item->client->h);
         evas_object_size_hint_max_set(img, size, n * item->client->h);
+        evas_object_size_hint_min_set(or,  size + 1, (n * item->client->h) + 1);
      }
    else
      {
         n = size * (1.0 / item->client->h);
         evas_object_size_hint_min_set(img, n * item->client->w, size);
         evas_object_size_hint_max_set(img, n * item->client->w, size);
+        evas_object_size_hint_min_set(or, (n * item->client->w) + 1, size + 1);
      }
 
-   or = evas_object_rectangle_add(evas_object_evas_get(o));
-   evas_object_size_hint_min_set(or, size + 10, size + 10);
-   evas_object_color_set(or, 47, 153, 255, 255);
-   evas_object_show(or);
    elm_table_pack(ot, or, 0, 0, 1, 1);
    elm_table_pack(ot, img, 0, 0, 1, 1);
 
