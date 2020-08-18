@@ -302,7 +302,11 @@ err:
 static Eina_Bool
 _ddc_init(void)
 {
-   ddc_lib = dlopen("libddcutil.so.2", RTLD_NOW | RTLD_LOCAL);
+   // .so.3 is ABI compatible twith .so.2 for out uses - see
+   // https://www.ddcutil.com/c_api_99/ for changes between them
+   ddc_lib = dlopen("libddcutil.so.3", RTLD_NOW | RTLD_LOCAL);
+   if (!ddc_lib)
+     ddc_lib = dlopen("libddcutil.so.2", RTLD_NOW | RTLD_LOCAL);
    if (!ddc_lib) return EINA_FALSE;
 #define SYM(_x) \
    do { \
