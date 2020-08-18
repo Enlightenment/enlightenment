@@ -212,7 +212,7 @@ _e_comp_fps_update(void)
         e_comp->canvas->fps_gr = evas_object_image_filled_add(e_comp->evas);
         evas_object_image_smooth_scale_set(e_comp->canvas->fps_gr, EINA_FALSE);
         evas_object_image_alpha_set(e_comp->canvas->fps_gr, EINA_TRUE);
-        evas_object_image_size_set(e_comp->canvas->fps_gr, 500, 3);
+        evas_object_image_size_set(e_comp->canvas->fps_gr, 1, 1);
         evas_object_color_set(e_comp->canvas->fps_gr, 255, 255, 255, 255);
         evas_object_layer_set(e_comp->canvas->fps_gr, E_LAYER_MAX);
         evas_object_name_set(e_comp->canvas->fps_gr, "e_comp->canvas->fps_gr");
@@ -380,32 +380,95 @@ _e_comp_nocomp_end(void)
 }
 
 static double
-_e_comp_fps_calc(double *frametimes, int count)
+_e_comp_frame_event_fps_calc(int info)
 {
-   int i;
-   double t0 = frametimes[0], dt;
+   int i, count = 0, iind, start, end, end2;
+   Eina_Bool first = EINA_FALSE;
+   double t0 = 0.0, dt;
 
-   for (i = 1; i < count; i++)
+   start = e_comp->frame_event_now - 1 + E_COMP_FRAME_EVENT_COUNT;
+   end = e_comp->frame_event_now + E_COMP_FRAME_EVENT_COUNT ;
+   end2 = e_comp->frame_event_now + E_COMP_FRAME_EVENT_COUNT + 1;
+   for (i = start;;)
      {
-        dt = t0 - frametimes[i];
-        if ((dt > 0.5) || (i >= (count - 1)))
+        iind = i % E_COMP_FRAME_EVENT_COUNT;
+        i--;
+        if (iind == (end % E_COMP_FRAME_EVENT_COUNT)) break;
+        if (e_comp->frame_events[iind].info[0] != info) continue;
+        count++;
+        if (!first)
           {
-             if (dt > 0.0) return ((double)i) / dt;
+             t0 =  e_comp->frame_events[iind].t;
+             first = EINA_TRUE;
+          }
+        else
+          {
+             dt = t0 - e_comp->frame_events[iind].t;
+             if ((dt > 0.5) || (iind == (end2 % E_COMP_FRAME_EVENT_COUNT)))
+               {
+                  if (dt > 0.0) return ((double)(count - 1)) / dt;
+               }
           }
      }
    return 0.0;
 }
 
 E_API void
+e_comp_frame_event_add(int info[4], double t)
+{
+   e_comp->frame_events[e_comp->frame_event_now].info[0] = info[0];
+   e_comp->frame_events[e_comp->frame_event_now].info[1] = info[1];
+   e_comp->frame_events[e_comp->frame_event_now].info[2] = info[2];
+   e_comp->frame_events[e_comp->frame_event_now].info[3] = info[3];
+   e_comp->frame_events[e_comp->frame_event_now].t = t;
+   e_comp->frame_event_now++;
+   if (e_comp->frame_event_now >= E_COMP_FRAME_EVENT_COUNT)
+     e_comp->frame_event_now = 0;
+}
+
+E_API void
 e_comp_client_frame_add(Evas_Object *obj EINA_UNUSED)
 {
-   int i;
+   int info[4] = { 0, 0, 0, 0 };
    double t = ecore_time_get();
 
-   for (i = 121; i >= 1; i--)
-     e_comp->client_frametimes[i] = e_comp->client_frametimes[i - 1];
-   e_comp->client_frametimes[0] = t;
+   info[0] = E_COMP_FRAME_EVENT_CLIENT_DAMAGE;
+   e_comp_frame_event_add(info, t);
 }
+
+static inline void
+_e_comp_fps_draw_point(unsigned int *pix, int stride, int w, int y, int col, int x)
+{
+   unsigned int *pixrow = pix + (y * (stride / 4));
+   // out of bounds abort draw
+   if (x <  0) return;
+   if (x >= w) return;
+   pixrow[x] = col;
+}
+
+/* for future
+static inline void
+_e_comp_fps_draw_span(unsigned int *pix, int stride, int w, int y, int col, int x1, int x2)
+{
+   unsigned int *pixrow = pix + (y * (stride / 4));
+   int x;
+
+   if (x2 < x1) // swap so x2 >= x1
+     {
+        x = x2;
+        x2 = x1;
+        x1 = x;
+     }
+   // out of bounds abort draw
+   if (x2 < 0) return;
+   if (x1 >= w) return;
+   // clip to span area
+   if (x1 < 0) x1 = 0;
+   if (x2 >= w) x2 = w - 1;
+   for (x = x1; x <= x2; x++)
+     pixrow[x] = col;
+}
+*/
 
 E_API void
 e_comp_fps_update(void)
@@ -418,17 +481,20 @@ e_comp_fps_update(void)
    E_Zone *z;
 
    e_comp->frameskip++;
-   if (e_comp->frameskip >= 15)
+   if (e_comp->frameskip >= 20)
      {
-        unsigned int *pix, *pixrow;
-        int pixw, pixh, pixstride, i, px, pixscale;
+        unsigned int *pix;
+        int i, pixw, pixh, pixsz, pixstride, px, pixscale, info0, start, end, iind;
         double t;
 
         t = ecore_time_get();
         e_comp->frameskip = 0;
 
-        fps = _e_comp_fps_calc(e_comp->frametimes, 122);
-        comp_fps = _e_comp_fps_calc(e_comp->comp_frametimes, 122);
+        pixh = 8;
+        pixsz = 2;
+
+        fps = _e_comp_frame_event_fps_calc(E_COMP_FRAME_EVENT_HANDLE_DAMAGE);
+        comp_fps = _e_comp_frame_event_fps_calc(E_COMP_FRAME_EVENT_RENDER_END);
 
         snprintf(buf, sizeof(buf), "FPS: (in) %1.1f (out) %1.1f", fps, comp_fps);
         evas_object_text_text_set(e_comp->canvas->fps_fg, buf);
@@ -446,40 +512,40 @@ e_comp_fps_update(void)
                   y = z->y + z->h - h;
 
                   gw = 500;
-                  gh = 3 * 5;
+                  gh = pixh * pixsz;
                   gx = x + w - gw;
                   gy = y - gh - 8;
 
                   bw = (gw > bw) ? gw : bw;
-                  bh = h + gh + 8;
+                  bh = h + gh + 16;
                   bx = (x > gx) ? gx: x;
-                  by = gy;
+                  by = gy - 8;
                   break;
                 case 2: // bottom-left
                   x = z->x;
                   y = z->y + z->h - h;
 
                   gw = 500;
-                  gh = 3 * 5;
+                  gh = pixh * pixsz;
                   gx = x;
                   gy = y - gh - 8;
 
                   bw = (gw > bw) ? gw : bw;
-                  bh = h + gh + 8;
+                  bh = h + gh + 16;
                   bx = x;
-                  by = gy;
+                  by = gy - 8;
                   break;
                 case 1: // top-right
                   x = z->x + z->w - w;
                   y = z->y;
 
                   gw = 500;
-                  gh = 3 * 5;
+                  gh = pixh * pixsz;
                   gx = x + w - gw;
                   gy = y + h;
 
                   bw = (gw > bw) ? gw : bw;
-                  bh = h + gh + 8;
+                  bh = h + gh + 16;
                   bx = (x > gx) ? gx: x;
                   by = y;
                   break;
@@ -489,12 +555,12 @@ e_comp_fps_update(void)
                   y = z->y;
 
                   gw = 500;
-                  gh = 3 * 5;
+                  gh = pixh * pixsz;
                   gx = x;
                   gy = y + h;
 
                   bw = (gw > bw) ? gw : bw;
-                  bh = h + gh + 8;
+                  bh = h + gh + 16;
                   bx = x;
                   by = y;
                   break;
@@ -502,7 +568,6 @@ e_comp_fps_update(void)
           }
         pixscale = 1000;
         pixw = 500;
-        pixh = 3;
         evas_object_image_size_set(e_comp->canvas->fps_gr, pixw, pixh);
         evas_object_image_alpha_set(e_comp->canvas->fps_gr, EINA_TRUE);
         pixstride = evas_object_image_stride_get(e_comp->canvas->fps_gr);
@@ -510,29 +575,35 @@ e_comp_fps_update(void)
 
         memset(pix, 0, pixstride * pixh);
 
-        // comp render done...
-        pixrow = pix + (0 * (pixstride / 4));
-        for (i = 0; i < 122; i++)
+        // go backwards from newest to oldest
+        start = e_comp->frame_event_now + E_COMP_FRAME_EVENT_COUNT - 1;
+        end = e_comp->frame_event_now + E_COMP_FRAME_EVENT_COUNT ;
+        for (i = start;;)
           {
-             px = (t - e_comp->comp_frametimes[i]) * pixscale;
-             if (px >= pixw) break;
-             pixrow[pixw - 1 - px] = 0xffff5533;
-          }
-        // client update jobs done...
-        pixrow = pix + (1 * (pixstride / 4));
-        for (i = 0; i < 122; i++)
-          {
-             px = (t - e_comp->frametimes[i]) * pixscale;
-             if (px >= pixw) break;
-             pixrow[pixw - 1 - px] = 0xff55ff33;
-          }
-        // client updates
-        pixrow = pix + (2 * (pixstride / 4));
-        for (i = 0; i < 122; i++)
-          {
-             px = (t - e_comp->client_frametimes[i]) * pixscale;
-             if (px >= pixw) break;
-             pixrow[pixw - 1 - px] = 0xff3355ff;
+             iind = i % E_COMP_FRAME_EVENT_COUNT;
+             i--;
+             if (iind == (end % E_COMP_FRAME_EVENT_COUNT)) break;
+
+             info0 = e_comp->frame_events[iind].info[0];
+             px = (t - e_comp->frame_events[iind].t) * pixscale;
+             px = pixw - px - 1;
+             if (px < 0) break;
+             if (info0 == E_COMP_FRAME_EVENT_RENDER2_END)
+               _e_comp_fps_draw_point(pix, pixstride, pixw, 0, 0xffffffff, px);
+             else if (info0 == E_COMP_FRAME_EVENT_RENDER2_BEGIN)
+               _e_comp_fps_draw_point(pix, pixstride, pixw, 1, 0xffffee88, px);
+             else if (info0 == E_COMP_FRAME_EVENT_RENDER_END)
+               _e_comp_fps_draw_point(pix, pixstride, pixw, 2, 0xffff9944, px);
+             else if (info0 == E_COMP_FRAME_EVENT_RENDER_BEGIN)
+               _e_comp_fps_draw_point(pix, pixstride, pixw, 3, 0xffff4433, px);
+             else if (info0 == E_COMP_FRAME_EVENT_IDLE_ENTER)
+               _e_comp_fps_draw_point(pix, pixstride, pixw, 4, 0xff994499, px);
+             else if (info0 == E_COMP_FRAME_EVENT_IDLE_EXIT)
+               _e_comp_fps_draw_point(pix, pixstride, pixw, 5, 0xffff88ff, px);
+             else if (info0 == E_COMP_FRAME_EVENT_HANDLE_DAMAGE)
+               _e_comp_fps_draw_point(pix, pixstride, pixw, 6, 0xff44ff22, px);
+             else if (info0 == E_COMP_FRAME_EVENT_CLIENT_DAMAGE)
+               _e_comp_fps_draw_point(pix, pixstride, pixw, 7, 0xff4466ff, px);
           }
 
         evas_object_image_data_set(e_comp->canvas->fps_gr, pix);
@@ -573,12 +644,11 @@ _e_comp_cb_update(void)
    _e_comp_fps_update();
    if (conf->fps_show)
      {
-        int i;
         double t = ecore_loop_time_get();
+        int info[4] = { 0, 0, 0, 0 };
 
-        for (i = 121; i >= 1; i--)
-          e_comp->frametimes[i] = e_comp->frametimes[i - 1];
-        e_comp->frametimes[0] = t;
+        info[0] = E_COMP_FRAME_EVENT_HANDLE_DAMAGE;
+        e_comp_frame_event_add(info, t);
         e_comp_fps_update();
      }
    /*

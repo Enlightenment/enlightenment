@@ -70,16 +70,47 @@ _e_comp_canvas_render_post_job(void *data EINA_UNUSED)
 }
 
 static void
+_e_comp_canvas_render_track_pre(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   int info[4] = { 0, 0, 0, 0 };
+
+   info[0] = E_COMP_FRAME_EVENT_RENDER_BEGIN;
+   e_comp_frame_event_add(info, ecore_time_get());
+}
+
+static void
+_e_comp_canvas_render_track_post(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   int info[4] = { 0, 0, 0, 0 };
+
+   info[0] = E_COMP_FRAME_EVENT_RENDER_END;
+   e_comp_frame_event_add(info, ecore_time_get());
+}
+
+static void
+_e_comp_canvas_render_track_flush_pre(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   int info[4] = { 0, 0, 0, 0 };
+
+   info[0] = E_COMP_FRAME_EVENT_RENDER2_BEGIN;
+   e_comp_frame_event_add(info, ecore_time_get());
+}
+
+static void
+_e_comp_canvas_render_track_flush_post(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   int info[4] = { 0, 0, 0, 0 };
+
+   info[0] = E_COMP_FRAME_EVENT_RENDER2_END;
+   e_comp_frame_event_add(info, ecore_time_get());
+}
+
+static void
 _e_comp_canvas_render_post(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Comp_Config *conf = e_comp_config_get();
-   double t = ecore_time_get();
-   int i;
 
    // NOTE: don't modify objects here as we may lose updates - defer...
-   for (i = 121; i >= 1; i--)
-     e_comp->comp_frametimes[i] = e_comp->comp_frametimes[i - 1];
-   e_comp->comp_frametimes[0] = t;
    if (conf->fps_show)
      {
         if (_e_comp_update_job) ecore_job_del(_e_comp_update_job);
@@ -425,9 +456,14 @@ _e_comp_canvas_cb_zone_sort(const void *data1, const void *data2)
 static void
 _e_comp_canvas_prerender(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
 {
+   int info[4] = { 0, 0, 0, 0 };
+   double t = ecore_time_get();
    E_Comp_Cb cb;
    Eina_List *l;
    E_Comp_Config *conf = e_comp_config_get();
+
+   info[0] = E_COMP_FRAME_EVENT_RENDER_BEGIN;
+   e_comp_frame_event_add(info, t);
 
    e_comp->rendering = EINA_TRUE;
 
@@ -439,6 +475,24 @@ _e_comp_canvas_prerender(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *even
 
    EINA_LIST_FOREACH(e_comp->pre_render_cbs, l, cb)
      cb();
+}
+
+static Eina_Bool
+_e_comp_canvas_cb_idle_enterer(void *data EINA_UNUSED)
+{
+   int info[4] = { 0, 0, 0, 0 };
+   info[0] = E_COMP_FRAME_EVENT_IDLE_ENTER;
+   e_comp_frame_event_add(info, ecore_time_get());
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_e_comp_canvas_cb_idle_exiter(void *data EINA_UNUSED)
+{
+   int info[4] = { 0, 0, 0, 0 };
+   info[0] = E_COMP_FRAME_EVENT_IDLE_EXIT;
+   e_comp_frame_event_add(info, ecore_time_get());
+   return EINA_TRUE;
 }
 
 E_API Eina_Bool
@@ -464,6 +518,17 @@ e_comp_canvas_init(int w, int h)
 
    e_comp->evas = ecore_evas_get(e_comp->ee);
 
+   static int inited = 0;
+   if (!inited)
+     {
+        inited = 1;
+        ecore_idle_enterer_add(_e_comp_canvas_cb_idle_enterer, NULL);
+        ecore_idle_exiter_add(_e_comp_canvas_cb_idle_exiter, NULL);
+     }
+   evas_event_callback_add(e_comp->evas, EVAS_CALLBACK_RENDER_PRE, _e_comp_canvas_render_track_pre, NULL);
+   evas_event_callback_add(e_comp->evas, EVAS_CALLBACK_RENDER_POST, _e_comp_canvas_render_track_post, NULL);
+   evas_event_callback_add(e_comp->evas, EVAS_CALLBACK_RENDER_FLUSH_PRE, _e_comp_canvas_render_track_flush_pre, NULL);
+   evas_event_callback_add(e_comp->evas, EVAS_CALLBACK_RENDER_FLUSH_POST, _e_comp_canvas_render_track_flush_post, NULL);
    if (e_first_frame)
      evas_event_callback_add(e_comp->evas, EVAS_CALLBACK_RENDER_POST, _e_comp_canvas_cb_first_frame, NULL);
    o = evas_object_rectangle_add(e_comp->evas);

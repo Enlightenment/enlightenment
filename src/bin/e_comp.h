@@ -91,6 +91,23 @@ typedef struct E_Comp_Canvas
    Evas_Object *gadget_site; //desktop gadget site
 } E_Comp_Canvas;
 
+#define E_COMP_FRAME_EVENT_COUNT 1024
+
+#define E_COMP_FRAME_EVENT_RENDER_BEGIN   1
+#define E_COMP_FRAME_EVENT_RENDER_END     2
+#define E_COMP_FRAME_EVENT_RENDER2_BEGIN  3
+#define E_COMP_FRAME_EVENT_RENDER2_END    4
+#define E_COMP_FRAME_EVENT_CLIENT_DAMAGE  5
+#define E_COMP_FRAME_EVENT_HANDLE_DAMAGE  6
+#define E_COMP_FRAME_EVENT_IDLE_EXIT      7
+#define E_COMP_FRAME_EVENT_IDLE_ENTER     8
+
+typedef struct E_Comp_Frame_Event
+{
+   int info[4];
+   double t;
+} E_Comp_Event;
+
 struct _E_Comp
 {
    E_Object e_obj_inherit;
@@ -146,9 +163,8 @@ struct _E_Comp
    Ecore_Timer    *nocomp_delay_timer; //delay before activating nocomp in x11
    Ecore_Timer    *nocomp_override_timer; //delay before overriding nocomp in x11
    int             animating; //number of animating comp objects
-   double          frametimes[122]; //used for calculating fps
-   double          comp_frametimes[122]; //used for calculating fps
-   double          client_frametimes[122]; //used for calculating fps
+   E_Comp_Event    frame_events[E_COMP_FRAME_EVENT_COUNT]; // history of frame events for debug
+   int             frame_event_now;
    int             frameskip;
 
    int             nocomp_override; //number of times nocomp override has been requested
@@ -225,6 +241,7 @@ E_API Eina_Bool e_comp_grab_input(Eina_Bool mouse, Eina_Bool kbd);
 E_API void e_comp_ungrab_input(Eina_Bool mouse, Eina_Bool kbd);
 E_API void e_comp_gl_set(Eina_Bool set);
 E_API Eina_Bool e_comp_gl_get(void);
+E_API void e_comp_frame_event_add(int info[4], double t);
 E_API void e_comp_client_frame_add(Evas_Object *obj);
 
 E_API void e_comp_button_bindings_grab_all(void);
