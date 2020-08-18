@@ -20,8 +20,10 @@ struct _Config_Item
    const char *id;
    int show_all;
    int minw, minh;
+   int preview_size;
    Eina_Bool icon_only;
    Eina_Bool text_only;
+   Eina_Bool preview;
 };
 
 E_API extern E_Module_Api e_modapi;

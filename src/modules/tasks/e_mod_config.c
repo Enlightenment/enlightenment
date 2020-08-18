@@ -8,6 +8,8 @@ struct _E_Config_Dialog_Data
    int minw, minh;
    int icon_only;
    int text_only;
+   int preview;
+   int preview_size;
 };
 
 /* Protos */
@@ -44,6 +46,8 @@ _fill_data(Config_Item *ci, E_Config_Dialog_Data *cfdata)
    cfdata->minh = ci->minh;
    cfdata->icon_only = ci->icon_only;
    cfdata->text_only = ci->text_only;
+   cfdata->preview = ci->preview;
+   cfdata->preview_size = ci->preview_size;
 }
 
 static void *
@@ -106,6 +110,20 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    _toggle_check(cfdata, NULL);
 
    e_widget_list_object_append(o, of, 1, 1, 0.5);
+
+   e_widget_framelist_object_append(of, ob);
+   of = e_widget_framelist_add(evas, _("Preview"), 0);
+   cfdata->icon = ob = e_widget_check_add(evas, _("Show"),
+                           &(cfdata->preview));
+   e_widget_framelist_object_append(of, ob);
+   ow = e_widget_label_add(evas, _("Preview Size"));
+   e_widget_framelist_object_append(of, ow);
+   ow = e_widget_slider_add(evas, 1, 0, _("%1.0f px"), 20, 420, 1, 0,
+                            NULL, &(cfdata->preview_size), 100);
+   e_widget_framelist_object_append(of, ow);
+   _toggle_check(cfdata, NULL);
+
+   e_widget_list_object_append(o, of, 1, 1, 0.5);
    return o;
 }
 
@@ -120,6 +138,8 @@ _basic_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
    ci->minh = cfdata->minh;
    ci->icon_only = cfdata->icon_only;
    ci->text_only = cfdata->text_only;
+   ci->preview = cfdata->preview;
+   ci->preview_size = cfdata->preview_size;
    e_config_save_queue();
    _tasks_config_updated(ci);
    return 1;

@@ -47,6 +47,8 @@ struct _Tasks_Item
    E_Client    *client; // The client this item points to
    Evas_Object *o_item; // The edje theme object
    Evas_Object *o_icon; // The icon
+   Evas_Object *o_preview; // The preview
+   Ecore_Timer *timer; // The preview timer
    Eina_Bool skip_taskbar E_BITFIELD;
    Eina_Bool focused E_BITFIELD;
    Eina_Bool urgent E_BITFIELD;
@@ -69,6 +71,8 @@ static void         _tasks_item_refill(Tasks_Item *item);
 static void         _tasks_item_fill(Tasks_Item *item);
 static void         _tasks_item_free(Tasks_Item *item);
 static void         _tasks_item_signal_emit(Tasks_Item *item, char *sig, char *src);
+static void         _tasks_item_preview_add(Tasks_Item *item);
+static void         _tasks_item_preview_del(Tasks_Item *item);
 
 static Config_Item *_tasks_config_item_get(const char *id);
 
@@ -76,6 +80,8 @@ static void         _tasks_cb_menu_configure(void *data, E_Menu *m, E_Menu_Item 
 static void         _tasks_cb_item_mouse_down(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void         _tasks_cb_item_mouse_up(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void         _tasks_cb_item_mouse_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info);
+static void         _tasks_cb_item_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info);
+static void         _tasks_cb_item_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info);
 
 static Eina_Bool    _tasks_cb_event_client_add(void *data, int type, void *event);
 static Eina_Bool    _tasks_cb_event_client_remove(void *data, int type, void *event);
@@ -87,6 +93,7 @@ static Eina_Bool    _tasks_cb_event_client_desk_set(void *data, int type, E_Even
 static Eina_Bool    _tasks_cb_window_focus_in(void *data, int type, void *event);
 static Eina_Bool    _tasks_cb_window_focus_out(void *data, int type, void *event);
 static Eina_Bool    _tasks_cb_event_desk_show(void *data, int type, void *event);
+static Eina_Bool    _tasks_cb_timer_del(void *data);
 
 static E_Config_DD *conf_edd = NULL;
 static E_Config_DD *conf_item_edd = NULL;
@@ -115,8 +122,10 @@ e_modapi_init(E_Module *m)
    E_CONFIG_VAL(D, T, show_all, INT);
    E_CONFIG_VAL(D, T, minw, INT);
    E_CONFIG_VAL(D, T, minh, INT);
+   E_CONFIG_VAL(D, T, preview_size, INT);
    E_CONFIG_VAL(D, T, icon_only, UCHAR);
    E_CONFIG_VAL(D, T, text_only, UCHAR);
+   E_CONFIG_VAL(D, T, preview, UCHAR);
 
    conf_edd = E_CONFIG_DD_NEW("Tasks_Config", Config);
 
@@ -138,6 +147,8 @@ e_modapi_init(E_Module *m)
         config->show_all = 0;
         config->minw = 100;
         config->minh = 32;
+        config->preview = 0;
+        config->preview_size = 32;
         tasks_config->items = eina_list_append(tasks_config->items, config);
      }
 
@@ -569,6 +580,10 @@ _tasks_item_new(Tasks *tasks, E_Client *ec)
                                   _tasks_cb_item_mouse_up, item);
    evas_object_event_callback_add(item->o_item, EVAS_CALLBACK_MOUSE_WHEEL,
                                   _tasks_cb_item_mouse_wheel, item);
+   evas_object_event_callback_add(item->o_item, EVAS_CALLBACK_MOUSE_IN,
+                                  _tasks_cb_item_mouse_in, item);
+   evas_object_event_callback_add(item->o_item, EVAS_CALLBACK_MOUSE_OUT,
+                                  _tasks_cb_item_mouse_out, item);
    evas_object_show(item->o_item);
 
    _tasks_item_fill(item);
@@ -615,12 +630,19 @@ _tasks_item_remove(Tasks_Item *item)
 }
 
 static void
+_tasks_item_preview_del(Tasks_Item *item)
+{
+   _tasks_cb_timer_del(item);
+}
+
+static void
 _tasks_item_free(Tasks_Item *item)
 {
    if (item->o_icon) evas_object_del(item->o_icon);
    if (e_object_is_del(E_OBJECT(item->client)))
      item->tasks->clients = eina_list_remove(item->tasks->clients, item->client);
    e_object_unref(E_OBJECT(item->client));
+   _tasks_item_preview_del(item);
    evas_object_del(item->o_item);
    free(item);
 }
@@ -792,6 +814,9 @@ _tasks_cb_item_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
 
    item = (Tasks_Item *)data;
    ev = event_info;
+
+   _tasks_item_preview_del(item);
+
    if (ev->button == 3)
      {
         E_Menu *m;
@@ -831,6 +856,136 @@ _tasks_cb_item_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
      }
 }
 
+static Eina_Bool
+_tasks_cb_timer_del(void *data)
+{
+   Tasks_Item *item = data;
+
+   evas_object_del(item->o_preview);
+   if (item->timer)
+     ecore_timer_del(item->timer);
+   item->timer = item->o_preview = NULL;
+
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static void
+_tasks_item_preview_add(Tasks_Item *item)
+{
+   Evas_Object *o, *ot, *or, *img;
+   Evas_Coord ox, oy, ow, oh, size;
+   double n;
+
+   if (item->o_preview) _tasks_cb_timer_del(item);
+
+   evas_object_geometry_get(item->o_item, &ox, &oy, &ow, &oh);
+
+   item->o_preview = o = elm_ctxpopup_add(e_comp->elm);
+   elm_object_style_set(o, "noblock");
+   evas_object_layer_set(o, E_LAYER_POPUP);
+
+   ot = elm_table_add(o);
+   evas_object_size_hint_align_set(ot, 0, 0);
+   elm_object_content_set(o, ot);
+   evas_object_show(ot);
+
+   img = e_comp_object_util_mirror_add(item->client->frame);
+   evas_object_size_hint_aspect_set(img, EVAS_ASPECT_CONTROL_BOTH, item->client->w, item->client->h);
+   evas_object_show(img);
+
+   size = item->tasks->config->preview_size;
+   if (item->client->w > item->client->h)
+     {
+        n = size * (1.0 / item->client->w);
+        evas_object_size_hint_min_set(img, size, n * item->client->h);
+        evas_object_size_hint_max_set(img, size, n * item->client->h);
+     }
+   else
+     {
+        n = size * (1.0 / item->client->h);
+        evas_object_size_hint_min_set(img, n * item->client->w, size);
+        evas_object_size_hint_max_set(img, n * item->client->w, size);
+     }
+
+   or = evas_object_rectangle_add(evas_object_evas_get(o));
+   evas_object_size_hint_min_set(or, size + 10, size + 10);
+   evas_object_color_set(or, 47, 153, 255, 255);
+   evas_object_show(or);
+   elm_table_pack(ot, or, 0, 0, 1, 1);
+   elm_table_pack(ot, img, 0, 0, 1, 1);
+
+   switch (item->tasks->gcc->gadcon->orient)
+     {
+        case E_GADCON_ORIENT_BOTTOM:
+        case E_GADCON_ORIENT_CORNER_BR:
+        case E_GADCON_ORIENT_CORNER_BL:
+          evas_object_move(o, ox + (ow / 2), oy);
+          elm_ctxpopup_direction_priority_set(o, ELM_CTXPOPUP_DIRECTION_UP, ELM_CTXPOPUP_DIRECTION_DOWN,
+                                              ELM_CTXPOPUP_DIRECTION_LEFT, ELM_CTXPOPUP_DIRECTION_RIGHT);
+          break;
+        case E_GADCON_ORIENT_TOP:
+        case E_GADCON_ORIENT_CORNER_TL:
+        case E_GADCON_ORIENT_CORNER_TR:
+          evas_object_move(o, ox + (ow / 2), oy + oh);
+          elm_ctxpopup_direction_priority_set(o, ELM_CTXPOPUP_DIRECTION_DOWN, ELM_CTXPOPUP_DIRECTION_UP,
+                                              ELM_CTXPOPUP_DIRECTION_LEFT, ELM_CTXPOPUP_DIRECTION_RIGHT);
+          break;
+        case E_GADCON_ORIENT_LEFT:
+        case E_GADCON_ORIENT_CORNER_LB:
+        case E_GADCON_ORIENT_CORNER_LT:
+          evas_object_move(o, ox + ow, oy + (oh / 2));
+          elm_ctxpopup_direction_priority_set(o, ELM_CTXPOPUP_DIRECTION_RIGHT, ELM_CTXPOPUP_DIRECTION_DOWN,
+                                              ELM_CTXPOPUP_DIRECTION_LEFT, ELM_CTXPOPUP_DIRECTION_UP);
+          break;
+        case E_GADCON_ORIENT_RIGHT:
+        case E_GADCON_ORIENT_CORNER_RB:
+        case E_GADCON_ORIENT_CORNER_RT:
+          evas_object_move(o, ox, oy + (oh / 2));
+          elm_ctxpopup_direction_priority_set(o, ELM_CTXPOPUP_DIRECTION_LEFT, ELM_CTXPOPUP_DIRECTION_DOWN,
+                                              ELM_CTXPOPUP_DIRECTION_RIGHT, ELM_CTXPOPUP_DIRECTION_UP);
+          break;
+        default:
+          break;
+     }
+   evas_object_show(o);
+}
+
+static void
+_tasks_cb_item_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Tasks_Item *item;
+   E_Client *ec;
+
+   item = data;
+
+   if (!item->tasks->config->preview) return;
+
+   ec = e_client_focused_get();
+
+   _tasks_item_preview_add(item);
+
+   if (ec)
+     evas_object_focus_set(ec->frame, 1);
+}
+
+static void
+_tasks_cb_item_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Tasks_Item *item;
+   E_Client *ec = e_client_focused_get();
+
+   item = data;
+
+   if (item->o_preview)
+     {
+       elm_ctxpopup_dismiss(item->o_preview);
+       item->timer = ecore_timer_add(1.0, _tasks_cb_timer_del, item);
+     }
+
+  if (ec)
+    evas_object_focus_set(ec->frame, 1);
+}
+
 static void
 _tasks_cb_item_mouse_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
@@ -860,6 +1015,9 @@ _tasks_cb_item_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
 
    ev = event_info;
    item = data;
+
+   _tasks_item_preview_del(item);
+
    if (ev->button == 1)
      {
         if (!item->client->sticky && item->tasks->config->show_all)
