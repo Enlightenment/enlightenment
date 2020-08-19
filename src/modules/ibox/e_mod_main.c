@@ -832,8 +832,9 @@ _ibox_cb_icon_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
                o = e_client_icon_add(ic->client, e_drag_evas_get(d));
              else
                {
-                  o = e_comp_object_util_mirror_add(ic->client->frame);
-                  evas_object_size_hint_aspect_set(o, EVAS_ASPECT_CONTROL_BOTH, ic->client->w, ic->client->h);
+                  E_Client *ec = ic->client;
+                  o = e_comp_object_util_mirror_add(ec->frame);
+                  evas_object_size_hint_aspect_set(o, EVAS_ASPECT_CONTROL_BOTH, ec->client.w, ec->client.h);
                   evas_object_size_hint_max_set(o, w, h);
                }
              e_drag_object_set(d, o);

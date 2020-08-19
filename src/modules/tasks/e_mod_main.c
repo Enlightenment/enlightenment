@@ -872,6 +872,7 @@ _tasks_cb_timer_del(void *data)
 static void
 _tasks_item_preview_add(Tasks_Item *item)
 {
+   E_Client *ec;
    Evas_Object *o, *ot, *or, *img;
    Evas_Coord ox, oy, ow, oh, size;
    double n;
@@ -889,26 +890,27 @@ _tasks_item_preview_add(Tasks_Item *item)
    elm_object_content_set(o, ot);
    evas_object_show(ot);
 
-   img = e_comp_object_util_mirror_add(item->client->frame);
-   evas_object_size_hint_aspect_set(img, EVAS_ASPECT_CONTROL_BOTH, item->client->w, item->client->h);
+   ec = item->client;
+   img = e_comp_object_util_mirror_add(ec->frame);
+   evas_object_size_hint_aspect_set(img, EVAS_ASPECT_CONTROL_BOTH, ec->client.w, ec->client.h);
    evas_object_show(img);
 
    or = evas_object_rectangle_add(evas_object_evas_get(o));
 
    size = item->tasks->config->preview_size;
-   if (item->client->w > item->client->h)
+   if (ec->client.w > ec->client.h)
      {
-        n = size * (1.0 / item->client->w);
-        evas_object_size_hint_min_set(img, size, n * item->client->h);
-        evas_object_size_hint_max_set(img, size, n * item->client->h);
-        evas_object_size_hint_min_set(or,  size + 1, (n * item->client->h) + 1);
+        n = size * (1.0 / ec->client.w);
+        evas_object_size_hint_min_set(img, size, n * ec->client.h);
+        evas_object_size_hint_max_set(img, size, n * ec->client.h);
+        evas_object_size_hint_min_set(or,  size + 1, (n * ec->client.h) + 1);
      }
    else
      {
-        n = size * (1.0 / item->client->h);
-        evas_object_size_hint_min_set(img, n * item->client->w, size);
-        evas_object_size_hint_max_set(img, n * item->client->w, size);
-        evas_object_size_hint_min_set(or, (n * item->client->w) + 1, size + 1);
+        n = size * (1.0 / ec->client.h);
+        evas_object_size_hint_min_set(img, n * ec->client.w, size);
+        evas_object_size_hint_max_set(img, n * ec->client.w, size);
+        evas_object_size_hint_min_set(or, (n * ec->client.w) + 1, size + 1);
      }
 
    elm_table_pack(ot, or, 0, 0, 1, 1);
