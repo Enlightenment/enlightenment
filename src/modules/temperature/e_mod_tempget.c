@@ -8,11 +8,11 @@
 #endif
 
 #ifdef __OpenBSD__
-#include <sys/param.h>
-#include <sys/sysctl.h>
-#include <sys/sensors.h>
-#include <errno.h>
-#include <err.h>
+# include <sys/param.h>
+# include <sys/sysctl.h>
+# include <sys/sensors.h>
+# include <errno.h>
+# include <err.h>
 #endif
 
 typedef struct
@@ -163,11 +163,10 @@ init(Tempthread *tth)
              name = eina_list_data_get(therms);
              tth->sensor_type = SENSOR_TYPE_LINUX_ACPI;
              tth->sensor_name = eina_stringshare_add(name);
-             eina_list_free(therms);
+             EINA_LIST_FREE(therms, name) free(name);
           }
         else
           {
-             eina_list_free(therms);
              therms = ecore_file_ls("/sys/class/thermal");
              if (therms)
                {
@@ -185,9 +184,9 @@ init(Tempthread *tth)
                             break;
                          }
                     }
-                  if (therms) eina_list_free(therms);
+                  EINA_LIST_FREE(therms, name) free(name);
                }
-             if (therms)
+             else
                {
                   if (ecore_file_exists("/proc/omnibook/temperature"))
                     {
@@ -237,7 +236,7 @@ init(Tempthread *tth)
                                       tth->sensor_name = eina_stringshare_add(path);
                                    }
                               }
-                            eina_list_free(therms);
+                            EINA_LIST_FREE(therms, name) free(name);
                          }
                        if (!tth->sensor_path)
                          {
@@ -263,7 +262,7 @@ init(Tempthread *tth)
                                            tth->sensor_name = eina_stringshare_add(path);
                                         }
                                    }
-                                 eina_list_free(therms);
+                                 EINA_LIST_FREE(therms, name) free(name);
                               }
                          }
                     }

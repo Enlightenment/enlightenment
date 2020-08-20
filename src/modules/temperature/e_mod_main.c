@@ -123,7 +123,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
         inst->poll_interval = 128;
         inst->low = 30;
         inst->high = 80;
-        inst->sensor_type = SENSOR_TYPE_NONE;
+        inst->sensor_type = SENSOR_TYPE_LINUX_SYS;
         inst->sensor_name = NULL;
         inst->temp = -900;
         inst->units = CELSIUS;
@@ -207,7 +207,7 @@ _gc_id_new(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
    inst->poll_interval = 128;
    inst->low = 30;
    inst->high = 80;
-   inst->sensor_type = SENSOR_TYPE_NONE;
+   inst->sensor_type = SENSOR_TYPE_LINUX_SYS;
    inst->sensor_name = NULL;
    inst->units = CELSIUS;
    if (!temperature_config->faces)
@@ -271,16 +271,22 @@ _temperature_face_shutdown(const Eina_Hash *hash EINA_UNUSED, const void *key EI
 }
 
 static Eina_Bool
-_temperature_face_id_max(const Eina_Hash *hash EINA_UNUSED, const void *key, void *hdata EINA_UNUSED, void *fdata)
+_temperature_face_id_max(const Eina_Hash *hash EINA_UNUSED, const void *key, void *hdata, void *fdata)
 {
    const char *p;
    int *max;
    int num = -1;
+   Config_Face *cf = hdata;
 
    max = fdata;
    p = strrchr(key, '.');
    if (p) num = atoi(p + 1);
    if (num > *max) *max = num;
+#if defined (__FreeBSD__) || defined(__DragonFly__) || defined (__OpenBSD__)
+   cf->sensor_type = SENSOR_TYPE_FREEBSD;
+#else
+   cf->sensor_type = SENSOR_TYPE_LINUX_SYS;
+#endif
    return EINA_TRUE;
 }
 

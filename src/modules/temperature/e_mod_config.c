@@ -145,9 +145,12 @@ _fill_data_tempget(E_Config_Dialog_Data *cfdata)
                   EINA_LIST_FREE(l, name)
                     {
                        cfdata->sensors =
-                       eina_list_append(cfdata->sensors, name);
-                       if (!strcmp(cfdata->inst->sensor_name, name))
-                       cfdata->sensor = n;
+                         eina_list_append(cfdata->sensors, name);
+                       if (cfdata->inst->sensor_name)
+                         {
+                            if (!strcmp(cfdata->inst->sensor_name, name))
+                              cfdata->sensor = n;
+                         }
                        n++;
                     }
                }
@@ -167,9 +170,12 @@ _fill_data_tempget(E_Config_Dialog_Data *cfdata)
                        if (!strncmp(name, "thermal", 7))
                          {
                             cfdata->sensors =
-                            eina_list_append(cfdata->sensors, name);
-                            if (!strcmp(cfdata->inst->sensor_name, name))
-                            cfdata->sensor = n;
+                              eina_list_append(cfdata->sensors, name);
+                            if (cfdata->inst->sensor_name)
+                              {
+                                 if (!strcmp(cfdata->inst->sensor_name, name))
+                                   cfdata->sensor = n;
+                              }
                             n++;
                          }
                     }
@@ -209,7 +215,10 @@ _fill_sensors(E_Config_Dialog_Data *cfdata, const char *name)
      }
    EINA_LIST_FOREACH(cfdata->sensors, l, n)
      {
-        if (!strcmp(cfdata->inst->sensor_name, n)) break;
+        if (cfdata->inst->sensor_name)
+          {
+             if (!strcmp(cfdata->inst->sensor_name, n)) break;
+          }
         cfdata->sensor++;
      }
 }
