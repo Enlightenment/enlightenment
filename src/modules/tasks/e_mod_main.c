@@ -947,6 +947,9 @@ _tasks_item_preview_add(Tasks_Item *item)
                                               ELM_CTXPOPUP_DIRECTION_RIGHT, ELM_CTXPOPUP_DIRECTION_UP);
           break;
         default:
+          evas_object_move(o, ox + (ow / 2), oy);
+          elm_ctxpopup_direction_priority_set(o, ELM_CTXPOPUP_DIRECTION_UP, ELM_CTXPOPUP_DIRECTION_DOWN,
+                                              ELM_CTXPOPUP_DIRECTION_LEFT, ELM_CTXPOPUP_DIRECTION_RIGHT);
           break;
      }
    evas_object_show(o);
