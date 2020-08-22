@@ -48,7 +48,6 @@ e_bindings_init(void)
    E_Config_Binding_Edge *ebe;
    E_Config_Binding_Key *ebk;
    E_Config_Binding_Acpi *eba;
-   E_Config_Binding_Acpi *ebsw;
    Eina_List *l;
 
    EINA_LIST_FOREACH(e_bindings->mouse_bindings, l, ebm)
