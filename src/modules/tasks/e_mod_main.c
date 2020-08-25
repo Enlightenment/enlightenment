@@ -82,6 +82,7 @@ static void         _tasks_cb_item_mouse_up(void *data, Evas *e, Evas_Object *ob
 static void         _tasks_cb_item_mouse_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info);
 static void         _tasks_cb_item_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info);
 static void         _tasks_cb_item_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info);
+static void         _tasks_cb_item_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info);
 
 static Eina_Bool    _tasks_cb_event_client_add(void *data, int type, void *event);
 static Eina_Bool    _tasks_cb_event_client_remove(void *data, int type, void *event);
@@ -584,6 +585,8 @@ _tasks_item_new(Tasks *tasks, E_Client *ec)
                                   _tasks_cb_item_mouse_in, item);
    evas_object_event_callback_add(item->o_item, EVAS_CALLBACK_MOUSE_OUT,
                                   _tasks_cb_item_mouse_out, item);
+   evas_object_event_callback_add(item->o_item, EVAS_CALLBACK_DEL,
+                                  _tasks_cb_item_del, item);
    evas_object_show(item->o_item);
 
    _tasks_item_fill(item);
@@ -807,6 +810,14 @@ _tasks_cb_menu_configure(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA
 }
 
 static void
+_tasks_cb_item_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Tasks_Item *item = data;
+
+   _tasks_item_preview_del(item);
+}
+
+static void
 _tasks_cb_item_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Down *ev;
@@ -861,7 +872,8 @@ _tasks_cb_timer_del(void *data)
 {
    Tasks_Item *item = data;
 
-   evas_object_del(item->o_preview);
+   if (item->o_preview)
+     evas_object_del(item->o_preview);
    if (item->timer)
      ecore_timer_del(item->timer);
    item->timer = item->o_preview = NULL;
