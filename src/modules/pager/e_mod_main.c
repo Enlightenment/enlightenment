@@ -332,11 +332,29 @@ _pager_recalc(void *data)
    Pager_Desk *pd;
    Evas_Coord mw = 0, mh = 0;
    int w, h, zw, zh, w2, h2;
+   E_Gadcon_Orient orient;
+   Eina_Bool shelf = 1;
+
+   if (!p->inst || !p->inst->gcc || !p->inst->gcc->gadcon) return;
 
    p->recalc = NULL;
    zw = p->zone->w; zh = p->zone->h;
    pd = eina_list_data_get(p->desks);
    if (!pd) return;
+
+   orient = p->inst->gcc->gadcon->orient;
+   switch (orient)
+     {
+        case E_GADCON_ORIENT_FLOAT:
+        case E_GADCON_ORIENT_VERT:
+        case E_GADCON_ORIENT_HORIZ:
+          shelf = 0;
+          break;
+        default:
+          break;
+     }
+
+   if (!shelf) return;
 
    edje_object_size_min_calc(pd->o_desk, &mw, &mh);
    evas_object_geometry_get(pd->o_desk, NULL, NULL, &w, &h);
@@ -348,14 +366,12 @@ _pager_recalc(void *data)
      }
    w = w2; h = h2;
    w += mw; h += mh;
-   if ((p->inst) && (p->inst->gcc))
-     {
-        if (p->invert)
-          e_gadcon_client_aspect_set(p->inst->gcc, p->ynum * w, p->xnum * h);
-        else
-          e_gadcon_client_aspect_set(p->inst->gcc, p->xnum * w, p->ynum * h);
-        _aspect(p->inst->gcc);
-     }
+
+   if (p->invert)
+     e_gadcon_client_aspect_set(p->inst->gcc, p->ynum * w, p->xnum * h);
+   else
+     e_gadcon_client_aspect_set(p->inst->gcc, p->xnum * w, p->ynum * h);
+   _aspect(p->inst->gcc);
 }
 
 static void
