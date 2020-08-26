@@ -55,6 +55,7 @@ struct _Pager
    E_Client       *active_drag_client;
    Ecore_Job      *recalc;
    Eina_Bool       invert E_BITFIELD;
+   Eina_Bool       noshelf E_BITFIELD;
 };
 
 struct _Pager_Desk
@@ -270,7 +271,9 @@ _aspect(E_Gadcon_Client *gcc)
    double aspect_ratio;
 
    inst = gcc->data;
-   if (inst->pager->invert)
+   if (inst->pager->noshelf)
+     evas_object_geometry_get(inst->pager->o_table, NULL, NULL, &aspect_w, &aspect_h);
+   else if (inst->pager->invert)
      {
         aspect_w = inst->pager->ynum * inst->pager->zone->w;
         aspect_h = inst->pager->xnum * inst->pager->zone->h;
@@ -333,7 +336,6 @@ _pager_recalc(void *data)
    Evas_Coord mw = 0, mh = 0;
    int w, h, zw, zh, w2, h2;
    E_Gadcon_Orient orient;
-   Eina_Bool shelf = 1;
 
    if (!p->inst || !p->inst->gcc || !p->inst->gcc->gadcon) return;
 
@@ -348,13 +350,11 @@ _pager_recalc(void *data)
         case E_GADCON_ORIENT_FLOAT:
         case E_GADCON_ORIENT_VERT:
         case E_GADCON_ORIENT_HORIZ:
-          shelf = 0;
+          p->noshelf = 1;
           break;
         default:
           break;
      }
-
-   if (!shelf) return;
 
    edje_object_size_min_calc(pd->o_desk, &mw, &mh);
    evas_object_geometry_get(pd->o_desk, NULL, NULL, &w, &h);
