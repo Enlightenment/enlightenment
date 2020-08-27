@@ -705,13 +705,25 @@ _screens_differ(E_Randr2 *r1, E_Randr2 *r2)
    printf("RRR: --------\n");
    EINA_LIST_FOREACH(r2->screens, l, s)
      {
+        if (s->id)
+          printf("RRR: look at r2 screen ID %s\n", s->id);
+        else
+          printf("RRR: look at r2 screen ID NIL\n");
         if (!s->id) continue;
         EINA_LIST_FOREACH(r1->screens, ll, ss)
           {
+             if (ss->id)
+               printf("RRR: look at r1 screen ID %s\n", ss->id);
+             else
+               printf("RRR: look at r1 screen ID NIL\n");
              if ((ss->id) && (!strcmp(s->id, ss->id))) break;
              ss = NULL;
           }
-        if (!ss) changed = EINA_TRUE;
+        if (!ss)
+          {
+             printf("RRR: do change because cannot find screen matching ID %s\n", s->id);
+             changed = EINA_TRUE;
+          }
         else if ((s->config.geom.x != ss->config.geom.x) ||
                  (s->config.geom.y != ss->config.geom.y) ||
                  (s->config.geom.w != ss->config.geom.w) ||
@@ -720,7 +732,19 @@ _screens_differ(E_Randr2 *r1, E_Randr2 *r2)
                  (s->config.mode.h != ss->config.mode.h) ||
                  (s->config.enabled != ss->config.enabled) ||
                  (s->config.rotation != ss->config.rotation))
-          changed = EINA_TRUE;
+          {
+             printf("RRR: do change because geom/mode/rotation don't match\n");
+             printf("RRR: geom=%i,%i-%ix%i mode=%ix%i enable=%i rot=%i  !=  geom=%i,%i-%ix%i mode=%ix%i enable=%i rot=%i\n",
+                    s->config.geom.x, s->config.geom.y,
+                    s->config.geom.w, s->config.geom.h,
+                    s->config.mode.w, s->config.mode.h,
+                    s->config.enabled, s->config.rotation,
+                    ss->config.geom.x, ss->config.geom.y,
+                    ss->config.geom.w, ss->config.geom.h,
+                    ss->config.mode.w, ss->config.mode.h,
+                    ss->config.enabled, ss->config.rotation);
+             changed = EINA_TRUE;
+          }
         else
           {
              if (r1_screen_num != r2_screen_num)
