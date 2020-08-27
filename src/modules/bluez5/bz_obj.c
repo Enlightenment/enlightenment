@@ -32,103 +32,103 @@ cb_obj_prop_entry(void *data, const void *key, Eldbus_Message_Iter *var)
         if (eldbus_message_iter_arguments_get(var, "b", &val))
           o->paired = val;
      }
-   if (!strcmp(skey, "Connected"))
+   else if (!strcmp(skey, "Connected"))
      {
         Eina_Bool val = EINA_FALSE;
         if (eldbus_message_iter_arguments_get(var, "b", &val))
           o->connected = val;
      }
-   if (!strcmp(skey, "Trusted"))
+   else if (!strcmp(skey, "Trusted"))
      {
         Eina_Bool val = EINA_FALSE;
         if (eldbus_message_iter_arguments_get(var, "b", &val))
           o->trusted = val;
      }
-   if (!strcmp(skey, "Blocked"))
+   else if (!strcmp(skey, "Blocked"))
      {
         Eina_Bool val = EINA_FALSE;
         if (eldbus_message_iter_arguments_get(var, "b", &val))
           o->blocked = val;
      }
-   if (!strcmp(skey, "LegacyPairing"))
+   else if (!strcmp(skey, "LegacyPairing"))
      {
         Eina_Bool val = EINA_FALSE;
         if (eldbus_message_iter_arguments_get(var, "b", &val))
           o->legacy_pairing = val;
      }
-   if (!strcmp(skey, "ServicesResolved"))
+   else if (!strcmp(skey, "ServicesResolved"))
      {
         Eina_Bool val = EINA_FALSE;
         if (eldbus_message_iter_arguments_get(var, "b", &val))
           o->services_resolved = val;
      }
-   if (!strcmp(skey, "Address"))
+   else if (!strcmp(skey, "Address"))
      {
         const char *val = NULL;
         if (eldbus_message_iter_arguments_get(var, "s", &val))
           o->address = eina_stringshare_add(val);
      }
-   if (!strcmp(skey, "AddressType"))
+   else if (!strcmp(skey, "AddressType"))
      {
         const char *val = NULL;
         if (eldbus_message_iter_arguments_get(var, "s", &val))
           o->address_type = eina_stringshare_add(val);
      }
-   if (!strcmp(skey, "Name"))
+   else if (!strcmp(skey, "Name"))
      {
         const char *val = NULL;
         if (eldbus_message_iter_arguments_get(var, "s", &val))
           o->name = eina_stringshare_add(val);
      }
-   if (!strcmp(skey, "Icon"))
+   else if (!strcmp(skey, "Icon"))
      {
         const char *val = NULL;
         if (eldbus_message_iter_arguments_get(var, "s", &val))
           o->icon = eina_stringshare_add(val);
      }
-   if (!strcmp(skey, "Alias"))
+   else if (!strcmp(skey, "Alias"))
      {
         const char *val = NULL;
         if (eldbus_message_iter_arguments_get(var, "s", &val))
           o->alias = eina_stringshare_add(val);
      }
-   if (!strcmp(skey, "Modalias"))
+   else if (!strcmp(skey, "Modalias"))
      {
         const char *val = NULL;
         if (eldbus_message_iter_arguments_get(var, "s", &val))
           o->modalias = eina_stringshare_add(val);
      }
-   if (!strcmp(skey, "Adapter"))
+   else if (!strcmp(skey, "Adapter"))
      {
         const char *val = NULL;
         if (eldbus_message_iter_arguments_get(var, "o", &val))
           o->adapter = eina_stringshare_add(val);
      }
-   if (!strcmp(skey, "Class"))
+   else if (!strcmp(skey, "Class"))
      {
         unsigned int val = 0;
         if (eldbus_message_iter_arguments_get(var, "u", &val))
           o->klass = val;
      }
-   if (!strcmp(skey, "Appearance"))
+   else if (!strcmp(skey, "Appearance"))
      {
         unsigned short val = 0;
         if (eldbus_message_iter_arguments_get(var, "q", &val))
           o->appearance = val;
      }
-   if (!strcmp(skey, "RSSI"))
+   else if (!strcmp(skey, "RSSI"))
      {
         short val = 0;
         if (eldbus_message_iter_arguments_get(var, "n", &val))
           o->rssi = val;
      }
-   if (!strcmp(skey, "TxPower"))
+   else if (!strcmp(skey, "TxPower"))
      {
         unsigned short val = 0;
         if (eldbus_message_iter_arguments_get(var, "n", &val))
           o->txpower = val;
      }
-   if (!strcmp(skey, "UUIDs"))
+   else if (!strcmp(skey, "UUIDs"))
      {
         Eldbus_Message_Iter *array = NULL;
 
@@ -143,37 +143,37 @@ cb_obj_prop_entry(void *data, const void *key, Eldbus_Message_Iter *var)
                }
           }
      }
-   if (!strcmp(skey, "Discoverable"))
+   else if (!strcmp(skey, "Discoverable"))
      {
         Eina_Bool val = EINA_FALSE;
         if (eldbus_message_iter_arguments_get(var, "b", &val))
           o->discoverable = val;
      }
-   if (!strcmp(skey, "Discovering"))
+   else if (!strcmp(skey, "Discovering"))
      {
         Eina_Bool val = EINA_FALSE;
         if (eldbus_message_iter_arguments_get(var, "b", &val))
           o->discovering = val;
      }
-   if (!strcmp(skey, "Pairable"))
+   else if (!strcmp(skey, "Pairable"))
      {
         Eina_Bool val = EINA_FALSE;
         if (eldbus_message_iter_arguments_get(var, "b", &val))
           o->pairable = val;
      }
-   if (!strcmp(skey, "Powered"))
+   else if (!strcmp(skey, "Powered"))
      {
         Eina_Bool val = EINA_FALSE;
         if (eldbus_message_iter_arguments_get(var, "b", &val))
           o->powered = val;
      }
-   if (!strcmp(skey, "DiscoverableTimeout"))
+   else if (!strcmp(skey, "DiscoverableTimeout"))
      {
         unsigned int val = 0;
         if (eldbus_message_iter_arguments_get(var, "u", &val))
           o->discoverable_timeout = val;
      }
-   if (!strcmp(skey, "PairableTimeout"))
+   else if (!strcmp(skey, "PairableTimeout"))
      {
         unsigned int val = 0;
         if (eldbus_message_iter_arguments_get(var, "u", &val))
@@ -287,6 +287,42 @@ cb_obj_prop_changed(void *data EINA_UNUSED, const Eldbus_Message *msg EINA_UNUSE
    eldbus_proxy_property_get_all(o->proxy, cb_obj_prop, o);
 }
 
+static void
+cb_obj_prop_bat_entry(void *data, const void *key, Eldbus_Message_Iter *var)
+{
+   Obj *o = data;
+   const char *skey = key;
+
+   if (!strcmp(skey, "Percentage"))
+     {
+        char val;
+        if (eldbus_message_iter_arguments_get(var, "y", &val))
+          o->bat_percent = val;
+     }
+}
+
+static void
+cb_obj_prop_bat(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
+{
+   Obj *o = data;
+   Eldbus_Message_Iter *array;
+
+   if (eldbus_message_error_get(msg, NULL, NULL)) return;
+   if (eldbus_message_arguments_get(msg, "a{sv}", &array))
+     eldbus_message_iter_dict_iterate(array, "sv", cb_obj_prop_bat_entry, o);
+   bz_obj_ref(o);
+   if (o->fn_change) o->fn_change(o);
+   bz_obj_unref(o);
+}
+
+static void
+cb_obj_prop_bat_changed(void *data EINA_UNUSED, const Eldbus_Message *msg EINA_UNUSED)
+{
+   Obj *o = data;
+   if (!o->proxy_bat) return;
+   eldbus_proxy_property_get_all(o->proxy_bat, cb_obj_prop_bat, o);
+}
+
 //static void
 //cb_obj_discovery_filter(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
 //{
@@ -302,6 +338,7 @@ bz_obj_add(const char *path)
    o->obj = eldbus_object_get(bz_conn, "org.bluez", o->path);
    o->type = BZ_OBJ_UNKNOWN;
    o->in_table = EINA_TRUE;
+   o->bat_percent = -1;
    eina_hash_add(obj_table, o->path, o);
    if (!strcmp(o->path, "/org/bluez"))
      {
@@ -316,8 +353,9 @@ bz_obj_add(const char *path)
    // all devices are /org/bluez/XXX/dev_XXX so look for /dev_
    else if (strstr(o->path, "/dev_"))
      {
-        o->proxy = eldbus_proxy_get(o->obj, "org.bluez.Device1");
         o->type = BZ_OBJ_DEVICE;
+        // device properties
+        o->proxy = eldbus_proxy_get(o->obj, "org.bluez.Device1");
         if (o->proxy)
           {
              eldbus_proxy_property_get_all(o->proxy, cb_obj_prop, o);
@@ -327,6 +365,18 @@ bz_obj_add(const char *path)
                o->prop_sig = eldbus_proxy_signal_handler_add(o->prop_proxy,
                                                              "PropertiesChanged",
                                                              cb_obj_prop_changed, o);
+          }
+        // battery properties - if it supports it
+        o->proxy_bat = eldbus_proxy_get(o->obj, "org.bluez.Battery1");
+        if (o->proxy_bat)
+          {
+             eldbus_proxy_property_get_all(o->proxy_bat, cb_obj_prop_bat, o);
+             o->prop_proxy_bat = eldbus_proxy_get(o->obj,
+                                              "org.freedesktop.DBus.Properties");
+             if (o->prop_proxy_bat)
+               o->prop_sig_bat = eldbus_proxy_signal_handler_add(o->prop_proxy_bat,
+                                                                 "PropertiesChanged",
+                                                                 cb_obj_prop_bat_changed, o);
           }
         goto done;
      }
@@ -765,6 +815,16 @@ bz_obj_unref(Obj *o)
      {
         eldbus_proxy_unref(o->prop_proxy);
         o->prop_proxy = NULL;
+     }
+   if (o->proxy_bat)
+     {
+        eldbus_proxy_unref(o->proxy_bat);
+        o->proxy_bat = NULL;
+     }
+   if (o->prop_proxy_bat)
+     {
+        eldbus_proxy_unref(o->prop_proxy_bat);
+        o->prop_proxy_bat = NULL;
      }
    if (o->obj)
      {

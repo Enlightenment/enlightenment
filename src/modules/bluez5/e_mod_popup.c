@@ -736,6 +736,29 @@ _cb_dev_content_get(void *data, Evas_Object *obj,
                }
           }
 
+        if (o->bat_percent >= 0)
+          {
+             Evas_Object *bat;
+             Edje_Message_Float msg;
+             double level = 0.0;
+             const int size = 24;
+
+             bat = edje_object_add(evas_object_evas_get(obj));
+             e_theme_edje_object_set(bat, "base/theme/modules/battery",
+                                     "e/modules/battery/main");
+             snprintf(buf, sizeof(buf), "%i", o->bat_percent);
+             edje_object_part_text_set(bat, "e.text.reading", buf);
+             level = (double)o->bat_percent / 100.0;
+             if (level > 1.0) level = 1.0;
+             msg.val = level;
+             edje_object_message_send(bat, EDJE_MESSAGE_FLOAT, 1, &msg);
+             evas_object_size_hint_min_set(bat,
+                                           ELM_SCALE_SIZE(size),
+                                           ELM_SCALE_SIZE(size));
+             elm_box_pack_end(bx, bat);
+             evas_object_show(bat);
+          }
+
         bt = util_button_icon_add(obj, "view-more-horizontal",
                                   _("Options for device like connect, pair etc."));
         evas_object_data_set(bt, "genlist", obj);
