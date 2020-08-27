@@ -14,9 +14,9 @@ typedef struct _Obj Obj;
 struct _Obj {
    //// internal object data
    Eldbus_Object *obj;
-   Eldbus_Proxy *proxy;
-   Eldbus_Proxy *prop_proxy;
-   Eldbus_Signal_Handler *prop_sig;
+   Eldbus_Proxy *proxy, *proxy_bat;
+   Eldbus_Proxy *prop_proxy, *prop_proxy_bat;
+   Eldbus_Signal_Handler *prop_sig, *prop_sig_bat;
    unsigned int ref;
    Eina_Bool in_table : 1;
    Eina_Bool add_called : 1;
@@ -43,6 +43,7 @@ struct _Obj {
    unsigned short appearance;
    unsigned short txpower;
    short rssi;
+   char bat_percent;
    Eina_Bool paired : 1;
    Eina_Bool connected : 1;
    Eina_Bool trusted : 1;
