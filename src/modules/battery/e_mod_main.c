@@ -27,16 +27,28 @@ static const E_Gadcon_Client_Class _gadcon_class =
 /* actual module specifics */
 typedef struct _Instance Instance;
 
+typedef struct __Popup_Data
+{
+   Instance        *inst;
+   Evas_Object     *fr;
+   Evas_Object     *pb;
+} _Popup_Data;
+
 struct _Instance
 {
    E_Gadcon_Client *gcc;
    Evas_Object     *o_battery;
+
+   E_Gadcon_Popup  *popup;
+   Ecore_Timer     *popup_timer;
+   _Popup_Data     *popup_data;
+
    Evas_Object     *popup_battery;
    E_Gadcon_Popup  *warning;
    unsigned int     notification_id;
 };
 
-static void      _battery_update(int full, int time_left, int time_full, Eina_Bool have_battery, Eina_Bool have_power);
+static void      _battery_update(int full, int time_left, int time_full, Eina_Bool have_battery, Eina_Bool have_power, Eina_Bool charging);
 static Eina_Bool _battery_cb_exe_data(void *data, int type, void *event);
 static Eina_Bool _battery_cb_exe_del(void *data, int type, void *event);
 static void      _button_cb_mouse_down(void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -160,6 +172,110 @@ _gc_id_new(const E_Gadcon_Client_Class *client_class)
 }
 
 static void
+_popup_usage_del(Instance *inst)
+{
+   if (inst->popup_timer) ecore_timer_del(inst->popup_timer);
+   E_FREE_FUNC(inst->popup, e_object_del);
+   if (inst->popup_data) E_FREE(inst->popup_data);
+   inst->popup = NULL; inst->popup_timer = NULL;
+   inst->popup_data = NULL;
+}
+
+static void
+_popup_usage_del_cb(void *obj)
+{
+   _popup_usage_del(e_object_data_get(obj));
+}
+
+static Eina_Bool
+_popup_usage_content_update_cb(void *data)
+{
+   Instance *inst;
+   _Popup_Data *pd = data;
+
+   inst = pd->inst;
+
+   if (!battery_config->have_battery)
+     {
+        _popup_usage_del(inst);
+        return ECORE_CALLBACK_CANCEL;
+     }
+
+   if (!inst->popup) return ECORE_CALLBACK_CANCEL;
+
+   elm_progressbar_pulse_set(pd->pb, 0);
+   elm_progressbar_pulse(pd->pb, 0);
+
+   if (battery_config->have_power && battery_config->charging)
+     elm_object_text_set(pd->fr, _("Charging"));
+   else if (battery_config->have_power)
+     elm_object_text_set(pd->fr, _("Plugged in"));
+   else
+     elm_object_text_set(pd->fr, _("Discharging"));
+
+   elm_progressbar_value_set(pd->pb, (double) battery_config->full / 100.0);
+
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Evas_Object *
+_popup_usage_content_add(Evas_Object *parent, Instance *inst)
+{
+   Evas_Object *tbl, *fr, *pb, *o;
+   _Popup_Data *pd;
+
+   tbl = elm_table_add(parent);
+   E_FILL(tbl); E_EXPAND(tbl);
+   evas_object_show(tbl);
+
+   o = evas_object_rectangle_add(evas_object_evas_get(parent));
+   evas_object_size_hint_min_set(o, ELM_SCALE_SIZE(160), ELM_SCALE_SIZE(1));
+   evas_object_size_hint_max_set(o, ELM_SCALE_SIZE(320), ELM_SCALE_SIZE(240));
+   elm_table_pack(tbl, o, 0, 0, 1, 1);
+
+   fr = elm_frame_add(tbl);
+   E_FILL(fr); E_EXPAND(fr);
+   evas_object_show(fr);
+
+   pb = elm_progressbar_add(tbl);
+   E_FILL(pb); E_EXPAND(pb);
+   evas_object_show(pb);
+   elm_progressbar_span_size_set(pb, 1.0);
+   elm_object_content_set(fr, pb);
+   elm_table_pack(tbl, fr, 0, 0, 1, 1);
+
+   if (!battery_config->have_battery)
+     {
+        elm_progressbar_pulse_set(pb, 1);
+        elm_progressbar_pulse(pb, 1);
+        elm_object_text_set(fr, _("Battery not present"));
+     }
+
+   pd = E_NEW(_Popup_Data, 1);
+   pd->fr = fr;
+   pd->pb = pb;
+   pd->inst = inst;
+   inst->popup_data = pd;
+
+   _popup_usage_content_update_cb(pd);
+
+   if (battery_config->have_battery)
+     inst->popup_timer = ecore_timer_add(10.0, _popup_usage_content_update_cb, pd);
+
+   return tbl;
+}
+
+static void
+_popup_usage_new(Instance *inst)
+{
+   inst->popup = e_gadcon_popup_new(inst->gcc, 0);
+   e_gadcon_popup_content_set(inst->popup, _popup_usage_content_add(e_comp->elm, inst));
+   e_gadcon_popup_show(inst->popup);
+   e_object_data_set(E_OBJECT(inst->popup),inst);
+   E_OBJECT_DEL_SET(inst->popup, _popup_usage_del_cb);
+}
+
+static void
 _button_cb_mouse_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Instance *inst;
@@ -198,7 +314,14 @@ _button_cb_mouse_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
                                  EVAS_BUTTON_NONE, ev->timestamp, NULL);
      }
    if (ev->button == 1)
-     _battery_cb_warning_popup_hide(data, e, obj, event_info);
+     {
+        _battery_cb_warning_popup_hide(data, e, obj, event_info);
+
+        if (!inst->popup)
+          _popup_usage_new(inst);
+        else
+          _popup_usage_del(inst);
+     }
 }
 
 static void
@@ -336,7 +459,7 @@ _battery_device_update(void)
    if (time_left < 1) time_left = -1;
    if (time_full < 1) time_full = -1;
 
-   _battery_update(full, time_left, time_full, have_battery, have_power);
+   _battery_update(full, time_left, time_full, have_battery, have_power, charging);
 }
 
 void
@@ -523,7 +646,7 @@ _powersave_cb_config_update(void *data EINA_UNUSED, int type EINA_UNUSED, void *
 }
 
 static void
-_battery_update(int full, int time_left, int time_full, Eina_Bool have_battery, Eina_Bool have_power)
+_battery_update(int full, int time_left, int time_full, Eina_Bool have_battery, Eina_Bool have_power, Eina_Bool charging)
 {
    Eina_List *l;
    Instance *inst;
@@ -647,6 +770,7 @@ _battery_update(int full, int time_left, int time_full, Eina_Bool have_battery, 
    battery_config->time_left = time_left;
    battery_config->have_battery = have_battery;
    battery_config->have_power = have_power;
+   battery_config->charging = charging;
 }
 
 static Eina_Bool
@@ -690,11 +814,12 @@ _battery_cb_exe_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
                   int time_full = 0;
                   int have_battery = 0;
                   int have_power = 0;
+                  int charging = 0;
 
                   if (sscanf(ev->lines[i].line, "%i %i %i %i %i", &full, &time_left, &time_full,
                              &have_battery, &have_power) == 5)
                     _battery_update(full, time_left, time_full,
-                                    have_battery, have_power);
+                                    have_battery, have_power, charging);
                   else
                     e_powersave_mode_set(E_POWERSAVE_MODE_LOW);
                }

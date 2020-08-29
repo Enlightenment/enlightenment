@@ -48,6 +48,7 @@ struct _Config
    int                  time_full;
    int                  have_battery;
    int                  have_power;
+   Eina_Bool            charging;
    int              desktop_notifications;
 #ifdef HAVE_EEZE
    Eeze_Udev_Watch     *acwatch;
