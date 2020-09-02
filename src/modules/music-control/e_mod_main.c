@@ -60,6 +60,7 @@ _music_control(E_Object *obj EINA_UNUSED, const char *params)
 {
    E_Music_Control_Module_Context *ctxt = music_control_mod->data;
    EINA_SAFETY_ON_NULL_RETURN(music_control_mod->data);
+   EINA_SAFETY_ON_NULL_RETURN(params);
 
    if (!strcmp(params, "play"))
      media_player2_player_play_pause_call(ctxt->mpris2_player);
