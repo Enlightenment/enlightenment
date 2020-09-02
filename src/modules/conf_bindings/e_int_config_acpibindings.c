@@ -476,6 +476,8 @@ _cb_actions_changed(void *data)
      }
 
    eina_stringshare_replace(&binding->action, dsc->act_cmd);
+   if (dsc->act_params) eina_stringshare_refplace(&binding->params, dsc->act_params);
+
    e_widget_disabled_set(cfdata->o_params, !(dsc->editable));
 
    if ((!dsc->editable) && (dsc->act_params))
