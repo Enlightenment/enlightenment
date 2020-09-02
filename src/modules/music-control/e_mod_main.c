@@ -62,18 +62,26 @@ _music_control(E_Object *obj EINA_UNUSED, const char *params)
    EINA_SAFETY_ON_NULL_RETURN(music_control_mod->data);
    EINA_SAFETY_ON_NULL_RETURN(params);
 
-   if (!strcmp(params, "play"))
+   if (!strcmp(params, "play")) //legacy compatibility - this should probebly be called playpause
      media_player2_player_play_pause_call(ctxt->mpris2_player);
    else if (!strcmp(params, "next"))
      media_player2_player_next_call(ctxt->mpris2_player);
    else if (!strcmp(params, "previous"))
      media_player2_player_previous_call(ctxt->mpris2_player);
+   else if (!strcmp(params, "pause"))
+     media_player2_player_pause_call(ctxt->mpris2_player);
+   else if (!strcmp(params, "play_music")) //the name play was already taken by play pause, see above
+     media_player2_player_play_call(ctxt->mpris2_player);
 }
 
 #define ACTION_NEXT "next_music"
 #define ACTION_NEXT_NAME "Next Music"
 #define ACTION_PLAY_PAUSE "playpause_music"
 #define ACTION_PLAY_PAUSE_NAME "Play/Pause Music"
+#define ACTION_PAUSE "pause_music"
+#define ACTION_PAUSE_NAME "Pause Music"
+#define ACTION_PLAY "play_music"
+#define ACTION_PLAY_NAME "Play Music"
 #define ACTION_PREVIOUS "previous_music"
 #define ACTION_PREVIOUS_NAME "Previous Music"
 
@@ -91,6 +99,14 @@ _actions_register(E_Music_Control_Module_Context *ctxt)
    action->func.go = _music_control;
    e_action_predef_name_set(_e_music_control_Name, ACTION_PLAY_PAUSE_NAME,
                             ACTION_PLAY_PAUSE, "play", NULL, 0);
+   action = e_action_add(ACTION_PAUSE);
+   action->func.go = _music_control;
+   e_action_predef_name_set(_e_music_control_Name, ACTION_PAUSE_NAME,
+                            ACTION_PAUSE, "pause", NULL, 0);
+   action = e_action_add(ACTION_PLAY);
+   action->func.go = _music_control;
+   e_action_predef_name_set(_e_music_control_Name, ACTION_PLAY_NAME,
+                            ACTION_PLAY, "play_music", NULL, 0);
    action = e_action_add(ACTION_PREVIOUS);
    action->func.go = _music_control;
    e_action_predef_name_set(_e_music_control_Name, ACTION_PREVIOUS_NAME,
