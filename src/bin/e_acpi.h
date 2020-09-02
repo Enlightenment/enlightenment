@@ -34,7 +34,11 @@ typedef enum _E_Acpi_Type
    E_ACPI_TYPE_ZOOM, // 27
    E_ACPI_TYPE_SCREENLOCK, // 28
    E_ACPI_TYPE_BATTERY_BUTTON, // 29
-   E_ACPI_TYPE_TABLET // 30
+   E_ACPI_TYPE_TABLET, // 30
+   E_ACPI_TYPE_CD_NEXT, // 31
+   E_ACPI_TYPE_CD_PREV, // 32
+   E_ACPI_TYPE_CD_PLAY, // 33
+   E_ACPI_TYPE_CD_STOP, // 34
 } E_Acpi_Type;
 
 /* enum for acpi signals */

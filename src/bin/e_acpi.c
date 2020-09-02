@@ -79,6 +79,12 @@ static E_ACPI_Device_Simple _devices_simple[] =
    {"button/battery", E_ACPI_TYPE_BATTERY_BUTTON},
    {"video/tabletmode", E_ACPI_TYPE_TABLET},
 
+   //bluetooth virtual input devices for A/V Remote Control
+   {"cd/next", E_ACPI_TYPE_CD_NEXT},
+   {"cd/prev", E_ACPI_TYPE_CD_PREV},
+   {"cd/stop", E_ACPI_TYPE_CD_STOP},
+   {"cd/play", E_ACPI_TYPE_CD_PLAY},
+
    {NULL, E_ACPI_TYPE_UNKNOWN}
 };
 

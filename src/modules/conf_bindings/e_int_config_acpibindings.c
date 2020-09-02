@@ -417,6 +417,14 @@ _binding_label_get(E_Config_Binding_Acpi *binding)
         if (binding->status == 1) return _("Tablet Enabled");
         return _("Tablet");
      }
+   if (binding->type == E_ACPI_TYPE_CD_NEXT)
+     return _("Next Media");
+   if (binding->type == E_ACPI_TYPE_CD_PREV)
+     return _("Prev Media");
+   if (binding->type == E_ACPI_TYPE_CD_STOP)
+     return _("Stop Media");
+   if (binding->type == E_ACPI_TYPE_CD_PLAY)
+     return _("Play Media");
 
    return _("Unknown");
 }
