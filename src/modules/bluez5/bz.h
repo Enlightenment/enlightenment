@@ -43,7 +43,7 @@ struct _Obj {
    unsigned short appearance;
    unsigned short txpower;
    short rssi;
-   char bat_percent;
+   signed char bat_percent;
    Eina_Bool paired : 1;
    Eina_Bool connected : 1;
    Eina_Bool trusted : 1;
