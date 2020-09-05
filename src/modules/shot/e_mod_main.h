@@ -11,7 +11,7 @@ extern E_Module *shot_module;
 
 #define MAXZONES 64
 
-void         share_save              (const char *cmd);
+void         share_save              (const char *cmd, const char *file, Eina_Bool copy);
 void         share_write_end_watch   (void *data);
 void         share_write_status_watch(void *data);
 void         share_dialog_show       (void);
@@ -22,8 +22,8 @@ void         preview_dialog_show     (E_Zone *zone, E_Client *ec, const char *pa
 Eina_Bool    preview_have            (void);
 void         preview_abort           (void);
 Evas_Object *preview_image_get       (void);
-void         save_to                 (const char *file);
-void         save_show               (void);
+void         save_to                 (const char *file, Eina_Bool copy);
+void         save_show               (Eina_Bool save);
 
 Evas_Object *ui_edit(Evas_Object *window, Evas_Object *o_bg, E_Zone *zone,
                      E_Client *ec, void *dst, int sx, int sy, int sw, int sh,

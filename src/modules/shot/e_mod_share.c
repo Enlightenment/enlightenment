@@ -6,6 +6,8 @@ static Evas_Object      *o_label = NULL;
 static Evas_Object      *o_entry = NULL;
 static Eina_List        *handlers = NULL;
 static char             *url_ret = NULL;
+static const char       *cnp_file = NULL;
+static Eina_Bool         cnp = EINA_FALSE;
 
 // clean up and be done
 static void
@@ -17,6 +19,47 @@ _share_done(void)
    img_write_exe = NULL;
    url_ret = NULL;
    preview_abort();
+}
+
+static void
+_cnp_thread_io(void *data, Ecore_Thread *eth EINA_UNUSED)
+{
+   char *file = data;
+   unsigned char *fdata = NULL;
+   ssize_t fsize = 0;
+   FILE *f = fopen(file, "r");
+
+   if (!f) goto err;
+   fseek(f, 0, SEEK_END);
+   fsize = ftell(f);
+   fseek(f, 0, SEEK_SET);
+   if (fsize > 0)
+     {
+        fdata = malloc(fsize);
+        if (fdata)
+          {
+             if (fread(fdata, fsize, 1, f) == 1)
+               {
+                  ecore_thread_main_loop_begin();
+                  elm_cnp_selection_set(e_comp->elm,
+                                        ELM_SEL_TYPE_CLIPBOARD,
+                                        ELM_SEL_FORMAT_IMAGE,
+                                        fdata, fsize);
+                  ecore_thread_main_loop_end();
+               }
+             free(fdata);
+          }
+     }
+   fclose(f);
+   eina_file_unlink(file);
+err:
+   free(file);
+}
+
+static void
+_cnp_file(const char *file)
+{
+   ecore_thread_run(_cnp_thread_io, NULL, NULL, strdup(file));
 }
 
 // the upload dialog
@@ -46,6 +89,11 @@ _img_write_end_cb(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *event)
 
    if (ev->exe != img_write_exe) return EINA_TRUE;
    _share_done();
+   if (cnp)
+     {
+        _cnp_file(cnp_file);
+        eina_stringshare_replace(&cnp_file, NULL);
+     }
    return EINA_FALSE;
 }
 
@@ -102,8 +150,13 @@ done:
 }
 
 void
-share_save(const char *cmd)
+share_save(const char *cmd, const char *file, Eina_Bool copy)
 {
+   if (copy)
+     {
+        eina_stringshare_replace(&cnp_file, file);
+        cnp = copy;
+     }
    share_write_end_watch(NULL);
    img_write_exe = ecore_exe_pipe_run
      (cmd, ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_READ_LINE_BUFFERED |
@@ -142,7 +195,7 @@ share_dialog_show(void)
 
    E_FREE_LIST(handlers, ecore_event_handler_del);
 
-   save_to(NULL);
+   save_to(NULL, EINA_FALSE);
 
    E_FREE_FUNC(win, evas_object_del);
 

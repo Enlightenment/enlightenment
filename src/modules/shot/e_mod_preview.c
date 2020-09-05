@@ -9,7 +9,13 @@ Eina_Rectangle crop = { 0, 0, 0, 0 };
 static void
 _win_save_cb(void *data EINA_UNUSED, void *data2 EINA_UNUSED)
 {
-   save_show();
+   save_show(EINA_FALSE);
+}
+
+static void
+_win_copy_cb(void *data EINA_UNUSED, void *data2 EINA_UNUSED)
+{
+   save_show(EINA_TRUE);
 }
 
 static void
@@ -87,6 +93,8 @@ preview_dialog_show(E_Zone *zone, E_Client *ec, const char *params, void *dst,
    o = e_widget_button_add(evas, _("Save"), NULL, _win_save_cb, win, NULL);
    e_widget_list_object_append(o_box, o, 1, 0, 0.5);
    o = e_widget_button_add(evas, _("Share"), NULL, _win_share_cb, win, NULL);
+   e_widget_list_object_append(o_box, o, 1, 0, 0.5);
+   o = e_widget_button_add(evas, _("Copy"), NULL, _win_copy_cb, win, NULL);
    e_widget_list_object_append(o_box, o, 1, 0, 0.5);
    if (!ec)
      {

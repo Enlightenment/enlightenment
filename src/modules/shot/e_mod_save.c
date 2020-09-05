@@ -7,6 +7,7 @@ typedef struct
    int w, h, stride, quality;
    size_t size;
    int fd;
+   Eina_Bool copy;
 } Rgba_Writer_Data;
 
 static void
@@ -43,7 +44,7 @@ _cb_rgba_writer_done(void *data, Ecore_Thread *th EINA_UNUSED)
               e_module_dir_get(shot_module), MODULE_ARCH,
               rdata->path, rdata->w, rdata->h, rdata->stride,
               rdata->quality);
-   share_save(buf);
+   share_save(buf, rdata->outfile, rdata->copy);
    _rgba_data_free(rdata);
 }
 
@@ -55,7 +56,7 @@ _cb_rgba_writer_cancel(void *data, Ecore_Thread *th EINA_UNUSED)
 }
 
 void
-save_to(const char *file)
+save_to(const char *file, Eina_Bool copy)
 {
    int fd;
    char tmpf[256] = "e-shot-rgba-XXXXXX";
@@ -71,7 +72,6 @@ save_to(const char *file)
         Evas_Object *img = preview_image_get();
 
         ui_edit_prepare();
-        printf("C: %i %i %ix%i\n", crop.x, crop.y, crop.w, crop.h);
         if ((crop.x == 0) && (crop.y == 0) &&
             (crop.w == 0) && (crop.h == 0))
           {
@@ -115,7 +115,6 @@ save_to(const char *file)
                             imh = crop.h;
                             imstride = imw * 4;
                             d = data;
-                            printf("Cpy dat %p -> %p | %ix%i\n", src_data, data, imw, imh);
                             for (y = crop.y; y < (crop.y + crop.h); y++)
                               {
                                  s = src_data + (stride * y) + (crop.x * 4);
@@ -144,6 +143,7 @@ save_to(const char *file)
                        thdat->h = imh;
                        thdat->stride = imstride;
                        thdat->quality = quality;
+                       thdat->copy = copy;
                        ecore_thread_run(_cb_rgba_writer_do,
                                         _cb_rgba_writer_done,
                                         _cb_rgba_writer_cancel, thdat);
@@ -167,7 +167,7 @@ save_to(const char *file)
 }
 
 void
-save_show(void)
+save_show(Eina_Bool copy)
 {
    char path[PATH_MAX + 512];
    char path2[PATH_MAX + 512];
@@ -185,21 +185,24 @@ save_show(void)
    else
      strftime(buf, sizeof(buf), "shot-%Y-%m-%d_%H-%M-%S.jpg", tm);
    e_user_dir_snprintf(path, sizeof(path), "shots/%s", buf);
-   save_to(path);
+   save_to(path, copy);
    snprintf(path, sizeof(path), "%s/shots.desktop",
             e_module_dir_get(shot_module));
    snprintf(path2, sizeof(path2), "%s/fileman/favorites/shots.desktop",
             e_user_dir_get());
    if (!ecore_file_exists(path2)) ecore_file_cp(path, path2);
-   a = e_action_find("fileman_show");
-   if (a)
+   if (!copy)
      {
-        a->func.go(NULL, "$E_HOME_DIR/shots");
+        a = e_action_find("fileman_show");
+        if (a)
+          {
+             a->func.go(NULL, "$E_HOME_DIR/shots");
+          }
+        else
+          e_util_dialog_show
+            (_("Error - No Filemanager"),
+             _("No filemanager action and/or module was found.<br>"
+               "Cannot show the location of your screenshots."));
      }
-   else
-     e_util_dialog_show
-       (_("Error - No Filemanager"),
-        _("No filemanager action and/or module was found.<br>"
-          "Cannot show the location of your screenshots."));
    preview_abort();
 }
