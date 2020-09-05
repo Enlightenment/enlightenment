@@ -350,6 +350,10 @@ _backlight_devices_screen_lid_get(void)
      {
         if (sc->info.is_lid) return sc;
      }
+   EINA_LIST_FOREACH(e_randr2->screens, l, sc)
+     {
+        if (sc->info.backlight) return sc;
+     }
    return NULL;
 }
 

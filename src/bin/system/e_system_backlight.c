@@ -21,8 +21,20 @@ _light_set(Light *lig, int val)
    lig->val = nval;
 #ifdef HAVE_EEZE
    char buf[PATH_MAX];
+   int fd;
+   if (val == 0)
+     {
+        snprintf(buf, sizeof(buf), "%s/bl_power", lig->dev);
+        fd = open(buf, O_WRONLY);
+        if (fd >= 0)
+          {
+             if (write(fd, "4", 1) <= 0)
+               ERR("Write failed of [%s] to [%s]\n", "4", buf);
+             close(fd);
+          }
+     }
    snprintf(buf, sizeof(buf), "%s/brightness", lig->dev);
-   int fd = open(buf, O_WRONLY);
+   fd = open(buf, O_WRONLY);
    if (fd >= 0)
      {
         char buf2[32];
@@ -30,6 +42,17 @@ _light_set(Light *lig, int val)
         if (write(fd, buf2, strlen(buf2)) <= 0)
           ERR("Write failed of [%s] to [%s]\n", buf2, buf);
         close(fd);
+     }
+   if (val != 0)
+     {
+        snprintf(buf, sizeof(buf), "%s/bl_power", lig->dev);
+        fd = open(buf, O_WRONLY);
+        if (fd >= 0)
+          {
+             if (write(fd, "0", 1) <= 0)
+               ERR("Write failed of [%s] to [%s]\n", "0", buf);
+             close(fd);
+          }
      }
 #elif defined(__FreeBSD_kernel__)
    sysctlbyname(lig->dev, NULL, NULL, &(lig->val), sizeof(lig->val));
@@ -41,7 +64,19 @@ _light_get(Light *lig)
 {
 #ifdef HAVE_EEZE
    const char *s;
-   s = eeze_udev_syspath_get_sysattr(lig->dev, "brightness");
+   s = eeze_udev_syspath_get_sysattr(lig->dev, "bl_power");
+   if (s)
+     {
+        if (atoi(s) != 0)
+          {
+             lig->val = 0;
+             eina_stringshare_del(s);
+             return;
+          }
+        eina_stringshare_del(s);
+     }
+   s = eeze_udev_syspath_get_sysattr(lig->dev, "actual_brightness");
+   if (!s) s = eeze_udev_syspath_get_sysattr(lig->dev, "brightness");
    if (s)
      {
         lig->val = atoi(s);
