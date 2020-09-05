@@ -28,10 +28,11 @@ e_drm2_compat_init(void)
    if (!sym_##sym##_##ver) \
      { \
         dlclose(e_drm2_lib); \
+        e_drm2_lib = NULL; \
         return EINA_FALSE; \
      }
 
-   e_drm2_lib = dlopen("libecore_drm2.so", RTLD_NOW | RTLD_LOCAL);
+   e_drm2_lib = dlopen("libecore_drm2.so.1", RTLD_NOW | RTLD_LOCAL);
 
    if (E_DRM2_EFL_VERSION_MINIMUM(1, 21, 99))
      {
@@ -62,7 +63,7 @@ e_drm2_compat_init(void)
 static void
 e_drm2_compat_shutdown(void)
 {
-   dlclose(e_drm2_lib);
+   if (e_drm2_lib) dlclose(e_drm2_lib);
 }
 
 static inline Ecore_Drm2_Device *
