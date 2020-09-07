@@ -646,7 +646,7 @@ e_pointer_type_pop(E_Pointer *ptr, void *obj, const char *type)
 
    EINA_LIST_FOREACH_SAFE(ptr->stack, l, ll, stack)
      {
-        if ((stack->obj == obj) &&
+        if (((stack->obj == obj) || (!obj)) &&
             ((!type) || (!e_util_strcmp(stack->type, type))))
           {
              _e_pointer_stack_free(stack);
@@ -655,11 +655,21 @@ e_pointer_type_pop(E_Pointer *ptr, void *obj, const char *type)
           }
      }
 
-   if (!ptr->stack)
+   if ((!obj) && (!type))
      {
-        e_pointer_hide(ptr);
-        eina_stringshare_replace(&ptr->type, NULL);
-        return;
+        if (!ptr->stack)
+          {
+             e_pointer_type_push(ptr, ptr, "default");
+          }
+     }
+   else
+     {
+        if (!ptr->stack)
+          {
+             e_pointer_hide(ptr);
+             eina_stringshare_replace(&ptr->type, NULL);
+             return;
+          }
      }
 
    if (!(stack = eina_list_data_get(ptr->stack))) return;

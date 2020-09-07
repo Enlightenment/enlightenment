@@ -863,6 +863,7 @@ lokker_lock(void)
    mlock(edd, sizeof(Lokker_Data));
 #endif
 
+   e_pointer_type_push(e_comp->pointer, e_comp->pointer, "default");
    E_LIST_FOREACH(e_comp->zones, _lokker_popup_add);
    total_zone_num = eina_list_count(e_comp->zones);
 
@@ -882,6 +883,8 @@ EINTERN void
 lokker_unlock(void)
 {
    E_FREE_LIST(edd->elock_wnd_list, _lokker_popup_free);
+   e_pointer_type_pop(e_comp->pointer, e_comp->pointer, "default");
+   e_pointer_type_pop(e_comp->pointer, NULL, NULL);
    E_FREE_LIST(edd->handlers, ecore_event_handler_del);
    if (edd->move_handler) ecore_event_handler_del(edd->move_handler);
 
