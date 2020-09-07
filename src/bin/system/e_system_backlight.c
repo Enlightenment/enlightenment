@@ -22,17 +22,6 @@ _light_set(Light *lig, int val)
 #ifdef HAVE_EEZE
    char buf[PATH_MAX];
    int fd;
-   if (val == 0)
-     {
-        snprintf(buf, sizeof(buf), "%s/bl_power", lig->dev);
-        fd = open(buf, O_WRONLY);
-        if (fd >= 0)
-          {
-             if (write(fd, "4", 1) <= 0)
-               ERR("Write failed of [%s] to [%s]\n", "4", buf);
-             close(fd);
-          }
-     }
    snprintf(buf, sizeof(buf), "%s/brightness", lig->dev);
    fd = open(buf, O_WRONLY);
    if (fd >= 0)
@@ -43,16 +32,16 @@ _light_set(Light *lig, int val)
           ERR("Write failed of [%s] to [%s]\n", buf2, buf);
         close(fd);
      }
-   if (val != 0)
+   snprintf(buf, sizeof(buf), "%s/bl_power", lig->dev);
+   fd = open(buf, O_WRONLY);
+   if (fd >= 0)
      {
-        snprintf(buf, sizeof(buf), "%s/bl_power", lig->dev);
-        fd = open(buf, O_WRONLY);
-        if (fd >= 0)
-          {
-             if (write(fd, "0", 1) <= 0)
-               ERR("Write failed of [%s] to [%s]\n", "0", buf);
-             close(fd);
-          }
+        int ret;
+
+        if (val == 0) ret = write(fd, "4", 1);
+        else ret = write(fd, "0", 1);
+        if (ret < 0) ERR("Write failed to [%s]\n", buf);
+        close(fd);
      }
 #elif defined(__FreeBSD_kernel__)
    sysctlbyname(lig->dev, NULL, NULL, &(lig->val), sizeof(lig->val));
