@@ -718,9 +718,10 @@ _cpufreq_status_check_available(Cpu_Status *s)
         s->frequencies = eina_list_sort(s->frequencies,
                                         eina_list_count(s->frequencies),
                                         _cpufreq_cb_sort);
+        /* sort is necessary because this can change and the order is reversed
+         * which breaks the theme. */
      }
 
-   /* sort is not necessary because freq_levels is already sorted */
    /* freebsd doesn't have governors */
    if (s->governors)
      {
