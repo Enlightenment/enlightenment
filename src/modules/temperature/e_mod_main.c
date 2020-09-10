@@ -51,7 +51,6 @@ static void
 _temperature_thread_free(Tempthread *tth)
 {
    eina_stringshare_del(tth->sensor_name);
-   eina_stringshare_del(tth->sensor_path);
    e_powersave_sleeper_free(tth->sleeper);
    free(tth->extn);
    free(tth);
@@ -123,7 +122,6 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
         inst->poll_interval = 128;
         inst->low = 30;
         inst->high = 80;
-        inst->sensor_type = SENSOR_TYPE_LINUX_SYS;
         inst->sensor_name = NULL;
         inst->temp = -900;
         inst->units = CELSIUS;
@@ -207,7 +205,6 @@ _gc_id_new(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
    inst->poll_interval = 128;
    inst->low = 30;
    inst->high = 80;
-   inst->sensor_type = SENSOR_TYPE_LINUX_SYS;
    inst->sensor_name = NULL;
    inst->units = CELSIUS;
    if (!temperature_config->faces)
@@ -282,11 +279,6 @@ _temperature_face_id_max(const Eina_Hash *hash EINA_UNUSED, const void *key, voi
    p = strrchr(key, '.');
    if (p) num = atoi(p + 1);
    if (num > *max) *max = num;
-#if defined (__FreeBSD__) || defined(__DragonFly__) || defined (__OpenBSD__)
-   cf->sensor_type = SENSOR_TYPE_FREEBSD;
-#else
-   cf->sensor_type = SENSOR_TYPE_LINUX_SYS;
-#endif
    return EINA_TRUE;
 }
 
@@ -302,8 +294,8 @@ _temperature_check_main(void *data, Ecore_Thread *th)
         temp = temperature_tempget_get(tth);
         if (ptemp != temp) ecore_thread_feedback(th, (void *)((long)temp));
         ptemp = temp;
-        e_powersave_sleeper_sleep(tth->sleeper, tth->poll_interval);
         if (ecore_thread_check(th)) break;
+        e_powersave_sleeper_sleep(tth->sleeper, tth->poll_interval);
      }
 }
 
@@ -333,7 +325,6 @@ temperature_face_update_config(Config_Face *inst)
 
    tth = calloc(1, sizeof(Tempthread));
    tth->poll_interval = inst->poll_interval;
-   tth->sensor_type = inst->sensor_type;
    tth->inst = inst;
    tth->sleeper = e_powersave_sleeper_new();
    if (inst->sensor_name)
@@ -365,7 +356,6 @@ e_modapi_init(E_Module *m)
    E_CONFIG_VAL(D, T, poll_interval, INT);
    E_CONFIG_VAL(D, T, low, INT);
    E_CONFIG_VAL(D, T, high, INT);
-   E_CONFIG_VAL(D, T, sensor_type, INT);
    E_CONFIG_VAL(D, T, sensor_name, STR);
    E_CONFIG_VAL(D, T, units, INT);
 
@@ -383,6 +373,7 @@ e_modapi_init(E_Module *m)
      eina_hash_foreach(temperature_config->faces, _temperature_face_id_max, &uuid);
    temperature_config->module = m;
 
+   temperature_tempget_setup();
    e_gadcon_provider_register(&_gadcon_class);
    return m;
 }
@@ -394,6 +385,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    if (temperature_config->faces)
      eina_hash_foreach(temperature_config->faces, _temperature_face_shutdown, NULL);
    eina_hash_free(temperature_config->faces);
+   temperature_tempget_clear();
    free(temperature_config);
    temperature_config = NULL;
    E_CONFIG_DD_FREE(conf_face_edd);

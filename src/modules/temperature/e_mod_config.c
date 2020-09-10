@@ -6,16 +6,14 @@
 
 struct _E_Config_Dialog_Data
 {
-   struct
-     {
-        int interval;
-     } poll;
+   struct {
+      int interval;
+   } poll;
 
    int unit_method;
-   struct
-     {
-        int low, high;
-     } temp;
+   struct {
+      int low, high;
+   } temp;
 
    int sensor;
    Eina_List *sensors;
@@ -28,55 +26,10 @@ struct _E_Config_Dialog_Data
 /* local function prototypes */
 static void *_create_data(E_Config_Dialog *cfd);
 static void _fill_data_tempget(E_Config_Dialog_Data *cfdata);
-static void _fill_sensors(E_Config_Dialog_Data *cfdata, const char *name);
 static void _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata);
 static Evas_Object *_basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata);
 static int _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 static void _cb_display_changed(void *data, Evas_Object *obj EINA_UNUSED);
-
-static Eina_List *
-temperature_get_bus_files(const char *bus)
-{
-   Eina_List *result;
-   Eina_List *therms;
-   char path[PATH_MAX +  PATH_MAX + 3];
-   char busdir[PATH_MAX];
-   char *name;
-
-   result = NULL;
-
-   snprintf(busdir, sizeof(busdir), "/sys/bus/%s/devices", bus);
-   /* Look through all the devices for the given bus. */
-   therms = ecore_file_ls(busdir);
-
-   EINA_LIST_FREE(therms, name)
-     {
-        Eina_List *files;
-        char *file;
-
-        /* Search each device for temp*_input, these should be
-         * temperature devices. */
-        snprintf(path, sizeof(path), "%s/%s", busdir, name);
-        files = ecore_file_ls(path);
-        EINA_LIST_FREE(files, file)
-          {
-             if ((!strncmp("temp", file, 4)) &&
-                 (!strcmp("_input", &file[strlen(file) - 6])))
-               {
-                  char *f;
-
-                  snprintf(path, sizeof(path),
-                           "%s/%s/%s", busdir, name, file);
-                  f = strdup(path);
-                  if (f) result = eina_list_append(result, f);
-               }
-             free(file);
-          }
-        free(name);
-     }
-   return result;
-}
-
 
 void
 config_temperature_module(Config_Face *inst)
@@ -118,119 +71,38 @@ _fill_data_tempget(E_Config_Dialog_Data *cfdata)
    cfdata->temp.low = cfdata->inst->low;
    cfdata->temp.high = cfdata->inst->high;
    cfdata->sensor = 0;
-   switch (cfdata->inst->sensor_type)
+#if defined (__FreeBSD__) || defined(__DragonFly__)
+#elif defined(__OpenBSD__)
+#else
+   Eina_List *sensors;
+   Sensor *sen;
+   int n;
+
+   sensors = temperature_tempget_sensor_list();
+   n = 0;
+   EINA_LIST_FREE(sensors, sen)
      {
-      case SENSOR_TYPE_NONE:
-      case SENSOR_TYPE_FREEBSD:
-      case SENSOR_TYPE_OMNIBOOK:
-      case SENSOR_TYPE_LINUX_MACMINI:
-      case SENSOR_TYPE_LINUX_PBOOK:
-      case SENSOR_TYPE_LINUX_INTELCORETEMP:
-        break;
-      case SENSOR_TYPE_LINUX_I2C:
-        _fill_sensors(cfdata, "i2c");
-        break;
-      case SENSOR_TYPE_LINUX_PCI:
-        _fill_sensors(cfdata, "pci");
-        break;
-      case SENSOR_TYPE_LINUX_ACPI:
-          {
-             Eina_List *l;
-
-             if ((l = ecore_file_ls("/proc/acpi/thermal_zone")))
-               {
-                  char *name;
-                  int n = 0;
-
-                  EINA_LIST_FREE(l, name)
-                    {
-                       cfdata->sensors =
-                         eina_list_append(cfdata->sensors, name);
-                       if (cfdata->inst->sensor_name)
-                         {
-                            if (!strcmp(cfdata->inst->sensor_name, name))
-                              cfdata->sensor = n;
-                         }
-                       n++;
-                    }
-               }
-             break;
-          }
-      case SENSOR_TYPE_LINUX_SYS:
-          {
-             Eina_List *l;
-
-             if ((l = ecore_file_ls("/sys/class/thermal")))
-               {
-                  char *name;
-                  int n = 0;
-
-                  EINA_LIST_FREE(l, name)
-                    {
-                       if (!strncmp(name, "thermal", 7))
-                         {
-                            cfdata->sensors =
-                              eina_list_append(cfdata->sensors, name);
-                            if (cfdata->inst->sensor_name)
-                              {
-                                 if (!strcmp(cfdata->inst->sensor_name, name))
-                                   cfdata->sensor = n;
-                              }
-                            n++;
-                         }
-                    }
-               }
-             break;
-          }
-      default:
-        break;
+        if ((cfdata->inst->sensor_name) &&
+            (!strcmp(sen->name, cfdata->inst->sensor_name)))
+          cfdata->sensor = n;
+        cfdata->sensors = eina_list_append(cfdata->sensors, sen);
+        n++;
      }
-}
-
-static void
-_fill_sensors(E_Config_Dialog_Data *cfdata, const char *name)
-{
-   Eina_List *therms, *l;
-   char *n;
-
-   if (!name) return;
-   if ((therms = temperature_get_bus_files(name)))
-     {
-        char path[PATH_MAX];
-
-        EINA_LIST_FREE(therms, n)
-          {
-             if (ecore_file_exists(n))
-               {
-                  int len;
-
-                  sprintf(path, "%s", ecore_file_file_get(n));
-                  len = strlen(path);
-                  if (len > 6) path[len - 6] = '\0';
-                  cfdata->sensors =
-                    eina_list_append(cfdata->sensors, strdup(path));
-               }
-             free(n);
-          }
-     }
-   EINA_LIST_FOREACH(cfdata->sensors, l, n)
-     {
-        if (cfdata->inst->sensor_name)
-          {
-             if (!strcmp(cfdata->inst->sensor_name, n)) break;
-          }
-        cfdata->sensor++;
-     }
+#endif
 }
 
 static void
 _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
-   char *sensor;
+   Sensor *sen;
 
    cfdata->inst->config_dialog = NULL;
-   EINA_LIST_FREE(cfdata->sensors, sensor)
-     free(sensor);
+   EINA_LIST_FREE(cfdata->sensors, sen)
+     {
+        eina_stringshare_replace(&(sen->name), NULL);
+        eina_stringshare_replace(&(sen->label), NULL);
+        free(sen);
+     }
    E_FREE(cfdata);
 }
 
@@ -246,15 +118,15 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
 
    if (cfdata->sensors)
      {
+        Sensor *sen;
         Eina_List *l;
-        char *name;
         int n = 0;
 
         ol = e_widget_list_add(evas, 0, 0);
         rg = e_widget_radio_group_new(&(cfdata->sensor));
-        EINA_LIST_FOREACH(cfdata->sensors, l, name)
+        EINA_LIST_FOREACH(cfdata->sensors, l, sen)
           {
-             ow = e_widget_radio_add(evas, _(name), n, rg);
+             ow = e_widget_radio_add(evas, sen->label, n, rg);
              e_widget_list_object_append(ol, ow, 1, 0, 0.5);
              n++;
           }
@@ -314,13 +186,16 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
 static int
 _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
+   Sensor *sen;
+
    cfdata->inst->poll_interval = cfdata->poll.interval;
    cfdata->inst->units = cfdata->unit_method;
    cfdata->inst->low = cfdata->temp.low;
    cfdata->inst->high = cfdata->temp.high;
 
-   eina_stringshare_replace(&cfdata->inst->sensor_name,
-                            eina_list_nth(cfdata->sensors, cfdata->sensor));
+   sen = eina_list_nth(cfdata->sensors, cfdata->sensor);
+   if (sen)
+     eina_stringshare_replace(&(cfdata->inst->sensor_name), sen->name);
 
    e_config_save_queue();
    temperature_face_update_config(cfdata->inst);
