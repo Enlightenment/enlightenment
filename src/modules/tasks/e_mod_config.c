@@ -113,7 +113,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
 
    e_widget_framelist_object_append(of, ob);
    of = e_widget_framelist_add(evas, _("Preview"), 0);
-   cfdata->icon = ob = e_widget_check_add(evas, _("Show"),
+   ob = e_widget_check_add(evas, _("Show"),
                            &(cfdata->preview));
    e_widget_framelist_object_append(of, ob);
    ow = e_widget_label_add(evas, _("Preview Size"));
