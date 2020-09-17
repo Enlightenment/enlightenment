@@ -6,7 +6,7 @@
 
 #define e_util_dialog_show(title, args...) \
 do { \
-   char __tmpbuf[4096]; \
+   char __tmpbuf[PATH_MAX + 256]; \
    \
    snprintf(__tmpbuf, sizeof(__tmpbuf), ##args); \
    e_util_dialog_internal(title, __tmpbuf); \
