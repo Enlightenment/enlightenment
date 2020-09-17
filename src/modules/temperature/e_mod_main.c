@@ -273,7 +273,6 @@ _temperature_face_id_max(const Eina_Hash *hash EINA_UNUSED, const void *key, voi
    const char *p;
    int *max;
    int num = -1;
-   Config_Face *cf = hdata;
 
    max = fdata;
    p = strrchr(key, '.');
