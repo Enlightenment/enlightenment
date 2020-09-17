@@ -181,7 +181,7 @@ e_module_new(const char *name)
 {
    E_Module *m;
    char buf[PATH_MAX];
-   char body[4096], title[1024];
+   char body[PATH_MAX + 256], title[1024];
    const char *modpath = NULL;
    char *s;
    int in_list = 0;
