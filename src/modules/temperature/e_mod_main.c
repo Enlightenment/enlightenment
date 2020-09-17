@@ -268,7 +268,7 @@ _temperature_face_shutdown(const Eina_Hash *hash EINA_UNUSED, const void *key EI
 }
 
 static Eina_Bool
-_temperature_face_id_max(const Eina_Hash *hash EINA_UNUSED, const void *key, void *hdata, void *fdata)
+_temperature_face_id_max(const Eina_Hash *hash EINA_UNUSED, const void *key, void *hdata EINA_UNUSED, void *fdata)
 {
    const char *p;
    int *max;
