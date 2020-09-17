@@ -14,9 +14,11 @@ struct _E_Config_Dialog_Data
    Eina_List       *widget_themes;
    const char      *widget_theme;
    int              enable_xsettings;
+   int              enable_xsettings_dpi;
+   int              xsettings_dpi;
+   Eina_List       *icon_themes;
    int              match_e17_theme;
    int              match_e17_icon_theme;
-   Eina_List       *icon_themes;
    const char      *icon_theme;
    int              icon_overrides;
    //int              enable_icon_theme; // We just need to check whether override or match icon theme is set.
@@ -75,6 +77,8 @@ _create_data(E_Config_Dialog *cfd)
    cfdata->match_e17_icon_theme = e_config->xsettings.match_e17_icon_theme;
    cfdata->match_e17_theme = e_config->xsettings.match_e17_theme;
    cfdata->enable_xsettings = e_config->xsettings.enabled;
+   cfdata->enable_xsettings_dpi = e_config->xsettings.dpi.enabled;
+   cfdata->xsettings_dpi = e_config->xsettings.dpi.value;
    cfdata->icon_theme = eina_stringshare_add(e_config->icon_theme);
    cfdata->icon_overrides = e_config->icon_theme_overrides;
    //cfdata->enable_icon_theme = !!(e_config->icon_theme);
@@ -131,6 +135,11 @@ _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
        (strcmp(cfdata->icon_theme, e_config->icon_theme) != 0))
      return 1;
 
+   if (cfdata->enable_xsettings_dpi != e_config->xsettings.dpi.enabled)
+     return 1;
+   if (cfdata->xsettings_dpi != e_config->xsettings.dpi.value)
+     return 1;
+
    return 0;
 }
 
@@ -148,6 +157,13 @@ _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
 //   e_config->xsettings.match_e17_icon_theme = cfdata->match_e17_icon_theme;
    e_config->xsettings.match_e17_theme = cfdata->match_e17_theme;
    e_config->xsettings.enabled = cfdata->enable_xsettings;
+
+   if (cfdata->enable_xsettings_dpi)
+     e_config->xsettings.dpi.enabled = 1;
+   else
+     e_config->xsettings.dpi.enabled = 0;
+
+   e_config->xsettings.dpi.value = cfdata->xsettings_dpi;
 
    eina_stringshare_del(e_config->icon_theme);
    if (cfdata->icon_overrides || cfdata->match_e17_icon_theme)
@@ -453,10 +469,18 @@ _icon_theme_changed(void *data, Evas_Object *o EINA_UNUSED)
    _populate_icon_preview(cfdata);
 }
 
+static void
+_xsettings_changed(void *data, Evas_Object *o EINA_UNUSED)
+{
+   E_Config_Dialog_Data *cfdata = data;
+
+   e_config_dialog_changed_set(cfdata->cfd, 1);
+}
+
 static Evas_Object *
 _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
-   Evas_Object *otb, *ol, *ilist, *of, *ow, *oc;
+   Evas_Object *otb, *ol, *ilist, *of, *ow, *oc, *os;
    struct _fill_icon_themes_data *d;
    unsigned int i;
 
@@ -487,12 +511,31 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    oc = e_widget_check_add(evas, _("Enable X Application Settings"),
                            &(cfdata->enable_xsettings));
    e_widget_list_object_append(ol, oc, 0, 0, 0.0);
-#endif
+
    e_widget_check_widget_disable_on_unchecked_add(oc, ilist);
    e_widget_check_widget_disable_on_unchecked_add(oc, ow);
+
+   of = e_widget_framelist_add(evas, "X Application Settings", 0);
+
+   ow = e_widget_check_add(evas, _("Enable Custom DPI"), &(cfdata->enable_xsettings_dpi));
+   e_widget_framelist_object_append(of, ow);
+   e_widget_check_widget_disable_on_unchecked_add(oc, ow);
+   e_widget_on_change_hook_set(ow, _xsettings_changed, cfdata);
+
+   os = e_widget_slider_add(evas, 1, 0, _("%1.0f dpi"), 50, 400, 1, 0,
+                            NULL, &(cfdata->xsettings_dpi), 90);
+   e_widget_on_change_hook_set(os, _xsettings_changed, cfdata);
+   e_widget_framelist_object_append(of, os);
+
+   e_widget_check_widget_disable_on_unchecked_add(ow, os);
+   e_widget_check_widget_disable_on_unchecked_add(oc, os);
+
+   e_widget_list_object_append(ol, of, 1, 0, 0.5);
+
+#endif
+
    e_widget_toolbook_page_append(otb, NULL, _("GTK Applications"), ol,
                                  1, 1, 1, 1, 0.5, 0.0);
-
    ol = e_widget_list_add(evas, 0, 0);
    ilist = e_widget_ilist_add(evas, 24, 24, &(cfdata->icon_theme));
    cfdata->gui.icon_list = ilist;

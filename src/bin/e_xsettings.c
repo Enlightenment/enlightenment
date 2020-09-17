@@ -68,9 +68,7 @@ static Eina_Bool reset = EINA_FALSE;
 static const char _setting_icon_theme_name[] = "Net/IconThemeName";
 static const char _setting_theme_name[] = "Net/ThemeName";
 static const char _setting_font_name[] = "Gtk/FontName";
-#if 0
 static const char _setting_xft_dpi[] = "Xft/DPI";
-#endif
 static const char *_setting_theme = NULL;
 
 static void _e_xsettings_done_cb(void *data, Eio_File *handler, const Eina_Stat *stat);
@@ -220,7 +218,6 @@ _e_xsettings_string_set(const char *name, const char *value)
    s->last_change = ecore_x_current_time_get();
 }
 
-#if 0
 static void
 _e_xsettings_int_set(const char *name, int value, Eina_Bool set)
 {
@@ -265,8 +262,6 @@ _e_xsettings_int_set(const char *name, int value, Eina_Bool set)
    s->length = 12;
    s->length += OFFSET_ADD(strlen(name));
 }
-
-#endif
 
 static unsigned char *
 _e_xsettings_copy(unsigned char *buffer, Setting *s)
@@ -574,7 +569,7 @@ _e_xsettings_font_set(void)
              if      (size < 5)   size  =    5; // don't allow too small
              else if (size > 100) size  =  100; // don't allow silly sizes
 
-             _dbl_to_str(size_buf, sizeof(size_buf), (double)size * 0.75, 3);
+             _dbl_to_str(size_buf, sizeof(size_buf), (double)size * 0.75, 0);
 
              buf = eina_strbuf_new();
              eina_strbuf_append(buf, efp->name);
@@ -594,8 +589,19 @@ _e_xsettings_font_set(void)
 
         e_font_properties_free(efp);
      }
-
    _e_xsettings_string_set(_setting_font_name, NULL);
+}
+
+static void
+_e_xsettings_dpi_set(void)
+{
+   if (e_config->xsettings.dpi.enabled)
+     {
+        _e_xsettings_int_set(_setting_xft_dpi, e_config->xsettings.dpi.value * 1024, EINA_TRUE);
+        return;
+     }
+
+   _e_xsettings_int_set(_setting_xft_dpi, 96 * 1024, EINA_TRUE);
 }
 
 #if 0
@@ -640,6 +646,7 @@ _e_xsettings_start(void)
 {
    if (running) return;
 
+   _e_xsettings_dpi_set();
    _e_xsettings_theme_set();
    _e_xsettings_icon_theme_set();
    _e_xsettings_font_set();
@@ -707,6 +714,17 @@ e_xsettings_shutdown(void)
    return 1;
 }
 
+static void
+_update_sequence(void)
+{
+   _e_xsettings_dpi_set();
+   _e_xsettings_theme_set();
+   _e_xsettings_icon_theme_set();
+   _e_xsettings_font_set();
+   _e_xsettings_update();
+   _e_xsettings_gtk_icon_update();
+}
+
 E_API void
 e_xsettings_config_update(void)
 {
@@ -715,6 +733,7 @@ e_xsettings_config_update(void)
    if (eio_op) eio_file_cancel(eio_op);
    if (!e_config->xsettings.enabled)
      {
+        _update_sequence();
         _e_xsettings_stop();
         return;
      }
@@ -725,11 +744,7 @@ e_xsettings_config_update(void)
      }
    else
      {
-        _e_xsettings_theme_set();
-        _e_xsettings_icon_theme_set();
-        _e_xsettings_font_set();
-        _e_xsettings_update();
-        _e_xsettings_gtk_icon_update();
+        _update_sequence();
         reset = EINA_TRUE;
      }
 }

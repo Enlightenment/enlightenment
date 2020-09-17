@@ -392,6 +392,12 @@ struct _E_Config
       unsigned char load_kde; // GUI
    } deskenv;
 
+   struct dpi
+   {
+      unsigned char enabled;
+      int           value;
+   } dpi;
+
    struct
    {
       unsigned char enabled;  // GUI
@@ -405,6 +411,7 @@ struct _E_Config
       const char   *net_theme_name_detected; // not saved
       const char   *net_icon_theme_name;
       const char   *gtk_font_name;
+      struct dpi    dpi;
    } xsettings;
 
    struct
