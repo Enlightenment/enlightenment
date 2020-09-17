@@ -157,12 +157,7 @@ _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
 //   e_config->xsettings.match_e17_icon_theme = cfdata->match_e17_icon_theme;
    e_config->xsettings.match_e17_theme = cfdata->match_e17_theme;
    e_config->xsettings.enabled = cfdata->enable_xsettings;
-
-   if (cfdata->enable_xsettings && cfdata->enable_xsettings_dpi)
-     e_config->xsettings.dpi.enabled = 1;
-   else
-     e_config->xsettings.dpi.enabled = 0;
-
+   e_config->xsettings.dpi.enabled = cfdata->enable_xsettings_dpi;
    e_config->xsettings.dpi.value = cfdata->xsettings_dpi;
 
    eina_stringshare_del(e_config->icon_theme);
@@ -469,14 +464,6 @@ _icon_theme_changed(void *data, Evas_Object *o EINA_UNUSED)
    _populate_icon_preview(cfdata);
 }
 
-static void
-_xsettings_changed(void *data, Evas_Object *o EINA_UNUSED)
-{
-   E_Config_Dialog_Data *cfdata = data;
-
-   e_config_dialog_changed_set(cfdata->cfd, 1);
-}
-
 static Evas_Object *
 _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
@@ -520,11 +507,9 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    ow = e_widget_check_add(evas, _("Enable Custom DPI"), &(cfdata->enable_xsettings_dpi));
    e_widget_framelist_object_append(of, ow);
    e_widget_check_widget_disable_on_unchecked_add(oc, ow);
-   e_widget_on_change_hook_set(ow, _xsettings_changed, cfdata);
 
    os = e_widget_slider_add(evas, 1, 0, _("%1.0f dpi"), 50, 400, 1, 0,
                             NULL, &(cfdata->xsettings_dpi), 90);
-   e_widget_on_change_hook_set(os, _xsettings_changed, cfdata);
    e_widget_framelist_object_append(of, os);
 
    e_widget_check_widget_disable_on_unchecked_add(ow, os);

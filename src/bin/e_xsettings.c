@@ -596,12 +596,9 @@ static void
 _e_xsettings_dpi_set(void)
 {
    if (e_config->xsettings.dpi.enabled)
-     {
-        _e_xsettings_int_set(_setting_xft_dpi, e_config->xsettings.dpi.value * 1024, EINA_TRUE);
-        return;
-     }
-
-   _e_xsettings_int_set(_setting_xft_dpi, 96 * 1024, EINA_TRUE);
+     _e_xsettings_int_set(_setting_xft_dpi, e_config->xsettings.dpi.value * 1024, EINA_TRUE);
+   else
+     _e_xsettings_int_set(_setting_xft_dpi, 96 * 1024, EINA_TRUE);
 }
 
 #if 0
@@ -664,8 +661,6 @@ static void
 _e_xsettings_stop(void)
 {
    Setting *s;
-
-   _e_xsettings_dpi_set();
 
    if (!running) return;
 
@@ -735,7 +730,6 @@ e_xsettings_config_update(void)
    if (eio_op) eio_file_cancel(eio_op);
    if (!e_config->xsettings.enabled)
      {
-        _update_sequence();
         _e_xsettings_stop();
         return;
      }
