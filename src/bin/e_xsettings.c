@@ -665,6 +665,8 @@ _e_xsettings_stop(void)
 {
    Setting *s;
 
+   _e_xsettings_dpi_set();
+
    if (!running) return;
 
    if (manager->timer_retry)

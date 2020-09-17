@@ -158,7 +158,7 @@ _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
    e_config->xsettings.match_e17_theme = cfdata->match_e17_theme;
    e_config->xsettings.enabled = cfdata->enable_xsettings;
 
-   if (cfdata->enable_xsettings_dpi)
+   if (cfdata->enable_xsettings && cfdata->enable_xsettings_dpi)
      e_config->xsettings.dpi.enabled = 1;
    else
      e_config->xsettings.dpi.enabled = 0;
