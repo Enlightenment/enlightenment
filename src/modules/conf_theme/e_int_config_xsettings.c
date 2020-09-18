@@ -77,8 +77,8 @@ _create_data(E_Config_Dialog *cfd)
    cfdata->match_e17_icon_theme = e_config->xsettings.match_e17_icon_theme;
    cfdata->match_e17_theme = e_config->xsettings.match_e17_theme;
    cfdata->enable_xsettings = e_config->xsettings.enabled;
-   cfdata->enable_xsettings_dpi = e_config->xsettings.dpi.enabled;
-   cfdata->xsettings_dpi = e_config->xsettings.dpi.value;
+   cfdata->enable_xsettings_dpi = e_config->xsettings.xft_dpi.enabled;
+   cfdata->xsettings_dpi = e_config->xsettings.xft_dpi.value;
    cfdata->icon_theme = eina_stringshare_add(e_config->icon_theme);
    cfdata->icon_overrides = e_config->icon_theme_overrides;
    //cfdata->enable_icon_theme = !!(e_config->icon_theme);
@@ -135,9 +135,10 @@ _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
        (strcmp(cfdata->icon_theme, e_config->icon_theme) != 0))
      return 1;
 
-   if (cfdata->enable_xsettings_dpi != e_config->xsettings.dpi.enabled)
+   if (cfdata->enable_xsettings_dpi != e_config->xsettings.xft_dpi.enabled)
      return 1;
-   if (cfdata->xsettings_dpi != e_config->xsettings.dpi.value)
+
+   if (cfdata->xsettings_dpi != e_config->xsettings.xft_dpi.value)
      return 1;
 
    return 0;
@@ -157,8 +158,8 @@ _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
 //   e_config->xsettings.match_e17_icon_theme = cfdata->match_e17_icon_theme;
    e_config->xsettings.match_e17_theme = cfdata->match_e17_theme;
    e_config->xsettings.enabled = cfdata->enable_xsettings;
-   e_config->xsettings.dpi.enabled = cfdata->enable_xsettings_dpi;
-   e_config->xsettings.dpi.value = cfdata->xsettings_dpi;
+   e_config->xsettings.xft_dpi.enabled = cfdata->enable_xsettings_dpi;
+   e_config->xsettings.xft_dpi.value = cfdata->xsettings_dpi;
 
    eina_stringshare_del(e_config->icon_theme);
    if (cfdata->icon_overrides || cfdata->match_e17_icon_theme)

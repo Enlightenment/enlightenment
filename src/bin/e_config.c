@@ -958,11 +958,11 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, xsettings.xft_hinting, INT);
    E_CONFIG_VAL(D, T, xsettings.xft_hint_style, STR);
    E_CONFIG_VAL(D, T, xsettings.xft_rgba, STR);
+   E_CONFIG_VAL(D, T, xsettings.xft_dpi.enabled, UCHAR);
+   E_CONFIG_VAL(D, T, xsettings.xft_dpi.value, INT);
    E_CONFIG_VAL(D, T, xsettings.net_theme_name, STR);
    E_CONFIG_VAL(D, T, xsettings.net_icon_theme_name, STR);
    E_CONFIG_VAL(D, T, xsettings.gtk_font_name, STR);
-   E_CONFIG_VAL(D, T, xsettings.dpi.enabled, UCHAR);
-   E_CONFIG_VAL(D, T, xsettings.dpi.value, INT);
 
    E_CONFIG_VAL(D, T, update.check, UCHAR);
    E_CONFIG_VAL(D, T, update.later, UCHAR);
