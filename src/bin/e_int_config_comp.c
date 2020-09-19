@@ -446,8 +446,7 @@ _advanced_apply_data(E_Config_Dialog *cfd  EINA_UNUSED,
         a = e_action_find("restart");
         if ((a) && (a->func.go)) a->func.go(NULL, NULL);
      }
-   e_config_save_queue();
-   return 1;
+   return e_comp_internal_save();
 }
 
 static void
