@@ -433,7 +433,6 @@ e_client_volume_object_add(E_Client *ec, Evas *evas)
      }
    if (edje_object_part_exists(bx, "e.swallow.volume"))
      {
-        o = edje_object_add(evas);
         o = elm_slider_add(e_comp->elm);
         elm_slider_min_max_set(o, ec->volume_min,
                                ec->volume_max);
