@@ -301,3 +301,7 @@ option('gesture-recognition',
 	type: 'boolean',
 	value: true,
 	description: 'Enable gesture recognition using libinput, needed to get swipe bindings beeing detected.')
+option('procstats',
+	type: 'boolean',
+	value: true,
+	description: 'enable procstats module: (default=true)')

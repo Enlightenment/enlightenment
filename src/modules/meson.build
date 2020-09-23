@@ -46,6 +46,7 @@ mods = [
   'packagekit',
   'vkbd',
   'gesture_recognition',
+  'procstats',
 # modules have a custom binary as well
   'battery',
   'cpufreq',

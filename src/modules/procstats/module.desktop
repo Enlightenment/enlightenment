@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Link
+Name=Procstats
+Comment=Monitor window process resources.
+Icon=e-module-procstats
+X-Enlightenment-ModuleType=system

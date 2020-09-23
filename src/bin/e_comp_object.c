@@ -3553,7 +3553,7 @@ e_comp_object_frame_theme_set(Evas_Object *obj, const char *name)
 
    if (ok)
      {
-        cw->frame_object = o;
+        cw->frame_object = cw->ec->frame_object = o;
         edje_object_signal_emit(o, "e,version,22", "e");
         eina_stringshare_del(cw->frame_theme);
         cw->frame_theme = theme;
