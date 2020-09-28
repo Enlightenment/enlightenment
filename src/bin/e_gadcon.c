@@ -1041,12 +1041,11 @@ _e_gadcon_client_box_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
 }
 
 static void
-_e_gadcon_client_box_hints_changed(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+_e_gadcon_client_box_hints_changed(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Gadcon_Client *gcc = data;
    if (gcc->autoscroll)
      _e_gadcon_client_scroll_state_update(gcc);
-   evas_object_size_hint_min_set(obj, 0, 0);
 }
 
 static void
@@ -2216,6 +2215,7 @@ _e_gadcon_moveresize_handle(E_Gadcon_Client *gcc)
      }
    evas_object_size_hint_min_set(gcc->o_base, w, h);
    evas_object_size_hint_max_set(gcc->o_base, mw, mh);
+   evas_object_size_hint_min_set(gcc->o_box, 0, 0);
    _e_gadcon_client_scroll_state_update(gcc);
 }
 
