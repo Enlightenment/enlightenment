@@ -141,6 +141,7 @@ struct _E_Menu_Item
    Eina_Bool  changed E_BITFIELD;
    Eina_Bool  active E_BITFIELD;
    Eina_Bool  disable E_BITFIELD;
+   Eina_Bool  hilighted E_BITFIELD;
 };
 
 struct _E_Menu_Category_Callback
