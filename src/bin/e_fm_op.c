@@ -1849,13 +1849,6 @@ static void
 _e_fm_op_random_char(char *buf, size_t len)
 {
    size_t i;
-   static int sranded = 0;
-
-   if (!sranded)
-     {
-        srand((unsigned int)time(NULL));
-        sranded = 1;
-     }
 
    for (i = 0; i < len; i++)
      {

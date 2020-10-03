@@ -60,7 +60,6 @@ find_tmpfile(int quality, char *buf, size_t buf_size)
 
    // come up with a tmp file - not really that critical as its due for
    // sharing to the internet as a whole
-   srand(time(NULL));
    for (i = 0; i < 100; i++)
      {
         int fd, v = rand();
