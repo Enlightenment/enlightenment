@@ -204,8 +204,7 @@ emix_backend_set(const char *backend)
 
    EINA_LIST_FOREACH(ctx->backends_names, l, name)
      {
-        if (!strncmp(name, backend, strlen(name)))
-          break;
+        if (!strcmp(name, backend)) break;
         i++;
      }
 
