@@ -5199,6 +5199,7 @@ _e_comp_cb_pointer_suspend_resume_done(void *data, Evas_Object *obj, const char 
         _e_comp_pointer_ungrab();
         e_pointer_grab_set(e_comp->pointer, EINA_FALSE);
      }
+   e_screensaver_update();
 }
 
 EINTERN Eina_Bool
@@ -5241,6 +5242,7 @@ _e_comp_x_screensaver_off()
 {
    const char *s;
 
+   e_screensaver_update();
    _e_comp_pointer_ungrab();
    e_pointer_grab_set(e_comp->pointer, EINA_FALSE);
    if ((!e_comp->pointer) || (!e_comp->pointer->o_ptr)) return ECORE_CALLBACK_RENEW;
