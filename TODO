@@ -52,7 +52,6 @@ TODO:
       * usb tehtering
       * wifi tethering
   * fix vkbd to work in wl - e_kbd_send.c - look at ecore_wl2_input.c
-* mixer: if pulseaudio is not there - try run it
 * action to switch config profiles so it can be bound
 * clean up some old actions that are handled better by newer ones
   * like suspend intelligently is better than regular suspend but
