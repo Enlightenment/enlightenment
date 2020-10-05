@@ -102,9 +102,7 @@ _e_client_cb_config_mode(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev 
 
    /* move fullscreen borders above everything */
 
-   if (e_config->mode.presentation)
-     layer = E_LAYER_CLIENT_TOP;
-   else if (!e_config->allow_above_fullscreen)
+   if (!e_config->allow_above_fullscreen)
      layer = E_LAYER_CLIENT_FULLSCREEN;
    else
      return ECORE_CALLBACK_RENEW;
@@ -4513,8 +4511,6 @@ e_client_fullscreen(E_Client *ec, E_Fullscreen policy)
    ec->saved.set = 1;
    if (!e_config->allow_above_fullscreen)
      evas_object_layer_set(ec->frame, E_LAYER_CLIENT_FULLSCREEN);
-   else if (e_config->mode.presentation)
-     evas_object_layer_set(ec->frame, E_LAYER_CLIENT_TOP);
 
    ec->fullscreen = 1;
    ec->unfullscreen_forced = 0;

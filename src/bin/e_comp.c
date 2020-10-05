@@ -370,8 +370,6 @@ _e_comp_nocomp_end(void)
           {
              if (!e_config->allow_above_fullscreen)
                layer = E_LAYER_CLIENT_FULLSCREEN;
-             else if (e_config->mode.presentation)
-               layer = E_LAYER_CLIENT_TOP;
           }
         evas_object_layer_set(e_comp->nocomp_ec->frame, layer);
         e_comp->nocomp_ec->fullscreen = fs;
@@ -693,7 +691,7 @@ nocomp:
                        if (!ec->visible) continue;
                        if (evas_object_data_get(ec->frame, "comp_skip")) continue;
                        if (e_object_is_del(E_OBJECT(ec)) || (!e_client_util_desk_visible(ec, e_desk_current_get(ec->zone)))) continue;
-                       if (ec->override || (e_config->allow_above_fullscreen && (!e_config->mode.presentation)))
+                       if (ec->override || (e_config->allow_above_fullscreen))
                          {
                             _e_comp_nocomp_end();
                             break;

@@ -33,7 +33,6 @@ e_dpms_update(void)
    Eina_Bool changed = EINA_FALSE;
 
    enabled = ((e_config->screensaver_enable) &&
-              (!e_config->mode.presentation) &&
               (!((e_util_fullscreen_current_any()) &&
                  (e_config->no_dpms_on_fullscreen))));
    if (_e_dpms_enabled != enabled)
@@ -87,8 +86,7 @@ e_dpms_force_update(void)
    unsigned int standby = 0, suspend = 0, off = 0;
    int enabled;
 
-   enabled = ((e_config->screensaver_enable) &&
-              (!e_config->mode.presentation));
+   enabled = (e_config->screensaver_enable);
 #ifndef HAVE_WAYLAND_ONLY
    if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      {

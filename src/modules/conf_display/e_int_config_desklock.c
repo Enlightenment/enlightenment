@@ -45,8 +45,6 @@ struct _E_Config_Dialog_Data
    E_Desklock_Background_Method bg_method;
    int              bg_method_prev;
    Eina_List       *bgs;
-   int              ask_presentation;
-   double           ask_presentation_timeout;
 
    struct
    {
@@ -174,10 +172,6 @@ _fill_data(E_Config_Dialog_Data *cfdata)
         cfdata->login_zone = e_config->desklock_login_box_zone;
         cfdata->zone = 0;
      }
-
-   cfdata->ask_presentation = e_config->desklock_ask_presentation;
-   cfdata->ask_presentation_timeout =
-     e_config->desklock_ask_presentation_timeout;
 }
 
 static void *
@@ -354,18 +348,6 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    e_widget_toolbook_page_append(otb, NULL, _("Timers"), ol,
                                  1, 1, 1, 0, 0.0, 0.0);
 
-   /* Presentation */
-   ol = e_widget_list_add(evas, 0, 0);
-   oc = e_widget_check_add(evas, _("Suggest if deactivated before"),
-                           &(cfdata->ask_presentation));
-   e_widget_list_object_append(ol, oc, 1, 1, 0.5);
-   ow = e_widget_slider_add(evas, 1, 0, _("%1.0f seconds"), 1.0, 300.0, 10.0, 0,
-                            &(cfdata->ask_presentation_timeout), NULL, 100);
-   e_widget_check_widget_disable_on_unchecked_add(oc, ow);
-   e_widget_list_object_append(ol, ow, 1, 1, 0.5);
-   e_widget_toolbook_page_append(otb, NULL, _("Presentation Mode"), ol,
-                                 1, 1, 1, 0, 0.0, 0.0);
-
    /* Wallpapers */
    ol = e_widget_list_add(evas, 0, 0);
    of = e_widget_table_add(e_win_evas_win_get(evas), 1);
@@ -449,8 +431,6 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
    e_config->desklock_on_suspend = cfdata->lock_on_suspend;
    e_config->desklock_post_screensaver_time = cfdata->post_screensaver_time;
    e_config->desklock_autolock_screensaver = cfdata->screensaver_lock;
-   e_config->desklock_ask_presentation = cfdata->ask_presentation;
-   e_config->desklock_ask_presentation_timeout = cfdata->ask_presentation_timeout;
    if (e_config->xkb.desklock_layout != cfdata->desklock_layout)
      {
         e_config->xkb.desklock_layout = eina_stringshare_ref(cfdata->desklock_layout);
@@ -568,9 +548,7 @@ _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
      }
    else if (e_config->desklock_custom_desklock_cmd != cfdata->custom_lock_cmd)
      return 1;
-
-   return (e_config->desklock_ask_presentation != cfdata->ask_presentation) ||
-          (!EINA_DBL_EQ(e_config->desklock_ask_presentation_timeout, cfdata->ask_presentation_timeout));
+   return 0;
 }
 
 static void

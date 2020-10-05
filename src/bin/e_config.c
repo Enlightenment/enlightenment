@@ -919,9 +919,6 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, syscon.do_input, UCHAR);
    E_CONFIG_LIST(D, T, syscon.actions, _e_config_syscon_action_edd);
 
-   E_CONFIG_VAL(D, T, mode.presentation, UCHAR);
-   E_CONFIG_VAL(D, T, mode.offline, UCHAR);
-
    E_CONFIG_VAL(D, T, exec.expire_timeout, DOUBLE);
    E_CONFIG_VAL(D, T, exec.show_run_dialog, UCHAR);
    E_CONFIG_VAL(D, T, exec.show_exit_dialog, UCHAR);
@@ -1931,9 +1928,6 @@ e_config_load(void)
    E_CONFIG_LIMIT(e_config->menu_gadcon_client_toplevel, 0, 1);
 
    E_CONFIG_LIMIT(e_config->ping_clients_interval, 16, 1024);
-
-   E_CONFIG_LIMIT(e_config->mode.presentation, 0, 1);
-   E_CONFIG_LIMIT(e_config->mode.offline, 0, 1);
 
    E_CONFIG_LIMIT(e_config->exec.expire_timeout, 0.1, 1000);
    E_CONFIG_LIMIT(e_config->exec.show_run_dialog, 0, 1);

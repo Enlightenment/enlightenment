@@ -43,17 +43,8 @@ struct _Config
   float timeout;
   Popup_Corner corner;
 
-  struct
-  {
-    Eina_Bool presentation;
-    Eina_Bool offline;
-  } last_config_mode;
-
-  Ecore_Event_Handler  *handler;
   Eina_List  *popups;
   unsigned int         next_id;
-
-  Ecore_Timer *initial_mode_timer;
 };
 
 struct _Popup_Data

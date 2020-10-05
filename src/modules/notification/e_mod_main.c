@@ -10,9 +10,6 @@ Config *notification_cfg = NULL;
 
 static E_Config_DD *conf_edd = NULL;
 
-static unsigned int offline_id;
-static unsigned int pres_id;
-
 static unsigned int
 _notification_notify(E_Notification_Notify *n)
 {
@@ -25,108 +22,6 @@ _notification_notify(E_Notification_Notify *n)
    notification_popup_notify(n, new_id);
 
    return new_id;
-}
-
-static void
-_notification_id_update(void *d, unsigned int id)
-{
-   uintptr_t *update_id = d;
-
-   *update_id = id;
-}
-
-static void
-_notification_show_common(const char *summary,
-                          const char *body,
-                          unsigned int *update_id)
-{
-   E_Notification_Notify n;
-   memset(&n, 0, sizeof(E_Notification_Notify));
-   n.app_name = "enlightenment";
-   n.replaces_id = *update_id;
-   n.icon.icon = "enlightenment";
-   n.summary = summary;
-   n.body = body;
-   n.urgency = E_NOTIFICATION_NOTIFY_URGENCY_CRITICAL;
-   e_notification_client_send(&n, _notification_id_update, update_id);
-}
-
-static void
-_notification_show_presentation(Eina_Bool enabled)
-{
-   const char *summary, *body;
-
-   if (enabled)
-     {
-        summary = _("Entered Presentation Mode");
-        body = _("Enlightenment has now entered <b>presentation</b> mode."
-                 "<ps/>During presentation mode, screen saver, lock and "
-                 "power saving will be disabled so you are not interrupted.");
-     }
-   else
-     {
-        summary = _("Exited Presentation Mode");
-        body = _("Presentation mode has been exited."
-                 "<ps/>Now screen saver, lock and "
-                 "power saving settings will be restored.");
-     }
-
-   _notification_show_common(summary, body, &pres_id);
-}
-
-static void
-_notification_show_offline(Eina_Bool enabled)
-{
-   const char *summary, *body;
-
-   if (enabled)
-     {
-        summary = _("Enter Offline Mode");
-        body = _("Enlightenment is in <b>offline</b> mode.<ps/>"
-                 "During offline mode, modules that use network will stop "
-                 "polling remote services.");
-     }
-   else
-     {
-        summary = _("Exited Offline Mode");
-        body = _("Now in <b>online</b> mode.<ps/>"
-                 "Now modules that use network will "
-                 "resume regular tasks.");
-     }
-
-   _notification_show_common(summary, body, &offline_id);
-}
-
-static Eina_Bool
-_notification_cb_config_mode_changed(Config *m_cfg,
-                                     int   type EINA_UNUSED,
-                                     void *event EINA_UNUSED)
-{
-   if (m_cfg->last_config_mode.presentation != e_config->mode.presentation)
-     {
-        m_cfg->last_config_mode.presentation = e_config->mode.presentation;
-        _notification_show_presentation(e_config->mode.presentation);
-     }
-
-   if (m_cfg->last_config_mode.offline != e_config->mode.offline)
-     {
-        m_cfg->last_config_mode.offline = e_config->mode.offline;
-        _notification_show_offline(e_config->mode.offline);
-     }
-
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_notification_cb_initial_mode_timer(Config *m_cfg)
-{
-   if (e_config->mode.presentation)
-     _notification_show_presentation(1);
-   if (e_config->mode.offline)
-     _notification_show_offline(1);
-
-   m_cfg->initial_mode_timer = NULL;
-   return EINA_FALSE;
 }
 
 /* Module Api Functions */
@@ -210,14 +105,6 @@ e_modapi_init(E_Module *m)
         return NULL;
      }
 
-   notification_cfg->last_config_mode.presentation = e_config->mode.presentation;
-   notification_cfg->last_config_mode.offline = e_config->mode.offline;
-   notification_cfg->handler = ecore_event_handler_add
-         (E_EVENT_CONFIG_MODE_CHANGED, (Ecore_Event_Handler_Cb)_notification_cb_config_mode_changed,
-         notification_cfg);
-   notification_cfg->initial_mode_timer = ecore_timer_loop_add
-       (0.1, (Ecore_Task_Cb)_notification_cb_initial_mode_timer, notification_cfg);
-
    notification_mod = m;
 
    return m;
@@ -226,12 +113,6 @@ e_modapi_init(E_Module *m)
 E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
-   if (notification_cfg->initial_mode_timer)
-     ecore_timer_del(notification_cfg->initial_mode_timer);
-
-   if (notification_cfg->handler)
-     ecore_event_handler_del(notification_cfg->handler);
-
    if (notification_cfg->cfd) e_object_del(E_OBJECT(notification_cfg->cfd));
    e_configure_registry_item_del("extensions/notification");
    e_configure_registry_category_del("extensions");
@@ -239,11 +120,9 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    notification_popup_shutdown();
    e_notification_server_unregister();
 
-
    _notification_cfg_free(notification_cfg);
    E_CONFIG_DD_FREE(conf_edd);
    notification_mod = NULL;
-
    return 1;
 }
 

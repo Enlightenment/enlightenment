@@ -347,12 +347,6 @@ struct _E_Config
 
    struct
    {
-      unsigned char presentation; // INTERNAL
-      unsigned char offline; // INTERNAL
-   } mode;
-
-   struct
-   {
       double        expire_timeout;
       unsigned char show_run_dialog;
       unsigned char show_exit_dialog;

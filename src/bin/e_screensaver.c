@@ -11,8 +11,6 @@ static Ecore_Event_Handler *_e_screensaver_handler_border_uniconify = NULL;
 static Ecore_Event_Handler *_e_screensaver_handler_border_desk_set = NULL;
 static Ecore_Event_Handler *_e_screensaver_handler_desk_show = NULL;
 static Ecore_Event_Handler *_e_screensaver_handler_powersave = NULL;
-static E_Dialog *_e_screensaver_ask_presentation_dia = NULL;
-static int _e_screensaver_ask_presentation_count = 0;
 
 static int _e_screensaver_timeout = 0;
 static int _e_screensaver_blanking = 0;
@@ -34,11 +32,11 @@ E_API int E_EVENT_SCREENSAVER_OFF_PRE = -1;
 E_API int
 e_screensaver_timeout_get(Eina_Bool use_idle)
 {
-   int timeout = 0, count = (1 + _e_screensaver_ask_presentation_count);
+   int timeout = 0;
    Eina_Bool use_special_instead_of_dim = EINA_FALSE;
 
    if (_screensaver_now) return 1;
-   if ((e_config->screensaver_enable) && (!e_config->mode.presentation))
+   if (e_config->screensaver_enable)
      {
         if ((e_desklock_state_get()) &&
             (e_config->screensaver_desklock_timeout > 0))
@@ -47,11 +45,10 @@ e_screensaver_timeout_get(Eina_Bool use_idle)
              use_special_instead_of_dim = EINA_TRUE;
           }
         else
-          timeout = e_config->screensaver_timeout * count;
+          timeout = e_config->screensaver_timeout;
      }
 
-   if ((use_idle) && (!e_config->mode.presentation) &&
-       (!use_special_instead_of_dim))
+   if ((use_idle) && (!use_special_instead_of_dim))
      {
         if (e_config->backlight.idle_dim)
           {
@@ -96,7 +93,6 @@ e_screensaver_update(void)
 
    timeout = e_screensaver_timeout_get(EINA_TRUE);
    if (!((e_config->screensaver_enable) &&
-         (!e_config->mode.presentation) &&
          (!((e_util_fullscreen_current_any()) &&
             (e_config->no_dpms_on_fullscreen)))))
      timeout = 0;
@@ -137,12 +133,8 @@ e_screensaver_update(void)
              // necessary on some hardware.
              if (!e_config->screensaver_dpms_off)
                {
-                  int enabled;
-
-                  enabled = ((e_config->screensaver_enable) &&
-                             (!e_config->mode.presentation));
-                  ecore_x_dpms_enabled_set(!enabled);
-                  ecore_x_dpms_enabled_set(enabled);
+                  ecore_x_dpms_enabled_set(!e_config->screensaver_enable);
+                  ecore_x_dpms_enabled_set(e_config->screensaver_enable);
                }
              ecore_x_screensaver_set(timeout, interval, blanking, expose);
           }
@@ -155,97 +147,6 @@ _e_screensaver_handler_config_mode_cb(void *data EINA_UNUSED, int type EINA_UNUS
 {
    e_screensaver_update();
    return ECORE_CALLBACK_PASS_ON;
-}
-
-static void
-_e_screensaver_ask_presentation_del(void *data)
-{
-   if (_e_screensaver_ask_presentation_dia == data)
-     _e_screensaver_ask_presentation_dia = NULL;
-}
-
-static void
-_e_screensaver_ask_presentation_yes(void *data EINA_UNUSED, E_Dialog *dia)
-{
-   e_config->mode.presentation = 1;
-   e_config_mode_changed();
-   e_config_save_queue();
-   e_object_del(E_OBJECT(dia));
-   _e_screensaver_ask_presentation_count = 0;
-}
-
-static void
-_e_screensaver_ask_presentation_no(void *data EINA_UNUSED, E_Dialog *dia)
-{
-   e_object_del(E_OBJECT(dia));
-   _e_screensaver_ask_presentation_count = 0;
-}
-
-static void
-_e_screensaver_ask_presentation_no_increase(void *data EINA_UNUSED, E_Dialog *dia)
-{
-   _e_screensaver_ask_presentation_count++;
-   e_screensaver_update();
-   e_object_del(E_OBJECT(dia));
-}
-
-static void
-_e_screensaver_ask_presentation_no_forever(void *data EINA_UNUSED, E_Dialog *dia)
-{
-   e_config->screensaver_ask_presentation = 0;
-   e_config_save_queue();
-   e_object_del(E_OBJECT(dia));
-   _e_screensaver_ask_presentation_count = 0;
-}
-
-static void
-_e_screensaver_ask_presentation_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event)
-{
-   Evas_Event_Key_Down *ev = event;
-   E_Dialog *dia = data;
-
-   if (strcmp(ev->key, "Return") == 0)
-     _e_screensaver_ask_presentation_yes(NULL, dia);
-   else if (strcmp(ev->key, "Escape") == 0)
-     _e_screensaver_ask_presentation_no(NULL, dia);
-}
-
-static void
-_e_screensaver_ask_presentation_mode(void)
-{
-   E_Dialog *dia;
-
-   if (_e_screensaver_ask_presentation_dia) return;
-
-   if (!(dia = e_dialog_new(NULL, "E", "_screensaver_ask_presentation"))) return;
-
-   e_dialog_title_set(dia, _("Activate Presentation Mode?"));
-   e_dialog_icon_set(dia, "dialog-ask", 64);
-   e_dialog_text_set(dia,
-                     _("You disabled the screensaver too fast.<ps/><ps/>"
-                       "Would you like to enable <b>presentation</b> mode and "
-                       "temporarily disable screen saver, lock and power saving?"));
-
-   e_object_del_attach_func_set(E_OBJECT(dia),
-                                _e_screensaver_ask_presentation_del);
-   e_dialog_button_add(dia, _("Yes"), NULL,
-                       _e_screensaver_ask_presentation_yes, NULL);
-   e_dialog_button_add(dia, _("No"), NULL,
-                       _e_screensaver_ask_presentation_no, NULL);
-   e_dialog_button_add(dia, _("No, but increase timeout"), NULL,
-                       _e_screensaver_ask_presentation_no_increase, NULL);
-   e_dialog_button_add(dia, _("No, and stop asking"), NULL,
-                       _e_screensaver_ask_presentation_no_forever, NULL);
-
-   e_dialog_button_focus_num(dia, 0);
-   e_widget_list_homogeneous_set(dia->box_object, 0);
-   elm_win_center(dia->win, 1, 1);
-   e_dialog_show(dia);
-
-   evas_object_event_callback_add(dia->bg_object, EVAS_CALLBACK_KEY_DOWN,
-                                  _e_screensaver_ask_presentation_key_down, dia);
-
-   _e_screensaver_ask_presentation_dia = dia;
 }
 
 static Eina_Bool
@@ -282,8 +183,6 @@ _e_screensaver_handler_powersave_cb(void *data EINA_UNUSED, int type EINA_UNUSED
    return ECORE_CALLBACK_PASS_ON;
 }
 
-static double last_start = 0.0;
-
 static Eina_Bool
 _e_screensaver_handler_screensaver_on_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
@@ -297,8 +196,6 @@ _e_screensaver_handler_screensaver_on_cb(void *data EINA_UNUSED, int type EINA_U
      _e_screensaver_suspend_timer =
        ecore_timer_loop_add(e_config->screensaver_suspend_delay,
                        _e_screensaver_suspend_cb, NULL);
-   last_start = ecore_loop_time_get();
-   _e_screensaver_ask_presentation_count = 0;
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -313,17 +210,6 @@ _e_screensaver_handler_screensaver_off_cb(void *data EINA_UNUSED, int type EINA_
         ecore_timer_del(_e_screensaver_suspend_timer);
         _e_screensaver_suspend_timer = NULL;
      }
-   if ((last_start > 0.0) && (e_config->screensaver_ask_presentation))
-     {
-        double current = ecore_loop_time_get();
-
-        if ((last_start + e_config->screensaver_ask_presentation_timeout)
-            >= current)
-          _e_screensaver_ask_presentation_mode();
-        last_start = 0.0;
-     }
-   else if (_e_screensaver_ask_presentation_count)
-     _e_screensaver_ask_presentation_count = 0;
    return ECORE_CALLBACK_PASS_ON;
 }
 
