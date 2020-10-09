@@ -11,9 +11,6 @@ struct _E_Desklock_Run
    int      position;
 };
 
-static Ecore_Exe *_e_custom_desklock_exe = NULL;
-static Ecore_Event_Handler *_e_custom_desklock_exe_handler = NULL;
-
 static Ecore_Event_Handler *_e_desklock_run_handler = NULL;
 static Ecore_Event_Handler *_e_desklock_randr_handler = NULL;
 static Ecore_Job *job = NULL;
@@ -34,7 +31,6 @@ static int _e_desklock_block = 0;
 static Eina_Bool desklock_manual = EINA_FALSE;
 
 /***********************************************************************/
-static Eina_Bool _e_desklock_cb_custom_desklock_exit(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
 static Eina_Bool _e_desklock_cb_run(void *data, int type, void *event);
 static Eina_Bool _e_desklock_cb_randr(void *data, int type, void *event);
 
@@ -211,7 +207,6 @@ e_desklock_demo(void)
    E_Desklock_Interface *iface;
    Eina_List *l;
 
-   if (e_desklock_is_external()) return EINA_FALSE;
    EINA_LIST_REVERSE_FOREACH(desklock_ifaces, l, iface)
      {
         if (iface->show())
@@ -244,25 +239,6 @@ _desklock_show_internal(Eina_Bool suspend)
      }
 #endif
    if (_e_desklock_state) return EINA_TRUE;
-
-   if (e_desklock_is_external() && e_config->desklock_custom_desklock_cmd && e_config->desklock_custom_desklock_cmd[0])
-     {
-        e_menu_hide_all();
-        _e_custom_desklock_exe_handler =
-          ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
-                                  _e_desklock_cb_custom_desklock_exit, NULL);
-        if (e_config->desklock_language)
-          e_intl_language_set(e_config->desklock_language);
-
-        if (e_config->xkb.lock_layout)
-          e_xkb_layout_set(e_config->xkb.lock_layout);
-        _e_custom_desklock_exe =
-          e_util_exe_safe_run(e_config->desklock_custom_desklock_cmd, NULL);
-        _e_desklock_state = EINA_TRUE;
-        e_bindings_disabled_set(1);
-        /* TODO: ensure layer is correct on external desklocks? */
-        return 1;
-     }
 
    if (e_desklock_is_personal())
      {
@@ -386,7 +362,7 @@ _desklock_hide_internal(void)
      }
    demo = EINA_FALSE;
 
-   if ((!_e_desklock_state) && (!_e_custom_desklock_exe)) return;
+   if (!_e_desklock_state) return;
 
    e_comp_override_del();
    e_comp_shape_queue();
@@ -418,12 +394,6 @@ _desklock_hide_internal(void)
 
    e_screensaver_update();
    e_dpms_force_update();
-
-   if (e_desklock_is_external())
-     {
-        _e_custom_desklock_exe = NULL;
-        return;
-     }
 
    EINA_LIST_FOREACH(hide_hooks, l, hide_cb)
      hide_cb();
@@ -491,23 +461,6 @@ e_desklock_unblock(void)
      {
         ERR("desklock block going below zero");
      }
-}
-
-static Eina_Bool
-_e_desklock_cb_custom_desklock_exit(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
-{
-   Ecore_Exe_Event_Del *ev = event;
-
-   if (ev->exe != _e_custom_desklock_exe) return ECORE_CALLBACK_PASS_ON;
-
-   if (ev->exit_code != 0)
-     {
-        /* do something profound here... like notify someone */
-     }
-
-   e_desklock_hide();
-
-   return ECORE_CALLBACK_DONE;
 }
 
 static Eina_Bool

@@ -796,8 +796,6 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, desklock_on_suspend, INT);
    E_CONFIG_VAL(D, T, desklock_autolock_screensaver, INT);
    E_CONFIG_VAL(D, T, desklock_post_screensaver_time, DOUBLE);
-   E_CONFIG_VAL(D, T, desklock_use_custom_desklock, INT);
-   E_CONFIG_VAL(D, T, desklock_custom_desklock_cmd, STR);
    E_CONFIG_VAL(D, T, desklock_ask_presentation, UCHAR);
    E_CONFIG_VAL(D, T, desklock_ask_presentation_timeout, DOUBLE);
 
@@ -1551,8 +1549,6 @@ e_config_load(void)
              Eina_Bool found = EINA_FALSE;
 
              CONFIG_VERSION_UPDATE_INFO(15);
-             if (e_config->desklock_use_custom_desklock)
-               e_config->desklock_auth_method = E_DESKLOCK_AUTH_METHOD_EXTERNAL;
 
              EINA_LIST_FOREACH(e_config->modules, l, em)
                if (!strcmp(em->name, "lokker"))
@@ -1872,7 +1868,6 @@ e_config_load(void)
    E_CONFIG_LIMIT(e_config->desklock_login_box_zone, -2, 1000);
    E_CONFIG_LIMIT(e_config->desklock_autolock_screensaver, 0, 1);
    E_CONFIG_LIMIT(e_config->desklock_post_screensaver_time, 0.0, 300.0);
-   E_CONFIG_LIMIT(e_config->desklock_use_custom_desklock, 0, 1);
    E_CONFIG_LIMIT(e_config->desklock_ask_presentation, 0, 1);
    E_CONFIG_LIMIT(e_config->desklock_ask_presentation_timeout, 1.0, 300.0);
    E_CONFIG_LIMIT(e_config->border_raise_on_mouse_action, 0, 1);
@@ -2635,7 +2630,6 @@ _e_config_free(E_Config *ecf)
    if (ecf->wallpaper_import_last_dev) eina_stringshare_del(ecf->wallpaper_import_last_dev);
    if (ecf->wallpaper_import_last_path) eina_stringshare_del(ecf->wallpaper_import_last_path);
    if (ecf->theme_default_border_style) eina_stringshare_del(ecf->theme_default_border_style);
-   if (ecf->desklock_custom_desklock_cmd) eina_stringshare_del(ecf->desklock_custom_desklock_cmd);
    EINA_LIST_FREE(ecf->syscon.actions, sca)
      {
         if (sca->action) eina_stringshare_del(sca->action);

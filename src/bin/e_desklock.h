@@ -15,7 +15,6 @@ typedef enum
 {
    E_DESKLOCK_AUTH_METHOD_SYSTEM = 0,
    E_DESKLOCK_AUTH_METHOD_PERSONAL = 1,
-   E_DESKLOCK_AUTH_METHOD_EXTERNAL = 2,
    E_DESKLOCK_AUTH_METHOD_PIN = 3,
 } E_Desklock_Auth_Method;
 
@@ -69,12 +68,6 @@ E_API void e_desklock_hide_hook_del(E_Desklock_Hide_Cb cb);
 E_API void e_desklock_zone_block_set(const E_Zone *zone, Eina_Bool block);
 
 extern E_API int E_EVENT_DESKLOCK;
-
-static inline Eina_Bool
-e_desklock_is_external(void)
-{
-   return e_config->desklock_auth_method == E_DESKLOCK_AUTH_METHOD_EXTERNAL;
-}
 
 static inline Eina_Bool
 e_desklock_is_personal(void)

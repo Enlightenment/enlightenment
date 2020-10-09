@@ -473,7 +473,6 @@ _lokker_popup_add(E_Zone *zone)
              E_LIST_HANDLER_APPEND(edd->handlers, ECORE_EVENT_MOUSE_BUTTON_DOWN, _pin_mouse_button_down, lp);
              E_LIST_HANDLER_APPEND(edd->handlers, ECORE_EVENT_MOUSE_BUTTON_UP, _pin_mouse_button_up, lp);
              break;
-           case E_DESKLOCK_AUTH_METHOD_EXTERNAL: //handled by e_desklock
            default: break;
           }
         if (cbg)
