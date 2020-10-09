@@ -1,7 +1,6 @@
 group "E_Config" struct {
   value "config_version" int: 1000030;
   value "config_type" uint: 0; // this profile seems to just be super minimalist
-  value "show_splash" int: 0;
   value "desktop_default_name" string: "%i-%i";
   value "desktop_default_window_profile" string: "";
   value "menus_scroll_speed" double: 1000.0;
@@ -10,7 +9,6 @@ group "E_Config" struct {
   value "border_shade_animate" int: 1;
   value "border_shade_transition" int: 3;
   value "border_shade_speed" double: 3000.0;
-  value "framerate" double: 60.0;
   value "priority" int: 3;
   value "image_cache" int: 4096;
   value "font_cache" int: 512;
@@ -21,7 +19,6 @@ group "E_Config" struct {
   value "show_desktop_icons" int: 1;
   value "edge_flip_dragging" int: 0;
   value "use_shaped_win" int: 0;
-  value "no_module_delay" int: 1;
   group "modules" list {
     group "E_Config_Module" struct {
       value "name" string: "wizard";
@@ -114,8 +111,6 @@ group "E_Config" struct {
   value "desklock_on_suspend" int: 0;
   value "desklock_autolock_screensaver" int: 0;
   value "desklock_post_screensaver_time" double: 0.0;
-  value "desklock_autolock_idle" int: 0;
-  value "desklock_autolock_idle_timeout" double: 300.0;
   value "desklock_use_custom_desklock" int: 0;
   value "desklock_ask_presentation" uchar: 1;
   value "desklock_ask_presentation_timeout" double: 30;
@@ -193,8 +188,6 @@ group "E_Config" struct {
   value "syscon.extra.icon_size" int: 48;
   value "syscon.timeout" double: 0.0;
   value "syscon.do_input" uchar: 0;
-  value "mode.presentation" uchar: 0;
-  value "mode.offline" uchar: 0;
   value "exec.expire_timeout" double: 30.0;
   value "exec.show_run_dialog" uchar: 1;
   value "exec.show_exit_dialog" uchar: 1;
