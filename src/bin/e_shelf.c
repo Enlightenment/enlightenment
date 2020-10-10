@@ -508,6 +508,8 @@ e_shelf_toggle(E_Shelf *es, int show)
    E_OBJECT_CHECK(es);
    E_OBJECT_TYPE_CHECK(es, E_SHELF_TYPE);
 
+   printf("%p - %d - %p - %f %d %p %d %d\n", es, show, es->hide_animator, es->instant_delay, es->hidden, es->gadcon, es->gadcon->editing, es->cfg->autohide);
+
    es->toggle = show;
    if (!es->hidden && _e_shelf_autohide_timer_extend(es)) return;
    if (es->locked) return;
@@ -530,13 +532,22 @@ e_shelf_toggle(E_Shelf *es, int show)
                {
                   ecore_timer_del(es->hide_timer);
                   es->hide_timer = NULL;
+                  return; //we should not add a animator here, the shelf cannot have moved yet.
                }
+
              if (!es->hide_animator)
                {
                   es->hide_begin = ecore_loop_time_get();
                   es->hide_animator =
                     ecore_animator_add(_e_shelf_cb_hide_animator, es);
                }
+             else
+               {
+                  printf("HIT\n");
+                  double time_elapsed = ecore_loop_time_get() - es->hide_begin;
+                  es->hide_begin = ecore_loop_time_get() - (es->cfg->hide_duration - time_elapsed);
+               }
+
           }
      }
    else if ((!show) && (!es->hidden) && ((!es->gadcon) || (!es->gadcon->editing)) &&
@@ -2072,6 +2083,8 @@ _e_shelf_cb_hide_animator(void *data)
    int hide_max = 0;
    double pos;
 
+   printf("A\n");
+
    es = data;
    if (!es->gadcon)
      {
@@ -2118,7 +2131,7 @@ _e_shelf_cb_hide_animator(void *data)
         es->hide_step = hide_max * (1.0 - pos);
         if (es->hide_step <= 0) es->hide_step = 0;
      }
-
+   printf("A -> %d\n", es->hide_step);
    switch (es->gadcon->orient)
      {
       case E_GADCON_ORIENT_TOP:
