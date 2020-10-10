@@ -530,13 +530,21 @@ e_shelf_toggle(E_Shelf *es, int show)
                {
                   ecore_timer_del(es->hide_timer);
                   es->hide_timer = NULL;
+                  return; //we should not add a animator here, the shelf cannot have moved yet.
                }
+
              if (!es->hide_animator)
                {
                   es->hide_begin = ecore_loop_time_get();
                   es->hide_animator =
                     ecore_animator_add(_e_shelf_cb_hide_animator, es);
                }
+             else
+               {
+                  double time_elapsed = ecore_loop_time_get() - es->hide_begin;
+                  es->hide_begin = ecore_loop_time_get() - (es->cfg->hide_duration - time_elapsed);
+               }
+
           }
      }
    else if ((!show) && (!es->hidden) && ((!es->gadcon) || (!es->gadcon->editing)) &&
