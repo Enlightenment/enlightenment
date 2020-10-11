@@ -2,5 +2,7 @@
 Type=Link
 Name=Procstats
 Comment=Monitor window process resources.
+Comment[it]=Monitorizza le risorse dei processi delle finestre.
+Comment[fr]=Surveillance des ressources du processus des fenêtres.
 Icon=e-module-procstats
 X-Enlightenment-ModuleType=system

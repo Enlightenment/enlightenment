@@ -2,6 +2,7 @@
 Type=Application
 Name=Enlightenment Askpass
 Comment=Enlightenment Password Request
+Comment[fr]=Demande de mot de passe pour Enlightenment
 Comment[it]=Richiesta password per Enlightenment
 Icon=enlightenment-askpass
 OnlyShowIn=Enlightenment;
