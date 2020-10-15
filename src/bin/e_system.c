@@ -11,6 +11,7 @@ typedef struct
    void (*func) (void *data, const char *params);
    void *data;
    Eina_Bool delete_me : 1;
+   Eina_Bool just_added : 1;
 } Handler;
 
 static Ecore_Exe *_system_exe = NULL;
@@ -163,7 +164,7 @@ _system_message_read(void)
         list = plist = eina_hash_find(_handlers, head->cmd);
         EINA_LIST_FOREACH(list, l, h)
           {
-             if (!h->delete_me)
+             if ((!h->delete_me) && (!h->just_added))
                {
                   if (head->size == 0) h->func(h->data, NULL);
                   else
@@ -179,6 +180,7 @@ _system_message_read(void)
           {
              EINA_LIST_FOREACH_SAFE(list, l, ll, h)
                {
+                  h->just_added = EINA_FALSE;
                   if (h->delete_me)
                     {
                        list = eina_list_remove_list(list, l);
@@ -376,6 +378,7 @@ e_system_handler_add(const char *cmd, void (*func) (void *data, const char *para
    if (!h) return;
    h->func = func;
    h->data = data;
+   if (_handlers_busy > 0) h->just_added = EINA_TRUE;
    list = eina_hash_find(_handlers, cmd);
    eina_hash_del(_handlers, cmd, list);
    list = eina_list_append(list, h);
