@@ -24,6 +24,7 @@ typedef struct _Notifier_Data
    EINA_INLIST;
    Notifier_Item *item;
    Evas_Object *icon;
+   E_Menu *menu;
 } Notifier_Item_Icon;
 
 struct _Instance_Notifier_Host

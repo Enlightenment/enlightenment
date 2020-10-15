@@ -32,6 +32,13 @@ systray_notifier_item_free(Notifier_Item *item)
           }
         if (!ii)
           continue;
+        if (ii->menu)
+          {
+             e_menu_post_deactivate_callback_set(ii->menu, NULL, NULL);
+             e_object_del(E_OBJECT(ii->menu));
+             ii->menu = NULL;
+             e_menu_hide_all();
+          }
         host_inst->ii_list = eina_inlist_remove(host_inst->ii_list,
                                                 EINA_INLIST_GET(ii));
         evas_object_del(ii->icon);
@@ -156,6 +163,7 @@ _menu_post_deactivate(void *data, E_Menu *m)
    E_Menu_Item *mi;
    E_Gadcon *gadcon = data;
    E_DBusMenu_Item *item;
+   Instance_Notifier_Host *host_inst;
 
    item = e_object_data_get(E_OBJECT(m));
    if (item)
@@ -174,6 +182,18 @@ _menu_post_deactivate(void *data, E_Menu *m)
              e_dbusmenu_item_unref(item);
           }
         if (mi->submenu) e_menu_deactivate(mi->submenu);
+     }
+   EINA_INLIST_FOREACH(ctx->instances, host_inst)
+     {
+        Notifier_Item_Icon *ii;
+        EINA_INLIST_FOREACH(host_inst->ii_list, ii)
+          {
+             if (ii->menu == m)
+               {
+                  ii->menu = NULL;
+                  break;
+               }
+          }
      }
    e_object_del(E_OBJECT(m));
 }
@@ -235,8 +255,13 @@ _clicked_item_cb(void *data, Evas *evas, Evas_Object *obj EINA_UNUSED, void *eve
    if (!ii->item->dbus_item) return;
    root_item = ii->item->dbus_item;
    EINA_SAFETY_ON_FALSE_RETURN(root_item->is_submenu);
-
-   m = _item_submenu_new(root_item, NULL);
+   if (ii->menu)
+     {
+        e_menu_post_deactivate_callback_set(ii->menu, NULL, NULL);
+        e_object_del(E_OBJECT(ii->menu));
+        ii->menu = NULL;
+     }
+   m = ii->menu = _item_submenu_new(root_item, NULL);
    e_gadcon_locked_set(gadcon, 1);
    e_menu_post_deactivate_callback_set(m, _menu_post_deactivate, gadcon);
 
