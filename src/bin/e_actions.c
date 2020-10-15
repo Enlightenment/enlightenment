@@ -2907,6 +2907,20 @@ ACT_FN_GO(backlight_adjust, )
    e_config_save_queue();
 }
 
+ACT_FN_GO(blanking, EINA_UNUSED)
+{
+   if      (params && (!strcmp(params, "on")))  e_config->screensaver_enable = 1;
+   else if (params && (!strcmp(params, "off"))) e_config->screensaver_enable = 0;
+   else if (params && (!strcmp(params, "toggle")))
+     {
+        if (e_config->screensaver_enable) e_config->screensaver_enable = 0;
+        else e_config->screensaver_enable = 1;
+     }
+   e_screensaver_update();
+   e_dpms_update();
+   e_config_save_queue();
+}
+
 ACT_FN_GO(kbd_layout, )
 {
    unsigned int x;
@@ -3581,6 +3595,14 @@ e_actions_init(void)
    e_action_predef_name_set(N_("Screen"), N_("Backlight Down"), "backlight_adjust",
                             "-10", NULL, 0);
 
+   /* blanking */
+   ACT_GO(blanking);
+   e_action_predef_name_set(N_("Screen"), N_("Blanking Off"), "blanking",
+                            "off", "syntax: toggle/off/on, example: off", 0);
+   e_action_predef_name_set(N_("Screen"), N_("Blanking On"), "blanking",
+                            "on", "syntax: toggle/off/on, example: on", 0);
+   e_action_predef_name_set(N_("Screen"), N_("Blanking Toggle"), "blanking",
+                            "toggle", "syntax: toggle/off/on, example: toggle", 0);
    /* screen setup */
    ACT_GO(screen_redo);
    e_action_predef_name_set(N_("Screen"),
