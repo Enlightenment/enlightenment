@@ -658,6 +658,7 @@ ping_schedule(Obj *o)
    double timeout = ping_powersave_timeout_get() + 1.0;
 
    if (o->ping_timer) ecore_timer_del(o->ping_timer);
+   printf("@@@ new ping in %1.3f\n", timeout);
    o->ping_timer = ecore_timer_add(timeout, cb_ping_timer, o);
 }
 
@@ -667,6 +668,8 @@ cb_ping_timer(void *data)
    Obj *o = data;
 
    printf("@@@ ping timer %s\n", o->address);
+   o->ping_timer = NULL;
+   o->ping_block = EINA_TRUE;
    if (o->ping_busy)
      {
         o->ping_busy = EINA_FALSE;
@@ -677,6 +680,7 @@ cb_ping_timer(void *data)
              if (o->fn_change) o->fn_change(o);
           }
      }
+   o->ping_block = EINA_FALSE;
    ping_do(o);
    ping_schedule(o);
    return EINA_TRUE;
@@ -685,7 +689,7 @@ cb_ping_timer(void *data)
 void
 bz_obj_ping_begin(Obj *o)
 {
-   if (o->ping_timer) return;
+   if ((o->ping_timer) || (o->ping_block)) return;
    if (o->ping_busy)
      {
         o->ping_busy = EINA_FALSE;

@@ -22,6 +22,7 @@ struct _Obj {
    Eina_Bool add_called : 1;
    Eina_Bool ping_ok : 1;
    Eina_Bool ping_busy : 1;
+   Eina_Bool ping_block : 1;
    Ecore_Timer *ping_timer;
    //// public data to read
    const char *path;
