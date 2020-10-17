@@ -8,6 +8,7 @@ struct _E_Winlist_Win
 {
    Evas_Object  *bg_object;
    Evas_Object  *icon_object;
+   Evas_Object  *win_object;
    E_Client     *client;
    unsigned char was_iconified E_BITFIELD;
    unsigned char was_shaded E_BITFIELD;
@@ -41,6 +42,7 @@ static E_Zone *_winlist_zone = NULL;
 static Evas_Object *_bg_object = NULL;
 static Evas_Object *_list_object = NULL;
 static Evas_Object *_icon_object = NULL;
+static Evas_Object *_win_object = NULL;
 static Eina_List *_wins = NULL;
 static Eina_List *_win_selected = NULL;
 static E_Desk *_last_desk = NULL;
@@ -266,6 +268,7 @@ e_winlist_hide(void)
      }
    _win_selected = NULL;
    _icon_object = NULL;
+   _win_object = NULL;
 
    evas_object_del(_winlist);
    e_client_focus_track_thaw();
@@ -674,6 +677,16 @@ _e_winlist_client_add(E_Client *ec, E_Zone *zone, E_Desk *desk)
         edje_object_part_swallow(ww->bg_object, "e.swallow.icon", o);
         evas_object_show(o);
      }
+   if (edje_object_part_exists(ww->bg_object, "e.swallow.win"))
+     {
+        o = e_comp_object_util_mirror_add(ec->frame);
+        ww->win_object = o;
+        e_comp_object_util_del_list_append(_winlist, o);
+        evas_object_size_hint_aspect_set(o, EVAS_ASPECT_CONTROL_BOTH,
+                                         ec->client.w, ec->client.h);
+        edje_object_part_swallow(ww->bg_object, "e.swallow.win", o);
+        evas_object_show(o);
+     }
    if (ec->shaded)
      edje_object_signal_emit(ww->bg_object, "e,state,shaded", "e");
    else if (ec->iconic)
@@ -719,6 +732,11 @@ _e_winlist_client_del(E_Client *ec)
                {
                   e_comp_object_util_del_list_remove(_winlist, ww->icon_object);
                   evas_object_del(ww->icon_object);
+               }
+             if (ww->win_object)
+               {
+                  e_comp_object_util_del_list_remove(_winlist, ww->win_object);
+                  evas_object_del(ww->win_object);
                }
              E_FREE(ww);
              _wins = eina_list_remove_list(_wins, l);
@@ -845,6 +863,23 @@ _e_winlist_activate(void)
         _icon_object = o;
         e_comp_object_util_del_list_append(_winlist, o);
         edje_object_part_swallow(_bg_object, "e.swallow.icon", o);
+        evas_object_show(o);
+     }
+   if (_win_object)
+     {
+        e_comp_object_util_del_list_remove(_winlist, _win_object);
+        evas_object_del(_win_object);
+        _win_object = NULL;
+     }
+   if (edje_object_part_exists(_bg_object, "e.swallow.win"))
+     {
+        o = e_comp_object_util_mirror_add(ww->client->frame);
+        _win_object = o;
+        e_comp_object_util_del_list_append(_winlist, o);
+        evas_object_size_hint_aspect_set(o, EVAS_ASPECT_CONTROL_BOTH,
+                                         ww->client->client.w,
+                                         ww->client->client.h);
+        edje_object_part_swallow(_bg_object, "e.swallow.win", o);
         evas_object_show(o);
      }
 
