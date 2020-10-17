@@ -337,9 +337,9 @@ _pager_recalc(void *data)
    int w, h, zw, zh, w2, h2;
    E_Gadcon_Orient orient;
 
+   p->recalc = NULL;
    if (!p->inst || !p->inst->gcc || !p->inst->gcc->gadcon) return;
 
-   p->recalc = NULL;
    zw = p->zone->w; zh = p->zone->h;
    pd = eina_list_data_get(p->desks);
    if (!pd) return;
@@ -379,8 +379,8 @@ _pager_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
 {
    Pager *p = data;
 
-   if (!p->recalc)
-     p->recalc = ecore_job_add(_pager_recalc, p);
+   if (p->recalc) ecore_job_del(p->recalc);
+   p->recalc = ecore_job_add(_pager_recalc, p);
 }
 
 static Pager *
@@ -404,10 +404,12 @@ _pager_new(Evas *evas, E_Zone *zone, E_Gadcon *gc, Instance *inst)
 static void
 _pager_free(Pager *p)
 {
+   pagers = eina_list_remove(pagers, p);
    _pager_empty(p);
    evas_object_del(p->o_table);
+   p->o_table = NULL;
    ecore_job_del(p->recalc);
-   pagers = eina_list_remove(pagers, p);
+   p->recalc = NULL;
    free(p);
 }
 
