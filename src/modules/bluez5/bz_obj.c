@@ -683,7 +683,7 @@ cb_ping_timer(void *data)
    o->ping_block = EINA_FALSE;
    ping_do(o);
    ping_schedule(o);
-   return EINA_TRUE;
+   return EINA_FALSE;
 }
 
 void
