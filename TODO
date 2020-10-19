@@ -84,7 +84,6 @@ TODO:
   * support setting up face auth (howdy / pam-face / pam-face-authentication / pam-facial-auth)
   * support setting up yubikey as auth
   * support setting up usb drive for auth (pam_usb)
-* winlist - add window miniatures to list mode
 * winlist - add grid mode with miniatures
 * winlist - add exposé like 2d layout of windows with miniatures
 * wifi/bt net: associate app/desktop(s) or actions to run when:
