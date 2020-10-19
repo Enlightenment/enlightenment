@@ -233,6 +233,7 @@ _backlight_devices_device_set(Backlight_Device *bd, double val)
              Ecore_X_Randr_Output o = _backlight_devices_randr_output_get(e_comp->root, bd->output, bd->edid);
              if (o)
                {
+                  fprintf(stderr, "BL: randr bklight %1.3f @ %1.3f\n", bd->val, ecore_time_get());
                   ecore_x_randr_output_backlight_level_set(e_comp->root, o, bd->val);
                   ecore_event_add(E_EVENT_BACKLIGHT_CHANGE, NULL, NULL, NULL);
                }
@@ -242,11 +243,13 @@ _backlight_devices_device_set(Backlight_Device *bd, double val)
 #endif
    if (!strncmp(bd->dev, "ddc:", 4))
      {
+        fprintf(stderr, "BL: ddc bklight %1.3f @ %1.3f\n", bd->val, ecore_time_get());
         e_system_send("ddc-val-set", "%s %i %i", bd->dev + 4, 0x10, (int)(bd->val * 100.0)); // backlight val in e_system_ddc.c
         ecore_event_add(E_EVENT_BACKLIGHT_CHANGE, NULL, NULL, NULL);
      }
    else
      {
+        fprintf(stderr, "BL: internal bklight %1.3f @ %1.3f\n", bd->val, ecore_time_get());
         e_system_send("bklight-set", "%s %i", bd->dev, (int)(bd->val * 1000.0));
         ecore_event_add(E_EVENT_BACKLIGHT_CHANGE, NULL, NULL, NULL);
      }
@@ -263,18 +266,15 @@ _backlight_devices_device_zone_get(Backlight_Device *bd)
    EINA_LIST_FOREACH(e_comp->zones, l, zone)
      {
         const char *id = zone->randr2_id;
-        fprintf(stderr, "look at %p %s\n", zone, id);
         if (!id)
           {
              const char *id2 = bd->edid;
              if (!id2) id2 = "";
              id = "";
-             fprintf(stderr, "cmp1 [%s] == [%s]\n", id, id2);
              if (!strcmp(id, id2)) return zone;
           }
         else
           {
-             fprintf(stderr, "cmp2 [%s] == [%s]\n", id, buf);
              if (!strcmp(id, buf)) return zone;
           }
      }
