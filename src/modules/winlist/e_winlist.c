@@ -1,8 +1,7 @@
 #include "e.h"
 #include "e_mod_main.h"
 
-// XXX: need to handle zone add/delete/reconfigure geom
-// XXX: need to handle client win resize
+// XXX: need some way to break a grab for desklock to work in x like wl _cb_lost
 // XXX: newly added windows while up come up black
 // XXX: ARGB windows when scaled down with zoomap have their base colors messed up (black)
 
@@ -20,6 +19,7 @@ struct _E_Winlist_Win
    unsigned char was_shaded E_BITFIELD;
 };
 
+static void      _e_winlist_client_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *info EINA_UNUSED);
 static void      _e_winlist_size_adjust(void);
 static Eina_Bool _e_winlist_client_add(E_Client *ec, E_Zone *zone, E_Desk *desk);
 static void      _e_winlist_client_del(E_Client *ec);
@@ -35,6 +35,8 @@ static Eina_Bool _e_winlist_cb_mouse_down(void *data, int type, void *event);
 static Eina_Bool _e_winlist_cb_mouse_up(void *data, int type, void *event);
 static Eina_Bool _e_winlist_cb_mouse_wheel(void *data, int type, void *event);
 static Eina_Bool _e_winlist_cb_mouse_move(void *data, int type, void *event);
+static Eina_Bool _e_winlist_cb_zone_del(void *data, int type, void *event);
+static Eina_Bool _e_winlist_cb_zone_move_resize(void *data, int type, void *event);
 static Eina_Bool _e_winlist_scroll_timer(void *data);
 static Eina_Bool _e_winlist_animator(void *data);
 
@@ -64,6 +66,7 @@ static double _scroll_align = 0.0;
 static Ecore_Timer *_scroll_timer = NULL;
 static Ecore_Animator *_animator = NULL;
 static Eina_Bool _mouse_pressed = EINA_FALSE;
+static Evas_Coord _winlist_chosen_h = 0;
 
 static Eina_Bool
 _wmclass_picked(const Eina_List *lst, const char *wmclass)
@@ -295,6 +298,8 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
    E_LIST_HANDLER_APPEND(_handlers, ECORE_EVENT_MOUSE_BUTTON_UP, _e_winlist_cb_mouse_up, NULL);
    E_LIST_HANDLER_APPEND(_handlers, ECORE_EVENT_MOUSE_WHEEL, _e_winlist_cb_mouse_wheel, NULL);
    E_LIST_HANDLER_APPEND(_handlers, ECORE_EVENT_MOUSE_MOVE, _e_winlist_cb_mouse_move, NULL);
+   E_LIST_HANDLER_APPEND(_handlers, E_EVENT_ZONE_DEL, _e_winlist_cb_zone_del, NULL);
+   E_LIST_HANDLER_APPEND(_handlers, E_EVENT_ZONE_MOVE_RESIZE, _e_winlist_cb_zone_move_resize, NULL);
 
    evas_object_show(_winlist);
    return 1;
@@ -315,6 +320,9 @@ e_winlist_hide(void)
    evas_object_hide(_winlist);
    EINA_LIST_FREE(_wins, ww)
      {
+        if (ww->client->frame)
+          evas_object_event_callback_del_full(ww->client->frame, EVAS_CALLBACK_RESIZE,
+                                              _e_winlist_client_resize_cb, ww);
         if ((!ec) || (ww->client != ec)) e_object_unref(E_OBJECT(ww->client));
         free(ww);
      }
@@ -779,6 +787,7 @@ try_again:
              goto try_again;
           }
      }
+   _winlist_chosen_h = h;
    return rows;
 }
 
@@ -848,6 +857,23 @@ _e_winlist_size_adjust(void)
 {
    if (e_config->winlist_mode == 1) _e_winlist_size_large_adjust();
    else _e_winlist_size_list_adjust();
+}
+
+static void
+_e_winlist_client_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *info EINA_UNUSED)
+{
+   E_Winlist_Win *ww = data;
+
+   if (e_config->winlist_mode == 1)
+     {
+        _e_winlist_large_item_height_set(_winlist_chosen_h);
+     }
+   else
+     {
+        evas_object_size_hint_aspect_set(ww->win_object, EVAS_ASPECT_CONTROL_BOTH,
+                                         ww->client->w, ww->client->h);
+        edje_object_part_swallow(ww->bg_object, "e.swallow.win", ww->win_object);
+     }
 }
 
 static Eina_Bool
@@ -939,7 +965,7 @@ _e_winlist_client_add(E_Client *ec, E_Zone *zone, E_Desk *desk)
           }
         else
           evas_object_size_hint_aspect_set(o, EVAS_ASPECT_CONTROL_BOTH,
-                                           ec->client.w, ec->client.h);
+                                           ec->w, ec->h);
         edje_object_part_swallow(ww->bg_object, "e.swallow.win", o);
         evas_object_show(o);
      }
@@ -973,6 +999,8 @@ _e_winlist_client_add(E_Client *ec, E_Zone *zone, E_Desk *desk)
         evas_object_size_hint_max_set(ww->bg_object, 9999, mh);
         elm_box_pack_end(_list_object, ww->bg_object);
      }
+   evas_object_event_callback_add(ww->client->frame, EVAS_CALLBACK_RESIZE,
+                                  _e_winlist_client_resize_cb, ww);
    e_object_ref(E_OBJECT(ww->client));
    return EINA_TRUE;
 }
@@ -988,6 +1016,9 @@ _e_winlist_client_del(E_Client *ec)
      {
         if (ww->client == ec)
           {
+             if (ec->frame)
+               evas_object_event_callback_del_full(ec->frame, EVAS_CALLBACK_RESIZE,
+                                                   _e_winlist_client_resize_cb, ww);
              e_object_unref(E_OBJECT(ww->client));
              if (l == _win_selected)
                {
@@ -1545,6 +1576,36 @@ _e_winlist_cb_mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *eve
    if (E_INSIDE(ev->x, ev->y, x, y, w, h))
      evas_event_feed_mouse_move(evas_object_evas_get(_winlist), ev->x, ev->y, ev->timestamp, NULL);
 
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_e_winlist_cb_zone_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   E_Event_Zone_Del *ev = event;
+
+   if (ev->zone != _winlist_zone) return ECORE_CALLBACK_PASS_ON;
+   _e_winlist_deactivate();
+   e_winlist_hide();
+   _hold_count = 0;
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_e_winlist_cb_zone_move_resize(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   E_Event_Zone_Move_Resize *ev = event;
+   Evas_Coord x, y, w, h;
+
+   if (ev->zone != _winlist_zone) return ECORE_CALLBACK_PASS_ON;
+   evas_object_geometry_set(_winlist_bg_object, ev->zone->x, ev->zone->y, ev->zone->w, ev->zone->h);
+   evas_object_geometry_get(_winlist, NULL, NULL, &w, &h);
+   x = ev->zone->x + ((ev->zone->w - w) / 2);
+   y = ev->zone->y + ((ev->zone->h - h) / 2);
+   evas_object_geometry_set(_winlist, x, y, w, h);
+   evas_object_geometry_set(_winlist_fg_object, ev->zone->x, ev->zone->y, ev->zone->w, ev->zone->h);
+   _e_winlist_deactivate();
+   e_winlist_hide();
    return ECORE_CALLBACK_PASS_ON;
 }
 
