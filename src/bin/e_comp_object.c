@@ -2898,6 +2898,8 @@ e_comp_object_util_type_set(Evas_Object *obj, E_Comp_Object_Type type)
      }
    else
      skip = EINA_TRUE;
+   if (evas_object_data_get(obj, "noshadow"))
+     shadow = EINA_FALSE;
    while (!ok)
      {
         if (skip)
@@ -2939,6 +2941,8 @@ e_comp_object_util_add(Evas_Object *obj, E_Comp_Object_Type type)
    vis = evas_object_visible_get(obj);
    o = edje_object_add(e_comp->evas);
    evas_object_data_set(o, "comp_object", (void*)1);
+   if (evas_object_data_get(obj, "noshadow"))
+     evas_object_data_set(o, "noshadow", o);
    e_comp_object_util_type_set(o, type);
 
    evas_object_geometry_get(obj, &x, &y, &w, &h);
@@ -4273,6 +4277,124 @@ e_comp_object_agent_add(Evas_Object *obj)
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOVE, _e_comp_object_cb_agent_move, cw);
    evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _e_comp_object_cb_agent_del, cw);
    return o;
+}
+
+static void
+_e_comp_object_frame_mirror_del_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *info EINA_UNUSED)
+{
+   Evas_Object *o;
+
+   o = evas_object_data_get(obj, "client");
+   if (o) evas_object_del(o);
+   evas_object_data_del(obj, "client");
+
+   o = evas_object_data_get(obj, "icon");
+   if (o) evas_object_del(o);
+   evas_object_data_del(obj, "icon");
+
+   o = evas_object_data_get(obj, "frame");
+   if (o) evas_object_del(o);
+   evas_object_data_del(obj, "frame");
+
+   o = evas_object_data_get(obj, "zoomap");
+   if (o) evas_object_del(o);
+   evas_object_data_del(obj, "zoomap");
+}
+
+static void
+_e_comp_object_frame_mirror_resize_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *info EINA_UNUSED)
+{
+   E_Client *ec;
+   Evas_Coord w, h;
+
+   ec = evas_object_data_get(obj, "ec");
+   if (!ec) return;
+   if (!evas_object_data_get(obj, "do_shadow")) return;
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   if ((w == ec->w) && (h == ec->h))
+     {
+        if (!evas_object_data_get(obj, "shadow_off"))
+          {
+             edje_object_signal_emit(obj, "e,state,shadow,off", "e");
+             evas_object_data_del(obj, "shadow_on");
+             evas_object_data_set(obj, "shadow_off", obj);
+          }
+     }
+   else
+     {
+        if (!evas_object_data_get(obj, "shadow_on"))
+          {
+             edje_object_signal_emit(obj, "e,state,shadow,on", "e");
+             evas_object_data_del(obj, "shadow_off");
+             evas_object_data_set(obj, "shadow_on", obj);
+          }
+     }
+}
+
+E_API Evas_Object *
+e_comp_object_util_frame_mirror_add(Evas_Object *obj)
+{
+   Evas_Object *o, *o_frame = NULL, *o_client, *o_icon, *o_zoomap = NULL, *o_sh;
+   const char *file = NULL, *group = NULL;
+
+   API_ENTRY NULL;
+
+   o = o_sh = edje_object_add(e_comp->evas);
+   evas_object_data_set(o_sh, "ec", cw->ec);
+   edje_object_file_get(cw->shobj, &file, &group);
+   edje_object_file_set(o, file, group);
+   if (e_client_util_shadow_state_get(cw->ec))
+     {
+        evas_object_data_set(o, "do_shadow", o_sh);
+        edje_object_signal_emit(o, "e,state,shadow,on", "e");
+     }
+   else
+     edje_object_signal_emit(o, "e,state,shadow,off", "e");
+   edje_object_signal_emit(o, "e,state,visible", "e");
+
+   edje_object_file_get(cw->frame_object, &file, &group);
+
+   if ((file) && (group))
+     {
+        o = o_zoomap = e_zoomap_add(e_comp->evas);
+        evas_object_data_set(o_sh, "zoomap", o);
+        e_zoomap_smooth_set(o, e_comp_config_get()->smooth_windows);
+        edje_object_part_swallow(o_sh, "e.swallow.content", o);
+        evas_object_show(o);
+
+        o = o_frame = edje_object_add(e_comp->evas);
+        evas_object_data_set(o_sh, "frame", o);
+        edje_object_file_set(o, file, group);
+        edje_object_signal_emit(o, "e,version,22", "e");
+        edje_object_signal_emit(o, "e,state,focused", "e");
+        edje_object_signal_emit(o, "e,state,visible", "e");
+        edje_object_part_text_set(o, "e.text.title", cw->frame_name);
+        e_zoomap_child_set(o_zoomap, o);
+        e_zoomap_solid_set(o, EINA_FALSE);
+        evas_object_show(o);
+     }
+
+   o = o_client = e_comp_object_util_mirror_add(obj);
+   evas_object_data_set(o_sh, "client", o);
+   if (o_frame) edje_object_part_swallow(o_frame, "e.swallow.client",  o);
+   else         edje_object_part_swallow(o_sh,    "e.swallow.content", o);
+   evas_object_show(o);
+
+   if (o_frame)
+     {
+        o = o_icon = e_client_icon_add(cw->ec, e_comp->evas);
+        evas_object_data_set(o_sh, "icon", o);
+        edje_object_part_swallow(o_frame, "e.swallow.icon", o);
+        evas_object_show(o);
+     }
+
+   evas_object_event_callback_add(o_sh, EVAS_CALLBACK_DEL,
+                                  _e_comp_object_frame_mirror_del_cb, NULL);
+   evas_object_event_callback_add(o_sh, EVAS_CALLBACK_RESIZE,
+                                  _e_comp_object_frame_mirror_resize_cb, NULL);
+   if (o_zoomap)
+     e_zoomap_child_resize(o_zoomap, cw->ec->w, cw->ec->h);
+   return o_sh;
 }
 
 /* create a duplicate of an evas object */

@@ -1,5 +1,5 @@
 group "E_Config" struct {
-    value "config_version" int: 1000030;
+    value "config_version" int: 1000032;
     value "config_type" uint: 3;
     value "desktop_default_name" string: "%i-%i";
     value "desktop_default_window_profile" string: "standard";
@@ -51,14 +51,9 @@ group "E_Config" struct {
     value "winlist_list_jump_desk_while_selecting" int: 0;
     value "winlist_list_focus_while_selecting" int: 1;
     value "winlist_list_raise_while_selecting" int: 1;
-    value "winlist_pos_align_x" double: 0.5;
-    value "winlist_pos_align_y" double: 0.5;
-    value "winlist_pos_size_w" double: 0.5;
-    value "winlist_pos_size_h" double: 0.5;
-    value "winlist_pos_min_w" int: 0;
-    value "winlist_pos_min_h" int: 0;
-    value "winlist_pos_max_w" int: 320;
-    value "winlist_pos_max_h" int: 320;
+    value "winlist_mode" int: 0;
+    value "winlist_large_size" double: 0.6666;
+    value "winlist_list_size" double: 0.3333;
     value "maximize_policy" int: 50;
     value "allow_manip" int: 0;
     value "border_fix_on_shelf_toggle" int: 0;

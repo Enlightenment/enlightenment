@@ -40,6 +40,8 @@ e_modapi_init(E_Module *m)
         _act_winlist->func.go_edge = _e_mod_action_winlist_edge_cb;
         _act_winlist->func.go_signal = _e_mod_action_winlist_signal_cb;
         _act_winlist->func.go_acpi = _e_mod_action_winlist_acpi_cb;
+        e_action_predef_name_set(N_("Window : List"), N_("Show"),
+                                 "winlist", "", NULL, 0);
         e_action_predef_name_set(N_("Window : List"), N_("Next Window"),
                                  "winlist", "next", NULL, 0);
         e_action_predef_name_set(N_("Window : List"), N_("Previous Window"),
@@ -112,7 +114,7 @@ _e_mod_action_winlist_cb_helper(E_Object *obj, const char *params, int modifiers
 {
    E_Zone *zone = NULL;
    E_Winlist_Filter filter = E_WINLIST_FILTER_NONE;
-   int direction = 0; // -1 for prev, 1 for next;
+   int direction =-99; // -1 for prev, 1 for next;
    int udlr = -1; // 0 for up, 1 for down, 2 for left, 3 for right
 
    zone = e_zone_current_get();
@@ -139,15 +141,12 @@ _e_mod_action_winlist_cb_helper(E_Object *obj, const char *params, int modifiers
           udlr = 2;
         else if (!strcmp(params, "right"))
           udlr = 3;
-        else return EINA_FALSE;
      }
-   else
-     direction = 1;
    e_winlist_modifiers_set(modifiers, type);
-   if (direction) e_winlist_show(zone, filter);
-   if (direction == 1) e_winlist_next();
-   else if (direction == -1) e_winlist_prev();
-   else e_winlist_direction_select(zone, udlr);
+   e_winlist_show(zone, filter);
+   if      (direction ==   1) e_winlist_next();
+   else if (direction ==  -1) e_winlist_prev();
+   else if (direction != -99) e_winlist_direction_select(zone, udlr);
    if ((obj) && (obj->type == E_CLIENT_TYPE))
      e_client_next_mouse_action_ignore((void *)obj);
    return EINA_TRUE;

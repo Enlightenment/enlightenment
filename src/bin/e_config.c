@@ -727,14 +727,9 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, winlist_list_focus_while_selecting, INT); /**/
    E_CONFIG_VAL(D, T, winlist_list_raise_while_selecting, INT); /**/
    E_CONFIG_VAL(D, T, winlist_list_move_after_select, INT); /**/
-   E_CONFIG_VAL(D, T, winlist_pos_align_x, DOUBLE); /**/
-   E_CONFIG_VAL(D, T, winlist_pos_align_y, DOUBLE); /**/
-   E_CONFIG_VAL(D, T, winlist_pos_size_w, DOUBLE); /**/
-   E_CONFIG_VAL(D, T, winlist_pos_size_h, DOUBLE); /**/
-   E_CONFIG_VAL(D, T, winlist_pos_min_w, INT); /**/
-   E_CONFIG_VAL(D, T, winlist_pos_min_h, INT); /**/
-   E_CONFIG_VAL(D, T, winlist_pos_max_w, INT); /**/
-   E_CONFIG_VAL(D, T, winlist_pos_max_h, INT); /**/
+   E_CONFIG_VAL(D, T, winlist_mode, INT); /**/
+   E_CONFIG_VAL(D, T, winlist_list_size, DOUBLE); /**/
+   E_CONFIG_VAL(D, T, winlist_large_size, DOUBLE); /**/
    E_CONFIG_VAL(D, T, maximize_policy, INT); /**/
    E_CONFIG_VAL(D, T, allow_manip, INT); /**/
    E_CONFIG_VAL(D, T, border_fix_on_shelf_toggle, INT); /**/
@@ -1323,7 +1318,7 @@ e_config_load(void)
      }
 
 #define CONFIG_VERSION_CHECK(VERSION) \
-  if (e_config->config_version - (E_CONFIG_FILE_EPOCH * 1000000) < (VERSION))
+  if ((e_config->config_version - (E_CONFIG_FILE_EPOCH * 1000000)) < (VERSION))
 
 #define CONFIG_VERSION_UPDATE_INFO(VERSION) \
   INF("Performing config upgrade for %d.%d", E_CONFIG_FILE_EPOCH, VERSION);
@@ -1773,6 +1768,13 @@ e_config_load(void)
                  }
                e_config_save_queue();
             }
+          CONFIG_VERSION_CHECK(32)
+            {
+               CONFIG_VERSION_UPDATE_INFO(32);
+               e_config->winlist_large_size = 0.6666;
+               e_config->winlist_list_size = 0.3333;
+               e_config_save_queue();
+            }
      }
    elm_config_profile_set(_e_config_profile);
    if (!e_config->remember_internal_fm_windows)
@@ -1826,14 +1828,9 @@ e_config_load(void)
    E_CONFIG_LIMIT(e_config->winlist_list_show_other_screen_windows, 0, 1);
    E_CONFIG_LIMIT(e_config->winlist_list_uncover_while_selecting, 0, 1);
    E_CONFIG_LIMIT(e_config->winlist_list_jump_desk_while_selecting, 0, 1);
-   E_CONFIG_LIMIT(e_config->winlist_pos_align_x, 0.0, 1.0);
-   E_CONFIG_LIMIT(e_config->winlist_pos_align_y, 0.0, 1.0);
-   E_CONFIG_LIMIT(e_config->winlist_pos_size_w, 0.0, 1.0);
-   E_CONFIG_LIMIT(e_config->winlist_pos_size_h, 0.0, 1.0);
-   E_CONFIG_LIMIT(e_config->winlist_pos_min_w, 0, 4000);
-   E_CONFIG_LIMIT(e_config->winlist_pos_min_h, 0, 4000);
-   E_CONFIG_LIMIT(e_config->winlist_pos_max_w, 8, 4000);
-   E_CONFIG_LIMIT(e_config->winlist_pos_max_h, 8, 4000);
+   E_CONFIG_LIMIT(e_config->winlist_mode, 8, 1);
+   E_CONFIG_LIMIT(e_config->winlist_large_size, 0.0, 1.0);
+   E_CONFIG_LIMIT(e_config->winlist_list_size, 0.0, 1.0);
    E_CONFIG_LIMIT(e_config->maximize_policy, E_MAXIMIZE_FULLSCREEN, E_MAXIMIZE_DIRECTION);
    E_CONFIG_LIMIT(e_config->allow_manip, 0, 1);
    E_CONFIG_LIMIT(e_config->border_fix_on_shelf_toggle, 0, 1);

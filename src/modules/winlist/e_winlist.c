@@ -1,6 +1,12 @@
 #include "e.h"
 #include "e_mod_main.h"
 
+// XXX: need to handle zone add/delete/reconfigure geom
+// XXX: need to handle client win resize
+// XXX: newly added windows while up come up black
+// XXX: ARGB windows when scaled down with zoomap have their base colors messed up (black)
+
+
 /* local subsystem functions */
 typedef struct _E_Winlist_Win E_Winlist_Win;
 
@@ -31,10 +37,6 @@ static Eina_Bool _e_winlist_cb_mouse_wheel(void *data, int type, void *event);
 static Eina_Bool _e_winlist_cb_mouse_move(void *data, int type, void *event);
 static Eina_Bool _e_winlist_scroll_timer(void *data);
 static Eina_Bool _e_winlist_animator(void *data);
-#if 0
-static void      _e_winlist_cb_item_mouse_in(void *data, Evas *evas,
-                                             Evas_Object *obj, void *event_info);
-#endif
 
 /* local subsystem globals */
 static Evas_Object *_winlist = NULL;
@@ -43,6 +45,8 @@ static Evas_Object *_bg_object = NULL;
 static Evas_Object *_list_object = NULL;
 static Evas_Object *_icon_object = NULL;
 static Evas_Object *_win_object = NULL;
+static Evas_Object *_winlist_bg_object = NULL;
+static Evas_Object *_winlist_fg_object = NULL;
 static Eina_List *_wins = NULL;
 static Eina_List *_win_selected = NULL;
 static E_Desk *_last_desk = NULL;
@@ -59,6 +63,7 @@ static double _scroll_align_to = 0.0;
 static double _scroll_align = 0.0;
 static Ecore_Timer *_scroll_timer = NULL;
 static Ecore_Animator *_animator = NULL;
+static Eina_Bool _mouse_pressed = EINA_FALSE;
 
 static Eina_Bool
 _wmclass_picked(const Eina_List *lst, const char *wmclass)
@@ -67,11 +72,10 @@ _wmclass_picked(const Eina_List *lst, const char *wmclass)
    const char *s;
 
    if (!wmclass) return EINA_FALSE;
-
    EINA_LIST_FOREACH(lst, l, s)
-     if (s == wmclass)
-       return EINA_TRUE;
-
+     {
+        if (s == wmclass) return EINA_TRUE;
+     }
    return EINA_FALSE;
 }
 
@@ -95,16 +99,22 @@ e_winlist_shutdown(void)
    return 1;
 }
 
+static void
+_cb_bgfg_signal_hide_done(void *data EINA_UNUSED, Evas_Object *obj, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
+{
+   evas_object_del(obj);
+}
+
 int
 e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
 {
-   int x, y, w, h;
    Evas_Object *o;
    Eina_List *l, *ll;
    E_Desk *desk;
    E_Client *ec;
    E_Winlist_Win *ww;
    Eina_List *wmclasses = NULL;
+   int ok;
 
    E_OBJECT_CHECK_RETURN(zone, 0);
    E_OBJECT_TYPE_CHECK_RETURN(zone, E_ZONE_TYPE, 0);
@@ -117,8 +127,8 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
         Ecore_X_Window mouse_grab = 0;
         _input_window = ecore_x_window_input_new(e_comp->root, 0, 0, 1, 1);
         ecore_x_window_show(_input_window);
-        if (_activate_type == E_WINLIST_ACTIVATE_TYPE_MOUSE)
-          mouse_grab = _input_window;
+        mouse_grab = _input_window;
+//        if (_activate_type == E_WINLIST_ACTIVATE_TYPE_MOUSE) mouse_grab = _input_window;
         if (!e_grabinput_get(mouse_grab, 0, _input_window))
           {
              ecore_x_window_free(_input_window);
@@ -131,26 +141,11 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
    if (e_comp->comp_type != E_PIXMAP_TYPE_X)
      {
         Eina_Bool mouse_grab = EINA_FALSE;
-        if (_activate_type == E_WINLIST_ACTIVATE_TYPE_MOUSE)
-          mouse_grab = EINA_TRUE;
-        if (!e_comp_grab_input(mouse_grab, EINA_TRUE))
-          return 0;
+        mouse_grab = EINA_TRUE;
+//        if (_activate_type == E_WINLIST_ACTIVATE_TYPE_MOUSE) mouse_grab = EINA_TRUE;
+        if (!e_comp_grab_input(mouse_grab, EINA_TRUE)) return 0;
         _input_window = e_comp->ee_win;
      }
-
-   w = (double)zone->w * e_config->winlist_pos_size_w;
-   if (w > e_config->winlist_pos_max_w) w = e_config->winlist_pos_max_w;
-   else if (w < e_config->winlist_pos_min_w)
-     w = e_config->winlist_pos_min_w;
-   if (w > zone->w) w = zone->w;
-   x = zone->x + (double)(zone->w - w) * e_config->winlist_pos_align_x;
-
-   h = (double)zone->h * e_config->winlist_pos_size_h;
-   if (h > e_config->winlist_pos_max_h) h = e_config->winlist_pos_max_h;
-   else if (h < e_config->winlist_pos_min_h)
-     h = e_config->winlist_pos_min_h;
-   if (h > zone->h) h = zone->h;
-   y = zone->y + (double)(zone->h - h) * e_config->winlist_pos_align_y;
 
    _winlist_zone = zone;
    e_client_move_cancel();
@@ -163,18 +158,79 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
 #endif
 
    evas_event_freeze(e_comp->evas);
+
+   o = edje_object_add(e_comp->evas);
+   evas_object_layer_set(o, E_LAYER_CLIENT_POPUP);
+   evas_object_pass_events_set(o, EINA_TRUE);
+   if (e_config->winlist_mode == 1)
+     ok = e_theme_edje_object_set(o, "base/theme/winlist", "e/widgets/winlist/large/bg");
+   else
+     ok = e_theme_edje_object_set(o, "base/theme/winlist", "e/widgets/winlist/bg");
+   if (ok)
+     {
+        // nothing need be done here yet
+        //   edje_object_signal_callback_add(o, "e,action,show,done", "e", _cb_bgfg_signal_hide_done, NULL);
+        edje_object_signal_callback_add(o, "e,action,hide,done", "e", _cb_bgfg_signal_hide_done, NULL);
+        edje_object_signal_emit(o, "e,state,visible,on", "e");
+        evas_object_geometry_set(o, zone->x, zone->y, zone->w, zone->h);
+        evas_object_show(o);
+        _winlist_bg_object = o;
+        // XXX: GGG: ^^^ handle zone resize/move and del.
+     }
+   else
+     {
+        evas_object_del(o);
+        _winlist_bg_object = NULL;
+     }
+
    o = edje_object_add(e_comp->evas);
    evas_object_pass_events_set(o, EINA_TRUE);
+   if (e_config->winlist_mode == 1)
+     {
+        if (!e_theme_edje_object_set(o, "base/theme/winlist", "e/widgets/winlist/large"))
+          e_theme_edje_object_set(o, "base/theme/winlist", "e/widgets/winlist/main");
+     }
+   else
+     e_theme_edje_object_set(o, "base/theme/winlist", "e/widgets/winlist/main");
+   if (edje_object_data_get(o, "noshadow"))
+     evas_object_data_set(o, "noshadow", o);
    _winlist = e_comp_object_util_add(o, E_COMP_OBJECT_TYPE_POPUP);
    evas_object_layer_set(_winlist, E_LAYER_CLIENT_POPUP);
-   evas_object_move(_winlist, x, y);
    _bg_object = o;
-   e_theme_edje_object_set(o, "base/theme/winlist",
-                           "e/widgets/winlist/main");
+
+   o = edje_object_add(e_comp->evas);
+   evas_object_layer_set(o, E_LAYER_CLIENT_POPUP);
+   evas_object_pass_events_set(o, EINA_TRUE);
+   if (e_config->winlist_mode == 1)
+     ok = e_theme_edje_object_set(o, "base/theme/winlist", "e/widgets/winlist/large/fg");
+   else
+     ok = e_theme_edje_object_set(o, "base/theme/winlist", "e/widgets/winlist/fg");
+   if (ok)
+     {
+        // nothing need be done here yet
+        //   edje_object_signal_callback_add(o, "e,action,show,done", "e", _cb_bgfg_signal_hide_done, NULL);
+        edje_object_signal_callback_add(o, "e,action,hide,done", "e", _cb_bgfg_signal_hide_done, NULL);
+        edje_object_signal_emit(o, "e,state,visible,on", "e");
+        evas_object_geometry_set(o, zone->x, zone->y, zone->w, zone->h);
+        evas_object_show(o);
+        _winlist_fg_object = o;
+        // XXX: GGG: ^^^ handle zone resize/move and del.
+     }
+   else
+     {
+        evas_object_del(o);
+        _winlist_fg_object = NULL;
+     }
 
    o = elm_box_add(e_comp->elm);
    _list_object = o;
-   elm_box_homogeneous_set(o, 1);
+   if (e_config->winlist_mode == 1)
+     {
+     }
+   else
+     {
+        elm_box_homogeneous_set(o, 1);
+     }
    e_comp_object_util_del_list_append(_winlist, o);
    edje_object_part_swallow(_bg_object, "e.swallow.list", o);
    edje_object_part_text_set(_bg_object, "e.text.title", _("Select a window"));
@@ -197,15 +253,12 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
         switch (filter)
           {
            case E_WINLIST_FILTER_CLASS_WINDOWS:
-             if (!_last_client)
-               pick = EINA_FALSE;
-             else
-               pick = _last_client->icccm.class == ec->icccm.class;
+             if (!_last_client) pick = EINA_FALSE;
+             else pick = _last_client->icccm.class == ec->icccm.class;
              break;
            case E_WINLIST_FILTER_CLASSES:
              pick = (!_wmclass_picked(wmclasses, ec->icccm.class));
-             if (pick)
-               wmclasses = eina_list_append(wmclasses, ec->icccm.class);
+             if (pick) wmclasses = eina_list_append(wmclasses, ec->icccm.class);
              break;
 
            default:
@@ -262,17 +315,22 @@ e_winlist_hide(void)
    evas_object_hide(_winlist);
    EINA_LIST_FREE(_wins, ww)
      {
-        if ((!ec) || (ww->client != ec))
-          e_object_unref(E_OBJECT(ww->client));
+        if ((!ec) || (ww->client != ec)) e_object_unref(E_OBJECT(ww->client));
         free(ww);
      }
    _win_selected = NULL;
    _icon_object = NULL;
    _win_object = NULL;
 
+   if (_winlist_bg_object)
+     edje_object_signal_emit(_winlist_bg_object, "e,state,visible,off", "e");
    evas_object_del(_winlist);
+   if (_winlist_fg_object)
+     edje_object_signal_emit(_winlist_fg_object, "e,state,visible,off", "e");
    e_client_focus_track_thaw();
    _winlist = NULL;
+   _winlist_bg_object = NULL;
+   _winlist_fg_object = NULL;
    _winlist_zone = NULL;
    _hold_count = 0;
    _hold_mod = 0;
@@ -293,18 +351,14 @@ e_winlist_hide(void)
           }
      }
 #endif
-   if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
-     e_comp_ungrab_input(1, 1);
+   if (e_comp->comp_type == E_PIXMAP_TYPE_WL) e_comp_ungrab_input(1, 1);
    _input_window = 0;
    if (ec)
      {
         Eina_Bool set = !ec->lock_focus_out;
 
-        if (ec->shaded)
-          {
-             if (!ec->lock_user_shade)
-               e_client_unshade(ec, ec->shade_dir);
-          }
+        if ((ec->shaded) && (!ec->lock_user_shade))
+          e_client_unshade(ec, ec->shade_dir);
         if (e_config->winlist_list_move_after_select)
           {
              e_client_zone_set(ec, e_zone_current_get());
@@ -319,10 +373,8 @@ e_winlist_hide(void)
              evas_object_raise(ec->frame);
              e_client_raise_latest_set(ec);
           }
-        if (ec->iconic)
-          e_client_uniconify(ec);
-        if (ec->shaded)
-          e_client_unshade(ec, ec->shade_dir);
+        if (ec->iconic) e_client_uniconify(ec);
+        if (ec->shaded) e_client_unshade(ec, ec->shade_dir);
         if ((e_config->focus_policy != E_FOCUS_CLICK) ||
             (e_config->winlist_warp_at_end) ||
             (e_config->winlist_warp_while_selecting))
@@ -353,10 +405,8 @@ e_winlist_next(void)
         return;
      }
    _e_winlist_deactivate();
-   if (!_win_selected)
-     _win_selected = _wins;
-   else
-     _win_selected = _win_selected->next;
+   if (!_win_selected) _win_selected = _wins;
+   else _win_selected = _win_selected->next;
    if (!_win_selected) _win_selected = _wins;
    _e_winlist_show_active();
    _e_winlist_activate();
@@ -377,10 +427,8 @@ e_winlist_prev(void)
         return;
      }
    _e_winlist_deactivate();
-   if (!_win_selected)
-     _win_selected = _wins;
-   else
-     _win_selected = _win_selected->prev;
+   if (!_win_selected) _win_selected = _wins;
+   else _win_selected = _win_selected->prev;
    if (!_win_selected) _win_selected = eina_list_last(_wins);
    _e_winlist_show_active();
    _e_winlist_activate();
@@ -416,12 +464,90 @@ point_line_dist(int x, int y, int lx1, int ly1, int lx2, int ly2)
      {
         xx = lx1 + lround(param * c);
         yy = ly1 + lround(param * d);
-   }
+     }
 
    dx = x - xx;
    dy = y - yy;
    dist = sqrt((dx * dx) + (dy * dy));
    return lround(dist);
+}
+
+void
+e_winlist_direction_large_select(int dir)
+{
+   E_Winlist_Win *ww;
+   Eina_List *l, *closest = NULL;
+   Evas_Coord x, y, w, h;
+   Evas_Coord sx, sy, sw, sh;
+   int lx1, ly1, lx2, ly2;
+   int dist, dist2, distmin = -1, dx, dy;
+
+   if (!_win_selected) _win_selected = _wins;
+   if (!_win_selected) return;
+   ww = _win_selected->data;
+   evas_object_geometry_get(ww->bg_object, &sx, &sy, &sw, &sh);
+   lx1 = sx + (sw / 2);
+   ly1 = sy + (sh / 2);
+   switch (dir)
+     {
+      case 0: /* up */
+        lx2 = lx1;
+        ly2 = ly1 - 30000;
+        break;
+      case 1: /* down */
+        lx2 = lx1;
+        ly2 = ly1 + 30000;
+        break;
+      case 2: /* left */
+        lx2 = lx1 - 30000;
+        ly2 = ly1;
+        break;
+      case 3: /* right */
+        lx2 = lx1 + 30000;
+        ly2 = ly1;
+        break;
+      default:
+        return;
+     }
+   EINA_LIST_FOREACH(_wins, l, ww)
+     {
+        if (l == _win_selected) continue;
+        evas_object_geometry_get(ww->bg_object, &x, &y, &w, &h);
+        dist = point_line_dist(x + (w / 2), y + (h / 2), lx1, ly1, lx2, ly2);
+        dx = (x + (w / 2)) - (sx + (sw / 2));
+        dy = (y + (h / 2)) - (sy + (sh / 2));
+        dist2 = sqrt((dx * dx) + (dy * dy));
+        dist += dist2 * 2;
+        switch (dir)
+          {
+           case 0: /* up */
+             if (dy > -1) continue;
+             break;
+           case 1: /* down */
+             if (dy < 1) continue;
+             break;
+           case 2: /* left */
+             if (dx > -1) continue;
+             break;
+           case 3: /* right */
+             if (dx < 1) continue;
+             break;
+           default:
+             break;
+          }
+        if ((dist < distmin) || (distmin == -1))
+          {
+             distmin = dist;
+             closest = l;
+          }
+     }
+   if (closest)
+     {
+        _e_winlist_deactivate();
+        _win_selected = closest;
+        _e_winlist_show_active();
+        _e_winlist_activate();
+     }
 }
 
 void
@@ -452,8 +578,7 @@ e_winlist_direction_select(E_Zone *zone, int dir)
         int a = 0, d = 0;
 
         if (ec == ec_orig) continue;
-        if ((!ec->icccm.accepts_focus) &&
-            (!ec->icccm.take_focus)) continue;
+        if ((!ec->icccm.accepts_focus) && (!ec->icccm.take_focus)) continue;
         if (ec->netwm.state.skip_taskbar) continue;
         if (ec->user_skip_winlist) continue;
         if (ec->iconic)
@@ -578,10 +703,10 @@ e_winlist_modifiers_set(int mod, E_Winlist_Activate_Type type)
 
 /* local subsystem functions */
 static void
-_e_winlist_size_adjust(void)
+_e_winlist_size_list_adjust(void)
 {
    Evas_Coord mw, mh;
-   E_Zone *zone;
+   E_Zone *zone = _winlist_zone;
    int x, y, w, h;
 
    elm_box_recalculate(_list_object);
@@ -591,22 +716,138 @@ _e_winlist_size_adjust(void)
    edje_object_part_swallow(_bg_object, "e.swallow.list", _list_object);
 
    zone = _winlist_zone;
-   w = (double)zone->w * e_config->winlist_pos_size_w;
+   w = zone->w * e_config->winlist_list_size;
    if (w < mw) w = mw;
-   if (w > e_config->winlist_pos_max_w) w = e_config->winlist_pos_max_w;
-   else if (w < e_config->winlist_pos_min_w)
-     w = e_config->winlist_pos_min_w;
    if (w > zone->w) w = zone->w;
-   x = zone->x + (double)(zone->w - w) * e_config->winlist_pos_align_x;
 
    h = mh;
-   if (h > e_config->winlist_pos_max_h) h = e_config->winlist_pos_max_h;
-   else if (h < e_config->winlist_pos_min_h)
-     h = e_config->winlist_pos_min_h;
    if (h > zone->h) h = zone->h;
-   y = zone->y + (double)(zone->h - h) * e_config->winlist_pos_align_y;
 
+   x = zone->x + ((zone->w - w) / 2);
+   y = zone->y + ((zone->h - h) / 2);
    evas_object_geometry_set(_winlist, x, y, w, h);
+}
+
+static int
+_e_winlist_large_item_height_set(Evas_Coord h)
+{
+   E_Winlist_Win *ww;
+   Eina_List *l, *boxes, *bl;
+   Evas_Coord mw, mh, lw, lh;
+   Evas_Object *o, *box;
+   int rows = 1;
+
+   evas_object_geometry_get(_list_object, NULL, NULL, &lw, &lh);
+   bl = elm_box_children_get(_list_object);
+   EINA_LIST_FOREACH(bl, l, o)
+     {
+        elm_box_unpack_all(o);
+     }
+   bl = elm_box_children_get(_list_object);
+   if (!bl) return 0;
+   EINA_LIST_FOREACH(_wins, l, ww)
+     {
+try_again:
+        mh = h;
+        if (mh > ww->client->h)
+          mh = ww->client->h;
+        if (ww->client->h > 0)
+          mw = (ww->client->w * mh) / ww->client->h;
+        else
+          mw = mh;
+        evas_object_size_hint_min_set(ww->win_object, mw, mh);
+        evas_object_size_hint_max_set(ww->win_object, mw, mh);
+        edje_object_part_unswallow(ww->bg_object, ww->win_object);
+        edje_object_part_swallow(ww->bg_object, "e.swallow.win", ww->win_object);
+        edje_object_size_min_calc(ww->bg_object, &mw, &mh);
+        evas_object_size_hint_min_set(ww->bg_object, mw, mh);
+        box = bl->data;
+        elm_box_pack_end(box, ww->bg_object);
+        evas_smart_objects_calculate(evas_object_evas_get(box));
+        evas_object_size_hint_min_get(box, &mw, &mh);
+        // if box is too big then reflow obj onto next box row
+        if (mw > lw)
+          {
+             boxes = elm_box_children_get(bl->data);
+             if (!boxes) break;
+             bl = bl->next;
+             if (!bl) break;
+             rows++;
+             if (eina_list_count(boxes) == 1) continue;
+             // unpack from prev box as we are going to try with a new row
+             elm_box_unpack(box, ww->bg_object);
+             goto try_again;
+          }
+     }
+   return rows;
+}
+
+static void
+_e_winlist_size_large_adjust(void)
+{
+   Evas_Coord mw = 0, mh = 0;
+   E_Zone *zone = _winlist_zone;
+   Evas_Coord x, y, w, h, h1, h2, maxw, maxh, prevh;
+   Eina_Bool expand = EINA_FALSE;
+
+   maxw = zone->w * e_config->winlist_large_size;
+   maxh = zone->h * e_config->winlist_large_size;
+   evas_object_resize(_bg_object, maxw, maxh);
+   evas_smart_objects_calculate(evas_object_evas_get(_bg_object));
+   evas_object_geometry_get(_list_object, NULL, NULL, &maxw, &maxh);
+   if (maxw < 64) maxw = 64;
+   if (maxh < 64) maxh = 64;
+   // we will bisect sizes using the interfval h1 -> h2 until h == h2
+   // then switch to expand mode where we go up bu 20% in size until
+   // we get too big
+   h1 = 0;
+   h2 = maxh;
+   h = (h1 + h2) / 2;
+   for (;;)
+     {
+        prevh = h;
+        // pick midpoint in interval
+        if (expand) h = ((h * 120) / 100) + 1;
+        else h = (h1 + h2) / 2;
+        _e_winlist_large_item_height_set(h);
+        evas_smart_objects_calculate(evas_object_evas_get(_bg_object));
+        evas_object_size_hint_min_get(_list_object, &mw, &mh);
+        if (expand)
+          {
+             if ((mw > maxw) || (mh > maxh) || (h >= maxh))
+               {
+                  h = prevh;
+                  _e_winlist_large_item_height_set(h);
+                  break;
+               }
+          }
+        else
+          {
+             if ((mw > maxw) || (mh > maxh)) h2 = h;
+             else h1 = h;
+             if ((h2 - h1) <= 1)
+               {
+                  expand = EINA_TRUE;
+                  h1 = h;
+                  h2 = maxh;
+               }
+          }
+     }
+   evas_smart_objects_calculate(evas_object_evas_get(_bg_object));
+   edje_object_size_min_calc(_bg_object, &mw, &mh);
+
+   w = mw;
+   h = mh;
+   x = zone->x + ((zone->w - w) / 2);
+   y = zone->y + ((zone->h - h) / 2);
+   evas_object_geometry_set(_winlist, x, y, w, h);
+}
+
+static void
+_e_winlist_size_adjust(void)
+{
+   if (e_config->winlist_mode == 1) _e_winlist_size_large_adjust();
+   else _e_winlist_size_list_adjust();
 }
 
 static Eina_Bool
@@ -616,8 +857,8 @@ _e_winlist_client_add(E_Client *ec, E_Zone *zone, E_Desk *desk)
    Evas_Coord mw, mh;
    Evas_Object *o;
 
-   if ((!ec->icccm.accepts_focus) &&
-       (!ec->icccm.take_focus)) return EINA_FALSE;
+   if ((!ec->icccm.accepts_focus) && (!ec->icccm.take_focus))
+     return EINA_FALSE;
    if (ec->netwm.state.skip_taskbar) return EINA_FALSE;
    if (ec->user_skip_winlist) return EINA_FALSE;
    if (ec->iconic)
@@ -633,7 +874,8 @@ _e_winlist_client_add(E_Client *ec, E_Zone *zone, E_Desk *desk)
         if (ec->sticky)
           {
              if ((ec->zone != zone) &&
-                 (!e_config->winlist_list_show_other_screen_windows)) return EINA_FALSE;
+                 (!e_config->winlist_list_show_other_screen_windows))
+               return EINA_FALSE;
           }
         else
           {
@@ -643,11 +885,10 @@ _e_winlist_client_add(E_Client *ec, E_Zone *zone, E_Desk *desk)
                     {
                        if (!e_config->winlist_list_show_other_screen_windows)
                          return EINA_FALSE;
-                       if (ec->zone && ec->desk && (ec->desk != e_desk_current_get(ec->zone)))
-                         {
-                            if (!e_config->winlist_list_show_other_desk_windows)
-                              return EINA_FALSE;
-                         }
+                       if ((ec->zone) && (ec->desk) &&
+                           (ec->desk != e_desk_current_get(ec->zone)) &&
+                           (!e_config->winlist_list_show_other_desk_windows))
+                         return EINA_FALSE;
                     }
                   else if (!e_config->winlist_list_show_other_desk_windows)
                     return EINA_FALSE;
@@ -663,8 +904,13 @@ _e_winlist_client_add(E_Client *ec, E_Zone *zone, E_Desk *desk)
    E_FILL(o);
    e_comp_object_util_del_list_append(_winlist, o);
    ww->bg_object = o;
-   e_theme_edje_object_set(o, "base/theme/winlist",
-                           "e/widgets/winlist/item");
+   if (e_config->winlist_mode == 1)
+     {
+        if (!e_theme_edje_object_set(o, "base/theme/winlist", "e/widgets/winlist/item_large"))
+          e_theme_edje_object_set(o, "base/theme/winlist", "e/widgets/winlist/item");
+     }
+   else
+     e_theme_edje_object_set(o, "base/theme/winlist", "e/widgets/winlist/item");
    edje_object_part_text_set(o, "e.text.label",
                              e_client_util_name_get
                              (e_client_stack_active_adjust(ww->client)));
@@ -679,11 +925,21 @@ _e_winlist_client_add(E_Client *ec, E_Zone *zone, E_Desk *desk)
      }
    if (edje_object_part_exists(ww->bg_object, "e.swallow.win"))
      {
-        o = e_comp_object_util_mirror_add(ec->frame);
+        o = e_comp_object_util_frame_mirror_add(ec->frame);
         ww->win_object = o;
         e_comp_object_util_del_list_append(_winlist, o);
-        evas_object_size_hint_aspect_set(o, EVAS_ASPECT_CONTROL_BOTH,
-                                         ec->client.w, ec->client.h);
+        if (e_config->winlist_mode == 1)
+          {
+             mh = e_config->winlist_large_size * zone->h;
+             if (mh > ec->h) mh = ec->h;
+             if (ec->h > 0) mw = (ec->w * mh) / ec->h;
+             else mw = e_config->winlist_large_size;
+             evas_object_size_hint_min_set(o, mw, mh);
+             evas_object_size_hint_max_set(o, mw, mh);
+          }
+        else
+          evas_object_size_hint_aspect_set(o, EVAS_ASPECT_CONTROL_BOTH,
+                                           ec->client.w, ec->client.h);
         edje_object_part_swallow(ww->bg_object, "e.swallow.win", o);
         evas_object_show(o);
      }
@@ -691,18 +947,32 @@ _e_winlist_client_add(E_Client *ec, E_Zone *zone, E_Desk *desk)
      edje_object_signal_emit(ww->bg_object, "e,state,shaded", "e");
    else if (ec->iconic)
      edje_object_signal_emit(ww->bg_object, "e,state,iconified", "e");
-   else if (ec->desk != desk)
-     {
-        if (!((ec->sticky) && (ec->zone == zone)))
-          edje_object_signal_emit(ww->bg_object, "e,state,invisible", "e");
-     }
+   else if ((ec->desk != desk) &&
+            (!((ec->sticky) && (ec->zone == zone))))
+     edje_object_signal_emit(ww->bg_object, "e,state,invisible", "e");
 
-   edje_object_size_min_calc(ww->bg_object, &mw, &mh);
-   E_WEIGHT(ww->bg_object, 1, 0);
-   E_FILL(ww->bg_object);
-   evas_object_size_hint_min_set(ww->bg_object, mw, mh);
-   evas_object_size_hint_max_set(ww->bg_object, 9999, mh);
-   elm_box_pack_end(_list_object, ww->bg_object);
+   if (e_config->winlist_mode == 1)
+     {
+        // a hboz per item
+        Evas_Object *o2 = elm_box_add(e_comp->elm);
+        elm_box_horizontal_set(o2, EINA_TRUE);
+        elm_box_pack_end(_list_object, o2);
+        evas_object_show(o2);
+
+        edje_object_size_min_calc(ww->bg_object, &mw, &mh);
+        E_WEIGHT(ww->bg_object, 0, 0);
+        evas_object_size_hint_min_set(ww->bg_object, mw, mh);
+        elm_box_pack_end(o2, ww->bg_object);
+     }
+   else
+     {
+        edje_object_size_min_calc(ww->bg_object, &mw, &mh);
+        E_WEIGHT(ww->bg_object, 1, 0);
+        E_FILL(ww->bg_object);
+        evas_object_size_hint_min_set(ww->bg_object, mw, mh);
+        evas_object_size_hint_max_set(ww->bg_object, 9999, mh);
+        elm_box_pack_end(_list_object, ww->bg_object);
+     }
    e_object_ref(E_OBJECT(ww->client));
    return EINA_TRUE;
 }
@@ -760,10 +1030,16 @@ _e_winlist_client_replace(E_Client *ec, E_Client *ec_new)
              edje_object_part_text_set(ww->bg_object, "e.text.label",
                                        e_client_util_name_get(ec_new));
              edje_object_size_min_calc(ww->bg_object, &mw, &mh);
-             E_WEIGHT(ww->bg_object, 1, 0);
-             E_FILL(ww->bg_object);
-             evas_object_size_hint_min_set(ww->bg_object, mw, mh);
-             evas_object_size_hint_max_set(ww->bg_object, 9999, mh);
+             if (e_config->winlist_mode == 1)
+               {
+               }
+             else
+               {
+                  E_WEIGHT(ww->bg_object, 1, 0);
+                  E_FILL(ww->bg_object);
+                  evas_object_size_hint_min_set(ww->bg_object, mw, mh);
+                  evas_object_size_hint_max_set(ww->bg_object, 9999, mh);
+               }
              return;
           }
      }
@@ -922,7 +1198,9 @@ _e_winlist_show_active(void)
    if (!_wins) return;
 
    for (i = 0, l = _wins; l; l = l->next, i++)
-     if (l == _win_selected) break;
+     {
+        if (l == _win_selected) break;
+     }
 
    n = eina_list_count(_wins);
    if (n <= 1) return;
@@ -937,8 +1215,14 @@ _e_winlist_show_active(void)
      }
    else
      {
-        _scroll_align = _scroll_align_to;
-        elm_box_align_set(_list_object, 0.5, fabs(1.0 - _scroll_align));
+        if (e_config->winlist_mode == 1)
+          {
+          }
+        else
+          {
+             _scroll_align = _scroll_align_to;
+             elm_box_align_set(_list_object, 0.5, fabs(1.0 - _scroll_align));
+          }
      }
 }
 
@@ -1017,14 +1301,20 @@ _e_winlist_cb_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event
      _e_winlist_restore_desktop();
    else if (act == E_UTIL_ACTION_DO)
      {
-        if      (y < 0)
-          e_winlist_direction_select(_winlist_zone, 0);
-        else if (y > 0)
-          e_winlist_direction_select(_winlist_zone, 1);
-        else if (x < 0)
-          e_winlist_direction_select(_winlist_zone, 2);
-        else if (x > 0)
-          e_winlist_direction_select(_winlist_zone, 3);
+        if (e_config->winlist_mode == 1)
+          {
+             if      (y < 0) e_winlist_direction_large_select(0);
+             else if (y > 0) e_winlist_direction_large_select(1);
+             else if (x < 0) e_winlist_direction_large_select(2);
+             else if (x > 0) e_winlist_direction_large_select(3);
+          }
+        else
+          {
+             if      (y < 0) e_winlist_direction_select(_winlist_zone, 0);
+             else if (y > 0) e_winlist_direction_select(_winlist_zone, 1);
+             else if (x < 0) e_winlist_direction_select(_winlist_zone, 2);
+             else if (x > 0) e_winlist_direction_select(_winlist_zone, 3);
+          }
      }
    else if (!strcmp(ev->key, "1"))
      _e_winlist_activate_nth(0);
@@ -1092,7 +1382,7 @@ _e_winlist_cb_key_up(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    ev = event;
    if (ev->window != _input_window) return ECORE_CALLBACK_PASS_ON;
    if (!_winlist) return ECORE_CALLBACK_PASS_ON;
-   if (_hold_mod)
+   if ((_hold_mod) && (_hold_count > 0))
      {
 #define KEY_CHECK(MOD, NAME) \
         if ((_hold_mod & ECORE_EVENT_MODIFIER_##MOD) && (!strcmp(ev->key, NAME))) \
@@ -1148,6 +1438,22 @@ _e_winlist_cb_key_up(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    return ECORE_CALLBACK_PASS_ON;
 }
 
+static Eina_List *
+_e_winlist_win_at_xy_get(Evas_Coord x, Evas_Coord y)
+{
+   E_Winlist_Win *ww;
+   Eina_List *l;
+   Evas_Coord ox, oy, ow, oh;
+
+   EINA_LIST_FOREACH(_wins, l, ww)
+     {
+        evas_object_geometry_get(ww->bg_object, &ox, &oy, &ow, &oh);
+        if ((x >= ox) && (x < (ox + ow)) && (y >= oy) && (y < (oy + oh)))
+          return l;
+     }
+   return NULL;
+}
+
 static Eina_Bool
 _e_winlist_cb_mouse_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
@@ -1157,6 +1463,18 @@ _e_winlist_cb_mouse_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *eve
    if (ev->window != _input_window) return ECORE_CALLBACK_PASS_ON;
    e_bindings_mouse_down_ecore_event_handle(E_BINDING_CONTEXT_WINLIST,
                                       E_OBJECT(_winlist_zone), ev);
+   if (ev->buttons == 1)
+     {
+        Eina_List *l = _e_winlist_win_at_xy_get(ev->x, ev->y);
+        _mouse_pressed = EINA_TRUE;
+        if (l)
+          {
+             _e_winlist_deactivate();
+             _win_selected = l;
+             _e_winlist_show_active();
+             _e_winlist_activate();
+          }
+     }
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -1164,13 +1482,26 @@ static Eina_Bool
 _e_winlist_cb_mouse_up(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Event_Mouse_Button *ev;
+   Eina_Bool was_pressed = EINA_FALSE;
 
    ev = event;
    if (ev->window != _input_window) return ECORE_CALLBACK_PASS_ON;
    if (e_bindings_mouse_up_ecore_event_handle(E_BINDING_CONTEXT_WINLIST, E_OBJECT(_winlist_zone), ev))
      return ECORE_CALLBACK_RENEW;
+   if (ev->buttons == 1)
+     {
+        if (_mouse_pressed) was_pressed = EINA_TRUE;
+        _mouse_pressed = EINA_FALSE;
+        if ((_win_selected) && (was_pressed))
+          {
+             _e_winlist_deactivate();
+             e_winlist_hide();
+             _hold_count = 0;
+             return ECORE_CALLBACK_PASS_ON;
+          }
+     }
    if (_activate_type != E_WINLIST_ACTIVATE_TYPE_MOUSE) return ECORE_CALLBACK_RENEW;
-   if (!--_hold_count) e_winlist_hide();
+   if ((!--_hold_count) && (was_pressed)) e_winlist_hide();
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -1187,12 +1518,16 @@ _e_winlist_cb_mouse_wheel(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev
    if (ev->z < 0) /* up */
      {
         for (i = ev->z; i < 0; i++)
-          e_winlist_prev();
+          {
+             e_winlist_prev();
+          }
      }
    else if (ev->z > 0) /* down */
      {
         for (i = ev->z; i > 0; i--)
-          e_winlist_next();
+          {
+             e_winlist_next();
+          }
      }
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -1243,28 +1578,9 @@ _e_winlist_animator(void *data EINA_UNUSED)
              _scroll_align = _scroll_align_to;
              _scroll_to = 0;
           }
+        // e_config->winlist_mode
         elm_box_align_set(_list_object, 0.5, fabs(1.0 - _scroll_align));
      }
    if (!_scroll_to) _animator = NULL;
    return _scroll_to;
 }
-
-#if 0
-static void
-_e_winlist_cb_item_mouse_in(void *data, Evas *evas, Evas_Object *obj, void *event_info)
-{
-   E_Winlist_Win *ww;
-   E_Winlist_Win *lww;
-   Eina_List *l;
-
-   if (!(ww = data)) return;
-   if (!_wins) return;
-   EINA_LIST_FOREACH(_wins, l, lww)
-     if (lww == ww) break;
-   _e_winlist_deactivate();
-   _win_selected = l;
-   _e_winlist_show_active();
-   _e_winlist_activate();
-}
-
-#endif

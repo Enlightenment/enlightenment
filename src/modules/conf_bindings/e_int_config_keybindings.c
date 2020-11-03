@@ -938,7 +938,6 @@ _grab_key_down_cb(void *data,
                   bi->modifiers = mod;
                   if (bi->key) eina_stringshare_del(bi->key);
                   bi->key = eina_stringshare_add(ev->key);
-                  printf("blub\n");
 
                   label = _key_binding_text_get(bi);
 

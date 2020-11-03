@@ -47,7 +47,7 @@ typedef enum
 /* increment this whenever a new set of config values are added but the users
  * config doesn't need to be wiped - simply new values need to be put in
  */
-#define E_CONFIG_FILE_GENERATION 31
+#define E_CONFIG_FILE_GENERATION 32
 #define E_CONFIG_FILE_VERSION    ((E_CONFIG_FILE_EPOCH * 1000000) + E_CONFIG_FILE_GENERATION)
 
 #define E_CONFIG_BINDINGS_VERSION 0 // DO NOT INCREMENT UNLESS YOU WANT TO WIPE ALL BINDINGS!!!!!
@@ -131,14 +131,9 @@ struct _E_Config
    int         winlist_list_focus_while_selecting; // GUI
    int         winlist_list_raise_while_selecting; // GUI
    int         winlist_list_move_after_select; // GUI
-   double      winlist_pos_align_x; // GUI
-   double      winlist_pos_align_y; // GUI
-   double      winlist_pos_size_w; // GUI
-   double      winlist_pos_size_h; // GUI
-   int         winlist_pos_min_w; // GUI
-   int         winlist_pos_min_h; // GUI
-   int         winlist_pos_max_w; // GUI
-   int         winlist_pos_max_h; // GUI
+   int         winlist_mode; // GUI
+   double      winlist_list_size; // GUI
+   double      winlist_large_size; // GUI
    int         maximize_policy; // GUI
    int         allow_manip; // GUI
    int         border_fix_on_shelf_toggle; // GUI
@@ -169,8 +164,7 @@ struct _E_Config
    int         menu_autoscroll_margin; // GUI
    int         menu_autoscroll_cursor_margin; // GUI
    const char *input_method; // GUI
-   struct
-   {
+   struct {
       int move;      // GUI
       int resize;      // GUI
       int raise;      // GUI

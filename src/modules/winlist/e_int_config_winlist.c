@@ -5,8 +5,6 @@ static void         _free_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdat
 static int          _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 static int          _basic_check_changed(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 static Evas_Object *_basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata);
-static void         _width_limits_changed(void *data, Evas_Object *obj EINA_UNUSED);
-static void         _height_limits_changed(void *data, Evas_Object *obj EINA_UNUSED);
 
 struct _E_Config_Dialog_Data
 {
@@ -23,14 +21,14 @@ struct _E_Config_Dialog_Data
    int    jump_desk;
    int    move_after_select;
 
+   int    mode;
+   double large_size;
+   double list_size;
+
    int    scroll_animate;
    double scroll_speed;
 
-   double align_x, align_y;
-   int    min_w, min_h, max_w, max_h;
-
-   struct
-   {
+   struct {
       Evas_Object *min_w, *min_h;
    } gui;
 };
@@ -64,6 +62,9 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    cfdata->uncover = e_config->winlist_list_uncover_while_selecting;
    cfdata->jump_desk = e_config->winlist_list_jump_desk_while_selecting;
    cfdata->move_after_select = e_config->winlist_list_move_after_select;
+   cfdata->mode = e_config->winlist_mode;
+   cfdata->large_size = e_config->winlist_large_size;
+   cfdata->list_size = e_config->winlist_list_size;
 
    cfdata->windows_other_desks =
      e_config->winlist_list_show_other_desk_windows;
@@ -82,13 +83,6 @@ _fill_data(E_Config_Dialog_Data *cfdata)
 
    cfdata->scroll_animate = e_config->winlist_scroll_animate;
    cfdata->scroll_speed = e_config->winlist_scroll_speed;
-
-   cfdata->align_x = e_config->winlist_pos_align_x;
-   cfdata->align_y = e_config->winlist_pos_align_y;
-   cfdata->min_w = e_config->winlist_pos_min_w;
-   cfdata->min_h = e_config->winlist_pos_min_h;
-   cfdata->max_w = e_config->winlist_pos_max_w;
-   cfdata->max_h = e_config->winlist_pos_max_h;
 }
 
 static void *
@@ -122,6 +116,9 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
    DO(list_uncover_while_selecting, uncover);
    DO(list_jump_desk_while_selecting, jump_desk);
    DO(list_move_after_select, move_after_select);
+   DO(mode, mode);
+   DO(large_size, large_size);
+   DO(list_size, list_size);
    DO(warp_while_selecting, warp_while_selecting);
    DO(warp_at_end, warp_at_end);
    DO(no_warp_on_direction, no_warp_on_direction);
@@ -129,12 +126,6 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
    DO(scroll_speed, scroll_speed);
    DO(list_focus_while_selecting, focus);
    DO(list_raise_while_selecting, raise);
-   DO(pos_align_x, align_x);
-   DO(pos_align_y, align_y);
-   DO(pos_min_w, min_w);
-   DO(pos_min_h, min_h);
-   DO(pos_max_w, max_w);
-   DO(pos_max_h, max_h);
 #undef DO
 
    e_config_save_queue();
@@ -158,6 +149,9 @@ _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
    DO(list_uncover_while_selecting, uncover);
    DO(list_jump_desk_while_selecting, jump_desk);
    DO(list_move_after_select, move_after_select);
+   DO(mode, mode);
+   DO_DBL(large_size, large_size);
+   DO_DBL(list_size, list_size);
    DO(warp_while_selecting, warp_while_selecting);
    DO(warp_at_end, warp_at_end);
    DO(no_warp_on_direction, no_warp_on_direction);
@@ -165,12 +159,6 @@ _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
    DO_DBL(scroll_speed, scroll_speed);
    DO(list_focus_while_selecting, focus);
    DO(list_raise_while_selecting, raise);
-   DO_DBL(pos_align_x, align_x);
-   DO_DBL(pos_align_y, align_y);
-   DO(pos_min_w, min_w);
-   DO(pos_min_h, min_h);
-   DO(pos_max_w, max_w);
-   DO(pos_max_h, max_h);
 #undef DO
 
    return 0;
@@ -185,6 +173,19 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    otb = e_widget_toolbook_add(evas, (48 * e_scale), (48 * e_scale));
 
    ol = e_widget_list_add(evas, 0, 0);
+   ob = e_widget_check_add(evas, _("Large"),
+                           &(cfdata->mode));
+   e_widget_list_object_append(ol, ob, 1, 0, 0.0);
+   ob = e_widget_label_add(evas, _("Large Mode Size"));
+   e_widget_list_object_append(ol, ob, 1, 0, 0.0);
+   ob = e_widget_slider_add(evas, 1, 0, _("%1.2f"), 0.0, 1.0, 0.01, 0,
+                            &(cfdata->large_size), NULL, 100);
+   e_widget_list_object_append(ol, ob, 1, 0, 0.0);
+   ob = e_widget_label_add(evas, _("List Mode Size"));
+   e_widget_list_object_append(ol, ob, 1, 0, 0.0);
+   ob = e_widget_slider_add(evas, 1, 0, _("%1.2f"), 0.0, 1.0, 0.01, 0,
+                            &(cfdata->list_size), NULL, 100);
+   e_widget_list_object_append(ol, ob, 1, 0, 0.0);
    ob = e_widget_check_add(evas, _("Windows from other desks"),
                            &(cfdata->windows_other_desks));
    e_widget_list_object_append(ol, ob, 1, 0, 0.0);
@@ -246,102 +247,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    e_widget_toolbook_page_append(otb, NULL, _("Animations"), ol,
                                  1, 1, 1, 0, 0.0, 0.0);
 
-   ol = e_widget_list_add(evas, 0, 0);
-   ob = e_widget_label_add(evas, _("Minimum width"));
-   e_widget_list_object_append(ol, ob, 1, 0, 0.0);
-   ob = e_widget_slider_add(evas, 1, 0, _("%4.0f"), 0, 4000, 10, 0, NULL,
-                            &(cfdata->min_w), 100);
-   cfdata->gui.min_w = ob;
-   e_widget_on_change_hook_set(ob, _width_limits_changed, cfdata);
-   e_widget_list_object_append(ol, ob, 1, 0, 0.0);
-   ob = e_widget_label_add(evas, _("Maximum width"));
-   e_widget_list_object_append(ol, ob, 1, 0, 0.0);
-   ob = e_widget_slider_add(evas, 1, 0, _("%4.0f"), 0, 4000, 10, 0, NULL,
-                            &(cfdata->max_w), 100);
-   e_widget_on_change_hook_set(ob, _width_limits_changed, cfdata);
-   e_widget_list_object_append(ol, ob, 1, 0, 0.0);
-   ob = e_widget_label_add(evas, _("Minimum height"));
-   e_widget_list_object_append(ol, ob, 1, 0, 0.0);
-   ob = e_widget_slider_add(evas, 1, 0, _("%4.0f"), 0, 4000, 10, 0, NULL,
-                            &(cfdata->min_h), 100);
-   cfdata->gui.min_h = ob;
-   e_widget_on_change_hook_set(ob, _height_limits_changed, cfdata);
-   e_widget_list_object_append(ol, ob, 1, 0, 0.0);
-   ob = e_widget_label_add(evas, _("Maximum height"));
-   e_widget_list_object_append(ol, ob, 1, 0, 0.0);
-   ob = e_widget_slider_add(evas, 1, 0, _("%4.0f"), 0, 4000, 10, 0, NULL,
-                            &(cfdata->max_h), 100);
-   e_widget_on_change_hook_set(ob, _height_limits_changed, cfdata);
-   e_widget_list_object_append(ol, ob, 1, 0, 0.0);
-   e_widget_toolbook_page_append(otb, NULL, _("Geometry"), ol,
-                                 1, 1, 1, 0, 0.0, 0.0);
-
-   ol = e_widget_list_add(evas, 0, 0);
-   ob = e_widget_label_add(evas, _("Horizontal alignment"));
-   e_widget_list_object_append(ol, ob, 1, 0, 0.0);
-   ob = e_widget_slider_add(evas, 1, 0, _("%1.2f"), 0.0, 1.0, 0.01, 0,
-                            &(cfdata->align_x), NULL, 100);
-   e_widget_list_object_append(ol, ob, 1, 0, 0.0);
-   ob = e_widget_label_add(evas, _("Vertical alignment"));
-   e_widget_list_object_append(ol, ob, 1, 0, 0.0);
-   ob = e_widget_slider_add(evas, 1, 0, _("%1.2f"), 0.0, 1.0, 0.01, 0,
-                            &(cfdata->align_y), NULL, 100);
-   e_widget_list_object_append(ol, ob, 1, 0, 0.0);
-   e_widget_toolbook_page_append(otb, NULL, _("Alignment"), ol,
-                                 1, 1, 1, 0, 0.0, 0.0);
-
    e_widget_toolbook_page_show(otb, 0);
 
    return otb;
-/*
-   Evas_Object *o, *of, *ob;
-
-   o = e_widget_list_add(evas, 0, 0);
-
-   of = e_widget_framelist_add(evas, _("Display"), 0);
-   ob = e_widget_check_add(evas, _("From other desks"), &(cfdata->other_desks));
-   e_widget_framelist_object_append(of, ob);
-   ob = e_widget_check_add(evas, _("From other screens"),
-                           &(cfdata->other_screens));
-   e_widget_framelist_object_append(of, ob);
-   ob = e_widget_check_add(evas, _("Iconified"), &(cfdata->iconified));
-   e_widget_framelist_object_append(of, ob);
-   ob = e_widget_check_add(evas, _("Animations"), &(cfdata->animations));
-   e_widget_framelist_object_append(of, ob);
-   e_widget_list_object_append(o, of, 1, 1, 0.5);
-
-   of = e_widget_framelist_add(evas, _("Selecting"), 0);
-   ob = e_widget_check_add(evas, _("Focus"), &(cfdata->focus));
-   e_widget_framelist_object_append(of, ob);
-   ob = e_widget_check_add(evas, _("Raise"), &(cfdata->raise));
-   e_widget_framelist_object_append(of, ob);
-   ob = e_widget_check_add(evas, _("Uncover"), &(cfdata->uncover));
-   e_widget_framelist_object_append(of, ob);
-   ob = e_widget_check_add(evas, _("Warp mouse"), &(cfdata->warp));
-   e_widget_framelist_object_append(of, ob);
-   ob = e_widget_check_add(evas, _("Jump to desk"), &(cfdata->jump_desk));
-   e_widget_framelist_object_append(of, ob);
-   e_widget_list_object_append(o, of, 1, 1, 0.5);
-
-   return o;
- */
 }
-
-static void
-_width_limits_changed(void *data, Evas_Object *obj EINA_UNUSED)
-{
-   E_Config_Dialog_Data *cfdata = data;
-
-   if (cfdata->min_w > cfdata->max_w)
-     e_widget_slider_value_int_set(cfdata->gui.min_w, cfdata->max_w);
-}
-
-static void
-_height_limits_changed(void *data, Evas_Object *obj EINA_UNUSED)
-{
-   E_Config_Dialog_Data *cfdata = data;
-
-   if (cfdata->min_h > cfdata->max_h)
-     e_widget_slider_value_int_set(cfdata->gui.min_h, cfdata->max_h);
-}
-
