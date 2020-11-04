@@ -4280,28 +4280,6 @@ e_comp_object_agent_add(Evas_Object *obj)
 }
 
 static void
-_e_comp_object_frame_mirror_del_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *info EINA_UNUSED)
-{
-   Evas_Object *o;
-
-   o = evas_object_data_get(obj, "client");
-   if (o) evas_object_del(o);
-   evas_object_data_del(obj, "client");
-
-   o = evas_object_data_get(obj, "icon");
-   if (o) evas_object_del(o);
-   evas_object_data_del(obj, "icon");
-
-   o = evas_object_data_get(obj, "frame");
-   if (o) evas_object_del(o);
-   evas_object_data_del(obj, "frame");
-
-   o = evas_object_data_get(obj, "zoomap");
-   if (o) evas_object_del(o);
-   evas_object_data_del(obj, "zoomap");
-}
-
-static void
 _e_comp_object_frame_mirror_resize_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *info EINA_UNUSED)
 {
    E_Client *ec;
@@ -4338,10 +4316,35 @@ _e_comp_object_frame_mirror_src_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_
    Evas_Object *o_zoomap;
    E_Client *ec = evas_object_data_get(o, "ec");
    if (!ec) return;
-   e_zoomap_child_resize(o_zoomap, ec->w, ec->h);
    o_zoomap = evas_object_data_get(obj, "zoomap");
    if (!o_zoomap) return;
    e_zoomap_child_resize(o_zoomap, ec->w, ec->h);
+}
+
+static void
+_e_comp_object_frame_mirror_del_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *info EINA_UNUSED)
+{
+   E_Client *ec;
+   Evas_Object *o;
+
+   ec = evas_object_data_get(obj, "ec");
+   if (ec)
+     evas_object_event_callback_del_full(ec->frame, EVAS_CALLBACK_RESIZE, _e_comp_object_frame_mirror_src_resize_cb, obj);
+   o = evas_object_data_get(obj, "client");
+   if (o) evas_object_del(o);
+   evas_object_data_del(obj, "client");
+
+   o = evas_object_data_get(obj, "icon");
+   if (o) evas_object_del(o);
+   evas_object_data_del(obj, "icon");
+
+   o = evas_object_data_get(obj, "frame");
+   if (o) evas_object_del(o);
+   evas_object_data_del(obj, "frame");
+
+   o = evas_object_data_get(obj, "zoomap");
+   if (o) evas_object_del(o);
+   evas_object_data_del(obj, "zoomap");
 }
 
 E_API Evas_Object *
@@ -4405,7 +4408,7 @@ e_comp_object_util_frame_mirror_add(Evas_Object *obj)
                                   _e_comp_object_frame_mirror_del_cb, NULL);
    evas_object_event_callback_add(o_sh, EVAS_CALLBACK_RESIZE,
                                   _e_comp_object_frame_mirror_resize_cb, NULL);
-   evas_object_event_callback_add(cw->obj, EVAS_CALLBACK_RESIZE,
+   evas_object_event_callback_add(cw->ec->frame, EVAS_CALLBACK_RESIZE,
                                   _e_comp_object_frame_mirror_src_resize_cb, o_sh);
    if (o_zoomap)
      e_zoomap_child_resize(o_zoomap, cw->ec->w, cw->ec->h);
