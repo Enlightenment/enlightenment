@@ -812,33 +812,43 @@ _e_winlist_size_large_adjust(void)
    h1 = 0;
    h2 = maxh;
    h = (h1 + h2) / 2;
+//   printf("SZ:\n");
    for (;;)
      {
         prevh = h;
         // pick midpoint in interval
-        if (expand) h = ((h * 120) / 100) + 1;
+        if (expand)
+          {
+             int newh = ((h * 120) / 100);
+             if (newh == h) h = newh + 1;
+             else h  = newh;
+          }
         else h = (h1 + h2) / 2;
+//        printf("SZ: %i [%i -> %i] expand=%i\n", h, h1, h2, expand);
         _e_winlist_large_item_height_set(h);
         evas_smart_objects_calculate(evas_object_evas_get(_bg_object));
         evas_object_size_hint_min_get(_list_object, &mw, &mh);
         if (expand)
           {
+//             printf("SZ:  exp %ix%i > %ix%i || %i >= %i\n", mw, mh, maxw, maxh, h, maxh);
              if ((mw > maxw) || (mh > maxh) || (h >= maxh))
                {
                   h = prevh;
+//                  printf("SZ:    chose %i\n", h);
                   _e_winlist_large_item_height_set(h);
                   break;
                }
           }
         else
           {
+//             printf("SZ:  shrink %ix%i > %ix%i\n", mw, mh, maxw, maxh);
              if ((mw > maxw) || (mh > maxh)) h2 = h;
              else h1 = h;
              if ((h2 - h1) <= 1)
                {
+//                  printf("SZ:    switch to expand\n");
                   expand = EINA_TRUE;
-                  h1 = h;
-                  h2 = maxh;
+                  h = h1;
                }
           }
      }
@@ -1180,12 +1190,12 @@ _e_winlist_activate(void)
      }
    if (edje_object_part_exists(_bg_object, "e.swallow.win"))
      {
-        o = e_comp_object_util_mirror_add(ww->client->frame);
+        o = e_comp_object_util_frame_mirror_add(ww->client->frame);
         _win_object = o;
         e_comp_object_util_del_list_append(_winlist, o);
         evas_object_size_hint_aspect_set(o, EVAS_ASPECT_CONTROL_BOTH,
-                                         ww->client->client.w,
-                                         ww->client->client.h);
+                                         ww->client->w,
+                                         ww->client->h);
         edje_object_part_swallow(_bg_object, "e.swallow.win", o);
         evas_object_show(o);
      }
