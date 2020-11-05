@@ -4310,26 +4310,102 @@ _e_comp_object_frame_mirror_resize_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSE
 }
 
 static void
-_e_comp_object_frame_mirror_src_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *info EINA_UNUSED)
+_e_comp_object_frame_mirror_src_frame_resize_cb(void *data, Evas_Object *obj, void *info EINA_UNUSED)
 {
    Evas_Object *o = data;
    Evas_Object *o_zoomap;
-   E_Client *ec = evas_object_data_get(o, "ec");
-   if (!ec) return;
-   o_zoomap = evas_object_data_get(obj, "zoomap");
+
+   API_ENTRY;
+
+   o_zoomap = evas_object_data_get(o, "zoomap");
    if (!o_zoomap) return;
-   e_zoomap_child_resize(o_zoomap, ec->w, ec->h);
+   e_zoomap_child_resize(o_zoomap, cw->ec->w, cw->ec->h);
+}
+
+static void
+_e_comp_object_frame_mirror_src_frame_shadow_changed_cb(void *data, Evas_Object *obj, void *info EINA_UNUSED)
+{
+   Evas_Object *o, *o_frame, *o_client, *o_zoomap, *o_sh = data;
+   const char *file = NULL, *group = NULL;
+
+   API_ENTRY;
+
+   o_frame = evas_object_data_get(o_sh, "frame");
+   o_client = evas_object_data_get(o_sh, "client");
+   o_zoomap = evas_object_data_get(o_sh, "zoomap");
+
+   edje_object_file_get(cw->shobj, &file, &group);
+   edje_object_file_set(o_sh, file, group);
+   evas_object_data_del(o_sh, "shadow_off");
+   evas_object_data_del(o_sh, "shadow_on");
+   if (e_client_util_shadow_state_get(cw->ec))
+     {
+        evas_object_data_set(o_sh, "do_shadow", o_sh);
+        edje_object_signal_emit(o_sh, "e,state,shadow,on", "e");
+     }
+   else
+     {
+        evas_object_data_del(o_sh, "do_shadow");
+        edje_object_signal_emit(o_sh, "e,state,shadow,off", "e");
+     }
+   edje_object_signal_emit(o_sh, "e,state,visible", "e");
+
+   edje_object_file_get(cw->frame_object, &file, &group);
+   if ((file) && (group))
+     {
+        if (!o_zoomap)
+          {
+             o = o_zoomap = e_zoomap_add(e_comp->evas);
+             evas_object_data_set(o_sh, "zoomap", o);
+             e_zoomap_smooth_set(o, e_comp_config_get()->smooth_windows);
+             edje_object_part_swallow(o_sh, "e.swallow.content", o);
+             evas_object_show(o);
+          }
+
+        if (!o_frame)
+          {
+             o = o_frame = edje_object_add(e_comp->evas);
+             evas_object_data_set(o_sh, "frame", o);
+             edje_object_file_set(o, file, group);
+             e_zoomap_child_set(o_zoomap, o);
+             e_zoomap_solid_set(o, EINA_FALSE);
+             evas_object_show(o);
+          }
+        edje_object_file_set(o_frame, file, group);
+        edje_object_signal_emit(o_frame, "e,version,22", "e");
+        edje_object_signal_emit(o_frame, "e,state,focused", "e");
+        edje_object_signal_emit(o_frame, "e,state,visible", "e");
+        edje_object_part_text_set(o_frame, "e.text.title", cw->frame_name);
+     }
+   else
+     {
+        o = evas_object_data_get(o_sh, "frame");
+        if (o) evas_object_del(o);
+        evas_object_data_del(o_sh, "frame");
+
+        o = evas_object_data_get(o_sh, "zoomap");
+        if (o) evas_object_del(o);
+        evas_object_data_del(o_sh, "zoomap");
+     }
+
+   if (o_frame) edje_object_part_swallow(o_frame, "e.swallow.client",  o_client);
+   else         edje_object_part_swallow(o_sh,    "e.swallow.content", o_client);
+   evas_object_show(o_client);
 }
 
 static void
 _e_comp_object_frame_mirror_del_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *info EINA_UNUSED)
 {
-   E_Client *ec;
    Evas_Object *o;
 
-   ec = evas_object_data_get(obj, "ec");
-   if (ec)
-     evas_object_event_callback_del_full(ec->frame, EVAS_CALLBACK_RESIZE, _e_comp_object_frame_mirror_src_resize_cb, obj);
+   o = evas_object_data_get(obj, "comp_obj");
+   if (o)
+     {
+        evas_object_smart_callback_del_full(o, "frame_changed", _e_comp_object_frame_mirror_src_frame_shadow_changed_cb, obj);
+        evas_object_smart_callback_del_full(o, "shadow_change", _e_comp_object_frame_mirror_src_frame_shadow_changed_cb, obj);
+        evas_object_smart_callback_del_full(o, "client_resize", _e_comp_object_frame_mirror_src_frame_resize_cb, obj);
+     }
+
    o = evas_object_data_get(obj, "client");
    if (o) evas_object_del(o);
    evas_object_data_del(obj, "client");
@@ -4356,7 +4432,7 @@ e_comp_object_util_frame_mirror_add(Evas_Object *obj)
    API_ENTRY NULL;
 
    o = o_sh = edje_object_add(e_comp->evas);
-   evas_object_data_set(o_sh, "ec", cw->ec);
+   evas_object_data_set(o, "ec", cw->ec);
    edje_object_file_get(cw->shobj, &file, &group);
    edje_object_file_set(o, file, group);
    if (e_client_util_shadow_state_get(cw->ec))
@@ -4404,12 +4480,12 @@ e_comp_object_util_frame_mirror_add(Evas_Object *obj)
         evas_object_show(o);
      }
 
-   evas_object_event_callback_add(o_sh, EVAS_CALLBACK_DEL,
-                                  _e_comp_object_frame_mirror_del_cb, NULL);
-   evas_object_event_callback_add(o_sh, EVAS_CALLBACK_RESIZE,
-                                  _e_comp_object_frame_mirror_resize_cb, NULL);
-   evas_object_event_callback_add(cw->ec->frame, EVAS_CALLBACK_RESIZE,
-                                  _e_comp_object_frame_mirror_src_resize_cb, o_sh);
+   evas_object_event_callback_add(o_sh, EVAS_CALLBACK_DEL, _e_comp_object_frame_mirror_del_cb, NULL);
+   evas_object_event_callback_add(o_sh, EVAS_CALLBACK_RESIZE, _e_comp_object_frame_mirror_resize_cb, NULL);
+   evas_object_data_set(o_sh, "comp_obj", obj);
+   evas_object_smart_callback_add(obj, "frame_changed", _e_comp_object_frame_mirror_src_frame_shadow_changed_cb, o_sh);
+   evas_object_smart_callback_add(obj, "shadow_change", _e_comp_object_frame_mirror_src_frame_shadow_changed_cb, o_sh);
+   evas_object_smart_callback_add(obj, "client_resize", _e_comp_object_frame_mirror_src_frame_resize_cb, o_sh);
    if (o_zoomap)
      e_zoomap_child_resize(o_zoomap, cw->ec->w, cw->ec->h);
    return o_sh;

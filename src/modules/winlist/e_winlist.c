@@ -19,7 +19,7 @@ struct _E_Winlist_Win
    unsigned char was_shaded E_BITFIELD;
 };
 
-static void      _e_winlist_client_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *info EINA_UNUSED);
+static void      _e_winlist_client_resize_cb(void *data, Evas_Object *obj, void *info);
 static void      _e_winlist_size_adjust(void);
 static Eina_Bool _e_winlist_client_add(E_Client *ec, E_Zone *zone, E_Desk *desk);
 static void      _e_winlist_client_del(E_Client *ec);
@@ -66,7 +66,6 @@ static double _scroll_align = 0.0;
 static Ecore_Timer *_scroll_timer = NULL;
 static Ecore_Animator *_animator = NULL;
 static Eina_Bool _mouse_pressed = EINA_FALSE;
-static Evas_Coord _winlist_chosen_h = 0;
 
 static Eina_Bool
 _wmclass_picked(const Eina_List *lst, const char *wmclass)
@@ -321,7 +320,7 @@ e_winlist_hide(void)
    EINA_LIST_FREE(_wins, ww)
      {
         if (ww->client->frame)
-          evas_object_event_callback_del_full(ww->client->frame, EVAS_CALLBACK_RESIZE,
+          evas_object_smart_callback_del_full(ww->client->frame, "client_resize",
                                               _e_winlist_client_resize_cb, ww);
         if ((!ec) || (ww->client != ec)) e_object_unref(E_OBJECT(ww->client));
         free(ww);
@@ -753,6 +752,7 @@ _e_winlist_large_item_height_set(Evas_Coord h)
      }
    bl = elm_box_children_get(_list_object);
    if (!bl) return 0;
+//   printf("W: fit %ix%i\n", lw, lh);
    EINA_LIST_FOREACH(_wins, l, ww)
      {
 try_again:
@@ -769,25 +769,30 @@ try_again:
         edje_object_part_swallow(ww->bg_object, "e.swallow.win", ww->win_object);
         edje_object_size_min_calc(ww->bg_object, &mw, &mh);
         evas_object_size_hint_min_set(ww->bg_object, mw, mh);
+//        printf("W: orig=[%ix%i] win=%ix%i | ", ww->client->w, ww->client->h, mw, mh);
         box = bl->data;
         elm_box_pack_end(box, ww->bg_object);
         evas_smart_objects_calculate(evas_object_evas_get(box));
         evas_object_size_hint_min_get(box, &mw, &mh);
         // if box is too big then reflow obj onto next box row
+//        printf("box=%ix%i", mw, mh);
         if (mw > lw)
           {
+//             printf(" newrow\n");
              boxes = elm_box_children_get(bl->data);
              if (!boxes) break;
+             // no more boxes to fill? break the loop trying - should not happen
              bl = bl->next;
              if (!bl) break;
              rows++;
+             // if only item on the row - continue adding more items
              if (eina_list_count(boxes) == 1) continue;
              // unpack from prev box as we are going to try with a new row
              elm_box_unpack(box, ww->bg_object);
              goto try_again;
           }
+//        printf("\n");
      }
-   _winlist_chosen_h = h;
    return rows;
 }
 
@@ -853,12 +858,14 @@ _e_winlist_size_large_adjust(void)
           }
      }
    evas_smart_objects_calculate(evas_object_evas_get(_bg_object));
+   edje_object_part_swallow(_bg_object, "e.swallow.list", _list_object);
    edje_object_size_min_calc(_bg_object, &mw, &mh);
 
    w = mw;
    h = mh;
    x = zone->x + ((zone->w - w) / 2);
    y = zone->y + ((zone->h - h) / 2);
+   evas_object_geometry_set(_winlist, -1, -1, 1, 1);
    evas_object_geometry_set(_winlist, x, y, w, h);
 }
 
@@ -870,13 +877,13 @@ _e_winlist_size_adjust(void)
 }
 
 static void
-_e_winlist_client_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *info EINA_UNUSED)
+_e_winlist_client_resize_cb(void *data, Evas_Object *obj EINA_UNUSED, void *info EINA_UNUSED)
 {
    E_Winlist_Win *ww = data;
 
    if (e_config->winlist_mode == 1)
      {
-        _e_winlist_large_item_height_set(_winlist_chosen_h);
+        _e_winlist_size_large_adjust();
      }
    else
      {
@@ -1009,7 +1016,7 @@ _e_winlist_client_add(E_Client *ec, E_Zone *zone, E_Desk *desk)
         evas_object_size_hint_max_set(ww->bg_object, 9999, mh);
         elm_box_pack_end(_list_object, ww->bg_object);
      }
-   evas_object_event_callback_add(ww->client->frame, EVAS_CALLBACK_RESIZE,
+   evas_object_smart_callback_add(ww->client->frame, "client_resize",
                                   _e_winlist_client_resize_cb, ww);
    e_object_ref(E_OBJECT(ww->client));
    return EINA_TRUE;
@@ -1027,7 +1034,7 @@ _e_winlist_client_del(E_Client *ec)
         if (ww->client == ec)
           {
              if (ec->frame)
-               evas_object_event_callback_del_full(ec->frame, EVAS_CALLBACK_RESIZE,
+               evas_object_smart_callback_del_full(ec->frame, "client_resize",
                                                    _e_winlist_client_resize_cb, ww);
              e_object_unref(E_OBJECT(ww->client));
              if (l == _win_selected)
@@ -1650,7 +1657,7 @@ _e_winlist_animator(void *data EINA_UNUSED)
              _scroll_to = 0;
           }
         // e_config->winlist_mode
-        elm_box_align_set(_list_object, 0.5, fabs(1.0 - _scroll_align));
+//        elm_box_align_set(_list_object, 0.5, fabs(1.0 - _scroll_align));
      }
    if (!_scroll_to) _animator = NULL;
    return _scroll_to;
