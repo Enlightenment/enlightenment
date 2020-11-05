@@ -22,6 +22,7 @@ const Player music_player_players[] =
    {"Rage",                 "org.mpris.MediaPlayer2.rage",             "rage"},
    {"Rhythmbox",            "org.gnome.Rhythmbox3",                    "rhythmbox"},
    {"Spotify",              "org.mpris.MediaPlayer2.spotify",          "spotify"},
+   {"Squeezebox",           "org.mpris.MediaPlayer2.squeezebox",       "slimpris2"},
    {"Tomahawk",             "org.mpris.MediaPlayer2.tomahawk",         "tomahawk"},
    {"VLC",                  "org.mpris.MediaPlayer2.vlc",              "vlc"},
    {"XMMS2",                "org.mpris.MediaPlayer2.xmms2",            "xmms2"},
