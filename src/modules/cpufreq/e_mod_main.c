@@ -783,7 +783,8 @@ _cpufreq_status_check_available(Cpu_Status *s)
                break;
             }
           fclose(f);
-          if (strcmp(buf, "intel_pstate\n")) break;
+          if (!((!strcmp(buf, "intel_pstate\n") ||
+                 (!strcmp(buf, "intel_cpufreq\n"))))) break;
 
           if (s->frequencies)
             {
