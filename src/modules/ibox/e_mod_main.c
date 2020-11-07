@@ -594,7 +594,7 @@ _ibox_icon_fill_preview(IBox_Icon *ic, Eina_Bool is_retry)
 
    ec = ic->client;
 
-   img = e_comp_object_util_mirror_add(ec->frame);
+   img = e_comp_object_util_frame_mirror_add(ec->frame);
    if (!img && !is_retry)
      {
         ecore_timer_add(0.5, _ibox_icon_fill_timer, ic);
@@ -607,7 +607,7 @@ _ibox_icon_fill_preview(IBox_Icon *ic, Eina_Bool is_retry)
    evas_object_pass_events_set(ic->o_icon, 1);
    evas_object_show(ic->o_icon);
 
-   img2 = e_comp_object_util_mirror_add(ec->frame);
+   img2 = e_comp_object_util_frame_mirror_add(ec->frame);
    evas_object_size_hint_aspect_set(img2, EVAS_ASPECT_CONTROL_BOTH, ec->client.w, ec->client.h);
    ic->o_icon2 = img2;
    edje_object_part_swallow(ic->o_holder2, "e.swallow.preview", ic->o_icon2);
@@ -833,7 +833,7 @@ _ibox_cb_icon_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
              else
                {
                   E_Client *ec = ic->client;
-                  o = e_comp_object_util_mirror_add(ec->frame);
+                  o = e_comp_object_util_frame_mirror_add(ec->frame);
                   evas_object_size_hint_aspect_set(o, EVAS_ASPECT_CONTROL_BOTH, ec->client.w, ec->client.h);
                   evas_object_size_hint_max_set(o, w, h);
                }
