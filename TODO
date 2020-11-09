@@ -252,10 +252,6 @@ TODO:
 * randr: get auto layout to handle screens laid out like:
   [dp2-2][dp2-1] <- 2 external monitors
       [edp-1] <- laptop main display
-* randr: when losing a zone/screen, move windows to same set of vd's on
-  current one not on current vd
-* randr: when losing a zone/screen, intelligently resize/move windows if
-  screen migrated to has diffrent res
 * randr: when losing a zone/screen, put windows in purgatory and then have
   purgatory screens available via pager to drag onto a current screen,
   or the specific virtual desktops from purgator to be accessible even
