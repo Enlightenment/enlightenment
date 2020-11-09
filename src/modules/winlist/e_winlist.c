@@ -270,6 +270,16 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
 
    if (!_wins)
      {
+        if (_winlist_bg_object)
+          {
+             evas_object_del(_winlist_bg_object);
+             _winlist_bg_object = NULL;
+          }
+        if (_winlist_fg_object)
+          {
+             evas_object_del(_winlist_fg_object);
+             _winlist_fg_object = NULL;
+          }
         e_winlist_hide();
         evas_event_thaw(e_comp->evas);
         return 1;
