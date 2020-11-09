@@ -164,7 +164,7 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
    o = edje_object_add(e_comp->evas);
    evas_object_layer_set(o, E_LAYER_CLIENT_POPUP);
    evas_object_pass_events_set(o, EINA_TRUE);
-   if (e_config->winlist_mode == 1)
+   if (e_config->winlist_mode == E_WINLIST_MODE_LARGE)
      ok = e_theme_edje_object_set(o, "base/theme/winlist", "e/widgets/winlist/large/bg");
    else
      ok = e_theme_edje_object_set(o, "base/theme/winlist", "e/widgets/winlist/bg");
@@ -177,7 +177,6 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
         evas_object_geometry_set(o, zone->x, zone->y, zone->w, zone->h);
         evas_object_show(o);
         _winlist_bg_object = o;
-        // XXX: GGG: ^^^ handle zone resize/move and del.
      }
    else
      {
@@ -187,7 +186,7 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
 
    o = edje_object_add(e_comp->evas);
    evas_object_pass_events_set(o, EINA_TRUE);
-   if (e_config->winlist_mode == 1)
+   if (e_config->winlist_mode == E_WINLIST_MODE_LARGE)
      {
         if (!e_theme_edje_object_set(o, "base/theme/winlist", "e/widgets/winlist/large"))
           e_theme_edje_object_set(o, "base/theme/winlist", "e/widgets/winlist/main");
@@ -203,7 +202,7 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
    o = edje_object_add(e_comp->evas);
    evas_object_layer_set(o, E_LAYER_CLIENT_POPUP);
    evas_object_pass_events_set(o, EINA_TRUE);
-   if (e_config->winlist_mode == 1)
+   if (e_config->winlist_mode == E_WINLIST_MODE_LARGE)
      ok = e_theme_edje_object_set(o, "base/theme/winlist", "e/widgets/winlist/large/fg");
    else
      ok = e_theme_edje_object_set(o, "base/theme/winlist", "e/widgets/winlist/fg");
@@ -216,7 +215,6 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
         evas_object_geometry_set(o, zone->x, zone->y, zone->w, zone->h);
         evas_object_show(o);
         _winlist_fg_object = o;
-        // XXX: GGG: ^^^ handle zone resize/move and del.
      }
    else
      {
@@ -226,7 +224,7 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
 
    o = elm_box_add(e_comp->elm);
    _list_object = o;
-   if (e_config->winlist_mode == 1)
+   if (e_config->winlist_mode == E_WINLIST_MODE_LARGE)
      {
      }
    else
@@ -872,7 +870,7 @@ _e_winlist_size_large_adjust(void)
 static void
 _e_winlist_size_adjust(void)
 {
-   if (e_config->winlist_mode == 1) _e_winlist_size_large_adjust();
+   if (e_config->winlist_mode == E_WINLIST_MODE_LARGE) _e_winlist_size_large_adjust();
    else _e_winlist_size_list_adjust();
 }
 
@@ -881,7 +879,7 @@ _e_winlist_client_resize_cb(void *data, Evas_Object *obj EINA_UNUSED, void *info
 {
    E_Winlist_Win *ww = data;
 
-   if (e_config->winlist_mode == 1)
+   if (e_config->winlist_mode == E_WINLIST_MODE_LARGE)
      {
         _e_winlist_size_large_adjust();
      }
@@ -947,7 +945,7 @@ _e_winlist_client_add(E_Client *ec, E_Zone *zone, E_Desk *desk)
    E_FILL(o);
    e_comp_object_util_del_list_append(_winlist, o);
    ww->bg_object = o;
-   if (e_config->winlist_mode == 1)
+   if (e_config->winlist_mode == E_WINLIST_MODE_LARGE)
      {
         if (!e_theme_edje_object_set(o, "base/theme/winlist", "e/widgets/winlist/item_large"))
           e_theme_edje_object_set(o, "base/theme/winlist", "e/widgets/winlist/item");
@@ -971,7 +969,7 @@ _e_winlist_client_add(E_Client *ec, E_Zone *zone, E_Desk *desk)
         o = e_comp_object_util_frame_mirror_add(ec->frame);
         ww->win_object = o;
         e_comp_object_util_del_list_append(_winlist, o);
-        if (e_config->winlist_mode == 1)
+        if (e_config->winlist_mode == E_WINLIST_MODE_LARGE)
           {
              mh = e_config->winlist_large_size * zone->h;
              if (mh > ec->h) mh = ec->h;
@@ -994,7 +992,7 @@ _e_winlist_client_add(E_Client *ec, E_Zone *zone, E_Desk *desk)
             (!((ec->sticky) && (ec->zone == zone))))
      edje_object_signal_emit(ww->bg_object, "e,state,invisible", "e");
 
-   if (e_config->winlist_mode == 1)
+   if (e_config->winlist_mode == E_WINLIST_MODE_LARGE)
      {
         // a hboz per item
         Evas_Object *o2 = elm_box_add(e_comp->elm);
@@ -1078,7 +1076,7 @@ _e_winlist_client_replace(E_Client *ec, E_Client *ec_new)
              edje_object_part_text_set(ww->bg_object, "e.text.label",
                                        e_client_util_name_get(ec_new));
              edje_object_size_min_calc(ww->bg_object, &mw, &mh);
-             if (e_config->winlist_mode == 1)
+             if (e_config->winlist_mode == E_WINLIST_MODE_LARGE)
                {
                }
              else
@@ -1263,7 +1261,7 @@ _e_winlist_show_active(void)
      }
    else
      {
-        if (e_config->winlist_mode == 1)
+        if (e_config->winlist_mode == E_WINLIST_MODE_LARGE)
           {
           }
         else
@@ -1349,7 +1347,7 @@ _e_winlist_cb_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event
      _e_winlist_restore_desktop();
    else if (act == E_UTIL_ACTION_DO)
      {
-        if (e_config->winlist_mode == 1)
+        if (e_config->winlist_mode == E_WINLIST_MODE_LARGE)
           {
              if      (y < 0) e_winlist_direction_large_select(0);
              else if (y > 0) e_winlist_direction_large_select(1);
@@ -1656,8 +1654,11 @@ _e_winlist_animator(void *data EINA_UNUSED)
              _scroll_align = _scroll_align_to;
              _scroll_to = 0;
           }
-        // e_config->winlist_mode
-//        elm_box_align_set(_list_object, 0.5, fabs(1.0 - _scroll_align));
+        if (e_config->winlist_mode == E_WINLIST_MODE_LARGE)
+          {
+          }
+        else
+          elm_box_align_set(_list_object, 0.5, fabs(1.0 - _scroll_align));
      }
    if (!_scroll_to) _animator = NULL;
    return _scroll_to;
