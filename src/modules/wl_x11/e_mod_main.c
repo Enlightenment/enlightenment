@@ -10,7 +10,7 @@ e_modapi_init(E_Module *m)
 {
    int w = 0, h = 0;
    Ecore_X_Window root, win;
-   Eina_Bool managed;
+   int managed;
 
    printf("LOAD WL_X11 MODULE\n");
 
@@ -20,9 +20,15 @@ e_modapi_init(E_Module *m)
         return NULL;
      }
    root = ecore_x_window_root_first_get();
-   managed = !!ecore_x_window_prop_window_get(root, ECORE_X_ATOM_NET_SUPPORTING_WM_CHECK,
-                                      &win, 1);
-   e_comp_x_randr_canvas_new(ecore_x_window_root_first_get(), 1, 1);
+
+   /* get root and setup canvas first */
+   e_comp_x_randr_canvas_new(root, 1, 1);
+
+   /* then check if it's 'managed' or not */
+   managed =
+     ecore_x_window_prop_window_get(root,
+                                    ECORE_X_ATOM_NET_SUPPORTING_WM_CHECK,
+                                    &win, 1);
 
    if (!e_comp->ee)
      {
