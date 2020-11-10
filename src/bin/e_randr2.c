@@ -35,6 +35,7 @@ static Ecore_Timer   *_screen_delay_timer = NULL;
 static Eina_Bool      event_screen = EINA_FALSE;
 static Eina_Bool      event_ignore = EINA_FALSE;
 static Eina_Bool      initted = EINA_FALSE;
+static Eina_Bool      blocked = EINA_FALSE;
 
 /////////////////////////////////////////////////////////////////////////
 E_API E_Config_Randr2 *e_randr2_cfg = NULL;
@@ -55,6 +56,7 @@ e_randr2_init(void)
    int count;
 
    if (!E_EVENT_RANDR_CHANGE) E_EVENT_RANDR_CHANGE = ecore_event_type_new();
+   if (blocked) return EINA_FALSE;
    if ((!e_comp->screen) || (!e_comp->screen->available) || (!e_comp->screen->available())) return EINA_FALSE;
    initted = EINA_TRUE;
    // create data descriptors for config storage
@@ -150,7 +152,8 @@ e_randr2_shutdown(void)
 E_API void
 e_randr2_stop(void)
 {
-   e_randr2_shutdown();
+   blocked = EINA_TRUE;
+   if (initted) e_randr2_shutdown();
 }
 
 E_API Eina_Bool
