@@ -66,6 +66,7 @@ e_modapi_init(E_Module *m)
 
    e_comp_wl->dmabuf_disable = EINA_TRUE;
 
+   if (managed) e_randr2_stop();
    return m;
 }
 

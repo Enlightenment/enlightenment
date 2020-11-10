@@ -34,6 +34,7 @@ static Eina_List     *_ev_handlers = NULL;
 static Ecore_Timer   *_screen_delay_timer = NULL;
 static Eina_Bool      event_screen = EINA_FALSE;
 static Eina_Bool      event_ignore = EINA_FALSE;
+static Eina_Bool      initted = EINA_FALSE;
 
 /////////////////////////////////////////////////////////////////////////
 E_API E_Config_Randr2 *e_randr2_cfg = NULL;
@@ -55,6 +56,7 @@ e_randr2_init(void)
 
    if (!E_EVENT_RANDR_CHANGE) E_EVENT_RANDR_CHANGE = ecore_event_type_new();
    if ((!e_comp->screen) || (!e_comp->screen->available) || (!e_comp->screen->available())) return EINA_FALSE;
+   initted = EINA_TRUE;
    // create data descriptors for config storage
    _e_randr2_cfg_screen_edd =
      E_CONFIG_DD_NEW("E_Config_Randr2_Screen", E_Config_Randr2_Screen);
@@ -123,6 +125,8 @@ e_randr2_init(void)
 EINTERN int
 e_randr2_shutdown(void)
 {
+   if (!initted) return 0;
+   initted = EINA_FALSE;
    _animated_apply_abort();
    // nuke any screen config delay handler
    if (_screen_delay_timer) ecore_timer_del(_screen_delay_timer);
@@ -141,6 +145,12 @@ e_randr2_shutdown(void)
    E_CONFIG_DD_FREE(_e_randr2_cfg_edd);
    E_CONFIG_DD_FREE(_e_randr2_cfg_screen_edd)
    return 1;
+}
+
+E_API void
+e_randr2_stop(void)
+{
+   e_randr2_shutdown();
 }
 
 E_API Eina_Bool

@@ -132,6 +132,8 @@ extern E_API int              E_EVENT_RANDR_CHANGE;
 EINTERN Eina_Bool             e_randr2_init(void);
 EINTERN int                   e_randr2_shutdown(void);
 
+E_API    void                 e_randr2_stop(void);
+
 E_API    Eina_Bool            e_randr2_config_save(void);
 E_API    void                 e_randr2_config_apply(void);
 E_API    void                 e_randr2_screeninfo_update(void);
@@ -141,6 +143,6 @@ E_API E_Config_Randr2_Screen *e_randr2_config_screen_find(E_Randr2_Screen *s, E_
 E_API void                    e_randr2_screens_setup(int rw, int rh);
 E_API E_Randr2_Screen        *e_randr2_screen_id_find(const char *id);
 E_API double                  e_randr2_screen_dpi_get(E_Randr2_Screen *s);
-E_API void                     e_randr2_screen_modes_sort(E_Randr2_Screen *s);
+E_API void                    e_randr2_screen_modes_sort(E_Randr2_Screen *s);
 #endif
 #endif
