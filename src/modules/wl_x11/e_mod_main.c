@@ -9,8 +9,8 @@ E_API void *
 e_modapi_init(E_Module *m)
 {
    int w = 0, h = 0;
-   Ecore_X_Window root, win;
-   int managed;
+   Ecore_X_Window root, win, win2;
+   Eina_Bool managed = EINA_FALSE;
 
    printf("LOAD WL_X11 MODULE\n");
 
@@ -25,10 +25,17 @@ e_modapi_init(E_Module *m)
    e_comp_x_randr_canvas_new(root, 1, 1);
 
    /* then check if it's 'managed' or not */
-   managed =
-     ecore_x_window_prop_window_get(root,
-                                    ECORE_X_ATOM_NET_SUPPORTING_WM_CHECK,
-                                    &win, 1);
+   if (ecore_x_window_prop_window_get(root,
+                                      ECORE_X_ATOM_NET_SUPPORTING_WM_CHECK,
+                                      &win, 1) == 1)
+     {
+        if (ecore_x_window_prop_window_get(win,
+                                           ECORE_X_ATOM_NET_SUPPORTING_WM_CHECK,
+                                           &win2, 1) == 1)
+          {
+             if (win == win2) managed = EINA_TRUE;
+          }
+     }
 
    if (!e_comp->ee)
      {
@@ -39,11 +46,13 @@ e_modapi_init(E_Module *m)
    ecore_evas_name_class_set(e_comp->ee, "E", "compositor");
 
    ecore_evas_screen_geometry_get(e_comp->ee, NULL, NULL, &w, &h);
-   if (!managed)
-     e_comp_x_randr_screen_iface_set();
+   if (managed) e_comp_x_randr_screen_iface_set();
    if (!e_comp_wl_init()) return NULL;
    if (managed)
-     w = w * 2 / 3, h = h * 2 / 3;
+     {
+        w = (w * 2) / 3;
+        h = (h * 2) / 3;
+     }
    if (!e_comp_canvas_init(w, h)) return NULL;
 
    e_comp_wl_input_pointer_enabled_set(EINA_TRUE);
