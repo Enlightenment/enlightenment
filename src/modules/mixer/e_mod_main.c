@@ -361,6 +361,9 @@ _mouse_wheel_cb(void *data EINA_UNUSED, Evas *evas EINA_UNUSED,
 {
    Evas_Event_Mouse_Wheel *ev = event;
 
+   if (backend_mute_get())
+     backend_mute_set(EINA_FALSE);
+
    if (ev->z > 0)
      backend_volume_decrease();
    else if (ev->z < 0)
