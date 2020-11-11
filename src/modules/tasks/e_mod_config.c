@@ -4,7 +4,8 @@
 struct _E_Config_Dialog_Data
 {
    Evas_Object *icon, *text;
-   int show_all;
+   int show_all_desktops;
+   int show_all_screens;
    int minw, minh;
    int icon_only;
    int text_only;
@@ -41,7 +42,8 @@ _config_tasks_module(Config_Item *ci)
 static void
 _fill_data(Config_Item *ci, E_Config_Dialog_Data *cfdata)
 {
-   cfdata->show_all = ci->show_all;
+   cfdata->show_all_desktops = ci->show_all_desktops;
+   cfdata->show_all_screens = ci->show_all_screens;
    cfdata->minw = ci->minw;
    cfdata->minh = ci->minh;
    cfdata->icon_only = ci->icon_only;
@@ -87,7 +89,10 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
 
    of = e_widget_framelist_add(evas, _("Display"), 0);
    ob = e_widget_check_add(evas, _("Show windows from all desktops"),
-                           &(cfdata->show_all));
+                           &(cfdata->show_all_desktops));
+   e_widget_framelist_object_append(of, ob);
+   ob = e_widget_check_add(evas, _("Show windows from all screens"),
+                           &(cfdata->show_all_screens));
    e_widget_framelist_object_append(of, ob);
    cfdata->icon = ob = e_widget_check_add(evas, _("Show icon only"),
                            &(cfdata->icon_only));
@@ -133,7 +138,8 @@ _basic_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
    Config_Item *ci;
 
    ci = cfd->data;
-   ci->show_all = cfdata->show_all;
+   ci->show_all_desktops = cfdata->show_all_desktops;
+   ci->show_all_screens = cfdata->show_all_screens;
    ci->minw = cfdata->minw;
    ci->minh = cfdata->minh;
    ci->icon_only = cfdata->icon_only;

@@ -120,7 +120,8 @@ e_modapi_init(E_Module *m)
 #define T Config_Item
 #define D conf_item_edd
    E_CONFIG_VAL(D, T, id, STR);
-   E_CONFIG_VAL(D, T, show_all, INT);
+   E_CONFIG_VAL(D, T, show_all_desktops, INT);
+   E_CONFIG_VAL(D, T, show_all_screens, INT);
    E_CONFIG_VAL(D, T, minw, INT);
    E_CONFIG_VAL(D, T, minh, INT);
    E_CONFIG_VAL(D, T, preview_size, INT);
@@ -145,7 +146,8 @@ e_modapi_init(E_Module *m)
 
         config = E_NEW(Config_Item, 1);
         config->id = eina_stringshare_add("0");
-        config->show_all = 0;
+        config->show_all_desktops = 0;
+        config->show_all_screens = 0;
         config->minw = 100;
         config->minh = 32;
         config->preview = 0;
@@ -603,13 +605,19 @@ _tasks_item_check_add(Tasks *tasks, E_Client *ec)
    if (ec->stack.prev) return 1;
    if (_tasks_item_find(tasks, ec)) return 1;
    if (!tasks->config) return 1;
-   if (!(tasks->config->show_all))
+
+   if (!(tasks->config->show_all_desktops))
      {
-        if (ec->zone != tasks->zone) return 1;
         if ((ec->desk != e_desk_current_get(ec->zone)) &&
             (!ec->sticky))
           return 1;
      }
+
+   if (!(tasks->config->show_all_screens))
+     {
+        if (ec->zone != tasks->zone) return 1;
+     }
+   
    _tasks_item_add(tasks, ec);
    return 0;
 }
@@ -780,7 +788,8 @@ _tasks_config_item_get(const char *id)
 
    config = E_NEW(Config_Item, 1);
    config->id = eina_stringshare_add(id);
-   config->show_all = 0;
+   config->show_all_desktops = 0;
+   config->show_all_screens = 0;
    config->minw = 100;
    config->minh = 32;
 
@@ -1039,7 +1048,7 @@ _tasks_cb_item_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
 
    if (ev->button == 1)
      {
-        if (!item->client->sticky && item->tasks->config->show_all)
+        if (!item->client->sticky && item->tasks->config->show_all_desktops)
           e_desk_show(item->client->desk);
         if (evas_key_modifier_is_set(ev->modifiers, "Alt"))
           {
@@ -1089,7 +1098,7 @@ _tasks_cb_item_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
      }
    else if (ev->button == 2)
      {
-        if (!item->client->sticky && item->tasks->config->show_all)
+        if (!item->client->sticky && item->tasks->config->show_all_desktops)
           e_desk_show(item->client->desk);
         evas_object_raise(item->client->frame);
         evas_object_focus_set(item->client->frame, 1);

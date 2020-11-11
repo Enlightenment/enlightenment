@@ -18,7 +18,8 @@ struct _Config
 struct _Config_Item
 {
    const char *id;
-   int show_all;
+   int show_all_desktops;
+   int show_all_screens;
    int minw, minh;
    int preview_size;
    Eina_Bool icon_only;
