@@ -51,7 +51,7 @@ static void
 _temperature_thread_free(Tempthread *tth)
 {
    eina_stringshare_del(tth->sensor_name);
-   e_powersave_sleeper_free(tth->sleeper);
+   if (tth->sleeper) e_powersave_sleeper_free(tth->sleeper);
    free(tth->extn);
    free(tth);
 }
@@ -260,6 +260,7 @@ _temperature_face_shutdown(const Eina_Hash *hash EINA_UNUSED, const void *key EI
    Config_Face *inst;
 
    inst = hdata;
+   // XXX: sleeper free
    if (inst->th) ecore_thread_cancel(inst->th);
    if (inst->sensor_name) eina_stringshare_del(inst->sensor_name);
    if (inst->id) eina_stringshare_del(inst->id);
@@ -294,7 +295,7 @@ _temperature_check_main(void *data, Ecore_Thread *th)
         if (ptemp != temp) ecore_thread_feedback(th, (void *)((long)temp));
         ptemp = temp;
         if (ecore_thread_check(th)) break;
-        e_powersave_sleeper_sleep(tth->sleeper, tth->poll_interval);
+        e_powersave_sleeper_sleep(tth->sleeper, tth->poll_interval, EINA_TRUE);
      }
 }
 

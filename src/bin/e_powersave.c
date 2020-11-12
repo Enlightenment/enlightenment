@@ -12,6 +12,8 @@ struct _E_Powersave_Sleeper
 {
    Ecore_Pipe *pipe;
    int         fd;
+   Eina_Bool   go E_BITFIELD;
+   Eina_Bool   free_requested E_BITFIELD;
 };
 
 /* local subsystem functions */
@@ -30,11 +32,13 @@ static Eina_List *deferred_actions = NULL;
 static Ecore_Timer *deferred_timer = NULL;
 static E_Powersave_Mode powersave_mode = E_POWERSAVE_MODE_LOW;
 static E_Powersave_Mode powersave_mode_force = E_POWERSAVE_MODE_NONE;
+static E_Powersave_Mode powersave_mode_screen = E_POWERSAVE_MODE_NONE;
 static double defer_time = 5.0;
 static Eina_Bool powersave_force = EINA_FALSE;
 static Eina_List *powersave_sleepers = NULL;
 static Eina_Bool powersave_deferred_suspend = EINA_FALSE;
 static Eina_Bool powersave_deferred_hibernate = EINA_FALSE;
+static Eina_Bool powersave_screen = EINA_FALSE;
 
 /* externally accessible functions */
 EINTERN int
@@ -99,6 +103,7 @@ e_powersave_mode_set(E_Powersave_Mode mode)
    else if (mode > e_config->powersave.max) mode = e_config->powersave.max;
 
    if (powersave_mode == mode) return;
+   printf("PWSAVE %i/%i\n", (int)mode, (int)E_POWERSAVE_MODE_FREEZE);
    powersave_mode = mode;
 
    if (powersave_force) return;
@@ -110,6 +115,7 @@ E_API E_Powersave_Mode
 e_powersave_mode_get(void)
 {
    if (powersave_force) return powersave_mode_force;
+   if (powersave_screen) return powersave_mode_screen;
    return powersave_mode;
 }
 
@@ -117,6 +123,7 @@ E_API void
 e_powersave_mode_force(E_Powersave_Mode mode)
 {
    if (mode == powersave_mode_force) return;
+   printf("PWSAVE FORCE %i/%i\n", (int)mode, (int)E_POWERSAVE_MODE_FREEZE);
    powersave_force = EINA_TRUE;
    powersave_mode_force = mode;
    _e_powersave_event_change_send(powersave_mode_force);
@@ -127,6 +134,7 @@ E_API void
 e_powersave_mode_unforce(void)
 {
    if (!powersave_force) return;
+   printf("PWSAVE UNFORCE\n");
    powersave_force = EINA_FALSE;
    if (powersave_mode_force != powersave_mode)
      {
@@ -134,6 +142,34 @@ e_powersave_mode_unforce(void)
         _e_powersave_mode_eval();
      }
    powersave_mode_force = E_POWERSAVE_MODE_NONE;
+}
+
+E_API void
+e_powersave_mode_screen_set(E_Powersave_Mode mode)
+{
+   if (mode == powersave_mode_screen) return;
+   printf("PWSAVE SCREEN SET %i/%i\n", (int)mode, (int)E_POWERSAVE_MODE_FREEZE);
+   powersave_screen = EINA_TRUE;
+   powersave_mode_screen = mode;
+   if (!powersave_force)
+     {
+        _e_powersave_event_change_send(powersave_mode_screen);
+        _e_powersave_mode_eval();
+     }
+}
+
+E_API void
+e_powersave_mode_screen_unset(void)
+{
+   if (!powersave_screen) return;
+   printf("PWSAVE SCREEN UNSET\n");
+   powersave_screen = EINA_FALSE;
+   if ((!powersave_force) && (powersave_mode_screen != powersave_mode))
+     {
+        _e_powersave_event_change_send(powersave_screen);
+        _e_powersave_mode_eval();
+     }
+   powersave_mode_screen = E_POWERSAVE_MODE_NONE;
 }
 
 E_API E_Powersave_Sleeper *
@@ -159,12 +195,12 @@ e_powersave_sleeper_free(E_Powersave_Sleeper *sleeper)
 {
    if (!sleeper) return;
    ecore_pipe_del(sleeper->pipe);
-   powersave_sleepers = eina_list_remove(powersave_sleepers, sleeper);
    eina_freeq_ptr_add(eina_freeq_main_get(), sleeper, free, sizeof(*sleeper));
+   powersave_sleepers = eina_list_remove(powersave_sleepers, sleeper);
 }
 
 E_API void
-e_powersave_sleeper_sleep(E_Powersave_Sleeper *sleeper, int poll_interval)
+e_powersave_sleeper_sleep(E_Powersave_Sleeper *sleeper, int poll_interval, Eina_Bool allow_save)
 {
    double timf;
    unsigned int tim;
@@ -174,8 +210,20 @@ e_powersave_sleeper_sleep(E_Powersave_Sleeper *sleeper, int poll_interval)
    char buf[1] = { 1 };
 
    if (!sleeper) return;
-   if (e_powersave_mode_get() == E_POWERSAVE_MODE_FREEZE) timf = 3600;
-   else timf = (double)poll_interval / 8.0;
+   if (allow_save)
+     {
+        if (e_powersave_mode_get() == E_POWERSAVE_MODE_FREEZE)
+          timf = 3600.0;
+        else if (e_powersave_mode_get() == E_POWERSAVE_MODE_EXTREME)
+          timf = (double)poll_interval / 2.0;
+        else if (e_powersave_mode_get() == E_POWERSAVE_MODE_HIGH)
+          timf = (double)poll_interval / 4.0;
+        else
+          timf = (double)poll_interval / 8.0;
+     }
+   else
+     timf = (double)poll_interval / 8.0;
+
    FD_ZERO(&rfds);
    FD_ZERO(&wfds);
    FD_ZERO(&exfds);
@@ -191,12 +239,11 @@ e_powersave_sleeper_sleep(E_Powersave_Sleeper *sleeper, int poll_interval)
           {
              if (read(sleeper->fd, buf, 1) < 0)
                fprintf(stderr, "%s: ERROR READING FROM FD\n", __func__);
-             return;
+             if (buf[0] == 1) // was woken up by mainloop to do another poll
+               return;
           }
         else if (ret == 0)
-          {
-             return;
-          }
+          return;
      }
 }
 
@@ -331,8 +378,7 @@ _e_powersave_event_change_send(E_Powersave_Mode mode)
 {
    E_Event_Powersave_Update *ev;
 
-   printf("CHANGE PW SAVE MODE TO %i / %i\n",
-          (int)mode, E_POWERSAVE_MODE_EXTREME);
+   printf("PWSAVE TO %i/%i\n", (int)mode, (int)E_POWERSAVE_MODE_FREEZE);
    ev = E_NEW(E_Event_Powersave_Update, 1);
    ev->mode = mode;
    ecore_event_add(E_EVENT_POWERSAVE_UPDATE, ev, _e_powersave_event_update_free, NULL);

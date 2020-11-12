@@ -237,6 +237,7 @@ _e_screensaver_handler_desk_show_cb(void *data EINA_UNUSED, int type EINA_UNUSED
 static Eina_Bool
 _e_screensaver_idle_timer_cb(void *d EINA_UNUSED)
 {
+   e_powersave_mode_screen_set(E_POWERSAVE_MODE_FREEZE);
    ecore_event_add(E_EVENT_SCREENSAVER_ON, NULL, NULL, NULL);
    screensaver_idle_timer = NULL;
    return EINA_FALSE;
@@ -452,7 +453,10 @@ e_screensaver_eval(Eina_Bool saver_on)
              if (!_screensaver_ignore)
                {
                   if (!e_screensaver_on_get())
-                    ecore_event_add(E_EVENT_SCREENSAVER_ON, NULL, NULL, NULL);
+                    {
+                       e_powersave_mode_screen_set(E_POWERSAVE_MODE_FREEZE);
+                       ecore_event_add(E_EVENT_SCREENSAVER_ON, NULL, NULL, NULL);
+                    }
                }
           }
         return;
@@ -485,6 +489,7 @@ e_screensaver_eval(Eina_Bool saver_on)
      {
         if (e_screensaver_on_get())
           {
+             e_powersave_mode_screen_unset();
              e_screensaver_update();
              ecore_event_add(E_EVENT_SCREENSAVER_OFF, NULL, NULL, NULL);
           }

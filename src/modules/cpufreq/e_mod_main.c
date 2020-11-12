@@ -1323,7 +1323,7 @@ static void
 _cpufreq_cb_frequency_check_done(void *data, Ecore_Thread *th EINA_UNUSED)
 {
    Thread_Config *thc = data;
-   e_powersave_sleeper_free(thc->sleeper);
+   if (thc->sleeper) e_powersave_sleeper_free(thc->sleeper);
    free(thc);
 }
 
@@ -1342,7 +1342,7 @@ _cpufreq_cb_frequency_check_main(void *data, Ecore_Thread *th)
         else
           _cpufreq_status_free(status);
         if (ecore_thread_check(th)) break;
-        e_powersave_sleeper_sleep(thc->sleeper, thc->interval);
+        e_powersave_sleeper_sleep(thc->sleeper, thc->interval, EINA_TRUE);
      }
 }
 

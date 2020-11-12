@@ -988,23 +988,20 @@ _e_sys_cb_acpi_event(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Acpi *ev = event;
 
-   if (e_powersave_mode_get() == E_POWERSAVE_MODE_FREEZE)
+   if (((ev->type == E_ACPI_TYPE_LID) &&
+        (ev->status == E_ACPI_LID_OPEN)) ||
+       (ev->type == E_ACPI_TYPE_POWER) ||
+       (ev->type == E_ACPI_TYPE_SLEEP))
      {
-        if (((ev->type == E_ACPI_TYPE_LID) &&
-             (ev->status == E_ACPI_LID_OPEN)) ||
-            (ev->type == E_ACPI_TYPE_POWER) ||
-            (ev->type == E_ACPI_TYPE_SLEEP))
+        if (_e_sys_acpi_handler)
           {
-             if (_e_sys_acpi_handler)
-               {
-                  ecore_event_handler_del(_e_sys_acpi_handler);
-                  _e_sys_acpi_handler = NULL;
-               }
-             e_powersave_mode_unforce();
-             ecore_timer_add(1.0, _e_sys_resume_delay, NULL);
-             // XXX: need some way of, at the system level, restoring
-             // system and devices back to running normally
+             ecore_event_handler_del(_e_sys_acpi_handler);
+             _e_sys_acpi_handler = NULL;
           }
+        e_powersave_mode_unforce();
+        ecore_timer_add(0.5, _e_sys_resume_delay, NULL);
+        // XXX: need some way of, at the system level, restoring
+        // system and devices back to running normally
      }
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -1026,11 +1023,11 @@ _e_sys_suspend_delay(void *data EINA_UNUSED)
    else
      {
         if (_e_sys_acpi_handler)
-        ecore_event_handler_del(_e_sys_acpi_handler);
+          ecore_event_handler_del(_e_sys_acpi_handler);
         _e_sys_acpi_handler =
-        ecore_event_handler_add(E_EVENT_ACPI,
-                                _e_sys_cb_acpi_event,
-                                NULL);
+          ecore_event_handler_add(E_EVENT_ACPI,
+                                  _e_sys_cb_acpi_event,
+                                  NULL);
         e_powersave_mode_force(E_POWERSAVE_MODE_FREEZE);
         // XXX: need some system way of forcing the system into a very low
         // power level with as many devices suspended as possible. below is
