@@ -148,11 +148,11 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    of = e_widget_framelist_add(evas, _("Misc"), 0);
    ob = e_widget_check_add(evas, _("Lock icon move"), &(cfdata->lock_move));
    e_widget_framelist_object_append(of, ob);
-   ob = e_widget_check_add(evas, _("Don't add items on launch"), &(cfdata->dont_add_nonorder));
+   ob = e_widget_check_add(evas, _("Don't show active windows"), &(cfdata->dont_add_nonorder));
    e_widget_framelist_object_append(of, ob);
    ob = e_widget_check_add(evas, _("Track launch"), &(cfdata->track_launch));
    e_widget_framelist_object_append(of, ob);
-   ob = e_widget_check_add(evas, _("Menu on mouse over"), &(cfdata->icon_menu_mouseover));
+   ob = e_widget_check_add(evas, _("Miniview on mouse over"), &(cfdata->icon_menu_mouseover));
    e_widget_framelist_object_append(of, ob);
 
    e_widget_list_object_append(o, of, 1, 1, 0.5);
