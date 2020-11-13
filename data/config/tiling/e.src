@@ -1,5 +1,5 @@
 group "E_Config" struct {
-    value "config_version" int: 1000032;
+    value "config_version" int: 1000033;
     value "config_type" uint: 3;
     value "desktop_default_name" string: "%i-%i";
     value "desktop_default_window_profile" string: "standard";
@@ -135,9 +135,15 @@ group "E_Config" struct {
     value "clientlist_limit_caption_len" int: 0;
     value "clientlist_max_caption_len" int: 2;
     value "mouse_hand" int: 1;
-    value "mouse_accel_numerator" int: 2;
-    value "mouse_accel_denominator" int: 1;
+    value "mouse_accel" double: 0.0;
     value "mouse_accel_threshold" int: 4;
+    value "touch_tap_to_click" uchar: 0;
+    value "mouse_natural_scroll" uchar: 0;
+    value "mouse_emulate_middle_button" uchar: 1;
+    value "touch_clickpad" uchar: 1;
+    value "touch_scrolling_mode" uchar: 0;
+    value "touch_scrolling_horiz" uchar: 1;
+    value "touch_palm_detect" uchar: 1;
     value "border_raise_on_mouse_action" int: 1;
     value "desk_flip_wrap" int: 0;
     value "fullscreen_flip" int: 1;

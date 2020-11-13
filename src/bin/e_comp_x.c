@@ -5472,6 +5472,22 @@ _e_comp_x_randr_change(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev
    return ECORE_CALLBACK_RENEW;
 }
 
+static Eina_Bool
+_e_comp_x_devices_change_cb(void *data EINA_UNUSED, int t EINA_UNUSED, void *ev EINA_UNUSED)
+{
+#ifdef HAVE_WAYLAND
+   if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+     {
+        // do nothing here
+     }
+   else
+#endif
+     {
+        e_comp_x_devices_config_apply();
+     }
+   return ECORE_CALLBACK_RENEW;
+}
+
 static void
 _e_comp_x_del(E_Comp *c)
 {
@@ -5999,6 +6015,7 @@ e_comp_x_init(void)
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_PING,
                          _e_comp_x_cb_ping, NULL);
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_RANDR_OUTPUT_PROPERTY_NOTIFY, _e_comp_x_backlight_notify_cb, NULL);
+   E_LIST_HANDLER_APPEND(handlers, ECORE_X_DEVICES_CHANGE, _e_comp_x_devices_change_cb, NULL);
    if (ecore_x_randr_version_get() >= RANDR_VERSION_1_3)
      backlight_atom = ecore_x_atom_get("Backlight");
 
@@ -6036,6 +6053,7 @@ e_comp_x_init(void)
                                 0,
                                 e_config->screensaver_blanking,
                                 e_config->screensaver_expose);
+        e_comp_x_devices_config_apply();
      }
    else
      e_dnd_init();

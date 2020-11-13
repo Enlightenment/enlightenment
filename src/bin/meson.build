@@ -255,6 +255,7 @@ hdr = [
   'e_comp_cfdata.h',
   'e_comp_object.h',
   'e_comp_x.h',
+  'e_comp_x_devices.h',
   'e_comp_x_randr.h',
   'e_config_data.h',
   'e_config_dialog.h',
@@ -421,6 +422,7 @@ endif
 if config_h.has('HAVE_WAYLAND_ONLY') == false
   src += [
     'e_comp_x.c',
+    'e_comp_x_devices.c',
     'e_comp_x_randr.c',
     'e_alert.c',
     'e_xsettings.c'

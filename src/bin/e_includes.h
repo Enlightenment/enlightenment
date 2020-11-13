@@ -151,6 +151,7 @@
 #include "e_comp_canvas.h"
 #include "e_utils.h"
 #include "e_hints.h"
+#include "e_comp_x_devices.h"
 #include "e_comp_x_randr.h"
 
 #ifdef HAVE_WAYLAND

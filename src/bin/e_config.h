@@ -47,7 +47,7 @@ typedef enum
 /* increment this whenever a new set of config values are added but the users
  * config doesn't need to be wiped - simply new values need to be put in
  */
-#define E_CONFIG_FILE_GENERATION 32
+#define E_CONFIG_FILE_GENERATION 33
 #define E_CONFIG_FILE_VERSION    ((E_CONFIG_FILE_EPOCH * 1000000) + E_CONFIG_FILE_GENERATION)
 
 #define E_CONFIG_BINDINGS_VERSION 0 // DO NOT INCREMENT UNLESS YOU WANT TO WIPE ALL BINDINGS!!!!!
@@ -242,10 +242,16 @@ struct _E_Config
    int                       clientlist_max_caption_len; // GUI
 
    int                       mouse_hand; //GUI
-   int                       mouse_accel_numerator; // GUI
-   int                       mouse_accel_denominator; // GUI
+   double                    mouse_accel; // GUI
    int                       mouse_accel_threshold; // GUI
    unsigned char             touch_tap_to_click; // GUI
+
+   unsigned char             mouse_natural_scroll; // GUI
+   unsigned char             mouse_emulate_middle_button; // GUI
+   unsigned char             touch_clickpad; // GUI
+   unsigned char             touch_scrolling_mode; // GUI 0=edge, 1=2finger, 2=circle
+   unsigned char             touch_scrolling_horiz; // GUI
+   unsigned char             touch_palm_detect; // GUI
 
    int                       border_raise_on_mouse_action; // GUI
    int                       border_raise_on_focus; // GUI
