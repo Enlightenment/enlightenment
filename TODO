@@ -292,9 +292,10 @@ TODO:
     front-end to back-end cmdline tools (use shell wrappers?)
 * cpufreq: support pstate: hwp_dynamic_boost, no_turbo, display turbo_pct,
   num_pstates
-* need more advanced input device controls like for touchpads for
-  swizzling their gesture recognition etc. - look into libratbag too
-  for gaming mouse stuff if its worth using it or just doing the same
+* advanced per-device config (xinput device by device). current is simple
+  generic "global" config e.g. for the mouse
+* look into libratbag too for gaming mouse stuff if its worth using it or
+  just doing the same
   stuff ourselves as we will probably have to via libinput
 * per app environment launch config - allow different TZ, LOCALE etc.
   per app and set up env appropriately
