@@ -28,7 +28,9 @@ struct _E_Config_Dialog_Data
 
    int tap_to_click;
    int clickpad;
-   int scrolling_mode;
+   int scrolling_2finger;
+   int scrolling_edge;
+   int scrolling_circular;
    int scrolling_horiz;
    int palm_detect;
 };
@@ -71,7 +73,9 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    cfdata->emulate_middle_button = e_config->mouse_emulate_middle_button;
    cfdata->natural_scroll = e_config->mouse_natural_scroll;
    cfdata->clickpad = e_config->touch_clickpad;
-   cfdata->scrolling_mode = e_config->touch_scrolling_mode;
+   cfdata->scrolling_2finger = e_config->touch_scrolling_2finger;
+   cfdata->scrolling_edge = e_config->touch_scrolling_edge;
+   cfdata->scrolling_circular = e_config->touch_scrolling_circular;
    cfdata->scrolling_horiz = e_config->touch_scrolling_horiz;
    cfdata->palm_detect = e_config->touch_palm_detect;
 }
@@ -100,7 +104,9 @@ _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
             (cfdata->emulate_middle_button == e_config->mouse_emulate_middle_button) &&
             (cfdata->natural_scroll == e_config->mouse_natural_scroll) &&
             (cfdata->clickpad == e_config->touch_clickpad) &&
-            (cfdata->scrolling_mode == e_config->touch_scrolling_mode) &&
+            (cfdata->scrolling_2finger == e_config->touch_scrolling_2finger) &&
+            (cfdata->scrolling_edge == e_config->touch_scrolling_edge) &&
+            (cfdata->scrolling_circular == e_config->touch_scrolling_circular) &&
             (cfdata->scrolling_horiz == e_config->touch_scrolling_horiz) &&
             (cfdata->palm_detect == e_config->touch_palm_detect) &&
             EINA_DBL_EQ(cfdata->accel, e_config->mouse_accel) &&
@@ -130,7 +136,9 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata
    e_config->mouse_emulate_middle_button = cfdata->emulate_middle_button;
    e_config->mouse_natural_scroll = cfdata->natural_scroll;
    e_config->touch_clickpad = cfdata->clickpad;
-   e_config->touch_scrolling_mode = cfdata->scrolling_mode;
+   e_config->touch_scrolling_2finger = cfdata->scrolling_2finger;
+   e_config->touch_scrolling_edge = cfdata->scrolling_edge;
+   e_config->touch_scrolling_circular = cfdata->scrolling_circular;
    e_config->touch_scrolling_horiz = cfdata->scrolling_horiz;
    e_config->touch_palm_detect = cfdata->palm_detect;
    e_config_save_queue();
@@ -269,13 +277,14 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    oc = e_widget_check_add(evas, _("Horizontal scrolling"), &(cfdata->scrolling_horiz));
    e_widget_framelist_object_append(of, oc);
 
-   rg = e_widget_radio_group_new(&(cfdata->scrolling_mode));
-   ob = e_widget_radio_add(evas, _("Edge scrolling"), 0, rg);
-   e_widget_framelist_object_append(of, ob);
-   ob = e_widget_radio_add(evas, _("Two finger scrolling"), 1, rg);
-   e_widget_framelist_object_append(of, ob);
-   ob = e_widget_radio_add(evas, _("Circular scrolling"), 2, rg);
-   e_widget_framelist_object_append(of, ob);
+   oc = e_widget_check_add(evas, _("Edge scrolling"), &(cfdata->scrolling_edge));
+   e_widget_framelist_object_append(of, oc);
+
+   oc = e_widget_check_add(evas, _("2 finger scrolling"), &(cfdata->scrolling_2finger));
+   e_widget_framelist_object_append(of, oc);
+
+   oc = e_widget_check_add(evas, _("Circular scrolling"), &(cfdata->scrolling_circular));
+   e_widget_framelist_object_append(of, oc);
 
    e_widget_list_object_append(ol, of, 1, 0, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Mouse"), ol,

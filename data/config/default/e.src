@@ -143,7 +143,9 @@ group "E_Config" struct {
   value "mouse_natural_scroll" uchar: 0;
   value "mouse_emulate_middle_button" uchar: 1;
   value "touch_clickpad" uchar: 1;
-  value "touch_scrolling_mode" uchar: 0;
+  value "touch_scrolling_2finger" uchar: 1;
+  value "touch_scrolling_edge" uchar: 1;
+  value "touch_scrolling_circular" uchar: 0;
   value "touch_scrolling_horiz" uchar: 1;
   value "touch_palm_detect" uchar: 1;
   value "border_raise_on_mouse_action" int: 1;

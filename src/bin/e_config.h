@@ -249,7 +249,9 @@ struct _E_Config
    unsigned char             mouse_natural_scroll; // GUI
    unsigned char             mouse_emulate_middle_button; // GUI
    unsigned char             touch_clickpad; // GUI
-   unsigned char             touch_scrolling_mode; // GUI 0=edge, 1=2finger, 2=circle
+   unsigned char             touch_scrolling_2finger; // GUI
+   unsigned char             touch_scrolling_edge; // GUI
+   unsigned char             touch_scrolling_circular; // GUI
    unsigned char             touch_scrolling_horiz; // GUI
    unsigned char             touch_palm_detect; // GUI
 
