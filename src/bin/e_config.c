@@ -833,12 +833,16 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, clientlist_max_caption_len, INT);
 
    E_CONFIG_VAL(D, T, mouse_hand, INT);
+
    E_CONFIG_VAL(D, T, mouse_accel, DOUBLE);
    E_CONFIG_VAL(D, T, mouse_accel_threshold, INT);
-   E_CONFIG_VAL(D, T, touch_tap_to_click, UCHAR);
-
    E_CONFIG_VAL(D, T, mouse_natural_scroll, UCHAR);
    E_CONFIG_VAL(D, T, mouse_emulate_middle_button, UCHAR);
+
+   E_CONFIG_VAL(D, T, touch_accel, DOUBLE);
+   E_CONFIG_VAL(D, T, touch_natural_scroll, UCHAR);
+   E_CONFIG_VAL(D, T, touch_emulate_middle_button, UCHAR);
+   E_CONFIG_VAL(D, T, touch_tap_to_click, UCHAR);
    E_CONFIG_VAL(D, T, touch_clickpad, UCHAR);
    E_CONFIG_VAL(D, T, touch_scrolling_2finger, UCHAR);
    E_CONFIG_VAL(D, T, touch_scrolling_edge, UCHAR);
@@ -1786,11 +1790,12 @@ e_config_load(void)
           CONFIG_VERSION_CHECK(33)
             {
                CONFIG_VERSION_UPDATE_INFO(33);
-               e_config->touch_clickpad = 1;
                e_config->mouse_emulate_middle_button = 1;
-               e_config->touch_scrolling_horiz = 1;
+               e_config->touch_emulate_middle_button = 1;
+               e_config->touch_clickpad = 1;
                e_config->touch_scrolling_2finger = 1;
-               e_config->touch_scrolling_edge = 1;
+               e_config->touch_scrolling_edge = 0;
+               e_config->touch_scrolling_horiz = 1;
                e_config->touch_palm_detect = 1;
                e_config_save_queue();
             }

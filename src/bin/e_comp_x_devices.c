@@ -2,8 +2,14 @@
 #define E_COMP_X
 #include "e.h"
 
+typedef enum
+{
+   DEVICE_FLAG_NONE,
+   DEVICE_FLAG_TOUCHPAD
+} Device_Flags;
+
 static void
-_handle_dev_prop(int dev_slot, const char *dev, const char *prop)
+_handle_dev_prop(int dev_slot, const char *dev, const char *prop, Device_Flags dev_flags)
 {
    int num, size;
    Ecore_X_Atom fmt;
@@ -12,12 +18,16 @@ _handle_dev_prop(int dev_slot, const char *dev, const char *prop)
    // libinput devices
    if (!strcmp(prop, "libinput Middle Emulation Enabled"))
      {
+        unsigned char cfval = 0;
         unsigned char *val = ecore_x_input_device_property_get
           (dev_slot, prop, &num, &fmt, &size);
-        if ((val) && (size == 8) && (num == 1) &&
-            (e_config->mouse_emulate_middle_button) != (val[0]))
+        if (dev_flags == DEVICE_FLAG_TOUCHPAD)
+          cfval = e_config->touch_emulate_middle_button;
+        else
+          cfval = e_config->mouse_emulate_middle_button;
+        if ((val) && (size == 8) && (num == 1) && (cfval != val[0]))
           {
-             val[0] = e_config->mouse_emulate_middle_button;
+             val[0] = cfval;
              printf("DEV: change [%s] [%s] -> %i\n", dev, prop, val[0]);
              ecore_x_input_device_property_set
                (dev_slot, prop, val, num, fmt, size);
@@ -26,12 +36,16 @@ _handle_dev_prop(int dev_slot, const char *dev, const char *prop)
      }
    else if (!strcmp(prop, "libinput Accel Speed"))
      {
+        float cfval = 0.0;
         float *val = ecore_x_input_device_property_get
           (dev_slot, prop, &num, &fmt, &size);
-        if ((val) && (size == 32) && (num == 1) &&
-            (fabs(e_config->mouse_accel - val[0]) >= 0.01))
+        if (dev_flags == DEVICE_FLAG_TOUCHPAD)
+          cfval = e_config->touch_accel;
+        else
+          cfval = e_config->mouse_accel;
+        if ((val) && (size == 32) && (num == 1) && (fabs(cfval - val[0]) >= 0.01))
           {
-             val[0] = e_config->mouse_accel;
+             val[0] = cfval;
              printf("DEV: change [%s] [%s] -> %1.3f\n", dev, prop, val[0]);
              ecore_x_input_device_property_set
                (dev_slot, prop, val, num, fmt, size);
@@ -40,61 +54,88 @@ _handle_dev_prop(int dev_slot, const char *dev, const char *prop)
      }
    else if (!strcmp(prop, "libinput Tapping Enabled"))
      {
-        unsigned char *val = ecore_x_input_device_property_get
-          (dev_slot, prop, &num, &fmt, &size);
-        if ((val) && (size == 8) && (num == 1) &&
-            (e_config->touch_tap_to_click) != (val[0]))
+        if (dev_flags == DEVICE_FLAG_TOUCHPAD)
           {
-             val[0] = e_config->touch_tap_to_click;
-             printf("DEV: change [%s] [%s] -> %i\n", dev, prop, val[0]);
-             ecore_x_input_device_property_set
-               (dev_slot, prop, val, num, fmt, size);
+             unsigned char *val = ecore_x_input_device_property_get
+               (dev_slot, prop, &num, &fmt, &size);
+             if ((val) && (size == 8) && (num == 1) &&
+                 (e_config->touch_tap_to_click != val[0]))
+               {
+                  val[0] = e_config->touch_tap_to_click;
+                  printf("DEV: change [%s] [%s] -> %i\n", dev, prop, val[0]);
+                  ecore_x_input_device_property_set
+                    (dev_slot, prop, val, num, fmt, size);
+               }
+             free(val);
           }
-        free(val);
      }
 //   else if (!strcmp(prop, "libinput Tapping Button Mapping Enabled"))
 //     {
 //        // 1 bool, 0 = LRM, 1 = LMR
 //     }
-   else if (!strcmp(prop, "libinput Horizontal Scrolling Enabled"))
+   else if ((!strcmp(prop, "libinput Horizontal Scrolling Enabled")) ||
+            (!strcmp(prop, "libinput Horizontal Scroll Enabled")))
      {
-        unsigned char *val = ecore_x_input_device_property_get
-          (dev_slot, prop, &num, &fmt, &size);
-        if ((val) && (size == 8) && (num == 1) &&
-            (e_config->touch_scrolling_horiz) != (val[0]))
+        if (dev_flags == DEVICE_FLAG_TOUCHPAD)
           {
-             val[0] = e_config->touch_scrolling_horiz;
-             printf("DEV: change [%s] [%s] -> %i\n", dev, prop, val[0]);
-             ecore_x_input_device_property_set
-               (dev_slot, prop, val, num, fmt, size);
+             unsigned char *val = ecore_x_input_device_property_get
+               (dev_slot, prop, &num, &fmt, &size);
+             if ((val) && (size == 8) && (num == 1) &&
+                 (e_config->touch_scrolling_horiz != val[0]))
+               {
+                  val[0] = e_config->touch_scrolling_horiz;
+                  printf("DEV: change [%s] [%s] -> %i\n", dev, prop, val[0]);
+                  ecore_x_input_device_property_set
+                    (dev_slot, prop, val, num, fmt, size);
+               }
+             free(val);
           }
-        free(val);
      }
    else if (!strcmp(prop, "libinput Scroll Method Enabled"))
      {
-        // 3 bool, 2 finger, edge, button
-        unsigned char *val = ecore_x_input_device_property_get
-          (dev_slot, prop, &num, &fmt, &size);
-        if ((val) && (size == 8) && (num >= 3) &&
-            ((e_config->touch_scrolling_2finger != val[0]) ||
-             (e_config->touch_scrolling_edge != val[1])))
+        if (dev_flags == DEVICE_FLAG_TOUCHPAD)
           {
-             val[0] = e_config->touch_scrolling_2finger;
-             val[1] = e_config->touch_scrolling_edge;
-             printf("DEV: change [%s] [%s] -> %i %i %i\n", dev, prop, val[0], val[1], val[2]);
-             ecore_x_input_device_property_set
-               (dev_slot, prop, val, num, fmt, size);
+             // 3 bool, 2 finger, edge, button
+             unsigned char *val0 = ecore_x_input_device_property_get
+               (dev_slot, "libinput Scroll Methods Available", &num, &fmt, &size);
+             if ((val0) && (size == 8) && (num >= 3))
+               {
+                  unsigned char *val = ecore_x_input_device_property_get
+                    (dev_slot, prop, &num, &fmt, &size);
+                  if ((val) && (size == 8) && (num >= 3))
+                    {
+                       unsigned char cf_2finger = 0, cf_edge = 0;
+
+                       if (val0[0]) cf_2finger = e_config->touch_scrolling_2finger;
+                       else cf_2finger = val[0];
+                       if (val0[1]) cf_edge = e_config->touch_scrolling_edge;
+                       else cf_edge = val[1];
+                       if ((cf_2finger != val[0]) || (cf_edge != val[1]))
+                         {
+                            val[0] = cf_2finger;
+                            val[1] = cf_edge;
+                            printf("DEV: change [%s] [%s] -> %i %i %i\n", dev, prop, val[0], val[1], val[2]);
+                            ecore_x_input_device_property_set
+                              (dev_slot, prop, val, num, fmt, size);
+                         }
+                    }
+                  free(val);
+               }
+             free(val0);
           }
-        free(val);
      }
    else if (!strcmp(prop, "libinput Natural Scrolling Enabled"))
      {
+        unsigned char cfval = 0;
         unsigned char *val = ecore_x_input_device_property_get
           (dev_slot, prop, &num, &fmt, &size);
-        if ((val) && (size == 8) && (num == 1) &&
-            (e_config->mouse_natural_scroll) != (val[0]))
+        if (dev_flags == DEVICE_FLAG_TOUCHPAD)
+          cfval = e_config->touch_natural_scroll;
+        else
+          cfval = e_config->mouse_natural_scroll;
+        if ((val) && (size == 8) && (num == 1) && (cfval != val[0]))
           {
-             val[0] = e_config->mouse_natural_scroll;
+             val[0] = cfval;
              printf("DEV: change [%s] [%s] -> %i\n", dev, prop, val[0]);
              ecore_x_input_device_property_set
                (dev_slot, prop, val, num, fmt, size);
@@ -120,7 +161,7 @@ _handle_dev_prop(int dev_slot, const char *dev, const char *prop)
         unsigned int *val = ecore_x_input_device_property_get
           (dev_slot, prop, &num, &fmt, &size);
         if ((val) && (size == 32) && (num == 1) &&
-            (e_config->mouse_emulate_middle_button && (val[0] != 50)))
+            (e_config->touch_emulate_middle_button && (val[0] != 50)))
           {
              val[0] = 50;
              printf("DEV: change [%s] [%s] -> %i\n", dev, prop, val[0]);
@@ -136,7 +177,7 @@ _handle_dev_prop(int dev_slot, const char *dev, const char *prop)
         // 4 val float min, max, accel, unused
         chval[0] = 1.0;
         chval[1] = 1.75;
-        chval[2] = 0.15 + (e_config->mouse_accel * 0.15);
+        chval[2] = 0.15 + (e_config->touch_accel * 0.15);
         float *val = ecore_x_input_device_property_get
           (dev_slot, prop, &num, &fmt, &size);
         if ((val) && (size == 32) && (num == 4) &&
@@ -289,8 +330,8 @@ _handle_dev_prop(int dev_slot, const char *dev, const char *prop)
         int *val = ecore_x_input_device_property_get
           (dev_slot, prop, &num, &fmt, &size);
         if ((val) && (size == 32) && (num == 2) &&
-            (((e_config->mouse_natural_scroll && ((val[0] > 0) || (val[1] > 0)))) ||
-             ((!e_config->mouse_natural_scroll && ((val[0] < 0) || (val[1] < 0))))))
+            (((e_config->touch_natural_scroll && ((val[0] > 0) || (val[1] > 0)))) ||
+             ((!e_config->touch_natural_scroll && ((val[0] < 0) || (val[1] < 0))))))
           {
              if (e_config->mouse_natural_scroll)
                {
@@ -360,12 +401,38 @@ e_comp_x_devices_config_apply(void)
         const char *name;
         char **props;
         int num_props, j;
+        Device_Flags dev_flags = 0;
 
         name = ecore_x_input_device_name_get(i);
 //        printf("DEV: DEV=%i: [%s]\n", i, name);
         props = ecore_x_input_device_properties_list(i, &num_props);
         if (props)
           {
+             int num, size;
+             Ecore_X_Atom fmt;
+             unsigned char *val;
+
+             // figure out device flags - for now is it a mouse or touchpad
+             val = ecore_x_input_device_property_get
+               (i, "libinput Scroll Methods Available", &num, &fmt, &size);
+             if ((val) && (size == 8) && (num >= 3))
+               {
+                  if ((!val[2]) && (val[0] || val[1]))
+                    {
+                       dev_flags = DEVICE_FLAG_TOUCHPAD;
+                    }
+               }
+             if (!val)
+               {
+                  val = ecore_x_input_device_property_get
+                    (i, "Synaptics Move Speed", &num, &fmt, &size);
+                  if ((val) && (size == 32) && (num == 4))
+                    {
+                       dev_flags = DEVICE_FLAG_TOUCHPAD;
+                    }
+               }
+             free(val);
+
              for (j = 0; j < num_props; j++)
                {
 //                  printf("DEV:   PROP=%i: [%s]\n", j, props[j]);
@@ -375,7 +442,7 @@ e_comp_x_devices_config_apply(void)
                     driver_libinput = EINA_TRUE;
                   else if ((!driver_synaptics) && (!strncmp(props[j], "Synaptics ", 10)))
                     driver_synaptics = EINA_TRUE;
-                  _handle_dev_prop(i, name, props[j]);
+                  _handle_dev_prop(i, name, props[j], dev_flags);
                }
              ecore_x_input_device_properties_free(props, num_props);
           }

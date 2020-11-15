@@ -21,18 +21,22 @@ struct _E_Config_Dialog_Data
    } gui;
 
    int mouse_hand;
-   double accel;
-   double threshold;
-   int emulate_middle_button;
-   int natural_scroll;
 
-   int tap_to_click;
-   int clickpad;
-   int scrolling_2finger;
-   int scrolling_edge;
-   int scrolling_circular;
-   int scrolling_horiz;
-   int palm_detect;
+   double mouse_accel;
+   double mouse_accel_threshold;
+   int mouse_natural_scroll;
+   int mouse_emulate_middle_button;
+
+   double touch_accel;
+   int touch_natural_scroll;
+   int touch_emulate_middle_button;
+   int touch_tap_to_click;
+   int touch_clickpad;
+   int touch_scrolling_2finger;
+   int touch_scrolling_edge;
+   int touch_scrolling_circular;
+   int touch_scrolling_horiz;
+   int touch_palm_detect;
 };
 
 E_Config_Dialog *
@@ -67,17 +71,22 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    cfdata->cursor_size = e_config->cursor_size;
 
    cfdata->mouse_hand = e_config->mouse_hand;
-   cfdata->accel = e_config->mouse_accel;
-   cfdata->threshold = e_config->mouse_accel_threshold;
-   cfdata->tap_to_click = e_config->touch_tap_to_click;
-   cfdata->emulate_middle_button = e_config->mouse_emulate_middle_button;
-   cfdata->natural_scroll = e_config->mouse_natural_scroll;
-   cfdata->clickpad = e_config->touch_clickpad;
-   cfdata->scrolling_2finger = e_config->touch_scrolling_2finger;
-   cfdata->scrolling_edge = e_config->touch_scrolling_edge;
-   cfdata->scrolling_circular = e_config->touch_scrolling_circular;
-   cfdata->scrolling_horiz = e_config->touch_scrolling_horiz;
-   cfdata->palm_detect = e_config->touch_palm_detect;
+
+   cfdata->mouse_accel = e_config->mouse_accel;
+   cfdata->mouse_accel_threshold = e_config->mouse_accel_threshold;
+   cfdata->mouse_natural_scroll = e_config->mouse_natural_scroll;
+   cfdata->mouse_emulate_middle_button = e_config->mouse_emulate_middle_button;
+
+   cfdata->touch_accel = e_config->touch_accel;
+   cfdata->touch_natural_scroll = e_config->touch_natural_scroll;
+   cfdata->touch_emulate_middle_button = e_config->touch_emulate_middle_button;
+   cfdata->touch_tap_to_click = e_config->touch_tap_to_click;
+   cfdata->touch_clickpad = e_config->touch_clickpad;
+   cfdata->touch_scrolling_2finger = e_config->touch_scrolling_2finger;
+   cfdata->touch_scrolling_edge = e_config->touch_scrolling_edge;
+   cfdata->touch_scrolling_circular = e_config->touch_scrolling_circular;
+   cfdata->touch_scrolling_horiz = e_config->touch_scrolling_horiz;
+   cfdata->touch_palm_detect = e_config->touch_palm_detect;
 }
 
 static void *
@@ -87,7 +96,6 @@ _create_data(E_Config_Dialog *cfd)
 
    cfdata = E_NEW(E_Config_Dialog_Data, 1);
    cfdata->cfd = cfd;
-
    _fill_data(cfdata);
    return cfdata;
 }
@@ -100,17 +108,20 @@ _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
             (cfdata->use_e_cursor == e_config->use_e_cursor) &&
             (cfdata->cursor_size == e_config->cursor_size) &&
             (cfdata->mouse_hand == e_config->mouse_hand) &&
-            (cfdata->tap_to_click == e_config->touch_tap_to_click) &&
-            (cfdata->emulate_middle_button == e_config->mouse_emulate_middle_button) &&
-            (cfdata->natural_scroll == e_config->mouse_natural_scroll) &&
-            (cfdata->clickpad == e_config->touch_clickpad) &&
-            (cfdata->scrolling_2finger == e_config->touch_scrolling_2finger) &&
-            (cfdata->scrolling_edge == e_config->touch_scrolling_edge) &&
-            (cfdata->scrolling_circular == e_config->touch_scrolling_circular) &&
-            (cfdata->scrolling_horiz == e_config->touch_scrolling_horiz) &&
-            (cfdata->palm_detect == e_config->touch_palm_detect) &&
-            EINA_DBL_EQ(cfdata->accel, e_config->mouse_accel) &&
-            EINA_DBL_EQ(cfdata->threshold, e_config->mouse_accel_threshold));
+            EINA_DBL_EQ(cfdata->mouse_accel, e_config->mouse_accel) &&
+            EINA_DBL_EQ(cfdata->mouse_accel_threshold, e_config->mouse_accel_threshold) &&
+            (cfdata->mouse_natural_scroll == e_config->mouse_natural_scroll) &&
+            (cfdata->mouse_emulate_middle_button == e_config->mouse_emulate_middle_button) &&
+            EINA_DBL_EQ(cfdata->touch_accel, e_config->touch_accel) &&
+            (cfdata->touch_natural_scroll == e_config->touch_natural_scroll) &&
+            (cfdata->touch_emulate_middle_button == e_config->touch_emulate_middle_button) &&
+            (cfdata->touch_tap_to_click == e_config->touch_tap_to_click) &&
+            (cfdata->touch_clickpad == e_config->touch_clickpad) &&
+            (cfdata->touch_scrolling_2finger == e_config->touch_scrolling_2finger) &&
+            (cfdata->touch_scrolling_edge == e_config->touch_scrolling_edge) &&
+            (cfdata->touch_scrolling_circular == e_config->touch_scrolling_circular) &&
+            (cfdata->touch_scrolling_horiz == e_config->touch_scrolling_horiz) &&
+            (cfdata->touch_palm_detect == e_config->touch_palm_detect));
 }
 
 static void
@@ -130,17 +141,23 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata
    e_config->cursor_size = cfdata->cursor_size;
 
    e_config->mouse_hand = cfdata->mouse_hand;
-   e_config->mouse_accel = cfdata->accel;
-   e_config->mouse_accel_threshold = cfdata->threshold;
-   e_config->touch_tap_to_click = cfdata->tap_to_click;
-   e_config->mouse_emulate_middle_button = cfdata->emulate_middle_button;
-   e_config->mouse_natural_scroll = cfdata->natural_scroll;
-   e_config->touch_clickpad = cfdata->clickpad;
-   e_config->touch_scrolling_2finger = cfdata->scrolling_2finger;
-   e_config->touch_scrolling_edge = cfdata->scrolling_edge;
-   e_config->touch_scrolling_circular = cfdata->scrolling_circular;
-   e_config->touch_scrolling_horiz = cfdata->scrolling_horiz;
-   e_config->touch_palm_detect = cfdata->palm_detect;
+
+   e_config->mouse_accel = cfdata->mouse_accel;
+   e_config->mouse_accel_threshold = cfdata->mouse_accel_threshold;
+   e_config->mouse_natural_scroll = cfdata->mouse_natural_scroll;
+   e_config->mouse_emulate_middle_button = cfdata->mouse_emulate_middle_button;
+
+   e_config->touch_accel = cfdata->touch_accel;
+   e_config->touch_natural_scroll = cfdata->touch_natural_scroll;
+   e_config->touch_emulate_middle_button = cfdata->touch_emulate_middle_button;
+   e_config->touch_tap_to_click = cfdata->touch_tap_to_click;
+   e_config->touch_clickpad = cfdata->touch_clickpad;
+   e_config->touch_scrolling_2finger = cfdata->touch_scrolling_2finger;
+   e_config->touch_scrolling_edge = cfdata->touch_scrolling_edge;
+   e_config->touch_scrolling_circular = cfdata->touch_scrolling_circular;
+   e_config->touch_scrolling_horiz = cfdata->touch_scrolling_horiz;
+   e_config->touch_palm_detect = cfdata->touch_palm_detect;
+
    e_config_save_queue();
 
    /* Apply the above settings */
@@ -158,7 +175,6 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata
      }
 
    e_mouse_update();
-
    return 1;
 }
 
@@ -220,6 +236,8 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    e_widget_framelist_object_append(of, ob);
    cfdata->gui.idle_cursor = ob;
 
+
+
    e_widget_list_object_append(ol, of, 1, 0, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Cursor"), ol,
                                  1, 0, 1, 0, 0.5, 0.0);
@@ -236,58 +254,82 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    e_widget_frametable_object_append(of, ob, 1, 0, 1, 1, 1, 1, 1, 1);
    e_widget_list_object_append(ol, of, 1, 0, 0.5);
 
-   of = e_widget_framelist_add(evas, _("Mouse Acceleration"), 0);
-
-   ob = e_widget_label_add(evas, _("Acceleration"));
-   e_widget_framelist_object_append(of, ob);
+   of = e_widget_framelist_add(evas, _("Acceleration"), 0);
    ob = e_widget_slider_add(evas, 1, 0, _("%1.1f"), -1.0, 1.0, 0.1, 0,
-                            &(cfdata->accel), NULL, 100);
-
+                            &(cfdata->mouse_accel), NULL, 100);
    e_widget_framelist_object_append(of, ob);
 
    ob = e_widget_label_add(evas, _("Threshold"));
    e_widget_framelist_object_append(of, ob);
    ob = e_widget_slider_add(evas, 1, 0, _("%1.0f"), 0.0, 10.0, 1.0, 0,
-                            &(cfdata->threshold), NULL, 100);
+                            &(cfdata->mouse_accel_threshold), NULL, 100);
    e_widget_framelist_object_append(of, ob);
 
    e_widget_list_object_append(ol, of, 1, 0, 0.5);
 
-   of = e_widget_framelist_add(evas, _("Clicks"), 0);
+   of = e_widget_framelist_add(evas, _("Buttons"), 0);
 
-   oc = e_widget_check_add(evas, _("Tap to click"), &(cfdata->tap_to_click));
-   e_widget_framelist_object_append(of, oc);
-
-   oc = e_widget_check_add(evas, _("Middle mouse button emulation"), &(cfdata->emulate_middle_button));
-   e_widget_framelist_object_append(of, oc);
-
-   oc = e_widget_check_add(evas, _("Clickpad"), &(cfdata->clickpad));
-   e_widget_framelist_object_append(of, oc);
-
-   oc = e_widget_check_add(evas, _("Palm detect"), &(cfdata->palm_detect));
+   oc = e_widget_check_add(evas, _("Middle mouse button emulation"), &(cfdata->mouse_emulate_middle_button));
    e_widget_framelist_object_append(of, oc);
 
    e_widget_list_object_append(ol, of, 1, 0, 0.5);
 
    of = e_widget_framelist_add(evas, _("Scrolling"), 0);
 
-   oc = e_widget_check_add(evas, _("Natural scrolling"), &(cfdata->natural_scroll));
-   e_widget_framelist_object_append(of, oc);
-
-   oc = e_widget_check_add(evas, _("Horizontal scrolling"), &(cfdata->scrolling_horiz));
-   e_widget_framelist_object_append(of, oc);
-
-   oc = e_widget_check_add(evas, _("Edge scrolling"), &(cfdata->scrolling_edge));
-   e_widget_framelist_object_append(of, oc);
-
-   oc = e_widget_check_add(evas, _("2 finger scrolling"), &(cfdata->scrolling_2finger));
-   e_widget_framelist_object_append(of, oc);
-
-   oc = e_widget_check_add(evas, _("Circular scrolling"), &(cfdata->scrolling_circular));
+   oc = e_widget_check_add(evas, _("Natural scrolling"), &(cfdata->mouse_natural_scroll));
    e_widget_framelist_object_append(of, oc);
 
    e_widget_list_object_append(ol, of, 1, 0, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Mouse"), ol,
+                                 1, 0, 1, 0, 0.5, 0.0);
+
+
+
+   ol = e_widget_list_add(evas, 0, 0);
+
+   of = e_widget_framelist_add(evas, _("Acceleration"), 0);
+
+   ob = e_widget_slider_add(evas, 1, 0, _("%1.1f"), -1.0, 1.0, 0.1, 0,
+                            &(cfdata->touch_accel), NULL, 100);
+   e_widget_framelist_object_append(of, ob);
+
+   e_widget_list_object_append(ol, of, 1, 0, 0.5);
+
+   of = e_widget_framelist_add(evas, _("Buttons"), 0);
+
+   oc = e_widget_check_add(evas, _("Tap to click"), &(cfdata->touch_tap_to_click));
+   e_widget_framelist_object_append(of, oc);
+
+   oc = e_widget_check_add(evas, _("Middle mouse button emulation"), &(cfdata->touch_emulate_middle_button));
+   e_widget_framelist_object_append(of, oc);
+
+   oc = e_widget_check_add(evas, _("Clickpad"), &(cfdata->touch_clickpad));
+   e_widget_framelist_object_append(of, oc);
+
+   oc = e_widget_check_add(evas, _("Palm detect"), &(cfdata->touch_palm_detect));
+   e_widget_framelist_object_append(of, oc);
+
+   e_widget_list_object_append(ol, of, 1, 0, 0.5);
+
+   of = e_widget_framelist_add(evas, _("Scrolling"), 0);
+
+   oc = e_widget_check_add(evas, _("Natural scrolling"), &(cfdata->touch_natural_scroll));
+   e_widget_framelist_object_append(of, oc);
+
+   oc = e_widget_check_add(evas, _("Horizontal scrolling"), &(cfdata->touch_scrolling_horiz));
+   e_widget_framelist_object_append(of, oc);
+
+   oc = e_widget_check_add(evas, _("Edge scrolling"), &(cfdata->touch_scrolling_edge));
+   e_widget_framelist_object_append(of, oc);
+
+   oc = e_widget_check_add(evas, _("2 finger scrolling"), &(cfdata->touch_scrolling_2finger));
+   e_widget_framelist_object_append(of, oc);
+
+   oc = e_widget_check_add(evas, _("Circular scrolling"), &(cfdata->touch_scrolling_circular));
+   e_widget_framelist_object_append(of, oc);
+
+   e_widget_list_object_append(ol, of, 1, 0, 0.5);
+   e_widget_toolbook_page_append(otb, NULL, _("Touchpad"), ol,
                                  1, 0, 1, 0, 0.5, 0.0);
 
    e_widget_toolbook_page_show(otb, 0);

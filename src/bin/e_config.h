@@ -244,10 +244,13 @@ struct _E_Config
    int                       mouse_hand; //GUI
    double                    mouse_accel; // GUI
    int                       mouse_accel_threshold; // GUI
-   unsigned char             touch_tap_to_click; // GUI
-
    unsigned char             mouse_natural_scroll; // GUI
    unsigned char             mouse_emulate_middle_button; // GUI
+
+   double                    touch_accel; // GUI
+   unsigned char             touch_natural_scroll; // GUI
+   unsigned char             touch_emulate_middle_button; // GUI
+   unsigned char             touch_tap_to_click; // GUI
    unsigned char             touch_clickpad; // GUI
    unsigned char             touch_scrolling_2finger; // GUI
    unsigned char             touch_scrolling_edge; // GUI
