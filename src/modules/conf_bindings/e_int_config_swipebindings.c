@@ -750,7 +750,7 @@ _update_swipe_cb(void *data, Eina_Bool end, double direction, double length, dou
 
         vis = create_visualisation(evas_object_evas_get(cfdata->locals.dia->win), direction, error);
         evas_object_size_hint_align_set(vis, 0.0, 0.5);
-        snprintf(text_buf, sizeof(text_buf), "Using %d Fingers<br> <b>Direction</b> %f <b>Length</b> %f <b>Error</b> %f", fingers, direction, length, error);
+        snprintf(text_buf, sizeof(text_buf), _("Using %d Fingers<br> <b>Direction</b> %f <b>Length</b> %f <b>Error</b> %f"), fingers, direction, length, error);
         e_dialog_text_set(cfdata->locals.dia, text_buf);
         elm_object_part_content_set(cfdata->locals.dia->bg_object, "e.swallow.icon", vis);
         evas_object_size_hint_min_set(vis, 30 * e_scale, 30 * e_scale);
@@ -765,8 +765,9 @@ _add_swipe_binding_by_sample_cb(void *data, void *data2 EINA_UNUSED)
    E_Config_Dialog_Data *cfdata = data;
 
    cfdata->locals.dia = e_dialog_new(cfdata->cfd->dia->win, "E", "_swipe_recognition");
-   e_dialog_title_set(cfdata->locals.dia, "Swipe recognition");
-   e_dialog_text_set(cfdata->locals.dia, "Do your swipe gesture.<br>");
+   e_dialog_icon_set(cfdata->locals.dia, "enlightenment/swipe", 48);
+   e_dialog_title_set(cfdata->locals.dia, _("Swipe recognition"));
+   e_dialog_text_set(cfdata->locals.dia, _("Do your swipe gesture.<br><br>Press <hilight>Escape</hilight> to abort"));
    elm_win_center(cfdata->locals.dia->win, 1, 1);
    elm_win_borderless_set(cfdata->locals.dia->win, 1);
    e_dialog_resizable_set(cfdata->locals.dia, 0);
