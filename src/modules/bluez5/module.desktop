@@ -9,5 +9,6 @@ Name[ja]=Bluez5
 Name[ms]=Bluez5
 Name[sr]=Блуез5
 Name[tr]=Bluetooth
+Comment=Bluetooth control Gadget.
 Icon=e-module-bluez5
 X-Enlightenment-ModuleType=utils
