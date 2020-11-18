@@ -282,6 +282,7 @@ _mirror_client_theme_setup(Mirror_Border *mb, Evas_Object *o)
 {
    char buf[4096];
 
+   if ((!mb) || (!mb->m) || (!mb->m->ec)) return;
    if (e_comp_object_frame_exists(mb->m->ec->frame))
      snprintf(buf, sizeof(buf), "e/deskmirror/frame/%s", mb->m->ec->border.name);
    else
