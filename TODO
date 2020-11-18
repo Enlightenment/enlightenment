@@ -297,6 +297,12 @@ TODO:
 * look into libratbag too for gaming mouse stuff if its worth using it or
   just doing the same
   stuff ourselves as we will probably have to via libinput
+* some kind of game mode and detection that will do things like:
+  * disable screen dimming/blanking
+  * set cpu to max performance
+  * lower priority/nice of non-game processes or even sigstop procs
+  * disable notifications
+  * explicit toggle and possible auto-detect of games running
 * per app environment launch config - allow different TZ, LOCALE etc.
   per app and set up env appropriately
 * back-end e system process for monitoring/polling and launching etc.
