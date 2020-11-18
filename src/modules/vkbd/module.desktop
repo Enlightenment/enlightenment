@@ -3,5 +3,6 @@ Type=Link
 Name=Virtual Keyboard
 Name[fr]=Clavier virtuel
 Name[it]=Tastiera virtuale
+Comment=Shows a virtual keyboard.
 Icon=e-module-vkbd
 X-Enlightenment-ModuleType=mobile
