@@ -232,11 +232,13 @@ TODO:
   * like you see on windows for example (search and multiple columns etc.)
   * a touch screen android-style scrolling fullscreen app icon style
 * music-control: allow manual addition of new named mpris services
-* wireless: fix on connman to work properly
+* connman:
   * divide the popup list with group headers like bz5 into tech
   * provide fuller status per line (reception and other info?)
   * massively flesh out connman vpn support in the gui
     * vpnmanager + create method support
+  * one day look at network manager support
+  * look into iwd too
 * bz5: add icon set for actions/states per bt device (pair.unpair, etc.)
 * bz5: add obex agent support integrated with efm for sharing via bt
   and downloads when received via obex bt (~/Downloads/...)
