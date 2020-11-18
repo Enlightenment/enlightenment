@@ -97,7 +97,8 @@ is_dragged(int dx, int dy)
 {
    Evas_Coord resist = elm_config_finger_size_get() / 2;
 
-   if ((dx * dx) + (dy * dy) > resist) return EINA_TRUE;
+   if (resist < 8) resist = 8;
+   if (((dx * dx) + (dy * dy)) > (resist * resist)) return EINA_TRUE;
    return EINA_FALSE;
 }
 
