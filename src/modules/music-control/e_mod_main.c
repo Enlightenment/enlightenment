@@ -230,52 +230,72 @@ parse_metadata(E_Music_Control_Module_Context *ctxt, Eina_Value *array)
    // DBG("Metadata: %s", eina_value_to_string(array));
    for (i = 0; i < eina_value_array_count(array); i++)
      {
-        const char *key, *str_val;
+        const char *key = NULL, *str_val;
         char *str_markup;
         Eina_Value st, subst;
         Efreet_Uri *uri;
 
-        eina_value_array_value_get(array, i, &st);
-        eina_value_struct_get(&st, "arg0", &key);
-        if (!strcmp(key, "xesam:title"))
+        eina_value_setup(&st, EINA_VALUE_TYPE_UINT64);
+        eina_value_setup(&subst, EINA_VALUE_TYPE_UINT64);
+        if (eina_value_array_value_get(array, i, &st) &&
+            eina_value_struct_get(&st, "arg0", &key))
           {
-             eina_value_struct_value_get(&st, "arg1", &subst);
-             eina_value_struct_get(&subst, "arg0", &str_val);
-             str_markup = evas_textblock_text_utf8_to_markup(NULL, str_val);
-             ctxt->meta_title = eina_stringshare_add(str_markup);
-             free(str_markup);
-             eina_value_flush(&subst);
-          }
-        else if (!strcmp(key, "xesam:album"))
-          {
-             eina_value_struct_value_get(&st, "arg1", &subst);
-             eina_value_struct_get(&subst, "arg0", &str_val);
-             str_markup = evas_textblock_text_utf8_to_markup(NULL, str_val);
-             ctxt->meta_album = eina_stringshare_add(str_markup);
-             free(str_markup);
-             eina_value_flush(&subst);
-          }
-        else if (!strcmp(key, "xesam:artist"))
-          {
-             Eina_Value arr;
-             eina_value_struct_value_get(&st, "arg1", &subst);
-             eina_value_struct_value_get(&subst, "arg0", &arr);
-             eina_value_array_get(&arr, 0, &str_val);
-             str_markup = evas_textblock_text_utf8_to_markup(NULL, str_val);
-             ctxt->meta_artist = eina_stringshare_add(str_markup);
-             free(str_markup);
-             eina_value_flush(&arr);
-             eina_value_flush(&subst);
-          }
-        else if (!strcmp(key, "mpris:artUrl"))
-          {
-             eina_value_struct_value_get(&st, "arg1", &subst);
-             eina_value_struct_get(&subst, "arg0", &str_val);
-             uri = efreet_uri_decode(str_val);
-             if (uri && !strncmp(uri->protocol, "file", 4))
-               ctxt->meta_cover = eina_stringshare_add(uri->path);
-             E_FREE_FUNC(uri, efreet_uri_free);
-             eina_value_flush(&subst);
+             if (!strcmp(key, "xesam:title"))
+               {
+                  if (eina_value_struct_value_get(&st, "arg1", &subst) &&
+                      eina_value_struct_get(&subst, "arg0", &str_val))
+                    {
+                       if ((str_markup = evas_textblock_text_utf8_to_markup(NULL, str_val)))
+                         {
+                            ctxt->meta_title = eina_stringshare_add(str_markup);
+                            free(str_markup);
+                         }
+                    }
+                  eina_value_flush(&subst);
+               }
+             else if (!strcmp(key, "xesam:album"))
+               {
+                  if (eina_value_struct_value_get(&st, "arg1", &subst) &&
+                      eina_value_struct_get(&subst, "arg0", &str_val))
+                    {
+                       if ((str_markup = evas_textblock_text_utf8_to_markup(NULL, str_val)))
+                         {
+                            ctxt->meta_album = eina_stringshare_add(str_markup);
+                            free(str_markup);
+                         }
+                    }
+                  eina_value_flush(&subst);
+               }
+             else if (!strcmp(key, "xesam:artist"))
+               {
+                  Eina_Value arr;
+
+                  eina_value_setup(&arr, EINA_VALUE_TYPE_UINT64);
+                  if (eina_value_struct_value_get(&st, "arg1", &subst) &&
+                      eina_value_struct_value_get(&subst, "arg0", &arr) &&
+                      eina_value_array_get(&arr, 0, &str_val))
+                    {
+                       if ((str_markup = evas_textblock_text_utf8_to_markup(NULL, str_val)))
+                         {
+                            ctxt->meta_artist = eina_stringshare_add(str_markup);
+                            free(str_markup);
+                         }
+                    }
+                  eina_value_flush(&arr);
+                  eina_value_flush(&subst);
+               }
+             else if (!strcmp(key, "mpris:artUrl"))
+               {
+                  if (eina_value_struct_value_get(&st, "arg1", &subst) &&
+                      eina_value_struct_get(&subst, "arg0", &str_val))
+                    {
+                       uri = efreet_uri_decode(str_val);
+                       if (uri && !strncmp(uri->protocol, "file", 4))
+                         ctxt->meta_cover = eina_stringshare_add(uri->path);
+                       E_FREE_FUNC(uri, efreet_uri_free);
+                    }
+                  eina_value_flush(&subst);
+               }
           }
         eina_value_flush(&st);
      }
