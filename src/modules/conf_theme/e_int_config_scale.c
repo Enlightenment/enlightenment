@@ -219,30 +219,16 @@ static Evas_Object *
 _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    Evas_Object *o, *ob;
-   double sc = 1.0;
-   int dpi = 0, x = 0, y = 0;
+   double sc = 1.0, dpi;
+   int x = 0, y = 0;
 
    _fill_data(cfdata);
    o = e_widget_table_add(e_win_evas_win_get(evas), 1);
 
-#ifndef HAVE_WAYLAND_ONLY
-   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
-     dpi = ecore_x_dpi_get();
-#endif
-#ifdef HAVE_WAYLAND
-   if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
-     {
-        int xdpi = 0, ydpi = 0;
+   dpi = e_scale_dpi_get();
 
-        ecore_evas_screen_dpi_get(e_comp->ee, &xdpi, &ydpi);
-        if (xdpi == 0) xdpi = 75;
-        if (ydpi == 0) ydpi = 75;
-        dpi = ((xdpi + ydpi) / 2);
-     }
-#endif
-
-   if ((dpi > 0) && (cfdata->base_dpi > 0))
-     sc = (double)dpi / (double)cfdata->base_dpi;
+   if ((dpi > 0.0) && (cfdata->base_dpi > 0))
+     sc = dpi / (double)cfdata->base_dpi;
 
    ob = _scale_preview_new(cfdata, evas, sc, &(cfdata->factor), _("DPI Scaling"), EINA_TRUE);
    e_widget_table_object_align_append(o, ob, 0, 0, 1, 1, 0, 0, 0, 0, 0.5, 0.5);
