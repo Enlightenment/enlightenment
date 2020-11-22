@@ -39,7 +39,7 @@ e_version_rev = '.'.join([ver, git_version])
 release = 'dev-0.24.99'
 ####
 
-efl_version = '>= 1.24.1'
+efl_version = '>= 1.25.99'
 
 add_global_arguments('-DHAVE_CONFIG_H=1', language: 'c')
 dir_prefix    = get_option('prefix')

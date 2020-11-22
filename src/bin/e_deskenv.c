@@ -4,23 +4,32 @@ EINTERN int
 e_deskenv_init(void)
 {
 #ifndef HAVE_WAYLAND_ONLY
-   char buf[PATH_MAX], buf2[PATH_MAX + sizeof("xrdb -load ")];
+   char buf[PATH_MAX], buf2[PATH_MAX + sizeof("xrdb -override ")];
 
    // run xdrb -load .Xdefaults & .Xresources
    // NOTE: one day we should replace this with an e based config + service
    if (e_config->deskenv.load_xrdb)
      {
+        Eina_Bool exists = EINA_FALSE;
+
         e_user_homedir_concat(buf, sizeof(buf), ".Xdefaults");
-        if (ecore_file_exists(buf))
+        exists = ecore_file_exists(buf);
+        if (!exists)
           {
-             snprintf(buf2, sizeof(buf2), "xrdb -load %s", buf);
-             ecore_exe_run(buf2, NULL);
+             e_user_homedir_concat(buf, sizeof(buf), ".Xresources");
+             exists = ecore_file_exists(buf);
           }
-        e_user_homedir_concat(buf, sizeof(buf), ".Xresources");
-        if (ecore_file_exists(buf))
+        if (exists)
           {
-             snprintf(buf2, sizeof(buf2), "xrdb -load %s", buf);
-             ecore_exe_run(buf2, NULL);
+#if 1
+             snprintf(buf2, sizeof(buf2), "xrdb -override %s", buf);
+             system(buf2);
+#else
+             // while this SHOULD work.. it ends up with mysterious problems
+             // inside xlib that i seem to not be able to trap easily...
+             ecore_x_rersource_load(buf);
+             ecore_x_resource_db_flush();
+#endif
           }
      }
 
