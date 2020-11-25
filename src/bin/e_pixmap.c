@@ -467,7 +467,8 @@ e_pixmap_usable_set(E_Pixmap *cp, Eina_Bool set)
 E_API Eina_Bool
 e_pixmap_usable_get(const E_Pixmap *cp)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(cp, EINA_FALSE);
+   if (!cp) return EINA_FALSE;
+//   EINA_SAFETY_ON_NULL_RETURN_VAL(cp, EINA_FALSE);
    return cp->usable;
 }
 
