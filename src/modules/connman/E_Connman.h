@@ -82,6 +82,8 @@ extern int E_CONNMAN_EVENT_MANAGER_OUT;
 /* Daemon monitoring */
 unsigned int e_connman_system_init(Eldbus_Connection *eldbus_conn) EINA_ARG_NONNULL(1);
 unsigned int e_connman_system_shutdown(void);
+void         e_connman_scan(struct Connman_Manager *cm);
+
 
 /* Requests from UI */
 

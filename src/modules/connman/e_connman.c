@@ -991,3 +991,9 @@ e_connman_system_shutdown(void)
 
    return init_count;
 }
+
+void
+e_connman_scan(struct Connman_Manager *cm)
+{
+   eldbus_proxy_call(cm->technology_iface, "Scan", NULL, NULL, -1, "");
+}

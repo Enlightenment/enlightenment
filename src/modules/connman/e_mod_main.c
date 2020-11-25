@@ -271,6 +271,8 @@ _econnman_popup_new(E_Connman_Instance *inst)
    if (!ctxt->cm)
      return;
 
+   e_connman_scan(ctxt->cm);
+
    inst->popup = e_gadcon_popup_new(inst->gcc, 0);
    evas = e_comp->evas;
 
