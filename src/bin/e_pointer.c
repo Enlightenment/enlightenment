@@ -225,8 +225,7 @@ _e_pointer_cb_hot_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA
 
    if (!ptr->e_cursor) return;
    if (!evas_object_visible_get(ptr->o_ptr)) return;
-   edje_object_part_geometry_get(ptr->o_ptr, "e.swallow.hotspot",
-                                 &x, &y, NULL, NULL);
+   evas_object_geometry_get(ptr->o_hot, &x, &y, NULL, NULL);
    _e_pointer_hot_update(ptr, x, y);
 }
 
@@ -237,8 +236,7 @@ _e_pointer_cb_hot_show(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA
    int x = 0, y = 0;
 
    if (!ptr->e_cursor) return;
-   edje_object_part_geometry_get(ptr->o_ptr, "e.swallow.hotspot",
-                                 &x, &y, NULL, NULL);
+   evas_object_geometry_get(ptr->o_hot, &x, &y, NULL, NULL);
    _e_pointer_hot_update(ptr, x, y);
 }
 
@@ -792,9 +790,15 @@ e_pointer_idler_before(void)
                {
 #ifndef HAVE_WAYLAND_ONLY
                   Ecore_X_Cursor cur;
+                  int hotx = ptr->hot.x;
+                  int hoty = ptr->hot.y;
 
-                  cur = ecore_x_cursor_new(ptr->win, ptr->pixels, ptr->w,
-                                           ptr->h, ptr->hot.x, ptr->hot.y);
+                  if      (hotx < 0)       hotx = 0;
+                  else if (hotx >= ptr->w) hotx = ptr->w - 1;
+                  if      (hoty < 0)       hoty = 0;
+                  else if (hoty >= ptr->h) hoty = ptr->h - 1;
+                  cur = ecore_x_cursor_new(ptr->win, ptr->pixels,
+                                           ptr->w, ptr->h, hotx, hoty);
                   ecore_x_window_cursor_set(ptr->win, cur);
                   ecore_x_cursor_free(cur);
 #endif
