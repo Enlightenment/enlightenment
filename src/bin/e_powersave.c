@@ -144,8 +144,6 @@ e_powersave_mode_unforce(void)
    powersave_mode_force = E_POWERSAVE_MODE_NONE;
 }
 
-// XXX: need a get for this
-
 E_API void
 e_powersave_mode_screen_set(E_Powersave_Mode mode)
 {
@@ -164,6 +162,13 @@ e_powersave_mode_screen_unset(void)
    powersave_screen = EINA_FALSE;
    powersave_mode_screen = E_POWERSAVE_MODE_NONE;
    _e_powersave_mode_eval();
+}
+
+E_API E_Powersave_Mode
+e_powersave_mode_screen_get(void)
+{
+   if (!powersave_screen) return E_POWERSAVE_MODE_NONE;
+   return powersave_mode_screen;
 }
 
 E_API E_Powersave_Sleeper *

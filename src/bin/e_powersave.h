@@ -44,6 +44,7 @@ E_API void                         e_powersave_mode_unforce(void);
 // are off/not visible
 E_API void                         e_powersave_mode_screen_set(E_Powersave_Mode mode);
 E_API void                         e_powersave_mode_screen_unset(void);
+E_API E_Powersave_Mode             e_powersave_mode_screen_get(void);
 
 E_API void                         e_powersave_defer_suspend(void);
 E_API void                         e_powersave_defer_hibernate(void);
