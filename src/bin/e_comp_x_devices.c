@@ -414,6 +414,7 @@ e_comp_x_devices_config_apply(void)
      }
    eina_strbuf_free(sbuf);
    printf("DEV: CHANGES ... have %i devices, changed=%i\n", num_devs, changed);
+   if (!changed) return;
    for (i = 0; i < num_devs; i++)
      {
         const char *name;
