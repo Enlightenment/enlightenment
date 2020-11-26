@@ -8,6 +8,8 @@ typedef enum
    DEVICE_FLAG_TOUCHPAD
 } Device_Flags;
 
+static char *devstring = NULL;
+
 static void
 _handle_dev_prop(int dev_slot, const char *dev, const char *prop, Device_Flags dev_flags)
 {
@@ -393,9 +395,25 @@ e_comp_x_devices_config_apply(void)
    Eina_Bool driver_evdev = EINA_FALSE;
    Eina_Bool driver_libinput = EINA_FALSE;
    Eina_Bool driver_synaptics = EINA_FALSE;
+   Eina_Strbuf *sbuf;
+   Eina_Bool changed = EINA_TRUE;
 
    num_devs = ecore_x_input_device_num_get();
-   printf("DEV: CHANGES ... have %i devices\n", num_devs);
+   sbuf = eina_strbuf_new();
+   if (!sbuf) return;
+   for (i = 0; i < num_devs; i++)
+     {
+        eina_strbuf_append(sbuf, ecore_x_input_device_name_get(i));
+     }
+   if ((devstring) && (!strcmp(devstring, eina_strbuf_string_get(sbuf))))
+     changed = EINA_FALSE;
+   else
+     {
+        free(devstring);
+        devstring = eina_strbuf_string_steal(sbuf);
+     }
+   eina_strbuf_free(sbuf);
+   printf("DEV: CHANGES ... have %i devices, changed=%i\n", num_devs, changed);
    for (i = 0; i < num_devs; i++)
      {
         const char *name;
