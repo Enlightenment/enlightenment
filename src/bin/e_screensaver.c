@@ -12,6 +12,9 @@ static Ecore_Event_Handler *_e_screensaver_handler_border_desk_set = NULL;
 static Ecore_Event_Handler *_e_screensaver_handler_desk_show = NULL;
 static Ecore_Event_Handler *_e_screensaver_handler_powersave = NULL;
 
+static int _e_screensaver_cfg_timeout = -1;
+static int _e_screensaver_cfg_dim = -1;
+
 static int _e_screensaver_timeout = 0;
 static int _e_screensaver_blanking = 0;
 static int _e_screensaver_expose = 0;
@@ -90,6 +93,21 @@ e_screensaver_update(void)
 {
    int timeout, interval = 0, blanking = 0, expose = 0;
    Eina_Bool changed = EINA_FALSE;
+   Eina_Bool real_changed = EINA_FALSE;
+   int dim_timeout = -1;
+   E_Powersave_Mode pm = e_powersave_mode_get();
+
+   if (pm > E_POWERSAVE_MODE_LOW)
+     dim_timeout = e_config->backlight.battery_timer;
+   else
+     dim_timeout = e_config->backlight.timer;
+
+   if (_e_screensaver_cfg_timeout != e_config->screensaver_timeout)
+     real_changed = EINA_TRUE;
+   else if (_e_screensaver_cfg_dim != dim_timeout)
+     real_changed = EINA_TRUE;
+   _e_screensaver_cfg_timeout = e_config->screensaver_timeout;
+   _e_screensaver_cfg_dim = dim_timeout;
 
    timeout = e_screensaver_timeout_get(EINA_TRUE);
    if (!((e_config->screensaver_enable) &&
@@ -131,7 +149,7 @@ e_screensaver_update(void)
              // screen doesn't turn off at all because x thinks internally
              // that the monitor is still off... so this is odd, but it's
              // necessary on some hardware.
-             if (!e_config->screensaver_dpms_off)
+             if ((real_changed) && (!e_config->screensaver_dpms_off))
                {
                   ecore_x_dpms_enabled_set(!e_config->screensaver_enable);
                   ecore_x_dpms_enabled_set(e_config->screensaver_enable);
@@ -170,7 +188,6 @@ _e_screensaver_suspend_cb(void *data EINA_UNUSED)
 static Eina_Bool
 _e_screensaver_handler_powersave_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
-   _e_screensaver_timeout = -1;
    e_screensaver_update();
    if ((e_config->screensaver_suspend) && (_e_screensaver_on))
      {

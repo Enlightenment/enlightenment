@@ -115,7 +115,7 @@ E_API E_Powersave_Mode
 e_powersave_mode_get(void)
 {
    if (powersave_force) return powersave_mode_force;
-   if (powersave_screen) return powersave_mode_screen;
+//   if (powersave_screen) return powersave_mode_screen;
    return powersave_mode;
 }
 
@@ -144,6 +144,8 @@ e_powersave_mode_unforce(void)
    powersave_mode_force = E_POWERSAVE_MODE_NONE;
 }
 
+// XXX: need a get for this
+
 E_API void
 e_powersave_mode_screen_set(E_Powersave_Mode mode)
 {
@@ -151,11 +153,7 @@ e_powersave_mode_screen_set(E_Powersave_Mode mode)
    printf("PWSAVE SCREEN SET %i/%i\n", (int)mode, (int)E_POWERSAVE_MODE_FREEZE);
    powersave_screen = EINA_TRUE;
    powersave_mode_screen = mode;
-   if (!powersave_force)
-     {
-        _e_powersave_event_change_send(powersave_mode_screen);
-        _e_powersave_mode_eval();
-     }
+   _e_powersave_mode_eval();
 }
 
 E_API void
@@ -164,12 +162,8 @@ e_powersave_mode_screen_unset(void)
    if (!powersave_screen) return;
    printf("PWSAVE SCREEN UNSET\n");
    powersave_screen = EINA_FALSE;
-   if ((!powersave_force) && (powersave_mode_screen != powersave_mode))
-     {
-        _e_powersave_event_change_send(powersave_screen);
-        _e_powersave_mode_eval();
-     }
    powersave_mode_screen = E_POWERSAVE_MODE_NONE;
+   _e_powersave_mode_eval();
 }
 
 E_API E_Powersave_Sleeper *
@@ -212,11 +206,15 @@ e_powersave_sleeper_sleep(E_Powersave_Sleeper *sleeper, int poll_interval, Eina_
    if (!sleeper) return;
    if (allow_save)
      {
-        if (e_powersave_mode_get() == E_POWERSAVE_MODE_FREEZE)
+        E_Powersave_Mode pm = e_powersave_mode_get();
+
+        if (powersave_screen) pm = powersave_mode_screen;
+
+        if (pm == E_POWERSAVE_MODE_FREEZE)
           timf = 3600.0;
-        else if (e_powersave_mode_get() == E_POWERSAVE_MODE_EXTREME)
+        else if (pm == E_POWERSAVE_MODE_EXTREME)
           timf = (double)poll_interval / 2.0;
-        else if (e_powersave_mode_get() == E_POWERSAVE_MODE_HIGH)
+        else if (pm == E_POWERSAVE_MODE_HIGH)
           timf = (double)poll_interval / 4.0;
         else
           timf = (double)poll_interval / 8.0;
@@ -308,11 +306,9 @@ static void
 _e_powersave_mode_eval(void)
 {
    double t = 0.0;
-   E_Powersave_Mode mode;
+   E_Powersave_Mode mode = e_powersave_mode_get();
 
-   if (powersave_force) mode = powersave_mode_force;
-   else mode = powersave_mode;
-
+   if (powersave_screen) mode = powersave_mode_screen;
    switch (mode)
      {
       case E_POWERSAVE_MODE_NONE:
