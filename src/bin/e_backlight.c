@@ -9,6 +9,7 @@ typedef struct
    double from_val, to_val;
    Ecore_Animator *anim;
    Ecore_Timer *retry_timer;
+   int ddc_max;
    int retries;
 } Backlight_Device;
 
@@ -81,17 +82,18 @@ static void
 _backlight_system_ddc_get_cb(void *data, const char *params)
 {
    char edid[257];
-   int id = -1, val = -1;
+   int id = -1, val = -1, max = -1;
    double fval;
    Backlight_Device *bd = data;
 
    if (!params) return;
-   if (sscanf(params, "%256s %i %i", edid, &id, &val) != 3) return;
+   if (sscanf(params, "%256s %i %i %i", edid, &id, &val, &max) != 4) return;
    if (!bd->edid) return;
    if (!!strncmp(bd->edid, edid, strlen(edid))) return;
    e_system_handler_del("ddc-val-get", _backlight_system_ddc_get_cb, bd);
    if (val < 0) fval = -1.0;
    else fval = (double)val / 100.0;
+   bd->ddc_max = max;
    if ((fabs(fval - bd->val) >= DBL_EPSILON) || (val == -1))
      {
         bd->val = fval;
@@ -243,8 +245,12 @@ _backlight_devices_device_set(Backlight_Device *bd, double val)
 #endif
    if (!strncmp(bd->dev, "ddc:", 4))
      {
+        double fval;
+
         fprintf(stderr, "BL: ddc bklight %1.3f @ %1.3f\n", bd->val, ecore_time_get());
-        e_system_send("ddc-val-set", "%s %i %i", bd->dev + 4, 0x10, (int)(bd->val * 100.0)); // backlight val in e_system_ddc.c
+        if (bd->ddc_max) fval = bd->val * (double)bd->ddc_max;
+        else fval = bd->val * 100.0;
+        e_system_send("ddc-val-set", "%s %i %i", bd->dev + 4, 0x10, (int)(fval)); // backlight val in e_system_ddc.c
         ecore_event_add(E_EVENT_BACKLIGHT_CHANGE, NULL, NULL, NULL);
      }
    else
@@ -520,7 +526,9 @@ _backlight_system_ddc_list_cb(void *data EINA_UNUSED, const char *params)
 {
    const char *p = params;
    char dev[257], buf[343];
+   Eina_Hash *tmphash;
 
+   tmphash = eina_hash_string_superfast_new(NULL);
    e_system_handler_del("ddc-list", _backlight_system_ddc_list_cb, NULL);
    while ((p) && (*p))
      {
@@ -531,10 +539,14 @@ _backlight_system_ddc_list_cb(void *data EINA_UNUSED, const char *params)
              bl_devs = eina_list_append
                (bl_devs, eina_stringshare_add(buf));
              _backlight_devices_edid_register(buf, dev);
+             if (eina_hash_find(tmphash, dev))
+               printf("BL: DDC ERROR: You have multiple DDC screens with the same EDID [%s] - this will lead to weirdness.\n", dev);
+             eina_hash_add(tmphash, dev, dev);
              if (*p != ' ') break;
           }
         else break;
      }
+   eina_hash_free(tmphash);
    _backlight_devices_pending_done();
 }
 

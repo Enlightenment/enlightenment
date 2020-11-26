@@ -198,6 +198,8 @@ struct {
      (DDCA_Display_Handle ddca_dh);
    void (*ddca_set_global_sleep_multiplier)
      (double multiplier);
+   bool (*ddca_enable_sleep_suppression)
+     (bool newval);
 } ddc_func;
 
 static DDCA_Display_Info_List *ddc_dlist = NULL;
@@ -325,6 +327,7 @@ _ddc_init(void)
       ddc_func._x = dlsym(ddc_lib, #_x); \
    } while (0)
    SYM_OPT(ddca_set_global_sleep_multiplier);
+   SYM_OPT(ddca_enable_sleep_suppression);
 
    // brute force modprobe this as it likely is needed - probe will fail
    // if this doesn't work or find devices anyway
@@ -332,6 +335,10 @@ _ddc_init(void)
      usleep(200 * 1000); // and wait for the module to come up... 200ms
 
    if (!_ddc_probe()) return EINA_FALSE;
+
+   // try improve performance by limiting sleeps in ddcutil
+   if (ddc_func.ddca_enable_sleep_suppression)
+     ddc_func.ddca_enable_sleep_suppression(true);
 
    return EINA_TRUE;
 }
@@ -484,7 +491,7 @@ _do_val_get(Ecore_Thread *th, const char *edid, int id)
 {
    Dev *d;
    Req *r;
-   int screen, val;
+   int screen, val, max;
    char buf[512];
    DDCA_Non_Table_Vcp_Value valrec;
 
@@ -505,15 +512,16 @@ _do_val_get(Ecore_Thread *th, const char *edid, int id)
    if (ddc_func.ddca_get_non_table_vcp_value
        (ddc_dh[screen], id, &valrec) == 0)
      {
+        max = valrec.ml | valrec.mh << 8;
         val = valrec.sl | (valrec.sh << 8);
-        fprintf(stderr, "DDC: get ok %s 0x%02x = %i\n", edid, id, val);
-        snprintf(buf, sizeof(buf), "%s %i %i", edid, id, val);
+        fprintf(stderr, "DDC: get ok %s 0x%02x val=%i max=%i\n", edid, id, val, max);
+        snprintf(buf, sizeof(buf), "%s %i %i %i", edid, id, val, max);
      }
    else
      {
         fprintf(stderr, "DDC: get fail %s 0x%02x\n", edid, id);
 err:
-        snprintf(buf, sizeof(buf), "%s %i -1", edid, id);
+        snprintf(buf, sizeof(buf), "%s %i -1 -1", edid, id);
      }
    r = _req_alloc("ddc-val-get", buf);
    if (r) ecore_thread_feedback(th, r);
