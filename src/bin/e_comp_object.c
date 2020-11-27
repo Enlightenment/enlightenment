@@ -723,7 +723,7 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
    /* breaks animation counter */
    //if (cw->ec->iconic)
      //e_comp_object_signal_emit(cw->smart_obj, "e,action,iconify", "e");
-   if (!cw->zoomap_disabled)
+   if ((!cw->zoomap_disabled) && (cw->zoomobj))
      e_zoomap_child_set(cw->zoomobj, NULL);
    if (cw->frame_object)
      {
@@ -732,7 +732,7 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
         edje_object_part_swallow(cw->frame_object, "e.swallow.volume", cw->frame_volume);
         if (cw->zoomap_disabled)
           edje_object_part_swallow(cw->shobj, "e.swallow.content", cw->frame_object);
-        else
+        else if (cw->zoomobj)
           {
              e_zoomap_child_set(cw->zoomobj, cw->frame_object);
              edje_object_part_swallow(cw->shobj, "e.swallow.content", cw->zoomobj);
@@ -755,7 +755,7 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
    else
      evas_object_pass_events_set(cw->obj, 0);
 #ifdef BORDER_ZOOMAPS
-   e_zoomap_child_edje_solid_setup(cw->zoomobj);
+   if (cw->zoomobj) e_zoomap_child_edje_solid_setup(cw->zoomobj);
 #endif
    return EINA_TRUE;
 }
