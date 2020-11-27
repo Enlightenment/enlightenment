@@ -787,8 +787,6 @@ _e_winlist_large_item_height_set(Evas_Coord h)
              bl = bl->next;
              if (!bl) break;
              rows++;
-             // if only item on the row - continue adding more items
-             if (eina_list_count(boxes) == 1) continue;
           }
         box = bl->data;
         elm_box_pack_end(box, ww->bg_object);
