@@ -45,6 +45,7 @@ struct _E_Fwin
 
    Ecore_Timer *popup_timer;
    Ecore_Job *popup_del_job;
+   Ecore_Job *object_del_job;
    Eina_List *popup_handlers;
    Evas_Object *popup;
 
@@ -831,7 +832,10 @@ _e_fwin_free(E_Fwin *fwin)
      {
         evas_object_hide(fwin->popup);
         evas_object_del(fwin->popup);
+        fwin->popup = NULL;
      }
+   if (fwin->object_del_job) ecore_job_del(fwin->object_del_job);
+   fwin->object_del_job = NULL;
    if (fwin->popup_timer) ecore_timer_del(fwin->popup_timer);
    fwin->popup_timer = NULL;
    if (fwin->win)
@@ -1099,7 +1103,9 @@ _e_fwin_page_create(E_Fwin *fwin)
    o = e_fm2_add(evas);
    page->fm_obj = o;
    e_fm2_view_flags_set(o, E_FM2_VIEW_DIR_CUSTOM);
-   evas_object_event_callback_add(o, EVAS_CALLBACK_KEY_DOWN, _e_fwin_cb_key_down, page);
+   // low priority to be called last... after e_fm's own cb's
+   evas_object_event_callback_priority_add(o, EVAS_CALLBACK_KEY_DOWN,
+                                           1000, _e_fwin_cb_key_down, page);
 
    evas_object_smart_callback_add(o, "changed", _e_fwin_icon_mouse_out, fwin);
    evas_object_smart_callback_add(o, "dir_changed",
@@ -1966,6 +1972,15 @@ _e_fwin_cb_all_change(void *data,
 }
 
 static void
+_e_fwin_cb_delay_del_job(void *data)
+{
+   E_Fwin *fwin = data;
+
+   fwin->object_del_job = NULL;
+   e_object_del(E_OBJECT(fwin));
+}
+
+static void
 _e_fwin_cb_key_down(void *data,
                     Evas *e          EINA_UNUSED,
                     Evas_Object *obj EINA_UNUSED,
@@ -1987,17 +2002,15 @@ _e_fwin_cb_key_down(void *data,
 
              e_fm2_path_get(page->fm_obj, &dev, &path);
              e_fwin_new(dev, path);
-             return;
           }
-        if (!strcmp(ev->key, "w"))
-          {
-             e_object_del(E_OBJECT(fwin));
-             return;
-          }
-        if (!strcmp(ev->key, "a"))
+        else if (!strcmp(ev->key, "a"))
           {
              e_fm2_all_sel(page->fm_obj);
-             return;
+          }
+        else if (!strcmp(ev->key, "w"))
+          {
+             if (fwin->object_del_job) ecore_job_del(fwin->object_del_job);
+             fwin->object_del_job = ecore_job_add(_e_fwin_cb_delay_del_job, fwin);
           }
      }
 }
