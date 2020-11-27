@@ -74,7 +74,7 @@ icon_pixmap_deserialize(Eldbus_Message_Iter *variant, uint32_t **data, int *w, i
              uint32_t *img;
              int len;
 
-             printf("SYSTRAY: serialized image data is %ix%i\n", tmpw, tmph);
+             printf("SYSTRAY: serialized image data is %ix%i... (looking for bigger than %ix%i)\n", tmpw, tmph, *w, *h);
              //only take this img if it has a higher resolution
              if ((tmpw > *w) || (tmph > *h))
                {
