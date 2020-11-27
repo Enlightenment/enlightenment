@@ -751,7 +751,9 @@ _e_winlist_large_item_height_set(Evas_Coord h)
    Evas_Coord mw, mh, lw, lh;
    Evas_Object *o, *box;
    int rows = 1;
+   int rowlen = 0;
 
+   evas_event_freeze(evas_object_evas_get(_list_object));
    evas_object_geometry_get(_list_object, NULL, NULL, &lw, &lh);
    bl = elm_box_children_get(_list_object);
    EINA_LIST_FOREACH(bl, l, o)
@@ -760,10 +762,8 @@ _e_winlist_large_item_height_set(Evas_Coord h)
      }
    bl = elm_box_children_get(_list_object);
    if (!bl) return 0;
-//   printf("W: fit %ix%i\n", lw, lh);
    EINA_LIST_FOREACH(_wins, l, ww)
      {
-try_again:
         mh = h;
         if (mh > ww->client->h)
           mh = ww->client->h;
@@ -771,22 +771,16 @@ try_again:
           mw = (ww->client->w * mh) / ww->client->h;
         else
           mw = mh;
+        edje_object_part_unswallow(ww->bg_object, ww->win_object);
         evas_object_size_hint_min_set(ww->win_object, mw, mh);
         evas_object_size_hint_max_set(ww->win_object, mw, mh);
-        edje_object_part_unswallow(ww->bg_object, ww->win_object);
         edje_object_part_swallow(ww->bg_object, "e.swallow.win", ww->win_object);
         edje_object_size_min_calc(ww->bg_object, &mw, &mh);
         evas_object_size_hint_min_set(ww->bg_object, mw, mh);
-//        printf("W: orig=[%ix%i] win=%ix%i | ", ww->client->w, ww->client->h, mw, mh);
-        box = bl->data;
-        elm_box_pack_end(box, ww->bg_object);
-        evas_smart_objects_calculate(evas_object_evas_get(box));
-        evas_object_size_hint_min_get(box, &mw, &mh);
-        // if box is too big then reflow obj onto next box row
-//        printf("box=%ix%i", mw, mh);
-        if (mw > lw)
+        rowlen += mw;
+        if (rowlen > lw)
           {
-//             printf(" newrow\n");
+             rowlen = 0;
              boxes = elm_box_children_get(bl->data);
              if (!boxes) break;
              // no more boxes to fill? break the loop trying - should not happen
@@ -795,12 +789,12 @@ try_again:
              rows++;
              // if only item on the row - continue adding more items
              if (eina_list_count(boxes) == 1) continue;
-             // unpack from prev box as we are going to try with a new row
-             elm_box_unpack(box, ww->bg_object);
-             goto try_again;
           }
-//        printf("\n");
+        box = bl->data;
+        elm_box_pack_end(box, ww->bg_object);
+//        evas_smart_objects_calculate(evas_object_evas_get(box));
      }
+   evas_event_thaw(evas_object_evas_get(_list_object));
    return rows;
 }
 
@@ -812,6 +806,10 @@ _e_winlist_size_large_adjust(void)
    Evas_Coord x, y, w, h, h1, h2, maxw, maxh, prevh;
    Eina_Bool expand = EINA_FALSE;
 
+// for optimizing - time things
+//   double t0 = ecore_time_get(), t;
+
+   evas_event_freeze(evas_object_evas_get(_list_object));
    maxw = zone->w * e_config->winlist_large_size;
    maxh = zone->h * e_config->winlist_large_size;
    evas_object_resize(_bg_object, maxw, maxh);
@@ -819,23 +817,25 @@ _e_winlist_size_large_adjust(void)
    evas_object_geometry_get(_list_object, NULL, NULL, &maxw, &maxh);
    if (maxw < 64) maxw = 64;
    if (maxh < 64) maxh = 64;
-   // we will bisect sizes using the interfval h1 -> h2 until h == h2
+   // we will bisect sizes using the interval h1 -> h2 until h == h2
    // then switch to expand mode where we go up bu 20% in size until
    // we get too big
    h1 = 0;
    h2 = maxh;
    h = (h1 + h2) / 2;
+//   t = ecore_time_get(); printf("WINLIST: start %1.5f\n", t - t0); t0 = t;
 //   printf("SZ:\n");
    for (;;)
      {
         prevh = h;
-        // pick midpoint in interval
         if (expand)
           {
+             // get bigger by a bit
              int newh = ((h * 120) / 100);
              if (newh == h) h = newh + 1;
              else h  = newh;
           }
+        // pick midpoint in interval (bisect)
         else h = (h1 + h2) / 2;
 //        printf("SZ: %i [%i -> %i] expand=%i\n", h, h1, h2, expand);
         _e_winlist_large_item_height_set(h);
@@ -849,6 +849,7 @@ _e_winlist_size_large_adjust(void)
                   h = prevh;
 //                  printf("SZ:    chose %i\n", h);
                   _e_winlist_large_item_height_set(h);
+//                  t = ecore_time_get(); printf("WINLIST: grow %1.5f\n", t - t0); t0 = t;
                   break;
                }
           }
@@ -860,11 +861,13 @@ _e_winlist_size_large_adjust(void)
              if ((h2 - h1) <= 1)
                {
 //                  printf("SZ:    switch to expand\n");
+//                  t = ecore_time_get(); printf("WINLIST: took shrink %1.5f\n", t - t0); t0 = t;
                   expand = EINA_TRUE;
                   h = h1;
                }
           }
      }
+//   t = ecore_time_get(); printf("WINLIST: loop done %1.5f\n", t - t0); t0 = t;
    evas_smart_objects_calculate(evas_object_evas_get(_bg_object));
    edje_object_part_swallow(_bg_object, "e.swallow.list", _list_object);
    edje_object_size_min_calc(_bg_object, &mw, &mh);
@@ -875,6 +878,8 @@ _e_winlist_size_large_adjust(void)
    y = zone->y + ((zone->h - h) / 2);
    evas_object_geometry_set(_winlist, -1, -1, 1, 1);
    evas_object_geometry_set(_winlist, x, y, w, h);
+   evas_event_thaw(evas_object_evas_get(_list_object));
+//   t = ecore_time_get(); printf("WINLIST: done %1.5f\n", t - t0); t0 = t;
 }
 
 static void
