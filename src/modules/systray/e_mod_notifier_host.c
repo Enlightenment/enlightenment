@@ -41,6 +41,7 @@ systray_notifier_item_free(Notifier_Item *item)
           }
         host_inst->ii_list = eina_inlist_remove(host_inst->ii_list,
                                                 EINA_INLIST_GET(ii));
+        systray_edje_box_remove(host_inst->inst, ii->icon);
         evas_object_del(ii->icon);
         free(ii);
         systray_size_updated(host_inst->inst);
