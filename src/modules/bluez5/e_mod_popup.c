@@ -278,6 +278,7 @@ static void
 _cb_unpair(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Obj *o = data;
+   ebluez5_device_prop_unlock_set(o-> address, EINA_FALSE);
    bz_obj_remove(o);
    _unflip(o, obj);
 }
@@ -286,7 +287,7 @@ static void
 _cb_unlock_start(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Obj *o = data;
-   printf("unlock start %s\n", o->address);
+   printf("BZ5: unlock start %s\n", o->address);
    ebluez5_device_prop_unlock_set(o->address, EINA_TRUE);
    ebluez5_popup_device_change(o);
    _unflip(o, obj);
@@ -296,7 +297,7 @@ static void
 _cb_unlock_stop(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Obj *o = data;
-   printf("unlock stop %s\n", o->address);
+   printf("BZ5: unlock stop %s\n", o->address);
    ebluez5_device_prop_unlock_set(o->address, EINA_FALSE);
    ebluez5_popup_device_change(o);
    _unflip(o, obj);
