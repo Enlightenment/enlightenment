@@ -3915,7 +3915,7 @@ e_client_activate(E_Client *ec, Eina_Bool just_do_it)
                  (!e_config->disable_all_pointer_warps) &&
                  (!e_util_strcmp(ec->icccm.name, "VCLSalFrame")))
                ecore_evas_pointer_warp(e_comp->ee,
-                                    ec->x + (ec->w / 2), ec->y + (ec->h / 2));
+                                       ec->x + (ec->w / 2), ec->y + (ec->h / 2));
              evas_object_focus_set(ec->frame, 1);
           }
      }

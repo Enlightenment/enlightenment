@@ -218,26 +218,35 @@ _e_pointer_cb_mouse_wheel(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev
 }
 
 static void
+_hot_update(E_Pointer *ptr)
+{
+   int x = 0, y = 0, ox = 0, oy = 0;
+
+   if (ptr->e_cursor && (e_comp->comp_type != E_PIXMAP_TYPE_WL))
+     evas_object_geometry_get(ptr->buffer_o_ptr, &ox, &oy, NULL, NULL);
+   else
+     evas_object_geometry_get(ptr->o_ptr, &ox, &oy, NULL, NULL);
+   evas_object_geometry_get(ptr->o_hot, &x, &y, NULL, NULL);
+   _e_pointer_hot_update(ptr, x - ox, y - oy);
+}
+
+static void
 _e_pointer_cb_hot_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Pointer *ptr = data;
-   int x = 0, y = 0;
 
    if (!ptr->e_cursor) return;
    if (!evas_object_visible_get(ptr->o_ptr)) return;
-   evas_object_geometry_get(ptr->o_hot, &x, &y, NULL, NULL);
-   _e_pointer_hot_update(ptr, x, y);
+   _hot_update(ptr);
 }
 
 static void
 _e_pointer_cb_hot_show(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Pointer *ptr = data;
-   int x = 0, y = 0;
 
    if (!ptr->e_cursor) return;
-   evas_object_geometry_get(ptr->o_hot, &x, &y, NULL, NULL);
-   _e_pointer_hot_update(ptr, x, y);
+   _hot_update(ptr);
 }
 
 static void
@@ -251,6 +260,8 @@ _e_pointer_pointer_canvas_init(E_Pointer *ptr, Evas *e, Evas_Object **o_ptr, Eva
    evas_object_color_set(*o_hot, 0, 0, 0, 0);
 
    evas_object_event_callback_add(*o_hot, EVAS_CALLBACK_MOVE,
+                                  _e_pointer_cb_hot_move, ptr);
+   evas_object_event_callback_add(*o_ptr, EVAS_CALLBACK_MOVE,
                                   _e_pointer_cb_hot_move, ptr);
    evas_object_event_callback_add(*o_hot, EVAS_CALLBACK_SHOW,
                                   _e_pointer_cb_hot_show, ptr);
@@ -457,7 +468,6 @@ _e_pointer_type_set(E_Pointer *ptr, const char *type)
    if (ptr->e_cursor)
      {
         char cursor[1024];
-        int x = 0, y = 0;
 
         if ((!ptr->buffer_evas) && ptr->win) _e_pointer_canvas_add(ptr);
         _e_pointer_theme_buf(ptr, cursor);
@@ -475,9 +485,7 @@ _e_pointer_type_set(E_Pointer *ptr, const char *type)
         _e_pointer_x11_setup(ptr, cursor);
         if (!cursor[0]) return;
 
-        edje_object_part_geometry_get(ptr->o_ptr, "e.swallow.hotspot",
-                                      &x, &y, NULL, NULL);
-        _e_pointer_hot_update(ptr, x, y);
+        _hot_update(ptr);
 
         if (ptr->canvas)
           e_pointer_object_set(ptr, NULL, 0, 0);
@@ -844,7 +852,8 @@ e_pointer_object_set(E_Pointer *ptr, Evas_Object *obj, int x, int y)
    else if ((o != ptr->o_ptr) || (x != px) || (y != py))
      {
         ecore_evas_cursor_unset(ptr->ee);
-        ecore_evas_object_cursor_set(ptr->ee, ptr->o_ptr, E_LAYER_MAX - 1, ptr->hot.x, ptr->hot.y);
+        ecore_evas_object_cursor_set(ptr->ee, ptr->o_ptr, E_LAYER_MAX - 1,
+                                     ptr->hot.x, ptr->hot.y);
         evas_object_show(ptr->o_ptr);
      }
    ptr->client.ec = ec;
