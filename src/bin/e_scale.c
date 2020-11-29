@@ -93,8 +93,12 @@ e_scale_update(void)
    e_pointers_size_set(e_config->cursor_size);
 #ifndef HAVE_WAYLAND_ONLY
    e_xsettings_config_update();
-   snprintf(buf, sizeof(buf), "%i", (int)(75.0 * e_scale));
-   ecore_x_resource_db_string_set("Xft.dpi", buf);
-   ecore_x_resource_db_flush();
+   if (e_config->scale.set_xapp_dpi)
+     {
+        snprintf(buf, sizeof(buf), "%i",
+                 (int)((double)e_config->scale.xapp_base_dpi * e_scale));
+        ecore_x_resource_db_string_set("Xft.dpi", buf);
+        ecore_x_resource_db_flush();
+     }
 #endif
 }

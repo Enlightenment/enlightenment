@@ -907,8 +907,10 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, scale.max, DOUBLE);
    E_CONFIG_VAL(D, T, scale.factor, DOUBLE);
    E_CONFIG_VAL(D, T, scale.base_dpi, INT);
+   E_CONFIG_VAL(D, T, scale.xapp_base_dpi, INT);
    E_CONFIG_VAL(D, T, scale.use_dpi, UCHAR);
    E_CONFIG_VAL(D, T, scale.use_custom, UCHAR);
+   E_CONFIG_VAL(D, T, scale.set_xapp_dpi, UCHAR);
 
    E_CONFIG_VAL(D, T, show_cursor, UCHAR);
    E_CONFIG_VAL(D, T, idle_cursor, UCHAR);
@@ -960,8 +962,6 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, xsettings.xft_hinting, INT);
    E_CONFIG_VAL(D, T, xsettings.xft_hint_style, STR);
    E_CONFIG_VAL(D, T, xsettings.xft_rgba, STR);
-   E_CONFIG_VAL(D, T, xsettings.xft_dpi.enabled, UCHAR);
-   E_CONFIG_VAL(D, T, xsettings.xft_dpi.value, INT);
    E_CONFIG_VAL(D, T, xsettings.net_theme_name, STR);
    E_CONFIG_VAL(D, T, xsettings.net_icon_theme_name, STR);
    E_CONFIG_VAL(D, T, xsettings.gtk_font_name, STR);
@@ -1799,6 +1799,13 @@ e_config_load(void)
                e_config->touch_palm_detect = 1;
                e_config_save_queue();
             }
+          CONFIG_VERSION_CHECK(34)
+            {
+               CONFIG_VERSION_UPDATE_INFO(34);
+               e_config->scale.xapp_base_dpi = 75;
+               e_config->scale.set_xapp_dpi = 1;
+               e_config_save_queue();
+            }
      }
    elm_config_profile_set(_e_config_profile);
    if (!e_config->remember_internal_fm_windows)
@@ -1911,6 +1918,12 @@ e_config_load(void)
    E_CONFIG_LIMIT(e_config->dpms_standby_timeout, 30, 5400);
    E_CONFIG_LIMIT(e_config->dpms_suspend_timeout, 30, 5400);
    E_CONFIG_LIMIT(e_config->dpms_off_timeout, 30, 5400);
+
+   E_CONFIG_LIMIT(e_config->scale.min, 0.1, 40.0);
+   E_CONFIG_LIMIT(e_config->scale.max, 0.1, 40.0);
+   E_CONFIG_LIMIT(e_config->scale.factor, 0.1, 40.0);
+   E_CONFIG_LIMIT(e_config->scale.base_dpi, 10, 4000);
+   E_CONFIG_LIMIT(e_config->scale.xapp_base_dpi, 10, 4000);
 
    E_CONFIG_LIMIT(e_config->backlight.timer, 1, 3600);
 

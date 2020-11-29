@@ -589,25 +589,11 @@ _e_xsettings_font_set(void)
 static void
 _e_xsettings_dpi_set(void)
 {
-   if ((e_config->xsettings.xft_dpi.enabled) &&
-       (e_config->xsettings.xft_dpi.value > 0))
-     _e_xsettings_int_set(_setting_xft_dpi, e_config->xsettings.xft_dpi.value * 1024, EINA_TRUE);
-   else
-     _e_xsettings_int_set(_setting_xft_dpi, 75.0 * e_scale * 1024, EINA_TRUE);
-}
-
-#if 0
-static void
-_e_xsettings_xft_set(void)
-{
-   if (e_config->scale.use_dpi)
+   if (e_config->scale.set_xapp_dpi)
      _e_xsettings_int_set(_setting_xft_dpi,
-                          e_config->scale.base_dpi, EINA_TRUE); // set
-   else
-     _e_xsettings_int_set(_setting_xft_dpi, 0, EINA_FALSE); // remove
+                          (double)e_config->scale.xapp_base_dpi * e_scale * 1024.0,
+                          EINA_TRUE);
 }
-
-#endif
 
 static void
 _e_xsettings_cursor_path_set(void)

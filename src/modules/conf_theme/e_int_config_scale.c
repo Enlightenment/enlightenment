@@ -16,6 +16,7 @@ struct _E_Config_Dialog_Data
    int    use_dpi;
    double min, max, factor;
    int    use_mode, base_dpi, use_custom;
+   int    xapp_base_dpi, set_xapp_dpi;
    struct
    {
       struct
@@ -58,14 +59,12 @@ _scale_preview_sel_set(Evas_Object *ob, int sel)
              cfdata->use_dpi = EINA_TRUE;
              cfdata->use_mode = 1;
              cfdata->use_custom = 0;
-             fprintf(stderr, "custom 0\n");
           }
         else
           {
              cfdata->use_dpi = EINA_FALSE;
              cfdata->use_mode = 2;
              cfdata->use_custom = 1;
-             fprintf(stderr, "custom 1\n");
           }
         EINA_LIST_FOREACH(cfdata->obs, l, ob2)
           {
@@ -206,6 +205,8 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    cfdata->max = e_config->scale.max;
    cfdata->factor = e_config->scale.factor;
    cfdata->base_dpi = e_config->scale.base_dpi;
+   cfdata->xapp_base_dpi = e_config->scale.xapp_base_dpi;
+   cfdata->set_xapp_dpi = e_config->scale.set_xapp_dpi;
 }
 
 static void
@@ -270,6 +271,8 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
    e_config->scale.max = cfdata->max;
    e_config->scale.factor = cfdata->factor;
    e_config->scale.base_dpi = cfdata->base_dpi;
+   e_config->scale.xapp_base_dpi = cfdata->xapp_base_dpi;
+   e_config->scale.set_xapp_dpi = cfdata->set_xapp_dpi;
 
    fprintf(stderr, "dpi: %i, custom: %i, min: %3.3f, max: %3.3f, sc: %3.3f: base: %i\n",
            e_config->scale.use_dpi, e_config->scale.use_custom,
@@ -329,7 +332,7 @@ _adv_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *
    ow = e_widget_label_add(evas, buff);
    cfdata->gui.adv.dpi_lbl = ow;
    e_widget_list_object_append(o, ow, 1, 1, 0.5);
-   ow = e_widget_slider_add(evas, 1, 0, _("%1.0f DPI"), 30, 600, 1, 0,
+   ow = e_widget_slider_add(evas, 1, 0, _("%1.0f DPI"), 20, 1000, 1, 0,
                             NULL, &(cfdata->base_dpi), 100);
    cfdata->gui.adv.dpi_slider = ow;
    e_widget_list_object_append(o, ow, 1, 1, 0.5);
@@ -340,6 +343,17 @@ _adv_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *
                             0, &(cfdata->factor), NULL, 100);
    cfdata->gui.adv.custom_slider = ow;
    e_widget_list_object_append(o, ow, 1, 1, 0.5);
+
+   ow = e_widget_label_add(evas, _("Application Base DPI"));
+   e_widget_list_object_append(o, ow, 1, 1, 0.5);
+   ow = e_widget_slider_add(evas, 1, 0, _("%1.0f DPI"), 20, 1000, 1, 0,
+                            NULL, &(cfdata->xapp_base_dpi), 100);
+   e_widget_list_object_append(o, ow, 1, 1, 0.5);
+
+   ow = e_widget_check_add(evas, _("Set Appliocation DPI"),
+                           &(cfdata->set_xapp_dpi));
+   e_widget_list_object_append(o, ow, 1, 1, 0.5);
+
    e_widget_toolbook_page_append(otb, NULL, _("Policy"), o,
                                  1, 0, 1, 0, 0.5, 0.0);
 
@@ -385,6 +399,8 @@ _adv_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
    e_config->scale.max = cfdata->max;
    e_config->scale.factor = cfdata->factor;
    e_config->scale.base_dpi = cfdata->base_dpi;
+   e_config->scale.xapp_base_dpi = cfdata->xapp_base_dpi;
+   e_config->scale.set_xapp_dpi = cfdata->set_xapp_dpi;
 
    e_win_no_reopen_set(cfd->dia->win, 1);
    e_remember_update(e_win_client_get(cfd->dia->win));
@@ -411,7 +427,9 @@ _adv_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
           (!EINA_DBL_EQ(cfdata->min, e_config->scale.min)) ||
           (!EINA_DBL_EQ(cfdata->max, e_config->scale.max)) ||
           (!EINA_DBL_EQ(cfdata->factor, e_config->scale.factor)) ||
-          (cfdata->base_dpi != e_config->scale.base_dpi);
+          (cfdata->base_dpi != e_config->scale.base_dpi) ||
+          (cfdata->xapp_base_dpi != e_config->scale.xapp_base_dpi) ||
+          (e_config->scale.set_xapp_dpi != cfdata->set_xapp_dpi);
 }
 
 static void

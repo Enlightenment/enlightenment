@@ -47,7 +47,7 @@ typedef enum
 /* increment this whenever a new set of config values are added but the users
  * config doesn't need to be wiped - simply new values need to be put in
  */
-#define E_CONFIG_FILE_GENERATION 33
+#define E_CONFIG_FILE_GENERATION 34
 #define E_CONFIG_FILE_VERSION    ((E_CONFIG_FILE_EPOCH * 1000000) + E_CONFIG_FILE_GENERATION)
 
 #define E_CONFIG_BINDINGS_VERSION 0 // DO NOT INCREMENT UNLESS YOU WANT TO WIPE ALL BINDINGS!!!!!
@@ -326,8 +326,10 @@ struct _E_Config
       double        max; // GUI
       double        factor; // GUI
       int           base_dpi; // GUI
+      int           xapp_base_dpi; // GUI
       unsigned char use_dpi; // GUI
       unsigned char use_custom; // GUI
+      unsigned char set_xapp_dpi; // GUI
    } scale;
 
    unsigned char show_cursor; // GUI
@@ -396,11 +398,6 @@ struct _E_Config
       unsigned char match_e17_icon_theme;  // GUI
       int           xft_antialias;
       int           xft_hinting;
-      struct
-      {
-         unsigned char enabled;
-         int           value;
-      } xft_dpi; // GUI
       const char   *xft_hint_style;
       const char   *xft_rgba;
       const char   *net_theme_name;  // GUI

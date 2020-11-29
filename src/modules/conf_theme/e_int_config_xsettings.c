@@ -14,8 +14,6 @@ struct _E_Config_Dialog_Data
    Eina_List       *widget_themes;
    const char      *widget_theme;
    int              enable_xsettings;
-   int              enable_xsettings_dpi;
-   int              xsettings_dpi;
    Eina_List       *icon_themes;
    int              match_e17_theme;
    int              match_e17_icon_theme;
@@ -77,8 +75,6 @@ _create_data(E_Config_Dialog *cfd)
    cfdata->match_e17_icon_theme = e_config->xsettings.match_e17_icon_theme;
    cfdata->match_e17_theme = e_config->xsettings.match_e17_theme;
    cfdata->enable_xsettings = e_config->xsettings.enabled;
-   cfdata->enable_xsettings_dpi = e_config->xsettings.xft_dpi.enabled;
-   cfdata->xsettings_dpi = e_config->xsettings.xft_dpi.value;
    cfdata->icon_theme = eina_stringshare_add(e_config->icon_theme);
    cfdata->icon_overrides = e_config->icon_theme_overrides;
    //cfdata->enable_icon_theme = !!(e_config->icon_theme);
@@ -135,12 +131,6 @@ _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
        (strcmp(cfdata->icon_theme, e_config->icon_theme) != 0))
      return 1;
 
-   if (cfdata->enable_xsettings_dpi != e_config->xsettings.xft_dpi.enabled)
-     return 1;
-
-   if (cfdata->xsettings_dpi != e_config->xsettings.xft_dpi.value)
-     return 1;
-
    return 0;
 }
 
@@ -158,8 +148,6 @@ _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
 //   e_config->xsettings.match_e17_icon_theme = cfdata->match_e17_icon_theme;
    e_config->xsettings.match_e17_theme = cfdata->match_e17_theme;
    e_config->xsettings.enabled = cfdata->enable_xsettings;
-   e_config->xsettings.xft_dpi.enabled = cfdata->enable_xsettings_dpi;
-   e_config->xsettings.xft_dpi.value = cfdata->xsettings_dpi;
 
    eina_stringshare_del(e_config->icon_theme);
    if (cfdata->icon_overrides || cfdata->match_e17_icon_theme)
@@ -468,7 +456,7 @@ _icon_theme_changed(void *data, Evas_Object *o EINA_UNUSED)
 static Evas_Object *
 _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
-   Evas_Object *otb, *ol, *ilist, *of, *ow, *oc, *os;
+   Evas_Object *otb, *ol, *ilist, *of, *ow, *oc;
    struct _fill_icon_themes_data *d;
    unsigned int i;
 
@@ -502,22 +490,6 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
 
    e_widget_check_widget_disable_on_unchecked_add(oc, ilist);
    e_widget_check_widget_disable_on_unchecked_add(oc, ow);
-
-   of = e_widget_framelist_add(evas, "X Application Settings", 0);
-
-   ow = e_widget_check_add(evas, _("Enable Custom DPI"), &(cfdata->enable_xsettings_dpi));
-   e_widget_framelist_object_append(of, ow);
-   e_widget_check_widget_disable_on_unchecked_add(oc, ow);
-
-   os = e_widget_slider_add(evas, 1, 0, _("%1.0f dpi"), 50, 400, 1, 0,
-                            NULL, &(cfdata->xsettings_dpi), 90);
-   e_widget_framelist_object_append(of, os);
-
-   e_widget_check_widget_disable_on_unchecked_add(ow, os);
-   e_widget_check_widget_disable_on_unchecked_add(oc, os);
-
-   e_widget_list_object_append(ol, of, 1, 0, 0.5);
-
 #endif
 
    e_widget_toolbook_page_append(otb, NULL, _("GTK Applications"), ol,
