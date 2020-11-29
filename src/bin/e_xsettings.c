@@ -23,32 +23,26 @@ typedef struct _Setting         Setting;
 
 struct _Settings_Manager
 {
-   Ecore_X_Window selection;
-   Ecore_Timer   *timer_retry;
-   unsigned long  serial;
-   Ecore_X_Atom   _atom_xsettings_screen;
-   Eina_Bool enabled E_BITFIELD;
+   Ecore_X_Window  selection;
+   Ecore_Timer    *timer_retry;
+   unsigned long   serial;
+   Ecore_X_Atom    _atom_xsettings_screen;
+   Eina_Bool       enabled E_BITFIELD;
 };
 
 struct _Setting
 {
    unsigned short type;
-
    const char    *name;
-
-   struct
-     {
+   struct {
       const char *value;
-     } s;
-   struct
-     {
+   } s;
+   struct {
       int value;
-     } i;
-   struct
-     {
+   } i;
+   struct {
       unsigned short red, green, blue, alpha;
-     } c;
-
+   } c;
    unsigned long length;
    unsigned long last_change;
 };
