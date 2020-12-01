@@ -1,7 +1,5 @@
 #include "config.h"
 
-//# include "e_drm2.x"
-
 #include <Elementary.h>
 #ifndef HAVE_WAYLAND_ONLY
 # include <Ecore_X.h>

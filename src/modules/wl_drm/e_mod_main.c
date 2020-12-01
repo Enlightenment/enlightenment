@@ -4,7 +4,6 @@
 
 #include <Ecore_Drm2.h>
 #include <Elput.h>
-#include "e_drm2.x"
 
 static Ecore_Event_Handler *seat_handler;
 
@@ -402,12 +401,12 @@ _drm2_randr_create(void)
                {
                   unsigned int refresh;
 
-                  e_drm2_output_info_get(output,
-                                         &s->config.geom.x,
-                                         &s->config.geom.y,
-                                         &s->config.geom.w,
-                                         &s->config.geom.h,
-                                         &refresh);
+                  ecore_drm2_output_info_get(output,
+                                             &s->config.geom.x,
+                                             &s->config.geom.y,
+                                             &s->config.geom.w,
+                                             &s->config.geom.h,
+                                             &refresh);
                   s->config.mode.w = s->config.geom.w;
                   s->config.mode.h = s->config.geom.h;
                   s->config.mode.refresh = refresh;
@@ -419,7 +418,7 @@ _drm2_randr_create(void)
                          s->config.geom.w, s->config.geom.h);
                }
 
-             outrot = e_drm2_output_rotation_get(output);
+             outrot = ecore_drm2_output_rotation_get(output);
              if (outrot & ECORE_DRM2_ROTATION_NORMAL)
                s->config.rotation = 0;
              else if (outrot & ECORE_DRM2_ROTATION_90)
@@ -714,7 +713,7 @@ _drm2_randr_apply(void)
                        ecore_drm2_output_enabled_set(outconf[i],
                                                      screenconf[i]->config.enabled);
 
-                       e_drm2_output_rotation_set(outconf[i], orient);
+                       ecore_drm2_output_rotation_set(outconf[i], orient);
 
                        ecore_evas_rotation_with_resize_set(e_comp->ee,
                                                            screenconf[i]->config.rotation);
@@ -902,15 +901,9 @@ _drm_device_del(void *data EINA_UNUSED, const Efl_Event *event)
    seat = efl_input_device_seat_get(event->info);
 
    if (seat != evas_default_device_get(e_comp->evas, EVAS_DEVICE_CLASS_SEAT)) return;
-#ifdef EFL_VERSION_1_23
    if (!efl_input_device_is_pointer_type_get(event->info)) return;
    if (efl_input_device_pointer_device_count_get(seat) == 1)
      ecore_evas_cursor_device_unset(e_comp->ee, event->info);
-#else
-   if (!efl_input_device_has_pointer_caps(event->info)) return;
-   if (efl_input_device_has_pointer_caps(seat) == 1)
-     ecore_evas_cursor_device_unset(e_comp->ee, event->info);
-#endif
 }
 
 E_API void *
@@ -928,8 +921,6 @@ e_modapi_init(E_Module *m)
    /*      fprintf(stderr, "Could not initialize ecore_drm"); */
    /*      return NULL; */
    /*   } */
-
-   if (!e_drm2_compat_init()) return NULL;
 
    if (e_comp_config_get()->engine == E_COMP_ENGINE_GL)
      {
@@ -965,14 +956,7 @@ e_modapi_init(E_Module *m)
    ecore_evas_screen_geometry_get(e_comp->ee, NULL, NULL, &w, &h);
    if (!e_comp_canvas_init(w, h)) return NULL;
 
-#ifdef EFL_VERSION_1_21
    arr[0].desc = EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED;
-#else
-   if (E_EFL_VERSION_MINIMUM(1, 20, 99))
-     arr[0].desc = dlsym(NULL, "_EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED");
-   if (!arr[0].desc)
-     arr[0].desc = dlsym(NULL, "_EFL_CANVAS_EVENT_DEVICE_REMOVED");
-#endif
    ecore_evas_pointer_xy_get(e_comp->ee, &e_comp_wl->ptr.x,
                              &e_comp_wl->ptr.y);
    evas_event_feed_mouse_in(e_comp->evas, 0, NULL);
@@ -1012,6 +996,5 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    activate_handler = NULL;
 
    E_FREE_FUNC(input_handler, ecore_event_handler_del);
-   e_drm2_compat_shutdown();
    return 1;
 }
