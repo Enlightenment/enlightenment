@@ -1997,7 +1997,7 @@ _e_comp_x_property(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_W
    E_Client *ec;
 
    ec = _e_comp_x_client_find_by_window(ev->win);
-   if (!ec) return ECORE_CALLBACK_RENEW;
+   if (!ec) return ECORE_CALLBACK_PASS_ON;
 
    if (ev->atom == ECORE_X_ATOM_WM_NAME)
      {
@@ -2225,7 +2225,7 @@ _e_comp_x_property(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_W
         EC_CHANGED(ec);
      }
 
-   return ECORE_CALLBACK_RENEW;
+   return ECORE_CALLBACK_PASS_ON;
 }
 
 static Eina_Bool

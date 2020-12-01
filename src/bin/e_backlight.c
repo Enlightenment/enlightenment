@@ -21,6 +21,7 @@ static Ecore_Job *zone_change_job = NULL;
 static Eina_List *_devices = NULL;
 static int        _devices_pending_ops = 0;
 static Eina_Bool  _devices_zones_update = EINA_FALSE;
+static Eina_Bool  _own_vt = EINA_TRUE;
 
 static void _backlight_devices_device_set(Backlight_Device *bd, double val);
 static void _backlight_devices_device_update(Backlight_Device *bd);
@@ -46,7 +47,8 @@ _backlight_mismatch_retry(Backlight_Device *bd)
        // and the delta between expected and val >= 0.05
        (fabs(bd->expected_val - bd->val) >= 0.05) &&
        // and we retried < 20 times
-       (bd->retries < 10))
+       (bd->retries < 10) &&
+       (_own_vt))
      { // try again
         printf("RETRY backlight set as %1.2f != %1.2f (expected) try=%i\n",
                bd->val, bd->expected_val, bd->retries);
@@ -227,6 +229,7 @@ _backlight_devices_device_set(Backlight_Device *bd, double val)
 {
    if (fabs(bd->expected_val - val) > DBL_EPSILON) bd->retries = 0;
    bd->val = bd->expected_val = val;
+   if (!_own_vt) return;
 #ifndef HAVE_WAYLAND_ONLY
    if (!strcmp(bd->dev, "randr"))
      {
@@ -654,6 +657,52 @@ _cb_handler_zone_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *info
    return EINA_TRUE;
 }
 
+#ifndef HAVE_WAYLAND_ONLY
+static Eina_Bool
+_cb_handler_x_window_property(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_X_Event_Window_Property *ev = event;
+
+   if ((e_comp) && (e_comp->comp_type == E_PIXMAP_TYPE_X))
+     {
+        static Ecore_X_Atom atom_xfree86_has_vt = 0;
+
+        if (!atom_xfree86_has_vt)
+          atom_xfree86_has_vt = ecore_x_atom_get("XFree86_has_VT");
+        if ((ev->win) && (e_comp->root) && (ev->win == e_comp->root) &&
+            (ev->atom == atom_xfree86_has_vt))
+          {
+             int *val = NULL, num = 0;
+
+             if (ecore_x_window_prop_property_get(ev->win, atom_xfree86_has_vt,
+                                                  ECORE_X_ATOM_INTEGER, 32,
+                                                  (unsigned char **)&val,
+                                                  &num))
+               {
+                  if (num > 0)
+                    {
+                       if ((*val == 1) && (!_own_vt)) // have vt
+                         {
+                            printf("BL: gained VT\n");
+                            _own_vt = EINA_TRUE;
+                            // we just go back to normal backlight if we gain
+                            // the vt again
+                            e_backlight_mode_set(NULL, E_BACKLIGHT_MODE_NORMAL);
+                         }
+                       else if (_own_vt)
+                         {
+                            printf("BL: lost VT\n");
+                            _own_vt = EINA_FALSE;
+                         }
+                    }
+                  free(data);
+               }
+          }
+     }
+   return ECORE_CALLBACK_PASS_ON;
+}
+#endif
+
 EINTERN int
 e_backlight_init(void)
 {
@@ -667,6 +716,9 @@ e_backlight_init(void)
    H(E_EVENT_ZONE_MOVE_RESIZE, _cb_handler_zone_change);
    H(E_EVENT_ZONE_STOW, _cb_handler_zone_change);
    H(E_EVENT_ZONE_UNSTOW, _cb_handler_zone_change);
+#ifndef HAVE_WAYLAND_ONLY
+   H(ECORE_X_EVENT_WINDOW_PROPERTY, _cb_handler_x_window_property);
+#endif
    e_backlight_update();
    if (!getenv("E_RESTART"))
      e_backlight_level_set(NULL, e_config->backlight.normal, -1.0);
