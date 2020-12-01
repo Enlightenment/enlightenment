@@ -330,14 +330,14 @@ _adv_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *
    cfdata->gui.adv.custom_slider = ow;
    e_widget_list_object_append(o, ow, 1, 1, 0.5);
 
+   ow = e_widget_check_add(evas, _("Set Application DPI"),
+                           &(cfdata->set_xapp_dpi));
+   e_widget_list_object_append(o, ow, 1, 1, 0.5);
+
    ow = e_widget_label_add(evas, _("Application Base DPI"));
    e_widget_list_object_append(o, ow, 1, 1, 0.5);
    ow = e_widget_slider_add(evas, 1, 0, _("%1.0f DPI"), 20, 1000, 1, 0,
                             NULL, &(cfdata->xapp_base_dpi), 100);
-   e_widget_list_object_append(o, ow, 1, 1, 0.5);
-
-   ow = e_widget_check_add(evas, _("Set Appliocation DPI"),
-                           &(cfdata->set_xapp_dpi));
    e_widget_list_object_append(o, ow, 1, 1, 0.5);
 
    e_widget_toolbook_page_append(otb, NULL, _("Policy"), o,
