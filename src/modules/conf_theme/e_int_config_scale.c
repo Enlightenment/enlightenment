@@ -311,21 +311,7 @@ _adv_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *
    e_widget_on_change_hook_set(ow, _adv_policy_changed, cfdata);
    e_widget_list_object_append(o, ow, 1, 1, 0.5);
 
-#ifndef HAVE_WAYLAND_ONLY
-   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
-     dpi = ecore_x_dpi_get();
-#endif
-#ifdef HAVE_WAYLAND
-   if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
-     {
-        int xdpi = 0, ydpi = 0;
-
-        ecore_evas_screen_dpi_get(e_comp->ee, &xdpi, &ydpi);
-        if (xdpi == 0) xdpi = 75;
-        if (ydpi == 0) ydpi = 75;
-        dpi = ((xdpi + ydpi) / 2);
-     }
-#endif
+   dpi = e_scale_dpi_get();
 
    snprintf(buff, sizeof(buff), _("Base DPI (Currently %i DPI)"), dpi);
 
