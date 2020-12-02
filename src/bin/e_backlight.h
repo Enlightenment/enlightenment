@@ -35,6 +35,7 @@ E_API double              e_backlight_level_get(E_Zone *zone);
 E_API void                e_backlight_mode_set(E_Zone *zone, E_Backlight_Mode mode);
 E_API E_Backlight_Mode    e_backlight_mode_get(E_Zone *zone);
 E_API const Eina_List    *e_backlight_devices_get(void);
+E_API void                e_backlight_suspend_set(Eina_Bool suspend);
 
 #endif
 #endif

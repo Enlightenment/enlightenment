@@ -55,6 +55,7 @@ _e_mod_drm_cb_activate(void *data EINA_UNUSED, int type EINA_UNUSED, void *event
      {
         if (session_state) goto end;
         session_state = EINA_TRUE;
+        e_backlight_suspend_set(EINA_FALSE);
 
         ecore_evas_show(e_comp->ee);
         evas_damage_rectangle_add(e_comp->evas, 0, 0, e_comp->w, e_comp->h);
@@ -72,6 +73,8 @@ _e_mod_drm_cb_activate(void *data EINA_UNUSED, int type EINA_UNUSED, void *event
    else
      {
         session_state = EINA_FALSE;
+        e_backlight_suspend_set(EINA_TRUE);
+
         ecore_evas_hide(e_comp->ee);
         edje_file_cache_flush();
         edje_collection_cache_flush();

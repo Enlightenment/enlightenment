@@ -22,6 +22,7 @@ static Eina_List *_devices = NULL;
 static int        _devices_pending_ops = 0;
 static Eina_Bool  _devices_zones_update = EINA_FALSE;
 static Eina_Bool  _own_vt = EINA_TRUE;
+static Eina_Bool  _e_bl_suspend = EINA_FALSE;
 
 static void _backlight_devices_device_set(Backlight_Device *bd, double val);
 static void _backlight_devices_device_update(Backlight_Device *bd);
@@ -875,4 +876,18 @@ E_API const Eina_List *
 e_backlight_devices_get(void)
 {
    return bl_devs;
+}
+
+E_API void
+e_backlight_suspend_set(Eina_Bool suspend)
+{
+   if (_e_bl_suspend == suspend) return;
+   _e_bl_suspend = suspend;
+   _own_vt = !_e_bl_suspend;
+   if (_own_vt)
+     {
+        // we just go back to normal backlight if we gain
+        // the vt again
+        e_backlight_mode_set(NULL, E_BACKLIGHT_MODE_NORMAL);
+     }
 }
