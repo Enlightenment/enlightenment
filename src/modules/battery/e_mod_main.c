@@ -735,7 +735,7 @@ _battery_update(int full, int time_left, int time_full, Eina_Bool have_battery, 
                {
                   printf("t-debounce = %3.3f\n", (t - debounce_time));
                   debounce_time = t;
-                  if ((t - init_time) > 5.0)
+                  if (((t - init_time) > 5.0) && (full < 15))
                     _battery_warning_popup(inst, time_left, (double)full / 100.0);
                }
           }
