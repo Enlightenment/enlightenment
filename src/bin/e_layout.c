@@ -212,7 +212,7 @@ e_layout_child_lower(Evas_Object *obj)
 
    li = evas_object_data_get(obj, "e_layout_data");
    if (!li) return;
-   if ((!li->sd->items) || (!EINA_INLIST_GET(li)->next)) return;
+   if ((!li->sd->items) || (!EINA_INLIST_GET(li)->prev)) return;
    li->sd->items = eina_inlist_promote(li->sd->items, EINA_INLIST_GET(li));
    evas_object_lower(obj);
 }
@@ -224,7 +224,7 @@ e_layout_child_raise(Evas_Object *obj)
 
    li = evas_object_data_get(obj, "e_layout_data");
    if (!li) return;
-   if ((!li->sd->items) || (!EINA_INLIST_GET(li)->prev)) return;
+   if ((!li->sd->items) || (!EINA_INLIST_GET(li)->next)) return;
    li->sd->items = eina_inlist_demote(li->sd->items, EINA_INLIST_GET(li));
    evas_object_raise(obj);
 }
