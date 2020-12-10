@@ -1859,7 +1859,7 @@ e_config_load(void)
    E_CONFIG_LIMIT(e_config->winlist_list_show_other_screen_windows, 0, 1);
    E_CONFIG_LIMIT(e_config->winlist_list_uncover_while_selecting, 0, 1);
    E_CONFIG_LIMIT(e_config->winlist_list_jump_desk_while_selecting, 0, 1);
-   E_CONFIG_LIMIT(e_config->winlist_mode, 8, 1);
+   E_CONFIG_LIMIT(e_config->winlist_mode, 0, 1);
    E_CONFIG_LIMIT(e_config->winlist_large_size, 0.0, 1.0);
    E_CONFIG_LIMIT(e_config->winlist_list_size, 0.0, 1.0);
    E_CONFIG_LIMIT(e_config->maximize_policy, E_MAXIMIZE_FULLSCREEN, E_MAXIMIZE_DIRECTION);
