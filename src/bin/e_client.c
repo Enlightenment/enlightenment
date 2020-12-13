@@ -5108,7 +5108,7 @@ e_client_act_menu_begin(E_Client *ec, E_Binding_Event_Mouse_Button *ev, int key)
      {
         int x, y;
 
-        evas_pointer_canvas_xy_get(e_comp->evas, &x, &y);
+        ecore_evas_pointer_xy_get(e_comp->ee, &x, &y);
         e_int_client_menu_show(ec, x, y, key, 0);
      }
 }
