@@ -151,6 +151,7 @@ e_powersave_mode_screen_set(E_Powersave_Mode mode)
    printf("PWSAVE SCREEN SET %i/%i\n", (int)mode, (int)E_POWERSAVE_MODE_FREEZE);
    powersave_screen = EINA_TRUE;
    powersave_mode_screen = mode;
+   _e_powersave_event_change_send(powersave_mode_screen);
    _e_powersave_mode_eval();
 }
 
@@ -161,6 +162,7 @@ e_powersave_mode_screen_unset(void)
    printf("PWSAVE SCREEN UNSET\n");
    powersave_screen = EINA_FALSE;
    powersave_mode_screen = E_POWERSAVE_MODE_NONE;
+   _e_powersave_event_change_send(powersave_mode_screen);
    _e_powersave_mode_eval();
 }
 
