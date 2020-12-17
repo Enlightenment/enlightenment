@@ -137,6 +137,7 @@ _dialog_del_cb(void *data)
 
    // FIXME need to mark cs->pending_connect = NULL;
    eldbus_message_unref(agent->msg);
+   agent->msg = NULL;
    agent->dialog = NULL;
 }
 
@@ -396,10 +397,13 @@ _agent_request_input(const Eldbus_Service_Interface *iface,
 
    /* Discard previous requests */
    // if msg is the current agent msg? eek.
-   if (agent->msg == msg) return NULL;
+   if (agent->msg == msg)
+     {
+        ERR("agent->msg == msg -> this should not be happening?");
+        return NULL;
+     }
 
-   if (agent->msg)
-     eldbus_message_unref(agent->msg);
+   if (agent->msg) eldbus_message_unref(agent->msg);
    agent->msg = eldbus_message_ref((Eldbus_Message *)msg);
 
    EINA_LIST_FOREACH(ctxt->instances, l, inst)
@@ -526,6 +530,9 @@ void
 econnman_agent_del(E_Connman_Agent *agent)
 {
    EINA_SAFETY_ON_NULL_RETURN(agent);
+   if (agent->msg) eldbus_message_unref(agent->msg);
+   agent->msg = NULL;
    eldbus_service_object_unregister(agent->iface);
+   agent->iface = NULL;
    free(agent);
 }
