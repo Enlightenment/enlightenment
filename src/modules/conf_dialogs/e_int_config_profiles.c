@@ -358,6 +358,7 @@ _cb_scratch(void *data EINA_UNUSED, void *data2 EINA_UNUSED)
         free(pdir);
      }
    e_config_profile_set("default");
+   e_config_profile_save();
    a = e_action_find("restart");
    if ((a) && (a->func.go)) a->func.go(NULL, NULL);
 }
