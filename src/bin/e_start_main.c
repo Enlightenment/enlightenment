@@ -814,9 +814,6 @@ not_done:
 
         if (result == child)
           {
-             printf("WIFSTOPPED=%i WIFEXITED=%i WEXITSTATUS=%i stop_ptrace=%i\n",
-                    WIFSTOPPED(status), WIFEXITED(status),
-                    WEXITSTATUS(status), stop_ptrace);
              if (WIFSTOPPED(status) && (!stop_ptrace))
                {
                   char *backtrace_str = NULL;
