@@ -64,6 +64,21 @@ struct _Instance
 static Context *mixer_context = NULL;
 static Eina_List *_handlers = NULL;
 
+static Emix_Sink*
+current_focused_client_sink_get(void)
+{
+   E_Client *client = e_client_focused_get();
+   if (!client) return NULL;
+   Eina_List *inputs = client->sinks;
+   if (eina_list_count(inputs) == 0) return NULL;
+   E_Client_Volume_Sink *first_vsink = eina_list_data_get(inputs);
+   if (!first_vsink) return NULL;
+   Emix_Sink_Input *input = e_client_volume_sink_input_get(first_vsink);
+   if (!input) return NULL;
+
+   return input->sink;
+}
+
 static void
 _mixer_popup_update(Instance *inst, int mute, int vol)
 {
@@ -108,9 +123,14 @@ _mixer_gadget_update(void)
 
         if (inst->list)
           {
+             Emix_Sink *current_sink = current_focused_client_sink_get();
+
              EINA_LIST_FOREACH(elm_list_items_get(inst->list), ll, it)
                {
-                  if (backend_sink_default_get() == elm_object_item_data_get(it))
+                  Emix_Sink *sink = elm_object_item_data_get(it);
+                  if (sink == current_sink)
+                    elm_list_item_selected_set(it, EINA_TRUE);
+                  else if (!current_sink && backend_sink_default_get() == elm_object_item_data_get(it))
                     elm_list_item_selected_set(it, EINA_TRUE);
                }
           }
@@ -184,6 +204,7 @@ _mixer_sinks_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event E
 {
    Instance *inst;
    Eina_List *l, *ll;
+   Emix_Sink *current_sink = current_focused_client_sink_get();
 
    EINA_LIST_FOREACH(mixer_context->instances, l, inst)
      {
@@ -199,10 +220,13 @@ _mixer_sinks_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event E
 
                   it = elm_list_item_append(inst->list, s->name, NULL, NULL,
                                             _sink_selected_cb, s);
-                  if (backend_sink_default_get() == s)
+                  if (current_sink == s)
+                    default_it = it;
+                  else if (!current_sink && backend_sink_default_get() == s)
                     default_it = it;
                }
              elm_list_go(inst->list);
+
              if (default_it)
                elm_list_item_selected_set(default_it, EINA_TRUE);
           }
@@ -211,14 +235,16 @@ _mixer_sinks_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event E
    return ECORE_CALLBACK_PASS_ON;
 }
 
+
 static void
 _popup_new(Instance *inst)
 {
    Evas_Object *button, *list, *slider, *bx;
-   Emix_Sink *s;
+   Emix_Sink *s, *current_focused_sink;
    Eina_List *l;
    Elm_Object_Item *default_it = NULL;
 
+   current_focused_sink = current_focused_client_sink_get();
    inst->popup = e_gadcon_popup_new(inst->gcc, 0);
    list = elm_box_add(e_comp->elm);
 
@@ -227,12 +253,15 @@ _popup_new(Instance *inst)
    evas_object_size_hint_align_set(inst->list, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(inst->list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(inst->list);
+
    EINA_LIST_FOREACH((Eina_List *)emix_sinks_get(), l, s)
      {
         Elm_Object_Item *it;
 
         it = elm_list_item_append(inst->list, s->name, NULL, NULL, _sink_selected_cb, s);
-        if (backend_sink_default_get() == s)
+        if (current_focused_sink == s)
+          default_it = it;
+        else if (!current_focused_sink && backend_sink_default_get() == s)
           default_it = it;
      }
    elm_list_go(inst->list);

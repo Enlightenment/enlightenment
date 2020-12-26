@@ -1,6 +1,7 @@
 #ifndef E_CLIENT_VOLUME_H_
 #define E_CLIENT_VOLUME_H_
 
+
 typedef struct _E_Client_Volume_Sink E_Client_Volume_Sink;
 typedef struct _E_Event_Client_Volume_Sink E_Event_Client_Volume_Sink;
 
@@ -26,6 +27,7 @@ struct _E_Client_Volume_Sink
    E_Client_Volume_Sink_Name_Get func_name_get;
    void *data;
    Eina_List *clients;
+   void *input;
 };
 
 struct _E_Event_Client_Volume_Sink
@@ -56,5 +58,8 @@ E_API void         e_client_volume_sink_update(E_Client_Volume_Sink *mixer);
 
 E_API void         e_client_volume_display_set(E_Client *ec, int volume, Eina_Bool mute);
 E_API void         e_client_volume_object_emit(E_Client *ec, const char *sig, const char *src);
+
+E_API void* e_client_volume_sink_input_get(E_Client_Volume_Sink *sink);
+E_API void e_client_volume_sink_input_set(E_Client_Volume_Sink *sink, void *emix_input);
 
 #endif

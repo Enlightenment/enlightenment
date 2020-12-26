@@ -551,6 +551,7 @@ _sink_input_event(int type, Emix_Sink_Input *input)
                                                         _sink_input_max_get,
                                                         _sink_input_name_get,
                                                         input);
+                        e_client_volume_sink_input_set(sink, input);
                         e_client_volume_sink_append(ec, sink);
                         _client_sinks = eina_list_append(_client_sinks, sink);
                         found = EINA_TRUE;

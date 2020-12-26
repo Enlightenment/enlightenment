@@ -171,6 +171,18 @@ e_client_volume_sink_new(E_Client_Volume_Sink_Get func_get, E_Client_Volume_Sink
    return sink;
 }
 
+E_API void*
+e_client_volume_sink_input_get(E_Client_Volume_Sink *sink)
+{
+   return sink->input;
+}
+
+E_API void
+e_client_volume_sink_input_set(E_Client_Volume_Sink *sink, void *emix_input)
+{
+   sink->input = emix_input;
+}
+
 E_API void
 e_client_volume_sink_del(E_Client_Volume_Sink *sink)
 {
