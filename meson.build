@@ -9,12 +9,6 @@ project('enlightenment', 'c',
 proj     = meson.project_name()
 ver      = meson.project_version()
 
-#### check for mixed autofoo and meson build tree mess
-clean_check = run_command('meson/clean_check.sh')
-if clean_check.returncode() == 0
-  error('Meson build requires a clean source tree')
-endif
-
 config_h = configuration_data()
 
 e_version   = ver.split('.')
