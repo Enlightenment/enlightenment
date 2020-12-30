@@ -596,7 +596,8 @@ _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
        (!eina_str_has_extension(cfdata->bg, ".ogg")) &&
        (!eina_str_has_extension(cfdata->bg, ".ogv")) &&
        (!eina_str_has_extension(cfdata->bg, ".ts")) &&
-       (!eina_str_has_extension(cfdata->bg, ".mov"))
+       (!eina_str_has_extension(cfdata->bg, ".mov")) &&
+       (!eina_str_has_extension(cfdata->bg, ".webm"))
       )
      {
         cfdata->import = e_import_config_dialog_show(cfd->dia->win, cfdata->bg, (Ecore_End_Cb)_apply_import_ok, NULL);
