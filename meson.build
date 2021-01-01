@@ -13,25 +13,22 @@ config_h = configuration_data()
 
 e_version   = ver.split('.')
 
-#### FOR RELEASE
-#e_version_rev = '.'.join([ver, 'beta1'])
-#e_version_rev = ver
-#release = '@0@.@1@.@2@'.format(e_version[0], e_version[1], e_version[2])
-#config_h.set('E_RELEASE_BUILD'         , '1')
-####
-
-#### FOR DEVELOPMENT
-git_version = '0'
-git         = find_program('git', required: false)
-if git.found() == true
-  git_cmd = run_command(git.path(), 'rev-list', '--count', 'HEAD')
-  if git_cmd.returncode() == 0
-    git_version = git_cmd.stdout().strip()
+if e_version[2] == 99
+  git_version = '0'
+  git         = find_program('git', required: false)
+  if git.found() == true
+    git_cmd = run_command(git.path(), 'rev-list', '--count', 'HEAD')
+    if git_cmd.returncode() == 0
+      git_version = git_cmd.stdout().strip()
+    endif
   endif
+  e_version_rev = '.'.join([ver, git_version])
+  release = 'dev-@0@.@1@.@2@'.format(e_version[0], e_version[1], e_version[2])
+else
+  e_version_rev = ver
+  release = '@0@.@1@.@2@'.format(e_version[0], e_version[1], e_version[2])
+  config_h.set('E_RELEASE_BUILD'         , '1')
 endif
-e_version_rev = '.'.join([ver, git_version])
-release = 'dev-0.24.99'
-####
 
 efl_version = '>= 1.25.99'
 
