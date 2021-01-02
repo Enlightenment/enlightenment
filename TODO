@@ -181,8 +181,6 @@ TODO:
    logging like tables, icons, timelines and graphs that can be output
    in text emulation and to screen - change eina log to go into here
    with eina_log_print_cb_set() )
-* watchdog: add watchdog handling to e_start to detect a hung e
-  * also detect if frames stop rendering but loop ok?
 * settings: config dialog redo and simplification
   * simplify the config and remove useless options
     * focus on new simpler config dialog(s) first

@@ -861,6 +861,12 @@ not_done:
                   restart = EINA_TRUE;
                   done = EINA_TRUE;
                }
+             else if (WEXITSTATUS(status) == 121)
+               {
+                  putenv("E_RESTART_OK=1");
+                  restart = EINA_TRUE;
+                  done = EINA_TRUE;
+               }
              else if (WEXITSTATUS(status) == 111)
                {
                   putenv("E_RESTART_OK=1");

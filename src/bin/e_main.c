@@ -1086,6 +1086,7 @@ main(int argc, char **argv)
         E_LIST_FOREACH(e_comp->zones, e_comp_canvas_zone_restarted);
      }
 
+   e_watchdog_begin();
    TS("MAIN LOOP AT LAST");
    if (!setjmp(x_fatal_buff))
      {
@@ -1094,6 +1095,7 @@ main(int argc, char **argv)
      }
    else
      CRI("FATAL: X Died. Connection gone. Abbreviated Shutdown\n");
+   e_watchdog_end();
    e_main_loop_running = EINA_FALSE;
 
    inloop = EINA_FALSE;
