@@ -13,7 +13,7 @@ config_h = configuration_data()
 
 e_version   = ver.split('.')
 
-if e_version[2] == 99
+if e_version[2] == '99'
   git_version = '0'
   git         = find_program('git', required: false)
   if git.found() == true
