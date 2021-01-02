@@ -1139,14 +1139,13 @@ _cpufreq_face_cb_set_governor(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUS
 }
 
 static Eina_Bool
-_cpufreq_event_cb_powersave(void *data EINA_UNUSED, int type, void *event)
+_cpufreq_event_cb_powersave(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Powersave_Update *ev;
    Eina_List *l;
    Eina_Bool has_powersave = EINA_FALSE;
    Eina_Bool has_conservative = EINA_FALSE;
 
-   if (type != E_EVENT_POWERSAVE_UPDATE) return ECORE_CALLBACK_PASS_ON;
    if (!cpufreq_config->auto_powersave) return ECORE_CALLBACK_PASS_ON;
 
    ev = event;
