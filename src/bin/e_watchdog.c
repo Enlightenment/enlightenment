@@ -10,7 +10,10 @@ _cb_watchdog_thread_pingpong_pipe(void *data EINA_UNUSED, void *buf, unsigned in
    unsigned long long *seq = buf;
    unsigned long long seq_num = bytes / sizeof(int);
 
-   if (seq_num < 1) return; // XXX: error
+   if (seq_num < 1)
+     {
+        return;
+     }
    last_seq = seq[seq_num - 1];
 }
 
@@ -70,6 +73,8 @@ e_watchdog_begin(void)
 {
    // set up main-loop ping-pong to a thread
    _watchdog_pipe = ecore_pipe_add(_cb_watchdog_thread_pingpong_pipe, NULL);
+   // stop mainloop watching with fd handler as wer wait manually
+   ecore_pipe_freeze(_watchdog_pipe);
    _watchdog_thread = ecore_thread_feedback_run
      (_cb_watchdog_thread_pingpong,
       _cb_watchdog_thread_pingpong_reply,
