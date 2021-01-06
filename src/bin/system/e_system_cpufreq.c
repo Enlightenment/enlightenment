@@ -152,8 +152,13 @@ void
 e_system_cpufreq_init(void)
 {
    e_system_inout_command_register("cpufreq-freq",     _cb_cpufreq_freq, NULL);
+#if defined __FreeBSD__ || defined __OpenBSD__
+   (void) _cb_cpufreq_governor;
+   (void) _cb_cpufreq_pstate;
+#else
    e_system_inout_command_register("cpufreq-governor", _cb_cpufreq_governor, NULL);
    e_system_inout_command_register("cpufreq-pstate",   _cb_cpufreq_pstate, NULL);
+#endif
 }
 
 void
