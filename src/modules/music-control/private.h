@@ -26,6 +26,8 @@ typedef struct _E_Music_Control_Module_Context
    Eldbus_Proxy *mpris2_player;
    E_Config_DD *conf_edd;
    Music_Control_Config *config;
+   Eldbus_Pending *bus_list_pend;
+   Ecore_Timer *poll_timer;
    const char *dbus_name;
    Eina_Bool actions_set E_BITFIELD;
 } E_Music_Control_Module_Context;
@@ -46,7 +48,8 @@ void music_control_popup_del(E_Music_Control_Instance *inst);
 void music_control_state_update_all(E_Music_Control_Module_Context *ctxt);
 void music_control_metadata_update_all(E_Music_Control_Module_Context *ctxt);
 Eina_Bool music_control_dbus_init(E_Music_Control_Module_Context *ctxt, const char *bus);
-Eina_Bool _desklock_cb(void *data, int type, void *ev);
+
+Eina_Bool _desklock_cb(void *data, int type EINA_UNUSED, void *ev);
 
 typedef struct _Player {
    const char *name;

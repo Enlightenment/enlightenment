@@ -1,5 +1,7 @@
 #include "private.h"
 
+// XXX: 
+
 #define MUSIC_CONTROL_DOMAIN "module.music_control"
 
 static E_Module *music_control_mod = NULL;
@@ -28,7 +30,10 @@ const Player music_player_players[] =
    {"VLC",                  "org.mpris.MediaPlayer2.vlc",              "vlc"},
    {"XMMS2",                "org.mpris.MediaPlayer2.xmms2",            "xmms2"},
    {"gmusicbrowser",        "org.mpris.MediaPlayer2.gmusicbrowser",    "gmusicbrowser"},
-#define PLAYER_COUNT 16
+   {"Chromium",             "org.mpris.MediaPlayer2.chromium.*",       "chromium"},
+   {"Firefox",              "org.mpris.MediaPlayer2.firefox.*",        "firefox"},
+   {"Automatic",            "org.mpris.MediaPlayer2.*",                ""},
+#define PLAYER_COUNT 21
    {NULL, NULL, NULL}
 };
 
@@ -293,10 +298,28 @@ parse_metadata(E_Music_Control_Module_Context *ctxt, Eina_Value *array)
                        uri = efreet_uri_decode(str_val);
                        if (uri && !strncmp(uri->protocol, "file", 4))
                          ctxt->meta_cover = eina_stringshare_add(uri->path);
+                       else
+                         {
+                            if (!strncmp(str_val, "https://open.spotify.com/image/", 31))
+                              {
+                                 // fix spotify brokenness:
+                                 //   https://open.spotify.com/image/ab67616d00001e02216a271725a34eba54dd0b55
+                                 // becomes
+                                 //   https://i.scdn.co/image/ab67616d00001e02216a271725a34eba54dd0b55
+                                 char buf[1024];
+                                 snprintf(buf, sizeof(buf), "https://i.scdn.co/image/%s", str_val + 31);
+                                 ctxt->meta_cover = eina_stringshare_add(buf);
+                              }
+                            else
+                              ctxt->meta_cover = eina_stringshare_add(str_val);
+                         }
                        E_FREE_FUNC(uri, efreet_uri_free);
                     }
                   eina_value_flush(&subst);
                }
+             // FIXME: to handle in future:
+             // mpris:length - int64
+             // xesam:url - s
           }
         eina_value_flush(&st);
      }
@@ -312,8 +335,7 @@ cb_playback_status_get(void *data, Eldbus_Pending *p EINA_UNUSED,
 
    if (error_info)
      {
-        fprintf(stderr, "MUSIC-CONTROL: %s %s",
-                error_info->error, error_info->message);
+        printf("MUSIC-CONTROL: %s %s", error_info->error, error_info->message);
         return;
      }
 
@@ -356,6 +378,90 @@ prop_changed(void *data, Eldbus_Proxy *proxy EINA_UNUSED, void *event_info)
      }
 }
 
+static void _bus_list(E_Music_Control_Module_Context *ctxt);
+
+static Eina_Bool
+_poll_dbus_cb(void *data)
+{
+   E_Music_Control_Module_Context *ctxt = data;
+   _bus_list(ctxt);
+   return EINA_FALSE;
+}
+
+static void
+_bus_list_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
+{
+   E_Music_Control_Module_Context *ctxt = data;
+   Eldbus_Message_Iter *array = NULL;
+   const char *bus;
+   char *bus_name = NULL;
+   int i, chosen = -1, auto_chosen = -1;
+
+   ctxt->bus_list_pend = NULL;
+   if (!eldbus_message_arguments_get(msg, "as", &array)) return;
+   while (eldbus_message_iter_get_and_next(array, 's', &bus))
+     {
+        if ((!bus) || (bus[0] == ':')) continue;
+        if ((ctxt->config) &&
+            (ctxt->config->player_selected >= 0) &&
+            (ctxt->config->player_selected < PLAYER_COUNT) &&
+            (e_util_glob_match(bus, music_player_players[ctxt->config->player_selected].dbus_name)))
+          {
+             if (bus_name) free(bus_name);
+             bus_name = strdup(bus);
+             chosen = ctxt->config->player_selected;
+          }
+        else
+          {
+             for (i = 0; music_player_players[i].name; i++)
+               {
+                  if (e_util_glob_match(bus, music_player_players[i].dbus_name))
+                    {
+                       if (bus_name) free(bus_name);
+                       bus_name = strdup(bus);
+                       auto_chosen = i;
+                       break;
+                    }
+               }
+          }
+     }
+   if (chosen < 0) chosen = auto_chosen;
+   if (chosen < 0)
+     {
+        eina_stringshare_del(ctxt->dbus_name);
+        ctxt->dbus_name = NULL;
+        if (ctxt->poll_timer) ecore_timer_del(ctxt->poll_timer);
+        ctxt->poll_timer = ecore_timer_add(5.0, _poll_dbus_cb, ctxt);
+        return;
+     }
+   if ((!ctxt->dbus_name) ||
+       (!bus_name) ||
+       (!!strcmp(ctxt->dbus_name, bus_name)))
+     {
+        eina_stringshare_del(ctxt->dbus_name);
+        ctxt->dbus_name = NULL;
+        if (bus_name)
+          {
+             music_control_dbus_init(ctxt, bus_name);
+             free(bus_name);
+             if (ctxt->poll_timer) ecore_timer_del(ctxt->poll_timer);
+             ctxt->poll_timer = NULL;
+          }
+        else
+          {
+             if (ctxt->poll_timer) ecore_timer_del(ctxt->poll_timer);
+             ctxt->poll_timer = ecore_timer_add(5.0, _poll_dbus_cb, ctxt);
+          }
+     }
+}
+
+static void
+_bus_list(E_Music_Control_Module_Context *ctxt)
+{
+   if (ctxt->bus_list_pend) eldbus_pending_cancel(ctxt->bus_list_pend);
+   ctxt->bus_list_pend = eldbus_names_list(ctxt->conn, _bus_list_cb, ctxt);
+}
+
 static void
 cb_name_owner_changed(void *data,
                       const char *bus EINA_UNUSED,
@@ -373,6 +479,8 @@ cb_name_owner_changed(void *data,
           (ctxt->mpris2_player, cb_metadata_get, ctxt);
         have_player = EINA_TRUE;
      }
+   else
+     _bus_list(ctxt);
 }
 
 void
@@ -420,10 +528,9 @@ music_control_dbus_init(E_Music_Control_Module_Context *ctxt, const char *bus)
      ctxt->conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctxt->conn, EINA_FALSE);
 
-   if (ctxt->mpris2_player)
-     mpris_media_player2_proxy_unref(ctxt->mpris2_player);
-   if (ctxt->mrpis2)
-     media_player2_player_proxy_unref(ctxt->mrpis2);
+   if (ctxt->mpris2_player) mpris_media_player2_proxy_unref(ctxt->mpris2_player);
+   if (ctxt->mrpis2) media_player2_player_proxy_unref(ctxt->mrpis2);
+
    ctxt->mrpis2 = mpris_media_player2_proxy_get(ctxt->conn, bus, NULL);
    ctxt->mpris2_player = media_player2_player_proxy_get(ctxt->conn, bus, NULL);
    eldbus_proxy_event_callback_add(ctxt->mpris2_player,
@@ -465,17 +572,11 @@ e_modapi_init(E_Module *m)
         ctxt->config->player_selected = -1;
      }
 
-   if (ctxt->config->player_selected < 0)
-     {
-     }
-   else
-     {
-        if (ctxt->config->player_selected >= PLAYER_COUNT)
-          ctxt->config->player_selected = PLAYER_COUNT - 1;
-        if (!music_control_dbus_init
-            (ctxt, music_player_players[ctxt->config->player_selected].dbus_name))
-          goto error_dbus_bus_get;
-     }
+   if (ctxt->config->player_selected >= PLAYER_COUNT)
+     ctxt->config->player_selected = PLAYER_COUNT - 1;
+   if (!ctxt->conn)
+     ctxt->conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
+   _bus_list(ctxt);
    music_control_mod = m;
 
    e_gadcon_provider_register(&_gc_class);
@@ -484,10 +585,6 @@ e_modapi_init(E_Module *m)
      desklock_handler = ecore_event_handler_add(E_EVENT_DESKLOCK,
                                                 _desklock_cb, ctxt);
    return ctxt;
-
-error_dbus_bus_get:
-   free(ctxt);
-   return NULL;
 }
 
 E_API int
@@ -502,11 +599,19 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    E_FREE_FUNC(ctxt->meta_artist, eina_stringshare_del);
    E_FREE_FUNC(ctxt->meta_cover, eina_stringshare_del);
 
+   if (ctxt->poll_timer) ecore_timer_del(ctxt->poll_timer);
+   ctxt->poll_timer = NULL;
+
    free(ctxt->config);
    E_CONFIG_DD_FREE(ctxt->conf_edd);
 
    E_FREE_FUNC(desklock_handler, ecore_event_handler_del);
 
+   if (ctxt->bus_list_pend)
+     {
+        eldbus_pending_cancel(ctxt->bus_list_pend);
+        ctxt->bus_list_pend = NULL;
+     }
    eldbus_name_owner_changed_callback_del
      (ctxt->conn, ctxt->dbus_name, cb_name_owner_changed, ctxt);
    eina_stringshare_del(ctxt->dbus_name);
@@ -517,7 +622,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    e_gadcon_provider_unregister(&_gc_class);
 
    if (eina_list_count(ctxt->instances))
-     fprintf(stderr, "MUSIC-CONTROL: Live instances.");
+     printf("MUSIC-CONTROL: Live instances.");
 
    free(ctxt);
    music_control_mod = NULL;
