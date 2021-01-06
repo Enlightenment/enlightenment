@@ -7,6 +7,7 @@
 static E_Module *music_control_mod = NULL;
 static Eina_Bool was_playing_before_lock = EINA_FALSE;
 static const char _e_music_control_Name[] = N_("Music controller");
+static Ecore_Event_Handler *music_control_powersave_event_handler = NULL;
 static Eina_Bool have_player = EINA_FALSE;
 
 const Player music_player_players[] =
@@ -389,6 +390,22 @@ _poll_dbus_cb(void *data)
 }
 
 static void
+_timer_redo(E_Music_Control_Module_Context *ctxt)
+{
+   E_Powersave_Mode pm;
+   double t = 5.0;
+
+   if (ctxt->poll_timer) ecore_timer_del(ctxt->poll_timer);
+   pm = e_powersave_mode_get();
+   if (e_powersave_mode_screen_get() > pm) pm = e_powersave_mode_screen_get();
+   if      (pm >= E_POWERSAVE_MODE_FREEZE)  t = 3600.0;
+   else if (pm >= E_POWERSAVE_MODE_EXTREME) t =  600.0;
+   else if (pm >= E_POWERSAVE_MODE_HIGH)    t =   10.0;
+   else                                     t =    5.0;
+   ctxt->poll_timer = ecore_timer_add(t, _poll_dbus_cb, ctxt);
+}
+
+static void
 _bus_list_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
 {
    E_Music_Control_Module_Context *ctxt = data;
@@ -430,8 +447,7 @@ _bus_list_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA
      {
         eina_stringshare_del(ctxt->dbus_name);
         ctxt->dbus_name = NULL;
-        if (ctxt->poll_timer) ecore_timer_del(ctxt->poll_timer);
-        ctxt->poll_timer = ecore_timer_add(5.0, _poll_dbus_cb, ctxt);
+        _timer_redo(ctxt);
         return;
      }
    if ((!ctxt->dbus_name) ||
@@ -447,11 +463,7 @@ _bus_list_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA
              if (ctxt->poll_timer) ecore_timer_del(ctxt->poll_timer);
              ctxt->poll_timer = NULL;
           }
-        else
-          {
-             if (ctxt->poll_timer) ecore_timer_del(ctxt->poll_timer);
-             ctxt->poll_timer = ecore_timer_add(5.0, _poll_dbus_cb, ctxt);
-          }
+        else _timer_redo(ctxt);
      }
 }
 
@@ -521,6 +533,15 @@ music_control_launch(E_Music_Control_Instance *inst)
      }
 }
 
+static Eina_Bool
+_powersave_change_cb(void *data, int type EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Music_Control_Module_Context *ctxt = data;
+
+   _timer_redo(ctxt);
+   return ECORE_CALLBACK_PASS_ON;
+}
+
 Eina_Bool
 music_control_dbus_init(E_Music_Control_Module_Context *ctxt, const char *bus)
 {
@@ -584,6 +605,9 @@ e_modapi_init(E_Module *m)
    if (ctxt->config->pause_on_desklock)
      desklock_handler = ecore_event_handler_add(E_EVENT_DESKLOCK,
                                                 _desklock_cb, ctxt);
+   music_control_powersave_event_handler =
+     ecore_event_handler_add(E_EVENT_POWERSAVE_UPDATE,
+                             _powersave_change_cb, ctxt);
    return ctxt;
 }
 
@@ -593,6 +617,9 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    E_Music_Control_Module_Context *ctxt;
    EINA_SAFETY_ON_NULL_RETURN_VAL(music_control_mod, 0);
    ctxt = music_control_mod->data;
+
+   ecore_event_handler_del(music_control_powersave_event_handler);
+   music_control_powersave_event_handler = NULL;
 
    E_FREE_FUNC(ctxt->meta_title, eina_stringshare_del);
    E_FREE_FUNC(ctxt->meta_album, eina_stringshare_del);
