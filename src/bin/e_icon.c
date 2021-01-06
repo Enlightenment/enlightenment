@@ -6,22 +6,27 @@ typedef struct _Cache        Cache;
 
 struct _E_Smart_Data
 {
-   Evas_Coord    x, y, w, h;
-   Evas_Object  *obj;
-   Evas_Object  *eventarea;
-   const char   *fdo;
-   Ecore_Timer  *guessing_animation;
-   Ecore_Timer  *timer, *fdo_reload_timer;
-   double        last_resize;
-   int           size;
-   int           frame, frame_count;
-   unsigned char fill_inside E_BITFIELD;
-   unsigned char scale_up E_BITFIELD;
-   unsigned char preload E_BITFIELD;
-   unsigned char loading E_BITFIELD;
-   unsigned char animated E_BITFIELD;
-   unsigned char invalid E_BITFIELD;
-   Eina_Bool     edje E_BITFIELD;
+   Evas_Coord     x, y, w, h;
+   Evas_Object   *obj;
+   Evas_Object   *eventarea;
+   const char    *fdo;
+   const char    *url;
+   const char    *tmp_file;
+   Ecore_Con_Url       *con_url;
+   Ecore_Event_Handler *url_hand;
+   Ecore_Timer   *guessing_animation;
+   Ecore_Timer   *timer, *fdo_reload_timer;
+   double         last_resize;
+   int            size;
+   int            frame, frame_count;
+   int            tmp_fd;
+   unsigned char  fill_inside E_BITFIELD;
+   unsigned char  scale_up E_BITFIELD;
+   unsigned char  preload E_BITFIELD;
+   unsigned char  loading E_BITFIELD;
+   unsigned char  animated E_BITFIELD;
+   unsigned char  invalid E_BITFIELD;
+   unsigned char  edje E_BITFIELD;
 };
 
 struct _Cache_Item
@@ -137,6 +142,19 @@ _handle_anim(E_Smart_Data *sd)
    return 1;
 }
 
+static Eina_Bool
+_url_complete_cb(void *data, int type EINA_UNUSED, void *event_info)
+{
+   Evas_Object *obj = data;
+   E_Smart_Data *sd = evas_object_smart_data_get(obj);
+   Ecore_Con_Event_Url_Complete *ev = event_info;
+
+   if (!sd) return EINA_TRUE;
+   if (ev->url_con != sd->con_url) return EINA_TRUE;
+   e_icon_file_set(obj, sd->tmp_file);
+   return EINA_FALSE;
+}
+
 E_API void
 e_icon_file_set(Evas_Object *obj, const char *file)
 {
@@ -163,6 +181,36 @@ e_icon_file_set(Evas_Object *obj, const char *file)
         eina_stringshare_del(sd->fdo);
         sd->fdo = NULL;
      }
+   if (sd->url)
+     {
+        eina_stringshare_del(sd->url);
+        sd->url = NULL;
+     }
+   if (sd->con_url)
+     {
+        ecore_con_url_free(sd->con_url);
+        sd->con_url = NULL;
+     }
+   if (sd->tmp_file)
+     {
+        if (!!strcmp(file, sd->tmp_file))
+          {
+             // if we set a file that is not the tmp file - delete tmp file
+             ecore_file_unlink(sd->tmp_file);
+             eina_stringshare_del(sd->tmp_file);
+             sd->tmp_file = NULL;
+          }
+     }
+   if (sd->tmp_fd >= 0)
+     {
+        close(sd->tmp_fd);
+        sd->tmp_fd = -1;
+     }
+   if (sd->url_hand)
+     {
+        ecore_event_handler_del(sd->url_hand);
+        sd->url_hand = NULL;
+     }
 
    if (sd->timer) ecore_timer_del(sd->timer);
    sd->timer = NULL;
@@ -179,7 +227,37 @@ e_icon_file_set(Evas_Object *obj, const char *file)
 
    if (sd->preload)
      evas_object_image_load_head_skip_set(sd->obj, EINA_TRUE);
-   evas_object_image_file_set(sd->obj, file, NULL);
+   if ((!strncasecmp(file, "http://", 7)) ||
+       (!strncasecmp(file, "https://", 8)))
+     {
+        char buf[4096];
+
+        snprintf(buf, sizeof(buf), "/tmp/.e-icon-tmp-XXXXXX");
+        sd->tmp_fd = mkstemp(buf);
+        if (sd->tmp_fd >= 0)
+          {
+             sd->url = eina_stringshare_add(file);
+             sd->tmp_file = eina_stringshare_add(buf);
+             sd->con_url = ecore_con_url_new(file);
+             ecore_con_url_fd_set(sd->con_url, sd->tmp_fd);
+             if (!ecore_con_url_get(sd->con_url))
+               {
+                  ecore_file_unlink(buf);
+                  close(sd->tmp_fd);
+                  ecore_con_url_free(sd->con_url);
+                  sd->tmp_fd = -1;
+                  sd->con_url = NULL;
+               }
+             else
+               {
+                  sd->url_hand = ecore_event_handler_add
+                    (ECORE_CON_EVENT_URL_COMPLETE, _url_complete_cb, obj);
+               }
+          }
+        return;
+     }
+   else
+     evas_object_image_file_set(sd->obj, file, NULL);
 //   if (evas_object_image_load_error_get(sd->obj) != EVAS_LOAD_ERROR_NONE)
 //     return EINA_FALSE;
 
@@ -212,6 +290,32 @@ e_icon_file_key_set(Evas_Object *obj, const char *file, const char *key)
      {
         eina_stringshare_del(sd->fdo);
         sd->fdo = NULL;
+     }
+   if (sd->url)
+     {
+        eina_stringshare_del(sd->url);
+        sd->url = NULL;
+     }
+   if (sd->con_url)
+     {
+        ecore_con_url_free(sd->con_url);
+        sd->con_url = NULL;
+     }
+   if (sd->tmp_file)
+     {
+        ecore_file_unlink(sd->tmp_file);
+        eina_stringshare_del(sd->tmp_file);
+        sd->tmp_file = NULL;
+     }
+   if (sd->tmp_fd >= 0)
+     {
+        close(sd->tmp_fd);
+        sd->tmp_fd = -1;
+     }
+   if (sd->url_hand)
+     {
+        ecore_event_handler_del(sd->url_hand);
+        sd->url_hand = NULL;
      }
 
    if (sd->timer) ecore_timer_del(sd->timer);
@@ -261,6 +365,32 @@ e_icon_edje_object_set(Evas_Object *obj, Evas_Object *edje)
         eina_stringshare_del(sd->fdo);
         sd->fdo = NULL;
      }
+   if (sd->url)
+     {
+        eina_stringshare_del(sd->url);
+        sd->url = NULL;
+     }
+   if (sd->con_url)
+     {
+        ecore_con_url_free(sd->con_url);
+        sd->con_url = NULL;
+     }
+   if (sd->tmp_file)
+     {
+        ecore_file_unlink(sd->tmp_file);
+        eina_stringshare_del(sd->tmp_file);
+        sd->tmp_file = NULL;
+     }
+   if (sd->tmp_fd >= 0)
+     {
+        close(sd->tmp_fd);
+        sd->tmp_fd = -1;
+     }
+   if (sd->url_hand)
+     {
+        ecore_event_handler_del(sd->url_hand);
+        sd->url_hand = NULL;
+     }
 
    if (sd->timer) ecore_timer_del(sd->timer);
    sd->timer = NULL;
@@ -303,6 +433,32 @@ e_icon_file_edje_set(Evas_Object *obj, const char *file, const char *part)
      {
         eina_stringshare_del(sd->fdo);
         sd->fdo = NULL;
+     }
+   if (sd->url)
+     {
+        eina_stringshare_del(sd->url);
+        sd->url = NULL;
+     }
+   if (sd->con_url)
+     {
+        ecore_con_url_free(sd->con_url);
+        sd->con_url = NULL;
+     }
+   if (sd->tmp_file)
+     {
+        ecore_file_unlink(sd->tmp_file);
+        eina_stringshare_del(sd->tmp_file);
+        sd->tmp_file = NULL;
+     }
+   if (sd->tmp_fd >= 0)
+     {
+        close(sd->tmp_fd);
+        sd->tmp_fd = -1;
+     }
+   if (sd->url_hand)
+     {
+        ecore_event_handler_del(sd->url_hand);
+        sd->url_hand = NULL;
      }
 
    if (sd->timer) ecore_timer_del(sd->timer);
@@ -772,6 +928,7 @@ _e_icon_smart_add(Evas_Object *obj)
    sd->scale_up = 1;
    sd->size = 64;
    sd->preload = 0;
+   sd->tmp_fd = -1;
    evas_object_smart_member_add(sd->obj, obj);
    evas_object_smart_data_set(obj, sd);
 }
@@ -788,6 +945,15 @@ _e_icon_smart_del(Evas_Object *obj)
    if (sd->fdo_reload_timer) ecore_timer_del(sd->fdo_reload_timer);
    if (sd->timer) ecore_timer_del(sd->timer);
    if (sd->guessing_animation) ecore_timer_del(sd->guessing_animation);
+   if (sd->url) eina_stringshare_del(sd->url);
+   if (sd->con_url) ecore_con_url_free(sd->con_url);
+   if (sd->tmp_file)
+     {
+        ecore_file_unlink(sd->tmp_file);
+        eina_stringshare_del(sd->tmp_file);
+     }
+   if (sd->tmp_fd >= 0) close(sd->tmp_fd);
+   if (sd->url_hand) ecore_event_handler_del(sd->url_hand);
    evas_object_smart_data_set(obj, NULL);
    memset(sd, 0, sizeof(*sd));
    free(sd);
