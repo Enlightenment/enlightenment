@@ -1823,20 +1823,6 @@ _e_shelf_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA
 }
 
 static Eina_Bool
-_e_shelf_cb_mouse_move_autohide_fuck_systray(E_Shelf *es)
-{
-   int x, y;
-   Ecore_Event_Mouse_Move ev;
-
-   memset(&ev, 0, sizeof(Ecore_Event_Mouse_Move));
-   ecore_evas_pointer_xy_get(e_comp->ee, &x, &y);
-   ev.root.x = e_comp_canvas_x_root_unadjust(x);
-   ev.root.y = e_comp_canvas_y_root_unadjust(y);
-   _e_shelf_cb_mouse_in(es, ECORE_EVENT_MOUSE_MOVE, &ev);
-   return EINA_TRUE;
-}
-
-static Eina_Bool
 _e_shelf_cb_mouse_in(void *data, int type, void *event)
 {
    E_Shelf *es;
@@ -1949,11 +1935,6 @@ _e_shelf_cb_mouse_in(void *data, int type, void *event)
         Eina_Bool inside = EINA_FALSE;
 
         ev = event;
-        /* FIXME: checking every mouse movement here is only necessary because of
-         * shitty systray embedding xwindows into itself which generates unreliable
-         * mouse in/out events. in the future, when we remove systray, we should go
-         * back to mouse in/out events
-         */
         inside = E_INSIDE(e_comp_canvas_x_root_adjust(ev->root.x),
                           e_comp_canvas_y_root_adjust(ev->root.y),
                           es->zone->x, es->zone->y, es->zone->w + 4, es->zone->h + 4);
@@ -1969,8 +1950,6 @@ _e_shelf_cb_mouse_in(void *data, int type, void *event)
           {
              if (es->autohide_timer)
                ecore_timer_loop_reset(es->autohide_timer);
-             else
-               es->autohide_timer = ecore_timer_loop_add(0.5, (Ecore_Task_Cb)_e_shelf_cb_mouse_move_autohide_fuck_systray, es);
           }
         if (inside)
           {
@@ -2014,21 +1993,6 @@ _e_shelf_cb_mouse_out(void *data, int type, void *event)
         int x, y, w, h;
 
         if (ev->win != e_comp->ee_win) return ECORE_CALLBACK_PASS_ON;
-
-        /*
-         * ECORE_X_EVENT_DETAIL_INFERIOR means focus went to children windows
-         * so do not hide shelf on this case (ie: systray base window, or
-         * embedded icons).
-         *
-         * Problem: when child window get mouse out, shelf window will
-         * not get mouse out itself, so it will stay visible and
-         * autohide will fail.
-         */
-        if (ev->detail == ECORE_X_EVENT_DETAIL_INFERIOR)
-          {
-             //fprintf(stderr, "SYSTRAYED\n");
-             return ECORE_CALLBACK_PASS_ON;
-          }
 
         evas_object_geometry_get(es->o_event, &x, &y, &w, &h);
         if (!E_INSIDE(ev->x, ev->y, x, y, w, h))

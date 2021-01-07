@@ -603,7 +603,6 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
    title = cw->ec->icccm.title;
    skip = (title && (!strncmp(title, "noshadow", 8)));
 
-   /* skipping here is mostly a hack for systray because I hate it */
    if (!skip)
      {
         EINA_LIST_FOREACH(list, l, m)

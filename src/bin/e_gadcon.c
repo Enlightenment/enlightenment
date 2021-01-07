@@ -2374,9 +2374,6 @@ _e_gadcon_client_drag_begin(E_Gadcon_Client *gcc, int x, int y)
    if (gcc->gadcon->drag_gcc) return;
    if (!zone) return;
 
-   if (!e_util_strcmp(gcc->client_class->name, "systray"))
-     return;
-
    e_gadcon_client_drag_set(gcc);
 
    e_object_ref(E_OBJECT(gcc));
@@ -2708,10 +2705,6 @@ _e_gadcon_client_move_go(E_Gadcon_Client *gcc)
    int changes = 0;
 
    if (!gcc->moving) return;
-   /* we need to get output not canvas because things like systray
-      can reparent another window so we get no position here */
-   /* maybe we should better grab mouse while move resize is active...*/
-   //evas_pointer_canvas_xy_get(gcc->gadcon->evas, &cx, &cy);
    if (gcc->gadcon->toolbar)
      evas_pointer_canvas_xy_get(gcc->gadcon->evas, &cx, &cy);
    else
