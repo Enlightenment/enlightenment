@@ -50,11 +50,23 @@ _metadata_update(E_Music_Control_Instance *inst)
    img = edje_object_part_swallow_get(inst->content_popup, "cover_swallow");
    if (img)
      {
-        e_comp_object_util_del_list_remove(inst->popup->comp_object, img);
-        evas_object_del(img);
+        if (inst->ctxt->meta_cover_prev != inst->ctxt->meta_cover)
+          {
+             e_comp_object_util_del_list_remove(inst->popup->comp_object, img);
+             evas_object_del(img);
+             img = NULL;
+             if (inst->ctxt->meta_cover_prev)
+               {
+                  eina_stringshare_del(inst->ctxt->meta_cover_prev);
+                  inst->ctxt->meta_cover_prev = NULL;
+               }
+          }
      }
-   if (inst->ctxt->meta_cover)
+   if ((!img) && (inst->ctxt->meta_cover))
      {
+        if (inst->ctxt->meta_cover)
+          inst->ctxt->meta_cover_prev = eina_stringshare_add(inst->ctxt->meta_cover);
+
         img = e_icon_add(evas_object_evas_get(inst->content_popup));
         e_icon_scale_size_set(img, 512);
         e_icon_scale_up_set(img, EINA_TRUE);

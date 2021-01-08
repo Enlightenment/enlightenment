@@ -625,6 +625,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    E_FREE_FUNC(ctxt->meta_album, eina_stringshare_del);
    E_FREE_FUNC(ctxt->meta_artist, eina_stringshare_del);
    E_FREE_FUNC(ctxt->meta_cover, eina_stringshare_del);
+   E_FREE_FUNC(ctxt->meta_cover_prev, eina_stringshare_del);
 
    if (ctxt->poll_timer) ecore_timer_del(ctxt->poll_timer);
    ctxt->poll_timer = NULL;

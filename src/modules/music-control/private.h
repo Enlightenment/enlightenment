@@ -22,6 +22,7 @@ typedef struct _E_Music_Control_Module_Context
    Eina_Stringshare *meta_album;
    Eina_Stringshare *meta_title;
    Eina_Stringshare *meta_cover;
+   Eina_Stringshare *meta_cover_prev;
    Eldbus_Proxy *mrpis2;
    Eldbus_Proxy *mpris2_player;
    E_Config_DD *conf_edd;
