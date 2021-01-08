@@ -563,7 +563,7 @@ _e_xsettings_font_set(void)
              if      (size < 5)   size  =    5; // don't allow too small
              else if (size > 100) size  =  100; // don't allow silly sizes
 
-             _dbl_to_str(size_buf, sizeof(size_buf), (double)size * 0.75, 0);
+             _dbl_to_str(size_buf, sizeof(size_buf), (double)size, 0);
 
              buf = eina_strbuf_new();
              eina_strbuf_append(buf, efp->name);
