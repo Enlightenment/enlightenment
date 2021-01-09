@@ -12,6 +12,8 @@ _pos_update(E_Music_Control_Instance *inst)
    msg->count = 2;
    msg->val[0] = inst->ctxt->position;
    msg->val[1] = inst->ctxt->meta_length;
+   if (msg->val[0] < 0.0) msg->val[0] = 0.0;
+   if (msg->val[0] > msg->val[1]) msg->val[0] = msg->val[1];
    edje_object_message_send(inst->content_popup, EDJE_MESSAGE_FLOAT_SET, 1, msg);
 }
 

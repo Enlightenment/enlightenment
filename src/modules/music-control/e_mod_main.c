@@ -405,6 +405,7 @@ prop_changed(void *data, Eldbus_Proxy *proxy EINA_UNUSED, void *event_info)
         long long llval = 0;
 
         eina_value_get(value, &llval);
+        if (llval < 0) llval = 0;
         ctxt->position = (double)llval / 1000000.0;
         music_control_pos_update(ctxt);
      }
