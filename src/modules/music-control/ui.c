@@ -3,6 +3,19 @@
 extern Player music_player_players[];
 
 static void
+_pos_update(E_Music_Control_Instance *inst)
+{
+   Edje_Message_Float_Set *msg;
+
+   if (!inst->popup) return;
+   msg = alloca(sizeof(Edje_Message_Float_Set) + (2 * sizeof(double)));
+   msg->count = 2;
+   msg->val[0] = inst->ctxt->position;
+   msg->val[1] = inst->ctxt->meta_length;
+   edje_object_message_send(inst->content_popup, EDJE_MESSAGE_FLOAT_SET, 1, msg);
+}
+
+static void
 _play_state_update(E_Music_Control_Instance *inst, Eina_Bool without_delay)
 {
    if (!inst->popup) return;
@@ -16,7 +29,13 @@ _play_state_update(E_Music_Control_Instance *inst, Eina_Bool without_delay)
      edje_object_signal_emit(inst->content_popup, "btn,state,image,play,no_delay", "play");
    else
      edje_object_signal_emit(inst->content_popup, "btn,state,image,play", "play");
+   if (inst->ctxt->loop)
+     edje_object_signal_emit(inst->content_popup, "loop,state,on", "play");
+   else
+     edje_object_signal_emit(inst->content_popup, "loop,state,off", "play");
+   _pos_update(inst);
 }
+
 
 void
 music_control_state_update_all(E_Music_Control_Module_Context *ctxt)
@@ -25,7 +44,21 @@ music_control_state_update_all(E_Music_Control_Module_Context *ctxt)
    Eina_List *list;
 
    EINA_LIST_FOREACH(ctxt->instances, list, inst)
-     _play_state_update(inst, EINA_FALSE);
+     {
+        _play_state_update(inst, EINA_FALSE);
+     }
+}
+
+void
+music_control_pos_update(E_Music_Control_Module_Context *ctxt)
+{
+   E_Music_Control_Instance *inst;
+   Eina_List *list;
+
+   EINA_LIST_FOREACH(ctxt->instances, list, inst)
+     {
+        _pos_update(inst);
+     }
 }
 
 static void
@@ -146,6 +179,7 @@ _popup_new(E_Music_Control_Instance *inst)
    _player_name_update(inst);
    _play_state_update(inst, EINA_TRUE);
    _metadata_update(inst);
+   _pos_update(inst);
    e_comp_object_util_autoclose(inst->popup->comp_object,
                                 _popup_autoclose_cb, NULL, inst);
    e_gadcon_popup_show(inst->popup);

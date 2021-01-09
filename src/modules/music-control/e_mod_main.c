@@ -238,6 +238,7 @@ parse_metadata(E_Music_Control_Module_Context *ctxt, Eina_Value *array)
    for (i = 0; i < eina_value_array_count(array); i++)
      {
         const char *key = NULL, *str_val;
+        long long llval;
         char *str_markup;
         Eina_Value st, subst;
         Efreet_Uri *uri;
@@ -318,8 +319,17 @@ parse_metadata(E_Music_Control_Module_Context *ctxt, Eina_Value *array)
                     }
                   eina_value_flush(&subst);
                }
+             else if (!strcmp(key, "mpris:length"))
+               {
+                  llval = -1;
+                  if (eina_value_struct_value_get(&st, "arg1", &subst) &&
+                      eina_value_struct_get(&subst, "arg0", &llval))
+                    {
+                       ctxt->meta_length = (double)llval / 1000000.0;
+                    }
+                  eina_value_flush(&subst);
+               }
              // FIXME: to handle in future:
-             // mpris:length - int64
              // xesam:url - s
           }
         eina_value_flush(&st);
@@ -372,10 +382,30 @@ prop_changed(void *data, Eldbus_Proxy *proxy EINA_UNUSED, void *event_info)
         else ctxt->playing = EINA_FALSE;
         music_control_state_update_all(ctxt);
      }
+   else if (!strcmp(event->name, "LoopStatus"))
+     {
+        const Eina_Value *value = event->value;
+        const char *status;
+
+        eina_value_get(value, &status);
+        if (!strcmp(status, "None")) ctxt->loop = EINA_FALSE;
+        else if (!strcmp(status, "Track")) ctxt->loop = EINA_TRUE;
+        if (!strcmp(status, "Playlist")) ctxt->loop = EINA_TRUE;
+        music_control_state_update_all(ctxt);
+     }
    else if (!strcmp(event->name, "Metadata"))
      {
         parse_metadata(ctxt, (Eina_Value*)event->value);
         music_control_metadata_update_all(ctxt);
+     }
+   else if (!strcmp(event->name, "Position"))
+     {
+        const Eina_Value *value = event->value;
+        long long llval = 0;
+
+        eina_value_get(value, &llval);
+        ctxt->position = (double)llval / 1000000.0;
+        music_control_pos_update(ctxt);
      }
 }
 
