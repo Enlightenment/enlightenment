@@ -325,6 +325,7 @@ parse_metadata(E_Music_Control_Module_Context *ctxt, Eina_Value *array)
                   if (eina_value_struct_value_get(&st, "arg1", &subst) &&
                       eina_value_struct_get(&subst, "arg0", &llval))
                     {
+                       if (llval < 0) llval = 0;
                        ctxt->meta_length = (double)llval / 1000000.0;
                     }
                   eina_value_flush(&subst);
