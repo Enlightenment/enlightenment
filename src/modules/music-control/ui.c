@@ -103,6 +103,7 @@ _metadata_update(E_Music_Control_Instance *inst)
           inst->ctxt->meta_cover_prev = eina_stringshare_add(inst->ctxt->meta_cover);
 
         img = e_icon_add(evas_object_evas_get(inst->content_popup));
+        e_icon_preload_set(img, EINA_TRUE);
         e_icon_scale_size_set(img, 512);
         e_icon_scale_up_set(img, EINA_TRUE);
         e_icon_fill_inside_set(img, EINA_FALSE);
