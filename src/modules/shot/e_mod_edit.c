@@ -1805,7 +1805,7 @@ ui_edit(Evas_Object *window, Evas_Object *o_bg, E_Zone *zone,
         Evas_Object **o_img_ret)
 {
    Evas *evas, *evas2;
-   Evas_Object *o, *tb, *tb2, *sc, *fr, *bx, *radg, *rad, *bx_ret;
+   Evas_Object *o, *tb, *tb2, *sc, *fr, *bx, *radg, *rad, *bx_ret, *sc2;
    int w, h;
 
    o = win = window;
@@ -1830,10 +1830,11 @@ ui_edit(Evas_Object *window, Evas_Object *o_bg, E_Zone *zone,
           }
      }
    w = (sw * zooms[zoom]) / 1000;
-   if ((zone) && (w > (zone->w / 4))) w = zone->w / 4;
-   if (w < ELM_SCALE_SIZE(400)) w = 400;
+   if ((zone) && (w > (zone->w / 8))) w = zone->w / 8;
+   if (w < ELM_SCALE_SIZE(360)) w = ELM_SCALE_SIZE(360);
    h = (w * sh) / sw;
-   if ((zone) && (h > (zone->h / 4))) h = zone->h / 4;
+   if ((zone) && (h > (zone->h / 8))) h = zone->h / 8;
+   if (h < ELM_SCALE_SIZE(280)) h = ELM_SCALE_SIZE(280);
 
    if (!ec)
      {
@@ -1905,7 +1906,7 @@ ui_edit(Evas_Object *window, Evas_Object *o_bg, E_Zone *zone,
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_min_set(o, w, h);
    evas_object_pass_events_set(o, EINA_TRUE);
-   elm_table_pack(tb, o, 0, 0, 6, 5);
+   elm_table_pack(tb, o, 0, 0, 5, 5);
 
    sc = o = elm_scroller_add(win);
    elm_object_style_set(o, "noclip");
@@ -1922,10 +1923,19 @@ ui_edit(Evas_Object *window, Evas_Object *o_bg, E_Zone *zone,
    elm_table_pack(tb, o, 0, 0, 5, 5);
    evas_object_show(o);
 
+   sc2 = o = elm_scroller_add(win);
+   elm_object_style_set(o, "noclip");
+   elm_scroller_content_min_limit(o, EINA_TRUE, EINA_FALSE);
+   elm_scroller_gravity_set(o, 0.0, 0.0);
+   evas_object_size_hint_weight_set(o, 0.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_table_pack(tb, o, 5, 0, 1, 5);
+   evas_object_show(o);
+
    bx_ret = bx = o = elm_box_add(win);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(o, 0.0, EVAS_HINT_EXPAND);
-   elm_table_pack(tb, o, 5, 0, 1, 5);
+   elm_object_content_set(sc2, o);
    evas_object_show(o);
 
    fr = o = elm_frame_add(win);

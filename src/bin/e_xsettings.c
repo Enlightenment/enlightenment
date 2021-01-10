@@ -63,6 +63,11 @@ static const char _setting_icon_theme_name[] = "Net/IconThemeName";
 static const char _setting_theme_name[] = "Net/ThemeName";
 static const char _setting_font_name[] = "Gtk/FontName";
 static const char _setting_xft_dpi[] = "Xft/DPI";
+static const char _setting_xft_antialias[] = "Xft/Antialias";
+static const char _setting_xft_autohint[] = "Xft/Autohint";
+static const char _setting_xft_hinting[] = "Xft/Hinting";
+static const char _setting_xft_hintstyle[] = "Xft/HintStyle";
+static const char _setting_xft_rgba[] = "Xft/RGBA";
 static const char *_setting_theme = NULL;
 
 static void _e_xsettings_done_cb(void *data, Eio_File *handler, const Eina_Stat *stat);
@@ -593,6 +598,19 @@ _e_xsettings_dpi_set(void)
      _e_xsettings_int_set(_setting_xft_dpi,
                           (double)e_config->scale.xapp_base_dpi * e_scale * 1024.0,
                           EINA_TRUE);
+   _e_xsettings_int_set(_setting_xft_antialias,
+                        1,
+                        EINA_TRUE);
+   _e_xsettings_int_set(_setting_xft_hinting,
+                        1,
+                        EINA_TRUE);
+   _e_xsettings_int_set(_setting_xft_autohint,
+                        0,
+                        EINA_TRUE);
+   _e_xsettings_string_set(_setting_xft_hintstyle,
+                           "hintfull");
+   _e_xsettings_string_set(_setting_xft_rgba,
+                           "none");
 }
 
 static void
