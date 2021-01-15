@@ -324,3 +324,7 @@ TODO:
   * have object stash for adding basic objects
     * have generic/basic object stash
     * have edje object stash
+* mixer: improve ui in emixer
+  * emixer - support selecting recording dev for apps like pavucontrol
+  * look at showing vu bars per recoridng or maybe output devices
+  * offer ability to show vu output in mixer gadget
