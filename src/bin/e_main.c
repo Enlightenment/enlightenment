@@ -601,6 +601,21 @@ main(int argc, char **argv)
         e_util_env_set("QT_QPA_PLATFORMTHEME", "gtk2");
         e_util_env_set("QT_STYLE_OVERRIDE", "gtk2");
      }
+   // make fonts NOT BLURRY. after 35 (v 38, v40 of interpreter) fonts become
+   // horizontally blurry - they seemingly want the interpreter for hinting to
+   // sub-pixel position on sub-pixel boundaries. this ends up with blurry
+   // horizontal positioning/hinting that is on a sub-pixel. yes - this
+   // requires logging out and logging in to get e to not set this env var.
+   // for now that's good enough. the aim is to get everyone to render the
+   // same way and this does it. efl, gtk, qt, chromium, firtefox, ...
+   if (e_config->scale.set_xapp_dpi)
+     {
+        s = getenv("FREETYPE_PROPERTIES");
+        if (!s)
+          {
+             e_util_env_set("FREETYPE_PROPERTIES", "truetype:interpreter-version=35");
+          }
+     }
 
    TS("E_Env Init");
    if (!e_env_init())
