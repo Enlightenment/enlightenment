@@ -568,14 +568,14 @@ _cb_dev_content_get(void *data, Evas_Object *obj,
 
                   if ((dev) && (dev->unlock))
                     {
-                       bt = util_button_icon_add(obj, "changes-allow-symbolic",
+                       bt = util_button_icon_add(obj, "bt-lock-device-off",
                                                  _("Stop this from being an unlock device"));
                        evas_object_data_set(bt, "genlist", obj);
                        evas_object_smart_callback_add(bt, "clicked", _cb_unlock_stop, o);
                     }
                   else
                     {
-                       bt = util_button_icon_add(obj, "channel-insecure-symbolic",
+                       bt = util_button_icon_add(obj, "bt-lock-device-on",
                                                  _("Make this auto unlock when detected (and lock when not)"));
                        evas_object_data_set(bt, "genlist", obj);
                        evas_object_smart_callback_add(bt, "clicked", _cb_unlock_start, o);
@@ -585,14 +585,14 @@ _cb_dev_content_get(void *data, Evas_Object *obj,
 
                   if ((dev) && (dev->force_connect))
                     {
-                       bt = util_button_icon_add(obj, "checkbox-symbolic",
+                       bt = util_button_icon_add(obj, "bt-force-connect-off",
                                                  _("Stop this device from being forcefully connected"));
                        evas_object_data_set(bt, "genlist", obj);
                        evas_object_smart_callback_add(bt, "clicked", _cb_force_connect_stop, o);
                     }
                   else
                     {
-                       bt = util_button_icon_add(obj, "checkbox-checked-symbolic",
+                       bt = util_button_icon_add(obj, "bt-force-connect-on",
                                                  _("Force this device to be connected when detected"));
                        evas_object_data_set(bt, "genlist", obj);
                        evas_object_smart_callback_add(bt, "clicked", _cb_force_connect_start, o);
@@ -602,14 +602,14 @@ _cb_dev_content_get(void *data, Evas_Object *obj,
                }
              if (o->connected)
                {
-                  bt = util_button_icon_add(obj, "network-offline",
+                  bt = util_button_icon_add(obj, "bt-connect-off",
                                             _("Disconnect this device"));
                   evas_object_data_set(bt, "genlist", obj);
                   evas_object_smart_callback_add(bt, "clicked", _cb_disconnect, o);
                }
              else
                {
-                  bt = util_button_icon_add(obj, "network-transmit-receive",
+                  bt = util_button_icon_add(obj, "bt-connect-on",
                                             _("Connect this device"));
                   evas_object_data_set(bt, "genlist", obj);
                   evas_object_smart_callback_add(bt, "clicked", _cb_connect, o);
@@ -638,7 +638,7 @@ _cb_dev_content_get(void *data, Evas_Object *obj,
           {
              if (!o->agent_request)
                {
-                  bt = util_button_icon_add(obj, "list-add",
+                  bt = util_button_icon_add(obj, "bt-pair-on",
                                             _("Pair with this device"));
                   evas_object_data_set(bt, "genlist", obj);
                   evas_object_smart_callback_add(bt, "clicked", _cb_pair, o);
@@ -648,7 +648,7 @@ _cb_dev_content_get(void *data, Evas_Object *obj,
           }
         else
           {
-             bt = util_button_icon_add(obj, "list-remove",
+             bt = util_button_icon_add(obj, "bt-pair-off",
                                         _("Unpair with this device"));
              evas_object_data_set(bt, "genlist", obj);
              evas_object_smart_callback_add(bt, "clicked", _cb_unpair, o);
@@ -656,7 +656,7 @@ _cb_dev_content_get(void *data, Evas_Object *obj,
              evas_object_show(bt);
           }
 
-        bt = util_button_icon_add(obj, "view-more-horizontal",
+        bt = util_button_icon_add(obj, "bt-expand-right",
                                   _("Cancel"));
         evas_object_data_set(bt, "genlist", obj);
         evas_object_smart_callback_add(bt, "clicked", _cb_flip, o);
@@ -699,7 +699,7 @@ _cb_dev_content_get(void *data, Evas_Object *obj,
                   elm_box_pack_end(bx, tb);
                   evas_object_show(tb);
 
-                  bt = util_button_icon_add(obj, "list-add",
+                  bt = util_button_icon_add(obj, "bt-pair-ok",
                                             _("Pair with this device"));
                   evas_object_data_set(bt, "genlist", obj);
                   evas_object_data_set(bt, "entry", en);
@@ -707,7 +707,7 @@ _cb_dev_content_get(void *data, Evas_Object *obj,
                   elm_box_pack_end(bx, bt);
                   evas_object_show(bt);
 
-                  bt = util_button_icon_add(obj, "list-remove",
+                  bt = util_button_icon_add(obj, "bt-pair-cancel",
                                             _("Reject pairing"));
                   evas_object_data_set(bt, "genlist", obj);
                   evas_object_smart_callback_add(bt, "clicked", _cb_agent_cancel, o);
@@ -721,14 +721,14 @@ _cb_dev_content_get(void *data, Evas_Object *obj,
                   elm_box_pack_end(bx, lb);
                   evas_object_show(lb);
 
-                  bt = util_button_icon_add(obj, "list-add",
+                  bt = util_button_icon_add(obj, "bt-pair-ok",
                                             _("Pair with this device"));
                   evas_object_data_set(bt, "genlist", obj);
                   evas_object_smart_callback_add(bt, "clicked", _cb_agent_ok, o);
                   elm_box_pack_end(bx, bt);
                   evas_object_show(bt);
 
-                  bt = util_button_icon_add(obj, "list-remove",
+                  bt = util_button_icon_add(obj, "bt-pair-cancel",
                                             _("Reject pairing"));
                   evas_object_data_set(bt, "genlist", obj);
                   evas_object_smart_callback_add(bt, "clicked", _cb_agent_cancel, o);
@@ -760,7 +760,7 @@ _cb_dev_content_get(void *data, Evas_Object *obj,
              evas_object_show(bat);
           }
 
-        bt = util_button_icon_add(obj, "view-more-horizontal",
+        bt = util_button_icon_add(obj, "bt-expand-left",
                                   _("Options for device like connect, pair etc."));
         evas_object_data_set(bt, "genlist", obj);
         evas_object_smart_callback_add(bt, "clicked", _cb_flip, o);
