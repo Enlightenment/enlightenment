@@ -71,6 +71,14 @@ _fill_data(E_Config_Dialog_Data *cfdata)
 
         if (dn->name)
           cfdata->name = strdup(dn->name);
+        else
+          {
+             char buff[PATH_MAX];
+
+             snprintf(buff, sizeof(buff), _("Desktop %d,%d"),
+                      cfdata->desk_x, cfdata->desk_y);
+             cfdata->name = strdup(buff);
+          }
         ok = 1;
         break;
      }
@@ -103,8 +111,12 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    if ((!cfdata->name) || (!cfdata->name[0]))
      {
+        char buff[PATH_MAX];
+
         free(cfdata->name);
-        cfdata->name = strdup("");
+        snprintf(buff, sizeof(buff), _("Desktop %d,%d"),
+                 cfdata->desk_x, cfdata->desk_y);
+        cfdata->name = strdup(buff);
      }
 
    e_desk_name_del(cfdata->zone_num,
@@ -151,7 +163,9 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 
    if (cfdata->hdl)
      ecore_event_handler_del(cfdata->hdl);
-   cfdata->hdl = ecore_event_handler_add(E_EVENT_BG_UPDATE, _cb_bg_change, cfdata);
+
+   cfdata->hdl =
+     ecore_event_handler_add(E_EVENT_BG_UPDATE, _cb_bg_change, cfdata);
 
    return o;
 }
@@ -192,4 +206,3 @@ _cb_bg_change(void *data, int type, void *event)
 
    return ECORE_CALLBACK_PASS_ON;
 }
-

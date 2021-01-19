@@ -116,7 +116,13 @@ e_desk_new(E_Zone *zone, int x, int y)
         break;
      }
 
-   if (!ok) desk->name = eina_stringshare_add("");
+   if (!ok)
+     {
+        char buff[PATH_MAX];
+
+        snprintf(buff, sizeof(buff), _("Desktop %d,%d"), desk->x, desk->y);
+        desk->name = eina_stringshare_add(buff);
+     }
 
    /* Get window profile name for current desktop */
    if (zone->randr2_id)
@@ -170,8 +176,16 @@ e_desk_name_add(int zone, int desk_x, int desk_y, const char *name)
    cfname->zone = zone;
    cfname->desk_x = desk_x;
    cfname->desk_y = desk_y;
-   if (name) cfname->name = eina_stringshare_add(name);
-   else cfname->name = NULL;
+   if (name)
+     cfname->name = eina_stringshare_add(name);
+   else
+     {
+        char buff[PATH_MAX];
+
+        snprintf(buff, sizeof(buff), _("Desktop %d,%d"),
+                 cfname->desk_x, cfname->desk_y);
+        cfname->name = eina_stringshare_add(buff);
+     }
    e_config->desktop_names = eina_list_append(e_config->desktop_names, cfname);
 }
 
@@ -219,7 +233,16 @@ e_desk_name_update(void)
                            ((int)zone->num != cfname->zone)) continue;
                        if ((cfname->desk_x != d_x) ||
                            (cfname->desk_y != d_y)) continue;
-                       e_desk_name_set(desk, cfname->name);
+                       if (cfname->name)
+                         e_desk_name_set(desk, cfname->name);
+                       else
+                         {
+                            char buff[PATH_MAX];
+
+                            snprintf(buff, sizeof(buff), _("Desktop %d,%d"),
+                                     cfname->desk_x, cfname->desk_y);
+                            e_desk_name_set(desk, buff);
+                         }
                        ok = 1;
                        break;
                     }
