@@ -186,7 +186,7 @@ _cb_add(void *data, void *data2 EINA_UNUSED)
    E_Config_Dialog_Data *cfdata;
 
    cfdata = data;
-   e_entry_dialog_show(_("Create new IBar source"), "enlightenment",
+   e_entry_dialog_show(NULL, _("Create new IBar source"), "enlightenment",
                        _("Enter a name for this new source:"), "", NULL, NULL,
                        _cb_entry_ok, NULL, cfdata);
 }
