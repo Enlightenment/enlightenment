@@ -1124,12 +1124,14 @@ e_shelf_config_new(E_Zone *zone, E_Config_Shelf *cf_es)
 }
 
 E_API E_Entry_Dialog *
-e_shelf_new_dialog(E_Zone *zone)
+e_shelf_new_dialog(Evas_Object *parent, E_Zone *zone)
 {
    char buf[256];
 
-   snprintf(buf, sizeof(buf), _("Shelf #%d"), eina_list_count(e_config->shelves));
-   return e_entry_dialog_show(_("Add New Shelf"), "preferences-desktop-shelf",
+   snprintf(buf, sizeof(buf), _("Shelf #%d"),
+            eina_list_count(e_config->shelves));
+   return e_entry_dialog_show(parent, _("Add New Shelf"),
+                              "preferences-desktop-shelf",
                               _("Name:"), buf, NULL, NULL,
                               _e_shelf_new_dialog_ok, NULL, zone);
 }
@@ -2282,10 +2284,11 @@ _e_shelf_cb_menu_rename(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_
 {
    E_Shelf *es = data;
    if (es->rename_dialog) return;
-   es->rename_dialog = e_entry_dialog_show(_("Rename Shelf"), "edit-rename",
-                                           _("Name:"), es->name, NULL, NULL,
-                                           _e_shelf_cb_menu_rename_yes_cb,
-                                           NULL, es);
+   es->rename_dialog =
+     e_entry_dialog_show(NULL, _("Rename Shelf"), "edit-rename",
+                         _("Name:"), es->name, NULL, NULL,
+                         _e_shelf_cb_menu_rename_yes_cb,
+                         NULL, es);
    e_object_data_set(E_OBJECT(es->rename_dialog), es);
    e_object_del_attach_func_set(E_OBJECT(es->rename_dialog),
                                 _e_shelf_cb_menu_rename_cb);
