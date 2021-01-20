@@ -349,9 +349,10 @@ _cb_add(void *data, void *data2 EINA_UNUSED)
    if (!cfdata) return;
 
    zone = e_comp_object_util_zone_get(cfdata->cfd->dia->win);
-   cfdata->dia_new_shelf = e_shelf_new_dialog(zone);
+   cfdata->dia_new_shelf = e_shelf_new_dialog(cfdata->cfd->dia->win, zone);
    e_object_data_set(E_OBJECT(cfdata->dia_new_shelf), cfdata);
-   e_object_del_attach_func_set(E_OBJECT(cfdata->dia_new_shelf), _new_shelf_cb_close);
+   e_object_del_attach_func_set(E_OBJECT(cfdata->dia_new_shelf),
+                                _new_shelf_cb_close);
    _widgets_disable(cfdata, 1, EINA_TRUE);
    cfdata->num_shelves = eina_list_count(e_config->shelves);
 }
