@@ -10431,10 +10431,11 @@ _e_fm2_file_rename(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSE
         snprintf(text, PATH_MAX + 256,
                  _("Rename %s to:"),
                  ic->info.file);
-        ic->entry_dialog = e_entry_dialog_show(_("Rename File"), "edit-rename",
-                                               text, ic->info.file, NULL, NULL,
-                                               _e_fm2_file_rename_yes_cb,
-                                               _e_fm2_file_rename_no_cb, ic);
+        ic->entry_dialog =
+          e_entry_dialog_show(NULL, _("Rename File"), "edit-rename",
+                              text, ic->info.file, NULL, NULL,
+                              _e_fm2_file_rename_yes_cb,
+                              _e_fm2_file_rename_no_cb, ic);
         E_OBJECT(ic->entry_dialog)->data = ic;
         e_object_del_attach_func_set(E_OBJECT(ic->entry_dialog),
                                      _e_fm2_file_rename_delete_cb);
@@ -10793,7 +10794,7 @@ _e_fm_overwrite_rename(void *data EINA_UNUSED, E_Dialog *dialog)
    e_object_del(E_OBJECT(dialog));
    file = ecore_file_file_get(ere->src);
    snprintf(text, sizeof(text), _("Rename %s to:"), file);
-   ed = e_entry_dialog_show(_("Rename File"), "edit-rename",
+   ed = e_entry_dialog_show(NULL, _("Rename File"), "edit-rename",
                             text, file, NULL, NULL,
                             _e_fm_overwrite_rename_yes_cb,
                             NULL, ere);
