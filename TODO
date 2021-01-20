@@ -51,10 +51,10 @@ TODO:
       * bt tethering
       * usb tehtering
       * wifi tethering
-  * fix vkbd to work in wl - e_kbd_send.c - look at ecore_wl2_input.c
-* action to switch config profiles so it can be bound
-* clean up some old actions that are handled better by newer ones
-  * like suspend intelligently is better than regular suspend but
+  * S fix vkbd to work in wl - e_kbd_send.c - look at ecore_wl2_input.c
+* S action to switch config profiles so it can be bound
+* S clean up some old actions that are handled better by newer ones
+  * S like suspend intelligently is better than regular suspend but
     suspend now is very explicit and worth keeping
 * clock - add event/alarm/appointment tracking and notifications etc.
   * this perhaps can be merged with the cron front-end
@@ -89,7 +89,7 @@ TODO:
   * wifi appears or disappears
   * wifi or wired network connected or disconnected to/from
   * perhaps need a more generic "events" bindings and these are events?
-* pointer: bug: sometiems gets stuck in move/resize modfe if mouse
+* S pointer: bug: sometiems gets stuck in move/resize modfe if mouse
   over move/resize area when desklock kicks in
 * clipboard manager - monitor clipboard changes + history + select from it
 * scriptlets: stdin/out module that provides gui services to some
@@ -170,7 +170,7 @@ TODO:
     * massive lowering of barrier ro create/change scriptlets
     * offer a share mechanism like shots?
       * security issue - they run. verification needed?
-* keyboard backlight controls, not just screen
+* S keyboard backlight controls, not just screen
 * login manager mode - be able to function as a login manager/gui since
   most everything you want in a login manager is already present in e
   like suspend/resume on lid open/close, multi screen config and even
@@ -229,7 +229,7 @@ TODO:
 * start: start menu could do with more featured content
   * like you see on windows for example (search and multiple columns etc.)
   * a touch screen android-style scrolling fullscreen app icon style
-* music-control: allow manual addition of new named mpris services
+* S music-control: allow manual addition of new named mpris services
 * connman:
   * divide the popup list with group headers like bz5 into tech
   * provide fuller status per line (reception and other info?)
@@ -237,7 +237,6 @@ TODO:
     * vpnmanager + create method support
   * one day look at network manager support
   * look into iwd too
-* bz5: add icon set for actions/states per bt device (pair.unpair, etc.)
 * bz5: add obex agent support integrated with efm for sharing via bt
   and downloads when received via obex bt (~/Downloads/...)
 * battery: redesign popup to list other battery details like the
@@ -297,14 +296,16 @@ TODO:
 * look into libratbag too for gaming mouse stuff if its worth using it or
   just doing the same
   stuff ourselves as we will probably have to via libinput
-* some kind of game mode and detection that will do things like:
-  * disable screen dimming/blanking
-  * set cpu to max performance
-  * lower priority/nice of non-game processes or even sigstop procs
-  * disable notifications
-  * explicit toggle and possible auto-detect of games running
+* S some kind of game mode and detection that will do things like:
+  * S disable screen dimming/blanking
+  * S set cpu to max performance
+  * S lower priority/nice of non-game processes or even sigstop procs
+  * S disable notifications
+  * S explicit toggle and possible auto-detect of games running
 * per app environment launch config - allow different TZ, LOCALE etc.
   per app and set up env appropriately
+* apps - ability to flag apps as "single run" so launchgin again from
+  menu/ibar will just focus the current window/jump to it etc.
 * back-end e system process for monitoring/polling and launching etc.
   * split e up into front vs back-end with back-end doing things like
     * monitoring processes/system (see above)
