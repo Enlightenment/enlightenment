@@ -226,9 +226,11 @@ _list_rename(void *data, void *list)
 
    ce = e_widget_ilist_selected_data_get(list);
    if (!ce) return;
-   cfdata->ed = e_entry_dialog_show(_("Rename"), "edit-rename", _("Enter a unique name for this entry"),
-                                    ce->id ?: ce->entry->id, NULL, NULL,
-                                    _rename_ok, NULL, ce);
+   cfdata->ed =
+     e_entry_dialog_show(NULL, _("Rename"), "edit-rename",
+                         _("Enter a unique name for this entry"),
+                         ce->id ?: ce->entry->id, NULL, NULL,
+                         _rename_ok, NULL, ce);
    e_object_data_set(E_OBJECT(cfdata->ed), cfdata);
    e_object_del_attach_func_set(E_OBJECT(cfdata->ed), _rename_del);
 }
