@@ -1942,7 +1942,7 @@ _e_int_menus_shelves_add_cb(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Men
    E_Zone *zone;
 
    zone = e_zone_current_get();
-   e_shelf_new_dialog(zone);
+   e_shelf_new_dialog(NULL, zone);
 }
 
 static void
