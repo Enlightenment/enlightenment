@@ -682,7 +682,7 @@ e_pointer_type_pop(E_Pointer *ptr, void *obj, const char *type)
 
    _e_pointer_type_set(ptr, stack->type);
 
-   eina_stringshare_replace(&ptr->type, stack->type);
+   /* eina_stringshare_replace(&ptr->type, stack->type); */
 }
 
 E_API void
@@ -885,6 +885,21 @@ e_pointer_grab_set(E_Pointer *ptr, Eina_Bool grab)
                }
           }
      }
+}
+
+E_API void
+e_pointer_reset(E_Pointer *ptr)
+{
+   EINA_SAFETY_ON_NULL_RETURN(ptr);
+
+   /* free stack of pointer types */
+   E_FREE_LIST(ptr->stack, _e_pointer_stack_free);
+
+   eina_stringshare_del(ptr->type);
+   eina_stringshare_del(ptr->deferred_type);
+
+   /* reset pointer to default */
+   e_pointer_type_push(ptr, ptr, "default");
 }
 
 EINTERN void

@@ -407,6 +407,8 @@ _desklock_hide_internal(void)
      }
 
    if (getenv("E_START_MANAGER")) kill(getppid(), SIGHUP);
+
+   e_pointer_reset(e_comp->pointer);
 }
 
 E_API int

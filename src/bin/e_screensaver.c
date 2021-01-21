@@ -227,6 +227,10 @@ _e_screensaver_handler_screensaver_off_cb(void *data EINA_UNUSED, int type EINA_
         ecore_timer_del(_e_screensaver_suspend_timer);
         _e_screensaver_suspend_timer = NULL;
      }
+
+   if (!e_desklock_state_get())
+     e_pointer_reset(e_comp->pointer);
+
    return ECORE_CALLBACK_PASS_ON;
 }
 

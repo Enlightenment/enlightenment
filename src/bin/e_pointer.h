@@ -84,5 +84,7 @@ E_API void e_pointer_idler_before(void);
 E_API void e_pointer_object_set(E_Pointer *ptr, Evas_Object *obj, int x, int y);
 E_API void e_pointer_window_add(E_Pointer *ptr, Ecore_Window win);
 E_API void e_pointer_grab_set(E_Pointer *ptr, Eina_Bool grab);
+E_API void e_pointer_reset(E_Pointer *ptr);
+
 # endif
 #endif
