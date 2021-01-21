@@ -2909,8 +2909,10 @@ ACT_FN_GO(backlight_adjust, )
 
 ACT_FN_GO(blanking, EINA_UNUSED)
 {
-   if      (params && (!strcmp(params, "on")))  e_config->screensaver_enable = 1;
-   else if (params && (!strcmp(params, "off"))) e_config->screensaver_enable = 0;
+   if (params && (!strcmp(params, "on")))
+     e_config->screensaver_enable = 1;
+   else if (params && (!strcmp(params, "off")))
+     e_config->screensaver_enable = 0;
    else if (params && (!strcmp(params, "toggle")))
      {
         if (e_config->screensaver_enable) e_config->screensaver_enable = 0;
