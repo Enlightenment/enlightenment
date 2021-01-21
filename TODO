@@ -88,6 +88,8 @@ TODO:
   * wifi appears or disappears
   * wifi or wired network connected or disconnected to/from
   * perhaps need a more generic "events" bindings and these are events?
+* S pointer: bug: sometiems gets stuck in move/resize modfe if mouse
+  over move/resize area when desklock kicks in
 * clipboard manager - monitor clipboard changes + history + select from it
 * scriptlets: stdin/out module that provides gui services to some
   back-end script or process where e just talks via stdin/out.
