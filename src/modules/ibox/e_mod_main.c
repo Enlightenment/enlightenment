@@ -518,6 +518,16 @@ _ibox_icon_at_coord(IBox *b, Evas_Coord x, Evas_Coord y)
    return NULL;
 }
 
+static Eina_Bool
+_ibox_cb_icon_fill_timer(void *data)
+{
+   IBox_Icon *ic = data;
+
+   _ibox_icon_fill(ic);
+
+   return EINA_FALSE;
+}
+
 static IBox_Icon *
 _ibox_icon_new(IBox *b, E_Client *ec)
 {
@@ -547,7 +557,7 @@ _ibox_icon_new(IBox *b, E_Client *ec)
    evas_object_pass_events_set(ic->o_holder2, 1);
    evas_object_show(ic->o_holder2);
 
-   _ibox_icon_fill(ic);
+   ecore_timer_add(0.1, _ibox_cb_icon_fill_timer, ic);
    return ic;
 }
 
