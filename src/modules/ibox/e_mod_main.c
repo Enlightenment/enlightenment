@@ -601,6 +601,7 @@ _ibox_icon_fill_preview(IBox_Icon *ic, Eina_Bool is_retry)
 {
    E_Client *ec;
    Evas_Object *img, *img2;
+   int w, h;
 
    ec = ic->client;
 
@@ -610,15 +611,19 @@ _ibox_icon_fill_preview(IBox_Icon *ic, Eina_Bool is_retry)
         ecore_timer_add(0.5, _ibox_icon_fill_timer, ic);
         return;
      }
-   evas_object_size_hint_aspect_set(img, EVAS_ASPECT_CONTROL_BOTH, ec->client.w, ec->client.h);
-   evas_object_size_hint_max_set(img, ec->client.w, ec->client.h);
+   w = ec->client.w;
+   h = ec->client.h;
+   if (ec->shaded)
+     evas_object_geometry_get(ec->frame_object, NULL, NULL, &w, &h);
+   evas_object_size_hint_aspect_set(img, EVAS_ASPECT_CONTROL_BOTH, w, h);
+   evas_object_size_hint_max_set(img, w, h);
    ic->o_icon = img;
    edje_object_part_swallow(ic->o_holder, "e.swallow.preview", ic->o_icon);
    evas_object_pass_events_set(ic->o_icon, 1);
    evas_object_show(ic->o_icon);
 
    img2 = e_comp_object_util_frame_mirror_add(ec->frame);
-   evas_object_size_hint_aspect_set(img2, EVAS_ASPECT_CONTROL_BOTH, ec->client.w, ec->client.h);
+   evas_object_size_hint_aspect_set(img2, EVAS_ASPECT_CONTROL_BOTH, w, h);
    ic->o_icon2 = img2;
    edje_object_part_swallow(ic->o_holder2, "e.swallow.preview", ic->o_icon2);
    evas_object_pass_events_set(ic->o_icon2, 1);
