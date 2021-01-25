@@ -9,15 +9,15 @@ static void _e_mod_action_fileman_reset_cb(E_Object *obj EINA_UNUSED, const char
 static void      _e_mod_menu_add(void   *data, E_Menu *m);
 static void      _e_mod_fileman_config_load(void);
 static void      _e_mod_fileman_config_free(void);
-static Eina_Bool _e_mod_zone_add(void *data,
-                                 int   type,
-                                 void *event);
+static Eina_Bool _e_mod_zone_reconf(void *data, int type, void *event);
+static Eina_Bool _e_mod_zone_add(void *data, int type, void *event);
 
 static E_Module *conf_module = NULL;
 static E_Action *act = NULL;
 static E_Action *act2 = NULL;
 static E_Action *act3 = NULL;
 static E_Int_Menu_Augmentation *maug = NULL;
+static Ecore_Event_Handler *zone_reconf_handler = NULL;
 static Ecore_Event_Handler *zone_add_handler = NULL;
 
 static E_Config_DD *paths_edd = NULL, *conf_edd = NULL;
@@ -79,6 +79,8 @@ e_modapi_init(E_Module *m)
         if (e_config->show_desktop_icons)
           e_fwin_zone_new(zone, e_mod_fileman_path_find(zone));
      }
+   zone_reconf_handler = ecore_event_handler_add(E_EVENT_ZONE_MOVE_RESIZE,
+                                                 _e_mod_zone_reconf, NULL);
    zone_add_handler = ecore_event_handler_add(E_EVENT_ZONE_ADD,
                                               _e_mod_zone_add, NULL);
 
@@ -101,7 +103,9 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    e_fileman_dbus_shutdown();
 
    ecore_event_handler_del(zone_add_handler);
+   ecore_event_handler_del(zone_reconf_handler);
    zone_add_handler = NULL;
+   zone_reconf_handler = NULL;
 
    /* Unhook zone fm */
    EINA_LIST_FOREACH(e_comp->zones, l, zone)
@@ -371,18 +375,29 @@ _e_mod_fileman_config_free(void)
 }
 
 static Eina_Bool
-_e_mod_zone_add(EINA_UNUSED void *data,
-                int              type,
-                void            *event)
+_e_mod_zone_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
-   E_Event_Zone_Add *ev;
-   E_Zone *zone;
+   E_Event_Zone_Add *ev = event;
+   E_Zone *zone = ev->zone;
 
-   if (type != E_EVENT_ZONE_ADD) return ECORE_CALLBACK_PASS_ON;
-   ev = event;
-   zone = ev->zone;
    if (e_fwin_zone_find(zone)) return ECORE_CALLBACK_PASS_ON;
    if (e_config->show_desktop_icons)
+     e_fwin_zone_new(zone, e_mod_fileman_path_find(zone));
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_e_mod_zone_reconf(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   E_Event_Zone_Move_Resize *ev = event;
+   E_Zone *zone = ev->zone;
+
+   if (e_fwin_zone_find(zone))
+     {
+        e_fwin_zone_shutdown(zone);
+        e_fwin_zone_new(zone, e_mod_fileman_path_find(zone));
+     }
+   else if (e_config->show_desktop_icons)
      e_fwin_zone_new(zone, e_mod_fileman_path_find(zone));
    return ECORE_CALLBACK_PASS_ON;
 }
