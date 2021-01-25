@@ -4459,6 +4459,8 @@ e_comp_object_util_frame_mirror_add(Evas_Object *obj)
         edje_object_signal_emit(o, "e,version,22", "e");
         edje_object_signal_emit(o, "e,state,focused", "e");
         edje_object_signal_emit(o, "e,state,visible", "e");
+        if (cw->ec->shaded)
+          edje_object_signal_emit(o, "e,state,shaded", "e");
         edje_object_part_text_set(o, "e.text.title", cw->frame_name);
         e_zoomap_child_set(o_zoomap, o);
         e_zoomap_solid_set(o, EINA_FALSE);
