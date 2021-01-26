@@ -837,8 +837,9 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas EINA_UNUSED, E_Config_Dialog_Data
    Evas_Object *win = cfd->dia->win;
    Evas_Object *o, *bx, *tb, *bx2;
    Eina_List *l;
-   E_Randr2_Screen *s, *first = NULL;
+   E_Randr2_Screen *s, *sc = NULL, *first = NULL;
    E_Config_Randr2_Screen *first_cfg = NULL;
+   E_Zone *zone;
    int i;
 
    e_dialog_resizable_set(cfd->dia, 1);
@@ -864,6 +865,11 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas EINA_UNUSED, E_Config_Dialog_Data
    cfdata->screens = NULL;
    cfdata->screen_items = NULL;
    i = 0;
+
+   zone = e_zone_current_get();
+   if (zone)
+     sc = e_randr2_screen_id_find(zone->randr2_id);
+
    EINA_LIST_FOREACH(e_randr2->screens, l, s)
      {
         Elm_Object_Item *it = NULL;
@@ -906,6 +912,16 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas EINA_UNUSED, E_Config_Dialog_Data
                             cfdata->screen = i;
                             elm_object_text_set(o, s->info.name);
                           }
+                    }
+                  else if (!first && sc)
+                    {
+                       if (s->id == sc->id)
+                         {
+                            first = s;
+                            first_cfg = cs;
+                            cfdata->screen = i;
+                            elm_object_text_set(o, s->info.name);
+                         }
                     }
                   else
                     {
