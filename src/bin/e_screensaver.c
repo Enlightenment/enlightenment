@@ -258,6 +258,7 @@ _e_screensaver_handler_desk_show_cb(void *data EINA_UNUSED, int type EINA_UNUSED
 static Eina_Bool
 _e_screensaver_idle_timer_cb(void *d EINA_UNUSED)
 {
+   e_pointer_reset(e_comp->pointer);
    e_powersave_mode_screen_set(E_POWERSAVE_MODE_FREEZE);
    ecore_event_add(E_EVENT_SCREENSAVER_ON, NULL, NULL, NULL);
    screensaver_idle_timer = NULL;
