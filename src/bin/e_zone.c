@@ -1467,15 +1467,18 @@ _e_zone_free(E_Zone *zone)
      }
 
    /* free desks */
+   while (zone->obstacles)
+     {
+        E_Object *obs = (void *)EINA_INLIST_CONTAINER_GET(zone->obstacles, E_Zone_Obstacle);
+        e_object_del(obs);
+     }
    for (x = 0; x < zone->desk_x_count; x++)
      {
         for (y = 0; y < zone->desk_y_count; y++)
-          e_object_del(E_OBJECT(zone->desks[x + (y * zone->desk_x_count)]));
-     }
-   while (zone->obstacles)
-     {
-        E_Object *obs = (void*)EINA_INLIST_CONTAINER_GET(zone->obstacles, E_Zone_Obstacle);
-        e_object_del(obs);
+          {
+             e_object_del(E_OBJECT(zone->desks[x + (y * zone->desk_x_count)]));
+             zone->desks[x + (y * zone->desk_x_count)] = NULL;
+          }
      }
    free(zone->desks);
    free(zone->randr2_id);
