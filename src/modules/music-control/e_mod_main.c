@@ -428,6 +428,7 @@ _timer_redo(E_Music_Control_Module_Context *ctxt)
    double t = 5.0;
 
    if (ctxt->poll_timer) ecore_timer_del(ctxt->poll_timer);
+   ctxt->poll_timer = NULL;
    pm = e_powersave_mode_get();
    if (e_powersave_mode_screen_get() > pm) pm = e_powersave_mode_screen_get();
    if      (pm >= E_POWERSAVE_MODE_FREEZE)  t = 3600.0;
