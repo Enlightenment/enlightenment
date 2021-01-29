@@ -53,6 +53,7 @@ struct _Tasks_Item
    Eina_Bool focused E_BITFIELD;
    Eina_Bool urgent E_BITFIELD;
    Eina_Bool iconified E_BITFIELD;
+   Eina_Bool iconifying E_BITFIELD;
 };
 
 static Tasks       *_tasks_new(Evas *e, E_Zone *zone, const char *id);
@@ -332,12 +333,17 @@ _gc_id_new(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
 static void
 _tasks_cb_iconify_end_cb(void *data, Evas_Object *obj EINA_UNUSED, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
 {
-   E_Client *ec = data;
+   Tasks_Item *item;
+   E_Client *ec;
+
+   item = data;
+   ec = item->client;
 
    evas_object_layer_set(ec->frame, ec->layer);
    ec->layer_block = 0;
    if (ec->iconic)
      evas_object_hide(ec->frame);
+   item->iconifying = 0;
 }
 
 static Eina_Bool
@@ -358,7 +364,7 @@ _tasks_cb_iconify_provider(void *data, Evas_Object *obj, const char *signal)
         ec2 = e_client_stack_bottom_get(item->client);
         for (; ec2; ec2 = ec2->stack.next)
           {
-             if (ec2 == ec)
+             if ((ec2 == ec) && (!item->iconifying))
                {
                   evas_object_geometry_get(item->o_item, &ox, &oy, &ow, &oh);
                   ec->layer_block = 1;
@@ -366,7 +372,8 @@ _tasks_cb_iconify_provider(void *data, Evas_Object *obj, const char *signal)
                   e_comp_object_effect_set(ec->frame, "iconify/tasks");
                   e_comp_object_effect_params_set(ec->frame, 1, (int[]){ec->x, ec->y, ec->w, ec->h, ox, oy, ow, oh}, 8);
                   e_comp_object_effect_params_set(ec->frame, 0, (int[]){!!strcmp(signal, "e,action,iconify")}, 1);
-                  e_comp_object_effect_start(ec->frame, _tasks_cb_iconify_end_cb, ec);
+                  item->iconifying = 1;
+                  e_comp_object_effect_start(ec->frame, _tasks_cb_iconify_end_cb, item);
                   return EINA_TRUE;
                }
           }
@@ -617,7 +624,7 @@ _tasks_item_check_add(Tasks *tasks, E_Client *ec)
      {
         if (ec->zone != tasks->zone) return 1;
      }
-   
+
    _tasks_item_add(tasks, ec);
    return 0;
 }
@@ -1075,7 +1082,7 @@ _tasks_cb_item_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
           {
              e_client_act_close_begin(item->client);
           }
-        else
+        else if (!item->iconifying)
           {
              if (item->client->iconic)
                {
