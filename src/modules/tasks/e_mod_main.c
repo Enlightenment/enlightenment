@@ -997,7 +997,8 @@ _tasks_cb_item_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
 
    ec = e_client_focused_get();
 
-   _tasks_item_preview_add(item);
+   if (!item->iconifying)
+     _tasks_item_preview_add(item);
 
    if (ec)
      evas_object_focus_set(ec->frame, 1);
