@@ -1154,7 +1154,15 @@ _e_comp_x_client_hide(E_Client *ec)
    if ((!ec->iconic) && (!ec->override))
      ecore_x_window_prop_card32_set(e_client_util_win_get(ec), E_ATOM_MAPPED, &visible, 1);
 
-   _e_comp_x_client_data_get(ec)->iconic = ec->iconic && (!e_comp_object_mirror_visibility_check(ec->frame));
+   _e_comp_x_client_data_get(ec)->iconic = ec->iconic
+// XXX: if we tell apps they are iconic.. they may stop rendering and this
+// means our miniatures we use in ibar, ibox and winlist alt-tab dont udpate
+// ... we could i guess setn fake wm state changes to normal when these are
+// visible and then toggle iconic on and off while still visually hiding
+// the client... but clients that assume they will be iconic when they ask
+// are mistaken  ... so for now disable this until we have a debate on it
+//   && (!e_comp_object_mirror_visibility_check(ec->frame))
+   ;
    if (ec->unredirected_single || _e_comp_x_client_data_get(ec)->iconic)
      ecore_x_window_hide(_e_comp_x_client_window_get(ec));
    if (_e_comp_x_client_data_get(ec)->iconic)
