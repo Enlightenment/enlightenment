@@ -74,7 +74,7 @@ void *alloca (size_t);
 # include <sys/sysctl.h>
 #endif
 
-#if defined (__FreeBSD_kernel__)
+#if defined (__FreeBSD__) && (__FreeBSD__ > 12)
 # include <sys/ioctl.h>
 # include <sys/backlight.h>
 #endif
