@@ -44,7 +44,18 @@ _light_set(Light *lig, int val)
         close(fd);
      }
 #elif defined(__FreeBSD_kernel__)
+#if __FreeBSD__ > 12
+   int fd = open("/dev/backlight/backlight0", O_RDWR);
+   if (fd >= 0)
+     {
+        struct backlight_props props;
+        props.brightness = lig->val;
+        ioctl(fd, BACKLIGHTUPDATESTATUS, &props);
+        close(fd);
+     }
+#else
    sysctlbyname(lig->dev, NULL, NULL, &(lig->val), sizeof(lig->val));
+#endif
 #endif
 }
 
@@ -72,8 +83,21 @@ _light_get(Light *lig)
         eina_stringshare_del(s);
      }
 #elif defined(__FreeBSD_kernel__)
+#if __FreeBSD__ > 12
+   struct backlight_props props;
+   int fd = open("/dev/backlight/backlight0", O_RDWR);
+   if (fd >= 0)
+     {
+        if (ioctl(fd, BACKLIGHTGETSTATUS, &props) != -1)
+          {
+             lig->val = props.brightness;
+          }
+        close(fd);
+     }
+#else
    size_t plen = sizeof(lig->val);
    sysctlbyname(lig->dev, &(lig->val), &plen, NULL, 0);
+#endif
 #endif
 }
 
@@ -178,9 +202,22 @@ _light_add(const char *dev)
      }
    if (lig->max <= 0) lig->max = 255;
    lig->prefer = eeze_udev_syspath_check_sysattr(lig->dev, "type", "firmware");
-#elif defined(__FreeBSD_kernel__)
+#elif defined (__FreeBSD_kernel__)
+#if __FreeBSD__ > 12
+   struct backlight_props props;
+   int fd = open("/dev/backlight/backlight0", O_RDWR);
+   if (fd >= 0)
+     {
+        if (ioctl(fd, BACKLIGHTGETSTATUS, &props) != -1)
+          {
+             lig->val = props.brightness;
+          }
+        close(fd);
+     }
+# else
    size_t plen = sizeof(lig->val);
    sysctlbyname(lig->dev, &(lig->val), &plen, NULL, 0);
+#endif
    lig->max = 100;
 #endif
    _devices = eina_list_append(_devices, lig);
@@ -238,7 +275,11 @@ _light_refresh_devices()
      }
 #elif defined(__FreeBSD_kernel__)
    // XXX; shouldn't we scan for devices?
+#if __FreeBSD__ > 12
+   _light_add("backlight0");
+#else
    _light_add("hw.acpi.video.lcd0.brightness");
+#endif
 #endif
 }
 

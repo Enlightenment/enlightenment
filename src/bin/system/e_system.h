@@ -74,6 +74,11 @@ void *alloca (size_t);
 # include <sys/sysctl.h>
 #endif
 
+#if defined (__FreeBSD_kernel__)
+# include <sys/ioctl.h>
+# include <sys/backlight.h>
+#endif
+
 # ifndef _POSIX_HOST_NAME_MAX
 #  define _POSIX_HOST_NAME_MAX 255
 # endif
