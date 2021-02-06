@@ -990,14 +990,19 @@ _tasks_cb_item_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
 {
    Tasks_Item *item;
    E_Client *ec;
+   Eina_Bool show;
 
    item = data;
 
    if (!item->tasks->config->preview) return;
 
+   show = !item->iconifying;
+   if ((item->tasks->gcc->gadcon->shelf) && (item->tasks->gcc->gadcon->shelf->hide_animator))
+     show = 0;
+
    ec = e_client_focused_get();
 
-   if (!item->iconifying)
+   if (show)
      _tasks_item_preview_add(item);
 
    if (ec)
