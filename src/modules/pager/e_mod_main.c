@@ -32,6 +32,7 @@ struct _Instance
 {
    E_Gadcon_Client *gcc;
    Evas_Object     *o_pager; /* table */
+   Evas_Object     *o_base;
    Pager           *pager;
 };
 
@@ -204,6 +205,40 @@ _pager_window_find(Pager *p, E_Client *client)
    return NULL;
 }
 
+static void
+_emit_orient(Instance *inst, E_Gadcon_Orient orient)
+{
+   static const char *signals[] =
+     {
+        "float",
+        "horiz",
+        "vert",
+        "left",
+        "right",
+        "top",
+        "bottom",
+        "corner_tl",
+        "corner_tr",
+        "corner_bl",
+        "corner_br",
+        "corner_lt",
+        "corner_rt",
+        "corner_lb",
+        "corner_rb"
+     };
+   char buf[256];
+
+   if (orient > E_GADCON_ORIENT_CORNER_RB) orient = E_GADCON_ORIENT_HORIZ;
+   snprintf(buf, sizeof(buf), "e,state,orient,%s", signals[orient]);
+
+   printf("%p %s\n", inst->o_base, buf);
+   if (inst->o_base)
+     {
+        edje_object_signal_emit(inst->o_base, buf, "e");
+        edje_object_message_signal_process(inst->o_base);
+     }
+}
+
 static E_Gadcon_Client *
 _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
 {
@@ -221,12 +256,25 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    inst = E_NEW(Instance, 1);
 
    p = _pager_new(gc->evas, gc->zone, gc, inst);
-   o = p->o_table;
+   o = edje_object_add(gc->evas);
+   if (!e_theme_edje_object_set(o, "base/theme/modules/pager",
+                                "e/modules/pager16/base"))
+     {
+        evas_object_del(o);
+        o = p->o_table;
+     }
+   else
+     {
+        edje_object_part_swallow(o, "e.swallow.content", p->o_table);
+        inst->o_base = o;
+     }
    gcc = e_gadcon_client_new(gc, name, id, style, o);
    gcc->data = inst;
 
    inst->gcc = gcc;
    inst->o_pager = o;
+
+   _emit_orient(inst, gc->orient);
 
    evas_object_geometry_get(o, &x, &y, &w, &h);
    p->drop_handler =
@@ -258,6 +306,11 @@ _gc_shutdown(E_Gadcon_Client *gcc)
      instances = eina_list_remove(instances, inst);
    e_drop_handler_del(inst->pager->drop_handler);
    _pager_free(inst->pager);
+   if (inst->o_base)
+     {
+        evas_object_del(inst->o_base);
+        inst->o_base = NULL;
+     }
    free(inst);
 }
 
@@ -269,6 +322,7 @@ _aspect(E_Gadcon_Client *gcc)
    double aspect_ratio;
 
    inst = gcc->data;
+   _emit_orient(inst, gcc->gadcon->orient);
    if (inst->pager->noshelf)
      evas_object_geometry_get(inst->pager->o_table, NULL, NULL, &aspect_w, &aspect_h);
    else if (inst->pager->invert)
@@ -365,6 +419,7 @@ _pager_recalc(void *data)
    w = w2; h = h2;
    w += mw; h += mh;
 
+   _emit_orient(p->inst, orient);
    if (p->invert)
      e_gadcon_client_aspect_set(p->inst->gcc, p->ynum * w, p->xnum * h);
    else
