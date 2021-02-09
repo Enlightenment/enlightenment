@@ -279,7 +279,10 @@ _e_sys_comp_resume2(void *data EINA_UNUSED)
    _e_sys_action_current = E_SYS_NONE;
 #ifndef HAVE_WAYLAND_ONLY
    if (e_comp->comp_type == E_PIXMAP_TYPE_X)
-     _e_comp_x_screensaver_off();
+     {
+        _e_comp_x_screensaver_off();
+        ecore_x_screensaver_reset();
+     }
 #endif
 #ifdef HAVE_WAYLAND
    if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
