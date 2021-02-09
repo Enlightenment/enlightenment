@@ -9,8 +9,8 @@ static E_Module *systray_mod = NULL;
 static Systray_Context *ctx = NULL;
 static char tmpbuf[4096]; /* general purpose buffer, just use immediately */
 
-#define SYSTRAY_MIN_W 16
-#define SYSTRAY_MIN_H 8
+#define SYSTRAY_MIN_W 4
+#define SYSTRAY_MIN_H 4
 
 static Eina_Bool
 _systray_site_is_safe(E_Gadcon_Site site)
