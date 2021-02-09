@@ -48,6 +48,8 @@ void *alloca(size_t);
 #define COPYBUFSIZE     16384
 #define REMOVECHUNKSIZE 4096
 #define NB_PASS         3
+#define SYNC_TIME       0.2
+#define SYNC_BYTES      (512 * 1024)
 
 #define E_FREE(p) do { free(p); p = NULL; } while (0)
 
@@ -125,6 +127,9 @@ int _e_fm_op_overwrite_response = E_FM_OP_NONE;
 Eina_List *_e_fm_op_separator = NULL;
 
 char *_e_fm_op_stdin_buffer = NULL;
+
+double _e_fm_op_last_sync = 0.0;
+unsigned long long _e_fm_op_bytes_sync = 0;
 
 struct _E_Fm_Op_Task
 {
@@ -422,6 +427,7 @@ skip_arg:
 
    _e_fm_op_set_up_idlers();
 
+   _e_fm_op_last_sync = ecore_time_get();
    ecore_main_loop_begin();
 
 quit:
@@ -1160,6 +1166,7 @@ static void
 _e_fm_op_copy_stat_info(E_Fm_Op_Task *task)
 {
    struct utimbuf ut;
+   double now = ecore_time_get();
 
    if (!task->dst.name) return;
 
@@ -1170,6 +1177,17 @@ _e_fm_op_copy_stat_info(E_Fm_Op_Task *task)
    ut.actime = task->src.st.st_atime;
    ut.modtime = task->src.st.st_mtime;
    utime(task->dst.name, &ut);
+   if ((now - _e_fm_op_last_sync) > SYNC_TIME)
+     {
+        int fd = open(task->dst.name, O_RDWR);
+
+        if (fd >= 0)
+          {
+             syncfs(fd);
+             _e_fm_op_last_sync = now;
+             close(fd);
+          }
+     }
 }
 
 static int
@@ -1234,6 +1252,7 @@ static int
 _e_fm_op_copy_dir(E_Fm_Op_Task *task)
 {
    struct stat st;
+   double now = ecore_time_get();
 
    /* Directory. Just create one in destatation. */
    if (mkdir(task->dst.name,
@@ -1264,7 +1283,20 @@ _e_fm_op_copy_dir(E_Fm_Op_Task *task)
                                    "Cannot make directory '%s': %s.",
                                    task->dst.name);
      }
+   else
+     {
+        if ((now - _e_fm_op_last_sync) > SYNC_TIME)
+          {
+             int fd = open(task->dst.name, O_RDWR);
 
+             if (fd >= 0)
+               {
+                  syncfs(fd);
+                  _e_fm_op_last_sync = now;
+                  close(fd);
+               }
+          }
+     }
    task->dst.done += task->src.st.st_size;
    _e_fm_op_update_progress(task, task->src.st.st_size, 0);
 
@@ -1279,6 +1311,7 @@ _e_fm_op_copy_link(E_Fm_Op_Task *task)
 {
    char *lnk_path;
    size_t lnk_len;
+   double now = ecore_time_get();
 
    lnk_path = ecore_file_readlink(task->src.name);
    if (!lnk_path)
@@ -1316,6 +1349,20 @@ _e_fm_op_copy_link(E_Fm_Op_Task *task)
              _E_FM_OP_ERROR_SEND_WORK(task, E_FM_OP_ERROR, "Cannot create link from '%s' to '%s': %s.", buf, task->dst.name);
           }
      }
+   else
+     {
+        if ((now - _e_fm_op_last_sync) > SYNC_TIME)
+          {
+             int fd = open(task->dst.name, O_RDWR);
+
+             if (fd >= 0)
+               {
+                  syncfs(fd);
+                  _e_fm_op_last_sync = now;
+                  close(fd);
+               }
+          }
+     }
    free(lnk_path);
 
    task->dst.done += task->src.st.st_size;
@@ -1330,6 +1377,8 @@ _e_fm_op_copy_link(E_Fm_Op_Task *task)
 static int
 _e_fm_op_copy_fifo(E_Fm_Op_Task *task)
 {
+   double now = ecore_time_get();
+
    if (mkfifo(task->dst.name, task->src.st.st_mode) == -1)
      {
         if (errno == EEXIST)
@@ -1341,6 +1390,20 @@ _e_fm_op_copy_fifo(E_Fm_Op_Task *task)
           }
         else
           _E_FM_OP_ERROR_SEND_WORK(task, E_FM_OP_ERROR, "Cannot make FIFO at '%s': %s.", task->dst.name);
+     }
+   else
+     {
+        if ((now - _e_fm_op_last_sync) > SYNC_TIME)
+          {
+             int fd = open(task->dst.name, O_RDWR);
+
+             if (fd >= 0)
+               {
+                  syncfs(fd);
+                  _e_fm_op_last_sync = now;
+                  close(fd);
+               }
+          }
      }
 
    _e_fm_op_copy_stat_info(task);
@@ -1389,13 +1452,19 @@ static int
 _e_fm_op_copy_chunk(E_Fm_Op_Task *task)
 {
    E_Fm_Op_Copy_Data *data;
-   size_t dread, dwrite;
+   unsigned long long dread, dwrite;
    char buf[COPYBUFSIZE];
+   double now = ecore_time_get();
 
    data = task->data;
 
    if (_e_fm_op_abort)
      {
+        if ((now - _e_fm_op_last_sync) > SYNC_TIME)
+          {
+             syncfs(fileno(data->to));
+             _e_fm_op_last_sync = now;
+          }
         _e_fm_op_rollback(task);
 
         task->finished = 1;
@@ -1408,6 +1477,12 @@ _e_fm_op_copy_chunk(E_Fm_Op_Task *task)
         if (!feof(data->from))
           _E_FM_OP_ERROR_SEND_WORK(task, E_FM_OP_ERROR, "Cannot read data from '%s': %s.", task->dst.name);
 
+        if ((now - _e_fm_op_last_sync) > SYNC_TIME)
+          {
+             fflush(data->to);
+             syncfs(fileno(data->to));
+             _e_fm_op_last_sync = now;
+          }
         fclose(data->from);
         fclose(data->to);
         data->to = NULL;
@@ -1425,6 +1500,15 @@ _e_fm_op_copy_chunk(E_Fm_Op_Task *task)
      }
 
    dwrite = fwrite(buf, 1, dread, data->to);
+   _e_fm_op_bytes_sync += dread;
+   if (((now - _e_fm_op_last_sync) > SYNC_TIME) ||
+       (_e_fm_op_bytes_sync > SYNC_BYTES))
+     {
+        fflush(data->to);
+        syncfs(fileno(data->to));
+        _e_fm_op_last_sync = now;
+        _e_fm_op_bytes_sync = 0;
+     }
 
    if (dwrite < dread)
      _E_FM_OP_ERROR_SEND_WORK(task, E_FM_OP_ERROR, "Cannot write data to '%s': %s.", task->dst.name);
@@ -1700,6 +1784,8 @@ _e_fm_op_symlink_atom(E_Fm_Op_Task *task)
 static int
 _e_fm_op_remove_atom(E_Fm_Op_Task *task)
 {
+   double now = ecore_time_get();
+
    if (_e_fm_op_abort) return 1;
 
    E_FM_OP_DEBUG("Remove: %s\n", task->src.name);
@@ -1715,6 +1801,17 @@ _e_fm_op_remove_atom(E_Fm_Op_Task *task)
                      If this happens (for example new files were created after the scan was
                      complete), implicitly delete everything. */
                   ecore_file_recursive_rm(task->src.name);
+                  if ((now - _e_fm_op_last_sync) > SYNC_TIME)
+                    {
+                       int fd = open(task->src.name, O_RDWR);
+
+                       if (fd >= 0)
+                         {
+                            syncfs(fd);
+                            _e_fm_op_last_sync = now;
+                            close(fd);
+                         }
+                    }
                   task->finished = 1; /* Make sure that task is removed. */
                   return 1;
                }
@@ -1724,6 +1821,17 @@ _e_fm_op_remove_atom(E_Fm_Op_Task *task)
      }
    else if (unlink(task->src.name) == -1)
      _E_FM_OP_ERROR_SEND_WORK(task, E_FM_OP_ERROR, "Cannot remove file '%s': %s.", task->src.name);
+   if ((now - _e_fm_op_last_sync) > SYNC_TIME)
+     {
+        int fd = open(task->src.name, O_RDWR);
+
+        if (fd >= 0)
+          {
+             syncfs(fd);
+             _e_fm_op_last_sync = now;
+             close(fd);
+          }
+     }
 
    task->dst.done += REMOVECHUNKSIZE;
    _e_fm_op_update_progress(task, REMOVECHUNKSIZE, 0);
