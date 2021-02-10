@@ -1161,6 +1161,16 @@ _e_fm_op_update_progress(E_Fm_Op_Task *task, off_t _plus_e_fm_op_done, off_t _pl
      }
 }
 
+static void
+_syncfs(int fd)
+{
+#if defined __linux__
+   syncfs(fd);
+#else
+   fsync(fd);
+#endif
+}
+
 /* We just use this code in several places. */
 static void
 _e_fm_op_copy_stat_info(E_Fm_Op_Task *task)
@@ -1183,7 +1193,7 @@ _e_fm_op_copy_stat_info(E_Fm_Op_Task *task)
 
         if (fd >= 0)
           {
-             syncfs(fd);
+             _syncfs(fd);
              _e_fm_op_last_sync = now;
              close(fd);
           }
@@ -1291,7 +1301,7 @@ _e_fm_op_copy_dir(E_Fm_Op_Task *task)
 
              if (fd >= 0)
                {
-                  syncfs(fd);
+                  _syncfs(fd);
                   _e_fm_op_last_sync = now;
                   close(fd);
                }
@@ -1357,7 +1367,7 @@ _e_fm_op_copy_link(E_Fm_Op_Task *task)
 
              if (fd >= 0)
                {
-                  syncfs(fd);
+                  _syncfs(fd);
                   _e_fm_op_last_sync = now;
                   close(fd);
                }
@@ -1399,7 +1409,7 @@ _e_fm_op_copy_fifo(E_Fm_Op_Task *task)
 
              if (fd >= 0)
                {
-                  syncfs(fd);
+                  _syncfs(fd);
                   _e_fm_op_last_sync = now;
                   close(fd);
                }
@@ -1462,7 +1472,7 @@ _e_fm_op_copy_chunk(E_Fm_Op_Task *task)
      {
         if ((now - _e_fm_op_last_sync) > SYNC_TIME)
           {
-             syncfs(fileno(data->to));
+             _syncfs(fileno(data->to));
              _e_fm_op_last_sync = now;
           }
         _e_fm_op_rollback(task);
@@ -1480,7 +1490,7 @@ _e_fm_op_copy_chunk(E_Fm_Op_Task *task)
         if ((now - _e_fm_op_last_sync) > SYNC_TIME)
           {
              fflush(data->to);
-             syncfs(fileno(data->to));
+             _syncfs(fileno(data->to));
              _e_fm_op_last_sync = now;
           }
         fclose(data->from);
@@ -1505,7 +1515,7 @@ _e_fm_op_copy_chunk(E_Fm_Op_Task *task)
        (_e_fm_op_bytes_sync > SYNC_BYTES))
      {
         fflush(data->to);
-        syncfs(fileno(data->to));
+        _syncfs(fileno(data->to));
         _e_fm_op_last_sync = now;
         _e_fm_op_bytes_sync = 0;
      }
@@ -1807,7 +1817,7 @@ _e_fm_op_remove_atom(E_Fm_Op_Task *task)
 
                        if (fd >= 0)
                          {
-                            syncfs(fd);
+                            _syncfs(fd);
                             _e_fm_op_last_sync = now;
                             close(fd);
                          }
@@ -1827,7 +1837,7 @@ _e_fm_op_remove_atom(E_Fm_Op_Task *task)
 
         if (fd >= 0)
           {
-             syncfs(fd);
+             _syncfs(fd);
              _e_fm_op_last_sync = now;
              close(fd);
           }
