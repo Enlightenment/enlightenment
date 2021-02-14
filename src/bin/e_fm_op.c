@@ -48,8 +48,8 @@ void *alloca(size_t);
 #define COPYBUFSIZE     16384
 #define REMOVECHUNKSIZE 4096
 #define NB_PASS         3
-#define SYNC_TIME       0.2
-#define SYNC_BYTES      (512 * 1024)
+#define SYNC_TIME       0.5
+#define SYNC_BYTES      (5 * 1024 * 1024)
 
 #define E_FREE(p) do { free(p); p = NULL; } while (0)
 
