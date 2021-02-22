@@ -333,11 +333,10 @@ _gc_id_new(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
 static void
 _tasks_cb_iconify_end_cb(void *data, Evas_Object *obj EINA_UNUSED, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
 {
-   Tasks_Item *item;
-   E_Client *ec;
+   Tasks_Item *item = data;
+   E_Client *ec = item->client;
 
-   item = data;
-   ec = item->client;
+   if (!ec) return;
 
    evas_object_layer_set(ec->frame, ec->layer);
    ec->layer_block = 0;
