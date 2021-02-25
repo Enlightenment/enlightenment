@@ -345,6 +345,7 @@ main(int argc, char **argv)
    e_util_env_set("E_RESTART_OK", NULL);
    e_util_env_set("PANTS", "ON");
    e_util_env_set("DESKTOP", "Enlightenment");
+   e_util_env_set("XDG_CURRENT_DESKTOP", "Enlightenment");
    if (getenv("E_ALERT_FONT_DIR"))
      e_util_env_set("E_ALERT_FONT_DIR", NULL);
    if (getenv("E_ALERT_SYSTEM_BIN"))
