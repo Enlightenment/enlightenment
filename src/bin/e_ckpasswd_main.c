@@ -266,6 +266,17 @@ main(int argc, char **argv)
    // read passwd from stdin
    if (polkit_mode == 0)
      {
+        rd = read(0, pw, 3);
+        if (rd != 3)
+          {
+             fprintf(stderr, "AUTH: Error. Can't read passwd preable\n");
+             goto err;
+          }
+        if (!((pw[0] == 'p') && (pw[1] == 'w') && (pw[2] == ' ')))
+          {
+             fprintf(stderr, "AUTH: Error. Preable is wrong\n");
+             goto err;
+          }
         rd = read(0, pw, sizeof(pw) - 1);
         if (rd < 0)
           {
