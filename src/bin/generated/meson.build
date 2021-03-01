@@ -1,7 +1,6 @@
 protos = [
   '@0@/unstable/linux-dmabuf/linux-dmabuf-unstable-v1.xml'.format(dir_wayland_protocols),
   '../../protocol/session-recovery.xml',
-  '../../protocol/www.xml',
   '../../protocol/efl-aux-hints.xml',
   '../../protocol/action_route.xml',
   '@0@/unstable/xdg-foreign/xdg-foreign-unstable-v1.xml'.format(dir_wayland_protocols),
