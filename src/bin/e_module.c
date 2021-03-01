@@ -766,7 +766,6 @@ _e_module_whitelist_check(void)
       "sysinfo",
       "systray",
       "tasks",
-      "teamwork",
       "temperature",
       "tiling",
       "time",
