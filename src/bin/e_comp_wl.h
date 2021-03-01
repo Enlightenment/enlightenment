@@ -109,10 +109,6 @@ typedef struct E_Comp_Wl_Extension_Data
      {
         struct wl_global *global;
      } session_recovery;
-   struct
-     {
-        struct wl_global *global;
-     } www;
    /* begin xdg-foreign */
    struct
      {
@@ -330,11 +326,6 @@ struct _E_Comp_Wl_Client_Data
            int fs_zone;
         } set;
      } shell;
-   struct
-   {
-      struct wl_resource *surface;
-      int x, y;
-   } www;
 
    E_Comp_Wl_Surface_State pending;
 

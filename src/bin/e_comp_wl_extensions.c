@@ -1,15 +1,12 @@
 #define E_COMP_WL
 #include "e.h"
 
-
 #include <uuid.h>
 #include "session-recovery-server-protocol.h"
-#include "www-server-protocol.h"
 #include "xdg-foreign-unstable-v1-server-protocol.h"
 #include "relative-pointer-unstable-v1-server-protocol.h"
 #include "pointer-constraints-unstable-v1-server-protocol.h"
 #include "action_route-server-protocol.h"
-
 
 /* mutter uses 32, seems reasonable */
 #define HANDLE_LEN 32
@@ -51,18 +48,12 @@ static void
 _e_comp_wl_extensions_client_move_begin(void *d EINA_UNUSED, E_Client *ec)
 {
    if (e_client_has_xwindow(ec) || e_object_is_del(E_OBJECT(ec))) return;
-
-   if (ec->comp_data->www.surface)
-     www_surface_send_start_drag(ec->comp_data->www.surface);
 }
 
 static void
 _e_comp_wl_extensions_client_move_end(void *d EINA_UNUSED, E_Client *ec)
 {
    if (e_client_has_xwindow(ec) || e_object_is_del(E_OBJECT(ec))) return;
-
-   if (ec->comp_data->www.surface)
-     www_surface_send_end_drag(ec->comp_data->www.surface);
 }
 
 static void
@@ -131,62 +122,6 @@ _e_comp_wl_session_recovery_destroy_uuid(struct wl_client *client EINA_UNUSED, s
    if (!ec->sr_remember) return;
    e_remember_use(ec->sr_remember);
    e_remember_apply(ec->sr_remember, ec);
-}
-
-static void
-_e_comp_wl_www_surface_del(struct wl_resource *res)
-{
-   E_Client *ec;
-
-   ec = wl_resource_get_user_data(res);
-   if (!e_object_is_del(E_OBJECT(ec)))
-     {
-        ec->comp_data->www.surface = NULL;
-        ec->comp_data->maximize_anims_disabled = 0;
-     }
-   ec->maximize_anims_disabled = 0;
-   e_object_unref(E_OBJECT(ec));
-}
-
-static void
-_e_comp_wl_www_surface_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
-{
-   wl_resource_destroy(resource);
-}
-
-static const struct www_surface_interface _e_www_surface_interface =
-{
-   _e_comp_wl_www_surface_destroy,
-};
-
-static void
-_e_comp_wl_www_cb_create(struct wl_client *client, struct wl_resource *resource, uint32_t id, struct wl_resource *surface)
-{
-    struct wl_resource *ww;
-    E_Client *ec;
-
-    ec = wl_resource_get_user_data(surface);
-    if (ec->comp_data->www.surface)
-      {
-        wl_resource_post_error(resource,
-                               WL_DISPLAY_ERROR_INVALID_OBJECT,
-                               "Surface already created www_surface");
-        return;
-      }
-    ww = wl_resource_create(client, &www_surface_interface, 1, id);
-    if (!ww)
-      {
-         ERR("Could not create www_surface!");
-         wl_client_post_no_memory(client);
-         return;
-      }
-    wl_resource_set_implementation(ww, &_e_www_surface_interface, NULL, _e_comp_wl_www_surface_del);
-    wl_resource_set_user_data(ww, ec);
-    ec->comp_data->www.surface = ww;
-    ec->comp_data->www.x = ec->x;
-    ec->comp_data->www.y = ec->y;
-    ec->comp_data->maximize_anims_disabled = ec->maximize_anims_disabled = 1;
-    e_object_ref(E_OBJECT(ec));
 }
 
 ///////////////////////////////////////////////////////
@@ -922,11 +857,6 @@ static const struct zwp_e_session_recovery_interface _e_session_recovery_interfa
    _e_comp_wl_session_recovery_destroy_uuid,
 };
 
-static const struct www_interface _e_www_interface =
-{
-   _e_comp_wl_www_cb_create
-};
-
 static const struct zxdg_exporter_v1_interface _e_zxdg_exporter_v1_interface =
 {
    _e_comp_wl_zxdg_exporter_v1_exporter_destroy,
@@ -983,7 +913,6 @@ _e_comp_wl_##NAME##_cb_bind(struct wl_client *client, void *data EINA_UNUSED, ui
 }
 
 GLOBAL_BIND_CB(session_recovery, zwp_e_session_recovery_interface)
-GLOBAL_BIND_CB(www, www_interface)
 GLOBAL_BIND_CB(zxdg_exporter_v1, zxdg_exporter_v1_interface)
 GLOBAL_BIND_CB(zxdg_importer_v1, zxdg_importer_v1_interface)
 GLOBAL_BIND_CB(zwp_relative_pointer_manager_v1, zwp_relative_pointer_manager_v1_interface)
@@ -1079,7 +1008,6 @@ e_comp_wl_extensions_init(void)
 
    /* try to add session_recovery to wayland globals */
    GLOBAL_CREATE_OR_RETURN(session_recovery, zwp_e_session_recovery_interface, 1);
-   GLOBAL_CREATE_OR_RETURN(www, www_interface, 1);
    GLOBAL_CREATE_OR_RETURN(zxdg_exporter_v1, zxdg_exporter_v1_interface, 1);
    e_comp_wl->extensions->zxdg_exporter_v1.surfaces = eina_hash_string_superfast_new(NULL);
    GLOBAL_CREATE_OR_RETURN(zxdg_importer_v1, zxdg_importer_v1_interface, 1);
