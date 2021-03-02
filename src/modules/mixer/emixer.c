@@ -17,12 +17,13 @@
 Evas_Object *win;
 Evas_Object *source_scroller, *sink_input_scroller, *sink_scroller, *card_scroller;
 Evas_Object *source_box, *sink_input_box, *sink_box, *card_box;
-
+Evas_Object *category_current = NULL;
 Eina_List *source_list = NULL, *sink_input_list = NULL, *sink_list = NULL, *card_list = NULL;
 
 //////////////////////////////////////////////////////////////////////////////
 
 static void _emix_sink_volume_fill(Emix_Sink *sink, Evas_Object *bxv, Evas_Object *bx, Eina_Bool locked);
+static Evas_Object *_icon(Evas_Object *base, const char *name);
 
 static Eina_Bool
 _backend_init(const char *back)
@@ -138,7 +139,7 @@ _cb_sink_default_change(void *data,
 static void
 _emix_sink_volume_fill(Emix_Sink *sink, Evas_Object *fr, Evas_Object *bx, Eina_Bool locked)
 {
-   Evas_Object *bxhv, *sl, *ck, *lb;
+   Evas_Object *bxhv, *ic, *sl, *ck, *lb;
    Eina_List *sls = NULL;
    unsigned int i;
 
@@ -148,9 +149,12 @@ _emix_sink_volume_fill(Emix_Sink *sink, Evas_Object *fr, Evas_Object *bx, Eina_B
    bxhv = elm_box_add(bx);
    evas_object_size_hint_weight_set(bxhv, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bxhv, EVAS_HINT_FILL, 0.5);
+   elm_box_horizontal_set(bxhv, 1);
    elm_box_pack_end(bx, bxhv);
    evas_object_show(bxhv);
 
+   ic = _icon(win, "audio-volume-medium");
+   elm_box_pack_end(bxhv, ic);
    if (locked)
      {
         sl = elm_slider_add(bx);
@@ -210,6 +214,8 @@ _emix_sink_volume_fill(Emix_Sink *sink, Evas_Object *fr, Evas_Object *bx, Eina_B
    evas_object_show(bxhv);
 
    ck = elm_check_add(bx);
+   evas_object_size_hint_weight_set(ck, 1.0, 1.0);
+   evas_object_size_hint_align_set(ck, 0.0, 0.5);
    evas_object_data_set(fr, "default", ck);
    elm_object_text_set(ck, "Default");
    elm_check_state_set(ck, sink->default_sink);
@@ -218,6 +224,8 @@ _emix_sink_volume_fill(Emix_Sink *sink, Evas_Object *fr, Evas_Object *bx, Eina_B
    evas_object_smart_callback_add(ck, "changed", _cb_sink_default_change, fr);
 
    ck = elm_check_add(bx);
+   evas_object_size_hint_weight_set(ck, 1.0, 1.0);
+   evas_object_size_hint_align_set(ck, 0.0, 0.5);
    evas_object_data_set(fr, "mute", ck);
    elm_object_text_set(ck, "Mute");
    elm_check_state_set(ck, sink->mute);
@@ -228,6 +236,8 @@ _emix_sink_volume_fill(Emix_Sink *sink, Evas_Object *fr, Evas_Object *bx, Eina_B
    if (sink->volume.channel_count > 1)
      {
         ck = elm_check_add(bx);
+        evas_object_size_hint_weight_set(ck, 1.0, 1.0);
+        evas_object_size_hint_align_set(ck, 0.0, 0.5);
         elm_object_text_set(ck, "Lock");
         evas_object_data_set(fr, "lock", ck);
         elm_check_state_set(ck, locked);
@@ -242,7 +252,7 @@ _emix_sink_volume_fill(Emix_Sink *sink, Evas_Object *fr, Evas_Object *bx, Eina_B
 static void
 _emix_sink_add(Emix_Sink *sink)
 {
-   Evas_Object *bxv, *bx, *lb, *hv, *sep, *fr;
+   Evas_Object *bxv, *bx, *hv, *fr;
    const Eina_List *l;
    Emix_Port *port;
    Eina_Bool locked = EINA_TRUE;
@@ -251,7 +261,7 @@ _emix_sink_add(Emix_Sink *sink)
    fr = elm_frame_add(win);
    evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, 0.0);
-   elm_object_style_set(fr, "pad_medium");
+   elm_object_text_set(fr, sink->name);
    sink_list = eina_list_append(sink_list, fr);
    evas_object_data_set(fr, "sink", sink);
 
@@ -266,14 +276,9 @@ _emix_sink_add(Emix_Sink *sink)
    elm_box_pack_end(bxv, bx);
    evas_object_show(bx);
 
-   lb = elm_label_add(win);
-   elm_object_text_set(lb, sink->name);
-   evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0.5);
-   evas_object_size_hint_align_set(lb, 0.0, 0.5);
-   elm_box_pack_end(bx, lb);
-   evas_object_show(lb);
-
    hv = elm_hoversel_add(win);
+   evas_object_size_hint_weight_set(hv, 1.0, 1.0);
+   evas_object_size_hint_align_set(hv, EVAS_HINT_FILL, 0.0); 
    evas_object_data_set(hv, "parent", fr);
    evas_object_data_set(fr, "port", hv);
    elm_hoversel_hover_parent_set(hv, win);
@@ -284,8 +289,6 @@ _emix_sink_add(Emix_Sink *sink)
                               _cb_sink_port_change, port);
         if (port->active) elm_object_text_set(hv, port->description);
      }
-   evas_object_size_hint_weight_set(hv, 0.0, 0.5);
-   evas_object_size_hint_align_set(hv, EVAS_HINT_FILL, 0.5);
    elm_box_pack_end(bx, hv);
    evas_object_show(hv);
 
@@ -308,7 +311,6 @@ _emix_sink_add(Emix_Sink *sink)
    elm_box_pack_end(bxv, bx);
    evas_object_show(bx);
 
-
    _emix_sink_volume_fill(sink, fr, bx, locked);
 
    elm_object_content_set(fr, bxv);
@@ -316,14 +318,6 @@ _emix_sink_add(Emix_Sink *sink)
 
    elm_box_pack_end(sink_box, fr);
    evas_object_show(fr);
-
-   sep = elm_separator_add(win);
-   evas_object_data_set(fr, "extra", sep);
-   elm_separator_horizontal_set(sep, EINA_TRUE);
-   evas_object_size_hint_weight_set(sep, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(sep, EVAS_HINT_FILL, 0.0);
-   elm_box_pack_end(sink_box, sep);
-   evas_object_show(sep);
 }
 
 static void
@@ -336,7 +330,6 @@ _emix_sink_del(Emix_Sink *sink)
         if (evas_object_data_get(fr, "sink") == sink)
           {
              sink_list = eina_list_remove_list(sink_list, l);
-             evas_object_del(evas_object_data_get(fr, "extra"));
              evas_object_del(fr);
              return;
           }
@@ -505,7 +498,7 @@ _cb_sink_input_lock_change(void *data,
 static void
 _emix_sink_input_volume_fill(Emix_Sink_Input *input, Evas_Object *fr, Evas_Object *bx, Eina_Bool locked)
 {
-   Evas_Object *bxhv, *lb, *sl = NULL, *ck;
+   Evas_Object *bxhv, *ic, *lb, *sl = NULL, *ck;
    unsigned int i;
    Eina_List *sls = NULL, *l;
 
@@ -515,9 +508,12 @@ _emix_sink_input_volume_fill(Emix_Sink_Input *input, Evas_Object *fr, Evas_Objec
    bxhv = elm_box_add(bx);
    evas_object_size_hint_weight_set(bxhv, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bxhv, EVAS_HINT_FILL, 0.5);
+   elm_box_horizontal_set(bxhv, 1);
    elm_box_pack_end(bx, bxhv);
    evas_object_show(bxhv);
 
+   ic = _icon(win, "audio-volume-medium");
+   elm_box_pack_end(bxhv, ic);
    if (locked)
      {
         sl = elm_slider_add(bx);
@@ -603,6 +599,7 @@ _emix_sink_input_volume_fill(Emix_Sink_Input *input, Evas_Object *fr, Evas_Objec
    if (input->volume.channel_count > 1)
      {
         ck = elm_check_add(bx);
+        elm_object_disabled_set(ck, 1);
         evas_object_data_set(fr, "lock", ck);
         elm_object_text_set(ck, "Lock");
         elm_check_state_set(ck, locked);
@@ -613,11 +610,10 @@ _emix_sink_input_volume_fill(Emix_Sink_Input *input, Evas_Object *fr, Evas_Objec
      }
 }
 
-
 static void
 _emix_sink_input_add(Emix_Sink_Input *input)
 {
-   Evas_Object *bxv, *bx, *lb, *hv, *sep, *ic, *fr;
+   Evas_Object *bxv, *bx, *lb, *hv, *ic, *fr;
    const Eina_List *l;
    Emix_Sink *sink;
    Eina_Bool locked = EINA_TRUE;
@@ -626,7 +622,8 @@ _emix_sink_input_add(Emix_Sink_Input *input)
    fr = elm_frame_add(win);
    evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, 0.0);
-   elm_object_style_set(fr, "pad_medium");
+   elm_object_text_set(fr, input->sink->name);
+
    sink_input_list = eina_list_append(sink_input_list, fr);
    evas_object_data_set(fr, "input", input);
 
@@ -643,6 +640,7 @@ _emix_sink_input_add(Emix_Sink_Input *input)
 
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, input->icon);
+   evas_object_size_hint_min_set(ic, ELM_SCALE_SIZE(24), ELM_SCALE_SIZE(24));
    evas_object_size_hint_weight_set(ic, 0.0, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(ic, 0.0, EVAS_HINT_FILL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
@@ -669,7 +667,7 @@ _emix_sink_input_add(Emix_Sink_Input *input)
      }
    evas_object_size_hint_weight_set(hv, 0.0, 0.5);
    evas_object_size_hint_align_set(hv, EVAS_HINT_FILL, 0.5);
-   elm_box_pack_end(bx, hv);
+   elm_box_pack_end(bxv, hv);
    evas_object_show(hv);
 
    bx = elm_box_add(win);
@@ -698,14 +696,6 @@ _emix_sink_input_add(Emix_Sink_Input *input)
 
    elm_box_pack_end(sink_input_box, fr);
    evas_object_show(fr);
-
-   sep = elm_separator_add(win);
-   evas_object_data_set(fr, "extra", sep);
-   elm_separator_horizontal_set(sep, EINA_TRUE);
-   evas_object_size_hint_weight_set(sep, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(sep, EVAS_HINT_FILL, 0.0);
-   elm_box_pack_end(sink_input_box, sep);
-   evas_object_show(sep);
 }
 
 static void
@@ -887,7 +877,7 @@ _cb_source_default_change(void *data,
 static void
 _emix_source_volume_fill(Emix_Source *source, Evas_Object *fr, Evas_Object *bx, Eina_Bool locked)
 {
-   Evas_Object *bxhv, *lb, *sl, *ck;
+   Evas_Object *bxhv, *lb, *ic, *sl, *ck;
    Eina_List *sls = NULL;
    unsigned int i;
 
@@ -897,9 +887,12 @@ _emix_source_volume_fill(Emix_Source *source, Evas_Object *fr, Evas_Object *bx, 
    bxhv = elm_box_add(bx);
    evas_object_size_hint_weight_set(bxhv, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bxhv, EVAS_HINT_FILL, 0.5);
+   elm_box_horizontal_set(bxhv, 1);
    elm_box_pack_end(bx, bxhv);
    evas_object_show(bxhv);
 
+   ic = _icon(win, "audio-input-microphone");
+   elm_box_pack_end(bxhv, ic);
    if (locked)
      {
         sl = elm_slider_add(bx);
@@ -965,6 +958,8 @@ _emix_source_volume_fill(Emix_Source *source, Evas_Object *fr, Evas_Object *bx, 
    evas_object_show(bxhv);
 
    ck = elm_check_add(bx);
+   evas_object_size_hint_weight_set(ck, 1.0, 1.0);
+   evas_object_size_hint_align_set(ck, 0.0, 0.5);
    evas_object_data_set(fr, "default", ck);
    elm_object_text_set(ck, "Default");
    elm_check_state_set(ck, source->default_source);
@@ -973,6 +968,8 @@ _emix_source_volume_fill(Emix_Source *source, Evas_Object *fr, Evas_Object *bx, 
    evas_object_smart_callback_add(ck, "changed", _cb_source_default_change, fr);
 
    ck = elm_check_add(bx);
+   evas_object_size_hint_weight_set(ck, 1.0, 1.0);
+   evas_object_size_hint_align_set(ck, 0.0, 0.5);
    evas_object_data_set(fr, "mute", ck);
    elm_object_text_set(ck, "Mute");
    elm_check_state_set(ck, source->mute);
@@ -984,6 +981,9 @@ _emix_source_volume_fill(Emix_Source *source, Evas_Object *fr, Evas_Object *bx, 
    if (source->volume.channel_count > 1)
      {
         ck = elm_check_add(bx);
+        elm_object_disabled_set(ck, 1);
+        evas_object_size_hint_weight_set(ck, 1.0, 1.0);
+        evas_object_size_hint_align_set(ck, 0.0, 0.5);
         evas_object_data_set(fr, "lock", ck);
         elm_object_text_set(ck, "Lock");
         elm_check_state_set(ck, locked);
@@ -998,14 +998,14 @@ _emix_source_volume_fill(Emix_Source *source, Evas_Object *fr, Evas_Object *bx, 
 static void
 _emix_source_add(Emix_Source *source)
 {
-   Evas_Object *bxv, *bx, *lb, *sep, *fr;
+   Evas_Object *bxv, *bx, *fr;
    unsigned int i;
    Eina_Bool locked = EINA_TRUE;
 
    fr = elm_frame_add(win);
    evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, 0.0);
-   elm_object_style_set(fr, "pad_medium");
+   elm_object_text_set(fr, source->name);
    source_list = eina_list_append(source_list, fr);
    evas_object_data_set(fr, "source", source);
 
@@ -1019,13 +1019,6 @@ _emix_source_add(Emix_Source *source)
    evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, 0.0);
    elm_box_pack_end(bxv, bx);
    evas_object_show(bx);
-
-   lb = elm_label_add(win);
-   elm_object_text_set(lb, source->name);
-   evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(lb, 0.0, 0.5);
-   elm_box_pack_end(bx, lb);
-   evas_object_show(lb);
 
    bx = elm_box_add(win);
    evas_object_data_set(fr, "volume_bx", bx);
@@ -1054,14 +1047,6 @@ _emix_source_add(Emix_Source *source)
 
    elm_box_pack_end(source_box, fr);
    evas_object_show(fr);
-
-   sep = elm_separator_add(win);
-   evas_object_data_set(fr, "extra", sep);
-   elm_separator_horizontal_set(sep, EINA_TRUE);
-   evas_object_size_hint_weight_set(sep, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(sep, EVAS_HINT_FILL, 0.0);
-   elm_box_pack_end(source_box, sep);
-   evas_object_show(sep);
 }
 
 static void
@@ -1140,7 +1125,7 @@ _cb_card_profile_change(void *data,
 static void
 _emix_card_add(Emix_Card *card)
 {
-   Evas_Object *bxv, *bx, *lb, *hv, *sep, *fr;
+   Evas_Object *bxv, *bx, *hv, *fr;
    Eina_List *l;
    Emix_Profile *profile;
    int cards = 0;
@@ -1148,7 +1133,7 @@ _emix_card_add(Emix_Card *card)
    fr = elm_frame_add(win);
    evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, 0.0);
-   elm_object_style_set(fr, "pad_medium");
+   elm_object_text_set(fr, card->name);
    card_list = eina_list_append(card_list, fr);
    evas_object_data_set(fr, "card", card);
 
@@ -1157,20 +1142,14 @@ _emix_card_add(Emix_Card *card)
    evas_object_size_hint_align_set(bxv, EVAS_HINT_FILL, 0.0);
 
    bx = elm_box_add(win);
-   elm_box_horizontal_set(bx, EINA_TRUE);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, 0.0);
    elm_box_pack_end(bxv, bx);
    evas_object_show(bx);
 
-   lb = elm_label_add(win);
-   elm_object_text_set(lb, card->name);
-   evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0.5);
-   evas_object_size_hint_align_set(lb, 0.0, 0.5);
-   elm_box_pack_end(bx, lb);
-   evas_object_show(lb);
-
    hv = elm_hoversel_add(win);
+   evas_object_size_hint_weight_set(hv, 1.0, 1.0);
+   evas_object_size_hint_align_set(hv, 0.5, 0.5);
    evas_object_data_set(hv, "parent", fr);
    evas_object_data_set(fr, "profile", hv);
    elm_hoversel_hover_parent_set(hv, win);
@@ -1194,14 +1173,6 @@ _emix_card_add(Emix_Card *card)
 
    elm_box_pack_end(card_box, fr);
    evas_object_show(fr);
-
-   sep = elm_separator_add(win);
-   evas_object_data_set(fr, "extra", sep);
-   elm_separator_horizontal_set(sep, EINA_TRUE);
-   evas_object_size_hint_weight_set(sep, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(sep, EVAS_HINT_FILL, 0.0);
-   elm_box_pack_end(card_box, sep);
-   evas_object_show(sep);
 }
 
 static void
@@ -1312,6 +1283,7 @@ _cb_playback(void *data EINA_UNUSED,
    evas_object_show(sink_input_scroller);
    evas_object_hide(sink_scroller);
    evas_object_hide(card_scroller);
+   category_current = sink_input_scroller;
 }
 
 static void
@@ -1323,6 +1295,7 @@ _cb_outputs(void *data EINA_UNUSED,
    evas_object_hide(sink_input_scroller);
    evas_object_show(sink_scroller);
    evas_object_hide(card_scroller);
+   category_current = sink_scroller;
 }
 
 static void
@@ -1334,6 +1307,7 @@ _cb_inputs(void *data EINA_UNUSED,
    evas_object_hide(sink_input_scroller);
    evas_object_hide(sink_scroller);
    evas_object_hide(card_scroller);
+   category_current = source_scroller;
 }
 
 static void
@@ -1345,6 +1319,7 @@ _cb_card(void *data EINA_UNUSED,
    evas_object_hide(sink_input_scroller);
    evas_object_hide(sink_scroller);
    evas_object_show(card_scroller);
+   category_current = card_scroller;
 }
 
 
@@ -1404,12 +1379,57 @@ _fill_card(void)
      }
 }
 
-//////////////////////////////////////////////////////////////////////////////
+static Evas_Object *
+_icon(Evas_Object *base, const char *name)
+{
+   Evas_Object *ic = elm_icon_add(base);
+   elm_icon_standard_set(ic, name);
+   evas_object_size_hint_min_set(ic, ELM_SCALE_SIZE(24), ELM_SCALE_SIZE(24));
+   evas_object_show(ic);
+
+   return ic;
+}
+
+static void
+_cb_category_selected(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                      void *event_info)
+{
+   Elm_Transit *trans;
+   Evas_Object *category_prev = category_current;
+   Elm_Object_Item *it = event_info;
+   Evas_Smart_Cb func = elm_object_item_data_get(it);
+
+   func(NULL, NULL, NULL);
+
+   if (!category_prev) return;
+
+   trans = elm_transit_add();
+   elm_transit_object_add(trans, category_prev);
+   elm_transit_object_add(trans, category_current);
+   elm_transit_duration_set(trans, 0.2);
+   elm_transit_effect_blend_add(trans);
+   elm_transit_go(trans);
+}
+
+
+static void
+_cb_key_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
+             Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Evas_Event_Key_Down *ev;
+
+   ev = event_info;
+   if ((!ev) || (!ev->keyname)) return;
+
+   if (!strcmp(ev->keyname, "Escape"))
+     evas_object_del(win);
+}
 
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
-   Evas_Object *tb, *tbar, *sc, *rect, *bx;
+   Evas_Object *tb, *lst, *ic, *sc, *rect, *bx;
+   Elm_Object_Item *it;
    const char *back = NULL;
 
    emix_init();
@@ -1422,60 +1442,58 @@ elm_main(int argc, char **argv)
    win = elm_win_util_standard_add("emix", _("Mixer"));
    elm_win_autodel_set(win, EINA_TRUE);
 
-/*
-   icon = evas_object_image_add(evas_object_evas_get(mw->win));
-   snprintf(buf, sizeof(buf), "%s/icons/emixer.png",
-            elm_app_data_dir_get());
-   evas_object_image_file_set(icon, buf, NULL);
-   elm_win_icon_object_set(mw->win, icon);
-   elm_win_icon_name_set(mw->win, "emixer");
- */
-
    tb = elm_table_add(win);
    evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, tb);
    evas_object_show(tb);
+   evas_object_event_callback_add(tb, EVAS_CALLBACK_KEY_DOWN, _cb_key_down, win);
 
-   tbar = elm_toolbar_add(win);
-   elm_toolbar_icon_size_set(tbar, 24);
-   elm_toolbar_select_mode_set(tbar, ELM_OBJECT_SELECT_MODE_ALWAYS);
-   elm_toolbar_homogeneous_set(tbar, EINA_TRUE);
-   elm_object_style_set(tbar, "item_horizontal");
-   evas_object_size_hint_weight_set(tbar, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(tbar, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   lst = elm_list_add(win);
+   evas_object_size_hint_weight_set(lst, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(lst, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(lst);
 
-   elm_toolbar_item_append(tbar, "media-playback-start", _("Playback"), _cb_playback, NULL);
-   elm_toolbar_item_append(tbar, "audio-volume-medium", _("Outputs"), _cb_outputs, NULL);
-   elm_toolbar_item_append(tbar, "audio-input-microphone", _("Inputs"), _cb_inputs, NULL);
-   elm_toolbar_item_append(tbar, "audio-card", _("Cards"), _cb_card, NULL);
+   ic = _icon(win, "media-playback-start");
+   it = elm_list_item_append(lst, _("Playback"), ic, NULL, NULL, _cb_playback);
+   ic = _icon(win, "audio-volume-medium");
+   elm_list_item_append(lst, _("Outputs"), ic, NULL, NULL, _cb_outputs);
+   ic = _icon(win, "audio-input-microphone");
+   elm_list_item_append(lst, _("Inputs"), ic, NULL, NULL, _cb_inputs);
+   ic = _icon(win, "audio-card");
+   elm_list_item_append(lst, _("Cards"), ic, NULL, NULL, _cb_card);
+   evas_object_smart_callback_add(lst, "selected", _cb_category_selected, NULL);
+   elm_table_pack(tb, lst, 0, 0, 1, 1);
 
-   elm_table_pack(tb, tbar, 0, 0, 1, 1);
-   evas_object_show(tbar);
+   rect = evas_object_rectangle_add(evas_object_evas_get(win));
+   evas_object_size_hint_weight_set(rect, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(rect, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_min_set(rect, ELM_SCALE_SIZE(120), -1);
+   elm_table_pack(tb, rect, 0, 0, 1, 1);
 
    sc = elm_scroller_add(win);
    source_scroller = sc;
    evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_table_pack(tb, sc, 0, 1, 1, 1);
+   elm_table_pack(tb, sc, 1, 0, 1, 1);
 
    sc = elm_scroller_add(win);
    sink_input_scroller = sc;
    evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_table_pack(tb, sc, 0, 1, 1, 1);
+   elm_table_pack(tb, sc, 1, 0, 1, 1);
    evas_object_show(sc);
 
    sc = elm_scroller_add(win);
    sink_scroller = sc;
    evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_table_pack(tb, sc, 0, 1, 1, 1);
+   elm_table_pack(tb, sc, 1, 0, 1, 1);
 
    sc = elm_scroller_add(win);
    card_scroller = sc;
    evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_table_pack(tb, sc, 0, 1, 1, 1);
+   elm_table_pack(tb, sc, 1, 0, 1, 1);
 
    bx = elm_box_add(win);
    source_box = bx;
@@ -1511,12 +1529,17 @@ elm_main(int argc, char **argv)
    evas_object_size_hint_min_set(rect,
                                  440 * elm_config_scale_get(),
                                  220 * elm_config_scale_get());
-   elm_table_pack(tb, rect, 0, 1, 1, 1);
+   elm_table_pack(tb, rect, 1, 0, 1, 1);
 
    _fill_source();
    _fill_sink_input();
    _fill_sink();
    _fill_card();
+
+   elm_list_go(lst);
+   elm_list_item_selected_set(it, 1);
+
+   elm_win_center(win, 1, 1);
    evas_object_show(win);
 
    elm_run();
