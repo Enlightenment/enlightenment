@@ -62,6 +62,7 @@ typedef struct _Emix_Sink {
    const char *name;
    Emix_Volume volume;
    Eina_Bool mute;
+   Eina_Bool default_sink;
    Eina_List *ports;
 } Emix_Sink;
 
@@ -78,6 +79,7 @@ typedef struct _Emix_Source {
    const char *name;
    Emix_Volume volume;
    Eina_Bool mute;
+   Eina_Bool default_source;
 } Emix_Source;
 
 typedef struct _Emix_Profile {
@@ -122,6 +124,9 @@ typedef struct _Emix_Backend {
                                        Emix_Sink_Input *input, Emix_Sink *sink);
 
    const Eina_List*      (*ebackend_sources_get)(void);
+   Eina_Bool             (*ebackend_source_default_support)(void);
+   const Emix_Source*    (*ebackend_source_default_get)(void);
+   void                  (*ebackend_source_default_set)(Emix_Source *source);
    void                  (*ebackend_source_mute_set)(Emix_Source *source,
                                                      Eina_Bool mute);
    void                  (*ebackend_source_volume_set)(Emix_Source *source,
@@ -179,6 +184,9 @@ E_API void                emix_sink_input_sink_change(Emix_Sink_Input *input,
                                                      Emix_Sink *sink);
 
 E_API const Eina_List*    emix_sources_get(void);
+E_API Eina_Bool           emix_source_default_support(void);
+E_API const Emix_Source*  emix_source_default_get(void);
+E_API void                emix_source_default_set(Emix_Source *source);
 E_API void                emix_source_mute_set(Emix_Source *source,
                                                   Eina_Bool mute);
 E_API void                emix_source_volume_set(Emix_Source *source,

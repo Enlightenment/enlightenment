@@ -25,7 +25,6 @@ typedef struct _Context
    Emix_Event_Cb cb;
    const void *userdata;
    Ecore_Timer *connect;
-   int default_sink;
 
    Eina_List *sinks, *sources, *inputs, *cards;
    Eina_Bool connected;
@@ -35,6 +34,7 @@ typedef struct _Sink
 {
    Emix_Sink base;
    int idx;
+   const char *pulse_name;
 } Sink;
 
 typedef struct _Sink_Input
@@ -47,6 +47,7 @@ typedef struct _Source
 {
    Emix_Source base;
    int idx;
+   const char *pulse_name;
 } Source;
 
 typedef struct _Profile
@@ -114,6 +115,7 @@ _sink_del(Sink *sink)
      eina_stringshare_del(sink->base.volume.channel_names[i]);
    free(sink->base.volume.channel_names);
    eina_stringshare_del(sink->base.name);
+   eina_stringshare_del(sink->pulse_name);
    free(sink);
 }
 
@@ -143,6 +145,7 @@ _source_del(Source *source)
      eina_stringshare_del(source->base.volume.channel_names[i]);
    free(source->base.volume.channel_names);
    eina_stringshare_del(source->base.name);
+   eina_stringshare_del(source->pulse_name);
    free(source);
 }
 
@@ -187,6 +190,7 @@ _sink_cb(pa_context *c EINA_UNUSED, const pa_sink_info *info, int eol,
 
    sink = calloc(1, sizeof(Sink));
    sink->idx = info->index;
+   sink->pulse_name = eina_stringshare_add(info->name);
    sink->base.name = eina_stringshare_add(info->description);
    _pa_cvolume_convert(&info->volume, &sink->base.volume);
    sink->base.volume.channel_names = calloc(sink->base.volume.channel_count, sizeof(Emix_Channel));
@@ -543,7 +547,8 @@ _source_cb(pa_context *c EINA_UNUSED, const pa_source_info *info,
    EINA_SAFETY_ON_NULL_RETURN(source);
 
    source->idx = info->index;
-   source->base.name = eina_stringshare_add(info->name);
+   source->pulse_name = eina_stringshare_add(info->name);
+   source->base.name = eina_stringshare_add(info->description);
    _pa_cvolume_convert(&info->volume, &source->base.volume);
    source->base.volume.channel_names = calloc(source->base.volume.channel_count, sizeof(Emix_Channel));
    for (i = 0; i < source->base.volume.channel_count; ++i)
@@ -642,6 +647,9 @@ static void
 _sink_default_cb(pa_context *c EINA_UNUSED, const pa_sink_info *info, int eol,
                  void *userdata EINA_UNUSED)
 {
+   Sink *sink;
+   Eina_List *l;
+
    if (eol < 0)
      {
         if (pa_context_errno(c) == PA_ERR_NOENTITY)
@@ -657,7 +665,50 @@ _sink_default_cb(pa_context *c EINA_UNUSED, const pa_sink_info *info, int eol,
    DBG("sink index: %d\nsink name: %s", info->index,
        info->name);
 
-   ctx->default_sink = info->index;
+   EINA_LIST_FOREACH(ctx->sinks, l, sink)
+   {
+     Eina_Bool prev_default = sink->base.default_sink;
+     sink->base.default_sink = (uint32_t)sink->idx == info->index;
+     if (ctx->cb && prev_default != sink->base.default_sink)
+       ctx->cb((void *)ctx->userdata, EMIX_SINK_CHANGED_EVENT,
+                    (Emix_Sink *)sink);
+   }
+
+   if (ctx->cb)
+      ctx->cb((void *)ctx->userdata, EMIX_READY_EVENT, NULL);
+}
+
+static void
+_source_default_cb(pa_context *c EINA_UNUSED, const pa_source_info *info, int eol,
+                 void *userdata EINA_UNUSED)
+{
+   Source *source;
+   Eina_List *l;
+
+   if (eol < 0)
+     {
+        if (pa_context_errno(c) == PA_ERR_NOENTITY)
+           return;
+
+        ERR("Source callback failure");
+        return;
+     }
+
+   if (eol > 0)
+      return;
+
+   DBG("source index: %d\nsource name: %s", info->index,
+       info->name);
+
+   EINA_LIST_FOREACH(ctx->sources, l, source)
+   {
+     Eina_Bool prev_default = source->base.default_source;
+     source->base.default_source = (uint32_t)source->idx == info->index;
+     if (ctx->cb && prev_default != source->base.default_source)
+       ctx->cb((void *)ctx->userdata, EMIX_SOURCE_CHANGED_EVENT,
+                    (Emix_Source *)source);
+   }
+
    if (ctx->cb)
       ctx->cb((void *)ctx->userdata, EMIX_READY_EVENT, NULL);
 }
@@ -680,6 +731,14 @@ _server_info_cb(pa_context *c, const pa_server_info *info,
                                               _sink_default_cb, userdata)))
      {
         ERR("pa_context_get_sink_info_by_name() failed");
+        return;
+     }
+   pa_operation_unref(o);
+
+   if (!(o = pa_context_get_source_info_by_name(c, info->default_source_name,
+                                              _source_default_cb, userdata)))
+     {
+        ERR("pa_context_get_source_info_by_name() failed");
         return;
      }
    pa_operation_unref(o);
@@ -1369,10 +1428,58 @@ _sink_default_get(void)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, NULL);
    EINA_LIST_FOREACH(ctx->sinks, l, s)
-      if (s->idx == ctx->default_sink)
+      if (s->base.default_sink)
         return (Emix_Sink *)s;
 
    return NULL;
+}
+
+static void
+_sink_default_set(Emix_Sink *sink)
+{
+  Sink *s = (Sink *)sink;
+  pa_operation* o;
+
+  DBG("Set default sink: %s", sink->name);
+  if (!(o = pa_context_set_default_sink(ctx->context, s->pulse_name, NULL, NULL))) {
+      ERR("pa_context_set_default_sink() failed");
+      return;
+  }
+  pa_operation_unref(o);
+}
+
+static Eina_Bool
+_source_default_support(void)
+{
+   return EINA_TRUE;
+}
+
+static const Emix_Source *
+_source_default_get(void)
+{
+   Source *s;
+   Eina_List *l;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, NULL);
+   EINA_LIST_FOREACH(ctx->sources, l, s)
+      if (s->base.default_source)
+        return (Emix_Source *)s;
+
+   return NULL;
+}
+
+static void
+_source_default_set(Emix_Source *source)
+{
+  Source *s = (Source *)source;
+  pa_operation* o;
+
+  DBG("Set default sink: %s", source->name);
+  if (!(o = pa_context_set_default_source(ctx->context, s->pulse_name, NULL, NULL))) {
+      ERR("pa_context_set_default_source() failed");
+      return;
+  }
+  pa_operation_unref(o);
 }
 
 static Eina_Bool
@@ -1424,7 +1531,7 @@ _pulseaudio_backend =
    _sinks_get,
    _sink_default_support,
    _sink_default_get,
-   NULL,
+   _sink_default_set,
    _sink_mute_set,
    _sink_volume_set,
    _sink_port_set,
@@ -1434,6 +1541,9 @@ _pulseaudio_backend =
    _sink_input_volume_set,
    _sink_input_move,
    _sources_get,
+   _source_default_support,
+   _source_default_get,
+   _source_default_set,
    _source_mute_set,
    _source_volume_set,
    NULL,

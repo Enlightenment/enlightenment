@@ -122,6 +122,20 @@ _cb_sink_lock_change(void *data,
 }
 
 static void
+_cb_sink_default_change(void *data,
+                     Evas_Object *obj,
+                     void *event_info EINA_UNUSED)
+{
+   Evas_Object *fr = data;
+   Emix_Sink *sink = evas_object_data_get(fr, "sink");
+   Eina_Bool is_default = elm_check_state_get(obj);
+   if (is_default) {
+     emix_sink_default_set(sink);
+     elm_object_disabled_set(obj, EINA_TRUE);
+  }
+}
+
+static void
 _emix_sink_volume_fill(Emix_Sink *sink, Evas_Object *fr, Evas_Object *bx, Eina_Bool locked)
 {
    Evas_Object *bxhv, *sl, *ck, *lb;
@@ -194,6 +208,14 @@ _emix_sink_volume_fill(Emix_Sink *sink, Evas_Object *fr, Evas_Object *bx, Eina_B
    bxhv = elm_box_add(bx);
    elm_box_pack_end(bx, bxhv);
    evas_object_show(bxhv);
+
+   ck = elm_check_add(bx);
+   evas_object_data_set(fr, "default", ck);
+   elm_object_text_set(ck, "Default");
+   elm_check_state_set(ck, sink->default_sink);
+   elm_box_pack_end(bxhv, ck);
+   evas_object_show(ck);
+   evas_object_smart_callback_add(ck, "changed", _cb_sink_default_change, fr);
 
    ck = elm_check_add(bx);
    evas_object_data_set(fr, "mute", ck);
@@ -368,6 +390,9 @@ _emix_sink_change(Emix_Sink *sink)
         elm_object_disabled_set(sl, sink->mute);
      }
 
+     ck = evas_object_data_get(fr, "default");
+     elm_check_state_set(ck, sink->default_sink);
+     elm_object_disabled_set(ck, sink->default_sink);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -846,6 +871,20 @@ _cb_source_lock_change(void *data,
 }
 
 static void
+_cb_source_default_change(void *data,
+                     Evas_Object *obj,
+                     void *event_info EINA_UNUSED)
+{
+   Evas_Object *fr = data;
+   Emix_Source *source = evas_object_data_get(fr, "source");
+   Eina_Bool is_default = elm_check_state_get(obj);
+   if (is_default) {
+     emix_source_default_set(source);
+     elm_object_disabled_set(obj, EINA_TRUE);
+  }
+}
+
+static void
 _emix_source_volume_fill(Emix_Source *source, Evas_Object *fr, Evas_Object *bx, Eina_Bool locked)
 {
    Evas_Object *bxhv, *lb, *sl, *ck;
@@ -924,6 +963,14 @@ _emix_source_volume_fill(Emix_Source *source, Evas_Object *fr, Evas_Object *bx, 
    bxhv = elm_box_add(bx);
    elm_box_pack_end(bx, bxhv);
    evas_object_show(bxhv);
+
+   ck = elm_check_add(bx);
+   evas_object_data_set(fr, "default", ck);
+   elm_object_text_set(ck, "Default");
+   elm_check_state_set(ck, source->default_source);
+   elm_box_pack_end(bxhv, ck);
+   evas_object_show(ck);
+   evas_object_smart_callback_add(ck, "changed", _cb_source_default_change, fr);
 
    ck = elm_check_add(bx);
    evas_object_data_set(fr, "mute", ck);
@@ -1071,6 +1118,10 @@ _emix_source_change(Emix_Source *source)
         elm_slider_value_set(sl, source->volume.volumes[0]);
         elm_object_disabled_set(sl, source->mute);
      }
+
+   ck = evas_object_data_get(fr, "default");
+   elm_check_state_set(ck, source->default_source);
+   elm_object_disabled_set(ck, source->default_source);
 }
 
 //////////////////////////////////////////////////////////////////////////////

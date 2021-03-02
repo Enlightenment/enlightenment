@@ -518,7 +518,7 @@ _alsa_backend =
    _alsa_shutdown,
    _max_volume,
    _alsa_sinks_get,
-   _alsa_support, /*default support*/
+   _alsa_support, /*sink default support*/
    NULL, /*get*/
    NULL, /*set*/
    _alsa_sink_mute_set, /*mute_set*/
@@ -530,6 +530,9 @@ _alsa_backend =
    NULL,/*sink input volume set*/
    NULL,/*sink input sink change*/
    _alsa_sources_get,/*source*/
+   _alsa_support, /* source default support*/
+   NULL, /*get*/
+   NULL, /*set*/
    _alsa_sources_mute_set,/* source mute set */
    _alsa_sources_volume_set, /* source volume set */
    NULL, /* advanced options */

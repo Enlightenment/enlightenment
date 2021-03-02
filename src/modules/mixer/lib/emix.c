@@ -347,6 +347,34 @@ emix_sources_get(void)
    return ctx->loaded->ebackend_sources_get();
 }
 
+Eina_Bool
+emix_source_default_support(void)
+{
+   EINA_SAFETY_ON_FALSE_RETURN_VAL((ctx && ctx->loaded &&
+                                    ctx->loaded->ebackend_source_default_support),
+                                   EINA_FALSE);
+   return ctx->loaded->ebackend_source_default_support();
+}
+
+const Emix_Source*
+emix_source_default_get(void)
+{
+   EINA_SAFETY_ON_FALSE_RETURN_VAL((ctx && ctx->loaded &&
+                                    ctx->loaded->ebackend_source_default_get),
+                                   NULL);
+   return ctx->loaded->ebackend_source_default_get();
+}
+
+void
+emix_source_default_set(Emix_Source *source)
+{
+   EINA_SAFETY_ON_FALSE_RETURN((ctx && ctx->loaded &&
+                                ctx->loaded->ebackend_source_default_set &&
+                                source));
+
+   ctx->loaded->ebackend_source_default_set(source);
+}
+
 void
 emix_source_mute_set(Emix_Source *source, Eina_Bool mute)
 {
@@ -428,5 +456,3 @@ emix_card_profile_set(Emix_Card *card, Emix_Profile *profile)
 
    return ctx->loaded->ebackend_card_profile_set(card, profile);
 }
-
-

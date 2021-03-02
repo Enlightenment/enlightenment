@@ -358,6 +358,10 @@ _sink_event(int type, void *info)
      }
    else if (type == EMIX_SINK_CHANGED_EVENT)
      {
+        /* If pulseaudio changed the default sink, swap the UI to display it
+           instead of previously selected sink */
+        if (sink->default_sink)
+          _sink_default = sink;
         if (_sink_default == sink)
           {
              static int prev_vol = -1;
