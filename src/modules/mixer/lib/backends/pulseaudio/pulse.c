@@ -666,13 +666,13 @@ _sink_default_cb(pa_context *c EINA_UNUSED, const pa_sink_info *info, int eol,
        info->name);
 
    EINA_LIST_FOREACH(ctx->sinks, l, sink)
-   {
-     Eina_Bool prev_default = sink->base.default_sink;
-     sink->base.default_sink = (uint32_t)sink->idx == info->index;
-     if (ctx->cb && prev_default != sink->base.default_sink)
-       ctx->cb((void *)ctx->userdata, EMIX_SINK_CHANGED_EVENT,
-                    (Emix_Sink *)sink);
-   }
+     {
+        Eina_Bool prev_default = sink->base.default_sink;
+        sink->base.default_sink = (uint32_t)sink->idx == info->index;
+        if (ctx->cb && prev_default != sink->base.default_sink)
+          ctx->cb((void *)ctx->userdata, EMIX_SINK_CHANGED_EVENT,
+                  (Emix_Sink *)sink);
+     }
 
    if (ctx->cb)
       ctx->cb((void *)ctx->userdata, EMIX_READY_EVENT, NULL);
@@ -701,13 +701,13 @@ _source_default_cb(pa_context *c EINA_UNUSED, const pa_source_info *info, int eo
        info->name);
 
    EINA_LIST_FOREACH(ctx->sources, l, source)
-   {
-     Eina_Bool prev_default = source->base.default_source;
-     source->base.default_source = (uint32_t)source->idx == info->index;
-     if (ctx->cb && prev_default != source->base.default_source)
-       ctx->cb((void *)ctx->userdata, EMIX_SOURCE_CHANGED_EVENT,
-                    (Emix_Source *)source);
-   }
+     {
+        Eina_Bool prev_default = source->base.default_source;
+        source->base.default_source = (uint32_t)source->idx == info->index;
+        if (ctx->cb && prev_default != source->base.default_source)
+          ctx->cb((void *)ctx->userdata, EMIX_SOURCE_CHANGED_EVENT,
+                  (Emix_Source *)source);
+     }
 
    if (ctx->cb)
       ctx->cb((void *)ctx->userdata, EMIX_READY_EVENT, NULL);
