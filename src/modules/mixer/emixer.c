@@ -247,27 +247,31 @@ _emix_sink_volume_fill(Emix_Sink *sink, Evas_Object *fr, Evas_Object *bx, Eina_B
      }
 }
 
-
-
 static void
 _emix_sink_add(Emix_Sink *sink)
 {
-   Evas_Object *bxv, *bx, *hv, *fr;
+   Evas_Object *bxv, *bx, *lb, *hv, *fr, *sep;
    const Eina_List *l;
    Emix_Port *port;
    Eina_Bool locked = EINA_TRUE;
    unsigned int i;
 
    fr = elm_frame_add(win);
-   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 1.0);
    evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, 0.0);
-   elm_object_text_set(fr, sink->name);
+   elm_object_style_set(fr, "pad_large");
    sink_list = eina_list_append(sink_list, fr);
    evas_object_data_set(fr, "sink", sink);
 
    bxv = elm_box_add(win);
    evas_object_size_hint_weight_set(bxv, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bxv, EVAS_HINT_FILL, 0.0);
+
+   lb = elm_label_add(win);
+   evas_object_size_hint_align_set(lb, 0.0, EVAS_HINT_FILL);
+   elm_object_text_set(lb, eina_slstr_printf("<big>%s</>", sink->name));
+   evas_object_show(lb);
+   elm_box_pack_end(bxv, lb);
 
    bx = elm_box_add(win);
    elm_box_horizontal_set(bx, EINA_TRUE);
@@ -278,7 +282,7 @@ _emix_sink_add(Emix_Sink *sink)
 
    hv = elm_hoversel_add(win);
    evas_object_size_hint_weight_set(hv, 1.0, 1.0);
-   evas_object_size_hint_align_set(hv, EVAS_HINT_FILL, 0.0); 
+   evas_object_size_hint_align_set(hv, EVAS_HINT_FILL, 0.0);
    evas_object_data_set(hv, "parent", fr);
    evas_object_data_set(fr, "port", hv);
    elm_hoversel_hover_parent_set(hv, win);
@@ -318,6 +322,14 @@ _emix_sink_add(Emix_Sink *sink)
 
    elm_box_pack_end(sink_box, fr);
    evas_object_show(fr);
+
+   sep = elm_separator_add(win);
+   evas_object_data_set(fr, "extra", sep);
+   elm_separator_horizontal_set(sep, EINA_TRUE);
+   evas_object_size_hint_weight_set(sep, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sep, EVAS_HINT_FILL, 0.0);
+   elm_box_pack_end(sink_box, sep);
+   evas_object_show(sep);
 }
 
 static void
@@ -330,6 +342,7 @@ _emix_sink_del(Emix_Sink *sink)
         if (evas_object_data_get(fr, "sink") == sink)
           {
              sink_list = eina_list_remove_list(sink_list, l);
+             evas_object_del(evas_object_data_get(fr, "extra"));
              evas_object_del(fr);
              return;
           }
@@ -613,23 +626,28 @@ _emix_sink_input_volume_fill(Emix_Sink_Input *input, Evas_Object *fr, Evas_Objec
 static void
 _emix_sink_input_add(Emix_Sink_Input *input)
 {
-   Evas_Object *bxv, *bx, *lb, *hv, *ic, *fr;
+   Evas_Object *bxv, *bx, *lb, *hv, *ic, *fr, *sep;
    const Eina_List *l;
    Emix_Sink *sink;
    Eina_Bool locked = EINA_TRUE;
    unsigned int i;
 
    fr = elm_frame_add(win);
-   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 1.0);
    evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, 0.0);
-   elm_object_text_set(fr, input->sink->name);
-
+   elm_object_style_set(fr, "pad_large");
    sink_input_list = eina_list_append(sink_input_list, fr);
    evas_object_data_set(fr, "input", input);
 
    bxv = elm_box_add(win);
    evas_object_size_hint_weight_set(bxv, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bxv, EVAS_HINT_FILL, 0.0);
+
+   lb = elm_label_add(win);
+   evas_object_size_hint_align_set(lb, 0.0, EVAS_HINT_FILL);
+   elm_object_text_set(lb, eina_slstr_printf("<big>%s</>", input->sink->name));
+   evas_object_show(lb);
+   elm_box_pack_end(bxv, lb);
 
    bx = elm_box_add(win);
    elm_box_horizontal_set(bx, EINA_TRUE);
@@ -696,6 +714,14 @@ _emix_sink_input_add(Emix_Sink_Input *input)
 
    elm_box_pack_end(sink_input_box, fr);
    evas_object_show(fr);
+
+   sep = elm_separator_add(win);
+   evas_object_data_set(fr, "extra", sep);
+   elm_separator_horizontal_set(sep, EINA_TRUE);
+   evas_object_size_hint_weight_set(sep, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sep, EVAS_HINT_FILL, 0.0);
+   elm_box_pack_end(sink_input_box, sep);
+   evas_object_show(sep);
 }
 
 static void
@@ -998,20 +1024,26 @@ _emix_source_volume_fill(Emix_Source *source, Evas_Object *fr, Evas_Object *bx, 
 static void
 _emix_source_add(Emix_Source *source)
 {
-   Evas_Object *bxv, *bx, *fr;
+   Evas_Object *bxv, *bx, *fr, *lb, *sep;
    unsigned int i;
    Eina_Bool locked = EINA_TRUE;
 
    fr = elm_frame_add(win);
-   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 1.0);
    evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, 0.0);
-   elm_object_text_set(fr, source->name);
+   elm_object_style_set(fr, "pad_large");
    source_list = eina_list_append(source_list, fr);
    evas_object_data_set(fr, "source", source);
 
    bxv = elm_box_add(win);
    evas_object_size_hint_weight_set(bxv, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bxv, EVAS_HINT_FILL, 0.0);
+
+   lb = elm_label_add(win);
+   evas_object_size_hint_align_set(lb, 0.0, EVAS_HINT_FILL);
+   elm_object_text_set(lb, eina_slstr_printf("<big>%s</>", source->name));
+   evas_object_show(lb);
+   elm_box_pack_end(bxv, lb);
 
    bx = elm_box_add(win);
    elm_box_horizontal_set(bx, EINA_TRUE);
@@ -1041,12 +1073,19 @@ _emix_source_add(Emix_Source *source)
 
    _emix_source_volume_fill(source, fr, bx, locked);
 
-
    elm_object_content_set(fr, bxv);
    evas_object_show(bxv);
 
    elm_box_pack_end(source_box, fr);
    evas_object_show(fr);
+
+   sep = elm_separator_add(win);
+   evas_object_data_set(fr, "extra", sep);
+   elm_separator_horizontal_set(sep, EINA_TRUE);
+   evas_object_size_hint_weight_set(sep, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sep, EVAS_HINT_FILL, 0.0);
+   elm_box_pack_end(source_box, sep);
+   evas_object_show(sep);
 }
 
 static void
@@ -1125,21 +1164,27 @@ _cb_card_profile_change(void *data,
 static void
 _emix_card_add(Emix_Card *card)
 {
-   Evas_Object *bxv, *bx, *hv, *fr;
+   Evas_Object *bxv, *bx, *hv, *fr, *lb, *sep;
    Eina_List *l;
    Emix_Profile *profile;
    int cards = 0;
 
    fr = elm_frame_add(win);
-   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 1.0);
    evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, 0.0);
-   elm_object_text_set(fr, card->name);
+   elm_object_style_set(fr, "pad_large");
    card_list = eina_list_append(card_list, fr);
    evas_object_data_set(fr, "card", card);
 
    bxv = elm_box_add(win);
    evas_object_size_hint_weight_set(bxv, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bxv, EVAS_HINT_FILL, 0.0);
+
+   lb = elm_label_add(win);
+   evas_object_size_hint_align_set(lb, 0.0, EVAS_HINT_FILL);
+   elm_object_text_set(lb, eina_slstr_printf("<big>%s</>", card->name));
+   evas_object_show(lb);
+   elm_box_pack_end(bxv, lb);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0.0);
@@ -1173,6 +1218,14 @@ _emix_card_add(Emix_Card *card)
 
    elm_box_pack_end(card_box, fr);
    evas_object_show(fr);
+
+   sep = elm_separator_add(win);
+   evas_object_data_set(fr, "extra", sep);
+   elm_separator_horizontal_set(sep, EINA_TRUE);
+   evas_object_size_hint_weight_set(sep, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sep, EVAS_HINT_FILL, 0.0);
+   elm_box_pack_end(card_box, sep);
+   evas_object_show(sep);
 }
 
 static void
