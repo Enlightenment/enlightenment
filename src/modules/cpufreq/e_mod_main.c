@@ -34,6 +34,8 @@ struct _Instance
 {
    E_Gadcon_Client *gcc;
    Evas_Object     *o_cpu;
+   Ecore_Timer     *update_timer;
+   Eina_List       *strings;
 };
 
 static void      _button_cb_mouse_down(void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -43,6 +45,7 @@ static Cpu_Status *_cpufreq_status_new(void);
 static void      _cpufreq_status_free(Cpu_Status *s);
 static void      _cpufreq_status_check_available(Cpu_Status *s);
 static int       _cpufreq_status_check_current(Cpu_Status *s);
+static void      _cpufreq_status_eval(Cpu_Status *status);
 static void      _cpufreq_face_update_available(Instance *inst);
 static void      _cpufreq_face_update_current(Instance *inst);
 static void      _cpufreq_face_cb_set_frequency(void *data, Evas_Object *o, const char *emission, const char *source);
@@ -114,11 +117,14 @@ static void
 _gc_shutdown(E_Gadcon_Client *gcc)
 {
    Instance *inst;
+   const char *s;
 
    inst = gcc->data;
    cpufreq_config->instances =
      eina_list_remove(cpufreq_config->instances, inst);
    evas_object_del(inst->o_cpu);
+   if (inst->update_timer) ecore_timer_del(inst->update_timer);
+   EINA_LIST_FREE(inst->strings, s) eina_stringshare_del(s);
    free(inst);
 
    if (!cpufreq_config->instances)
@@ -180,6 +186,7 @@ _button_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
 {
    Instance *inst;
    Evas_Event_Mouse_Down *ev;
+   const char *s;
 
    inst = data;
    ev = event_info;
@@ -258,7 +265,9 @@ _button_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
                   e_menu_item_radio_group_set(mi, 1);
                   if (!strcmp(cpufreq_config->status->cur_governor, l->data))
                     e_menu_item_toggle_set(mi, 1);
-                  e_menu_item_callback_set(mi, _cpufreq_menu_governor, l->data);
+                  s = eina_stringshare_add(l->data);
+                  inst->strings = eina_list_append(inst->strings, s);
+                  e_menu_item_callback_set(mi, _cpufreq_menu_governor, s);
                }
 
              e_menu_item_separator_set(e_menu_item_new(mo), 1);
@@ -296,7 +305,9 @@ _button_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
                   if (cpufreq_config->powersave_governor
                       && !strcmp(cpufreq_config->powersave_governor, l->data))
                     e_menu_item_toggle_set(mi, 1);
-                  e_menu_item_callback_set(mi, _cpufreq_menu_powersave_governor, l->data);
+                  s = eina_stringshare_add(l->data);
+                  inst->strings = eina_list_append(inst->strings, s);
+                  e_menu_item_callback_set(mi, _cpufreq_menu_powersave_governor, s);
                }
 
              e_menu_item_separator_set(e_menu_item_new(mo), 1);
@@ -468,10 +479,32 @@ _button_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
      }
 }
 
+static Eina_Bool
+_update_cb(void *data)
+{
+   Instance *inst = data;
+
+   inst->update_timer = EINA_FALSE;
+   if (cpufreq_config)
+     {
+        Cpu_Status *status = _cpufreq_status_new();
+
+        if (status)
+          {
+             if (_cpufreq_status_check_current(status))
+               _cpufreq_status_eval(status);
+             else
+               _cpufreq_status_free(status);
+          }
+     }
+   return EINA_FALSE;
+}
+
 static void
 _menu_cb_post(void *data, E_Menu *m EINA_UNUSED)
 {
    Instance *inst = data;
+   const char *s;
 
    if (inst)
      e_gadcon_locked_set(inst->gcc->gadcon, 0);
@@ -495,6 +528,9 @@ _menu_cb_post(void *data, E_Menu *m EINA_UNUSED)
    if (cpufreq_config->menu_pstate2)
      e_object_del(E_OBJECT(cpufreq_config->menu_pstate2));
    cpufreq_config->menu_powersave = NULL;
+   EINA_LIST_FREE(inst->strings, s) eina_stringshare_del(s);
+   if (inst->update_timer) ecore_timer_del(inst->update_timer);
+   inst->update_timer = ecore_timer_add(0.5, _update_cb, inst);
 }
 
 static Eina_Bool _response = EINA_FALSE;
@@ -1346,11 +1382,8 @@ _cpufreq_cb_frequency_check_main(void *data, Ecore_Thread *th)
 }
 
 static void
-_cpufreq_cb_frequency_check_notify(void *data EINA_UNUSED,
-                                   Ecore_Thread *th EINA_UNUSED,
-                                   void *msg)
+_cpufreq_status_eval(Cpu_Status *status)
 {
-   Cpu_Status *status = msg;
    Instance *inst;
    Eina_List *l;
    int active;
@@ -1373,7 +1406,7 @@ _cpufreq_cb_frequency_check_notify(void *data EINA_UNUSED,
         (status->cur_max_frequency != cpufreq_config->status->cur_max_frequency) ||
         (status->can_set_frequency != cpufreq_config->status->can_set_frequency)))
      freq_changed = EINA_TRUE;
-   _cpufreq_status_free(cpufreq_config->status);
+   if (cpufreq_config->status) _cpufreq_status_free(cpufreq_config->status);
    cpufreq_config->status = status;
    if (freq_changed)
      {
@@ -1400,6 +1433,14 @@ _cpufreq_cb_frequency_check_notify(void *data EINA_UNUSED,
                             cpufreq_config->pstate_max - 1);
         init_set = EINA_TRUE;
      }
+}
+
+static void
+_cpufreq_cb_frequency_check_notify(void *data EINA_UNUSED,
+                                   Ecore_Thread *th EINA_UNUSED,
+                                   void *msg)
+{
+   _cpufreq_status_eval(msg);
 }
 
 void

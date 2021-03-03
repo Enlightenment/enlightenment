@@ -22,7 +22,7 @@ sys_cpu_setall(const char *control, const char *value)
         fclose(f);
         num++;
      }
-   return 0;
+   return 1;
 }
 
 static int
@@ -90,8 +90,10 @@ _cb_cpufreq_freq(void *data EINA_UNUSED, const char *params)
              return;
           }
 #else
+        fprintf(stderr, "CPUFREQ: scaling_setspeed [%s]\n", params);
         if (sys_cpu_setall("scaling_setspeed", params) > 0)
           {
+             fprintf(stderr, "CPUFREQ: scaling_setspeed OK\n");
              e_system_inout_command_send("cpufreq-freq", "ok");
              return;
           }
@@ -109,11 +111,15 @@ _cb_cpufreq_governor(void *data EINA_UNUSED, const char *params EINA_UNUSED)
 #elif defined __FreeBSD__
    e_system_inout_command_send("cpufreq-governor", "err");
 #else
+   fprintf(stderr, "CPUFREQ: scaling_governor [%s]\n", params);
    if (sys_cpu_setall("scaling_governor", params) <= 0)
      {
         ERR("Unable to open governor interface for writing\n");
         e_system_inout_command_send("cpufreq-governor", "err");
+        return;
      }
+   else
+     fprintf(stderr, "CPUFREQ: scaling_governor OK\n");
    if (!strcmp(params, "ondemand"))
      sys_cpufreq_set("ondemand/ignore_nice_load", "0");
    else if (!strcmp(params, "conservative"))
@@ -132,7 +138,11 @@ _cb_cpufreq_pstate(void *data EINA_UNUSED, const char *params EINA_UNUSED)
    e_system_inout_command_send("cpufreq-pstate", "err");
 #else
    int min = 0, max = 100, turbo = 1;
+   FILE *f;
 
+   f = fopen("/sys/devices/system/cpu/intel_pstate/min_perf_pct", "r");
+   if (!f) return;
+   fclose(f);
    if (sscanf(params, "%i %i %i", &min, &max, &turbo) == 3)
      {
         if (min < 0) min = 0;
@@ -141,8 +151,12 @@ _cb_cpufreq_pstate(void *data EINA_UNUSED, const char *params EINA_UNUSED)
         else if (max > 100) max = 100;
         if (turbo < 0) turbo = 0;
         else if (turbo > 1) turbo = 1;
+        fprintf(stderr, "CPUFREQ: pstate [min=%i max=%i turbo=%i]\n", min, max, turbo);
         if (sys_cpu_pstate(min, max, turbo) > 0)
-          e_system_inout_command_send("cpufreq-pstate", "ok");
+          {
+             e_system_inout_command_send("cpufreq-pstate", "ok");
+             return;
+          }
      }
    e_system_inout_command_send("cpufreq-pstate", "err");
 #endif
