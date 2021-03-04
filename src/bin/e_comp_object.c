@@ -3423,6 +3423,8 @@ e_comp_object_frame_icon_update(Evas_Object *obj)
    if (!cw->frame_icon) return EINA_TRUE;
    if (!edje_object_part_swallow(cw->frame_object, "e.swallow.icon", cw->frame_icon))
      E_FREE_FUNC(cw->frame_icon, evas_object_del);
+   else
+     evas_object_show(cw->frame_icon);
    return EINA_TRUE;
 }
 
