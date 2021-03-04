@@ -417,6 +417,7 @@ static Eina_Bool
 _poll_dbus_cb(void *data)
 {
    E_Music_Control_Module_Context *ctxt = data;
+   ctxt->poll_timer = NULL;
    _bus_list(ctxt);
    return EINA_FALSE;
 }
