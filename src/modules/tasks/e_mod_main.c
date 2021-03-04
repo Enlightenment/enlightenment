@@ -54,6 +54,7 @@ struct _Tasks_Item
    Eina_Bool urgent E_BITFIELD;
    Eina_Bool iconified E_BITFIELD;
    Eina_Bool iconifying E_BITFIELD;
+   Eina_Bool delete_me E_BITFIELD;
 };
 
 static Tasks       *_tasks_new(Evas *e, E_Zone *zone, const char *id);
@@ -336,13 +337,14 @@ _tasks_cb_iconify_end_cb(void *data, Evas_Object *obj EINA_UNUSED, const char *s
    Tasks_Item *item = data;
    E_Client *ec = item->client;
 
-   if (!ec) return;
-
-   evas_object_layer_set(ec->frame, ec->layer);
    ec->layer_block = 0;
-   if (ec->iconic)
-     evas_object_hide(ec->frame);
+   if (ec)
+     {
+        evas_object_layer_set(ec->frame, ec->layer);
+        if (ec->iconic) evas_object_hide(ec->frame);
+     }
    item->iconifying = 0;
+   if (item->delete_me) free(item);
 }
 
 static Eina_Bool
@@ -657,13 +659,26 @@ _tasks_item_preview_del(Tasks_Item *item)
 static void
 _tasks_item_free(Tasks_Item *item)
 {
-   if (item->o_icon) evas_object_del(item->o_icon);
+   if (item->o_icon)
+     {
+        evas_object_del(item->o_icon);
+        item->o_icon = NULL;
+     }
    if (e_object_is_del(E_OBJECT(item->client)))
      item->tasks->clients = eina_list_remove(item->tasks->clients, item->client);
    e_object_unref(E_OBJECT(item->client));
    _tasks_item_preview_del(item);
-   evas_object_del(item->o_item);
-   free(item);
+   if (item->o_item)
+     {
+        evas_object_del(item->o_item);
+        item->o_item = NULL;
+     }
+   item->client = NULL;
+   item->tasks = NULL;
+   if (item->iconifying)
+     item->delete_me = EINA_TRUE;
+   else
+     free(item);
 }
 
 static void
