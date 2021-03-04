@@ -674,7 +674,11 @@ _tasks_item_refill(Tasks_Item *item)
         _tasks_refill(item->tasks);
         return;
      }
-   if (item->o_icon) evas_object_del(item->o_icon);
+   if (item->o_icon)
+     {
+        evas_object_del(item->o_icon);
+        item->o_icon = NULL;
+     }
    _tasks_item_fill(item);
 }
 
@@ -731,9 +735,7 @@ _tasks_item_fill(Tasks_Item *item)
 
    ec = item->client;
 
-   if (item->tasks->config->text_only)
-     item->o_icon = NULL;
-   else
+   if (!item->tasks->config->text_only)
      {
         item->o_icon = e_client_icon_add(ec, evas_object_evas_get(item->tasks->o_items));
         edje_object_part_swallow(item->o_item, "e.swallow.icon", item->o_icon);
