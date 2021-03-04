@@ -5160,7 +5160,6 @@ e_client_icon_add(E_Client *ec, Evas *evas)
 
    E_OBJECT_CHECK_RETURN(ec, NULL);
    E_OBJECT_TYPE_CHECK_RETURN(ec, E_CLIENT_TYPE, NULL);
-
    o = NULL;
    if (ec->internal)
      {
@@ -5221,7 +5220,7 @@ e_client_icon_add(E_Client *ec, Evas *evas)
      {
         if ((ec->desktop) && (ec->icon_preference != E_ICON_PREF_NETWM))
           {
-             o = e_util_desktop_icon_add(ec->desktop, 64, evas);
+             o = e_util_desktop_icon_add(ec->desktop, 128, evas);
              if (o)
                return o;
           }
@@ -5237,7 +5236,6 @@ e_client_icon_add(E_Client *ec, Evas *evas)
           }
 #endif
      }
-
    o = e_icon_add(evas);
    e_util_icon_theme_set(o, "unknown");
    return o;
