@@ -65,6 +65,7 @@ static void         _tasks_refill_border(E_Client *ec);
 
 static Tasks_Item  *_tasks_item_find(Tasks *tasks, E_Client *ec);
 static Tasks_Item  *_tasks_item_new(Tasks *tasks, E_Client *ec);
+static Tasks_Item  *_tasks_all_item_find(E_Client *ec);
 
 static int          _tasks_item_check_add(Tasks *tasks, E_Client *ec);
 static void         _tasks_item_add(Tasks *tasks, E_Client *ec);
@@ -334,15 +335,18 @@ _gc_id_new(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
 static void
 _tasks_cb_iconify_end_cb(void *data, Evas_Object *obj EINA_UNUSED, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
 {
-   Tasks_Item *item = data;
-   E_Client *ec = item->client;
+   Tasks_Item *item;
+   E_Client *ec = data;
 
-   if (ec)
-     {
-        evas_object_layer_set(ec->frame, ec->layer);
-        ec->layer_block = 0;
-        if (ec->iconic) evas_object_hide(ec->frame);
-     }
+   if (!ec) return;
+
+   evas_object_layer_set(ec->frame, ec->layer);
+   ec->layer_block = 0;
+   if (ec->iconic) evas_object_hide(ec->frame);
+
+   item = _tasks_all_item_find(ec);
+   if (!item) return;
+
    item->iconifying = 0;
    if (item->delete_me) free(item);
 }
@@ -374,7 +378,7 @@ _tasks_cb_iconify_provider(void *data, Evas_Object *obj, const char *signal)
                   e_comp_object_effect_params_set(ec->frame, 1, (int[]){ec->x, ec->y, ec->w, ec->h, ox, oy, ow, oh}, 8);
                   e_comp_object_effect_params_set(ec->frame, 0, (int[]){!!strcmp(signal, "e,action,iconify")}, 1);
                   item->iconifying = 1;
-                  e_comp_object_effect_start(ec->frame, _tasks_cb_iconify_end_cb, item);
+                  e_comp_object_effect_start(ec->frame, _tasks_cb_iconify_end_cb, ec);
                   return EINA_TRUE;
                }
           }
@@ -551,6 +555,21 @@ _tasks_item_find(Tasks *tasks, E_Client *ec)
           }
      }
    return NULL;
+}
+
+static Tasks_Item *
+_tasks_all_item_find(E_Client *ec)
+{
+   const Eina_List *l;
+   Tasks *tasks;
+   Tasks_Item *item = NULL;
+
+   EINA_LIST_FOREACH(tasks_config->tasks, l, tasks)
+     {
+        item = _tasks_item_find(tasks, ec);
+        if (item) break;
+     }
+   return item;
 }
 
 static Tasks_Item *
