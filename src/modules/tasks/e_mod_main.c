@@ -339,8 +339,8 @@ _tasks_cb_iconify_end_cb(void *data, Evas_Object *obj EINA_UNUSED, const char *s
 
    if (ec)
      {
-        ec->layer_block = 0;
         evas_object_layer_set(ec->frame, ec->layer);
+        ec->layer_block = 0;
         if (ec->iconic) evas_object_hide(ec->frame);
      }
    item->iconifying = 0;
