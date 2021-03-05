@@ -643,8 +643,6 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
      edje_object_signal_emit(o, "e,state,seconds,off", "e");
 
    edje_object_part_text_set(o, "e.text.today", todaystr);
-   edje_object_message_signal_process(o);
-   evas_object_show(o);
 
    gcc = e_gadcon_client_new(gc, name, id, style, o);
    gcc->data = inst;
@@ -656,6 +654,8 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
                                   EVAS_CALLBACK_MOUSE_DOWN,
                                   _clock_cb_mouse_down,
                                   inst);
+   edje_object_message_signal_process(o);
+   evas_object_show(o);
 
    clock_instances = eina_list_append(clock_instances, inst);
 
