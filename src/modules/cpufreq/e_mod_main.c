@@ -484,7 +484,7 @@ _update_cb(void *data)
 {
    Instance *inst = data;
 
-   inst->update_timer = EINA_FALSE;
+   inst->update_timer = NULL;
    if (cpufreq_config)
      {
         Cpu_Status *status = _cpufreq_status_new();
