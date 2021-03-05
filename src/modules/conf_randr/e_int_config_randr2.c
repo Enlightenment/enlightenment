@@ -983,11 +983,18 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas EINA_UNUSED, E_Config_Dialog_Data
    cfdata->size_obj = o;
 
 ///////////////////////////////////////////////////////////////////////
+
+   bx2 = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_table_pack(tb, bx2, 1, 0, 1, 14);
+   evas_object_show(bx2);
+
    o = elm_list_add(win);
    elm_scroller_content_min_limit(o, 1, 0);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_table_pack(tb, o, 1, 0, 1, 14);
+   elm_box_pack_end(bx2, o);
    evas_object_show(o);
    cfdata->modes_obj = o;
 
