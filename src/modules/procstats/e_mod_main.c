@@ -74,10 +74,12 @@ _proc_stats_item_del(Proc_Stats *item)
 }
 
 static void
-_proc_stats_client_del_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_proc_stats_client_del_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Proc_Stats *item = data;
-   _proc_stats_item_del(item);
+
+   evas_object_hide(item->obj_swallow);
+   edje_object_signal_emit(obj, "e,state,procstats,off", "e");
 }
 
 static void
