@@ -215,6 +215,16 @@ e_widget_entry_select_all(Evas_Object *entry)
    elm_entry_select_all(wd->o_entry);
 }
 
+E_API void
+e_widget_entry_select_set(Evas_Object *entry, int start, int end)
+{
+   E_Widget_Data *wd;
+
+   if (!(entry) || (!(wd = e_widget_data_get(entry))))
+     return;
+   elm_entry_select_region_set(wd->o_entry, start, end);
+}
+
 /* Private functions */
 
 static void

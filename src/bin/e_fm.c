@@ -10483,7 +10483,16 @@ _e_fm2_icon_entry_widget_add(E_Fm2_Icon *ic)
    e_widget_entry_text_set(ic->entry_widget, ic->info.file);
    e_widget_focus_set(ic->entry_widget, 1);
    ic->focus_hook = e_client_hook_add(E_CLIENT_HOOK_FOCUS_SET, _e_fm2_icon_entry_widget_focus_out, ic);
-   e_widget_entry_select_all(ic->entry_widget);
+   char *dot = strchr(ic->info.file, '.');
+   if (dot)
+     {
+        int end = (int)((long)(dot - ic->info.file));
+        printf("SEL: %i -> %i\n", 0, end);
+        e_widget_entry_select_set(ic->entry_widget, 0,
+                                  (int)((long)(dot - ic->info.file)));
+     }
+   else
+     e_widget_entry_select_all(ic->entry_widget);
    ic->sd->iop_icon = ic;
    ic->sd->typebuf.disabled = EINA_TRUE;
    if (e_comp->comp_type == E_PIXMAP_TYPE_X)
