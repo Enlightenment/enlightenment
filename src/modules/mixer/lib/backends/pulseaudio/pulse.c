@@ -669,7 +669,7 @@ _sink_default_cb(pa_context *c EINA_UNUSED, const pa_sink_info *info, int eol,
      {
         Eina_Bool prev_default = sink->base.default_sink;
         sink->base.default_sink = (uint32_t)sink->idx == info->index;
-        if (ctx->cb && prev_default != sink->base.default_sink)
+        if (ctx->cb && (prev_default != sink->base.default_sink))
           ctx->cb((void *)ctx->userdata, EMIX_SINK_CHANGED_EVENT,
                   (Emix_Sink *)sink);
      }
@@ -719,11 +719,12 @@ _server_info_cb(pa_context *c, const pa_server_info *info,
 {
    pa_operation *o;
 
-   if (pa_context_errno(c) != PA_OK)
-     {
-        WRN("Could not get pa server info, error: %d", pa_context_errno(c));
-        return;
-     }
+// this seems to trap old errors then forget to update defaults as below
+//   if (pa_context_errno(c) != PA_OK)
+//     {
+//        WRN("Could not get pa server info, error: %d", pa_context_errno(c));
+//        return;
+//     }
 
    EINA_SAFETY_ON_NULL_RETURN(info);
 
@@ -1358,7 +1359,6 @@ _sink_input_volume_set(Emix_Sink_Input *input, Emix_Volume *volume)
    Sink_Input *sink_input = (Sink_Input *)input;
    pa_cvolume vol = _emix_volume_convert(volume);
    EINA_SAFETY_ON_FALSE_RETURN(ctx && ctx->context && input != NULL);
-
 
    if (!(o = pa_context_set_sink_input_volume(ctx->context,
                                               sink_input->idx, &vol,

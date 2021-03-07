@@ -71,6 +71,7 @@ static void _backend_changed(void);
 static int _backend_log_domain = 0;
 static int _volume_init = 0;
 static Eina_Bool _backend_init_flag = EINA_FALSE;
+static Eina_Bool _restored = EINA_FALSE;
 
 EINTERN int E_EVENT_MIXER_BACKEND_CHANGED = 0;
 EINTERN int E_EVENT_MIXER_SINKS_CHANGED = 0;
@@ -405,6 +406,7 @@ _disconnected(void)
         e_client_volume_sink_del(sink);
      }
    _sink_default = NULL;
+   _restored = EINA_FALSE;
    _backend_changed();
 }
 
@@ -421,7 +423,7 @@ _ready(void)
           _sink_default = emix_sinks_get()->data;
      }
 
-   if (emix_config_save_get())
+   if (emix_config_save_get() && !_restored)
      {
         Emix_Sink *s;
         const char *sinkname;
@@ -442,6 +444,7 @@ _ready(void)
                }
           }
         emix_config_save_state_restore();
+        _restored = EINA_TRUE;
      }
 
    _backend_changed();
@@ -1181,7 +1184,7 @@ backend_init(void)
    if (!backend_loaded) goto err;
 
    if (emix_sink_default_support())
-      _sink_default = emix_sink_default_get();
+     _sink_default = emix_sink_default_get();
 
    _actions_register();
 
@@ -1332,6 +1335,7 @@ backend_sink_default_set(const Emix_Sink *s)
         if (s)
           {
              DBG("Sink default set %s", s->name);
+             emix_sink_default_set((Emix_Sink *)s);
              emix_config_save_sink_set(s->name);
           }
         _backend_changed();
