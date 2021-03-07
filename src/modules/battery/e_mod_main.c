@@ -283,48 +283,47 @@ _popup_usage_content_add(Evas_Object *parent, Instance *inst)
 
         tb2 = elm_table_add(parent);
         E_FILL(tb2); E_EXPAND(tb2);
+        elm_table_padding_set(tb2, 2, 4);
         evas_object_show(tb2);
         elm_object_content_set(fr, tb2);
 
-        w->lb_state = lb = elm_label_add(parent);
-        E_ALIGN(lb, 0.5, 0.5);
-        evas_object_show(lb);
-        elm_table_pack(tb2, lb, 0, 0, 1, 1);
-        rec = evas_object_rectangle_add(evas_object_evas_get(parent));
-        evas_object_size_hint_min_set(rec, ELM_SCALE_SIZE(80), 1);
-        elm_table_pack(tb2, rec, 0, 0, 1, 1);
-
-        w->pb_usage = pb = elm_progressbar_add(parent);
-        E_FILL(pb); E_EXPAND(pb);
-        evas_object_show(pb);
-        elm_progressbar_span_size_set(pb, 1.0);
-        elm_table_pack(tb2, pb, 1, 0, 1, 1);
-
         lb = elm_label_add(parent);
+        E_ALIGN(lb, 1.0, 0.5);
+        E_EXPAND(lb);
+        evas_object_show(lb);
+        elm_object_text_set(lb, _("Time"));
+        elm_table_pack(tb2, lb, 0, 0, 1, 1);
+
+        w->lb_time = lb = elm_label_add(parent);
         E_ALIGN(lb, 0.5, 0.5);
         E_EXPAND(lb);
         evas_object_show(lb);
-        elm_object_text_set(lb, _("Health"));
+        elm_table_pack(tb2, lb, 1, 0, 1, 1);
+
+        w->lb_state = lb = elm_label_add(parent);
+        E_ALIGN(lb, 1.0, 0.5);
+        evas_object_show(lb);
         elm_table_pack(tb2, lb, 0, 1, 1, 1);
 
-        w->pb_health = pb = elm_progressbar_add(parent);
+        w->pb_usage = pb = elm_progressbar_add(parent);
         E_FILL(pb); E_EXPAND(pb);
         evas_object_show(pb);
         elm_progressbar_span_size_set(pb, 1.0);
         elm_table_pack(tb2, pb, 1, 1, 1, 1);
 
         lb = elm_label_add(parent);
-        E_ALIGN(lb, 0.5, 0.5);
+        E_ALIGN(lb, 1.0, 0.5);
         E_EXPAND(lb);
         evas_object_show(lb);
-        elm_object_text_set(lb, _("Time"));
+        elm_object_text_set(lb, _("Health"));
         elm_table_pack(tb2, lb, 0, 2, 1, 1);
 
-        w->lb_time = lb = elm_label_add(parent);
-        E_ALIGN(lb, 0.5, 0.5);
-        E_EXPAND(lb);
-        evas_object_show(lb);
-        elm_table_pack(tb2, lb, 1, 2, 1, 1);
+        w->pb_health = pb = elm_progressbar_add(parent);
+        E_FILL(pb); E_EXPAND(pb);
+        evas_object_show(pb);
+        elm_progressbar_span_size_set(pb, 1.0);
+        elm_table_pack(tb2, pb, 1, 2, 1, 1);
+
 
         if (n == 1) continue;
         sep = elm_separator_add(parent);
