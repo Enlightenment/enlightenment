@@ -178,7 +178,7 @@ struct _E_Config
    int                       menu_eap_comment_show; // GUI
    int                       menu_favorites_show; // GUI
    int                       menu_apps_show; // GUI
-   Eina_Bool                menu_icons_hide; // GUI
+   Eina_Bool                 menu_icons_hide; // GUI
    int                       menu_gadcon_client_toplevel; // GUI
    int                       fullscreen_policy; // GUI
    const char               *exebuf_term_cmd; // GUI
@@ -441,6 +441,7 @@ struct _E_Config
 
    Eina_List  *menu_applications;
    unsigned char exe_always_single_instance; // GUI
+   unsigned char explicit_date_time; // GUI
    Eina_List *screen_profiles;
 };
 

@@ -584,41 +584,54 @@ e_util_file_time_get(time_t ftime)
    ltime = time(NULL);
    diff = ltime - ftime;
    buf[0] = 0;
-   if (ftime > ltime)
-     snprintf(buf, sizeof(buf), _("In the future"));
+   if (e_config->explicit_date_time)
+     {
+        struct tm tm;
+
+        if (localtime_r(&ftime, &tm))
+          {
+             s = eina_strftime("%F %T", &tm);
+             if (s) return s;
+          }
+     }
    else
      {
-        if (diff <= 60)
-          snprintf(buf, sizeof(buf), _("In the last minute"));
-        else if (diff >= 31526000)
+        if (ftime > ltime)
+          snprintf(buf, sizeof(buf), _("In the future"));
+        else
           {
-             test = diff / 31526000;
-             snprintf(buf, sizeof(buf), P_("Last year", "%li Years ago", test), test);
-          }
-        else if (diff >= 2592000)
-          {
-             test = diff / 2592000;
-             snprintf(buf, sizeof(buf), P_("Last month", "%li Months ago", test), test);
-          }
-        else if (diff >= 604800)
-          {
-             test = diff / 604800;
-             snprintf(buf, sizeof(buf), P_("Last week", "%li Weeks ago", test), test);
-          }
-        else if (diff >= 86400)
-          {
-             test = diff / 86400;
-             snprintf(buf, sizeof(buf), P_("Yesterday", "%li Days ago", test), test);
-          }
-        else if (diff >= 3600)
-          {
-             test = diff / 3600;
-             snprintf(buf, sizeof(buf), P_("An hour ago", "%li Hours ago", test), test);
-          }
-        else if (diff > 60)
-          {
-             test = diff / 60;
-             snprintf(buf, sizeof(buf), P_("A minute ago", "%li Minutes ago", test), test);
+             if (diff <= 60)
+               snprintf(buf, sizeof(buf), _("In the last minute"));
+             else if (diff >= 31526000)
+               {
+                  test = diff / 31526000;
+                  snprintf(buf, sizeof(buf), P_("Last year", "%li Years ago", test), test);
+               }
+             else if (diff >= 2592000)
+               {
+                  test = diff / 2592000;
+                  snprintf(buf, sizeof(buf), P_("Last month", "%li Months ago", test), test);
+               }
+             else if (diff >= 604800)
+               {
+                  test = diff / 604800;
+                  snprintf(buf, sizeof(buf), P_("Last week", "%li Weeks ago", test), test);
+               }
+             else if (diff >= 86400)
+               {
+                  test = diff / 86400;
+                  snprintf(buf, sizeof(buf), P_("Yesterday", "%li Days ago", test), test);
+               }
+             else if (diff >= 3600)
+               {
+                  test = diff / 3600;
+                  snprintf(buf, sizeof(buf), P_("An hour ago", "%li Hours ago", test), test);
+               }
+             else if (diff > 60)
+               {
+                  test = diff / 60;
+                  snprintf(buf, sizeof(buf), P_("A minute ago", "%li Minutes ago", test), test);
+               }
           }
      }
 

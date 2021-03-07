@@ -49,6 +49,7 @@ struct _E_Config_Dialog_Data
        const char *key_hint;
        int max_thumb_size;
     } icon;
+    int explicit_date_time;
     /* how to sort files */
     struct
     {
@@ -91,7 +92,7 @@ struct _E_Config_Dialog_Data
 
    Evas_Object *dir_sort_first;
    Evas_Object *dir_sort_last;
-    E_Config_Dialog *cfd;
+   E_Config_Dialog *cfd;
 };
 
 static void        *_create_data(E_Config_Dialog *cfd);
@@ -171,6 +172,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    cfdata->dbus.desktop = e_config->device_desktop;
    cfdata->dbus.auto_mount = e_config->device_auto_mount;
    cfdata->dbus.auto_open = e_config->device_auto_open;
+   cfdata->explicit_date_time = e_config->explicit_date_time;
 }
 
 static void
@@ -222,6 +224,7 @@ _basic_apply(E_Config_Dialog *cfd  EINA_UNUSED,
 
    e_config->device_auto_mount = cfdata->dbus.auto_mount;
    e_config->device_auto_open = cfdata->dbus.auto_open;
+   e_config->explicit_date_time = cfdata->explicit_date_time;
 
    e_config_save_queue();
 
@@ -263,7 +266,9 @@ _basic_check_changed(E_Config_Dialog *cfd  EINA_UNUSED,
      (fileman_config->list.sort.no_case != !(cfdata->list.sort.case_sen)) ||
      (e_config->device_desktop != cfdata->dbus.desktop) ||
      (e_config->device_auto_mount != cfdata->dbus.auto_mount) ||
-     (e_config->device_auto_open != cfdata->dbus.auto_open);
+     (e_config->device_auto_open != cfdata->dbus.auto_open) ||
+     (e_config->explicit_date_time != cfdata->explicit_date_time)
+   ;
 }
 
 static void
@@ -353,6 +358,9 @@ _basic_create(E_Config_Dialog *cfd  EINA_UNUSED,
    e_widget_list_object_append(o, ob, 1, 1, 0.5);
    ob = e_widget_check_add(evas, _("Sidebar"),
                            &(cfdata->view.show_sidebar));
+   e_widget_list_object_append(o, ob, 1, 1, 0.5);
+   ob = e_widget_check_add(evas, _("Show Detailed Time and Date"),
+                           &(cfdata->explicit_date_time));
    e_widget_list_object_append(o, ob, 1, 1, 0.5);
 /* FIXME: this sucks
    ob = e_widget_check_add(evas, _("Regular Files In Menu (SLOW)"),
