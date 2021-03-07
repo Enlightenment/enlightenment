@@ -73,6 +73,9 @@ static void      _battery_cb_warning_popup_hide(void *data, Evas *e, Evas_Object
 static void      _battery_warning_popup_destroy(Instance *inst);
 static void      _battery_warning_popup(Instance *inst, int time, double percent);
 
+static void      _battery_popup_usage_destroy(Instance *inst);
+static void      _battery_popup_usage_new(Instance *inst);
+
 static Eina_Bool _powersave_cb_config_update(void *data, int type, void *event);
 
 static E_Config_DD *conf_edd = NULL;
@@ -131,6 +134,7 @@ _gc_shutdown(E_Gadcon_Client *gcc)
         e_object_del(E_OBJECT(inst->warning));
         inst->popup_battery = NULL;
      }
+   _battery_popup_usage_destroy(inst);
    E_FREE(inst);
 }
 
@@ -183,7 +187,7 @@ _gc_id_new(const E_Gadcon_Client_Class *client_class)
 }
 
 static void
-_popup_usage_del(Instance *inst)
+_battery_popup_usage_destroy(Instance *inst)
 {
    if (inst->popup_timer) ecore_timer_del(inst->popup_timer);
    E_FREE_FUNC(inst->popup, e_object_del);
@@ -193,13 +197,13 @@ _popup_usage_del(Instance *inst)
 }
 
 static void
-_popup_usage_del_cb(void *obj)
+_battery_popup_usage_destroy_cb(void *obj)
 {
-   _popup_usage_del(e_object_data_get(obj));
+   _battery_popup_usage_destroy(e_object_data_get(obj));
 }
 
 static Eina_Bool
-_popup_usage_content_update_cb(void *data)
+_battery_popup_usage_content_update_cb(void *data)
 {
    Instance *inst;
    _Popup_Data *pd;
@@ -214,7 +218,7 @@ _popup_usage_content_update_cb(void *data)
 
    if (!battery_config->have_battery)
      {
-        _popup_usage_del(inst);
+        _battery_popup_usage_destroy(inst);
         return ECORE_CALLBACK_CANCEL;
      }
 
@@ -252,7 +256,7 @@ _popup_usage_content_update_cb(void *data)
 }
 
 static Evas_Object *
-_popup_usage_content_add(Evas_Object *parent, Instance *inst)
+_battery_popup_usage_content_add(Evas_Object *parent, Instance *inst)
 {
    Evas_Object *tb, *tb2, *fr, *lb, *pb, *sep, *rec;
    _Popup_Data *pd;
@@ -333,22 +337,22 @@ _popup_usage_content_add(Evas_Object *parent, Instance *inst)
         elm_table_pack(tb2, sep, 0, 3, 2, 1);
      }
 
-   _popup_usage_content_update_cb(pd);
+   _battery_popup_usage_content_update_cb(pd);
 
    if (battery_config->have_battery)
-     inst->popup_timer = ecore_timer_add(10.0, _popup_usage_content_update_cb, pd);
+     inst->popup_timer = ecore_timer_add(10.0, _battery_popup_usage_content_update_cb, pd);
 
    return tb;
 }
 
 static void
-_popup_usage_new(Instance *inst)
+_battery_popup_usage_new(Instance *inst)
 {
    inst->popup = e_gadcon_popup_new(inst->gcc, 0);
-   e_gadcon_popup_content_set(inst->popup, _popup_usage_content_add(e_comp->elm, inst));
+   e_gadcon_popup_content_set(inst->popup, _battery_popup_usage_content_add(e_comp->elm, inst));
    e_gadcon_popup_show(inst->popup);
    e_object_data_set(E_OBJECT(inst->popup),inst);
-   E_OBJECT_DEL_SET(inst->popup, _popup_usage_del_cb);
+   E_OBJECT_DEL_SET(inst->popup, _battery_popup_usage_destroy_cb);
 }
 
 static void
@@ -394,9 +398,9 @@ _button_cb_mouse_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
         _battery_cb_warning_popup_hide(data, e, obj, event_info);
 
         if (!inst->popup)
-          _popup_usage_new(inst);
+          _battery_popup_usage_new(inst);
         else
-          _popup_usage_del(inst);
+          _battery_popup_usage_destroy(inst);
      }
 }
 

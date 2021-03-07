@@ -16,19 +16,22 @@
 # include <sys/sensors.h>
 #endif
 
-static Eina_Bool _battery_sysctl_battery_update_poll(void *data EINA_UNUSED);
-static int       _battery_sysctl_battery_update();
+static Eina_Bool   _battery_sysctl_battery_update_poll(void *data EINA_UNUSED);
+static int         _battery_sysctl_battery_update();
 
-extern Eina_List *device_batteries;
-extern Eina_List *device_ac_adapters;
-extern double init_time;
+extern Eina_List  *device_batteries;
+extern Eina_List  *device_ac_adapters;
+extern double      init_time;
 
 static Ac_Adapter *ac = NULL;
-static Battery *bat = NULL;
 
 int
 _battery_sysctl_start(void)
 {
+   Battery *bat;
+
+   if (device_batteries) return 1;
+
 # if defined(__OpenBSD__)
    int mib[] = {CTL_HW, HW_SENSORS, 0, 0, 0};
    int devn;
@@ -134,6 +137,8 @@ _battery_sysctl_start(void)
 void
 _battery_sysctl_stop(void)
 {
+   Battery *bat;
+
    if (ac)
      {
         eina_stringshare_del(ac->udi);
@@ -143,7 +148,7 @@ _battery_sysctl_stop(void)
         E_FREE(ac);
      }
 
-   if (bat)
+   EINA_LIST_FREE(device_batteries, bat)
      {
         eina_stringshare_del(bat->udi);
         eina_stringshare_del(bat->technology);
@@ -160,12 +165,17 @@ _battery_sysctl_stop(void)
 static Eina_Bool
 _battery_sysctl_battery_update_poll(void *data EINA_UNUSED)
 {
-   _battery_sysctl_battery_update();
+   Battery *bat;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(device_batteries, l, bat)
+     _battery_sysctl_battery_update(bat);
+
    return EINA_TRUE;
 }
 
 static int
-_battery_sysctl_battery_update()
+_battery_sysctl_battery_update(Battery *bat)
 {
    double _time;
 # if defined(__OpenBSD__)
