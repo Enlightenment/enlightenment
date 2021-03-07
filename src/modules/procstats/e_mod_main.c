@@ -178,10 +178,11 @@ _proc_stats_item_children_update(Eina_List *children, Proc_Stats *item)
     }
 }
 
-static const char *
+static char *
 _size_format(unsigned long long bytes)
 {
    const char *units = "BKMGTPEZY";
+   char buf[1024];
    unsigned long powi = 1;
    unsigned long long value;
    unsigned int precision = 2, powj = 1;
@@ -201,13 +202,17 @@ _size_format(unsigned long long bytes)
         if ((value / powi) < powj) break;
         --precision;
      }
-   return eina_slstr_printf("%1.*f%c", precision, (double) value / powi, *units);
+   snprintf(buf, sizeof(buf), "%1.*f%c", precision, (double) value / powi, *units);
+
+   return strdup(buf);
 }
 
 static void
 _proc_stats_item_display(Proc_Stats *item)
 {
    Evas_Object *pb;
+   Eina_Strbuf *buf;
+   char *s;
    double val = 0.0;
 
    if (item->cpu_time_prev > item->cpu_time)
@@ -219,14 +224,26 @@ _proc_stats_item_display(Proc_Stats *item)
 
    val = (item->cpu_time - item->cpu_time_prev) / _TIMER_FREQ;
    elm_progressbar_value_set(pb, val / 100.0);
-   elm_object_part_text_set(pb, "elm.text.status", eina_slstr_printf("%1.0f %%", val));
+
+   buf = eina_strbuf_new();
+
+   eina_strbuf_append_printf(buf, "%1.0f %%", val);
+   elm_object_part_text_set(pb, "elm.text.status", eina_strbuf_string_get(buf));
+   eina_strbuf_reset(buf);
 
    pb = evas_object_data_get(item->obj_swallow, "pb_mem");
    val = item->mem_size / (_mem_total / 100.0);
    elm_progressbar_value_set(pb, val / 100.0);
-   elm_object_part_text_set(pb, "elm.text.status",
-                            eina_slstr_printf("%s/%s", _size_format(item->mem_size),
-                                              _size_format(_mem_total)));
+
+   s = _size_format(item->mem_size);
+   eina_strbuf_append_printf(buf, "%s/", s);
+   free(s);
+   s = _size_format(_mem_total);
+   eina_strbuf_append(buf, s);
+   free(s);
+
+   elm_object_part_text_set(pb, "elm.text.status", eina_strbuf_string_get(buf));
+   eina_strbuf_free(buf);
 }
 
 static void
