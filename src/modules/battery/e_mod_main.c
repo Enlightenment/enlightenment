@@ -24,14 +24,23 @@ static const E_Gadcon_Client_Class _gadcon_class =
    E_GADCON_CLIENT_STYLE_PLAIN
 };
 
+#define MAX_UNITS 8
+
 /* actual module specifics */
 typedef struct _Instance Instance;
+
+typedef struct __Popup_Widgets
+{
+   Evas_Object *pb;
+   Evas_Object *fr;
+   Evas_Object *lb_state;
+} _Popup_Widgets;
 
 typedef struct __Popup_Data
 {
    Instance        *inst;
-   Evas_Object     *fr;
-   Evas_Object     *pb;
+   unsigned int     n_units;
+   _Popup_Widgets   widgets[MAX_UNITS];
 } _Popup_Data;
 
 struct _Instance
@@ -191,8 +200,12 @@ static Eina_Bool
 _popup_usage_content_update_cb(void *data)
 {
    Instance *inst;
-   _Popup_Data *pd = data;
+   _Popup_Data *pd;
+   Eina_List *l;
+   Battery *bat;
+   unsigned int i = 0;
 
+   pd = data;
    inst = pd->inst;
 
    if (!battery_config->have_battery)
@@ -203,17 +216,18 @@ _popup_usage_content_update_cb(void *data)
 
    if (!inst->popup) return ECORE_CALLBACK_CANCEL;
 
-   elm_progressbar_pulse_set(pd->pb, 0);
-   elm_progressbar_pulse(pd->pb, 0);
-
-   if (battery_config->have_power && battery_config->charging)
-     elm_object_text_set(pd->fr, _("Charging"));
-   else if (battery_config->have_power)
-     elm_object_text_set(pd->fr, _("Plugged in"));
-   else
-     elm_object_text_set(pd->fr, _("Discharging"));
-
-   elm_progressbar_value_set(pd->pb, (double) battery_config->full / 100.0);
+   EINA_LIST_FOREACH(device_batteries, l, bat)
+     {
+        _Popup_Widgets *w = &pd->widgets[i++];
+        elm_progressbar_value_set(w->pb, (double) bat->percent / 100.0);
+        if ((battery_config->have_power) && (!bat->charging))
+          elm_object_text_set(w->lb_state, _("Charged"));
+        else if (bat->charging)
+          elm_object_text_set(w->lb_state, _("Charging"));
+        else
+          elm_object_text_set(w->lb_state, _("Discharging"));
+        if (i == (pd->n_units - 1)) break;
+     }
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -221,48 +235,65 @@ _popup_usage_content_update_cb(void *data)
 static Evas_Object *
 _popup_usage_content_add(Evas_Object *parent, Instance *inst)
 {
-   Evas_Object *tbl, *fr, *pb, *o;
+   Evas_Object *tb, *fr, *bx, *lb, *pb, *sep, *o;
    _Popup_Data *pd;
-
-   tbl = elm_table_add(parent);
-   E_FILL(tbl); E_EXPAND(tbl);
-   evas_object_show(tbl);
-
-   o = evas_object_rectangle_add(evas_object_evas_get(parent));
-   evas_object_size_hint_min_set(o, ELM_SCALE_SIZE(160), ELM_SCALE_SIZE(1));
-   evas_object_size_hint_max_set(o, ELM_SCALE_SIZE(320), ELM_SCALE_SIZE(240));
-   elm_table_pack(tbl, o, 0, 0, 1, 1);
-
-   fr = elm_frame_add(tbl);
-   E_FILL(fr); E_EXPAND(fr);
-   evas_object_show(fr);
-
-   pb = elm_progressbar_add(tbl);
-   E_FILL(pb); E_EXPAND(pb);
-   evas_object_show(pb);
-   elm_progressbar_span_size_set(pb, 1.0);
-   elm_object_content_set(fr, pb);
-   elm_table_pack(tbl, fr, 0, 0, 1, 1);
-
-   if (!battery_config->have_battery)
-     {
-        elm_progressbar_pulse_set(pb, 1);
-        elm_progressbar_pulse(pb, 1);
-        elm_object_text_set(fr, _("Battery not present"));
-     }
+   unsigned int n;
 
    pd = E_NEW(_Popup_Data, 1);
-   pd->fr = fr;
-   pd->pb = pb;
    pd->inst = inst;
    inst->popup_data = pd;
+
+   tb = elm_table_add(parent);
+   E_FILL(tb); E_EXPAND(tb);
+   evas_object_show(tb);
+
+   pd->n_units = n = eina_list_count(device_batteries);
+   for (unsigned int i = 0; i < n; i++)
+     {
+        _Popup_Widgets *w = &pd->widgets[i];
+
+        o = evas_object_rectangle_add(evas_object_evas_get(parent));
+        evas_object_size_hint_min_set(o, ELM_SCALE_SIZE(160), 1);
+        evas_object_size_hint_max_set(o, ELM_SCALE_SIZE(320), -1);
+        elm_table_pack(tb, o, 0, i, 1, 1);
+
+        w->fr = fr = elm_frame_add(parent);
+        E_FILL(fr); E_EXPAND(fr);
+        elm_object_style_set(fr, "pad_small");
+        evas_object_show(fr);
+        elm_table_pack(tb, fr, 0, i++, 1, 1);
+
+        bx = elm_box_add(parent);
+        E_FILL(bx); E_EXPAND(bx);
+        evas_object_show(bx);
+        elm_object_content_set(fr, bx);
+
+        w->lb_state = lb = elm_label_add(parent);
+        E_ALIGN(lb, 0.5, 0.5);
+        E_EXPAND(lb);
+        evas_object_show(lb);
+        elm_box_pack_end(bx, lb);
+
+        w->pb = pb = elm_progressbar_add(parent);
+        E_FILL(pb); E_EXPAND(pb);
+        evas_object_show(pb);
+        elm_progressbar_span_size_set(pb, 1.0);
+        elm_box_pack_end(bx, pb);
+
+        if (n == 1) continue;
+        sep = elm_separator_add(parent);
+        elm_separator_horizontal_set(sep, 1);
+        E_FILL(sep); E_EXPAND(sep);
+        evas_object_show(sep);
+        elm_box_pack_end(bx, sep);
+     }
 
    _popup_usage_content_update_cb(pd);
 
    if (battery_config->have_battery)
      inst->popup_timer = ecore_timer_add(10.0, _popup_usage_content_update_cb, pd);
 
-   return tbl;
+   return tb;
 }
 
 static void
