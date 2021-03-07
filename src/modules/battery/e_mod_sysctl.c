@@ -1,12 +1,17 @@
 #include "e.h"
 #include "e_mod_main.h"
 
-#if defined(__OpenBSD__) || defined(__NetBSD__) || defined(__FreeBSD__) || defined(__DragonFly__)
+#if defined(__OpenBSD__) || defined(__FreeBSD__) || defined(__DragonFly__)
 # include <err.h>
 # include <sys/types.h>
 # include <sys/sysctl.h>
 
-#if defined(__OpenBSD__) || defined(__NetBSD__)
+#if defined(__FreeBSD__) || defined(__DragonFly__)
+# include <sys/ioctl.h>
+# include <dev/acpica/acpiio.h>
+#endif
+
+#if defined(__OpenBSD__)
 # include <sys/param.h>
 # include <sys/sensors.h>
 #endif
@@ -24,17 +29,14 @@ static Battery *bat = NULL;
 int
 _battery_sysctl_start(void)
 {
-# if defined(__OpenBSD__) || defined(__NetBSD__)
+# if defined(__OpenBSD__)
    int mib[] = {CTL_HW, HW_SENSORS, 0, 0, 0};
    int devn;
    struct sensordev snsrdev;
    size_t sdlen = sizeof(struct sensordev);
-# elif defined(__FreeBSD__) || defined(__DragonFly__)
-   size_t len;
-# endif
 
-# if defined(__OpenBSD__) || defined(__NetBSD__)
-   for (devn = 0;; devn++) {
+   for (devn = 0;; devn++)
+     {
         mib[2] = devn;
         if (sysctl(mib, 3, &snsrdev, &sdlen, NULL, 0) == -1)
           {
@@ -76,53 +78,48 @@ _battery_sysctl_start(void)
           }
      }
 # elif defined(__FreeBSD__) || defined(__DragonFly__)
-     if ((sysctlbyname("hw.acpi.battery.life", NULL, &len, NULL, 0)) != -1)
-       {
-          if (!(bat = E_NEW(Battery, 1)))
-            return 0;
+   int fd, n_units, val;
+   union acpi_battery_ioctl_arg battio;
+   char buf[128];
 
-          bat->mib = malloc(sizeof(int) * 4);
-          if (!bat->mib) return 0;
-          sysctlnametomib("hw.acpi.battery.life", bat->mib, &len);
+   if ((fd = open("/dev/acpi", O_RDONLY)) == -1) return 0;
 
-          bat->mib_state = malloc(sizeof(int) * 4);
-          if (!bat->mib_state) return 0;
-          sysctlnametomib("hw.acpi.battery.state", bat->mib_state, &len);
+   if (ioctl(fd, ACPIIO_BATT_GET_UNITS, &n_units) == -1) return 0;
 
-          bat->mib_time  = malloc(sizeof(int) * 4);
-          if (!bat->mib_time) return 0;
-          sysctlnametomib("hw.acpi.battery.time", bat->mib_time, &len);
+   for (int i = 0; i < n_units; i++)
+     {
+        battio.unit = i;
+        if (ioctl(fd, ACPIIO_BATT_GET_BIX, &battio) != -1)
+          {
+             if (battio.bst.state == ACPI_BATT_STAT_NOT_PRESENT)
+               continue;
 
-          bat->mib_units = malloc(sizeof(int) * 4);
-          if(!bat->mib_units) return 0;
-          sysctlnametomib("hw.acpi.battery.units", bat->mib_units, &len);
+             if (!(bat = E_NEW(Battery, 1)))
+               return 0;
 
-          bat->udi = eina_stringshare_add("hw.acpi.battery");
-          bat->technology = eina_stringshare_add("Unknown");
-          bat->model = eina_stringshare_add("Unknown");
-          bat->vendor = eina_stringshare_add("Unknown");
+             snprintf(buf, sizeof(buf), "hw.acpi.battery.%i", i);
+             bat->udi = eina_stringshare_add(buf);
+             bat->technology = eina_stringshare_add(battio.bix.type);
+             bat->vendor = eina_stringshare_add(battio.bix.oeminfo);
+             bat->model = eina_stringshare_add(battio.bix.model);
+             bat->poll = ecore_poller_add(ECORE_POLLER_CORE,
+                                          battery_config->poll_interval,
+                                          _battery_sysctl_battery_update_poll, NULL);
+             bat->unit = i;
+             device_batteries = eina_list_append(device_batteries, bat);
+          }
+     }
 
-          bat->poll = ecore_poller_add(ECORE_POLLER_CORE,
-                                       battery_config->poll_interval,
-                                       _battery_sysctl_battery_update_poll, NULL);
+    if (ioctl(fd, ACPIIO_ACAD_GET_STATUS, &val) != -1)
+      {
+         if (!(ac = E_NEW(Ac_Adapter, 1)))
+           return 0;
 
-          device_batteries = eina_list_append(device_batteries, bat);
+         ac->udi = eina_stringshare_add("hw.acpi.acline");
+         ac->present = val;
+         device_ac_adapters = eina_list_append(device_ac_adapters, ac);
       }
-
-      if ((sysctlbyname("hw.acpi.acline", NULL, &len, NULL, 0)) != -1)
-        {
-           if (!(ac = E_NEW(Ac_Adapter, 1)))
-             return 0;
-
-           ac->mib = malloc(sizeof(int) * 3);
-           if (!ac->mib) return 0;
-           len = sizeof(ac->mib);
-           sysctlnametomib("hw.acpi.acline", ac->mib, &len);
-
-           ac->udi = eina_stringshare_add("hw.acpi.acline");
-
-           device_ac_adapters = eina_list_append(device_ac_adapters, ac);
-        }
+    close(fd);
 # endif
    _battery_sysctl_battery_update();
 
@@ -138,7 +135,9 @@ _battery_sysctl_stop(void)
    if (ac)
      {
         eina_stringshare_del(ac->udi);
+#if defined(__OpenBSD__)
         E_FREE(ac->mib);
+#endif
         E_FREE(ac);
      }
 
@@ -149,12 +148,9 @@ _battery_sysctl_stop(void)
         eina_stringshare_del(bat->model);
         eina_stringshare_del(bat->vendor);
         ecore_poller_del(bat->poll);
-# if defined(__FreeBSD__) || defined(__DragonFly__)
-        E_FREE(bat->mib_state);
-        E_FREE(bat->mib_time);
-        E_FREE(bat->mib_units);
-# endif
+#if defined(__OpenBSD__)
         E_FREE(bat->mib);
+#endif
         E_FREE(bat);
      }
 }
@@ -170,13 +166,13 @@ static int
 _battery_sysctl_battery_update()
 {
    double _time;
-# if defined(__OpenBSD__) || defined(__NetBSD__)
+# if defined(__OpenBSD__)
    double charge;
    struct sensor s;
    size_t slen = sizeof(struct sensor);
 # elif defined(__FreeBSD__) || defined(__DragonFly__)
-   int value;
-   size_t len;
+   int fd, val;
+   union acpi_battery_ioctl_arg battio;
 # endif
 
    if (bat)
@@ -184,7 +180,7 @@ _battery_sysctl_battery_update()
        /* update the poller interval */
        ecore_poller_poller_interval_set(bat->poll,
                                         battery_config->poll_interval);
-# if defined(__OpenBSD__) || defined(__NetBSD__)
+# if defined(__OpenBSD__)
        charge = 0;
 
        /* last full capacity */
@@ -270,49 +266,32 @@ _battery_sysctl_battery_update()
          }
 
 # elif defined(__FreeBSD__) || defined(__DragonFly__)
-       len = sizeof(value);
-       if ((sysctl(bat->mib, 4, &value, &len, NULL, 0)) == -1)
+       if ((fd = open("/dev/acpi", O_RDONLY)) == -1) return 0;
+
+       battio.unit = bat->unit;
+       if (ioctl(fd, ACPIIO_BATT_GET_BATTINFO, &battio) == -1)
          {
-           return 0;
+            if (fd != -1)
+              close(fd);
+            return 0;
          }
+       bat->got_prop = 1;
 
-       bat->percent = value;
-
+       bat->percent = battio.battinfo.cap;
        _time = ecore_time_get();
        bat->last_update = _time;
 
-       len = sizeof(value);
-       if ((sysctl(bat->mib_state, 4, &value, &len, NULL, 0)) == -1)
-         {
-           return 0;
-         }
-
-       bat->charging = !value;
-       bat->got_prop = 1;
-
-       bat->time_full = -1;
-       bat->time_left = -1;
-
-       len = sizeof(bat->time_min);
-       if ((sysctl(bat->mib_time, 4, &bat->time_min, &len, NULL, 0)) == -1)
-         {
-            bat->time_min = -1;
-         }
-
-       len = sizeof(bat->batteries);
-       if ((sysctl(bat->mib_units, 4, &bat->batteries, &len, NULL, 0)) == -1)
-         {
-            bat->batteries = 1;
-         }
+       bat->charging = (battio.battinfo.state == ACPI_BATT_STAT_CHARGING) ? 1 : 0;
+       bat->time_min = battio.battinfo.min;
 
        if (bat->time_min >= 0) bat->time_left = bat->time_min * 60;
-       if (bat->batteries == 1) bat->time_left = -1;
+       close(fd);
 # endif
    }
 
    if (ac)
      {
-# if defined(__OpenBSD__) || defined(__NetBSD__)
+# if defined(__OpenBSD__)
        /* AC State */
        ac->mib[3] = 9;
        ac->mib[4] = 0;
@@ -324,11 +303,14 @@ _battery_sysctl_battery_update()
               ac->present = 0;
          }
 # elif defined(__FreeBSD__) || defined(__DragonFly__)
-       len = sizeof(value);
-       if ((sysctl(ac->mib, 3, &value, &len, NULL, 0)) != -1)
+       if ((fd = open("/dev/acpi", O_RDONLY)) == -1) return 0;
+       if (ioctl(fd, ACPIIO_ACAD_GET_STATUS, &val) == -1)
          {
-            ac->present = value;
+            close(fd);
+            return 0;
          }
+       ac->present = val;
+       close(fd);
 # endif
      }
 
