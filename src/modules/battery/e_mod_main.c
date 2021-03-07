@@ -31,9 +31,11 @@ typedef struct _Instance Instance;
 
 typedef struct __Popup_Widgets
 {
-   Evas_Object *pb;
    Evas_Object *fr;
    Evas_Object *lb_state;
+   Evas_Object *pb_usage;
+   Evas_Object *lb_time;
+   Evas_Object *pb_health;
 } _Popup_Widgets;
 
 typedef struct __Popup_Data
@@ -203,6 +205,8 @@ _popup_usage_content_update_cb(void *data)
    _Popup_Data *pd;
    Eina_List *l;
    Battery *bat;
+   char buf[128];
+   int hrs, mins, t = 0;
    unsigned int i = 0;
 
    pd = data;
@@ -219,13 +223,28 @@ _popup_usage_content_update_cb(void *data)
    EINA_LIST_FOREACH(device_batteries, l, bat)
      {
         _Popup_Widgets *w = &pd->widgets[i++];
-        elm_progressbar_value_set(w->pb, (double) bat->percent / 100.0);
+        snprintf(buf, sizeof(buf), "%s (%s)", bat->vendor, bat->model);
+        elm_object_text_set(w->fr, buf);
         if ((battery_config->have_power) && (!bat->charging))
           elm_object_text_set(w->lb_state, _("Charged"));
         else if (bat->charging)
-          elm_object_text_set(w->lb_state, _("Charging"));
+          {
+             t = bat->time_full;
+             elm_object_text_set(w->lb_state, _("Charging"));
+          }
         else
-          elm_object_text_set(w->lb_state, _("Discharging"));
+          {
+             t = bat->time_left;
+             elm_object_text_set(w->lb_state, _("Discharging"));
+          }
+        hrs = (t / 3600);
+        mins = ((t) / 60 - (hrs * 60));
+        if (mins < 0) mins = 0;
+          snprintf(buf, sizeof(buf), "%i:%02i", hrs, mins);
+        elm_object_text_set(w->lb_time, buf);
+        elm_progressbar_value_set(w->pb_usage, (double) bat->percent / 100.0);
+        elm_progressbar_value_set(w->pb_health,
+                                  ((double) bat->last_full_charge / (bat->design_charge / 100)) / 100);
         if (i == (pd->n_units - 1)) break;
      }
 
@@ -235,7 +254,7 @@ _popup_usage_content_update_cb(void *data)
 static Evas_Object *
 _popup_usage_content_add(Evas_Object *parent, Instance *inst)
 {
-   Evas_Object *tb, *fr, *bx, *lb, *pb, *sep, *o;
+   Evas_Object *tb, *tb2, *fr, *lb, *pb, *sep, *rec;
    _Popup_Data *pd;
    unsigned int n;
 
@@ -252,40 +271,67 @@ _popup_usage_content_add(Evas_Object *parent, Instance *inst)
      {
         _Popup_Widgets *w = &pd->widgets[i];
 
-        o = evas_object_rectangle_add(evas_object_evas_get(parent));
-        evas_object_size_hint_min_set(o, ELM_SCALE_SIZE(160), 1);
-        evas_object_size_hint_max_set(o, ELM_SCALE_SIZE(320), -1);
-        elm_table_pack(tb, o, 0, i, 1, 1);
+        rec = evas_object_rectangle_add(evas_object_evas_get(parent));
+        evas_object_size_hint_min_set(rec, ELM_SCALE_SIZE(240), 1);
+        evas_object_size_hint_max_set(rec, ELM_SCALE_SIZE(320), -1);
+        elm_table_pack(tb, rec, 0, i, 1, 1);
 
         w->fr = fr = elm_frame_add(parent);
         E_FILL(fr); E_EXPAND(fr);
-        elm_object_style_set(fr, "pad_small");
         evas_object_show(fr);
         elm_table_pack(tb, fr, 0, i++, 1, 1);
 
-        bx = elm_box_add(parent);
-        E_FILL(bx); E_EXPAND(bx);
-        evas_object_show(bx);
-        elm_object_content_set(fr, bx);
+        tb2 = elm_table_add(parent);
+        E_FILL(tb2); E_EXPAND(tb2);
+        evas_object_show(tb2);
+        elm_object_content_set(fr, tb2);
 
         w->lb_state = lb = elm_label_add(parent);
         E_ALIGN(lb, 0.5, 0.5);
-        E_EXPAND(lb);
         evas_object_show(lb);
-        elm_box_pack_end(bx, lb);
+        elm_table_pack(tb2, lb, 0, 0, 1, 1);
+        rec = evas_object_rectangle_add(evas_object_evas_get(parent));
+        evas_object_size_hint_min_set(rec, ELM_SCALE_SIZE(80), 1);
+        elm_table_pack(tb2, rec, 0, 0, 1, 1);
 
-        w->pb = pb = elm_progressbar_add(parent);
+        w->pb_usage = pb = elm_progressbar_add(parent);
         E_FILL(pb); E_EXPAND(pb);
         evas_object_show(pb);
         elm_progressbar_span_size_set(pb, 1.0);
-        elm_box_pack_end(bx, pb);
+        elm_table_pack(tb2, pb, 1, 0, 1, 1);
+
+        lb = elm_label_add(parent);
+        E_ALIGN(lb, 0.5, 0.5);
+        E_EXPAND(lb);
+        evas_object_show(lb);
+        elm_object_text_set(lb, _("Health"));
+        elm_table_pack(tb2, lb, 0, 1, 1, 1);
+
+        w->pb_health = pb = elm_progressbar_add(parent);
+        E_FILL(pb); E_EXPAND(pb);
+        evas_object_show(pb);
+        elm_progressbar_span_size_set(pb, 1.0);
+        elm_table_pack(tb2, pb, 1, 1, 1, 1);
+
+        lb = elm_label_add(parent);
+        E_ALIGN(lb, 0.5, 0.5);
+        E_EXPAND(lb);
+        evas_object_show(lb);
+        elm_object_text_set(lb, _("Time"));
+        elm_table_pack(tb2, lb, 0, 2, 1, 1);
+
+        w->lb_time = lb = elm_label_add(parent);
+        E_ALIGN(lb, 0.5, 0.5);
+        E_EXPAND(lb);
+        evas_object_show(lb);
+        elm_table_pack(tb2, lb, 1, 2, 1, 1);
 
         if (n == 1) continue;
         sep = elm_separator_add(parent);
         elm_separator_horizontal_set(sep, 1);
         E_FILL(sep); E_EXPAND(sep);
         evas_object_show(sep);
-        elm_box_pack_end(bx, sep);
+        elm_table_pack(tb2, sep, 0, 3, 2, 1);
      }
 
    _popup_usage_content_update_cb(pd);
@@ -499,7 +545,7 @@ _battery_config_updated(void)
    Eina_List *l;
    Instance *inst;
    char buf[4096];
-   int ok = 0;
+   int ok = 1;
 
    if (!battery_config) return;
 
@@ -519,11 +565,14 @@ _battery_config_updated(void)
        (battery_config->force_mode == SUBSYSTEM))
      {
 #ifdef HAVE_EEZE
-        ok = _battery_udev_start();
+        if (!eina_list_count(device_batteries))
+          ok = _battery_udev_start();
 #elif defined(__OpenBSD__) || defined(__DragonFly__) || defined(__FreeBSD__)
-        ok = _battery_sysctl_start();
+        if (!eina_list_count(device_batteries))
+          ok = _battery_sysctl_start();
 #else
-        ok = _battery_upower_start();
+        if (!eina_list_count(device_batteries))
+          ok = _battery_upower_start();
 #endif
      }
    if (ok) return;

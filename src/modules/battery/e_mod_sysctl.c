@@ -102,6 +102,8 @@ _battery_sysctl_start(void)
              bat->technology = eina_stringshare_add(battio.bix.type);
              bat->vendor = eina_stringshare_add(battio.bix.oeminfo);
              bat->model = eina_stringshare_add(battio.bix.model);
+             bat->design_charge = battio.bix.dcap;
+             bat->last_full_charge = battio.bix.lfcap;
              bat->poll = ecore_poller_add(ECORE_POLLER_CORE,
                                           battery_config->poll_interval,
                                           _battery_sysctl_battery_update_poll, NULL);
@@ -282,7 +284,7 @@ _battery_sysctl_battery_update()
        bat->last_update = _time;
 
        bat->charging = (battio.battinfo.state == ACPI_BATT_STAT_CHARGING) ? 1 : 0;
-       bat->time_min = battio.battinfo.min;
+       bat->time_min = bat->time_full = battio.battinfo.min;
 
        if (bat->time_min >= 0) bat->time_left = bat->time_min * 60;
        close(fd);
