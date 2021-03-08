@@ -358,8 +358,8 @@ _battery_popup_usage_new(Instance *inst)
    evas_object_show(tb);
 
    rec = evas_object_rectangle_add(evas_object_evas_get(base));
-   evas_object_size_hint_min_set(rec, ELM_SCALE_SIZE(240), ELM_SCALE_SIZE(134));
-   evas_object_size_hint_max_set(rec, ELM_SCALE_SIZE(240), ELM_SCALE_SIZE(134));
+   evas_object_size_hint_min_set(rec, ELM_SCALE_SIZE(250), ELM_SCALE_SIZE(135));
+   evas_object_size_hint_max_set(rec, ELM_SCALE_SIZE(250), ELM_SCALE_SIZE(135));
    elm_table_pack(tb, rec, 0, 0, 1, 1);
 
    Evas_Object *glist = elm_genlist_add(base);
