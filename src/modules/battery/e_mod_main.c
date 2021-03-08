@@ -32,10 +32,8 @@ typedef struct _Instance Instance;
 typedef struct __Popup_Widgets
 {
    Evas_Object *fr;
-   Evas_Object *lb_state;
    Evas_Object *pb_usage;
-   Evas_Object *lb_time;
-   Evas_Object *pb_health;
+   Evas_Object *ent_status;
 } _Popup_Widgets;
 
 typedef struct __Popup_Data
@@ -209,9 +207,9 @@ _battery_popup_usage_content_update_cb(void *data)
    _Popup_Data *pd;
    Eina_List *l;
    Battery *bat;
-   char buf[128];
    int hrs, mins, t = 0;
    unsigned int i = 0;
+   char buf[256];
 
    pd = data;
    inst = pd->inst;
@@ -224,123 +222,115 @@ _battery_popup_usage_content_update_cb(void *data)
 
    if (!inst->popup) return ECORE_CALLBACK_CANCEL;
 
+   Eina_Strbuf *sbuf = eina_strbuf_new();
    EINA_LIST_FOREACH(device_batteries, l, bat)
      {
         _Popup_Widgets *w = &pd->widgets[i++];
-        snprintf(buf, sizeof(buf), "%s (%s)", bat->vendor, bat->model);
-        elm_object_text_set(w->fr, buf);
+
+        eina_strbuf_append(sbuf, _("State: "));
         if ((battery_config->have_power) && (!bat->charging))
-          elm_object_text_set(w->lb_state, _("Charged"));
+          eina_strbuf_append(sbuf, _("Charged.<br>"));
         else if (bat->charging)
           {
              t = bat->time_full;
-             elm_object_text_set(w->lb_state, _("Charging"));
+             eina_strbuf_append(sbuf, _("Charging.<br>"));
           }
         else
           {
              t = bat->time_left;
-             elm_object_text_set(w->lb_state, _("Discharging"));
+             eina_strbuf_append(sbuf, _("Discharging.<br>"));
           }
         hrs = (t / 3600);
         mins = ((t) / 60 - (hrs * 60));
+        if (hrs < 0) hrs = 0;
         if (mins < 0) mins = 0;
           snprintf(buf, sizeof(buf), "%i:%02i", hrs, mins);
-        elm_object_text_set(w->lb_time, buf);
+        eina_strbuf_append_printf(sbuf, _("Time Remaining: %s<br>"), buf);
+        eina_strbuf_append_printf(sbuf, _("Health: %1.1f %%<br>"),
+                                  (double) bat->last_full_charge / (bat->design_charge / 100));
+        eina_strbuf_append_printf(sbuf, _("Technology: %s"), bat->technology);
+
+        elm_object_text_set(w->ent_status, eina_strbuf_string_get(sbuf));
         elm_progressbar_value_set(w->pb_usage, (double) bat->percent / 100.0);
-        elm_progressbar_value_set(w->pb_health,
-                                  ((double) bat->last_full_charge / (bat->design_charge / 100)) / 100);
+        eina_strbuf_reset(sbuf);
         if (i == (pd->n_units - 1)) break;
      }
 
+   eina_strbuf_free(sbuf);
    return ECORE_CALLBACK_RENEW;
 }
 
-static Evas_Object *
-_battery_popup_usage_content_add(Evas_Object *parent, Instance *inst)
+static char *
+_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
 {
-   Evas_Object *tb, *tb2, *fr, *lb, *pb, *sep, *rec;
-   _Popup_Data *pd;
-   unsigned int n;
+   char *buf;
+   if (strcmp(part, "elm.text")) return NULL;
+   buf = data;
+   return strdup(buf);
+}
 
-   pd = E_NEW(_Popup_Data, 1);
-   pd->inst = inst;
-   inst->popup_data = pd;
+static Evas_Object *
+_icon_get(void *data EINA_UNUSED, Evas_Object *obj, const char *part)
+{
+   Evas_Object *ic;
+   if (strcmp(part, "elm.swallow.icon")) return NULL;
 
-   tb = elm_table_add(parent);
-   E_FILL(tb); E_EXPAND(tb);
+   ic = elm_icon_add(obj);
+   elm_icon_standard_set(ic, "battery");
+   evas_object_size_hint_min_set(ic, ELM_SCALE_SIZE(16), ELM_SCALE_SIZE(16));
+   evas_object_show(ic);
+   return ic;
+}
+
+static Evas_Object *
+_content_get(void *data, Evas_Object *obj, const char *part)
+{
+   Evas_Object *tb, *rec, *o;
+   _Popup_Widgets *w;
+   if (strcmp(part, "elm.swallow.content")) return NULL;
+
+   w = data;
+
+   tb = elm_table_add(obj);
    evas_object_show(tb);
 
-   pd->n_units = n = eina_list_count(device_batteries);
-   for (unsigned int i = 0; i < n; i++)
-     {
-        _Popup_Widgets *w = &pd->widgets[i];
+   rec = evas_object_rectangle_add(evas_object_evas_get(obj));
+   evas_object_size_hint_min_set(rec, ELM_SCALE_SIZE(220), ELM_SCALE_SIZE(100));
+   evas_object_size_hint_max_set(rec, ELM_SCALE_SIZE(220), ELM_SCALE_SIZE(100));
+   elm_table_pack(tb, rec, 0, 0, 1, 1);
 
-        rec = evas_object_rectangle_add(evas_object_evas_get(parent));
-        evas_object_size_hint_min_set(rec, ELM_SCALE_SIZE(240), 1);
-        evas_object_size_hint_max_set(rec, ELM_SCALE_SIZE(320), -1);
-        elm_table_pack(tb, rec, 0, i, 1, 1);
+   Evas_Object *bx = elm_box_add(obj);
+   E_EXPAND(bx); E_FILL(bx);
+   evas_object_show(bx);
+   elm_table_pack(tb, bx, 0, 0, 1, 1);
 
-        w->fr = fr = elm_frame_add(parent);
-        E_FILL(fr); E_EXPAND(fr);
-        evas_object_show(fr);
-        elm_table_pack(tb, fr, 0, i++, 1, 1);
+   rec = evas_object_rectangle_add(evas_object_evas_get(obj));
+   evas_object_size_hint_weight_set(rec, 1.0, 0);
+   evas_object_size_hint_min_set(rec, 1, ELM_SCALE_SIZE(6));
+   evas_object_size_hint_max_set(rec, -1, ELM_SCALE_SIZE(6));
+   elm_box_pack_end(bx, rec);
 
-        tb2 = elm_table_add(parent);
-        E_FILL(tb2); E_EXPAND(tb2);
-        elm_table_padding_set(tb2, 2, 4);
-        evas_object_show(tb2);
-        elm_object_content_set(fr, tb2);
+   w->pb_usage = o = elm_progressbar_add(obj);
+   evas_object_size_hint_weight_set(o, 1.0, 0);
+   E_FILL(o);
+   elm_progressbar_span_size_set(o, 1.0);
+   evas_object_show(o);
+   elm_box_pack_end(bx, o);
 
-        lb = elm_label_add(parent);
-        E_ALIGN(lb, 1.0, 0.5);
-        E_EXPAND(lb);
-        evas_object_show(lb);
-        elm_object_text_set(lb, _("Time"));
-        elm_table_pack(tb2, lb, 0, 0, 1, 1);
+   rec = evas_object_rectangle_add(evas_object_evas_get(obj));
+   evas_object_size_hint_weight_set(rec, 1.0, 0);
+   evas_object_size_hint_min_set(rec, 1, ELM_SCALE_SIZE(6));
+   evas_object_size_hint_max_set(rec, -1, ELM_SCALE_SIZE(6));
+   elm_box_pack_end(bx, rec);
 
-        w->lb_time = lb = elm_label_add(parent);
-        E_ALIGN(lb, 0.5, 0.5);
-        E_EXPAND(lb);
-        evas_object_show(lb);
-        elm_table_pack(tb2, lb, 1, 0, 1, 1);
-
-        w->lb_state = lb = elm_label_add(parent);
-        E_ALIGN(lb, 1.0, 0.5);
-        evas_object_show(lb);
-        elm_table_pack(tb2, lb, 0, 1, 1, 1);
-
-        w->pb_usage = pb = elm_progressbar_add(parent);
-        E_FILL(pb); E_EXPAND(pb);
-        evas_object_show(pb);
-        elm_progressbar_span_size_set(pb, 1.0);
-        elm_table_pack(tb2, pb, 1, 1, 1, 1);
-
-        lb = elm_label_add(parent);
-        E_ALIGN(lb, 1.0, 0.5);
-        E_EXPAND(lb);
-        evas_object_show(lb);
-        elm_object_text_set(lb, _("Health"));
-        elm_table_pack(tb2, lb, 0, 2, 1, 1);
-
-        w->pb_health = pb = elm_progressbar_add(parent);
-        E_FILL(pb); E_EXPAND(pb);
-        evas_object_show(pb);
-        elm_progressbar_span_size_set(pb, 1.0);
-        elm_table_pack(tb2, pb, 1, 2, 1, 1);
-
-
-        if (n == 1) continue;
-        sep = elm_separator_add(parent);
-        elm_separator_horizontal_set(sep, 1);
-        E_FILL(sep); E_EXPAND(sep);
-        evas_object_show(sep);
-        elm_table_pack(tb2, sep, 0, 3, 2, 1);
-     }
-
-   _battery_popup_usage_content_update_cb(pd);
-
-   if (battery_config->have_battery)
-     inst->popup_timer = ecore_timer_add(10.0, _battery_popup_usage_content_update_cb, pd);
+   w->ent_status = o = elm_entry_add(obj);
+   elm_entry_single_line_set(o, 0);
+   elm_entry_scrollable_set(o, 1);
+   elm_entry_editable_set(o, 0);
+   E_EXPAND(o);
+   E_FILL(o);
+   evas_object_show(o);
+   elm_box_pack_end(bx, o);
 
    return tb;
 }
@@ -348,11 +338,75 @@ _battery_popup_usage_content_add(Evas_Object *parent, Instance *inst)
 static void
 _battery_popup_usage_new(Instance *inst)
 {
+   Evas_Object *base, *tb, *rec;
+   _Popup_Data *pd;
+   unsigned int n;
+   static char buf[512];
+   Eina_List *l;
+   Battery *bat;
+   int i = 0;
+   Elm_Genlist_Item_Class *itc, *itc2;
+
+   base = e_comp->elm;
    inst->popup = e_gadcon_popup_new(inst->gcc, 0);
-   e_gadcon_popup_content_set(inst->popup, _battery_popup_usage_content_add(e_comp->elm, inst));
+
+   pd = E_NEW(_Popup_Data, 1);
+   pd->inst = inst;
+   inst->popup_data = pd;
+
+   tb = elm_table_add(base);
+   E_FILL(tb); E_EXPAND(tb);
+   evas_object_show(tb);
+
+   rec = evas_object_rectangle_add(evas_object_evas_get(base));
+   evas_object_size_hint_min_set(rec, ELM_SCALE_SIZE(240), ELM_SCALE_SIZE(131));
+   evas_object_size_hint_max_set(rec, ELM_SCALE_SIZE(240), ELM_SCALE_SIZE(131));
+   elm_table_pack(tb, rec, 0, 0, 1, 1);
+
+   Evas_Object *glist = elm_genlist_add(base);
+   E_FILL(glist);
+   E_EXPAND(glist);
+   elm_genlist_select_mode_set(glist, ELM_OBJECT_SELECT_MODE_NONE);
+   evas_object_show(glist);
+   elm_table_pack(tb, glist, 0, 0, 1, 1);
+
+   itc = elm_genlist_item_class_new();
+   itc->item_style = "full";
+   itc->func.text_get = NULL;
+   itc->func.content_get = _content_get;
+   itc->func.filter_get = NULL;
+   itc2->func.state_get = NULL;
+   itc->func.del = NULL;
+
+   itc2 = elm_genlist_item_class_new();
+   itc2->item_style = "group_index";
+   itc2->func.text_get = _text_get;
+   itc2->func.content_get = _icon_get;
+   itc2->func.filter_get = NULL;
+   itc2->func.state_get = NULL;
+   itc2->func.del = NULL;
+
+   pd->n_units = eina_list_count(device_batteries);
+   EINA_LIST_FOREACH(device_batteries, l, bat)
+     {
+        _Popup_Widgets *w = &pd->widgets[i++];
+        snprintf(buf, sizeof(buf), _("Battery: %s (%s)"), bat->vendor, bat->model);
+        elm_genlist_item_append(glist, itc2, buf, NULL, ELM_GENLIST_ITEM_GROUP, NULL, NULL);
+        elm_genlist_item_append(glist, itc, w, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
+     }
+
+   if (pd->n_units)
+     inst->popup_timer = ecore_timer_add(2.0, _battery_popup_usage_content_update_cb, pd);
+
+   elm_genlist_item_class_free(itc);
+   elm_genlist_item_class_free(itc2);
+
+   e_gadcon_popup_content_set(inst->popup, tb);
    e_gadcon_popup_show(inst->popup);
    e_object_data_set(E_OBJECT(inst->popup),inst);
    E_OBJECT_DEL_SET(inst->popup, _battery_popup_usage_destroy_cb);
+
+   _battery_popup_usage_content_update_cb(pd);
 }
 
 static void
@@ -430,6 +484,7 @@ _battery_face_time_set(Evas_Object *battery, int t)
 
    hrs = (t / 3600);
    mins = ((t) / 60 - (hrs * 60));
+   if (hrs < 0) hrs = 0;
    if (mins < 0) mins = 0;
    snprintf(buf, sizeof(buf), "%i:%02i", hrs, mins);
    edje_object_part_text_set(battery, "e.text.time", buf);
