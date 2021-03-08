@@ -1017,6 +1017,7 @@ _tasks_item_preview_add(Tasks_Item *item)
                                               ELM_CTXPOPUP_DIRECTION_LEFT, ELM_CTXPOPUP_DIRECTION_RIGHT);
           break;
      }
+   evas_object_pass_events_set(o, 1);
    evas_object_show(o);
 }
 
