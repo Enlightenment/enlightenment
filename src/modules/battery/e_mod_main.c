@@ -340,7 +340,6 @@ _battery_popup_usage_new(Instance *inst)
 {
    Evas_Object *base, *tb, *rec;
    _Popup_Data *pd;
-   unsigned int n;
    static char buf[512];
    Eina_List *l;
    Battery *bat;
@@ -359,8 +358,8 @@ _battery_popup_usage_new(Instance *inst)
    evas_object_show(tb);
 
    rec = evas_object_rectangle_add(evas_object_evas_get(base));
-   evas_object_size_hint_min_set(rec, ELM_SCALE_SIZE(240), ELM_SCALE_SIZE(131));
-   evas_object_size_hint_max_set(rec, ELM_SCALE_SIZE(240), ELM_SCALE_SIZE(131));
+   evas_object_size_hint_min_set(rec, ELM_SCALE_SIZE(240), ELM_SCALE_SIZE(134));
+   evas_object_size_hint_max_set(rec, ELM_SCALE_SIZE(240), ELM_SCALE_SIZE(134));
    elm_table_pack(tb, rec, 0, 0, 1, 1);
 
    Evas_Object *glist = elm_genlist_add(base);
@@ -375,7 +374,7 @@ _battery_popup_usage_new(Instance *inst)
    itc->func.text_get = NULL;
    itc->func.content_get = _content_get;
    itc->func.filter_get = NULL;
-   itc2->func.state_get = NULL;
+   itc->func.state_get = NULL;
    itc->func.del = NULL;
 
    itc2 = elm_genlist_item_class_new();
