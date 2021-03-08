@@ -343,14 +343,18 @@ _battery_popup_usage_new(Instance *inst)
    static char buf[512];
    Eina_List *l;
    Battery *bat;
-   int i = 0;
+   int n, i = 0;
    Elm_Genlist_Item_Class *itc, *itc2;
+
+   n = eina_list_count(device_batteries);
+   if (!n) return;
 
    base = e_comp->elm;
    inst->popup = e_gadcon_popup_new(inst->gcc, 0);
 
    pd = E_NEW(_Popup_Data, 1);
    pd->inst = inst;
+   pd->n_units = n;
    inst->popup_data = pd;
 
    tb = elm_table_add(base);
@@ -385,7 +389,6 @@ _battery_popup_usage_new(Instance *inst)
    itc2->func.state_get = NULL;
    itc2->func.del = NULL;
 
-   pd->n_units = eina_list_count(device_batteries);
    EINA_LIST_FOREACH(device_batteries, l, bat)
      {
         _Popup_Widgets *w = &pd->widgets[i++];
