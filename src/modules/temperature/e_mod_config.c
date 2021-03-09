@@ -71,8 +71,7 @@ _fill_data_tempget(E_Config_Dialog_Data *cfdata)
    cfdata->temp.low = cfdata->inst->low;
    cfdata->temp.high = cfdata->inst->high;
    cfdata->sensor = 0;
-#if defined (__FreeBSD__) || defined(__DragonFly__)
-#else
+
    Eina_List *sensors;
    Sensor *sen;
    int n;
@@ -87,7 +86,6 @@ _fill_data_tempget(E_Config_Dialog_Data *cfdata)
         cfdata->sensors = eina_list_append(cfdata->sensors, sen);
         n++;
      }
-#endif
 }
 
 static void

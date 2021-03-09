@@ -18,7 +18,6 @@ struct _Tempthread
    Config_Face *inst;
    int poll_interval;
    const char *sensor_name;
-   void *extn;
    E_Powersave_Sleeper *sleeper;
    Eina_Bool initted E_BITFIELD;
 };

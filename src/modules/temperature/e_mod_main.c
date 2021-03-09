@@ -52,7 +52,6 @@ _temperature_thread_free(Tempthread *tth)
 {
    eina_stringshare_del(tth->sensor_name);
    if (tth->sleeper) e_powersave_sleeper_free(tth->sleeper);
-   free(tth->extn);
    free(tth);
 }
 

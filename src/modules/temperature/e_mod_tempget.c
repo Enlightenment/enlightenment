@@ -593,23 +593,8 @@ _hwmon_update(void)
 
 typedef struct
 {
-#if defined (__FreeBSD__) || defined(__DragonFly__)
-   int mib[CTL_MAXNAME];
-   unsigned int miblen;
-#endif
    int dummy;
 } Extn;
-
-#if defined (__FreeBSD__) || defined(__DragonFly__)
-static const char *sources[] =
-{
-   "hw.acpi.thermal.tz0.temperature",
-   "dev.cpu.0.temperature",
-   "dev.aibs.0.temp.0",
-   "dev.lm75.0.temperature",
-   NULL
-};
-#endif
 
 #if defined(__OpenBSD__)
 
@@ -683,41 +668,92 @@ _sysctl_update(void)
    eina_lock_release(&mons_lock);
 }
 
+#elif defined(__FreeBSD__) || defined(__DragonFly__)
+
+static Eina_Lock mons_lock;
+static Eina_List *mons = NULL;
+
+static const char *sources[] =
+{
+   "hw.acpi.thermal.tz0.temperature",
+   "dev.aibs.0.temp.0",
+   "dev.lm75.0.temperature",
+   NULL
+};
+
+typedef struct
+{
+   const char  *name;
+   const char  *label;
+   double       temp;
+   int          mib[CTL_MAXNAME];
+   unsigned int miblen;
+} Temp;
+
+static void
+_sysctl_init(void)
+{
+   size_t len;
+   int mib[CTL_MAXNAME];
+   char buf[128];
+
+   for (int i = 0; sources[i] != NULL; i++)
+     {
+        len = 4;
+        if (sysctlnametomib(sources[i], mib, &len) != -1)
+          {
+             Temp *temp = malloc(sizeof(Temp));
+             temp->name = eina_stringshare_add(sources[i]);
+             temp->label = eina_stringshare_add(sources[i]);
+             memcpy(temp->mib, &mib, sizeof(mib));
+             temp->miblen = len;
+             mons = eina_list_append(mons, temp);
+         }
+     }
+   for (int i = 0; i < 256; i++)
+     {
+        len = 4;
+        snprintf(buf, sizeof(buf), "dev.cpu.%i.temperature", i);
+        if (sysctlnametomib(buf, mib, &len) == -1) break;
+
+        Temp *temp = malloc(sizeof(Temp));
+        temp->name = eina_stringshare_add(buf);
+        temp->label = eina_stringshare_add(buf);
+        memcpy(temp->mib, &mib, sizeof(mib));
+        temp->miblen = len;
+        mons = eina_list_append(mons, temp);
+    }
+}
+
+static void
+_sysctl_update(void)
+{
+   Eina_List *l;
+   Temp *temp;
+   int val;
+   size_t len = sizeof(val);
+
+   eina_lock_take(&mons_lock);
+   EINA_LIST_FOREACH(mons, l, temp)
+     {
+        if (sysctl(temp->mib, temp->miblen, &val, &len, NULL, 0) != -1)
+          temp->temp = (val - 2732) / 10;
+     }
+   eina_lock_release(&mons_lock);
+}
+
 #endif
 
 static void
 init(Tempthread *tth)
 {
-   Extn *extn;
-
    if (tth->initted) return;
    tth->initted = EINA_TRUE;
 
-   extn = calloc(1, sizeof(Extn));
-   if (!extn) return;
-
-   tth->extn = extn;
    if (((!tth->sensor_name) || (tth->sensor_name[0] == 0)))
      {
         eina_stringshare_replace(&(tth->sensor_name), NULL);
-#if defined (__FreeBSD__) || defined(__DragonFly__)
-        unsigned int i;
-        size_t len;
-        int rc;
-
-        for (i = 0; sources[i]; i++)
-          {
-             rc = sysctlbyname(sources[i], NULL, NULL, NULL, 0);
-             if (rc == 0)
-               {
-                  tth->sensor_name = eina_stringshare_add(sources[i]);
-                  len = sizeof(extn->mib) / sizeof(extn->mib[0]);
-                  rc = sysctlnametomib(tth->sensor_name, extn->mib, &len);
-                  if (rc == 0) extn->miblen = len;
-                  break;
-               }
-          }
-#elif defined(__OpenBSD__)
+#if defined (__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__)
         if (!tth->sensor_name)
           {
              Eina_List *l;
@@ -756,13 +792,14 @@ init(Tempthread *tth)
 static int
 check(Tempthread *tth)
 {
-#if defined (__FreeBSD__) || defined(__DragonFly__)
-   return NULL;
-#elif defined (__OpenBSD__)
+#if defined (__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__)
    Eina_List *l;
    Temp *temp;
+
    _sysctl_update();
+
    if (!tth->sensor_name) return -999;
+
    double t = 0.0;
 
    eina_lock_take(&mons_lock);
@@ -815,9 +852,7 @@ temperature_tempget_get(Tempthread *tth)
 Eina_List *
 temperature_tempget_sensor_list(void)
 {
-#if defined (__FreeBSD__) || defined(__DragonFly__)
-   return NULL;
-#elif defined (__OpenBSD__)
+#if defined (__FreeBSD__) || defined(__DragonFly__) || defined (__OpenBSD__)
    Eina_List *sensors = NULL, *l;
    Sensor *sen;
    Temp *temp;
@@ -857,8 +892,7 @@ temperature_tempget_sensor_list(void)
 void
 temperature_tempget_setup(void)
 {
-#if defined (__FreeBSD__) || defined(__DragonFly__)
-#elif defined (__OpenBSD__)
+#if defined (__FreeBSD__) || defined(__DragonFly__) || defined (__OpenBSD__)
    eina_lock_new(&mons_lock);
    _sysctl_init();
 #else
@@ -870,8 +904,7 @@ temperature_tempget_setup(void)
 void
 temperature_tempget_clear(void)
 {
-#if defined (__FreeBSD__) || defined(__DragonFly__)
-#elif defined (__OpenBSD__)
+#if defined (__FreeBSD__) || defined(__DragonFly__) || defined (__OpenBSD__)
    Temp *temp;
    eina_lock_take(&mons_lock);
    EINA_LIST_FREE(mons, temp)
