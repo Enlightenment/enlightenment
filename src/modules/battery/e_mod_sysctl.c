@@ -49,11 +49,11 @@ _battery_sysctl_start(void)
                break;
           }
 
-        if (!strcmp("acpibat0", snsrdev.xname))
+        if (!strncmp("acpibat", snsrdev.xname, 7))
           {
              if (!(bat = E_NEW(Battery, 1)))
                return 0;
-             bat->udi = eina_stringshare_add("acpibat0"),
+             bat->udi = eina_stringshare_add(snsrdev.xname);
              bat->mib = malloc(sizeof(int) * 5);
              if (!bat->mib) return 0;
              bat->mib[0] = mib[0];
