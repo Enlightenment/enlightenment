@@ -324,6 +324,8 @@ _content_get(void *data, Evas_Object *obj, const char *part)
    elm_box_pack_end(bx, rec);
 
    w->ent_status = o = elm_entry_add(obj);
+   elm_scroller_policy_set(o, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   elm_scroller_movement_block_set(o, ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL);
    elm_entry_single_line_set(o, 0);
    elm_entry_scrollable_set(o, 1);
    elm_entry_editable_set(o, 0);
