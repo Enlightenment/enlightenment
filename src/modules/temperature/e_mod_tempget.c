@@ -593,10 +593,8 @@ _hwmon_update(void)
 
 typedef struct
 {
-#if defined (__FreeBSD__) || defined(__DragonFly__) || defined (__OpenBSD__)
-   int mib[CTL_MAXNAME];
-#endif
 #if defined (__FreeBSD__) || defined(__DragonFly__)
+   int mib[CTL_MAXNAME];
    unsigned int miblen;
 #endif
    int dummy;
@@ -614,8 +612,77 @@ static const char *sources[] =
 #endif
 
 #if defined(__OpenBSD__)
-static struct sensor snsr;
-static size_t slen = sizeof(snsr);
+
+static Eina_Lock mons_lock;
+static Eina_List *mons = NULL;
+
+typedef struct
+{
+   const char *name;
+   const char *label;
+   double      temp;
+   int         mib[5];
+} Temp;
+
+static void
+_sysctl_init(void)
+{
+   int dev, numt;
+   struct sensordev snsrdev;
+   struct sensor snsr;
+   size_t sdlen = sizeof(snsrdev);
+   size_t slen = sizeof(snsr);
+   int mib[5] = { CTL_HW, HW_SENSORS, 0, 0, 0 };
+
+   for (dev = 0;; dev++)
+     {
+        mib[2] = dev;
+        if (sysctl(mib, 3, &snsrdev, &sdlen, NULL, 0) == -1)
+          {
+             if (errno == ENOENT) /* no further sensors */
+               break;
+             else
+               continue;
+          }
+        for (numt = 0; numt < snsrdev.maxnumt[SENSOR_TEMP]; numt++)
+          {
+             mib[4] = numt;
+             slen = sizeof(snsr);
+             if (sysctl(mib, 5, &snsr, &slen, NULL, 0) == -1)
+               continue;
+             if (slen > 0 && (snsr.flags & SENSOR_FINVALID) == 0)
+               break;
+          }
+        slen = sizeof(snsr);
+        if (sysctl(mib, 5, &snsr, &slen, NULL, 0) == -1)
+          continue;
+        if (snsr.type != SENSOR_TEMP) continue;
+
+        Temp *temp = malloc(sizeof(Temp));
+        temp->name = eina_stringshare_add(snsrdev.xname);
+        temp->label = eina_stringshare_add(snsrdev.xname);
+        memcpy(temp->mib, &mib, sizeof(mib));
+        mons = eina_list_append(mons, temp);
+     }
+}
+
+static void
+_sysctl_update(void)
+{
+   Eina_List *l;
+   Temp *temp;
+   struct sensor snsr;
+   size_t slen = sizeof(struct sensor);
+
+   eina_lock_take(&mons_lock);
+   EINA_LIST_FOREACH(mons, l, temp)
+     {
+        if (sysctl(temp->mib, 5, &snsr, &slen, NULL, 0) != -1)
+          temp->temp = (snsr.value - 273150000) / 1000000.0;
+     }
+   eina_lock_release(&mons_lock);
+}
+
 #endif
 
 static void
@@ -651,41 +718,18 @@ init(Tempthread *tth)
                }
           }
 #elif defined(__OpenBSD__)
-        int dev, numt;
-        struct sensordev snsrdev;
-        size_t sdlen = sizeof(snsrdev);
+        if (!tth->sensor_name)
+          {
+             Eina_List *l;
+             Temp *temp;
 
-        extn->mib[0] = CTL_HW;
-        extn->mib[1] = HW_SENSORS;
-        for (dev = 0;; dev++)
-          {
-             extn->mib[2] = dev;
-             if (sysctl(extn->mib, 3, &snsrdev, &sdlen, NULL, 0) == -1)
+             eina_lock_take(&mons_lock);
+             EINA_LIST_FOREACH(mons, l, temp)
                {
-                  if (errno == ENOENT) /* no further sensors */
-                    break;
-                  else
-                    continue;
-               }
-             if (strcmp(snsrdev.xname, "cpu0") == 0)
-               {
-                  tth->sensor_name = eina_stringshare_add("cpu0");
+                  tth->sensor_name = eina_stringshare_add(temp->name);
                   break;
                }
-             else if (strcmp(snsrdev.xname, "km0") == 0)
-               {
-                  tth->sensor_name = eina_stringshare_add("km0");
-                  break;
-               }
-          }
-        for (numt = 0; numt < snsrdev.maxnumt[SENSOR_TEMP]; numt++)
-          {
-             extn->mib[4] = numt;
-             slen = sizeof(snsr);
-             if (sysctl(extn->mib, 5, &snsr, &slen, NULL, 0) == -1)
-               continue;
-             if (slen > 0 && (snsr.flags & SENSOR_FINVALID) == 0)
-               break;
+             eina_lock_release(&mons_lock);
           }
 #else
         if (!tth->sensor_name)
@@ -713,16 +757,25 @@ static int
 check(Tempthread *tth)
 {
 #if defined (__FreeBSD__) || defined(__DragonFly__)
-   Extn *extn = tth->extn;
-   size_t len;
-   size_t ftemp = 0;
-   len = sizeof(ftemp);
-   if (sysctl(extn->mib, extn->miblen, &ftemp, &len, NULL, 0) == 0)
-     return (ftemp - 2732) / 10;
+   return NULL;
 #elif defined (__OpenBSD__)
-   Extn *extn = tth->extn;
-   if (sysctl(extn->mib, 5, &snsr, &slen, NULL, 0) != -1)
-     return (snsr.value - 273150000) / 1000000.0;
+   Eina_List *l;
+   Temp *temp;
+   _sysctl_update();
+   if (!tth->sensor_name) return -999;
+   double t = 0.0;
+
+   eina_lock_take(&mons_lock);
+   EINA_LIST_FOREACH(mons, l, temp)
+     {
+        if (!strcmp(tth->sensor_name, temp->name))
+          {
+             t = temp->temp;
+             break;
+          }
+     }
+   eina_lock_release(&mons_lock);
+   return t;
 #else
    Eina_List *l, *ll;
    Mon *mon;
@@ -765,7 +818,18 @@ temperature_tempget_sensor_list(void)
 #if defined (__FreeBSD__) || defined(__DragonFly__)
    return NULL;
 #elif defined (__OpenBSD__)
-   return NULL;
+   Eina_List *sensors = NULL, *l;
+   Sensor *sen;
+   Temp *temp;
+
+   EINA_LIST_FOREACH(mons, l, temp)
+     {
+        sen = calloc(1, sizeof(Sensor));
+        sen->name = eina_stringshare_add(temp->name);
+        sen->label = eina_stringshare_add(temp->label);
+        sensors = eina_list_append(sensors, sen);
+     }
+   return sensors;
 #else
    Eina_List *sensors = NULL, *l, *ll;
    Sensor *sen;
@@ -795,6 +859,8 @@ temperature_tempget_setup(void)
 {
 #if defined (__FreeBSD__) || defined(__DragonFly__)
 #elif defined (__OpenBSD__)
+   eina_lock_new(&mons_lock);
+   _sysctl_init();
 #else
    eina_lock_new(&mons_lock);
    _hwmon_init();
@@ -806,6 +872,19 @@ temperature_tempget_clear(void)
 {
 #if defined (__FreeBSD__) || defined(__DragonFly__)
 #elif defined (__OpenBSD__)
+   Temp *temp;
+   eina_lock_take(&mons_lock);
+   EINA_LIST_FREE(mons, temp)
+     {
+        eina_stringshare_replace(&(temp->name), NULL);
+        eina_stringshare_replace(&(temp->label), NULL);
+        free(temp);
+     }
+   eina_lock_release(&mons_lock);
+   // extra lock take to cover race cond for thread
+   eina_lock_take(&mons_lock);
+   eina_lock_release(&mons_lock);
+   eina_lock_free(&mons_lock);
 #else
    Mon *mon;
    Temp *temp;

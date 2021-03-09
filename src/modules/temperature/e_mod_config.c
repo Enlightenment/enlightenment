@@ -72,7 +72,6 @@ _fill_data_tempget(E_Config_Dialog_Data *cfdata)
    cfdata->temp.high = cfdata->inst->high;
    cfdata->sensor = 0;
 #if defined (__FreeBSD__) || defined(__DragonFly__)
-#elif defined(__OpenBSD__)
 #else
    Eina_List *sensors;
    Sensor *sen;
