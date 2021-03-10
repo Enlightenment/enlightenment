@@ -1,4 +1,7 @@
 #include "e.h"
+#ifdef HAVE_LIBEXIF
+#include <libexif/exif-data.h>
+#endif
 
 /* FIXME:
  *
@@ -69,6 +72,7 @@ struct _E_Config_Dialog_Data
    char            *mod_date;
    char            *acc_date;
    char            *pms_date;
+   char            *exif_date;
    char            *mime;
    char            *owner;
    char            *link;
@@ -133,6 +137,41 @@ _fill_data(E_Config_Dialog_Data *cfdata, E_Fm2_Icon *ic)
    cfdata->mod_date = e_util_file_time_get(cfdata->fi->statinfo.st_mtime);
    cfdata->acc_date = e_util_file_time_get(cfdata->fi->statinfo.st_atime);
    cfdata->pms_date = e_util_file_time_get(cfdata->fi->statinfo.st_ctime);
+#ifdef HAVE_LIBEXIF
+   snprintf(loc, sizeof(loc), "%s/%s", e_fm2_real_path_get(cfdata->fi->fm), cfdata->fi->file);
+   ExifData *ed = exif_data_new_from_file(loc);
+   if (ed)
+     {
+        ExifEntry *entry = exif_content_get_entry(ed->ifd[EXIF_IFD_0], EXIF_TAG_DATE_TIME_ORIGINAL);
+        if (!entry)
+          entry = exif_content_get_entry(ed->ifd[EXIF_IFD_0], EXIF_TAG_DATE_TIME_DIGITIZED);
+        if (!entry)
+          entry = exif_content_get_entry(ed->ifd[EXIF_IFD_0], EXIF_TAG_DATE_TIME);
+        if (entry)
+          {
+             char tbuf[128];
+             struct tm tm;
+             time_t tim;
+
+             exif_entry_get_value(entry, tbuf, sizeof(tbuf));
+             tbuf[127] = 0;
+             memset(&tm, 0, sizeof(tm));
+             tm.tm_isdst = -1;
+             // "YYYY:MM:DD HH:MM:SS"
+             if (sscanf(tbuf, "%i:%i:%i %i:%i:%i",
+                        &tm.tm_year, &tm.tm_mon, &tm.tm_mday,
+                        &tm.tm_hour, &tm.tm_min, &tm.tm_sec) == 6)
+               {
+                  tm.tm_year -= 1900;
+                  tm.tm_mon -= 1;
+                  tim = mktime(&tm);
+                  if (tim != (time_t)-1)
+                    cfdata->exif_date = e_util_file_time_get(tim);
+               }
+          }
+        exif_data_unref(ed);
+     }
+#endif
    if (cfdata->fi->mime) cfdata->mime = strdup(cfdata->fi->mime);
 
    snprintf(blks, sizeof(blks), "%lu", (unsigned long)cfdata->fi->statinfo.st_blocks);
@@ -182,6 +221,7 @@ _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
    E_FREE(cfdata->mod_date);
    E_FREE(cfdata->acc_date);
    E_FREE(cfdata->pms_date);
+   E_FREE(cfdata->exif_date);
    E_FREE(cfdata->mime);
    E_FREE(cfdata->owner);
    E_FREE(cfdata->link);
@@ -380,7 +420,7 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cf
    E_Radio_Group *rg;
    char buf[PATH_MAX];
    const char *itype = NULL;
-   int mh;
+   int mh, row = 0;
 
    win = cfd->dia->win;
    snprintf(buf, sizeof(buf), "%s/%s",
@@ -392,68 +432,88 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cf
    of = e_widget_frametable_add(evas, _("General"), 1);
 
    ob = e_widget_label_add(evas, _("Name:"));
-   e_widget_frametable_object_append(of, ob, 0, 0, 1, 1, 1, 0, 1, 0);
+   e_widget_frametable_object_append(of, ob, 0, row, 1, 1, 1, 0, 1, 0);
    ob = e_widget_entry_add(win, &(cfdata->file), NULL, NULL, NULL);
    e_widget_size_min_get(ob, NULL, &mh);
    e_widget_size_min_set(ob, 140, mh);
    e_widget_entry_readonly_set(ob, 1);
-   e_widget_frametable_object_append(of, ob, 1, 0, 1, 1, 1, 0, 1, 0);
+   e_widget_frametable_object_append(of, ob, 1, row, 1, 1, 1, 0, 1, 0);
+   row++;
 
    ob = e_widget_label_add(evas, _("Location:"));
-   e_widget_frametable_object_append(of, ob, 0, 1, 1, 1, 1, 0, 1, 0);
+   e_widget_frametable_object_append(of, ob, 0, row, 1, 1, 1, 0, 1, 0);
    ob = e_widget_entry_add(win, &(cfdata->location), NULL, NULL, NULL);
    e_widget_size_min_get(ob, NULL, &mh);
    e_widget_size_min_set(ob, 140, mh);
    e_widget_entry_readonly_set(ob, 1);
-   e_widget_frametable_object_append(of, ob, 1, 1, 1, 1, 1, 0, 1, 0);
+   e_widget_frametable_object_append(of, ob, 1, row, 1, 1, 1, 0, 1, 0);
+   row++;
 
    ob = e_widget_label_add(evas, _("Size:"));
-   e_widget_frametable_object_append(of, ob, 0, 2, 1, 1, 1, 0, 1, 0);
+   e_widget_frametable_object_append(of, ob, 0, row, 1, 1, 1, 0, 1, 0);
    ob = e_widget_entry_add(win, &(cfdata->size), NULL, NULL, NULL);
    e_widget_size_min_get(ob, NULL, &mh);
    e_widget_size_min_set(ob, 140, mh);
    e_widget_entry_readonly_set(ob, 1);
-   e_widget_frametable_object_append(of, ob, 1, 2, 1, 1, 1, 0, 1, 0);
+   e_widget_frametable_object_append(of, ob, 1, row, 1, 1, 1, 0, 1, 0);
+   row++;
 
    ob = e_widget_label_add(evas, _("Occupied blocks on disk:"));
-   e_widget_frametable_object_append(of, ob, 0, 3, 1, 1, 1, 0, 1, 0);
+   e_widget_frametable_object_append(of, ob, 0, row, 1, 1, 1, 0, 1, 0);
    ob = e_widget_entry_add(win, &(cfdata->blocks), NULL, NULL, NULL);
    e_widget_size_min_get(ob, NULL, &mh);
    e_widget_size_min_set(ob, 140, mh);
    e_widget_entry_readonly_set(ob, 1);
-   e_widget_frametable_object_append(of, ob, 1, 3, 1, 1, 1, 0, 1, 0);
+   e_widget_frametable_object_append(of, ob, 1, row, 1, 1, 1, 0, 1, 0);
+   row++;
+
+   if (cfdata->exif_date)
+     {
+        ob = e_widget_label_add(evas, _("Taken on:"));
+        e_widget_frametable_object_append(of, ob, 0, row, 1, 1, 1, 0, 1, 0);
+        ob = e_widget_entry_add(win, &(cfdata->exif_date), NULL, NULL, NULL);
+        e_widget_size_min_get(ob, NULL, &mh);
+        e_widget_size_min_set(ob, 140, mh);
+        e_widget_entry_readonly_set(ob, 1);
+        e_widget_frametable_object_append(of, ob, 1, row, 1, 1, 1, 0, 1, 0);
+        row++;
+     }
 
    ob = e_widget_label_add(evas, _("Last Accessed:"));
-   e_widget_frametable_object_append(of, ob, 0, 4, 1, 1, 1, 0, 1, 0);
+   e_widget_frametable_object_append(of, ob, 0, row, 1, 1, 1, 0, 1, 0);
    ob = e_widget_entry_add(win, &(cfdata->acc_date), NULL, NULL, NULL);
    e_widget_size_min_get(ob, NULL, &mh);
    e_widget_size_min_set(ob, 140, mh);
    e_widget_entry_readonly_set(ob, 1);
-   e_widget_frametable_object_append(of, ob, 1, 4, 1, 1, 1, 0, 1, 0);
+   e_widget_frametable_object_append(of, ob, 1, row, 1, 1, 1, 0, 1, 0);
+   row++;
 
    ob = e_widget_label_add(evas, _("Last Modified:"));
-   e_widget_frametable_object_append(of, ob, 0, 5, 1, 1, 1, 0, 1, 0);
+   e_widget_frametable_object_append(of, ob, 0, row, 1, 1, 1, 0, 1, 0);
    ob = e_widget_entry_add(win, &(cfdata->mod_date), NULL, NULL, NULL);
    e_widget_size_min_get(ob, NULL, &mh);
    e_widget_size_min_set(ob, 140, mh);
    e_widget_entry_readonly_set(ob, 1);
-   e_widget_frametable_object_append(of, ob, 1, 5, 1, 1, 1, 0, 1, 0);
+   e_widget_frametable_object_append(of, ob, 1, row, 1, 1, 1, 0, 1, 0);
+   row++;
 
    ob = e_widget_label_add(evas, _("Last Modified Permissions:"));
-   e_widget_frametable_object_append(of, ob, 0, 6, 1, 1, 1, 0, 1, 0);
+   e_widget_frametable_object_append(of, ob, 0, row, 1, 1, 1, 0, 1, 0);
    ob = e_widget_entry_add(win, &(cfdata->pms_date), NULL, NULL, NULL);
    e_widget_size_min_get(ob, NULL, &mh);
    e_widget_size_min_set(ob, 140, mh);
    e_widget_entry_readonly_set(ob, 1);
-   e_widget_frametable_object_append(of, ob, 1, 6, 1, 1, 1, 0, 1, 0);
+   e_widget_frametable_object_append(of, ob, 1, row, 1, 1, 1, 0, 1, 0);
+   row++;
 
    ob = e_widget_label_add(evas, _("File Type:"));
-   e_widget_frametable_object_append(of, ob, 0, 7, 1, 1, 1, 0, 1, 0);
+   e_widget_frametable_object_append(of, ob, 0, row, 1, 1, 1, 0, 1, 0);
    ob = e_widget_entry_add(win, &(cfdata->mime), NULL, NULL, NULL);
    e_widget_size_min_get(ob, NULL, &mh);
    e_widget_size_min_set(ob, 140, mh);
    e_widget_entry_readonly_set(ob, 1);
-   e_widget_frametable_object_append(of, ob, 1, 7, 1, 1, 1, 0, 1, 0);
+   e_widget_frametable_object_append(of, ob, 1, row, 1, 1, 1, 0, 1, 0);
+   row++;
 
    e_widget_table_object_append(ot, of, 0, 0, 1, 1, 1, 1, 1, 1);
    e_widget_table_object_append(o, ot, 1, 0, 0, 1, 1, 1, 1, 1);

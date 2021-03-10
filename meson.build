@@ -221,6 +221,11 @@ if get_option('pam') == true
   endif
 endif
 
+if get_option('libexif') == true
+  dep_libexif = dependency('libexif', required: true)
+  config_h.set('HAVE_LIBEXIF', '1')
+endif
+
 dep_m  = cc.find_library('m', required: false)
 dep_dl = cc.find_library('dl', required: false)
 

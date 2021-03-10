@@ -36,6 +36,10 @@ deps_e = [
   dep_intl
 ]
 
+if config_h.has('HAVE_LIBEXIF') == true
+  deps_e += dep_libexif
+endif
+
 deps_ckpass = [ dep_eina, dep_ecore, dep_eldbus ]
 
 if freebsd == true

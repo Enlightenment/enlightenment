@@ -35,6 +35,10 @@ option('pam',
 	type: 'boolean',
 	value: true,
 	description: 'enable PAM support: (default=true)')
+option('libexif',
+	type: 'boolean',
+	value: true,
+	description: 'enable EXIF support: (default=true)')
 
 option('device-udev',
 	type: 'boolean',
