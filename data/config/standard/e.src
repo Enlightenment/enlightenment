@@ -674,8 +674,8 @@ group "E_Config" struct {
                     value "resizable" uchar: 0;
                 }
                 group "E_Config_Gadcon_Client" struct {
-                    value "name" string: "ibar";
-                    value "id" string: "ibar.1";
+                    value "name" string: "systray";
+                    value "id" string: "systray";
                     value "geom.pos" int: 128;
                     value "geom.size" int: 32;
                     value "geom.res" int: 800;
