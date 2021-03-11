@@ -11,6 +11,7 @@ Must:
   * libpam (On Linux)
 
 Highly suggested:
+  * libexif (exif metadata display support)
   * evas_generic_loaders (All loaders)
   * bluez5 (BT support and l2ping tool)
   * connman
