@@ -591,11 +591,6 @@ _hwmon_update(void)
 }
 #endif
 
-typedef struct
-{
-   int dummy;
-} Extn;
-
 #if defined(__OpenBSD__)
 
 static Eina_Lock mons_lock;
