@@ -340,7 +340,7 @@ _content_get(void *data, Evas_Object *obj, const char *part)
 static void
 _battery_popup_usage_new(Instance *inst)
 {
-   Evas_Object *base, *tb, *rec;
+   Evas_Object *base, *tb, *rec, *glist;
    _Popup_Data *pd;
    static char buf[512];
    Eina_List *l;
@@ -368,7 +368,7 @@ _battery_popup_usage_new(Instance *inst)
    evas_object_size_hint_max_set(rec, ELM_SCALE_SIZE(250), ELM_SCALE_SIZE(135));
    elm_table_pack(tb, rec, 0, 0, 1, 1);
 
-   Evas_Object *glist = elm_genlist_add(base);
+   glist = elm_genlist_add(base);
    E_FILL(glist);
    E_EXPAND(glist);
    elm_genlist_select_mode_set(glist, ELM_OBJECT_SELECT_MODE_NONE);
