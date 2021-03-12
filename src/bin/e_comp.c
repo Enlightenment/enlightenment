@@ -570,43 +570,45 @@ e_comp_fps_update(void)
         evas_object_image_alpha_set(e_comp->canvas->fps_gr, EINA_TRUE);
         pixstride = evas_object_image_stride_get(e_comp->canvas->fps_gr);
         pix = evas_object_image_data_get(e_comp->canvas->fps_gr, EINA_TRUE);
-
-        memset(pix, 0, pixstride * pixh);
-
-        // go backwards from newest to oldest
-        start = e_comp->frame_event_now + E_COMP_FRAME_EVENT_COUNT - 1;
-        end = e_comp->frame_event_now + E_COMP_FRAME_EVENT_COUNT ;
-        for (i = start;;)
+        if (pix)
           {
-             iind = i % E_COMP_FRAME_EVENT_COUNT;
-             i--;
-             if (iind == (end % E_COMP_FRAME_EVENT_COUNT)) break;
+             memset(pix, 0, pixstride * pixh);
 
-             info0 = e_comp->frame_events[iind].info[0];
-             px = (t - e_comp->frame_events[iind].t) * pixscale;
-             px = pixw - px - 1;
-             if (px < 0) break;
-             if (info0 == E_COMP_FRAME_EVENT_RENDER2_END)
-               _e_comp_fps_draw_point(pix, pixstride, pixw, 0, 0xffffffff, px);
-             else if (info0 == E_COMP_FRAME_EVENT_RENDER2_BEGIN)
-               _e_comp_fps_draw_point(pix, pixstride, pixw, 1, 0xffffee88, px);
-             else if (info0 == E_COMP_FRAME_EVENT_RENDER_END)
-               _e_comp_fps_draw_point(pix, pixstride, pixw, 2, 0xffff9944, px);
-             else if (info0 == E_COMP_FRAME_EVENT_RENDER_BEGIN)
-               _e_comp_fps_draw_point(pix, pixstride, pixw, 3, 0xffff4433, px);
-             else if (info0 == E_COMP_FRAME_EVENT_IDLE_ENTER)
-               _e_comp_fps_draw_point(pix, pixstride, pixw, 4, 0xff994499, px);
-             else if (info0 == E_COMP_FRAME_EVENT_IDLE_EXIT)
-               _e_comp_fps_draw_point(pix, pixstride, pixw, 5, 0xffff88ff, px);
-             else if (info0 == E_COMP_FRAME_EVENT_HANDLE_DAMAGE)
-               _e_comp_fps_draw_point(pix, pixstride, pixw, 6, 0xff44ff22, px);
-             else if (info0 == E_COMP_FRAME_EVENT_CLIENT_DAMAGE)
-               _e_comp_fps_draw_point(pix, pixstride, pixw, 7, 0xff4466ff, px);
+             // go backwards from newest to oldest
+             start = e_comp->frame_event_now + E_COMP_FRAME_EVENT_COUNT - 1;
+             end = e_comp->frame_event_now + E_COMP_FRAME_EVENT_COUNT ;
+             for (i = start;;)
+               {
+                  iind = i % E_COMP_FRAME_EVENT_COUNT;
+                  i--;
+                  if (iind == (end % E_COMP_FRAME_EVENT_COUNT)) break;
+
+                  info0 = e_comp->frame_events[iind].info[0];
+                  px = (t - e_comp->frame_events[iind].t) * pixscale;
+                  px = pixw - px - 1;
+                  if (px < 0) break;
+                  if (info0 == E_COMP_FRAME_EVENT_RENDER2_END)
+                    _e_comp_fps_draw_point(pix, pixstride, pixw, 0, 0xffffffff, px);
+                  else if (info0 == E_COMP_FRAME_EVENT_RENDER2_BEGIN)
+                    _e_comp_fps_draw_point(pix, pixstride, pixw, 1, 0xffffee88, px);
+                  else if (info0 == E_COMP_FRAME_EVENT_RENDER_END)
+                    _e_comp_fps_draw_point(pix, pixstride, pixw, 2, 0xffff9944, px);
+                  else if (info0 == E_COMP_FRAME_EVENT_RENDER_BEGIN)
+                    _e_comp_fps_draw_point(pix, pixstride, pixw, 3, 0xffff4433, px);
+                  else if (info0 == E_COMP_FRAME_EVENT_IDLE_ENTER)
+                    _e_comp_fps_draw_point(pix, pixstride, pixw, 4, 0xff994499, px);
+                  else if (info0 == E_COMP_FRAME_EVENT_IDLE_EXIT)
+                    _e_comp_fps_draw_point(pix, pixstride, pixw, 5, 0xffff88ff, px);
+                  else if (info0 == E_COMP_FRAME_EVENT_HANDLE_DAMAGE)
+                    _e_comp_fps_draw_point(pix, pixstride, pixw, 6, 0xff44ff22, px);
+                  else if (info0 == E_COMP_FRAME_EVENT_CLIENT_DAMAGE)
+                    _e_comp_fps_draw_point(pix, pixstride, pixw, 7, 0xff4466ff, px);
+               }
+             evas_object_image_data_set(e_comp->canvas->fps_gr, pix);
+             evas_object_image_data_update_add(e_comp->canvas->fps_gr,
+                                               0, 0, pixw, pixh);
           }
 
-        evas_object_image_data_set(e_comp->canvas->fps_gr, pix);
-        evas_object_image_data_update_add(e_comp->canvas->fps_gr,
-                                          0, 0, pixw, pixh);
         evas_object_color_set(e_comp->canvas->fps_bg, 0, 0, 0, 192);
         evas_object_geometry_set(e_comp->canvas->fps_bg, bx, by, bw, bh);
         evas_object_geometry_set(e_comp->canvas->fps_gr, gx, gy, gw, gh);
