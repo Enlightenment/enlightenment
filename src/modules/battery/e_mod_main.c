@@ -31,9 +31,11 @@ typedef struct _Instance Instance;
 
 typedef struct __Popup_Widgets
 {
-   Evas_Object *fr;
    Evas_Object *pb_usage;
-   Evas_Object *ent_status;
+   Evas_Object *state;
+   Evas_Object *remaining;
+   Evas_Object *health;
+   Evas_Object *technology;
 } _Popup_Widgets;
 
 typedef struct __Popup_Data
@@ -222,41 +224,39 @@ _battery_popup_usage_content_update_cb(void *data)
 
    if (!inst->popup) return ECORE_CALLBACK_CANCEL;
 
-   Eina_Strbuf *sbuf = eina_strbuf_new();
    EINA_LIST_FOREACH(device_batteries, l, bat)
      {
         _Popup_Widgets *w = &pd->widgets[i++];
 
-        eina_strbuf_append(sbuf, _("State: "));
+        elm_progressbar_value_set(w->pb_usage, (double) bat->percent / 100.0);
+
         if ((battery_config->have_power) && (!bat->charging))
-          eina_strbuf_append(sbuf, _("Charged.<br>"));
+          elm_object_text_set(w->state, _("Charged"));
         else if (bat->charging)
           {
              t = bat->time_full;
-             eina_strbuf_append(sbuf, _("Charging.<br>"));
+             elm_object_text_set(w->state, _("Charging"));
           }
         else
           {
              t = bat->time_left;
-             eina_strbuf_append(sbuf, _("Discharging.<br>"));
+             elm_object_text_set(w->state, _("Discharging"));
           }
-        hrs = (t / 3600);
-        mins = ((t) / 60 - (hrs * 60));
-        if (hrs < 0) hrs = 0;
-        if (mins < 0) mins = 0;
-          snprintf(buf, sizeof(buf), "%i:%02i", hrs, mins);
-        eina_strbuf_append_printf(sbuf, _("Time Remaining: %s<br>"), buf);
-        eina_strbuf_append_printf(sbuf, _("Health: %1.1f %%<br>"),
-                                  (double) bat->last_full_charge / (bat->design_charge / 100));
-        eina_strbuf_append_printf(sbuf, _("Technology: %s"), bat->technology);
 
-        elm_object_text_set(w->ent_status, eina_strbuf_string_get(sbuf));
-        elm_progressbar_value_set(w->pb_usage, (double) bat->percent / 100.0);
-        eina_strbuf_reset(sbuf);
+        hrs = (t / 3600);
+        if (hrs < 0) hrs = 0;
+        mins = (t / 60) - (hrs * 60);
+        if (mins < 0) mins = 0;
+        snprintf(buf, sizeof(buf), "%i:%02i", hrs, mins);
+        elm_object_text_set(w->remaining, buf);
+
+        snprintf(buf, sizeof(buf), "%1.1f%%",
+                 (double)bat->last_full_charge / (bat->design_charge / 100));
+        elm_object_text_set(w->health, buf);
+
+        elm_object_text_set(w->technology, bat->technology);
         if (i == (pd->n_units - 1)) break;
      }
-
-   eina_strbuf_free(sbuf);
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -277,7 +277,7 @@ _icon_get(void *data EINA_UNUSED, Evas_Object *obj, const char *part)
 
    ic = elm_icon_add(obj);
    elm_icon_standard_set(ic, "battery");
-   evas_object_size_hint_min_set(ic, ELM_SCALE_SIZE(16), ELM_SCALE_SIZE(16));
+   evas_object_size_hint_min_set(ic, ELM_SCALE_SIZE(20), ELM_SCALE_SIZE(20));
    evas_object_show(ic);
    return ic;
 }
@@ -285,54 +285,82 @@ _icon_get(void *data EINA_UNUSED, Evas_Object *obj, const char *part)
 static Evas_Object *
 _content_get(void *data, Evas_Object *obj, const char *part)
 {
-   Evas_Object *tb, *rec, *o;
+   Evas_Object *tb, *o;
    _Popup_Widgets *w;
    if (strcmp(part, "elm.swallow.content")) return NULL;
 
    w = data;
 
-   tb = elm_table_add(obj);
-   evas_object_show(tb);
+   tb = o = elm_table_add(obj);
+   elm_table_padding_set(o, ELM_SCALE_SIZE(4), ELM_SCALE_SIZE(4));
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+   evas_object_size_hint_weight_set(o, 1.0, 0);
 
-   rec = evas_object_rectangle_add(evas_object_evas_get(obj));
-   evas_object_size_hint_min_set(rec, ELM_SCALE_SIZE(220), ELM_SCALE_SIZE(100));
-   evas_object_size_hint_max_set(rec, ELM_SCALE_SIZE(220), ELM_SCALE_SIZE(100));
-   elm_table_pack(tb, rec, 0, 0, 1, 1);
 
-   Evas_Object *bx = elm_box_add(obj);
-   E_EXPAND(bx); E_FILL(bx);
-   evas_object_show(bx);
-   elm_table_pack(tb, bx, 0, 0, 1, 1);
-
-   rec = evas_object_rectangle_add(evas_object_evas_get(obj));
-   evas_object_size_hint_weight_set(rec, 1.0, 0);
-   evas_object_size_hint_min_set(rec, 1, ELM_SCALE_SIZE(6));
-   evas_object_size_hint_max_set(rec, -1, ELM_SCALE_SIZE(6));
-   elm_box_pack_end(bx, rec);
+   o = evas_object_rectangle_add(evas_object_evas_get(obj));
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+   evas_object_size_hint_weight_set(o, 1.0, 0);
+   evas_object_size_hint_min_set(o, ELM_SCALE_SIZE(220), ELM_SCALE_SIZE(20));
+   elm_table_pack(tb, o, 0, 0, 8, 1);
 
    w->pb_usage = o = elm_progressbar_add(obj);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    evas_object_size_hint_weight_set(o, 1.0, 0);
-   E_FILL(o);
    elm_progressbar_span_size_set(o, 1.0);
+   elm_table_pack(tb, o, 0, 0, 8, 1);
    evas_object_show(o);
-   elm_box_pack_end(bx, o);
 
-   rec = evas_object_rectangle_add(evas_object_evas_get(obj));
-   evas_object_size_hint_weight_set(rec, 1.0, 0);
-   evas_object_size_hint_min_set(rec, 1, ELM_SCALE_SIZE(6));
-   evas_object_size_hint_max_set(rec, -1, ELM_SCALE_SIZE(6));
-   elm_box_pack_end(bx, rec);
 
-   w->ent_status = o = elm_entry_add(obj);
-   elm_scroller_policy_set(o, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
-   elm_scroller_movement_block_set(o, ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL);
-   elm_entry_single_line_set(o, 0);
-   elm_entry_scrollable_set(o, 1);
-   elm_entry_editable_set(o, 0);
-   E_EXPAND(o);
-   E_FILL(o);
+   o = elm_icon_add(obj);
+   elm_icon_standard_set(o, "power-plug");
+   evas_object_size_hint_min_set(o, ELM_SCALE_SIZE(20), ELM_SCALE_SIZE(20));
+   elm_table_pack(tb, o, 0, 1, 1, 1);
    evas_object_show(o);
-   elm_box_pack_end(bx, o);
+
+   w->state = o = elm_label_add(obj);
+   evas_object_size_hint_align_set(o, 0.0, 0.5);
+   evas_object_size_hint_weight_set(o, 1.0, 0);
+   elm_table_pack(tb, o, 1, 1, 1, 1);
+   evas_object_show(o);
+
+
+   o = elm_icon_add(obj);
+   elm_icon_standard_set(o, "clock");
+   evas_object_size_hint_min_set(o, ELM_SCALE_SIZE(20), ELM_SCALE_SIZE(20));
+   elm_table_pack(tb, o, 2, 1, 1, 1);
+   evas_object_show(o);
+
+   w->remaining = o = elm_label_add(obj);
+   evas_object_size_hint_align_set(o, 0.0, 0.5);
+   evas_object_size_hint_weight_set(o, 1.0, 0);
+   elm_table_pack(tb, o, 3, 1, 1, 1);
+   evas_object_show(o);
+
+
+   o = elm_icon_add(obj);
+   elm_icon_standard_set(o, "health");
+   evas_object_size_hint_min_set(o, ELM_SCALE_SIZE(20), ELM_SCALE_SIZE(20));
+   elm_table_pack(tb, o, 4, 1, 1, 1);
+   evas_object_show(o);
+
+   w->health = o = elm_label_add(obj);
+   evas_object_size_hint_align_set(o, 0.0, 0.5);
+   evas_object_size_hint_weight_set(o, 1.0, 0);
+   elm_table_pack(tb, o, 5, 1, 1, 1);
+   evas_object_show(o);
+
+
+   o = elm_icon_add(obj);
+   elm_icon_standard_set(o, "tech");
+   evas_object_size_hint_min_set(o, ELM_SCALE_SIZE(20), ELM_SCALE_SIZE(20));
+   elm_table_pack(tb, o, 6, 1, 1, 1);
+   evas_object_show(o);
+
+   w->technology = o = elm_label_add(obj);
+   evas_object_size_hint_align_set(o, 0.0, 0.5);
+   evas_object_size_hint_weight_set(o, 1.0, 0);
+   elm_table_pack(tb, o, 7, 1, 1, 1);
+   evas_object_show(o);
 
    return tb;
 }
@@ -364,16 +392,16 @@ _battery_popup_usage_new(Instance *inst)
    evas_object_show(tb);
 
    rec = evas_object_rectangle_add(evas_object_evas_get(base));
-   evas_object_size_hint_min_set(rec, ELM_SCALE_SIZE(250), ELM_SCALE_SIZE(135));
-   evas_object_size_hint_max_set(rec, ELM_SCALE_SIZE(250), ELM_SCALE_SIZE(135));
+   evas_object_size_hint_min_set(rec, ELM_SCALE_SIZE(360), ELM_SCALE_SIZE(160));
+   evas_object_size_hint_max_set(rec, ELM_SCALE_SIZE(560), ELM_SCALE_SIZE(400));
    elm_table_pack(tb, rec, 0, 0, 1, 1);
 
    glist = elm_genlist_add(base);
    E_FILL(glist);
    E_EXPAND(glist);
    elm_genlist_select_mode_set(glist, ELM_OBJECT_SELECT_MODE_NONE);
-   evas_object_show(glist);
    elm_table_pack(tb, glist, 0, 0, 1, 1);
+   evas_object_show(glist);
 
    itc = elm_genlist_item_class_new();
    itc->item_style = "full";
