@@ -230,17 +230,19 @@ _battery_popup_usage_content_update_cb(void *data)
 
         elm_progressbar_value_set(w->pb_usage, (double) bat->percent / 100.0);
 
-        if ((battery_config->have_power) && (!bat->charging))
-          elm_object_text_set(w->state, _("Charged"));
-        else if (bat->charging)
+        t = bat->time_left;
+        if ((battery_config->have_power) && (battery_config->full < 100))
           {
-             t = bat->time_full;
              elm_object_text_set(w->state, _("Charging"));
+          }
+        else if ((!battery_config->have_power) && (battery_config->full < 100))
+          {
+             elm_object_text_set(w->state, _("Discharging"));
           }
         else
           {
-             t = bat->time_left;
-             elm_object_text_set(w->state, _("Discharging"));
+             t = 0;
+             elm_object_text_set(w->state, _("Charged"));
           }
 
         hrs = (t / 3600);
