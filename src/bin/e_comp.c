@@ -272,6 +272,7 @@ _e_comp_cb_nocomp_begin(void)
    e_comp_render_queue();
    e_comp_shape_queue_block(1);
    ecore_event_add(E_EVENT_COMPOSITOR_DISABLE, NULL, NULL, NULL);
+   printf("COMP: suspend\n");
 }
 
 static void
@@ -281,6 +282,7 @@ _e_comp_cb_nocomp_end(void)
 
    if (!e_comp->nocomp) return;
 
+   printf("COMP: resume\n");
    INF("COMP RESUME!");
    //ecore_evas_manual_render_set(e_comp->ee, EINA_FALSE);
    ecore_evas_show(e_comp->ee);
