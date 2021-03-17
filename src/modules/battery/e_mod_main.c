@@ -828,18 +828,21 @@ _battery_update(int full, int time_left, int time_full, Eina_Bool have_battery, 
      {
         if (have_power != battery_config->have_power)
           {
+             if (have_power)
+               edje_object_signal_emit(inst->o_battery, "e,state,ac,on", "e");
+             else
+               edje_object_signal_emit(inst->o_battery, "e,state,ac,off", "e");
              if (have_power && (full < 100))
-               edje_object_signal_emit(inst->o_battery,
-                                       "e,state,charging",
-                                       "e");
+               {
+                  edje_object_signal_emit(inst->o_battery, "e,state,charging", "e");
+                  if (inst->popup_battery)
+                    edje_object_signal_emit(inst->popup_battery, "e,state,charging", "e");
+               }
              else
                {
-                  edje_object_signal_emit(inst->o_battery,
-                                          "e,state,discharging",
-                                          "e");
+                  edje_object_signal_emit(inst->o_battery, "e,state,discharging", "e");
                   if (inst->popup_battery)
-                    edje_object_signal_emit(inst->popup_battery,
-                                            "e,state,discharging", "e");
+                    edje_object_signal_emit(inst->popup_battery, "e,state,discharging", "e");
                }
           }
         if (have_battery)
@@ -858,9 +861,12 @@ _battery_update(int full, int time_left, int time_full, Eina_Bool have_battery, 
         else
           {
              _battery_face_level_set(inst->o_battery, 0.0);
-             edje_object_part_text_set(inst->o_battery,
-                                       "e.text.reading",
-                                       _("N/A"));
+             edje_object_part_text_set(inst->o_battery, "e.text.reading", _("N/A"));
+             if (inst->popup_battery)
+               {
+                  _battery_face_level_set(inst->popup_battery, 0.0);
+                  edje_object_part_text_set(inst->popup_battery, "e.text.reading", _("N/A"));
+               }
           }
 
         if ((time_full < 0) && (time_left != battery_config->time_left))
