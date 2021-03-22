@@ -765,7 +765,7 @@ _add_swipe_binding_by_sample_cb(void *data, void *data2 EINA_UNUSED)
    E_Config_Dialog_Data *cfdata = data;
 
    cfdata->locals.dia = e_dialog_new(cfdata->cfd->dia->win, "E", "_swipe_recognition");
-   e_dialog_icon_set(cfdata->locals.dia, "enlightenment/swipe", 48);
+   e_dialog_icon_set(cfdata->locals.dia, "preferences-desktop-swipe-bindings", 48);
    e_dialog_title_set(cfdata->locals.dia, _("Swipe recognition"));
    e_dialog_text_set(cfdata->locals.dia, _("Do your swipe gesture.<br><br>Press <hilight>Escape</hilight> to abort"));
    elm_win_center(cfdata->locals.dia->win, 1, 1);
