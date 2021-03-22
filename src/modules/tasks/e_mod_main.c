@@ -471,6 +471,20 @@ _tasks_refill(Tasks *tasks)
                                             w,
                                             h * eina_list_count(tasks->items));
           }
+        if (tasks->horizontal)
+          {
+             EINA_LIST_FOREACH(tasks->items, l, item)
+               {
+                  evas_object_size_hint_min_set(item->o_item, w, th);
+               }
+          }
+        else
+          {
+             EINA_LIST_FOREACH(tasks->items, l, item)
+               {
+                  evas_object_size_hint_min_set(item->o_item, tw, h);
+               }
+          }
      }
    else
      e_gadcon_client_min_size_set(tasks->gcc, 0, 0);
