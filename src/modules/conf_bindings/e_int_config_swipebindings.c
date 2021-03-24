@@ -276,12 +276,12 @@ _action_change_cb(void *data)
 static int
 _swipe_binding_sort_cb(E_Config_Binding_Swipe *a, E_Config_Binding_Swipe *b)
 {
-   int finger_diff = (a->fingers == b->fingers)*-1;
+   int finger_diff = a->fingers - b->fingers;
    if (!finger_diff)
      {
         return a->direction - b->direction;
      }
-   return finger_diff;
+   return finger_diff*-1;
 }
 
 static void
@@ -950,6 +950,38 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cf
    return o;
 }
 
+static Eina_Bool
+_user_part_of_input(void)
+{
+   uid_t user = getuid();
+   struct passwd *user_pw = getpwuid(user);
+   gid_t *gids = NULL;
+   int number_of_groups = 0;
+   struct group *input_group = getgrnam("input");
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(user_pw, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(input_group, EINA_FALSE);
+
+   if (getgrouplist(user_pw->pw_name, getgid(), NULL, &number_of_groups) != -1)
+     {
+        ERR("Failed to enumerate groups of user");
+        return EINA_FALSE;
+     }
+   number_of_groups ++;
+   gids = alloca((number_of_groups) * sizeof(gid_t));
+   if (getgrouplist(user_pw->pw_name, getgid(), gids, &number_of_groups) == -1)
+     {
+        ERR("Failed to get groups of user");
+        return EINA_FALSE;
+     }
+
+   for (int i = 0; i < number_of_groups; ++i)
+     {
+        if (gids[i] == input_group->gr_gid)
+          return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
 
 E_Config_Dialog *
 e_int_config_swipebindings(Evas_Object *parent EINA_UNUSED, const char *params)
@@ -966,13 +998,22 @@ e_int_config_swipebindings(Evas_Object *parent EINA_UNUSED, const char *params)
    v->basic.create_widgets = _basic_create_widgets;
    v->override_auto_apply = 1;
 
+   if (!_user_part_of_input())
+     {
+        e_module_dialog_show(NULL, "Gesture Recognition", "Your user is not part of the input group, libinput cannot be used.");
+     }
+
+   if (e_bindings_gesture_capable_devices_get() == 0)
+     {
+        e_module_dialog_show(NULL, "Gesture Recognition", "No devices detected that are capable of gesture recognition.");
+     }
+
    cfd = e_config_dialog_new(NULL, _("Swipe Bindings Settings"), "E",
                              "keyboard_and_mouse/swipe_bindings",
                              "enlightenment/swipes", 0, v, NULL);
    if ((params) && (params[0]))
      {
         cfd->cfdata->params = eina_stringshare_add(params);
-//        _add_swipe_binding_cb(cfd->cfdata, NULL);
      }
 
    return cfd;

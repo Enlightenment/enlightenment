@@ -224,6 +224,8 @@ E_API E_Action*     e_bindings_swipe_handle(E_Binding_Context ctxt, E_Object *ob
 E_API Eina_Inarray/*<E_Bindings_Swipe_Candidate>*/* e_bindings_swipe_find_candidates(E_Binding_Context ctxt, double direction, double lenght, unsigned int fingers);
 E_API void           e_bindings_swipe_live_update_hook_set(E_Bindings_Swipe_Live_Update update, void *data);
 E_API E_Bindings_Swipe_Live_Update e_bindings_swipe_live_update_hook_get(void);
+E_API void           e_bindings_gesture_capable_devices_set(int number);
+E_API int            e_bindings_gesture_capable_devices_get(void);
 E_API void*          e_bindings_swipe_live_update_hook_data_get(void);
 
 E_API int e_bindings_evas_modifiers_convert(Evas_Modifier *modifiers);

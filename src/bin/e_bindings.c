@@ -21,6 +21,7 @@ static Eina_List *acpi_bindings = NULL;
 static Eina_List *swipe_bindings = NULL;
 
 static unsigned int bindings_disabled = 0;
+static int gesture_capable_devices = 0;
 
 static E_Bindings_Swipe_Live_Update live_update;
 static E_Bindings_Swipe_Live_Update live_update_data;
@@ -1611,6 +1612,19 @@ _e_bindings_edge_cb_timer(void *data)
    E_FREE(ev);
 
    return ECORE_CALLBACK_CANCEL;
+}
+
+
+E_API void
+e_bindings_gesture_capable_devices_set(int number)
+{
+   gesture_capable_devices = number;
+}
+
+E_API int
+e_bindings_gesture_capable_devices_get(void)
+{
+   return gesture_capable_devices;
 }
 
 E_API void
