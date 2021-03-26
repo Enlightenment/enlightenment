@@ -1200,19 +1200,91 @@ e_pixmap_dmabuf_test(struct linux_dmabuf_buffer *dmabuf)
    return EINA_TRUE;
 }
 
-E_API Eina_Bool
-e_pixmap_dmabuf_formats_query(int **formats EINA_UNUSED, int *num_formats)
-{
-   *num_formats = 0;
+/*
+if (weston_check_egl_extension(extensions,
+                               "EGL_EXT_image_dma_buf_import_modifiers")) {
+   gr->query_dmabuf_formats =
+   (void *) eglGetProcAddress("eglQueryDmaBufFormatsEXT");
+   gr->query_dmabuf_modifiers =
+   (void *) eglGetProcAddress("eglQueryDmaBufModifiersEXT");
+   assert(gr->query_dmabuf_formats);
+   assert(gr->query_dmabuf_modifiers);
+   gr->has_dmabuf_import_modifiers = true;
+}
+*/
 
+extern Eina_Bool e_comp_wl_query_dmabuf_formats(int max_formats, int *formats, int *num_formats);
+extern Eina_Bool e_comp_wl_query_dmabuf_modifiers(int format, int max_modifiers, uint64_t *modifiers, Eina_Bool *external_only, int *num_modifiers);
+
+E_API Eina_Bool
+e_pixmap_dmabuf_formats_query(int **formats, int *num_formats)
+{
+   static const int fallback_formats[] =
+     {
+        DRM_FORMAT_ARGB8888,
+        DRM_FORMAT_XRGB8888,
+// support later ...
+//      DRM_FORMAT_YUYV,
+//      DRM_FORMAT_NV12,
+//      DRM_FORMAT_YUV420,
+//      DRM_FORMAT_YUV444,
+//      DRM_FORMAT_XYUV8888,
+     };
+   Eina_Bool fallback = EINA_FALSE;
+   int num = 0;
+
+   if (!e_comp_wl_query_dmabuf_formats(0, NULL, &num))
+     {
+        num = 2;
+        fallback = EINA_TRUE;
+     }
+   *formats = calloc(num, sizeof(int));
+   if (!(*formats))
+     {
+        *num_formats = 0;
+        return EINA_FALSE;
+     }
+   if (fallback)
+     {
+        memcpy(*formats, fallback_formats, num * sizeof(int));
+        *num_formats = num;
+        return EINA_TRUE;
+     }
+   if (!e_comp_wl_query_dmabuf_formats(num, *formats, &num))
+     {
+        *num_formats = 0;
+        free(*formats);
+        return EINA_FALSE;
+     }
+   *num_formats = num;
    return EINA_TRUE;
 }
 
 E_API Eina_Bool
-e_pixmap_dmabuf_modifiers_query(int format EINA_UNUSED, uint64_t **modifiers EINA_UNUSED, int *num_modifiers)
+e_pixmap_dmabuf_modifiers_query(int format, uint64_t **modifiers, int *num_modifiers)
 {
-   *num_modifiers = 0;
+   int num;
 
+   if (!e_comp_wl_query_dmabuf_modifiers(format, 0, NULL, NULL, &num) ||
+       (num == 0))
+     {
+        *num_modifiers = 0;
+        return EINA_FALSE;
+     }
+   *modifiers = calloc(num, sizeof(uint64_t));
+   if (!(*modifiers))
+     {
+        *num_modifiers = 0;
+        return EINA_FALSE;
+     }
+   if (!e_comp_wl_query_dmabuf_modifiers
+       (format, num, *modifiers, NULL, &num))
+     {
+        *num_modifiers = 0;
+        free(*modifiers);
+        return EINA_FALSE;
+     }
+   *num_modifiers = num;
    return EINA_TRUE;
 }
 

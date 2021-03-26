@@ -2954,6 +2954,30 @@ _e_comp_wl_gl_shutdown(void)
    evas_gl_config_free(e_comp_wl->wl.glcfg);
 }
 
+Eina_Bool
+e_comp_wl_query_dmabuf_formats(int max_formats, int *formats, int *num_formats)
+{
+   *num_formats = 0;
+#if EVAS_GL_API_VERSION >= 7
+   if (!e_comp_wl->wl.glapi->evasglQueryDmaBufFormats) return EINA_FALSE;
+   return e_comp_wl->wl.glapi->evasglQueryDmaBufFormats(e_comp_wl->wl.gl, max_formats, formats, num_formats);
+#else
+   return EINA_FALSE;
+#endif
+}
+
+Eina_Bool
+e_comp_wl_query_dmabuf_modifiers(int format, int max_modifiers, uint64_t *modifiers, Eina_Bool *external_only, int *num_modifiers)
+{
+   *num_modifiers = 0;
+#if EVAS_GL_API_VERSION >= 7
+   if (!e_comp_wl->wl.glapi->evasglQueryDmaBufModifiers) return EINA_FALSE;
+   return e_comp_wl->wl.glapi->evasglQueryDmaBufModifiers(e_comp_wl->wl.gl, format, max_modifiers, modifiers, external_only, num_modifiers);
+#else
+   return EINA_FALSE;
+#endif
+}
+
 static void
 _e_comp_wl_gl_init(void)
 {
