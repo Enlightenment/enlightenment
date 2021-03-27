@@ -632,6 +632,8 @@ _emix_sink_input_add(Emix_Sink_Input *input)
    Eina_Bool locked = EINA_TRUE;
    unsigned int i;
 
+   if (!input->sink) return;
+
    fr = elm_frame_add(win);
    evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 1.0);
    evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, 0.0);
