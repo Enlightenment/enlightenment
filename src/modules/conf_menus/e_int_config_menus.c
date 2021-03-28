@@ -148,7 +148,7 @@ _create_menus_list(Evas *evas, E_Config_Dialog_Data *cfdata)
    int sel = -1, i = 0;
 
    get_menus(&menus);
-   ob = e_widget_ilist_add(evas, (32 * e_scale), (32 * e_scale),
+   ob = e_widget_ilist_add(evas, (40 * e_scale), (40 * e_scale),
                            &(cfdata->default_system_menu));
    e_widget_size_min_set(ob, (100 * e_scale), (140 * e_scale));
    e_widget_ilist_freeze(ob);

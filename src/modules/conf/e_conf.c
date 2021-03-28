@@ -436,7 +436,7 @@ _e_configure_fill_cat_list(void *data, const char *sel)
    eco->item_list = NULL;
 
    /* Category List */
-   eco->cat_list = e_widget_toolbar_add(eco->evas, 32 * e_scale, 32 * e_scale);
+   eco->cat_list = e_widget_toolbar_add(eco->evas, 40 * e_scale, 40 * e_scale);
    e_widget_toolbar_scrollable_set(eco->cat_list, 1);
    /***--- fill ---***/
    EINA_LIST_FOREACH(e_configure_registry, l, ecat)
@@ -466,7 +466,7 @@ _e_configure_fill_cat_list(void *data, const char *sel)
    e_widget_list_object_append(eco->o_list, eco->cat_list, 1, 0, 0.5);
 
    /* Item List */
-   eco->item_list = e_widget_ilist_add(eco->evas, 32 * e_scale, 32 * e_scale, NULL);
+   eco->item_list = e_widget_ilist_add(eco->evas, 40 * e_scale, 40 * e_scale, NULL);
    e_widget_ilist_selector_set(eco->item_list, 1);
    e_widget_ilist_go(eco->item_list);
    e_widget_on_focus_hook_set(eco->item_list, _e_configure_focus_cb, eco);

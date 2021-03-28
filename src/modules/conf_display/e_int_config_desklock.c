@@ -254,7 +254,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
                                  1, 1, 1, 0, 0.0, 0.0);
 
    /* Keyboard Layout */
-   cfdata->gui.kbd_list = ol = e_widget_ilist_add(evas, 32 * e_scale, 32 * e_scale, &cfdata->desklock_layout);
+   cfdata->gui.kbd_list = ol = e_widget_ilist_add(evas, 40 * e_scale, 40 * e_scale, &cfdata->desklock_layout);
    EINA_LIST_FOREACH(e_config->xkb.used_layouts, l, cl)
      {
         Evas_Object *icon, *end;

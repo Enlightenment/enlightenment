@@ -179,12 +179,12 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 
    of = e_widget_table_add(e_win_evas_win_get(evas), 0);
 
-   cfdata->o_toolbar = e_widget_toolbar_add(evas, 32 * e_scale, 32 * e_scale);
+   cfdata->o_toolbar = e_widget_toolbar_add(evas, 40 * e_scale, 40 * e_scale);
    e_widget_toolbar_scrollable_set(cfdata->o_toolbar, 1);
    _fill_cat_list(cfdata);
    e_widget_table_object_append(of, cfdata->o_toolbar, 0, 0, 2, 1, 1, 1, 1, 0);
 
-   cfdata->l_modules = e_widget_ilist_add(evas, 32 * e_scale, 32 * e_scale, NULL);
+   cfdata->l_modules = e_widget_ilist_add(evas, 40 * e_scale, 40 * e_scale, NULL);
    e_widget_ilist_multi_select_set(cfdata->l_modules, EINA_TRUE);
    e_widget_ilist_go(cfdata->l_modules);
    e_widget_size_min_get(cfdata->l_modules, &mw, &mh);
