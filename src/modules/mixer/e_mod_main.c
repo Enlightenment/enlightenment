@@ -64,6 +64,55 @@ struct _Instance
 static Context *mixer_context = NULL;
 static Eina_List *_handlers = NULL;
 
+static char *
+_sink_icon_find(const char *name)
+{
+   const char *dir;
+   char buf[PATH_MAX], *res = NULL, **strs, *glob, *icon;
+   FILE *f;
+   int i;
+   size_t len;
+
+   dir = e_module_dir_get(mixer_context->module);
+   if (!dir) return NULL;
+   snprintf(buf, sizeof(buf), "%s/sink-icons.txt", dir);
+   f = fopen(buf, "r");
+   if (!f) return NULL;
+   while (fgets(buf, sizeof(buf), f))
+     {
+        buf[sizeof(buf) - 1] = 0;
+        len = strlen(buf);
+        if (len > 0)
+          {
+             buf[len - 1] = 0;
+             strs = eina_str_split(buf, "|", 0);
+             if (strs)
+               {
+                  i = 0;
+                  for (glob = strs[i]; glob; i += 2)
+                    {
+                       icon = strs[i + 1];
+                       if (icon)
+                         {
+                            if (e_util_glob_case_match(name, glob))
+                              {
+                                 res = strdup(icon);
+                                 break;
+                              }
+                         }
+                       else break;
+                    }
+                  free(strs[0]);
+                  free(strs);
+               }
+             if (res) break;
+          }
+        else break;
+     }
+   fclose(f);
+   return res;
+}
+
 static void
 _mixer_popup_update(Instance *inst, int mute, int vol)
 {
@@ -196,8 +245,16 @@ _mixer_sinks_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event E
              EINA_LIST_FOREACH((Eina_List *)emix_sinks_get(), ll, s)
                {
                   Elm_Object_Item *it;
+                  Evas_Object *ic;
+                  char *icname = NULL;
 
-                  it = elm_list_item_append(inst->list, s->name, NULL, NULL,
+                  if (s->name) icname = _sink_icon_find(s->name);
+                  if (!icname) icname = strdup("audio-volume");
+                  ic = elm_icon_add(e_comp->elm);
+                  evas_object_size_hint_min_set(ic, 20 * e_scale, 20 * e_scale);
+                  elm_icon_standard_set(ic, icname);
+                  free(icname);
+                  it = elm_list_item_append(inst->list, s->name, ic, NULL,
                                             _sink_selected_cb, s);
                   if (backend_sink_default_get() == s)
                     default_it = it;
@@ -214,7 +271,7 @@ _mixer_sinks_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event E
 static void
 _popup_new(Instance *inst)
 {
-   Evas_Object *button, *list, *slider, *bx;
+   Evas_Object *button, *list, *slider, *bx, *ic;
    Emix_Sink *s;
    Eina_List *l;
    Elm_Object_Item *default_it = NULL;
@@ -230,8 +287,16 @@ _popup_new(Instance *inst)
    EINA_LIST_FOREACH((Eina_List *)emix_sinks_get(), l, s)
      {
         Elm_Object_Item *it;
+        char *icname = NULL;
 
-        it = elm_list_item_append(inst->list, s->name, NULL, NULL, _sink_selected_cb, s);
+        if (s->name) icname = _sink_icon_find(s->name);
+        if (!icname) icname = strdup("audio-volume");
+        ic = elm_icon_add(e_comp->elm);
+        evas_object_size_hint_min_set(ic, 20 * e_scale, 20 * e_scale);
+        elm_icon_standard_set(ic, icname);
+        free(icname);
+
+        it = elm_list_item_append(inst->list, s->name, ic, NULL, _sink_selected_cb, s);
         if (backend_sink_default_get() == s)
           default_it = it;
      }

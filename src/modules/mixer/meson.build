@@ -55,4 +55,7 @@ if get_option(m) == true
              install_dir        : dir_bin,
              install            : true
             )
+  install_data(['sink-icons.txt'],
+                install_dir: _dir)
+
 endif

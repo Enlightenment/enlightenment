@@ -1,0 +1,6 @@
+Built-in Analog*|speaker-box
+Starship/Matisse HD Audio*|speaker-box
+Sound Blaster Play*|headphones
+*HD Audio*|speaker-box
+*HDMI*|video-display
+*|audio-volume
