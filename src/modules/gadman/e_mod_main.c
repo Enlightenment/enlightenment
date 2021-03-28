@@ -23,7 +23,7 @@ e_modapi_init(E_Module *m)
    e_configure_registry_category_add("extensions", 90, _("Extensions"), NULL,
                                      "preferences-extensions");
    e_configure_registry_item_add("extensions/gadman", 150, _("Gadgets"), NULL,
-                                 buf, _config_gadman_module);
+                                 "gadgets", _config_gadman_module);
 
    /* Set this module to be loaded after all other modules, or we don't see
       modules loaded after this */
