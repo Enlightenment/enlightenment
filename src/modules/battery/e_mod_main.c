@@ -1026,8 +1026,6 @@ E_API E_Module_Api e_modapi =
 E_API void *
 e_modapi_init(E_Module *m)
 {
-   char buf[4096];
-
    conf_edd = E_CONFIG_DD_NEW("Battery_Config", Config);
 #undef T
 #undef D
@@ -1085,11 +1083,10 @@ e_modapi_init(E_Module *m)
 
    e_gadcon_provider_register(&_gadcon_class);
 
-   snprintf(buf, sizeof(buf), "%s/e-module-battery.edj", e_module_dir_get(m));
    e_configure_registry_category_add("advanced", 80, _("Advanced"), NULL,
                                      "preferences-advanced");
    e_configure_registry_item_add("advanced/battery", 100, _("Battery Meter"),
-                                 NULL, buf, e_int_config_battery_module);
+                                 NULL, "battery", e_int_config_battery_module);
 
    return m;
 }
