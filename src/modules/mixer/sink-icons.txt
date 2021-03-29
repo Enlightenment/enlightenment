@@ -6,5 +6,6 @@ HN[0-9][0-9]00|headset-one-ear
 *HD Audio*|speaker-box
 *HDMI*|video-display
 *DisplayPort*|video-display
-*Buds*|earbuds
+*Buds*|earbud
+T1|earbud
 *|audio-volume
