@@ -257,28 +257,32 @@ _proc_stats_item_children_update(Eina_List *children, Proc_Stats *item)
 static char *
 _size_format(unsigned long long bytes)
 {
-   const char *units = "BKMGTPEZY";
    char buf[1024];
    unsigned long powi = 1;
    unsigned long long value;
    unsigned int precision = 2, powj = 1;
+   int i = 0;
+   const char *units[8] = {
+      _("B"), _("KiB"), _("MiB"), _("GiB"),
+      _("TiB"), _("PiB"), _("EiB"), _("ZiB"),
+   };
 
    value = bytes;
    while (value > 1024)
      {
        if ((value / 1024) < powi) break;
        powi *= 1024;
-       ++units;
-       if (units[1] == '\0') break;
+       ++i;
+       if (i == 7) break;
      }
-   if (*units == 'B') precision = 0;
+   if (!i) precision = 0;
    while (precision > 0)
      {
         powj *= 10;
         if ((value / powi) < powj) break;
         --precision;
      }
-   snprintf(buf, sizeof(buf), "%1.*f%c", precision, (double) value / powi, *units);
+   snprintf(buf, sizeof(buf), "%1.*f%s", precision, (double) value / powi, units[i]);
 
    return strdup(buf);
 }
@@ -286,6 +290,7 @@ _size_format(unsigned long long bytes)
 static void
 _proc_stats_item_display(Proc_Stats *item)
 {
+   Edje_Message_Int_Set *msg;
    Evas_Object *pb;
    Eina_Strbuf *buf;
    char *s;
@@ -295,6 +300,17 @@ _proc_stats_item_display(Proc_Stats *item)
      return;
 
    if (!item->cpu_time_prev) item->cpu_time_prev = item->cpu_time;
+
+   msg = malloc(sizeof(Edje_Message_Int_Set) + (sizeof(int) * 4));
+   EINA_SAFETY_ON_NULL_RETURN(msg);
+   msg->count = 5;
+   msg->val[0] = eina_cpu_count();
+   msg->val[1] = (item->cpu_time - item->cpu_time_prev) / POLL_TIME;
+   msg->val[2] = (int) _mem_total / 4096;
+   msg->val[3] = (int) item->mem_size / 4096;
+   msg->val[4] = 0;
+   edje_object_message_send(item->obj, EDJE_MESSAGE_INT_SET, 1, msg);
+   free(msg);
 
    if (!item->popup) return;
 
