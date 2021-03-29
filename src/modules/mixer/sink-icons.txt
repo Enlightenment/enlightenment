@@ -1,6 +1,10 @@
 Built-in Analog*|speaker-box
 Starship/Matisse HD Audio*|speaker-box
 Sound Blaster Play*|headphones
+HM[0-9][0-9]00|headset-one-ear
+HN[0-9][0-9]00|headset-one-ear
 *HD Audio*|speaker-box
 *HDMI*|video-display
+*DisplayPort*|video-display
+*Buds*|earbuds
 *|audio-volume
