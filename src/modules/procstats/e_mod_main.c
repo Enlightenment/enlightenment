@@ -10,7 +10,7 @@ static int64_t      _mem_total;
 static Eina_List   *_clients = NULL;
 static Ecore_Timer *_clients_timer = NULL;
 
-#define _TIMER_FREQ 3.0
+#define POLL_TIME 3.0
 
 typedef struct _Proc_Stats Proc_Stats;
 struct _Proc_Stats
@@ -18,11 +18,14 @@ struct _Proc_Stats
    E_Client    *client;
    Evas_Object *obj;
    Evas_Object *obj_swallow;
+   Evas_Object *popup;
    pid_t        pid;
    uint64_t     mem_size;
    uint64_t     cpu_time;
    uint64_t     cpu_time_prev;
 };
+
+static void _proc_stats_item_display(Proc_Stats *item);
 
 static void
 _memory_total(void)
@@ -68,9 +71,12 @@ _proc_stats_item_exists(E_Client *ec)
 static void
 _proc_stats_item_del(Proc_Stats *item)
 {
+   if (item->popup) evas_object_del(item->popup);
+   item->popup = NULL;
    edje_object_signal_emit(item->obj, "e,state,procstats,off", "e");
    evas_object_del(item->obj_swallow);
    free(item);
+   item = NULL;
 }
 
 static void
@@ -78,16 +84,92 @@ _proc_stats_client_del_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj, 
 {
    Proc_Stats *item = data;
 
+   if (item->popup) evas_object_del(item->popup);
+   item->popup = NULL;
    evas_object_hide(item->obj_swallow);
    edje_object_signal_emit(obj, "e,state,procstats,off", "e");
 }
 
 static void
-_proc_stats_item_add(E_Client *ec)
+_proc_stats_client_move_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *tb, *pb;
-   Evas_Object *o;
    Proc_Stats *item;
+   Evas_Coord ox, oy, ow, oh;
+
+   item = data;
+   if (!item) return;
+
+   evas_object_geometry_get(item->obj_swallow, &ox, &oy, &ow, &oh);
+
+   if (item->popup)
+     evas_object_move(item->popup, ox + (ow / 2), oy + oh);
+}
+
+static void
+_proc_stats_icon_clicked_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Evas_Event_Mouse_Up *ev;
+   Proc_Stats *item;
+   Evas_Object *o, *tb;
+   Evas_Object *pb;
+   Evas_Coord ox, oy, ow, oh;
+
+   ev = event_info;
+   item = data;
+
+   if (ev->button != 1) return;
+
+   if (!item) return;
+
+   if (item->popup)
+     {
+        elm_ctxpopup_dismiss(item->popup);
+        item->popup = NULL;
+        return;
+     }
+
+   evas_object_geometry_get(item->obj_swallow, &ox, &oy, &ow, &oh);
+
+   item->popup = o = elm_ctxpopup_add(e_comp->elm);
+   E_FILL(o); E_EXPAND(o);
+   elm_object_style_set(o, "noblock");
+   evas_object_layer_set(o, E_LAYER_MENU);
+
+   tb = elm_table_add(o);
+   E_FILL(tb); E_EXPAND(tb);
+   elm_object_content_set(o, tb);
+   evas_object_show(tb);
+
+   pb = elm_progressbar_add(o);
+   elm_progressbar_span_size_set(pb, 100);
+   E_FILL(pb); E_EXPAND(pb);
+   elm_table_pack(tb, pb, 0, 0, 1, 1);
+   evas_object_data_set(o, "pb_cpu", pb);
+   evas_object_show(pb);
+
+   pb = elm_progressbar_add(o);
+   elm_progressbar_span_size_set(pb, 100);
+   E_FILL(pb); E_EXPAND(pb);
+   elm_table_pack(tb, pb, 0, 1, 1, 1);
+   evas_object_data_set(o, "pb_mem", pb);
+   evas_object_show(pb);
+
+   _proc_stats_item_display(item);
+
+   elm_ctxpopup_direction_priority_set(o, ELM_CTXPOPUP_DIRECTION_DOWN,
+                                       ELM_CTXPOPUP_DIRECTION_UP,
+                                       ELM_CTXPOPUP_DIRECTION_LEFT,
+                                       ELM_CTXPOPUP_DIRECTION_RIGHT);
+   evas_object_move(o, ox + (ow / 2), oy + oh);
+   evas_object_show(o);
+}
+
+static void
+_proc_stats_item_add(E_Client *ec, E_Module *module)
+{
+   Evas_Object *o, *ic;
+   Proc_Stats *item;
+   char buf[PATH_MAX];
 
    if (ec->internal || ec->netwm.pid == -1) return;
    if (!ec->frame_object) return;
@@ -96,38 +178,32 @@ _proc_stats_item_add(E_Client *ec)
    o = edje_object_add(evas_object_evas_get(ec->frame));
 
    e_theme_edje_object_set(o, "base/theme/borders",
-                    "e/widgets/border/default/border");
+                           "e/widgets/border/default/border");
 
    if (!edje_object_part_exists(o, "e.procstats.swallow")) return;
 
-   tb = elm_table_add(e_comp->elm);
-   evas_object_show(tb);
+   snprintf(buf, sizeof(buf), "%s/e-module-procstats.edj", e_module_dir_get(module));
 
-   pb = elm_progressbar_add(e_comp->elm);
-   elm_progressbar_span_size_set(pb, 60);
-   evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_show(pb);
-   elm_table_pack(tb, pb, 0, 0, 1, 1);
-   evas_object_data_set(tb,  "pb_cpu", pb);
-
-   pb = elm_progressbar_add(e_comp->elm);
-   elm_progressbar_span_size_set(pb, 100);
-   evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_show(pb);
-   elm_table_pack(tb, pb, 1, 0, 1, 1);
-   evas_object_data_set(tb,  "pb_mem", pb);
+   ic = elm_icon_add(e_comp->elm);
+   elm_image_file_set(ic, buf, "icon");
+   evas_object_size_hint_min_set(ic, ELM_SCALE_SIZE(16), ELM_SCALE_SIZE(16));
+   evas_object_size_hint_max_set(ic, ELM_SCALE_SIZE(16), ELM_SCALE_SIZE(16));
+   E_FILL(ic); E_EXPAND(ic);
+   evas_object_show(ic);
 
    item = calloc(1, sizeof(Proc_Stats));
    EINA_SAFETY_ON_NULL_RETURN(item);
    item->pid = ec->netwm.pid;
    item->client = ec;
    item->obj = ec->frame_object;
-   item->obj_swallow = tb;
+   item->obj_swallow = ic;
 
-   edje_object_part_swallow(ec->frame_object, "e.procstats.swallow", tb);
+   edje_object_part_swallow(ec->frame_object, "e.procstats.swallow", ic);
    edje_object_signal_emit(ec->frame_object, "e,state,procstats,on", "e");
 
    evas_object_event_callback_add(item->obj, EVAS_CALLBACK_DEL, _proc_stats_client_del_cb, item);
+   evas_object_event_callback_add(item->obj, EVAS_CALLBACK_MOVE, _proc_stats_client_move_cb, item);
+   evas_object_event_callback_add(ic, EVAS_CALLBACK_MOUSE_UP, _proc_stats_icon_clicked_cb, item);
 
    _clients = eina_list_append(_clients, item);
 }
@@ -220,23 +296,26 @@ _proc_stats_item_display(Proc_Stats *item)
 
    if (!item->cpu_time_prev) item->cpu_time_prev = item->cpu_time;
 
-   pb = evas_object_data_get(item->obj_swallow, "pb_cpu");
+   if (!item->popup) return;
 
-   val = (item->cpu_time - item->cpu_time_prev) / _TIMER_FREQ;
+   pb = evas_object_data_get(item->popup, "pb_cpu");
+
+   val = (item->cpu_time - item->cpu_time_prev) / POLL_TIME;
    elm_progressbar_value_set(pb, val / 100.0);
 
    buf = eina_strbuf_new();
+   val = (item->cpu_time - item->cpu_time_prev) / POLL_TIME;
 
    eina_strbuf_append_printf(buf, "%1.0f %%", val);
    elm_object_part_text_set(pb, "elm.text.status", eina_strbuf_string_get(buf));
    eina_strbuf_reset(buf);
 
-   pb = evas_object_data_get(item->obj_swallow, "pb_mem");
+   pb = evas_object_data_get(item->popup, "pb_mem");
    val = item->mem_size / (_mem_total / 100.0);
    elm_progressbar_value_set(pb, val / 100.0);
 
    s = _size_format(item->mem_size);
-   eina_strbuf_append_printf(buf, "%s/", s);
+   eina_strbuf_append_printf(buf, "%s / ", s);
    free(s);
    s = _size_format(_mem_total);
    eina_strbuf_append(buf, s);
@@ -268,17 +347,20 @@ _proc_stats_item_update(Eina_List *procs, Proc_Stats *item)
 }
 
 static Eina_Bool
-_proc_stats_timer_cb(void *data EINA_UNUSED)
+_proc_stats_timer_cb(void *data)
 {
+   E_Module *module;
    Eina_List *procs, *l;
    E_Client *ec;
    Proc_Info *proc;
    Proc_Stats *item;
 
+   module = data;
+
    EINA_LIST_FOREACH(e_comp->clients, l, ec)
      {
         if (!_proc_stats_item_exists(ec))
-          _proc_stats_item_add(ec);
+          _proc_stats_item_add(ec, module);
      }
 
    procs = proc_info_all_children_get();
@@ -304,12 +386,12 @@ E_API E_Module_Api e_modapi =
 };
 
 E_API int
-e_modapi_init(E_Module *m EINA_UNUSED)
+e_modapi_init(E_Module *m)
 {
    _memory_total();
-   _proc_stats_timer_cb(NULL);
+   _proc_stats_timer_cb(m);
 
-   _clients_timer = ecore_timer_add(_TIMER_FREQ, _proc_stats_timer_cb, NULL);
+   _clients_timer = ecore_timer_add(POLL_TIME, _proc_stats_timer_cb, m);
 
    return 1;
 }
