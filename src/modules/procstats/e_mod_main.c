@@ -27,13 +27,13 @@ struct _Proc_Stats
 
 static void _proc_stats_item_display(Proc_Stats *item);
 
-static void
+static Eina_Bool
 _memory_total(void)
 {
 #if defined(__linux__)
    char line[256];
    FILE *f = fopen("/proc/meminfo", "r");
-   if (!f) return;
+   if (!f) return 0;
 
    while (fgets(line, sizeof(line), f) != NULL)
      {
@@ -48,11 +48,14 @@ _memory_total(void)
           }
      }
    fclose(f);
+   if(!_mem_total) return 0;
 #else
    size_t len = sizeof(_mem_total);
    int mib[5] = { CTL_HW, HW_PHYSMEM, 0, 0, 0 };
-   sysctl(mib, 2, &_mem_total, &len, NULL, 0);
+   if (sysctl(mib, 2, &_mem_total, &len, NULL, 0) == -1)
+     return 0;
 #endif
+   return 1;
 }
 
 static Eina_Bool
@@ -141,14 +144,14 @@ _proc_stats_icon_clicked_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
    evas_object_show(tb);
 
    pb = elm_progressbar_add(o);
-   elm_progressbar_span_size_set(pb, 100);
+   elm_progressbar_span_size_set(pb, 140);
    E_FILL(pb); E_EXPAND(pb);
    elm_table_pack(tb, pb, 0, 0, 1, 1);
    evas_object_data_set(o, "pb_cpu", pb);
    evas_object_show(pb);
 
    pb = elm_progressbar_add(o);
-   elm_progressbar_span_size_set(pb, 100);
+   elm_progressbar_span_size_set(pb, 140);
    E_FILL(pb); E_EXPAND(pb);
    elm_table_pack(tb, pb, 0, 1, 1, 1);
    evas_object_data_set(o, "pb_mem", pb);
@@ -218,9 +221,9 @@ _proc_stats_item_remove(Proc_Stats *item)
      {
         if (it == item)
           {
-            _proc_stats_item_del(item);
-            _clients = eina_list_remove_list(_clients, l);
-            return;
+             _proc_stats_item_del(item);
+             _clients = eina_list_remove_list(_clients, l);
+             return;
           }
      }
 }
@@ -316,11 +319,10 @@ _proc_stats_item_display(Proc_Stats *item)
 
    pb = evas_object_data_get(item->popup, "pb_cpu");
 
-   val = (item->cpu_time - item->cpu_time_prev) / POLL_TIME;
+   val = ((item->cpu_time - item->cpu_time_prev) / POLL_TIME);
    elm_progressbar_value_set(pb, val / 100.0);
 
    buf = eina_strbuf_new();
-   val = (item->cpu_time - item->cpu_time_prev) / POLL_TIME;
 
    eina_strbuf_append_printf(buf, "%1.0f %%", val);
    elm_object_part_text_set(pb, "elm.text.status", eina_strbuf_string_get(buf));
@@ -398,13 +400,15 @@ _proc_stats_timer_cb(void *data)
 E_API E_Module_Api e_modapi =
 {
    E_MODULE_API_VERSION,
-     "Procstats"
+   "Procstats"
 };
 
 E_API int
 e_modapi_init(E_Module *m)
 {
-   _memory_total();
+   if (!_memory_total())
+     return 0;
+
    _proc_stats_timer_cb(m);
 
    _clients_timer = ecore_timer_add(POLL_TIME, _proc_stats_timer_cb, m);
