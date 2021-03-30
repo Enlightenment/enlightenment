@@ -22,6 +22,123 @@ Eina_List *source_list = NULL, *sink_input_list = NULL, *sink_list = NULL, *card
 
 //////////////////////////////////////////////////////////////////////////////
 
+typedef struct _Mon_Data
+{
+   Emix_Sink *sink;
+   Emix_Sink_Input *input;
+   Emix_Source *source;
+   Evas_Object *fr;
+   Evas_Object *vu;
+   Ecore_Animator *animator;
+   float samp_max;
+   int mon_skips;
+   int mon_update;
+   int mon_samps;
+} Mon_Data;
+
+static Eina_List *_monitor_data_list = NULL;
+
+static Eina_Bool
+_cb_emix_monitor_update(void *data)
+{
+   Mon_Data *md = data;
+
+   if (md->mon_update == 0)
+     {
+        md->mon_skips++;
+        if (md->mon_skips > 5)
+          {
+             elm_progressbar_value_set(md->vu, 0.0);
+             md->animator = NULL;
+             return EINA_FALSE;
+          }
+        return EINA_TRUE;
+     }
+   elm_progressbar_value_set(md->vu, md->samp_max);
+   md->mon_update = 0;
+   md->samp_max = 0;
+   md->mon_skips = 0;
+   md->mon_samps = 0;
+   return EINA_TRUE;
+}
+
+static void
+_cb_emix_sink_monitor_event(void *data, enum Emix_Event event, void *event_info)
+{
+   Mon_Data *md = data;
+   Emix_Sink *sink = event_info;
+
+   if (sink != md->sink) return;
+   if (event == EMIX_SINK_MONITOR_EVENT)
+     {
+        unsigned int i, num = sink->mon_num * 2;
+        float samp, max = 0.0;
+
+        for (i = 0; i < num; i++)
+          {
+             samp = fabs(sink->mon_buf[i]);
+             if (samp > max) max = samp;
+          }
+        md->mon_samps += num;
+        if (md->samp_max < max) md->samp_max = max;
+        md->mon_update++;
+        if (!md->animator)
+          md->animator = ecore_animator_add(_cb_emix_monitor_update, md);
+     }
+}
+
+static void
+_cb_emix_sink_input_monitor_event(void *data, enum Emix_Event event, void *event_info)
+{
+   Mon_Data *md = data;
+   Emix_Sink_Input *input = event_info;
+
+   if (input != md->input) return;
+   if (event == EMIX_SINK_INPUT_MONITOR_EVENT)
+     {
+        unsigned int i, num = input->mon_num * 2;
+        float samp, max = 0.0;
+
+        for (i = 0; i < num; i++)
+          {
+             samp = fabs(input->mon_buf[i]);
+             if (samp > max) max = samp;
+          }
+        md->mon_samps += num;
+        if (md->samp_max < max) md->samp_max = max;
+        md->mon_update++;
+        if (!md->animator)
+          md->animator = ecore_animator_add(_cb_emix_monitor_update, md);
+     }
+}
+
+static void
+_cb_emix_source_monitor_event(void *data, enum Emix_Event event, void *event_info)
+{
+   Mon_Data *md = data;
+   Emix_Source *source = event_info;
+
+   if (source != md->source) return;
+   if (event == EMIX_SOURCE_MONITOR_EVENT)
+     {
+        unsigned int i, num = source->mon_num * 2;
+        float samp, max = 0.0;
+
+        for (i = 0; i < num; i++)
+          {
+             samp = fabs(source->mon_buf[i]);
+             if (samp > max) max = samp;
+          }
+        md->mon_samps += num;
+        if (md->samp_max < max) md->samp_max = max;
+        md->mon_update++;
+        if (!md->animator)
+          md->animator = ecore_animator_add(_cb_emix_monitor_update, md);
+     }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
 static void _emix_sink_volume_fill(Emix_Sink *sink, Evas_Object *bxv, Evas_Object *bx, Eina_Bool locked);
 static Evas_Object *_icon(Evas_Object *base, const char *name);
 
@@ -38,6 +155,12 @@ _backend_init(const char *back)
         if (emix_backend_set(name)) return EINA_TRUE;
      }
    return EINA_FALSE;
+}
+
+static char *
+_cb_vu_format_cb(double v EINA_UNUSED)
+{
+   return "";
 }
 
 static void
@@ -250,10 +373,11 @@ _emix_sink_volume_fill(Emix_Sink *sink, Evas_Object *fr, Evas_Object *bx, Eina_B
 static void
 _emix_sink_add(Emix_Sink *sink)
 {
-   Evas_Object *bxv, *bx, *lb, *hv, *fr, *sep;
+   Evas_Object *bxv, *bx, *lb, *hv, *fr, *sep, *vu;
    const Eina_List *l;
    Emix_Port *port;
    Eina_Bool locked = EINA_TRUE;
+   Mon_Data *md;
    unsigned int i;
 
    fr = elm_frame_add(win);
@@ -323,6 +447,14 @@ _emix_sink_add(Emix_Sink *sink)
    elm_box_pack_end(sink_box, fr);
    evas_object_show(fr);
 
+   vu = elm_progressbar_add(win);
+   elm_progressbar_unit_format_function_set(vu, _cb_vu_format_cb, NULL);
+   evas_object_data_set(fr, "vu", vu);
+   evas_object_size_hint_weight_set(vu, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(vu, EVAS_HINT_FILL, 0.0);
+   elm_box_pack_end(sink_box, vu);
+   evas_object_show(vu);
+
    sep = elm_separator_add(win);
    evas_object_data_set(fr, "extra", sep);
    elm_separator_horizontal_set(sep, EINA_TRUE);
@@ -330,19 +462,44 @@ _emix_sink_add(Emix_Sink *sink)
    evas_object_size_hint_align_set(sep, EVAS_HINT_FILL, 0.0);
    elm_box_pack_end(sink_box, sep);
    evas_object_show(sep);
+
+   md = calloc(1, sizeof(Mon_Data));
+   if (md)
+     {
+        md->sink = sink;
+        md->fr = fr;
+        md->vu = vu;
+        emix_event_callback_add(_cb_emix_sink_monitor_event, md);
+        _monitor_data_list = eina_list_append(_monitor_data_list, md);
+     }
+   emix_sink_monitor(sink, EINA_TRUE);
 }
 
 static void
 _emix_sink_del(Emix_Sink *sink)
 {
-   Eina_List *l;
+   Eina_List *l, *ll;
    Evas_Object *fr;
+   Mon_Data *md;
+
+   emix_sink_monitor(sink, EINA_FALSE);
+   EINA_LIST_FOREACH_SAFE(_monitor_data_list, l, ll, md)
+     {
+        if (md->sink == sink)
+          {
+             emix_event_callback_del(_cb_emix_sink_monitor_event, md);
+             _monitor_data_list = eina_list_remove_list(_monitor_data_list, l);
+             if (md->animator) ecore_animator_del(md->animator);
+             free(md);
+          }
+     }
    EINA_LIST_FOREACH(sink_list, l, fr)
      {
         if (evas_object_data_get(fr, "sink") == sink)
           {
              sink_list = eina_list_remove_list(sink_list, l);
              evas_object_del(evas_object_data_get(fr, "extra"));
+             evas_object_del(evas_object_data_get(fr, "vu"));
              evas_object_del(fr);
              return;
           }
@@ -626,10 +783,11 @@ _emix_sink_input_volume_fill(Emix_Sink_Input *input, Evas_Object *fr, Evas_Objec
 static void
 _emix_sink_input_add(Emix_Sink_Input *input)
 {
-   Evas_Object *bxv, *bx, *lb, *hv, *ic, *fr, *sep;
+   Evas_Object *bxv, *bx, *lb, *hv, *ic, *fr, *sep, *vu;
    const Eina_List *l;
    Emix_Sink *sink;
    Eina_Bool locked = EINA_TRUE;
+   Mon_Data *md;
    unsigned int i;
 
    if (!input->sink) return;
@@ -717,6 +875,14 @@ _emix_sink_input_add(Emix_Sink_Input *input)
    elm_box_pack_end(sink_input_box, fr);
    evas_object_show(fr);
 
+   vu = elm_progressbar_add(win);
+   elm_progressbar_unit_format_function_set(vu, _cb_vu_format_cb, NULL);
+   evas_object_data_set(fr, "vu", vu);
+   evas_object_size_hint_weight_set(vu, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(vu, EVAS_HINT_FILL, 0.0);
+   elm_box_pack_end(sink_input_box, vu);
+   evas_object_show(vu);
+
    sep = elm_separator_add(win);
    evas_object_data_set(fr, "extra", sep);
    elm_separator_horizontal_set(sep, EINA_TRUE);
@@ -724,19 +890,44 @@ _emix_sink_input_add(Emix_Sink_Input *input)
    evas_object_size_hint_align_set(sep, EVAS_HINT_FILL, 0.0);
    elm_box_pack_end(sink_input_box, sep);
    evas_object_show(sep);
+
+   md = calloc(1, sizeof(Mon_Data));
+   if (md)
+     {
+        md->input = input;
+        md->fr = fr;
+        md->vu = vu;
+        emix_event_callback_add(_cb_emix_sink_input_monitor_event, md);
+        _monitor_data_list = eina_list_append(_monitor_data_list, md);
+     }
+   emix_sink_input_monitor(input, EINA_TRUE);
 }
 
 static void
 _emix_sink_input_del(Emix_Sink_Input *input)
 {
-   Eina_List *l;
+   Eina_List *l, *ll;
    Evas_Object *fr;
+   Mon_Data *md;
+
+   emix_sink_input_monitor(input, EINA_FALSE);
+   EINA_LIST_FOREACH_SAFE(_monitor_data_list, l, ll, md)
+     {
+        if (md->input == input)
+          {
+             emix_event_callback_del(_cb_emix_sink_input_monitor_event, md);
+             _monitor_data_list = eina_list_remove_list(_monitor_data_list, l);
+             if (md->animator) ecore_animator_del(md->animator);
+             free(md);
+          }
+     }
    EINA_LIST_FOREACH(sink_input_list, l, fr)
      {
         if (evas_object_data_get(fr, "input") == input)
           {
              sink_input_list = eina_list_remove_list(sink_input_list, l);
              evas_object_del(evas_object_data_get(fr, "extra"));
+             evas_object_del(evas_object_data_get(fr, "vu"));
              evas_object_del(fr);
              return;
           }
@@ -1026,9 +1217,10 @@ _emix_source_volume_fill(Emix_Source *source, Evas_Object *fr, Evas_Object *bx, 
 static void
 _emix_source_add(Emix_Source *source)
 {
-   Evas_Object *bxv, *bx, *fr, *lb, *sep;
+   Evas_Object *bxv, *bx, *fr, *lb, *sep, *vu;
    unsigned int i;
    Eina_Bool locked = EINA_TRUE;
+   Mon_Data *md;
 
    fr = elm_frame_add(win);
    evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 1.0);
@@ -1081,6 +1273,14 @@ _emix_source_add(Emix_Source *source)
    elm_box_pack_end(source_box, fr);
    evas_object_show(fr);
 
+   vu = elm_progressbar_add(win);
+   elm_progressbar_unit_format_function_set(vu, _cb_vu_format_cb, NULL);
+   evas_object_data_set(fr, "vu", vu);
+   evas_object_size_hint_weight_set(vu, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(vu, EVAS_HINT_FILL, 0.0);
+   elm_box_pack_end(source_box, vu);
+   evas_object_show(vu);
+
    sep = elm_separator_add(win);
    evas_object_data_set(fr, "extra", sep);
    elm_separator_horizontal_set(sep, EINA_TRUE);
@@ -1088,6 +1288,17 @@ _emix_source_add(Emix_Source *source)
    evas_object_size_hint_align_set(sep, EVAS_HINT_FILL, 0.0);
    elm_box_pack_end(source_box, sep);
    evas_object_show(sep);
+
+   md = calloc(1, sizeof(Mon_Data));
+   if (md)
+     {
+        md->source = source;
+        md->fr = fr;
+        md->vu = vu;
+        emix_event_callback_add(_cb_emix_source_monitor_event, md);
+        _monitor_data_list = eina_list_append(_monitor_data_list, md);
+     }
+   emix_source_monitor(source, EINA_TRUE);
 }
 
 static void
@@ -1101,6 +1312,7 @@ _emix_source_del(Emix_Source *source)
           {
              source_list = eina_list_remove_list(source_list, l);
              evas_object_del(evas_object_data_get(fr, "extra"));
+             evas_object_del(evas_object_data_get(fr, "vu"));
              evas_object_del(fr);
              return;
           }
@@ -1321,6 +1533,12 @@ _cb_emix_event(void *data EINA_UNUSED, enum Emix_Event event, void *event_info)
         break;
       case EMIX_CARD_CHANGED_EVENT:
         _emix_card_change(event_info);
+        break;
+      case EMIX_SINK_MONITOR_EVENT:
+        break;
+      case EMIX_SINK_INPUT_MONITOR_EVENT:
+        break;
+      case EMIX_SOURCE_MONITOR_EVENT:
         break;
       default:
         break;

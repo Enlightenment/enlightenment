@@ -39,7 +39,10 @@ enum Emix_Event {
    EMIX_SOURCE_CHANGED_EVENT,
    EMIX_CARD_ADDED_EVENT,
    EMIX_CARD_REMOVED_EVENT,
-   EMIX_CARD_CHANGED_EVENT
+   EMIX_CARD_CHANGED_EVENT,
+   EMIX_SINK_MONITOR_EVENT,
+   EMIX_SINK_INPUT_MONITOR_EVENT,
+   EMIX_SOURCE_MONITOR_EVENT,
 };
 
 typedef const char * Emix_Channel;
@@ -64,6 +67,8 @@ typedef struct _Emix_Sink {
    Eina_Bool mute;
    Eina_Bool default_sink;
    Eina_List *ports;
+   unsigned int mon_num; // number of left + right sample pairs
+   const float *mon_buf; // LRLRLR unsigned char samples
 } Emix_Sink;
 
 typedef struct _Emix_Sink_Input {
@@ -73,6 +78,8 @@ typedef struct _Emix_Sink_Input {
    Emix_Sink *sink;
    pid_t pid;
    const char *icon;
+   unsigned int mon_num; // number of left + right sample pairs
+   const float *mon_buf; // LRLRLR unsigned char samples
 } Emix_Sink_Input;
 
 typedef struct _Emix_Source {
@@ -80,6 +87,8 @@ typedef struct _Emix_Source {
    Emix_Volume volume;
    Eina_Bool mute;
    Eina_Bool default_source;
+   unsigned int mon_num; // number of left + right sample pairs
+   const float *mon_buf; // LRLRLR unsigned char samples
 } Emix_Source;
 
 typedef struct _Emix_Profile {
@@ -135,6 +144,13 @@ typedef struct _Emix_Backend {
    Evas_Object*          (*ebackend_advanced_options_add)(Evas_Object *parent);
    const Eina_List*      (*ebackend_cards_get)(void);
    Eina_Bool             (*ebackend_card_profile_set)(Emix_Card *card, const Emix_Profile *profile);
+
+   void                  (*ebackend_sink_monitor_set)(Emix_Sink *sink,
+                                                      Eina_Bool monitor);
+   void                  (*ebackend_sink_input_monitor_set)(Emix_Sink_Input *input,
+                                                            Eina_Bool monitor);
+   void                  (*ebackend_source_monitor_set)(Emix_Source *source,
+                                                        Eina_Bool monitor);
 } Emix_Backend;
 
 //////////////////////////////////////////////////////////////////////////////
@@ -160,8 +176,9 @@ E_API const Eina_List*    emix_backends_available(void);
 E_API Eina_Bool           emix_backend_set(const char *backend);
 
 E_API Eina_Bool           emix_event_callback_add(Emix_Event_Cb cb,
-                                                 const void *data);
-E_API Eina_Bool           emix_event_callback_del(Emix_Event_Cb cb);
+                                                  const void *data);
+E_API Eina_Bool           emix_event_callback_del(Emix_Event_Cb cb,
+                                                  const void *data);
 
 E_API int                 emix_max_volume_get(void);
 
@@ -195,5 +212,9 @@ E_API Evas_Object*        emix_advanced_options_add(Evas_Object *parent);
 
 E_API const Eina_List*    emix_cards_get(void);
 E_API Eina_Bool           emix_card_profile_set(Emix_Card *card, Emix_Profile *profile);
+
+E_API void                emix_sink_monitor(Emix_Sink *sink, Eina_Bool monitor);
+E_API void                emix_sink_input_monitor(Emix_Sink_Input *input, Eina_Bool monitor);
+E_API void                emix_source_monitor(Emix_Source *source, Eina_Bool monitor);
 
 #endif  /* EMIX_H */

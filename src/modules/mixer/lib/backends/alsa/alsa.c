@@ -537,7 +537,10 @@ _alsa_backend =
    _alsa_sources_volume_set, /* source volume set */
    NULL, /* advanced options */
    NULL, /* card list */
-   NULL  /* card profile set */
+   NULL, /* card profile set */
+   NULL, /* sink monitor set */
+   NULL, /* sink input monitor set */
+   NULL /* ssource monitor set */
 };
 
 E_API Emix_Backend *

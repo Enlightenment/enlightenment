@@ -1248,7 +1248,7 @@ backend_shutdown(void)
      }
 
 
-   emix_event_callback_del(_events_cb);
+   emix_event_callback_del(_events_cb, NULL);
    emix_shutdown();
    emix_config_shutdown();
 

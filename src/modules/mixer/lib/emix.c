@@ -419,7 +419,7 @@ emix_event_callback_add(Emix_Event_Cb cb, const void *data)
 }
 
 Eina_Bool
-emix_event_callback_del(Emix_Event_Cb cb)
+emix_event_callback_del(Emix_Event_Cb cb, const void *data)
 {
    struct Callback_Data *callback;
    Eina_List *l;
@@ -427,7 +427,7 @@ emix_event_callback_del(Emix_Event_Cb cb)
 
    EINA_LIST_FOREACH(ctx->callbacks, l, callback)
      {
-        if (callback->cb == cb)
+        if ((callback->cb == cb) && (callback->data == data))
           {
              ctx->callbacks = eina_list_remove_list(ctx->callbacks, l);
              free(callback);
@@ -456,3 +456,37 @@ emix_card_profile_set(Emix_Card *card, Emix_Profile *profile)
 
    return ctx->loaded->ebackend_card_profile_set(card, profile);
 }
+
+void
+emix_sink_monitor(Emix_Sink *sink, Eina_Bool monitor)
+{
+   EINA_SAFETY_ON_FALSE_RETURN((ctx && ctx->loaded &&
+                                ctx->loaded->ebackend_sink_mute_set &&
+                                sink));
+   if (!ctx->loaded->ebackend_sink_monitor_set) return;
+   ctx->loaded->ebackend_sink_monitor_set(sink, monitor);
+}
+
+void
+emix_sink_input_monitor(Emix_Sink_Input *input, Eina_Bool monitor)
+{
+   EINA_SAFETY_ON_FALSE_RETURN((ctx && ctx->loaded &&
+                                ctx->loaded->ebackend_sink_mute_set &&
+                                input));
+
+   if (!ctx->loaded->ebackend_sink_input_monitor_set) return;
+   ctx->loaded->ebackend_sink_input_monitor_set(input, monitor);
+}
+
+void
+emix_source_monitor(Emix_Source *source, Eina_Bool monitor)
+{
+   EINA_SAFETY_ON_FALSE_RETURN((ctx && ctx->loaded &&
+                                ctx->loaded->ebackend_sink_mute_set &&
+                                source));
+
+   if (!ctx->loaded->ebackend_source_monitor_set) return;
+   ctx->loaded->ebackend_source_monitor_set(source, monitor);
+}
+
+

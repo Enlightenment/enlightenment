@@ -33,14 +33,21 @@ typedef struct _Context
 typedef struct _Sink
 {
    Emix_Sink base;
-   int idx;
+   int idx, monitor_idx;
    const char *pulse_name;
+   const char *monitor_source_name;
+   int mon_count;
+   pa_stream *mon_stream;
+   Eina_Bool running : 1;
 } Sink;
 
 typedef struct _Sink_Input
 {
    Emix_Sink_Input base;
-   int idx;
+   int idx, sink_idx;
+   int mon_count;
+   pa_stream *mon_stream;
+   Eina_Bool running : 1;
 } Sink_Input;
 
 typedef struct _Source
@@ -48,6 +55,8 @@ typedef struct _Source
    Emix_Source base;
    int idx;
    const char *pulse_name;
+   int mon_count;
+   pa_stream *mon_stream;
 } Source;
 
 typedef struct _Profile
@@ -64,6 +73,13 @@ typedef struct _Card
 
 static Context *ctx = NULL;
 extern pa_mainloop_api functable;
+
+static void _sink_monitor_begin(Sink *sink);
+static void _sink_monitor_end(Sink *sink);
+static void _sink_input_monitor_begin(Sink_Input *i);
+static void _sink_input_monitor_end(Sink_Input *i);
+static void _source_monitor_begin(Source *s);
+static void _source_monitor_end(Source *s);
 
 static pa_cvolume
 _emix_volume_convert(const Emix_Volume *volume)
@@ -116,6 +132,8 @@ _sink_del(Sink *sink)
    free(sink->base.volume.channel_names);
    eina_stringshare_del(sink->base.name);
    eina_stringshare_del(sink->pulse_name);
+   eina_stringshare_del(sink->monitor_source_name);
+   if (sink->mon_stream) pa_stream_disconnect(sink->mon_stream);
    free(sink);
 }
 
@@ -131,6 +149,7 @@ _sink_input_del(Sink_Input *input)
    free(input->base.volume.channel_names);
    eina_stringshare_del(input->base.name);
    eina_stringshare_del(input->base.icon);
+   if (input->mon_stream) pa_stream_disconnect(input->mon_stream);
    free(input);
 }
 
@@ -166,6 +185,30 @@ _card_del(Card *card)
 }
 
 static void
+_sink_state_running_set(Sink *sink, Eina_Bool running)
+{
+   if (running)
+     {
+        if ((!sink->running) && (sink->mon_count > 0))
+          {
+             sink->running = running;
+             _sink_monitor_begin(sink);
+             return;
+          }
+     }
+   else
+     {
+        if ((sink->running) && (sink->mon_count > 0))
+          {
+             sink->running = running;
+             _sink_monitor_end(sink);
+             return;
+          }
+     }
+   sink->running = running;
+}
+
+static void
 _sink_cb(pa_context *c EINA_UNUSED, const pa_sink_info *info, int eol,
          void *userdata EINA_UNUSED)
 {
@@ -190,6 +233,7 @@ _sink_cb(pa_context *c EINA_UNUSED, const pa_sink_info *info, int eol,
 
    sink = calloc(1, sizeof(Sink));
    sink->idx = info->index;
+   sink->monitor_idx = info->monitor_source;
    sink->pulse_name = eina_stringshare_add(info->name);
    sink->base.name = eina_stringshare_add(info->description);
    _pa_cvolume_convert(&info->volume, &sink->base.volume);
@@ -197,6 +241,7 @@ _sink_cb(pa_context *c EINA_UNUSED, const pa_sink_info *info, int eol,
    for (i = 0; i < sink->base.volume.channel_count; ++i)
      sink->base.volume.channel_names[i] = eina_stringshare_add(pa_channel_position_to_pretty_string(info->channel_map.map[i]));
    sink->base.mute = !!info->mute;
+   sink->monitor_source_name = eina_stringshare_add(info->monitor_source_name);
 
    for (i = 0; i < info->n_ports; i++)
      {
@@ -214,7 +259,8 @@ _sink_cb(pa_context *c EINA_UNUSED, const pa_sink_info *info, int eol,
         if (info->ports[i]->name == info->active_port->name)
            port->active = EINA_TRUE;
      }
-
+   if (info->state == PA_SINK_RUNNING) _sink_state_running_set(sink, EINA_TRUE);
+   else _sink_state_running_set(sink, EINA_FALSE);
    ctx->sinks = eina_list_append(ctx->sinks, sink);
    if (ctx->cb)
       ctx->cb((void *)ctx->userdata, EMIX_SINK_ADDED_EVENT,
@@ -297,6 +343,11 @@ _sink_changed_cb(pa_context *c EINA_UNUSED, const pa_sink_info *info, int eol,
            port->active = EINA_TRUE;
      }
 
+   sink->monitor_idx = info->monitor_source;
+
+   if (info->state == PA_SINK_RUNNING) _sink_state_running_set(sink, EINA_TRUE);
+   else _sink_state_running_set(sink, EINA_FALSE);
+
    if (ctx->cb)
      ctx->cb((void *)ctx->userdata, EMIX_SINK_CHANGED_EVENT,
                   (Emix_Sink *)sink);
@@ -358,6 +409,30 @@ _icon_from_properties(pa_proplist *l)
 }
 
 static void
+_sink_input_state_running_set(Sink_Input *input, Eina_Bool running)
+{
+   if (running)
+     {
+        if ((!input->running) && (input->mon_count > 0))
+          {
+             input->running = running;
+             _sink_input_monitor_begin(input);
+             return;
+          }
+     }
+   else
+     {
+        if ((input->running) && (input->mon_count > 0))
+          {
+             input->running = running;
+             _sink_input_monitor_end(input);
+             return;
+          }
+     }
+   input->running = running;
+}
+
+static void
 _sink_input_cb(pa_context *c EINA_UNUSED, const pa_sink_input_info *info,
                int eol, void *userdata EINA_UNUSED)
 {
@@ -387,6 +462,7 @@ _sink_input_cb(pa_context *c EINA_UNUSED, const pa_sink_input_info *info,
        info->name);
 
    input->idx = info->index;
+   input->sink_idx = info->sink;
 
    Eina_Strbuf *input_name;
 
@@ -421,6 +497,8 @@ _sink_input_cb(pa_context *c EINA_UNUSED, const pa_sink_input_info *info,
      {
         input->base.pid = atoi(t);
      }
+   if (!info->corked) _sink_input_state_running_set(input, EINA_TRUE);
+   else _sink_input_state_running_set(input, EINA_FALSE);
 
    if (ctx->cb)
      ctx->cb((void *)ctx->userdata, EMIX_SINK_INPUT_ADDED_EVENT,
@@ -469,6 +547,7 @@ _sink_input_changed_cb(pa_context *c EINA_UNUSED,
         ctx->inputs = eina_list_append(ctx->inputs, input);
      }
    input->idx = info->index;
+   input->sink_idx = info->sink;
    if (input->base.volume.channel_count != info->volume.channels)
      {
         for (i = 0; i < input->base.volume.channel_count; ++i)
@@ -492,6 +571,9 @@ _sink_input_changed_cb(pa_context *c EINA_UNUSED,
      {
         input->base.pid = atoi(t);
      }
+
+   if (!info->corked) _sink_input_state_running_set(input, EINA_TRUE);
+   else _sink_input_state_running_set(input, EINA_FALSE);
 
    if (ctx->cb)
      ctx->cb((void *)ctx->userdata, EMIX_SINK_INPUT_CHANGED_EVENT,
@@ -529,6 +611,7 @@ _source_cb(pa_context *c EINA_UNUSED, const pa_source_info *info,
 {
    Source *source;
    unsigned int i;
+   size_t len;
    EINA_SAFETY_ON_NULL_RETURN(ctx);
 
    if (eol < 0)
@@ -542,6 +625,13 @@ _source_cb(pa_context *c EINA_UNUSED, const pa_source_info *info,
 
    if (eol > 0)
       return;
+
+   len = strlen(info->name);
+   if (len > 8)
+     {
+        const char *s = info->name + len - 8;
+        if (!strcmp(s, ".monitor")) return;
+     }
 
    source = calloc(1, sizeof(Source));
    EINA_SAFETY_ON_NULL_RETURN(source);
@@ -600,7 +690,7 @@ _source_changed_cb(pa_context *c EINA_UNUSED,
         EINA_SAFETY_ON_NULL_RETURN(source);
         ctx->sources = eina_list_append(ctx->sources, source);
      }
-   source->idx= info->index;
+   source->idx = info->index;
    if (source->base.volume.channel_count != info->volume.channels)
      {
         for (i = 0; i < source->base.volume.channel_count; ++i)
@@ -1522,6 +1612,241 @@ _card_profile_set(Emix_Card *card, const Emix_Profile *profile)
    return EINA_TRUE;
 }
 
+static void
+_sink_mon_read(pa_stream *stream, size_t bytes EINA_UNUSED, void *data)
+{
+   Sink *s = data;
+   size_t rbytes;
+   const void *buf = NULL;
+
+   if (pa_stream_peek(stream, &buf, &rbytes) == 0)
+     {
+        if ((!buf) && (rbytes))
+          {
+             pa_stream_drop(stream);
+             return;
+          }
+        s->base.mon_num = (unsigned int)((rbytes / sizeof(float)) / 2);
+        s->base.mon_buf = buf;
+        if (ctx->cb)
+          ctx->cb((void *)ctx->userdata, EMIX_SINK_MONITOR_EVENT, s);
+        pa_stream_drop(stream);
+     }
+}
+
+static void
+_sink_monitor_begin(Sink *s)
+{
+   pa_sample_spec samp;
+   pa_buffer_attr attr;
+
+   if (pa_context_get_server_protocol_version(ctx->context) < 13) return;
+
+   pa_sample_spec_init(&samp);
+   samp.format = PA_SAMPLE_FLOAT32;
+   samp.rate = 44100;
+   samp.channels = 2;
+   memset(&attr, 0, sizeof(attr));
+   attr.fragsize = sizeof(float) * 4096;
+   attr.maxlength = (uint32_t) -1;
+
+   s->mon_stream = pa_stream_new(ctx->context, "__e_mon", &samp, NULL);
+   pa_stream_set_read_callback(s->mon_stream, _sink_mon_read, s);
+   pa_stream_connect_record(s->mon_stream, s->monitor_source_name,
+                            &attr,
+                            PA_STREAM_NOFLAGS
+                            | PA_STREAM_DONT_MOVE
+                            | PA_STREAM_ADJUST_LATENCY
+                            | PA_STREAM_DONT_INHIBIT_AUTO_SUSPEND
+                           );
+}
+
+static void
+_sink_monitor_end(Sink *s)
+{
+   if (s->mon_stream)
+     {
+        if (s->mon_stream) pa_stream_disconnect(s->mon_stream);
+        s->mon_stream = NULL;
+     }
+}
+
+static void
+_sink_monitor_set(Emix_Sink *sink, Eina_Bool monitor)
+{
+   Sink *s = (Sink *)sink;
+   EINA_SAFETY_ON_NULL_RETURN(ctx);
+   if (monitor) s->mon_count++;
+   else s->mon_count--;
+   if (s->mon_count < 0) s->mon_count = 0;
+   if (s->mon_count == 1)
+     {
+        if (s->running) _sink_monitor_begin(s);
+     }
+   else if (s->mon_count == 0) _sink_monitor_end(s);
+}
+
+static void
+_sink_input_mon_read(pa_stream *stream, size_t bytes EINA_UNUSED, void *data)
+{
+   Sink_Input *i = data;
+   size_t rbytes;
+   const void *buf = NULL;
+
+   if (pa_stream_peek(stream, &buf, &rbytes) == 0)
+     {
+        if ((!buf) && (rbytes))
+          {
+             pa_stream_drop(stream);
+             return;
+          }
+        i->base.mon_num = (unsigned int)((rbytes / sizeof(float)) / 2);
+        i->base.mon_buf = buf;
+        if (ctx->cb)
+          ctx->cb((void *)ctx->userdata, EMIX_SINK_INPUT_MONITOR_EVENT, i);
+        pa_stream_drop(stream);
+     }
+}
+
+static void
+_sink_input_monitor_begin(Sink_Input *i)
+{
+   pa_sample_spec samp;
+   pa_buffer_attr attr;
+   char buf[16];
+   Eina_List *l;
+   Sink *s;
+   unsigned int mon_idx = 0;
+
+   if (pa_context_get_server_protocol_version(ctx->context) < 13) return;
+
+   pa_sample_spec_init(&samp);
+   samp.format = PA_SAMPLE_FLOAT32;
+   samp.rate = 44100;
+   samp.channels = 2;
+   memset(&attr, 0, sizeof(attr));
+   attr.fragsize = sizeof(float) * 4096;
+   attr.maxlength = (uint32_t) -1;
+
+   i->mon_stream = pa_stream_new(ctx->context, "__e_mon", &samp, NULL);
+   pa_stream_set_monitor_stream(i->mon_stream, i->idx);
+   pa_stream_set_read_callback(i->mon_stream, _sink_input_mon_read, i);
+   EINA_LIST_FOREACH(ctx->sinks, l, s)
+     {
+        if (i->sink_idx == s->idx)
+          {
+             mon_idx = s->monitor_idx;
+             break;
+          }
+     }
+   if (!l) return;
+   snprintf(buf, sizeof(buf), "%i", mon_idx);
+   pa_stream_connect_record(i->mon_stream, buf,
+                            &attr,
+                            PA_STREAM_NOFLAGS
+                            | PA_STREAM_DONT_MOVE
+                            | PA_STREAM_ADJUST_LATENCY
+                            | PA_STREAM_DONT_INHIBIT_AUTO_SUSPEND
+                           );
+}
+
+static void
+_sink_input_monitor_end(Sink_Input *i)
+{
+   if (i->mon_stream)
+     {
+        if (i->mon_stream) pa_stream_disconnect(i->mon_stream);
+        i->mon_stream = NULL;
+     }
+}
+
+static void
+_sink_input_monitor_set(Emix_Sink_Input *input, Eina_Bool monitor)
+{
+   Sink_Input *i = (Sink_Input *)input;
+   EINA_SAFETY_ON_NULL_RETURN(ctx);
+   if (monitor) i->mon_count++;
+   else i->mon_count--;
+   if (i->mon_count < 0) i->mon_count = 0;
+   if (i->mon_count == 1)
+     {
+        if (i->running) _sink_input_monitor_begin(i);
+     }
+   else if (i->mon_count == 0) _sink_input_monitor_end(i);
+}
+
+static void
+_source_mon_read(pa_stream *stream, size_t bytes EINA_UNUSED, void *data)
+{
+   Source *s = data;
+   size_t rbytes;
+   const void *buf = NULL;
+
+   if (pa_stream_peek(stream, &buf, &rbytes) == 0)
+     {
+        if ((!buf) && (rbytes))
+          {
+             pa_stream_drop(stream);
+             return;
+          }
+        s->base.mon_num = (unsigned int)((rbytes / sizeof(float)) / 2);
+        s->base.mon_buf = buf;
+        if (ctx->cb)
+          ctx->cb((void *)ctx->userdata, EMIX_SOURCE_MONITOR_EVENT, s);
+        pa_stream_drop(stream);
+     }
+}
+
+static void
+_source_monitor_begin(Source *s)
+{
+   pa_sample_spec samp;
+   pa_buffer_attr attr;
+   char buf[16];
+
+   if (pa_context_get_server_protocol_version(ctx->context) < 13) return;
+
+   pa_sample_spec_init(&samp);
+   samp.format = PA_SAMPLE_FLOAT32;
+   samp.rate = 44100;
+   samp.channels = 2;
+   memset(&attr, 0, sizeof(attr));
+   attr.fragsize = sizeof(float) * 4096;
+   attr.maxlength = (uint32_t) -1;
+
+   s->mon_stream = pa_stream_new(ctx->context, "__e_mon", &samp, NULL);
+   pa_stream_set_read_callback(s->mon_stream, _source_mon_read, s);
+   snprintf(buf, sizeof(buf), "%i", s->idx);
+   pa_stream_connect_record(s->mon_stream, buf,
+                            &attr,
+                            PA_STREAM_NOFLAGS
+                            | PA_STREAM_DONT_MOVE
+                            | PA_STREAM_ADJUST_LATENCY
+                           );
+}
+
+static void
+_source_monitor_end(Source *s)
+{
+   if (s->mon_stream)
+     {
+        if (s->mon_stream) pa_stream_disconnect(s->mon_stream);
+        s->mon_stream = NULL;
+     }
+}
+
+static void
+_source_monitor_set(Emix_Source *source, Eina_Bool monitor)
+{
+   Source *s = (Source *)source;
+   EINA_SAFETY_ON_NULL_RETURN(ctx);
+   if (monitor) s->mon_count++;
+   else s->mon_count--;
+   if (s->mon_count < 0) s->mon_count = 0;
+   if (s->mon_count == 1) _source_monitor_begin(s);
+   else if (s->mon_count == 0) _source_monitor_end(s);
+}
+
 static Emix_Backend
 _pulseaudio_backend =
 {
@@ -1548,7 +1873,10 @@ _pulseaudio_backend =
    _source_volume_set,
    NULL,
    _cards_get,
-   _card_profile_set
+   _card_profile_set,
+   _sink_monitor_set,
+   _sink_input_monitor_set,
+   _source_monitor_set
 };
 
 E_API Emix_Backend *
