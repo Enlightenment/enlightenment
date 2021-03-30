@@ -393,7 +393,7 @@ _emix_sink_add(Emix_Sink *sink)
 
    lb = elm_label_add(win);
    evas_object_size_hint_align_set(lb, 0.0, EVAS_HINT_FILL);
-   elm_object_text_set(lb, eina_slstr_printf("<big>%s</>", sink->name));
+   elm_object_text_set(lb, eina_slstr_printf("<heading>%s</>", sink->name));
    evas_object_show(lb);
    elm_box_pack_end(bxv, lb);
 
@@ -805,7 +805,7 @@ _emix_sink_input_add(Emix_Sink_Input *input)
 
    lb = elm_label_add(win);
    evas_object_size_hint_align_set(lb, 0.0, EVAS_HINT_FILL);
-   elm_object_text_set(lb, eina_slstr_printf("<big>%s</>", input->sink->name));
+   elm_object_text_set(lb, eina_slstr_printf("<heading>%s</>", input->sink->name));
    evas_object_show(lb);
    elm_box_pack_end(bxv, lb);
 
@@ -1235,7 +1235,7 @@ _emix_source_add(Emix_Source *source)
 
    lb = elm_label_add(win);
    evas_object_size_hint_align_set(lb, 0.0, EVAS_HINT_FILL);
-   elm_object_text_set(lb, eina_slstr_printf("<big>%s</>", source->name));
+   elm_object_text_set(lb, eina_slstr_printf("<heading>%s</>", source->name));
    evas_object_show(lb);
    elm_box_pack_end(bxv, lb);
 
@@ -1409,7 +1409,7 @@ _emix_card_add(Emix_Card *card)
 
    lb = elm_label_add(win);
    evas_object_size_hint_align_set(lb, 0.0, EVAS_HINT_FILL);
-   elm_object_text_set(lb, eina_slstr_printf("<big>%s</>", card->name));
+   elm_object_text_set(lb, eina_slstr_printf("<heading>%s</>", card->name));
    evas_object_show(lb);
    elm_box_pack_end(bxv, lb);
 
