@@ -1304,8 +1304,21 @@ _emix_source_add(Emix_Source *source)
 static void
 _emix_source_del(Emix_Source *source)
 {
-   Eina_List *l;
+   Eina_List *l, *ll;
    Evas_Object *fr;
+   Mon_Data *md;
+
+   emix_source_monitor(source, EINA_FALSE);
+   EINA_LIST_FOREACH_SAFE(_monitor_data_list, l, ll, md)
+     {
+        if (md->source == source)
+          {
+             emix_event_callback_del(_cb_emix_sink_monitor_event, md);
+             _monitor_data_list = eina_list_remove_list(_monitor_data_list, l);
+             if (md->animator) ecore_animator_del(md->animator);
+             free(md);
+          }
+     }
    EINA_LIST_FOREACH(source_list, l, fr)
      {
         if (evas_object_data_get(fr, "source") == source)
