@@ -380,33 +380,21 @@ _icon_from_properties(pa_proplist *l)
 {
    const char *t;
 
-   if ((t = pa_proplist_gets(l, PA_PROP_MEDIA_ICON_NAME)))
-      return t;
-
-   if ((t = pa_proplist_gets(l, PA_PROP_WINDOW_ICON_NAME)))
-      return t;
-
-   if ((t = pa_proplist_gets(l, PA_PROP_APPLICATION_ICON_NAME)))
-      return t;
+   if ((t = pa_proplist_gets(l, PA_PROP_MEDIA_ICON_NAME))) return t;
+   if ((t = pa_proplist_gets(l, PA_PROP_WINDOW_ICON_NAME))) return t;
+   if ((t = pa_proplist_gets(l, PA_PROP_APPLICATION_ICON_NAME))) return t;
+   if ((t = pa_proplist_gets(l, PA_PROP_APPLICATION_ICON))) return t;
+   if ((t = pa_proplist_gets(l, PA_PROP_APPLICATION_ID))) return t;
+   if ((t = pa_proplist_gets(l, PA_PROP_APPLICATION_NAME))) return t;
 
    if ((t = pa_proplist_gets(l, PA_PROP_MEDIA_ROLE)))
      {
-
-        if (strcmp(t, "video") == 0 ||
-            strcmp(t, "phone") == 0)
-           return t;
-
-        if (strcmp(t, "music") == 0)
-           return "audio";
-
-        if (strcmp(t, "game") == 0)
-           return "applications-games";
-
-        if (strcmp(t, "event") == 0)
-           return "dialog-information";
+        if ((!strcmp(t, "video")) || (!strcmp(t, "phone"))) return t;
+        if (!strcmp(t, "music")) return "multimedia-player";
+        if (!strcmp(t, "game")) return "applications-games";
+        if (!strcmp(t, "event")) return "dialog-information";
      }
-
-   return "audio-card";
+   return NULL;
 }
 
 static void

@@ -514,7 +514,8 @@ _gc_id_new(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
 E_API void *
 e_modapi_init(E_Module *m EINA_UNUSED)
 {
-   char buf[4096];
+   char buf[PATH_MAX];
+   const char *dir;
 
    _e_emix_log_domain = eina_log_domain_register("mixer", EINA_COLOR_RED);
 
@@ -542,6 +543,10 @@ e_modapi_init(E_Module *m EINA_UNUSED)
 
    e_gadcon_provider_register(&_gadcon_class);
 
+   dir = e_module_dir_get(mixer_context->module);
+   if (!dir) return NULL;
+   snprintf(buf, sizeof(buf), "%s/sink-icons.txt", dir);
+   e_util_env_set("EMIX_SINK_ICONS", buf);
    return m;
 }
 
