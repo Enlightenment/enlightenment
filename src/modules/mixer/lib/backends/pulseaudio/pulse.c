@@ -262,6 +262,7 @@ _sink_cb(pa_context *c EINA_UNUSED, const pa_sink_info *info, int eol,
    if (info->state == PA_SINK_RUNNING) _sink_state_running_set(sink, EINA_TRUE);
    else _sink_state_running_set(sink, EINA_FALSE);
    ctx->sinks = eina_list_append(ctx->sinks, sink);
+
    if (ctx->cb)
       ctx->cb((void *)ctx->userdata, EMIX_SINK_ADDED_EVENT,
               (Emix_Sink *)sink);
@@ -578,6 +579,12 @@ _sink_input_changed_cb(pa_context *c EINA_UNUSED,
    if (ctx->cb)
      ctx->cb((void *)ctx->userdata, EMIX_SINK_INPUT_CHANGED_EVENT,
              (Emix_Sink_Input *)input);
+
+   if (input->mon_count > 0)
+     {
+        _sink_input_monitor_end(input);
+        if (input->running) _sink_input_monitor_begin(input);
+     }
 }
 
 static void
