@@ -53,9 +53,9 @@ group "E_Config" struct {
   value "winlist_list_show_other_screen_windows" int: 0;
   value "winlist_list_uncover_while_selecting" int: 0;
   value "winlist_list_jump_desk_while_selecting" int: 0;
-  value "winlist_list_focus_while_selecting" int: 1;
-  value "winlist_list_raise_while_selecting" int: 1;
-  value "winlist_mode" int: 0;
+  value "winlist_list_focus_while_selecting" int: 0;
+  value "winlist_list_raise_while_selecting" int: 0;
+  value "winlist_mode" int: 1;
   value "winlist_large_size" double: 0.6666;
   value "winlist_list_size" double: 0.3333;
   value "maximize_policy" int: 49;
