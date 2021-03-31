@@ -875,7 +875,7 @@ not_done:
                }
              else if (WEXITSTATUS(status) == 101)
                {
-                  printf("Explici error exit from enlightenment\n");
+                  printf("Explicit error exit from enlightenment\n");
                   restart = EINA_FALSE;
                   done = EINA_TRUE;
                }
