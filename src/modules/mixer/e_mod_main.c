@@ -47,6 +47,18 @@ struct _Context
    E_Menu *menu;
 };
 
+typedef struct _Mon_Data Mon_Data;
+struct _Mon_Data
+{
+   Emix_Sink *sink;
+   Evas_Object *vu;
+   Ecore_Animator *animator;
+   float samp_max;
+   int mon_skips;
+   int mon_update;
+   int mon_samps;
+};
+
 typedef struct _Instance Instance;
 struct _Instance
 {
@@ -59,6 +71,8 @@ struct _Instance
    Evas_Object *list;
    Evas_Object *slider;
    Evas_Object *check;
+   Evas_Object *vu;
+   Mon_Data mon_data;
 };
 
 static Context *mixer_context = NULL;
@@ -111,6 +125,61 @@ _sink_icon_find(const char *name)
      }
    fclose(f);
    return res;
+}
+
+static void _sink_unmonitor(Instance *inst, Emix_Sink *s);
+static void _sink_monitor(Instance *inst, Emix_Sink *s);
+
+static Eina_Bool
+_cb_emix_monitor_update(void *data)
+{
+   Mon_Data *md = data;
+
+   if (md->mon_update == 0)
+     {
+        md->mon_skips++;
+        if (md->mon_skips > 5)
+          {
+             printf(" too many skips\n");
+             elm_progressbar_value_set(md->vu, 0.0);
+             md->animator = NULL;
+             return EINA_FALSE;
+          }
+        return EINA_TRUE;
+     }
+   printf(" vu %1.2f\n", md->samp_max);
+   elm_progressbar_value_set(md->vu, md->samp_max);
+   md->mon_update = 0;
+   md->samp_max = 0;
+   md->mon_skips = 0;
+   md->mon_samps = 0;
+   return EINA_TRUE;
+}
+
+static void
+_cb_emix_sink_monitor_event(void *data, enum Emix_Event event, void *event_info)
+{
+   Mon_Data *md = data;
+   Emix_Sink *sink = event_info;
+
+   if (sink != md->sink) return;
+   if (event == EMIX_SINK_MONITOR_EVENT)
+     {
+        unsigned int i, num = sink->mon_num * 2;
+        float samp, max = 0.0;
+
+        printf(" vu input data %i\n", num);
+        for (i = 0; i < num; i++)
+          {
+             samp = fabs(sink->mon_buf[i]);
+             if (samp > max) max = samp;
+          }
+        md->mon_samps += num;
+        if (md->samp_max < max) md->samp_max = max;
+        md->mon_update++;
+        if (!md->animator)
+          md->animator = ecore_animator_add(_cb_emix_monitor_update, md);
+     }
 }
 
 static void
@@ -179,6 +248,8 @@ _popup_del(Instance *inst)
    inst->slider = NULL;
    inst->check = NULL;
    inst->list = NULL;
+   inst->vu = NULL;
+   if (inst->mon_data.sink) _sink_unmonitor(inst, inst->mon_data.sink);
    E_FREE_FUNC(inst->popup, e_object_del);
 }
 
@@ -228,6 +299,39 @@ _sink_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EIN
    backend_sink_default_set(data);
 }
 
+static void
+_sink_unmonitor(Instance *inst, Emix_Sink *s)
+{
+   Mon_Data *md = &(inst->mon_data);
+   if (md->sink != s) return;
+   emix_event_callback_del(_cb_emix_sink_monitor_event, md);
+   if (md->animator)
+     {
+        ecore_animator_del(md->animator);
+        md->animator = NULL;
+     }
+   emix_sink_monitor(md->sink, EINA_FALSE);
+   md->sink = NULL;
+   md->vu = NULL;
+   md->mon_update = 0;
+   md->samp_max = 0;
+   md->mon_skips = 0;
+   md->mon_samps = 0;
+}
+
+static void
+_sink_monitor(Instance *inst, Emix_Sink *s)
+{
+   Mon_Data *md = &(inst->mon_data);
+   if (md->sink == s) return;
+
+   if (md->sink) _sink_unmonitor(inst, md->sink);
+   md->sink = s;
+   md->vu = inst->vu;
+   emix_event_callback_add(_cb_emix_sink_monitor_event, md);
+   emix_sink_monitor(md->sink, EINA_TRUE);
+}
+
 static Eina_Bool
 _mixer_sinks_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
@@ -241,6 +345,8 @@ _mixer_sinks_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event E
              Elm_Object_Item *default_it = NULL;
              Emix_Sink *s;
 
+             if (inst->mon_data.sink)
+               _sink_unmonitor(inst, inst->mon_data.sink);
              elm_list_clear(inst->list);
              EINA_LIST_FOREACH((Eina_List *)emix_sinks_get(), ll, s)
                {
@@ -257,7 +363,10 @@ _mixer_sinks_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event E
                   it = elm_list_item_append(inst->list, s->name, ic, NULL,
                                             _sink_selected_cb, s);
                   if (backend_sink_default_get() == s)
-                    default_it = it;
+                    {
+                       default_it = it;
+                       _sink_monitor(inst, s);
+                    }
                }
              elm_list_go(inst->list);
              if (default_it)
@@ -266,6 +375,12 @@ _mixer_sinks_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event E
      }
 
    return ECORE_CALLBACK_PASS_ON;
+}
+
+static char *
+_cb_vu_format_cb(double v EINA_UNUSED)
+{
+   return "";
 }
 
 static void
@@ -284,26 +399,16 @@ _popup_new(Instance *inst)
    evas_object_size_hint_align_set(inst->list, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(inst->list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(inst->list);
-   EINA_LIST_FOREACH((Eina_List *)emix_sinks_get(), l, s)
-     {
-        Elm_Object_Item *it;
-        char *icname = NULL;
-
-        if (s->name) icname = _sink_icon_find(s->name);
-        if (!icname) icname = strdup("audio-volume");
-        ic = elm_icon_add(e_comp->elm);
-        evas_object_size_hint_min_set(ic, 20 * e_scale, 20 * e_scale);
-        elm_icon_standard_set(ic, icname);
-        free(icname);
-
-        it = elm_list_item_append(inst->list, s->name, ic, NULL, _sink_selected_cb, s);
-        if (backend_sink_default_get() == s)
-          default_it = it;
-     }
-   elm_list_go(inst->list);
    elm_box_pack_end(list, inst->list);
 
    bx = elm_box_add(e_comp->elm);
+   inst->vu = elm_progressbar_add(e_comp->elm);
+   elm_progressbar_unit_format_function_set(inst->vu, _cb_vu_format_cb, NULL);
+   evas_object_size_hint_weight_set(inst->vu, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(inst->vu, EVAS_HINT_FILL, 0.0);
+   elm_box_pack_end(list, inst->vu);
+   evas_object_show(inst->vu);
+
    elm_box_horizontal_set(bx, EINA_TRUE);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, 0.0);
@@ -341,7 +446,28 @@ _popup_new(Instance *inst)
    elm_box_pack_end(list, button);
    evas_object_show(button);
 
-   evas_object_size_hint_min_set(list, 208, 208);
+   EINA_LIST_FOREACH((Eina_List *)emix_sinks_get(), l, s)
+     {
+        Elm_Object_Item *it;
+        char *icname = NULL;
+
+        if (s->name) icname = _sink_icon_find(s->name);
+        if (!icname) icname = strdup("audio-volume");
+        ic = elm_icon_add(e_comp->elm);
+        evas_object_size_hint_min_set(ic, 20 * e_scale, 20 * e_scale);
+        elm_icon_standard_set(ic, icname);
+        free(icname);
+
+        it = elm_list_item_append(inst->list, s->name, ic, NULL, _sink_selected_cb, s);
+        if (backend_sink_default_get() == s)
+          {
+             default_it = it;
+             _sink_monitor(inst, s);
+          }
+     }
+   elm_list_go(inst->list);
+
+   evas_object_size_hint_min_set(list, 240 * e_scale, 240 * e_scale);
 
    e_gadcon_popup_content_set(inst->popup, list);
    e_comp_object_util_autoclose(inst->popup->comp_object,
@@ -473,6 +599,7 @@ _gc_shutdown(E_Gadcon_Client *gcc)
    Instance *inst;
 
    inst = gcc->data;
+   if (inst->popup) _popup_del(inst);
    evas_object_del(inst->gadget);
    mixer_context->instances = eina_list_remove(mixer_context->instances, inst);
    free(inst);
