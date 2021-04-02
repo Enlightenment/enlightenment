@@ -1647,6 +1647,7 @@ _sink_monitor_begin(Sink *s)
 
    s->mon_stream = pa_stream_new(ctx->context, "__e_mon", &samp, NULL);
    pa_stream_set_read_callback(s->mon_stream, _sink_mon_read, s);
+   pa_context_set_source_mute_by_name(ctx->context, s->monitor_source_name, 0, NULL, NULL);
    pa_stream_connect_record(s->mon_stream, s->monitor_source_name,
                             &attr,
                             PA_STREAM_NOFLAGS
@@ -1736,6 +1737,7 @@ _sink_input_monitor_begin(Sink_Input *i)
      }
    if (!l) return;
    snprintf(buf, sizeof(buf), "%i", mon_idx);
+   pa_context_set_source_mute_by_name(ctx->context, buf, 0, NULL, NULL);
    pa_stream_connect_record(i->mon_stream, buf,
                             &attr,
                             PA_STREAM_NOFLAGS
