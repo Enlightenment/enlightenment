@@ -140,14 +140,12 @@ _cb_emix_monitor_update(void *data)
         md->mon_skips++;
         if (md->mon_skips > 5)
           {
-             printf(" too many skips\n");
              elm_progressbar_value_set(md->vu, 0.0);
              md->animator = NULL;
              return EINA_FALSE;
           }
         return EINA_TRUE;
      }
-   printf(" vu %1.2f\n", md->samp_max);
    elm_progressbar_value_set(md->vu, md->samp_max);
    md->mon_update = 0;
    md->samp_max = 0;
