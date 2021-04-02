@@ -1799,6 +1799,21 @@ ui_icon_button_add(Evas_Object *parent, const char *icon)
    return o;
 }
 
+static Evas_Object *
+ui_icon_button_standard_add(Evas_Object *parent, const char *icon)
+{
+   Evas_Object *o, *ic;
+
+   ic = o = elm_icon_add(parent);
+   elm_icon_standard_set(o, icon);
+
+   o = elm_button_add(parent);
+   elm_object_content_set(o, ic);
+   evas_object_show(ic);
+   evas_object_show(o);
+   return o;
+}
+
 Evas_Object *
 ui_edit(Evas_Object *window, Evas_Object *o_bg, E_Zone *zone,
         E_Client *ec, void *dst, int sx, int sy, int sw, int sh,
@@ -2083,15 +2098,18 @@ ui_edit(Evas_Object *window, Evas_Object *o_bg, E_Zone *zone,
    elm_object_style_set(o, "pad_large");
    elm_table_pack(tb, o, 4, 0, 1, 1);
 
-   o = ui_icon_button_add(win, "zoom-in");
+   o = ui_icon_button_standard_add(win, "zoom-in");
+   elm_object_style_set(o, "overlay");
    elm_table_pack(tb, o, 3, 1, 1, 1);
    evas_object_smart_callback_add(o, "clicked", _cb_tool_zoom_plus, NULL);
 
-   o = ui_icon_button_add(win, "zoom");
+   o = ui_icon_button_standard_add(win, "zoom-original");
+   elm_object_style_set(o, "overlay");
    elm_table_pack(tb, o, 3, 2, 1, 1);
    evas_object_smart_callback_add(o, "clicked", _cb_tool_zoom_reset, NULL);
 
-   o = ui_icon_button_add(win, "zoom-out");
+   o = ui_icon_button_standard_add(win, "zoom-out");
+   elm_object_style_set(o, "overlay");
    elm_table_pack(tb, o, 3, 3, 1, 1);
    evas_object_smart_callback_add(o, "clicked", _cb_tool_zoom_minus, NULL);
    evas_object_show(o);
