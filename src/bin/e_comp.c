@@ -1239,6 +1239,11 @@ e_comp_init(void)
         conf->version = E_COMP_VERSION;
      }
 
+   if (conf->no_dither)
+     e_util_env_set("EVAS_GL_RENDER_DISABLE_DITHER", "1");
+   else
+     e_util_env_set("EVAS_GL_RENDER_DISABLE_DITHER", NULL);
+
    {
       E_Action *act;
 

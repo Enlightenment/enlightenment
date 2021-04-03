@@ -44,6 +44,7 @@ e_comp_cfdata_edd_init(E_Config_DD **conf_edd, E_Config_DD **match_edd)
 //   E_CONFIG_VAL(D, T, lock_fps, UCHAR);
    E_CONFIG_VAL(D, T, grab, UCHAR);
    E_CONFIG_VAL(D, T, vsync, UCHAR);
+   E_CONFIG_VAL(D, T, no_dither, UCHAR);
    E_CONFIG_VAL(D, T, swap_mode, UCHAR);
    //E_CONFIG_VAL(D, T, keep_unmapped, UCHAR);
    E_CONFIG_VAL(D, T, send_flush, UCHAR);
@@ -80,6 +81,7 @@ e_comp_cfdata_config_new(void)
 //   cfg->lock_fps = 0;
    cfg->grab = 0;
    cfg->vsync = 1;
+   cfg->no_dither = 0;
 #ifdef ECORE_EVAS_GL_X11_OPT_SWAP_MODE
    cfg->swap_mode = ECORE_EVAS_GL_X11_SWAP_MODE_AUTO;
 #else

@@ -22,6 +22,7 @@ struct _E_Comp_Config
    unsigned char grab;
    unsigned char vsync;
    unsigned char swap_mode;
+   unsigned char no_dither;
    unsigned char keep_unmapped;
    unsigned char send_flush;
    unsigned char send_dump;

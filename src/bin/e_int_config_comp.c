@@ -8,6 +8,7 @@ struct _E_Config_Dialog_Data
    int         smooth_windows;
    int         grab;
    int         vsync;
+   int         dither;
    int         swap_mode;
 
    const char *shadow_style;
@@ -25,6 +26,7 @@ struct _E_Config_Dialog_Data
 
    Evas_Object *styles_il;
    Evas_Object *vsync_check;
+   Evas_Object *dither_check;
    Evas_Object *texture_check;
 
    Evas_Object *swap_auto_radio;
@@ -104,6 +106,7 @@ _create_data(E_Config_Dialog *cfd EINA_UNUSED)
    cfdata->smooth_windows = conf->smooth_windows;
    cfdata->grab = conf->grab;
    cfdata->vsync = conf->vsync;
+   cfdata->dither = !(!!conf->no_dither);
    cfdata->swap_mode = conf->swap_mode;
    cfdata->shadow_style = eina_stringshare_add(conf->shadow_style);
 
@@ -130,6 +133,8 @@ _comp_engine_toggle(void *data, Evas_Object *o EINA_UNUSED, void *event EINA_UNU
    E_Config_Dialog_Data *cfdata = data;
 
    e_widget_disabled_set(cfdata->vsync_check,
+                         (cfdata->engine == E_COMP_ENGINE_SW));
+   e_widget_disabled_set(cfdata->dither_check,
                          (cfdata->engine == E_COMP_ENGINE_SW));
 
    if (cfdata->texture_check)
@@ -284,7 +289,12 @@ _advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data 
 //             e_widget_framelist_object_append(of, ob);
           }
      }
+   ob = e_widget_check_add(evas, _("Dithering"), &(cfdata->dither));
+   e_widget_framelist_object_append(of, ob);
+   cfdata->dither_check = ob;
+   e_widget_disabled_set(ob, (cfdata->engine == E_COMP_ENGINE_SW));
    e_widget_list_object_append(ol, of, 1, 1, 0.5);
+
    e_widget_toolbook_page_append(otb, NULL, _("Rendering"), ol, 0, 0, 0, 0, 0.5, 0.0);
 
    ///////////////////////////////////////////
@@ -433,6 +443,7 @@ _advanced_apply_data(E_Config_Dialog *cfd  EINA_UNUSED,
        (cfdata->indirect != conf->indirect) ||
        (cfdata->texture_from_pixmap != conf->texture_from_pixmap) ||
        (cfdata->vsync != conf->vsync) ||
+       (cfdata->dither != !(!!conf->no_dither)) ||
        (cfdata->swap_mode != conf->swap_mode))
      {
         E_Action *a;
@@ -441,6 +452,7 @@ _advanced_apply_data(E_Config_Dialog *cfd  EINA_UNUSED,
         conf->indirect = cfdata->indirect;
         conf->texture_from_pixmap = cfdata->texture_from_pixmap;
         conf->vsync = cfdata->vsync;
+        conf->no_dither = !(!!cfdata->dither);
         conf->swap_mode = cfdata->swap_mode;
 
         a = e_action_find("restart");
@@ -502,6 +514,10 @@ _basic_create_widgets(E_Config_Dialog *cfd,
         cfdata->vsync_check = ob;
         e_widget_disabled_set(ob, (cfdata->engine == E_COMP_ENGINE_SW));
      }
+   ob = e_widget_check_add(evas, _("Dithering"), &(cfdata->dither));
+   e_widget_framelist_object_append(of, ob);
+   cfdata->dither_check = ob;
+   e_widget_disabled_set(ob, (cfdata->engine == E_COMP_ENGINE_SW));
 
    ob = e_widget_check_add(evas, _("Smooth scaling of window content"), &(cfdata->smooth_windows));
    e_widget_framelist_object_append(of, ob);
@@ -582,7 +598,8 @@ _basic_apply_data(E_Config_Dialog *cfd  EINA_UNUSED,
    if ((cfdata->engine != conf->engine) ||
        (cfdata->indirect != conf->indirect) ||
        (cfdata->texture_from_pixmap != conf->texture_from_pixmap) ||
-       (cfdata->vsync != conf->vsync))
+       (cfdata->vsync != conf->vsync) ||
+       (cfdata->dither != !(!!conf->no_dither)))
      {
         E_Action *a;
 
@@ -590,6 +607,7 @@ _basic_apply_data(E_Config_Dialog *cfd  EINA_UNUSED,
         conf->indirect = cfdata->indirect;
         conf->texture_from_pixmap = cfdata->texture_from_pixmap;
         conf->vsync = cfdata->vsync;
+        conf->no_dither = !(!!cfdata->dither);
 
         a = e_action_find("restart");
         if ((a) && (a->func.go)) a->func.go(NULL, NULL);
