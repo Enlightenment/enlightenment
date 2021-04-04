@@ -977,7 +977,8 @@ _e_winlist_client_add(E_Client *ec, E_Zone *zone, E_Desk *desk)
         edje_object_part_swallow(ww->bg_object, "e.swallow.icon", o);
         evas_object_show(o);
      }
-   if (edje_object_part_exists(ww->bg_object, "e.swallow.win"))
+   if (edje_object_part_exists(ww->bg_object, "e.swallow.win") &&
+      (!e_config->winlist_list_no_miniatures))
      {
         o = e_comp_object_util_frame_mirror_add(ec->frame);
         ww->win_object = o;

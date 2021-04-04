@@ -22,6 +22,7 @@ struct _E_Config_Dialog_Data
    int    move_after_select;
 
    int    mode;
+   int    list_miniatures;
    double large_size;
    double list_size;
 
@@ -65,6 +66,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    cfdata->mode = e_config->winlist_mode;
    cfdata->large_size = e_config->winlist_large_size;
    cfdata->list_size = e_config->winlist_list_size;
+   cfdata->list_miniatures = !(!!e_config->winlist_list_no_miniatures);
 
    cfdata->windows_other_desks =
      e_config->winlist_list_show_other_desk_windows;
@@ -119,6 +121,7 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
    DO(mode, mode);
    DO(large_size, large_size);
    DO(list_size, list_size);
+   e_config->winlist_list_no_miniatures = !(!!cfdata->list_miniatures);
    DO(warp_while_selecting, warp_while_selecting);
    DO(warp_at_end, warp_at_end);
    DO(no_warp_on_direction, no_warp_on_direction);
@@ -152,6 +155,7 @@ _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
    DO(mode, mode);
    DO_DBL(large_size, large_size);
    DO_DBL(list_size, list_size);
+   if (e_config->winlist_list_no_miniatures != !(!!cfdata->list_miniatures)) return 1;
    DO(warp_while_selecting, warp_while_selecting);
    DO(warp_at_end, warp_at_end);
    DO(no_warp_on_direction, no_warp_on_direction);
@@ -185,6 +189,9 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    e_widget_list_object_append(ol, ob, 1, 0, 0.0);
    ob = e_widget_slider_add(evas, 1, 0, _("%1.2f"), 0.0, 1.0, 0.01, 0,
                             &(cfdata->list_size), NULL, 100);
+   e_widget_list_object_append(ol, ob, 1, 0, 0.0);
+   ob = e_widget_check_add(evas, _("List Window Miniatures"),
+                           &(cfdata->list_miniatures));
    e_widget_list_object_append(ol, ob, 1, 0, 0.0);
    ob = e_widget_check_add(evas, _("Windows from other desks"),
                            &(cfdata->windows_other_desks));
