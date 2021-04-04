@@ -1779,7 +1779,7 @@ ui_tool_add(Evas_Object *parent, Evas_Object *tb, Evas_Object *radg, int x, int 
    evas_object_show(o);
    return rad;
 }
-
+/* not used right now
 static Evas_Object *
 ui_icon_button_add(Evas_Object *parent, const char *icon)
 {
@@ -1798,7 +1798,7 @@ ui_icon_button_add(Evas_Object *parent, const char *icon)
    evas_object_show(o);
    return o;
 }
-
+*/
 static Evas_Object *
 ui_icon_button_standard_add(Evas_Object *parent, const char *icon)
 {
