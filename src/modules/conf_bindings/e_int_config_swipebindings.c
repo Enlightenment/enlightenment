@@ -998,7 +998,7 @@ e_int_config_swipebindings(Evas_Object *parent EINA_UNUSED, const char *params)
    v->basic.create_widgets = _basic_create_widgets;
    v->override_auto_apply = 1;
 
-   if (!_user_part_of_input())
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X && !_user_part_of_input())
      {
         e_module_dialog_show(NULL, "Gesture Recognition", "Your user is not part of the input group, libinput cannot be used.");
      }
