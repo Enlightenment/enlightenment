@@ -21,10 +21,6 @@ static Eina_List *acpi_bindings = NULL;
 static Eina_List *swipe_bindings = NULL;
 
 static unsigned int bindings_disabled = 0;
-static int gesture_capable_devices = 0;
-
-static E_Bindings_Swipe_Live_Update live_update;
-static E_Bindings_Swipe_Live_Update live_update_data;
 
 EINTERN E_Action *(*e_binding_key_list_cb)(E_Binding_Context, Ecore_Event_Key*, E_Binding_Modifier, E_Binding_Key **);
 
@@ -1614,19 +1610,6 @@ _e_bindings_edge_cb_timer(void *data)
    return ECORE_CALLBACK_CANCEL;
 }
 
-
-E_API void
-e_bindings_gesture_capable_devices_set(int number)
-{
-   gesture_capable_devices = number;
-}
-
-E_API int
-e_bindings_gesture_capable_devices_get(void)
-{
-   return gesture_capable_devices;
-}
-
 E_API void
 e_bindings_swipe_add(E_Binding_Context ctxt, double direction, double length, unsigned int fingers, double error, const char *action, const char *params)
 {
@@ -1726,23 +1709,4 @@ e_bindings_swipe_find_candidates(E_Binding_Context ctxt, double direction, doubl
      }
 
    return ret;
-}
-
-E_API void
-e_bindings_swipe_live_update_hook_set(E_Bindings_Swipe_Live_Update update, void *data)
-{
-   live_update = update;
-   live_update_data = data;
-}
-
-E_API E_Bindings_Swipe_Live_Update
-e_bindings_swipe_live_update_hook_get(void)
-{
-   return live_update;
-}
-
-E_API void*
-e_bindings_swipe_live_update_hook_data_get(void)
-{
-   return live_update_data;
 }

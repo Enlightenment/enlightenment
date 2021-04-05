@@ -298,6 +298,7 @@ dep_eo               = dependency('eo'              , required: true)
 dep_eldbus           = dependency('eldbus'          , required: true)
 dep_emotion          = dependency('emotion'         , required: true)
 dep_elementary       = dependency('elementary'      , required: true)
+dep_elput            = dependency('elput'           , required: true)
 
 dep_wayland = []
 if get_option('wl') == true

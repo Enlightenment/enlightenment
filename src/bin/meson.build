@@ -33,6 +33,7 @@ deps_e = [
   dep_eldbus,
   dep_emotion,
   dep_elementary,
+  dep_elput,
   dep_intl
 ]
 
@@ -223,6 +224,7 @@ src = [
   'e_xinerama.c',
   'e_zoomap.c',
   'e_zone.c',
+  'e_gesture.c',
   'efx/efx_bumpmapping.c',
   'efx/efx.c',
   'efx/efx_fade.c',
@@ -401,7 +403,8 @@ hdr = [
   'e_xkb.h',
   'e_xsettings.h',
   'e_zoomap.h',
-  'e_zone.h'
+  'e_zone.h',
+  'e_gesture.h'
 ]
 
 if config_h.has('HAVE_WAYLAND') == true

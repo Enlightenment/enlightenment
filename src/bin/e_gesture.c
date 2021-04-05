@@ -5,12 +5,6 @@
 #include <pwd.h>
 #include <Elput.h>
 
-E_API E_Module_Api e_modapi =
-   {
-      E_MODULE_API_VERSION,
-      "Gesture Recognition"
-   };
-
 static Eina_Hash *active_gestures;
 static Elput_Manager *manager;
 
@@ -21,6 +15,10 @@ typedef struct {
      Evas_Object *visuals, *win;
    } visuals;
 } Swipe_Stats;
+
+static int gesture_capable_devices = 0;
+static E_Bindings_Swipe_Live_Update live_update;
+static void* live_update_data;
 
 static Swipe_Stats*
 _find_swipe_gesture_recognizition(Elput_Device *dev)
@@ -92,10 +90,9 @@ _stats_free(void *ptr)
 static void
 _apply_visual_changes(Swipe_Stats *stats)
 {
-   E_Bindings_Swipe_Live_Update live_update = e_bindings_swipe_live_update_hook_get();
    if (live_update)
      {
-        live_update(e_bindings_swipe_live_update_hook_data_get(), EINA_FALSE, _config_angle(stats->pos), eina_vector2_length_get(&stats->pos), 0.8, stats->fingers);
+        live_update(live_update_data, EINA_FALSE, _config_angle(stats->pos), eina_vector2_length_get(&stats->pos), 0.8, stats->fingers);
      }
    else if (stats->visuals.win)
      {
@@ -151,11 +148,10 @@ _swipe_cb(void *data EINA_UNUSED, int type, void *event)
      }
    else if (type == ELPUT_EVENT_SWIPE_END)
      {
-        E_Bindings_Swipe_Live_Update live_update = e_bindings_swipe_live_update_hook_get();
         Swipe_Stats *stats = _find_swipe_gesture_recognizition(dev);
 
         if (live_update)
-          live_update(e_bindings_swipe_live_update_hook_data_get(), EINA_TRUE, _config_angle(stats->pos), eina_vector2_length_get(&stats->pos), 0.8, stats->fingers);
+          live_update(live_update_data, EINA_TRUE, _config_angle(stats->pos), eina_vector2_length_get(&stats->pos), 0.8, stats->fingers);
         else
           e_bindings_swipe_handle(E_BINDING_CONTEXT_NONE, NULL, _config_angle(stats->pos), eina_vector2_length_get(&stats->pos), stats->fingers);
 
@@ -179,19 +175,25 @@ _debug(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
              number_of_gesture_devices++;
           }
      }
-   e_bindings_gesture_capable_devices_set(number_of_gesture_devices);
+   gesture_capable_devices= number_of_gesture_devices;
    return ECORE_CALLBACK_PASS_ON;
 }
 
 static void
-_init_for_x11(E_Module *m EINA_UNUSED)
+_init_for_x11(void)
 {
    const char *device = NULL;
 
-   elput_init();
+   if (!elput_init())
+     {
+        ERR("Failed to init elput");
+        return;
+     }
    device = getenv("XDG_SEAT");
    if (!device) device = "seat0";
    manager = elput_manager_connect_gestures(device, 0);
+
+   EINA_SAFETY_ON_NULL_RETURN(manager);
    elput_input_init(manager);
 }
 
@@ -205,11 +207,11 @@ _shutdown_for_x11(void)
 
 
 E_API int
-e_modapi_init(E_Module *m EINA_UNUSED)
+e_gesture_init(void)
 {
    if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      {
-        _init_for_x11(m);
+        _init_for_x11();
      }
 
    active_gestures = eina_hash_pointer_new(_stats_free);
@@ -223,7 +225,7 @@ e_modapi_init(E_Module *m EINA_UNUSED)
 }
 
 E_API int
-e_modapi_shutdown(E_Module *m EINA_UNUSED)
+e_gesture_shutdown(void)
 {
    if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      {
@@ -233,10 +235,15 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    return 1;
 }
 
-E_API int
-e_modapi_save(E_Module *m EINA_UNUSED)
+E_API void
+e_bindings_swipe_live_update_hook_set(E_Bindings_Swipe_Live_Update update, void *data)
 {
-
-   return 1;
+   live_update = update;
+   live_update_data = data;
 }
 
+E_API int
+e_bindings_gesture_capable_devices_get(void)
+{
+   return gesture_capable_devices;
+}

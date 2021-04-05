@@ -1054,6 +1054,11 @@ main(int argc, char **argv)
    e_comp_canvas_keys_grab();
    TS("E_Comp_Canvas Keys Grab Done");
 
+   TS("E_Gesture Init");
+   e_gesture_init();
+   TS("E_Gesture Init Done");
+   _e_main_shutdown_push(e_gesture_shutdown);
+
    TS("Run Startup Apps");
    if (!nostartup)
      {
