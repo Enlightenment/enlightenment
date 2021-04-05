@@ -891,6 +891,24 @@ _restore_swipe_binding_defaults_cb(void *data, void *data2 EINA_UNUSED)
    e_widget_disabled_set(cfdata->gui.o_params, 1);
 }
 
+static void
+_close_help_dialog(void *data EINA_UNUSED, E_Dialog *dia)
+{
+   e_object_del(E_OBJECT(dia));
+}
+
+static void
+_help_swipe_bindings_cb(void *data EINA_UNUSED, void *data2 EINA_UNUSED)
+{
+   E_Config_Dialog_Data *cfdata = data;
+
+   E_Dialog *help = e_dialog_new(cfdata->cfd->dia->win, "E", "_swipe_recognition");
+   e_dialog_title_set(help, _("Swipe Bindings Help"));
+   e_dialog_text_set(help, _("Enlightenment is using libinput to detect swipe gesture. In case there are problems:<br> 1. Test gestures while executing \"libinput debug-events\" in terminal. The console output will tell the precision of your hardware.<br>2. Watch for error in console, some libinput devices are returning wrong results. <br>3. If your session is running inside Xorg, ensure that your user is part of the libinput group.<br>"));
+   e_dialog_button_add(help, _("Close"), NULL, _close_help_dialog, help);
+   e_dialog_show(help);
+}
+
 static Evas_Object *
 _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
@@ -922,7 +940,9 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cf
    e_widget_disabled_set(ob, 1);
    e_widget_frametable_object_append(of, ob, 1, 2, 1, 1, 1, 0, 1, 0);
    ob = e_widget_button_add(evas, _("Restore Default Bindings"), "enlightenment", _restore_swipe_binding_defaults_cb, cfdata, NULL);
-   e_widget_frametable_object_append(of, ob, 0, 3, 2, 1, 1, 0, 1, 0);
+   e_widget_frametable_object_append(of, ob, 0, 3, 1, 1, 1, 0, 1, 0);
+   ob = e_widget_button_add(evas, _("Help"), "help", _help_swipe_bindings_cb, cfdata, NULL);
+   e_widget_frametable_object_append(of, ob, 1, 3, 1, 1, 1, 0, 1, 0);
    e_widget_list_object_append(ol, of, 1, 1, 0.5);
 
    ot = e_widget_table_add(e_win_evas_win_get(evas), 0);
