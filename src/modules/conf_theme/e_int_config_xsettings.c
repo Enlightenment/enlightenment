@@ -159,10 +159,18 @@ _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
    e_config->xsettings.match_e17_icon_theme = cfdata->match_e17_icon_theme;
    e_config_save_queue();
 
-   if (cfdata->match_e17_icon_theme &&
-       strcmp(e_config->icon_theme, elm_config_icon_theme_get()))
+/*   if (//cfdata->match_e17_icon_theme &&
+       !!strcmp(e_config->icon_theme, elm_config_icon_theme_get()))
      {
         elm_config_icon_theme_set(e_config->icon_theme);
+        elm_config_all_flush();
+        elm_config_save();
+     }
+   else */
+   if (//cfdata->match_e17_icon_theme &&
+       !!strcmp("_Elementary_Icon_Theme", elm_config_icon_theme_get()))
+     {
+        elm_config_icon_theme_set("_Elementary_Icon_Theme");
         elm_config_all_flush();
         elm_config_save();
      }
