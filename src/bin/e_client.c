@@ -2763,7 +2763,7 @@ e_client_new(E_Pixmap *cp, int first_map, int internal)
         evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_RESTACK, _e_client_cb_evas_restack, ec);
         evas_object_smart_callback_add(ec->frame, "shade_done", _e_client_cb_evas_shade_done, ec);
         if (ec->override)
-          evas_object_layer_set(ec->frame, E_LAYER_CLIENT_ABOVE);
+          evas_object_layer_set(ec->frame, E_LAYER_CLIENT_TOP);
         else
           evas_object_layer_set(ec->frame, E_LAYER_CLIENT_NORMAL);
      }
