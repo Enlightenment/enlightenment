@@ -9,6 +9,8 @@ static E_Config_DD *conf_device_edd = NULL;
 static E_Config_DD *conf_edd = NULL;
 Config *ebluez5_config = NULL;
 
+static Ecore_Timer *zero_adapters_check_timer = NULL;
+
 E_API E_Module_Api e_modapi = {E_MODULE_API_VERSION, "Bluez5"};
 
 static void
@@ -210,6 +212,48 @@ _cb_rfkill_unblock(void *datam EINA_UNUSED, const char *params)
         "users and groups there to be sure."));
 }
 
+static void
+_cb_rfkill_list(void *datam EINA_UNUSED, const char *params)
+{
+   if ((!params) || (!strcmp(params, "-"))) return;
+   // params is:
+   // hci0\tBluetooth\n
+   // phy0\tWireless LAN\n
+   // ...
+   // we got a list of possible rf-killable devices and this list callback
+   // will only have happened if we requested a list which we only do if
+   // tjhe list of adapters is empty still 5 seconds after init - something
+   // possibly wrong with them being blocked and thbus bluez not even listing
+   // them, so unblock them to get them listed
+   char **lines = eina_str_split(params, "\n", 0);
+   if (lines)
+     {
+        int i = 0;
+        char *line = lines[i];
+
+        while (line)
+          {
+             char **fields = eina_str_split(line, "\t", 0);
+             if (fields)
+               {
+                  if ((fields[0]) && (fields[1]))
+                    {
+                       if (!strcasecmp(fields[1], "bluetooth"))
+                         {
+                            ebluez5_rfkill_unblock(fields[0]);
+                         }
+                    }
+                  free(fields[0]);
+                  free(fields);
+               }
+             i++;
+             line = lines[i];
+          }
+        free(lines[0]);
+        free(lines);
+     }
+}
+
 void
 ebluez5_rfkill_unblock(const char *name)
 {
@@ -329,6 +373,15 @@ ebluez5_device_prop_unlock_set(const char *address, Eina_Bool enable)
      }
 }
 
+static Eina_Bool
+_cb_zero_adapters_check(void *data EINA_UNUSED)
+{
+   zero_adapters_check_timer = NULL;
+   if (!ebluez5_popup_adapters_get())
+     e_system_send("rfkill-list", "-");
+   return EINA_FALSE;
+}
+
 /////////////////////////////////////////////////////////////////////////////
 
 /* Module Functions */
@@ -364,6 +417,7 @@ e_modapi_init(E_Module *m)
    E_CONFIG_LIST(D, T, devices, conf_device_edd);
 
    e_system_handler_add("rfkill-unblock", _cb_rfkill_unblock, NULL);
+   e_system_handler_add("rfkill-list", _cb_rfkill_list, NULL);
 
    ebluez5_config = e_config_domain_load("module.ebluez5", conf_edd);
    if (!ebluez5_config) ebluez5_config = E_NEW(Config, 1);
@@ -372,6 +426,8 @@ e_modapi_init(E_Module *m)
    bz_init();
 
    e_gadcon_provider_register(&_gc_class);
+
+   zero_adapters_check_timer = ecore_timer_add(5.0, _cb_zero_adapters_check, NULL);
 
    return m;
 }
@@ -382,6 +438,12 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    Config_Adapter *ad;
    Config_Device *dev;
 
+   if (zero_adapters_check_timer)
+     {
+        ecore_timer_del(zero_adapters_check_timer);
+        zero_adapters_check_timer = NULL;
+     }
+   e_system_handler_del("rfkill-list", _cb_rfkill_list, NULL);
    e_system_handler_del("rfkill-unblock", _cb_rfkill_unblock, NULL);
    EINA_LIST_FREE(ebluez5_config->adapters, ad)
      {
