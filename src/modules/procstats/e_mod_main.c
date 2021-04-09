@@ -105,7 +105,7 @@ _proc_stats_client_move_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj 
    evas_object_geometry_get(item->obj_swallow, &ox, &oy, &ow, &oh);
 
    if (item->popup)
-     evas_object_move(item->popup, ox + (ow / 2), oy + oh);
+     evas_object_move(item->popup, ox + (ow / 2), oy);
 }
 
 static void
@@ -159,11 +159,11 @@ _proc_stats_icon_clicked_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
 
    _proc_stats_item_display(item);
 
-   elm_ctxpopup_direction_priority_set(o, ELM_CTXPOPUP_DIRECTION_DOWN,
-                                       ELM_CTXPOPUP_DIRECTION_UP,
+   elm_ctxpopup_direction_priority_set(o, ELM_CTXPOPUP_DIRECTION_UP,
+                                       ELM_CTXPOPUP_DIRECTION_DOWN,
                                        ELM_CTXPOPUP_DIRECTION_LEFT,
                                        ELM_CTXPOPUP_DIRECTION_RIGHT);
-   evas_object_move(o, ox + (ow / 2), oy + oh);
+   evas_object_move(o, ox + (ow / 2), oy);
    evas_object_show(o);
 }
 
