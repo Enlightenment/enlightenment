@@ -54,30 +54,6 @@ _e_startup_delay(void *data)
    return EINA_FALSE;
 }
 
-// custom float parser for N.nnnn, or N,nnnn or N to avoid locale issues
-static double
-_atof(const char *s)
-{
-   const char *p;
-   double v = 0, dec;
-
-   for (p = s; isdigit(*p); p++)
-     {
-        v *= 10.0;
-        v += (double)(*p - '0');
-     }
-   if ((*p == '.') || (*p == ','))
-     {
-        dec = 0.1;
-        for (p++; isdigit(*p); p++)
-          {
-             v += ((double)(*p - '0')) * dec;
-             dec /= 10.0;
-          }
-     }
-   return v;
-}
-
 static void
 _e_startup(void)
 {
@@ -103,12 +79,7 @@ _e_startup(void)
    if (desktop->x)
      {
         s = eina_hash_find(desktop->x, "X-GNOME-Autostart-Delay");
-        if (s)
-          {
-             const char *prev = setlocale(LC_NUMERIC, "C");
-             delay = _atof(s);
-             setlocale(LC_NUMERIC, prev);
-          }
+        if (s) delay = eina_convert_strtod_c(s, NULL);
      }
    if (delay > 0.0)
      {
