@@ -1163,6 +1163,8 @@ _e_comp_x_client_hide(E_Client *ec)
 // are mistaken  ... so for now disable this until we have a debate on it
 //   && (!e_comp_object_mirror_visibility_check(ec->frame))
    ;
+   ec->netwm.state.hidden = 1;
+   e_hints_window_state_set(ec);
    if (ec->unredirected_single || _e_comp_x_client_data_get(ec)->iconic)
      ecore_x_window_hide(_e_comp_x_client_window_get(ec));
    if (_e_comp_x_client_data_get(ec)->iconic)
@@ -1209,6 +1211,8 @@ _e_comp_x_client_show(E_Client *ec)
         ecore_x_window_show(_e_comp_x_client_window_get(ec));
         _e_comp_x_client_data_get(ec)->iconic = 0;
      }
+   ec->netwm.state.hidden = 0;
+   e_hints_window_state_set(ec);
    if (!ec->override)
      e_hints_window_visible_set(ec);
 
