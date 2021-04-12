@@ -1,6 +1,7 @@
+#include <e.h>
+
 #ifdef HAVE_ELPUT
 
-#include <e.h>
 #include <Eina.h>
 #include <grp.h>
 #include <sys/types.h>
