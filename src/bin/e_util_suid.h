@@ -198,7 +198,7 @@ e_setuid_setup(uid_t *caller_uid, gid_t *caller_gid, char **caller_user, char **
 # ifdef HAVE_ENVIRON
    if (environ)
      {
-        int again;
+        int i, again;
         // go over environment array again and again... safely
         do
           {
