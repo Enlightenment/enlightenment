@@ -1648,16 +1648,40 @@ _e_main_desk_restore(void)
         unsigned int desks[2];
         Ecore_X_Atom a;
 
+        // hide all windows first as desk show will restore
+        E_CLIENT_FOREACH(ec)
+          {
+             ec->hidden = 1;
+             evas_object_show(ec->frame);
+             ec->changes.visible = 0;
+             evas_object_hide(ec->frame);
+             e_client_comp_hidden_set(ec, EINA_TRUE);
+          }
         EINA_LIST_FOREACH(e_comp->zones, l, zone)
           {
+             desk = NULL;
+
              snprintf(buf, sizeof(buf), "E_DESK_%i", zone->num);
              a = ecore_x_atom_get(buf);
              ret = ecore_x_window_prop_card32_get(e_comp->root, a, desks, 2);
              if (ret == 2)
                {
                   desk = e_desk_at_xy_get(zone, desks[0], desks[1]);
-                  if (!desk) continue;
-                  e_desk_show(desk);
+                  if (desk) e_desk_show(desk);
+               }
+             if (!desk) desk = e_desk_current_get(zone);
+             if (desk)
+               {
+                  // ensure windows for this desk are shown
+                  E_CLIENT_REVERSE_FOREACH(ec)
+                    {
+                       if ((ec->desk == desk) || (ec->sticky))
+                         {
+                            ec->hidden = 0;
+                            e_client_comp_hidden_set(ec, ec->hidden || ec->shaded);
+                            evas_object_show(ec->frame);
+                         }
+                    }
                }
           }
         E_CLIENT_REVERSE_FOREACH(ec)
