@@ -33,10 +33,12 @@ e_modapi_init(E_Module *m)
                                  _("Edge Bindings"), NULL,
                                  "preferences-desktop-edge-bindings",
                                  e_int_config_edgebindings);
+#ifdef HAVE_ELPUT
    e_configure_registry_item_add("keyboard_and_mouse/swipe_bindings", 10,
                                  _("Swipe Bindings"), NULL,
                                  "preferences-desktop-swipe-bindings",
                                  e_int_config_swipebindings);
+#endif
 
    e_configure_registry_category_add("advanced", 80, _("Advanced"), NULL, "preferences-advanced");
    e_configure_registry_item_add("advanced/signal_bindings", 10,

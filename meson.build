@@ -309,7 +309,7 @@ dep_eo               = dependency('eo'              , required: true)
 dep_eldbus           = dependency('eldbus'          , required: true)
 dep_emotion          = dependency('emotion'         , required: true)
 dep_elementary       = dependency('elementary'      , required: true)
-dep_elput            = dependency('elput'           , required: true)
+dep_elput            = dependency('elput'           , required: false)
 
 dep_wayland = []
 if get_option('wl') == true
@@ -359,6 +359,10 @@ if get_option('wl') == true and get_option('wl-x11') == false and get_option('xw
   config_h.set('HAVE_WAYLAND_ONLY', '1')
 else
   dep_ecore_x = dependency('ecore-x')
+endif
+
+if get_option('elput') == true
+   config_h.set('HAVE_ELPUT', '1')
 endif
 
 dep_xkeyboard_config = dependency('xkeyboard-config', required: false)

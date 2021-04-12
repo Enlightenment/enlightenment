@@ -40,6 +40,11 @@ option('libexif',
 	value: true,
 	description: 'enable EXIF support: (default=true)')
 
+option('elput',
+       type: 'boolean',
+       value: true,
+       description: 'enable elput support: (default=true)')
+
 option('device-udev',
 	type: 'boolean',
 	value: true,

@@ -1,3 +1,5 @@
+#ifdef HAVE_ELPUT
+
 #include <e.h>
 #include <Eina.h>
 #include <grp.h>
@@ -247,3 +249,5 @@ e_bindings_gesture_capable_devices_get(void)
 {
    return gesture_capable_devices;
 }
+
+#endif
