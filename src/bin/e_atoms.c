@@ -14,6 +14,7 @@ E_API Ecore_X_Atom E_ATOM_WINDOW_STATE_CENTERED = 0;
 E_API Ecore_X_Atom E_ATOM_DESKTOP_FILE = 0;
 E_API Ecore_X_Atom E_ATOM_ZONE_GEOMETRY = 0;
 E_API Ecore_X_Atom WL_SURFACE_ID = 0;
+E_API Ecore_X_Atom E_ATOM_E_WAS_HERE = 0;
 #endif
 
 /* externally accessible functions */
@@ -33,7 +34,8 @@ e_atoms_init(void)
       "__E_ATOM_WINDOW_STATE_CENTERED",
       "__E_ATOM_DESKTOP_FILE",
       "E_ZONE_GEOMETRY",
-      "WL_SURFACE_ID"
+      "WL_SURFACE_ID",
+      "__E_ATOM_E_WAS_HERE",
    };
    Ecore_X_Atom atoms[EINA_C_ARRAY_LENGTH(atom_names)];
 
@@ -50,6 +52,7 @@ e_atoms_init(void)
    E_ATOM_DESKTOP_FILE = atoms[9];
    E_ATOM_ZONE_GEOMETRY = atoms[10];
    WL_SURFACE_ID = atoms[11];
+   E_ATOM_E_WAS_HERE = atoms[12];
 #endif
    return 1;
 }

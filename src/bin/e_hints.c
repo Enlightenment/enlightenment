@@ -1014,7 +1014,7 @@ e_hints_window_state_get(E_Client *ec)
 #ifdef HAVE_WAYLAND_ONLY
    (void)ec;
 #else
-   unsigned int i, num;
+   unsigned int i, num, was_here = 0;
    Ecore_X_Window_State *state;
 
    if (!e_client_has_xwindow(ec)) return;
@@ -1029,6 +1029,17 @@ e_hints_window_state_get(E_Client *ec)
    ec->netwm.state.fullscreen = 0;
    ec->netwm.state.stacking = 0;
 
+   if (ecore_x_window_prop_card32_get(e_client_util_win_get(ec),
+                                      E_ATOM_E_WAS_HERE,
+                                      &was_here, 1) != 1)
+     {
+        unsigned int val = 1;
+
+        was_here = 0;
+        ecore_x_window_prop_card32_set(e_client_util_win_get(ec),
+                                       E_ATOM_E_WAS_HERE,
+                                       &val, 1);
+     }
    ecore_x_netwm_window_state_get(e_client_util_win_get(ec), &state, &num);
    if (state)
      {
@@ -1069,7 +1080,8 @@ e_hints_window_state_get(E_Client *ec)
                   break;
 
                 case ECORE_X_WINDOW_STATE_HIDDEN:
-                  ec->netwm.state.hidden = 1;
+                  if (!was_here)
+                    ec->netwm.state.hidden = 1;
                   break;
 
                 case ECORE_X_WINDOW_STATE_FULLSCREEN:

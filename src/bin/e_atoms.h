@@ -25,6 +25,7 @@ extern E_API Ecore_X_Atom E_ATOM_WINDOW_STATE_CENTERED;
 
 extern E_API Ecore_X_Atom E_ATOM_ZONE_GEOMETRY;
 extern E_API Ecore_X_Atom WL_SURFACE_ID;
+extern E_API Ecore_X_Atom E_ATOM_E_WAS_HERE;
 
 EINTERN int    e_atoms_init(void);
 EINTERN int    e_atoms_shutdown(void);
