@@ -252,11 +252,17 @@ _battery_popup_usage_content_update_cb(void *data)
         snprintf(buf, sizeof(buf), "%i:%02i", hrs, mins);
         elm_object_text_set(w->remaining, buf);
 
-        snprintf(buf, sizeof(buf), "%1.1f%%",
-                 (double)bat->last_full_charge / (bat->design_charge / 100));
+        if ((bat->last_full_charge > 0) && (bat->design_charge > 0))
+          snprintf(buf, sizeof(buf), "%1.1f%%",
+                   100.0 * ((double)bat->last_full_charge / bat->design_charge));
+        else
+          snprintf(buf, sizeof(buf), "???%%");
         elm_object_text_set(w->health, buf);
 
-        elm_object_text_set(w->technology, bat->technology);
+        if (bat->technology)
+          elm_object_text_set(w->technology, bat->technology);
+        else
+          elm_object_text_set(w->technology, _("Unknown"));
         if (i == (pd->n_units - 1)) break;
      }
    return ECORE_CALLBACK_RENEW;
@@ -424,7 +430,14 @@ _battery_popup_usage_new(Instance *inst)
    EINA_LIST_FOREACH(device_batteries, l, bat)
      {
         _Popup_Widgets *w = &pd->widgets[i++];
-        snprintf(buf, sizeof(buf), _("Battery: %s (%s)"), bat->vendor, bat->model);
+        if ((bat->vendor) && (bat->model))
+          snprintf(buf, sizeof(buf), _("Battery: %s (%s)"), bat->vendor, bat->model);
+        else if (bat->vendor)
+          snprintf(buf, sizeof(buf), _("Battery: %s"), bat->vendor);
+        else if (bat->model)
+          snprintf(buf, sizeof(buf), _("Battery: %s"), bat->model);
+        else
+          snprintf(buf, sizeof(buf), _("Battery"));
         elm_genlist_item_append(glist, itc2, buf, NULL, ELM_GENLIST_ITEM_GROUP, NULL, NULL);
         elm_genlist_item_append(glist, itc, w, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
      }
