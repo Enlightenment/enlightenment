@@ -88,16 +88,9 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
 
    inst = E_NEW(Instance, 1);
    inst->o_base = edje_object_add(gc->evas);
-   if (!e_theme_edje_object_set(inst->o_base,
-                                "base/theme/modules/syscon",
-                                "e/modules/syscon/button"))
-     {
-        char buff[PATH_MAX];
-
-        snprintf(buff, sizeof(buff), "%s/e-module-syscon.edj", e_module_dir_get(mod));
-        edje_object_file_set(inst->o_base, buff,
-                             "e/modules/syscon/button");
-     }
+   e_theme_edje_object_set(inst->o_base,
+                           "base/theme/modules/syscon",
+                           "e/modules/syscon/button");
    inst->gcc = e_gadcon_client_new(gc, name, id, style, inst->o_base);
    inst->gcc->data = inst;
 
