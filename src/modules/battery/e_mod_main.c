@@ -604,7 +604,7 @@ _battery_device_update(void)
 
    EINA_LIST_FOREACH(device_batteries, l, bat)
      {
-        if ((!bat->got_prop) || (!bat->technology))
+        if ((!bat->got_prop)/* || (!bat->technology)*/)
           continue;
         have_battery = 1;
         batnum++;

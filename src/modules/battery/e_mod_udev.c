@@ -96,6 +96,7 @@ static void
 _battery_udev_battery_add(const char *syspath)
 {
    Battery *bat;
+   const char *type;
 
    if ((bat = _battery_battery_find(syspath)))
      {
@@ -103,7 +104,22 @@ _battery_udev_battery_add(const char *syspath)
         _battery_udev_battery_update(NULL, bat);
         return;
      }
-
+   type = eeze_udev_syspath_get_property(syspath, "POWER_SUPPLY_TYPE");
+   if (type)
+     {
+        if ((!strcmp(type, "USB")) || (!strcmp(type, "Mains")))
+          {
+             _battery_udev_ac_add(syspath);
+             eina_stringshare_del(type);
+             return;
+          }
+        if (!!strcmp(type, "Battery"))
+          {
+             eina_stringshare_del(type);
+             return;
+          }
+        eina_stringshare_del(type);
+     }
    if (!(bat = E_NEW(Battery, 1)))
      {
         eina_stringshare_del(syspath);
@@ -233,6 +249,15 @@ _battery_udev_battery_update(const char *syspath, Battery *bat)
    test = eeze_udev_syspath_get_property(bat->udi, "POWER_SUPPLY_ENERGY_NOW");
    if (!test)
      test = eeze_udev_syspath_get_property(bat->udi, "POWER_SUPPLY_CHARGE_NOW");
+   if (!test)
+     {
+        if (eina_dbl_exact(bat->last_full_charge, 0))
+          {
+             bat->last_full_charge = 100;
+             bat->design_charge = 100;
+          }
+        test = eeze_udev_syspath_get_property(bat->udi, "POWER_SUPPLY_CAPACITY");
+     }
    if (test)
      {
         double charge_rate = 0;
@@ -240,15 +265,20 @@ _battery_udev_battery_update(const char *syspath, Battery *bat)
         charge = strtod(test, NULL);
         eina_stringshare_del(test);
         t = ecore_time_get();
-        if ((bat->got_prop) && (!eina_dbl_exact(charge, bat->current_charge)) && (!eina_dbl_exact(bat->current_charge, 0)))
-          charge_rate = ((charge - bat->current_charge) / (t - bat->last_update));
-        if ((!eina_dbl_exact(charge_rate, 0)) || eina_dbl_exact(bat->last_update, 0) || eina_dbl_exact(bat->current_charge, 0))
+        if ((bat->got_prop) &&
+            (!eina_dbl_exact(charge, bat->current_charge)) &&
+            (!eina_dbl_exact(bat->current_charge, 0)))
+          charge_rate =
+            ((charge - bat->current_charge) / (t - bat->last_update));
+        if ((!eina_dbl_exact(charge_rate, 0)) ||
+            eina_dbl_exact(bat->last_update, 0) ||
+            eina_dbl_exact(bat->current_charge, 0))
           {
              bat->last_update = t;
              bat->current_charge = charge;
              bat->charge_rate = charge_rate;
           }
-        bat->percent = 100 * (bat->current_charge / bat->last_full_charge);
+        bat->percent = (100 * bat->current_charge) / bat->last_full_charge;
         if (bat->got_prop)
           {
              if (bat->charge_rate > 0)
