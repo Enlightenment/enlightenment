@@ -305,12 +305,12 @@ _gc_shutdown(E_Gadcon_Client *gcc)
    if (pager_config)
      instances = eina_list_remove(instances, inst);
    e_drop_handler_del(inst->pager->drop_handler);
-   _pager_free(inst->pager);
    if (inst->o_base)
      {
         evas_object_del(inst->o_base);
         inst->o_base = NULL;
      }
+   _pager_free(inst->pager);
    free(inst);
 }
 
