@@ -44,10 +44,19 @@
 # define DRM_FORMAT_MOD_LINEAR 0
 #endif
 
-static void
-linux_dmabuf_buffer_destroy(struct linux_dmabuf_buffer *buffer)
+void
+linux_dmabuf_buffer_ref(struct linux_dmabuf_buffer *buffer)
+{
+   buffer->refs++;
+}
+
+void
+linux_dmabuf_buffer_unref(struct linux_dmabuf_buffer *buffer)
 {
    int i;
+
+   buffer->refs--;
+   if (buffer->refs > 0) return;
 
    for (i = 0; i < buffer->attributes.n_planes; i++)
      {
@@ -57,6 +66,12 @@ linux_dmabuf_buffer_destroy(struct linux_dmabuf_buffer *buffer)
 
    buffer->attributes.n_planes = 0;
    free(buffer);
+}
+
+static void
+linux_dmabuf_buffer_destroy(struct linux_dmabuf_buffer *buffer)
+{
+   linux_dmabuf_buffer_unref(buffer);
 }
 
 static void
@@ -369,6 +384,7 @@ linux_dmabuf_create_params(struct wl_client *client,
    buffer = calloc(1, sizeof *buffer);
    if (!buffer) goto err_out;
 
+   buffer->refs = 1;
    for (i = 0; i < MAX_DMABUF_PLANES; i++)
      buffer->attributes.fd[i] = -1;
 

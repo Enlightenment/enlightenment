@@ -53,6 +53,7 @@ struct _E_Pixmap
    void *data;
    Eina_Rectangle opaque;
    Eina_List *free_buffers;
+   Eina_List *busy_list;
 #endif
 
    Eina_Bool usable E_BITFIELD;
@@ -136,6 +137,8 @@ static void
 _e_pixmap_wl_resource_release(E_Comp_Wl_Buffer *buffer)
 {
    buffer->busy--;
+   if (buffer->dmabuf_buffer)
+     linux_dmabuf_buffer_unref(buffer->dmabuf_buffer);
    if (buffer->busy) return;
 
    if (buffer->pool)
@@ -171,6 +174,11 @@ _e_pixmap_wayland_buffer_release(E_Pixmap *cp, E_Comp_Wl_Buffer *buffer)
         return;
      }
 
+   if (buffer->busy == 1)
+     {
+        // we are at busy 1 abut about to go to 0 below, so remove now
+        cp->busy_list = eina_list_remove(cp->busy_list, buffer);
+     }
    _e_pixmap_wl_resource_release(buffer);
 }
 
@@ -192,6 +200,18 @@ static void
 _e_pixmap_wayland_image_clear(E_Pixmap *cp)
 {
    EINA_SAFETY_ON_NULL_RETURN(cp);
+
+   if (cp->busy_list)
+     {
+        E_Comp_Wl_Buffer *buffer;
+
+        EINA_LIST_FREE(cp->busy_list, buffer)
+          {
+             buffer->busy--;
+             if (buffer->dmabuf_buffer)
+               linux_dmabuf_buffer_unref(buffer->dmabuf_buffer);
+          }
+     }
 
    if (!cp->held_buffer) return;
    if (!cp->held_buffer->pool) return;
@@ -703,7 +723,17 @@ e_pixmap_resource_set(E_Pixmap *cp, void *resource)
    if (cp->buffer == resource) return;
 
    if (cp->buffer)
-     _e_pixmap_wl_resource_release(cp->buffer);
+     {
+        if (resource)
+          {
+        if (cp->buffer->busy == 1)
+          {
+             // about to go to busy 0, so remove from list
+             cp->busy_list = eina_list_remove(cp->busy_list, cp->buffer);
+          }
+        _e_pixmap_wl_resource_release(cp->buffer);
+          }
+     }
 
    if (cp->buffer_destroy_listener.notify)
      {
@@ -716,7 +746,14 @@ e_pixmap_resource_set(E_Pixmap *cp, void *resource)
    wl_signal_add(&cp->buffer->destroy_signal,
                  &cp->buffer_destroy_listener);
 
+   if (cp->buffer->dmabuf_buffer)
+     linux_dmabuf_buffer_ref(cp->buffer->dmabuf_buffer);
    cp->buffer->busy++;
+   if (cp->buffer->busy > 0)
+     {
+        cp->busy_list = eina_list_remove(cp->busy_list, cp->buffer);
+        cp->busy_list = eina_list_append(cp->busy_list, cp->buffer);
+     }
 #else
    (void)resource;
 #endif
@@ -751,23 +788,32 @@ e_pixmap_is_pixels(E_Pixmap *cp)
 static void
 _e_pixmap_scanout_handler(void *data, Evas_Native_Surface_Status status)
 {
-   E_Comp_Wl_Buffer *buffer;
+   E_Comp_Wl_Buffer *buffer = data;
 
    printf("EWL: %s, Status: %d\n", __FUNCTION__, status);
 
-   buffer = data;
    switch (status)
      {
       case EVAS_NATIVE_SURFACE_STATUS_SCANOUT_ON:
+        if (buffer->dmabuf_buffer)
+          linux_dmabuf_buffer_ref(buffer->dmabuf_buffer);
         buffer->busy++;
+        // XXX: fixme - handle cp->busy_list
         break;
       case EVAS_NATIVE_SURFACE_STATUS_SCANOUT_OFF:
+        // busy--
+        // XXX: fixme - handle cp->busy_list
         _e_pixmap_wl_resource_release(buffer);
         break;
       case EVAS_NATIVE_SURFACE_STATUS_PLANE_ASSIGN:
+        if (buffer->dmabuf_buffer)
+          linux_dmabuf_buffer_ref(buffer->dmabuf_buffer);
+        // XXX: fixme - handle cp->busy_list
         buffer->busy++;
         break;
       case EVAS_NATIVE_SURFACE_STATUS_PLANE_RELEASE:
+        // busy--
+        // XXX: fixme - handle cp->busy_list
         _e_pixmap_wl_resource_release(buffer);
         break;
      }

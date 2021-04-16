@@ -58,6 +58,7 @@ struct linux_dmabuf_buffer {
 
 	void *user_data;
 	dmabuf_user_data_destroy_func user_data_destroy_func;
+        int refs; // a refcount to keep this alive for just a bit longer...
 
 	/* XXX:
 	 *
@@ -74,6 +75,9 @@ struct linux_dmabuf_buffer {
 	 * possibilities to successfully scan out, avoiding compositing.
 	 */
 };
+
+void linux_dmabuf_buffer_ref(struct linux_dmabuf_buffer *buffer);
+void linux_dmabuf_buffer_unref(struct linux_dmabuf_buffer *buffer);
 
 int
 linux_dmabuf_setup(struct wl_display *display);
