@@ -5495,7 +5495,7 @@ _e_comp_x_devices_change_cb(void *data EINA_UNUSED, int t EINA_UNUSED, void *ev 
    else
 #endif
      {
-        e_comp_x_devices_config_apply();
+        e_comp_x_devices_config_apply(EINA_FALSE);
      }
    return ECORE_CALLBACK_RENEW;
 }
@@ -6068,7 +6068,7 @@ e_comp_x_init(void)
                                 0,
                                 e_config->screensaver_blanking,
                                 e_config->screensaver_expose);
-        e_comp_x_devices_config_apply();
+        e_comp_x_devices_config_apply(EINA_FALSE);
      }
    else
      e_dnd_init();

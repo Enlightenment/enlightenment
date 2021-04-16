@@ -389,7 +389,7 @@ _handle_dev_prop(int dev_slot, const char *dev, const char *prop, Device_Flags d
 }
 
 E_API void
-e_comp_x_devices_config_apply(void)
+e_comp_x_devices_config_apply(Eina_Bool force)
 {
    int num_devs, i;
    Eina_Bool driver_evdev = EINA_FALSE;
@@ -413,6 +413,7 @@ e_comp_x_devices_config_apply(void)
         devstring = eina_strbuf_string_steal(sbuf);
      }
    eina_strbuf_free(sbuf);
+   changed |= force;
    printf("DEV: CHANGES ... have %i devices, changed=%i\n", num_devs, changed);
    if (!changed) return;
    for (i = 0; i < num_devs; i++)

@@ -8,7 +8,7 @@ e_mouse_update(void)
 {
 #ifndef HAVE_WAYLAND_ONLY
    if (e_comp->comp_type == E_PIXMAP_TYPE_X)
-     e_comp_x_devices_config_apply();
+     e_comp_x_devices_config_apply(EINA_TRUE);
 #endif
 
 #ifdef USE_MODULE_WL_DRM
