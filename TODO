@@ -311,6 +311,17 @@ TODO:
 * cpufreq - move to config dialog for settings
   * set governor for ac vs battery (or powerstate levels)
   * set pstate min and max for ac vs battery (or power state levels)
+* saving power
+  * when screen blanks set all apps to hidden state
+  * have new property/atom for hidden but visible in a pager orsomething
+    * efl - dont suspend render when this is the case but drop fps to 1/4
+  * look into x grabserver for long periods (eg 1s) then ungrab for
+    0.1 sec then grab again to throttle apps from doing drawing while
+    blanked
+  * look into SIGSTOP/CONT child processes and their children when blanked
+    * optional SIGSTOP while iconified
+    * optional SIGSTOP when on another desktop
+    * need to allow a CONT every now and again to unblock buffers
 * set backlight and dim timeout per powersave level
 * battery - set powersave levels based on ac or battery level
 * efl: flat theme redo
