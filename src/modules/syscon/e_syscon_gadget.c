@@ -138,11 +138,11 @@ static Evas_Object *
 _gc_icon(const E_Gadcon_Client_Class *cc EINA_UNUSED, Evas *evas)
 {
    Evas_Object *obj;
-   char buff[PATH_MAX];
 
-   snprintf(buff, sizeof(buff), "%s/e-module-syscon.edj", e_module_dir_get(mod));
    obj = edje_object_add(evas);
-   edje_object_file_set(obj, buff, "gadget_icon");
+   e_theme_edje_object_set(obj,
+                           "base/theme/modules/syscon",
+                           "e/modules/syscon/button");
    return obj;
 }
 
