@@ -31,5 +31,5 @@ Comment[pt]=Definições do rato, teclas e botões.
 Comment[ru]=Настройки управления мышью, клавишами и кнопками.
 Comment[sr]=Поставке управљањем мишем, тастатуром и дугмадима.
 Comment[tr]=Klavye, fare ve düğme denetim ayarları.
-Icon=preferences-desktop-keyboard-shortcuts
+Icon=e-module-conf_bindings
 X-Enlightenment-ModuleType=settings

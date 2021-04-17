@@ -10,4 +10,4 @@ src = files(
 if get_option('gesture-recognition') == true
    src += files('e_int_config_swipebindings.c')
 endif
-desktop_only = true
+

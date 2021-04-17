@@ -5,5 +5,3 @@ src = files(
   'e_int_config_intl.c',
   'e_mod_main.h'
  )
-
-desktop_only = true

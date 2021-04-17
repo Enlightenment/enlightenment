@@ -73,7 +73,6 @@ mods = [
 ]
 
 foreach m: mods
-  desktop_only = false
   disable      = false
   no_icon      = false
   cargs        = ''
@@ -103,9 +102,7 @@ foreach m: mods
     _conf         = 'USE_MODULE_' + m.underscorify().to_upper()
     module_files += join_paths(_dir_bin, m + '.so')
 
-    if desktop_only == true
-      _data = [ join_paths(m, 'module.desktop') ]
-    elif no_icon == true
+    if no_icon == true
       _data = []
     else
       _data = [ join_paths(m, 'e-module-' + m + '.edj'),

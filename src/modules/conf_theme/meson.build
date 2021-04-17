@@ -11,5 +11,3 @@ src = files(
   'e_int_config_xsettings.c',
   'e_mod_main.h'
  )
-
-desktop_only = true
