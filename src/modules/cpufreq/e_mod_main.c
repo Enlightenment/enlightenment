@@ -1208,6 +1208,7 @@ _cpufreq_event_cb_powersave(void *data EINA_UNUSED, int type EINA_UNUSED, void *
      {
       case E_POWERSAVE_MODE_NONE:
         printf("PWSV: none\n");
+        EINA_FALLTHROUGH;
       case E_POWERSAVE_MODE_LOW:
         printf("PWSV: low - orig=%s\n", cpufreq_config->governor);
         gov = cpufreq_config->status->orig_governor;
@@ -1218,6 +1219,7 @@ _cpufreq_event_cb_powersave(void *data EINA_UNUSED, int type EINA_UNUSED, void *
 
       case E_POWERSAVE_MODE_MEDIUM:
         printf("PWSV: med\n");
+        EINA_FALLTHROUGH;
       case E_POWERSAVE_MODE_HIGH:
         printf("PWSV: hi\n");
         eina_stringshare_replace(&(cpufreq_config->status->orig_governor),
@@ -1237,6 +1239,7 @@ _cpufreq_event_cb_powersave(void *data EINA_UNUSED, int type EINA_UNUSED, void *
 
       case E_POWERSAVE_MODE_EXTREME:
         printf("PWSV: extreme\n");
+        EINA_FALLTHROUGH;
       case E_POWERSAVE_MODE_FREEZE:
         printf("PWSV: freeze\n");
         eina_stringshare_replace(&(cpufreq_config->status->orig_governor),
