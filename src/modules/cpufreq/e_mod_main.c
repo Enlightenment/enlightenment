@@ -1181,12 +1181,15 @@ _cpufreq_event_cb_powersave(void *data EINA_UNUSED, int type EINA_UNUSED, void *
    Eina_List *l;
    Eina_Bool has_powersave = EINA_FALSE;
    Eina_Bool has_conservative = EINA_FALSE;
+// don't use these at this point...
+//   Eina_Bool has_ondemand = EINA_FALSE;
+//   Eina_Bool has_interactive = EINA_FALSE;
+   const char *gov;
 
+   printf("PWSV: auto=%i\n", cpufreq_config->auto_powersave);
    if (!cpufreq_config->auto_powersave) return ECORE_CALLBACK_PASS_ON;
 
    ev = event;
-   if (!cpufreq_config->status->orig_governor)
-     cpufreq_config->status->orig_governor = eina_stringshare_add(cpufreq_config->status->cur_governor);
 
    for (l = cpufreq_config->status->governors; l; l = l->next)
      {
@@ -1194,34 +1197,50 @@ _cpufreq_event_cb_powersave(void *data EINA_UNUSED, int type EINA_UNUSED, void *
           has_conservative = EINA_TRUE;
         else if (!strcmp(l->data, "powersave"))
           has_powersave = EINA_TRUE;
-        else if (!strcmp(l->data, "interactive"))
-          has_powersave = EINA_TRUE;
+// don't use these at this point...
+//        else if (!strcmp(l->data, "ondemand"))
+//          has_ondemand = EINA_TRUE;
+//        else if (!strcmp(l->data, "interactive"))
+//          has_interactive = EINA_TRUE;
      }
 
    switch (ev->mode)
      {
       case E_POWERSAVE_MODE_NONE:
+        printf("PWSV: none\n");
       case E_POWERSAVE_MODE_LOW:
-        _cpufreq_set_governor(cpufreq_config->status->orig_governor);
-        eina_stringshare_del(cpufreq_config->status->orig_governor);
-        cpufreq_config->status->orig_governor = NULL;
+        printf("PWSV: low - orig=%s\n", cpufreq_config->governor);
+        gov = cpufreq_config->status->orig_governor;
+        if (!gov) gov = cpufreq_config->governor;
+        eina_stringshare_replace(&(cpufreq_config->status->orig_governor), NULL);
+        if (gov) _cpufreq_set_governor(gov);
         break;
 
       case E_POWERSAVE_MODE_MEDIUM:
+        printf("PWSV: med\n");
       case E_POWERSAVE_MODE_HIGH:
-        if ((cpufreq_config->powersave_governor) || (has_conservative))
+        printf("PWSV: hi\n");
+        eina_stringshare_replace(&(cpufreq_config->status->orig_governor),
+                                 cpufreq_config->status->cur_governor);
+        if (cpufreq_config->powersave_governor)
           {
-             if (cpufreq_config->powersave_governor)
-               _cpufreq_set_governor(cpufreq_config->powersave_governor);
-             else
-               _cpufreq_set_governor("conservative");
+             _cpufreq_set_governor(cpufreq_config->powersave_governor);
+             break;
+          }
+        else if (has_conservative)
+          {
+             _cpufreq_set_governor("conservative");
              break;
           }
         EINA_FALLTHROUGH;
         /* no break */
 
       case E_POWERSAVE_MODE_EXTREME:
+        printf("PWSV: extreme\n");
       case E_POWERSAVE_MODE_FREEZE:
+        printf("PWSV: freeze\n");
+        eina_stringshare_replace(&(cpufreq_config->status->orig_governor),
+                                 cpufreq_config->status->cur_governor);
         if (has_powersave)
           _cpufreq_set_governor("powersave");
         break;
