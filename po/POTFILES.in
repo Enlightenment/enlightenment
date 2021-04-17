@@ -147,6 +147,8 @@ src/bin/e_gadcon.c
 src/bin/e_gadcon.h
 src/bin/e_gadcon_popup.c
 src/bin/e_gadcon_popup.h
+src/bin/e_gesture.c
+src/bin/e_gesture.h
 src/bin/e_grab_dialog.c
 src/bin/e_grab_dialog.h
 src/bin/e_grabinput.c
@@ -528,7 +530,6 @@ src/modules/gadman/e_mod_gadman.c
 src/modules/gadman/e_mod_gadman.h
 src/modules/gadman/e_mod_main.c
 src/modules/geolocation/e_mod_main.c
-src/modules/gesture_recognition/e_mod_main.c
 src/modules/ibar/e_mod_config.c
 src/modules/ibar/e_mod_main.c
 src/modules/ibar/e_mod_main.h
