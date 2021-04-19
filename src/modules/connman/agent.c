@@ -302,15 +302,31 @@ _agent_release(const Eldbus_Service_Interface *iface,
 
 static Eldbus_Message *
 _agent_report_error(const Eldbus_Service_Interface *iface EINA_UNUSED,
-                    const Eldbus_Message *msg EINA_UNUSED)
+                    const Eldbus_Message *msg)
 {
+   const char *txt = NULL;
+
+   if (eldbus_message_arguments_get(msg, "s", &txt))
+     {
+        e_util_dialog_show(_("Connman Error"), "%s", txt);
+     }
    return NULL;
 }
 
 static Eldbus_Message *
 _agent_request_browser(const Eldbus_Service_Interface *iface EINA_UNUSED,
-                       const Eldbus_Message *msg EINA_UNUSED)
+                       const Eldbus_Message *msg)
 {
+   const char *url = NULL;
+
+   if (eldbus_message_arguments_get(msg, "s", &url))
+     {
+        char buf[PATH_MAX * 2];
+
+        snprintf(buf, sizeof(buf), "%s/enlightenment_open %s",
+                 e_prefix_bin_get(), e_util_filename_escape(url));
+        e_util_exe_safe_run(buf, NULL);
+     }
    return NULL;
 }
 
