@@ -599,7 +599,7 @@ e_hints_window_state_set(E_Client *ec)
         if (ec->netwm.state.skip_pager)
           state[num++] = ECORE_X_WINDOW_STATE_SKIP_PAGER;
      }
-   if (ec->netwm.state.hidden)
+   if ((ec->netwm.state.hidden) || (ec->frozen))
      state[num++] = ECORE_X_WINDOW_STATE_HIDDEN;
    if (ec->netwm.state.fullscreen)
      state[num++] = ECORE_X_WINDOW_STATE_FULLSCREEN;
@@ -1261,10 +1261,17 @@ e_hints_window_visible_set(E_Client *ec)
    (void)ec;
 #else
    if (!e_client_has_xwindow(ec)) return;
-   if (ec->icccm.state != ECORE_X_WINDOW_STATE_HINT_WITHDRAWN)
+   if ((ec->icccm.state != ECORE_X_WINDOW_STATE_HINT_WITHDRAWN) &&
+       (!ec->frozen))
      {
         ec->icccm.state = ECORE_X_WINDOW_STATE_HINT_NORMAL;
         ecore_x_icccm_state_set(e_client_util_win_get(ec), ECORE_X_WINDOW_STATE_HINT_NORMAL);
+     }
+   else if (ec->frozen)
+     {
+        if (ec->icccm.state != ECORE_X_WINDOW_STATE_HINT_WITHDRAWN)
+          ec->icccm.state = ECORE_X_WINDOW_STATE_HINT_NORMAL;
+        ecore_x_icccm_state_set(e_client_util_win_get(ec), ECORE_X_WINDOW_STATE_HINT_ICONIC);
      }
    if (ec->netwm.state.hidden)
      {
@@ -1286,6 +1293,12 @@ e_hints_window_iconic_set(E_Client *ec)
    if (ec->icccm.state != ECORE_X_WINDOW_STATE_HINT_WITHDRAWN)
      {
         ec->icccm.state = ECORE_X_WINDOW_STATE_HINT_ICONIC;
+        ecore_x_icccm_state_set(e_client_util_win_get(ec), ECORE_X_WINDOW_STATE_HINT_ICONIC);
+     }
+   else if (ec->frozen)
+     {
+        if (ec->icccm.state != ECORE_X_WINDOW_STATE_HINT_WITHDRAWN)
+          ec->icccm.state = ECORE_X_WINDOW_STATE_HINT_ICONIC;
         ecore_x_icccm_state_set(e_client_util_win_get(ec), ECORE_X_WINDOW_STATE_HINT_ICONIC);
      }
    if (!ec->netwm.state.hidden)

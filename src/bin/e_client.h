@@ -656,6 +656,8 @@ struct E_Client
 
    unsigned int       stolen E_BITFIELD;
 
+   unsigned int       frozen E_BITFIELD;
+
    unsigned int       internal E_BITFIELD;
    unsigned int       internal_no_remember E_BITFIELD;
    unsigned int       internal_no_reopen E_BITFIELD;

@@ -1775,6 +1775,11 @@ _e_client_eval(E_Client *ec)
 
    if ((ec->new_client) && (!e_client_util_ignored_get(ec)) && (ec->zone))
      {
+        if (e_comp->frozen)
+          {
+             ec->frozen = EINA_TRUE;
+             e_hints_window_state_set(ec);
+          }
         _e_client_event_simple(ec, E_EVENT_CLIENT_ADD);
         e_zone_useful_geometry_get(ec->zone, &zx, &zy, &zw, &zh);
         /* enforce wm size hints for initial sizing */

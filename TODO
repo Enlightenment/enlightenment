@@ -312,7 +312,6 @@ TODO:
   * set governor for ac vs battery (or powerstate levels)
   * set pstate min and max for ac vs battery (or power state levels)
 * saving power
-  * when screen blanks set all apps to hidden state
   * have new property/atom for hidden but visible in a pager orsomething
     * efl - dont suspend render when this is the case but drop fps to 1/4
   * look into x grabserver for long periods (eg 1s) then ungrab for

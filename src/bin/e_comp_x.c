@@ -2520,6 +2520,72 @@ _e_comp_x_mapping_change(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_E
    return ECORE_CALLBACK_PASS_ON;
 }
 
+static Eina_Bool
+_e_comp_x_powersave(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   E_Event_Powersave_Update *ev = event;
+   Eina_List *l;
+   E_Client *ec;
+
+   if (e_comp->comp_type == E_PIXMAP_TYPE_WL) return ECORE_CALLBACK_PASS_ON;
+   switch (ev->mode)
+     {
+      case E_POWERSAVE_MODE_NONE:
+      case E_POWERSAVE_MODE_LOW:
+      case E_POWERSAVE_MODE_MEDIUM:
+      case E_POWERSAVE_MODE_HIGH:
+      case E_POWERSAVE_MODE_EXTREME:
+        if (e_comp->frozen)
+          {
+             e_comp->frozen = EINA_FALSE;
+             EINA_LIST_FOREACH(e_comp->clients, l, ec)
+               {
+                  if (ec->frozen)
+                    {
+                       ec->frozen = EINA_FALSE;
+                       // XXX: update props
+                       if (e_client_has_xwindow(ec))
+                         {
+                            if (!ec->iconic)
+                              {
+                                 ecore_x_icccm_state_set(e_client_util_win_get(ec),
+                                                         ECORE_X_WINDOW_STATE_HINT_NORMAL);
+                              }
+                            e_hints_window_state_set(ec);
+                         }
+                    }
+               }
+          }
+        break;
+      case E_POWERSAVE_MODE_FREEZE:
+        if (!e_comp->frozen)
+          {
+             e_comp->frozen = EINA_TRUE;
+             EINA_LIST_FOREACH(e_comp->clients, l, ec)
+               {
+                  if (!ec->frozen)
+                    {
+                       ec->frozen = EINA_TRUE;
+                       // XXX: update props
+                       if (e_client_has_xwindow(ec))
+                         {
+                            if (!ec->iconic)
+                              {
+                                 ecore_x_icccm_state_set(e_client_util_win_get(ec),
+                                                         ECORE_X_WINDOW_STATE_HINT_ICONIC);
+                              }
+                            e_hints_window_state_set(ec);
+                         }
+                    }
+               }
+          }
+        break;
+      default:
+        break;
+     }
+   return ECORE_CALLBACK_PASS_ON;
+}
+
 static void
 _e_comp_x_mouse_in_job(void *d EINA_UNUSED)
 {
@@ -6042,6 +6108,8 @@ e_comp_x_init(void)
    if (!e_xsettings_init())
      e_error_message_show(_("Enlightenment cannot initialize the XSettings system.\n"));
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_RANDR_CHANGE, _e_comp_x_randr_change, NULL);
+
+   E_LIST_HANDLER_APPEND(handlers, E_EVENT_POWERSAVE_UPDATE, _e_comp_x_powersave, NULL);
 
    ecore_x_sync();
    _x_idle_flush = ecore_idle_enterer_add(_e_comp_x_flusher, NULL);

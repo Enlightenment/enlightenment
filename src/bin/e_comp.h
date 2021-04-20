@@ -190,6 +190,8 @@ struct _E_Comp
 
    Eina_Bool       rendering E_BITFIELD; // we've received a pre-render callback but no post-render yet.
    Eina_Bool       updating E_BITFIELD; // running client updates
+
+   Eina_Bool       frozen E_BITFIELD; // frozen - when power save freeze mode is on
 };
 
 
