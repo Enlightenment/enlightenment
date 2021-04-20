@@ -845,6 +845,15 @@ _clock_time_update(void *d EINA_UNUSED, int type EINA_UNUSED, void *event EINA_U
 static Eina_Bool
 _clock_screensaver_on()
 {
+   Eina_List *l;
+   Instance *inst;
+
+   EINA_LIST_FOREACH(clock_instances, l, inst)
+     {
+        edje_object_signal_emit(inst->o_clock, "e,state,freeze", "e");
+        if (inst->o_popclock)
+          edje_object_signal_emit(inst->o_popclock, "e,state,freeze", "e");
+     }
    E_FREE_FUNC(update_today, ecore_timer_del);
    return ECORE_CALLBACK_RENEW;
 }
@@ -852,6 +861,15 @@ _clock_screensaver_on()
 static Eina_Bool
 _clock_screensaver_off()
 {
+   Eina_List *l;
+   Instance *inst;
+
+   EINA_LIST_FOREACH(clock_instances, l, inst)
+     {
+        edje_object_signal_emit(inst->o_clock, "e,state,thaw", "e");
+        if (inst->o_popclock)
+          edje_object_signal_emit(inst->o_popclock, "e,state,thaw", "e");
+     }
    if (clock_instances) _update_today_timer(NULL);
    return ECORE_CALLBACK_RENEW;
 }
