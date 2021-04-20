@@ -3879,8 +3879,8 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                                                 E_ATOM_E_WAS_HERE,
                                                 &was_here, 1) != 1)
                was_here = 0;
+             // if we managed this before, then use WM_STATE not initial state
              if (was_here) ec->icccm.state = ecore_x_icccm_state_get(win);
-                    ec->icccm.initial_state);
              if (ec->new_client)
                {
                   /* clients may unset iconic state when no wm is present */
