@@ -231,7 +231,6 @@ _emit_orient(Instance *inst, E_Gadcon_Orient orient)
    if (orient > E_GADCON_ORIENT_CORNER_RB) orient = E_GADCON_ORIENT_HORIZ;
    snprintf(buf, sizeof(buf), "e,state,orient,%s", signals[orient]);
 
-   printf("%p %s\n", inst->o_base, buf);
    if (inst->o_base)
      {
         edje_object_signal_emit(inst->o_base, buf, "e");
