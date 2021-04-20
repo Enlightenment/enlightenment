@@ -369,7 +369,7 @@ _cb_bklight_set(void *data EINA_UNUSED, const char *params)
    if (!params) return;
    if (sscanf(params, "%1023s %i", dev, &val) != 2) return;
    eina_lock_take(&_devices_lock);
-   fprintf(stderr, "BL: set [%s] -> %i\n", dev, val);
+//   fprintf(stderr, "BL: set [%s] -> %i\n", dev, val);
    lig = _light_find(dev);
    if (!lig) goto done;
    lig->val_set = val;

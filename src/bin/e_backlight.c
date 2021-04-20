@@ -239,7 +239,7 @@ _backlight_devices_device_set(Backlight_Device *bd, double val)
              Ecore_X_Randr_Output o = _backlight_devices_randr_output_get(e_comp->root, bd->output, bd->edid);
              if (o)
                {
-                  fprintf(stderr, "BL: randr bklight %1.3f @ %1.3f\n", bd->val, ecore_time_get());
+//                  fprintf(stderr, "BL: randr bklight %1.3f @ %1.3f\n", bd->val, ecore_time_get());
                   ecore_x_randr_output_backlight_level_set(e_comp->root, o, bd->val);
                   ecore_event_add(E_EVENT_BACKLIGHT_CHANGE, NULL, NULL, NULL);
                }
@@ -251,7 +251,7 @@ _backlight_devices_device_set(Backlight_Device *bd, double val)
      {
         double fval;
 
-        fprintf(stderr, "BL: ddc bklight %1.3f @ %1.3f\n", bd->val, ecore_time_get());
+//        fprintf(stderr, "BL: ddc bklight %1.3f @ %1.3f\n", bd->val, ecore_time_get());
         if (bd->ddc_max) fval = bd->val * (double)bd->ddc_max;
         else fval = bd->val * 100.0;
         e_system_send("ddc-val-set", "%s %i %i", bd->dev + 4, 0x10, (int)(fval)); // backlight val in e_system_ddc.c
@@ -259,7 +259,7 @@ _backlight_devices_device_set(Backlight_Device *bd, double val)
      }
    else
      {
-        fprintf(stderr, "BL: internal bklight %1.3f @ %1.3f\n", bd->val, ecore_time_get());
+//        fprintf(stderr, "BL: internal bklight %1.3f @ %1.3f\n", bd->val, ecore_time_get());
         e_system_send("bklight-set", "%s %i", bd->dev, (int)(bd->val * 1000.0));
         ecore_event_add(E_EVENT_BACKLIGHT_CHANGE, NULL, NULL, NULL);
      }
