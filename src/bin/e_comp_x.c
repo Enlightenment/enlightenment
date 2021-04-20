@@ -3873,6 +3873,14 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                                     (Ecore_X_Window*)&ec->icccm.window_group,
                                     &is_urgent))
           {
+             unsigned int was_here = 0;
+
+             if (ecore_x_window_prop_card32_get(win,
+                                                E_ATOM_E_WAS_HERE,
+                                                &was_here, 1) != 1)
+               was_here = 0;
+             if (was_here) ec->icccm.state = ecore_x_icccm_state_get(win);
+                    ec->icccm.initial_state);
              if (ec->new_client)
                {
                   /* clients may unset iconic state when no wm is present */

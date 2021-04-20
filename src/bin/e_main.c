@@ -1675,6 +1675,7 @@ _e_main_desk_restore(void)
                   // ensure windows for this desk are shown
                   E_CLIENT_REVERSE_FOREACH(ec)
                     {
+                       if (ec->iconic) continue;
                        if ((ec->desk == desk) || (ec->sticky))
                          {
                             ec->hidden = 0;
