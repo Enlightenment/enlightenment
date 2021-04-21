@@ -226,6 +226,7 @@ evry_show(E_Zone *zone, E_Zone_Edge edge, const char *params, Eina_Bool popup)
         ec = e_win_client_get(win->ewin);
         if (ec)
           {
+             evas_object_layer_set(ec->frame, E_LAYER_CLIENT_PRIO);
 #ifndef HAVE_WAYLAND_ONLY
              if (e_comp->comp_type == E_PIXMAP_TYPE_X)
                ecore_x_netwm_window_type_set(elm_win_window_id_get(win->ewin),
