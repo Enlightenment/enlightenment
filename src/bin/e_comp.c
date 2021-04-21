@@ -1779,34 +1779,6 @@ e_comp_override_add(void)
    if ((e_comp->nocomp_override > 0) && (e_comp->nocomp)) _e_comp_nocomp_end();
 }
 
-#if 0
-FIXME
-E_API void
-e_comp_block_window_add(void)
-{
-   e_comp->block_count++;
-   if (e_comp->block_win) return;
-   e_comp->block_win = ecore_x_window_new(e_comp->root, 0, 0, e_comp->w, e_comp->h);
-   INF("BLOCK WIN: %x", e_comp->block_win);
-   ecore_x_window_background_color_set(e_comp->block_win, 0, 0, 0);
-   e_comp_ignore_win_add(e_comp->block_win);
-   ecore_x_window_configure(e_comp->block_win,
-     ECORE_X_WINDOW_CONFIGURE_MASK_SIBLING | ECORE_X_WINDOW_CONFIGURE_MASK_STACK_MODE,
-     0, 0, 0, 0, 0, ((E_Comp_Win*)e_comp->wins)->win, ECORE_X_WINDOW_STACK_ABOVE);
-   ecore_x_window_show(e_comp->block_win);
-}
-
-E_API void
-e_comp_block_window_del(void)
-{
-   if (!e_comp->block_count) return;
-   e_comp->block_count--;
-   if (e_comp->block_count) return;
-   if (e_comp->block_win) ecore_x_window_free(e_comp->block_win);
-   e_comp->block_win = 0;
-}
-#endif
-
 E_API E_Comp *
 e_comp_find_by_window(Ecore_Window win)
 {

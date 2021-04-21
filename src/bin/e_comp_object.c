@@ -2526,7 +2526,9 @@ _e_comp_smart_move(Evas_Object *obj, int x, int y)
      _e_comp_object_input_rect_update(cw);
    /* this gets called once during setup to init coords offscreen and guarantee first move */
    if (e_comp && cw->visible)
-     e_comp_shape_queue();
+     {
+        e_comp_shape_queue();
+     }
 }
 
 static void
@@ -2602,7 +2604,9 @@ _e_comp_smart_resize(Evas_Object *obj, int w, int h)
    if (!cw->visible) return;
    e_comp_render_queue();
    if (!cw->animating)
-     e_comp_shape_queue();
+     {
+        e_comp_shape_queue();
+     }
 }
 
 static void
@@ -2759,7 +2763,9 @@ _e_comp_object_util_show(void *data EINA_UNUSED, Evas_Object *obj)
           return;
      }
    else
-     e_comp_shape_queue();
+     {
+        e_comp_shape_queue();
+     }
 
    evas_object_show(obj);
    if (ref && (!stopping))
@@ -2832,7 +2838,9 @@ _e_comp_object_util_moveresize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
         e_zoomap_child_resize(data, w, h);
      }
    if (evas_object_visible_get(obj))
-     e_comp_shape_queue();
+     {
+        e_comp_shape_queue();
+     }
 }
 
 E_API void

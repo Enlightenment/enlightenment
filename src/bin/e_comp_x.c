@@ -1693,39 +1693,48 @@ _e_comp_x_configure(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_
    //INF("configure %p: %d,%d %dx%d", ec, ev->x, ev->y, ev->w, ev->h);
    if (ev->abovewin == 0)
      {
-        if (e_client_below_get(ec))
-          evas_object_lower(ec->frame);
+        // forcibly lower the window as it's not above anything
+        if (e_client_below_get(ec)) evas_object_lower(ec->frame);
      }
    else
      {
-        E_Client *ec2 = _e_comp_x_client_find_by_window(ev->abovewin);
+        E_Client *ec_above = _e_comp_x_client_find_by_window(ev->abovewin);
 
-        if (ec2)
+        // if we find the client the window is above
+        if (ec_above)
           {
-             /* client(ec) wants to be above a layer client(ec2) */
-             if (e_client_is_stacking(ec2)) //is it a stacking placeholder window?
+             // if the window to stack above is a layer marker window/client
+             // then we need to find the next one up and stack below that
+             // because the ec_above will be one layer below as layer marker
+             // is at the top of a layer
+             if (e_client_is_stacking(ec_above))
                {
-                  E_Client *ec3;
+                  E_Client *ec_next_up = e_client_above_get(ec_above);
 
-                  ec3 = e_client_above_get(ec2);
-                  /* stack under next client(ec3) */
-                  if (ec3)
+                  // stacking under the next win up == above ec_above
+                  if (ec_next_up)
                     {
-                       evas_object_layer_set(ec->frame, ec3->layer);
-                       if (!e_client_is_stacking(ec3))
-                         evas_object_stack_below(ec->frame, ec3->frame);
+                       evas_object_layer_set(ec->frame, ec_next_up->layer);
+                       evas_object_stack_below(ec->frame, ec_next_up->frame);
                     }
-                  else //force override to obey our stacking
-                    evas_object_layer_set(ec->frame, ec2->layer);
+                  else // no marker above, so live on the same layer - on top
+                    {
+                       evas_object_layer_set(ec->frame, ec_above->layer);
+                    }
                }
+             // if it's above is a regular win
              else
                {
-                  evas_object_layer_set(ec->frame, ec2->layer);
-                  evas_object_stack_above(ec->frame, ec2->frame);
+                  // if the layer obj is not right below already...
+                  evas_object_layer_set(ec->frame, ec_above->layer);
+                  evas_object_stack_above(ec->frame, ec_above->frame);
                }
           }
+        // we didnt find the client it's above - so stuff this on top
         else
-          evas_object_layer_set(ec->frame, E_LAYER_CLIENT_PRIO);
+          {
+             evas_object_layer_set(ec->frame, E_LAYER_CLIENT_PRIO);
+          }
      }
    move = (ec->client.x != ev->x) || (ec->client.y != ev->y);
    resize = (ec->client.w != ev->w) || (ec->client.h != ev->h);
