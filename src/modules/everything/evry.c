@@ -801,10 +801,9 @@ _evry_window_new(E_Zone *zone, E_Zone_Edge edge)
 
    win = E_NEW(Evry_Window, 1);
    win->ewin = elm_win_add(NULL, NULL, ELM_WIN_UTILITY);
-   elm_win_borderless_set(win->ewin, 1);
+   elm_win_override_set(win->ewin, 1);
    e_win_no_remember_set(win->ewin, 1);
    e_win_placed_set(win->ewin, 1);
-   elm_win_override_set(win->ewin, 1);
    win->evas = evas_object_evas_get(win->ewin);
    win->zone = zone;
    evas_object_data_set(win->ewin, "evry_win", win);
@@ -896,9 +895,6 @@ _evry_window_new(E_Zone *zone, E_Zone_Edge edge)
    evas_object_geometry_set(win->ewin, x, y, mw, mh);
 
    evas_object_show(o);
-
-   evas_event_feed_mouse_in(win->evas, 0, NULL);
-   evas_event_feed_mouse_move(win->evas, -1000000, -1000000, 0, NULL);
 
    evas_object_event_callback_add(win->ewin, EVAS_CALLBACK_DEL, _evry_cb_win_delete, win);
 
@@ -1986,7 +1982,6 @@ _evry_cb_key_down(void *data, int type EINA_UNUSED, void *event)
         e_grabinput_release(elm_win_window_id_get(ewin), elm_win_window_id_get(ewin));
 
         ec = e_win_client_get(ewin);
-        elm_win_borderless_set(ewin, 0);
         ec->override = 0;
 #ifndef HAVE_WAYLAND_ONLY
         if (e_comp->comp_type == E_PIXMAP_TYPE_X)
@@ -2000,7 +1995,7 @@ _evry_cb_key_down(void *data, int type EINA_UNUSED, void *event)
         ec->netwm.update.state = 1;
         ec->internal_no_remember = 1;
         e_comp_object_frame_theme_set(ec->frame, E_COMP_OBJECT_FRAME_RESHADOW);
-
+        e_client_focus_set_with_pointer(ec);
         win->grab = 0;
         return ECORE_CALLBACK_PASS_ON;
      }
@@ -2644,10 +2639,6 @@ _evry_state_clear(Evry_Window *win)
              edje_object_part_unswallow(win->o_main, v->o_list);
           }
      }
-
-   /* replay mouse down to allow direct sliding back */
-   if (win->mouse_button)
-     evas_event_feed_mouse_down(win->evas, win->mouse_button, 0, 0, NULL);
 }
 
 static void
