@@ -963,6 +963,9 @@ _tasks_item_preview_add(Tasks_Item *item)
    evas_object_geometry_get(item->o_item, &ox, &oy, &ow, &oh);
 
    item->o_preview = o = elm_ctxpopup_add(e_comp->elm);
+   evas_object_pass_events_set(o, EINA_TRUE);
+   elm_object_focus_allow_set(o, EINA_FALSE);
+   elm_object_tree_focus_allow_set(o, EINA_FALSE);
    elm_object_style_set(o, "noblock");
    evas_object_layer_set(o, E_LAYER_POPUP);
 
@@ -1040,43 +1043,29 @@ _tasks_item_preview_add(Tasks_Item *item)
 static void
 _tasks_cb_item_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Tasks_Item *item;
-   E_Client *ec;
+   Tasks_Item *item = data;
    Eina_Bool show;
-
-   item = data;
 
    if (!item->tasks->config->preview) return;
 
    show = !item->iconifying;
-   if ((item->tasks->gcc->gadcon->shelf) && (item->tasks->gcc->gadcon->shelf->hide_animator))
+   if ((item->tasks->gcc->gadcon->shelf) &&
+       (item->tasks->gcc->gadcon->shelf->hide_animator))
      show = 0;
 
-   ec = e_client_focused_get();
-
-   if (show)
-     _tasks_item_preview_add(item);
-
-   if (ec)
-     evas_object_focus_set(ec->frame, 1);
+   if (show) _tasks_item_preview_add(item);
 }
 
 static void
 _tasks_cb_item_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Tasks_Item *item;
-   E_Client *ec = e_client_focused_get();
-
-   item = data;
+   Tasks_Item *item = data;
 
    if (item->o_preview)
      {
-       elm_ctxpopup_dismiss(item->o_preview);
-       item->timer = ecore_timer_add(1.0, _tasks_cb_timer_del, item);
+        elm_ctxpopup_dismiss(item->o_preview);
+        item->timer = ecore_timer_add(1.0, _tasks_cb_timer_del, item);
      }
-
-  if (ec)
-    evas_object_focus_set(ec->frame, 1);
 }
 
 static void
