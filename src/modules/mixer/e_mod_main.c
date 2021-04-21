@@ -166,7 +166,6 @@ _cb_emix_sink_monitor_event(void *data, enum Emix_Event event, void *event_info)
         unsigned int i, num = sink->mon_num * 2;
         float samp, max = 0.0;
 
-        printf(" vu input data %i\n", num);
         for (i = 0; i < num; i++)
           {
              samp = fabs(sink->mon_buf[i]);
