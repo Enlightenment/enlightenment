@@ -12,4 +12,5 @@ Soundcore*|earbud
 *DisplayPort*|video-display
 *Buds*|earbud
 T1|earbud
+Echo*|speaker-box
 *|audio-volume
