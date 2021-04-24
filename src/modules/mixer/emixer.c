@@ -55,6 +55,8 @@ _sink_icon_find(const char *name)
    int i;
    size_t len;
 
+   if (!name) return NULL;
+
    file = getenv("EMIX_SINK_ICONS");
    if (!file) return NULL;
    f = fopen(file, "r");
