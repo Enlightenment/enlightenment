@@ -52,10 +52,7 @@ _sink_icon_find(const char *name)
    const char *file;
    char buf[PATH_MAX], *res = NULL, **strs, *glob, *icon;
    FILE *f;
-   int i;
    size_t len;
-
-   if (!name) return NULL;
 
    file = getenv("EMIX_SINK_ICONS");
    if (!file) return NULL;
@@ -71,23 +68,18 @@ _sink_icon_find(const char *name)
              strs = eina_str_split(buf, "|", 0);
              if (strs)
                {
-                  i = 0;
-                  for (glob = strs[i]; glob; i += 2)
+                  glob = strs[0];
+                  icon = strs[1];
+                  if (icon)
                     {
-                       icon = strs[i + 1];
-                       if (icon)
+                       if (_glob_case_match(name, glob))
                          {
-                            if (_glob_case_match(name, glob))
-                              {
-                                 res = strdup(icon);
-                                 break;
-                              }
+                            res = strdup(icon);
                          }
-                       else break;
                     }
-                  free(strs[0]);
-                  free(strs);
                }
+             free(strs[0]);
+             free(strs);
              if (res) break;
           }
         else break;

@@ -84,7 +84,6 @@ _sink_icon_find(const char *name)
    const char *dir;
    char buf[PATH_MAX], *res = NULL, **strs, *glob, *icon;
    FILE *f;
-   int i;
    size_t len;
 
    dir = e_module_dir_get(mixer_context->module);
@@ -102,19 +101,12 @@ _sink_icon_find(const char *name)
              strs = eina_str_split(buf, "|", 0);
              if (strs)
                {
-                  i = 0;
-                  for (glob = strs[i]; glob; i += 2)
+                  glob = strs[0];
+                  icon = strs[1];
+                  if (icon)
                     {
-                       icon = strs[i + 1];
-                       if (icon)
-                         {
-                            if (e_util_glob_case_match(name, glob))
-                              {
-                                 res = strdup(icon);
-                                 break;
-                              }
-                         }
-                       else break;
+                       if (e_util_glob_case_match(name, glob))
+                         res = strdup(icon);
                     }
                   free(strs[0]);
                   free(strs);
