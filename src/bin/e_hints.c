@@ -599,7 +599,7 @@ e_hints_window_state_set(E_Client *ec)
         if (ec->netwm.state.skip_pager)
           state[num++] = ECORE_X_WINDOW_STATE_SKIP_PAGER;
      }
-   if ((ec->netwm.state.hidden) || (ec->frozen))
+   if (ec->netwm.state.hidden)
      state[num++] = ECORE_X_WINDOW_STATE_HIDDEN;
    if (ec->netwm.state.fullscreen)
      state[num++] = ECORE_X_WINDOW_STATE_FULLSCREEN;
