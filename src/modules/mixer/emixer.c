@@ -77,9 +77,9 @@ _sink_icon_find(const char *name)
                             res = strdup(icon);
                          }
                     }
+                  free(strs[0]);
+                  free(strs);
                }
-             free(strs[0]);
-             free(strs);
              if (res) break;
           }
         else break;
