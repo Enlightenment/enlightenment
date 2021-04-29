@@ -122,6 +122,21 @@ e_fm_prop_file(E_Fm2_Icon *ic)
    return cfd;
 }
 
+#ifdef HAVE_LIBEXIF
+static ExifEntry *
+_exif_entry_find(ExifData *ed, ExifTag tag)
+{
+   ExifEntry *entry;
+
+   if ((entry = exif_content_get_entry(ed->ifd[EXIF_IFD_0], tag))) return entry;
+   if ((entry = exif_content_get_entry(ed->ifd[EXIF_IFD_1], tag))) return entry;
+   if ((entry = exif_content_get_entry(ed->ifd[EXIF_IFD_EXIF], tag))) return entry;
+   if ((entry = exif_content_get_entry(ed->ifd[EXIF_IFD_GPS], tag))) return entry;
+   if ((entry = exif_content_get_entry(ed->ifd[EXIF_IFD_INTEROPERABILITY], tag))) return entry;
+   return NULL;
+}
+#endif
+
 /**--CREATE--**/
 static void
 _fill_data(E_Config_Dialog_Data *cfdata, E_Fm2_Icon *ic)
@@ -142,11 +157,9 @@ _fill_data(E_Config_Dialog_Data *cfdata, E_Fm2_Icon *ic)
    ExifData *ed = exif_data_new_from_file(loc);
    if (ed)
      {
-        ExifEntry *entry = exif_content_get_entry(ed->ifd[EXIF_IFD_0], EXIF_TAG_DATE_TIME_ORIGINAL);
-        if (!entry)
-          entry = exif_content_get_entry(ed->ifd[EXIF_IFD_0], EXIF_TAG_DATE_TIME_DIGITIZED);
-        if (!entry)
-          entry = exif_content_get_entry(ed->ifd[EXIF_IFD_0], EXIF_TAG_DATE_TIME);
+        ExifEntry *entry = _exif_entry_find(ed, EXIF_TAG_DATE_TIME_ORIGINAL);
+        if (!entry) entry = _exif_entry_find(ed, EXIF_TAG_DATE_TIME_DIGITIZED);
+        if (!entry) entry = _exif_entry_find(ed, EXIF_TAG_DATE_TIME);
         if (entry)
           {
              char tbuf[128];
