@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2021-04-17 14:19+0200\n"
-"PO-Revision-Date: 2021-04-19 07:01+0200\n"
+"PO-Revision-Date: 2021-05-01 07:13+0200\n"
 "Last-Translator: Philippe Jean Guillaumie <similar@orange.fr>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -27,7 +27,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Poedit 2.4.2\n"
+"X-Generator: Poedit 2.4.3\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
 #: src/bin/e_about.c:17
@@ -1054,9 +1054,9 @@ msgid ""
 "without XComposite support. Note that for composite support you will also "
 "need XRender and XFixes support in X11 and Ecore."
 msgstr ""
-"Votre serveur d'affichage ne supporte pas XComposite, ou Ecore-X a été "
-"compilé sans le support de XComposite. Notez que pour le support de "
-"composite vous aurez aussi besoin de XRender et XFixes dans X11 et Ecore."
+"Votre serveur d'affichage ne supporte pas XComposite, ou Ecore-X est compilé "
+"sans le support de XComposite. Notez que vous avez également besoin de "
+"XRender et XFixes dans X11 et Ecore pour la prise en charge du composite."
 
 #: src/bin/e_comp_x.c:5937
 msgid ""
@@ -1316,9 +1316,9 @@ msgid ""
 ">the time the window starts up, and does not<ps/>change."
 msgstr ""
 "La fenêtre pour laquelle vous voulez créer<ps/>une icône ne possède ni nom "
-"ni classe.<ps/> Sans ces propriétés, vous devrez utiliser le<ps/>titre de la "
+"ni classe.<ps/> Sans ces propriétés, vous devez utiliser le<ps/>titre de la "
 "fenêtre à la place. Cela ne fonctionnera<ps/>qu'à condition que le titre de "
-"cette fenêtre<ps/>reste le même qu'au premier lancement."
+"cette fenêtre<ps/>reste le même qu'au lancement."
 
 #: src/bin/e_desktop_editor.c:265
 msgid "Desktop Entry Editor"
@@ -2115,7 +2115,7 @@ msgid ""
 "Please press a key combination.<ps/><ps/>Press <hilight>Escape</hilight> to "
 "abort."
 msgstr ""
-"Veuillez composer votre séquence au clavier,<ps/><ps/>ou <hilight>Échap</"
+"Composez votre séquence au clavier.<ps/><ps/>Appuyez sur <hilight>Échap</"
 "hilight> pour annuler."
 
 #: src/bin/e_grab_dialog.c:5
@@ -2124,9 +2124,9 @@ msgid ""
 ">or roll a wheel to assign mouse binding.<ps/><ps/>Press <hilight>Escape</"
 "hilight> to abort."
 msgstr ""
-"Veuillez appuyer sur le modificateur de votre choix et<ps/>sur un bouton de "
-"votre souris, ou tourner la molette,<ps/>afin d'assigner un raccourci souris."
-"<ps/><ps/>Appuyez sur <hilight>Échap</hilight> pour annuler."
+"Appuyez sur le modificateur de votre choix<ps/>et sur un bouton de votre "
+"souris ou<ps/>en tournant la molette, afin d'assigner<ps/>un raccourci "
+"souris.<ps/><ps/>Appuyez sur <hilight>Échap</hilight> pour annuler."
 
 #: src/bin/e_grab_dialog.c:117
 msgid "Mouse Binding Combination"
@@ -2827,12 +2827,12 @@ msgstr ""
 "><hilight>propriétés distinctives</hilight>.<ps/><ps/>Ce qui signifie "
 "qu'elle partage son nom et classe,<ps/>sa relation transitoire, son rôle, "
 "etc., avec au<ps/>moins une autre fenêtre à l'écran et que la<ps/"
-">mémorisation des propriétés pour cette fenêtre<ps/>s'appliquera à toutes "
-"les autres fenêtres qui<ps/>partagent les mêmes propriétés.<ps/><ps/>Ceci "
-"n'est qu'un avertissement au cas où ce<ps/>n'était pas ce que vous "
-"recherchiez.<ps/>Cliquez sur <hilight>Appliquer</hilight> ou <hilight>OK</"
-"hilight> et<ps/>vos paramètres seront acceptés.<ps/>Cliquez sur "
-"<hilight>Fermer</hilight> en cas de doute,<ps/>et rien ne sera modifié."
+">mémorisation des propriétés pour cette fenêtre<ps/>s'applique à toutes les "
+"autres fenêtres qui<ps/>partagent les mêmes propriétés.<ps/><ps/>Ceci n'est "
+"qu'un avertissement au cas où ce<ps/>n'était pas ce que vous recherchiez.<ps/"
+">Cliquez sur <hilight>Appliquer</hilight> ou <hilight>OK</hilight> et<ps/"
+">vos paramètres seront acceptés.<ps/>Cliquez sur <hilight>Fermer</hilight> "
+"en cas de doute,<ps/>et rien ne sera modifié."
 
 #: src/bin/e_int_client_remember.c:544
 msgid "No match properties set"
@@ -3985,8 +3985,8 @@ msgstr ""
 "Veuillez ne pas utiliser l'exécutable « enlightenment » mais\n"
 "plutôt le lanceur « enlightenment_start ». Ce dernier se\n"
 "charge du paramétrage des variables d'environnement,\n"
-"des chemins et de la gestion de tout autre service\n"
-"nécessaire, avant même le démarrage d'Enlightenment.\n"
+"des chemins, et de la gestion de tout autre service\n"
+"nécessaire avant le lancement d'Enlightenment.\n"
 
 #: src/bin/e_main.c:1570
 msgid "Enlightenment cannot create a compositor.\n"
@@ -4010,7 +4010,7 @@ msgstr ""
 
 #: src/bin/e_main.c:1748 src/bin/e_main.c:1764
 msgid "Enlightenment crashed early on start and has been restarted"
-msgstr "Enlightenment a planté en phase d'initialisation et a été redémarré"
+msgstr "Enlightenment a planté en phase d'initialisation et a été relancé"
 
 #: src/bin/e_main.c:1749
 #, c-format
@@ -4043,11 +4043,11 @@ msgid ""
 "modules from your configuration.<ps/><ps/>The module configuration dialog "
 "should let you select your<ps/>modules again."
 msgstr ""
-"Enlightenment a planté en phase d'initialisation et a été redémarré.<ps/"
-">Tous les modules ont été désactivés et ne seront pas chargés pour vous<ps/"
-">aider à supprimer les modules problématiques de votre configuration.<ps/"
-"><ps/>Le dialogue de configuration des modules vous permettra<ps/>de "
-"recharger vos modules."
+"Enlightenment a planté en phase d'initialisation et a été relancé.<ps/>Tous "
+"les modules ont été désactivés et ne seront pas chargés pour vous<ps/>aider "
+"à supprimer les modules problématiques de votre configuration.<ps/><ps/>Le "
+"dialogue de configuration des modules vous permettra<ps/>de recharger vos "
+"modules."
 
 #: src/bin/e_module.c:159
 #, c-format
@@ -4115,7 +4115,7 @@ msgid ""
 msgstr ""
 "Les modules suivants ne sont pas conformes au standard de<ps/>Enlightenment "
 "et peuvent provoquer bogues et plantages.<ps/>Désactivez-les avant tout "
-"rapport de bogue.<ps/><ps/>La liste des modules est la suivante :<ps/><ps/>"
+"rapport de bogue.<ps/><ps/>Module(s) instable(s) :<ps/><ps/>"
 
 #: src/bin/e_module.c:704
 msgid "Unstable module tainting"
@@ -4311,7 +4311,7 @@ msgid ""
 "Resetting.<ps/>You cannot perform any other system actions<ps/>once a reboot "
 "has begun."
 msgstr ""
-"Réamorçage en cours.<ps/>Vous ne pouvez pas effectuer d'autres actions "
+"Redémarrage en cours.<ps/>Vous ne pouvez pas effectuer d'autres actions "
 "système<ps/>pendant cette phase."
 
 #: src/bin/e_sys.c:967
@@ -5938,7 +5938,7 @@ msgid ""
 msgstr ""
 "Enlightenment utilise libinput pour détecter les mouvements de balayage. En "
 "cas de problème :<br> 1. Tester les mouvements avec « libinput debug-events "
-"» dans un terminal. La sortie de la console indiquera la précision de votre "
+"» dans un terminal. La sortie de la console indique la précision de votre "
 "matériel.<br>2. Guettez les erreurs dans la console, certains appareils "
 "renvoient des résultats erronés avec libinput.<br>3. Si votre session "
 "actuelle se déroule dans Xorg, assurez-vous que votre utilisateur fait "
@@ -9839,8 +9839,8 @@ msgstr ""
 "La fenêtre sélectionnée créée avec le nom :<ps/>%s<ps/>et la classe :<ps/>"
 "%s<ps/> est introuvable dans la base de données des<ps/>applications pour "
 "les accès rapides.<ps/> Cela signifie que l'application est soit inconnue,"
-"<ps/>soit inutilisable dans ce cas de figure.<ps/>Veuillez choisir une "
-"action à appliquer :"
+"<ps/>soit inutilisable dans ce cas de figure.<ps/>Choisissez une action à "
+"appliquer :"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:394
 #: src/modules/quickaccess/e_mod_quickaccess.c:1018
@@ -10250,7 +10250,7 @@ msgstr "Configuration de Tâches"
 
 #: src/modules/tasks/e_mod_config.c:97
 msgid "Show icon only"
-msgstr "Afficher uniquement l'icône"
+msgstr "Afficher uniquement les icônes"
 
 #: src/modules/tasks/e_mod_config.c:101
 msgid "Show text only"
