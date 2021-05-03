@@ -62,7 +62,7 @@ e_util_glob_match(const char *str, const char *pattern)
      }
    if (str == pattern) return 1;
    if (!strcmp(pattern, "*")) return 1;
-   if (!fnmatch(pattern, str, 0)) return 1;
+   if (eina_fnmatch(pattern, str, 0)) return 1;
    return 0;
 }
 
@@ -87,7 +87,7 @@ e_util_glob_case_match(const char *str, const char *pattern)
    for (tp = tglob, p = pattern; *p != 0; p++, tp++)
      *tp = tolower(*p);
    *tp = 0;
-   if (!fnmatch(tglob, tstr, 0)) return 1;
+   if (eina_fnmatch(tglob, tstr, 0)) return 1;
    return 0;
 }
 

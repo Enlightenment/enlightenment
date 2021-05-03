@@ -2718,7 +2718,7 @@ ACT_FN_GO(shelf_show, )
 
    EINA_LIST_FOREACH(e_shelf_list(), l, es)
      {
-        if ((!params) || (params && (fnmatch(params, es->name, 0) == 0)))
+        if ((!params) || (params && (eina_fnmatch(params, es->name, 0))))
           {
              e_shelf_toggle(es, 1);
              e_shelf_toggle(es, 0);
@@ -2727,7 +2727,7 @@ ACT_FN_GO(shelf_show, )
 }
 /***************************************************************************/
 #define ACT_SHELF_SHOW(params, es)                                  \
-  if ((!params) || (params && (fnmatch(params, es->name, 0) == 0))) \
+  if ((!params) || (params && (eina_fnmatch(params, es->name, 0)))) \
     {                                                               \
        e_shelf_toggle(es, 1);                                       \
        e_shelf_toggle(es, 0);                                       \

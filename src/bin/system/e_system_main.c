@@ -15,12 +15,12 @@ _conf_allow_deny(const char *cmd, const char *glob, const char *sys)
    if (!strcmp(cmd, "allow:"))
      {
         if (!strcmp(glob, "*")) return 1; // allow
-        if (!fnmatch(glob, sys, 0)) return 1; // allow this sys
+        if (eina_fnmatch(glob, sys, 0)) return 1; // allow this sys
      }
    else if (!strcmp(cmd, "deny:"))
      {
         if (!strcmp(glob, "*")) return -1; // deny
-        if (!fnmatch(glob, sys, 0)) return -1; // deny this sys
+        if (eina_fnmatch(glob, sys, 0)) return -1; // deny this sys
      }
    return 0; // unknown
 }
@@ -58,7 +58,7 @@ _etc_enlightenment_system_conf_check(const char *sys)
                   in_usergroup = EINA_FALSE;
                   if (pw)
                     {
-                       if (!fnmatch(usergroup, pw->pw_name, 0))
+                       if (eina_fnmatch(usergroup, pw->pw_name, 0))
                          {
                             in_usergroup = EINA_TRUE;
                          }
@@ -87,7 +87,7 @@ _etc_enlightenment_system_conf_check(const char *sys)
                             gp = getgrgid(gl[i]);
                             if (gp)
                               {
-                                 if (!fnmatch(usergroup, gp->gr_name, 0))
+                                 if (eina_fnmatch(usergroup, gp->gr_name, 0))
                                    {
                                       in_usergroup = EINA_TRUE;
                                       break;

@@ -192,12 +192,6 @@ if cc.has_function('mlock') == true
   config_h.set('HAVE_MLOCK'            , '1')
 endif
 
-if cc.has_header('fnmatch.h') == false
-  error('fnmatch.h not found')
-endif
-
-dep_fnmatch = cc.find_library('fnmatch', required: false)
-
 code = '''#define _GNU_SOURCE 1
 #include <unistd.h>
 #include <stdio.h>

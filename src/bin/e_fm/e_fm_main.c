@@ -32,7 +32,6 @@ void *alloca (size_t);
 #include <sys/param.h>
 #include <utime.h>
 #include <math.h>
-#include <fnmatch.h>
 #include <limits.h>
 #include <ctype.h>
 #include <time.h>

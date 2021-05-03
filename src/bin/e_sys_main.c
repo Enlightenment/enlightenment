@@ -20,7 +20,6 @@
 #include <sys/wait.h>
 #include <pwd.h>
 #include <grp.h>
-#include <fnmatch.h>
 #include <ctype.h>
 #ifdef HAVE_ALLOCA_H
 #include <alloca.h>
@@ -598,7 +597,7 @@ auth_etc_enlightenment_sysactions(char *a,
         deny = 0;
         if (!strcmp(id, "user:"))
           {
-             if (!fnmatch(ugname, u, 0))
+             if (eina_fnmatch(ugname, u, 0))
                {
                   if (!strcmp(perm, "allow:")) allow = 1;
                   else if (!strcmp(perm, "deny:"))
@@ -615,7 +614,7 @@ auth_etc_enlightenment_sysactions(char *a,
 
              for (gp = g; *gp; gp++)
                {
-                  if (!fnmatch(ugname, *gp, 0))
+                  if (eina_fnmatch(ugname, *gp, 0))
                     {
                        matched = EINA_TRUE;
                        if (!strcmp(perm, "allow:")) allow = 1;
@@ -646,7 +645,7 @@ auth_etc_enlightenment_sysactions(char *a,
           {
              p = get_word(p, act);
              if (act[0] == 0) break;
-             if (!fnmatch(act, a, 0))
+             if (eina_fnmatch(act, a, 0))
                {
                   if (allow) ok = 1;
                   else if (deny)

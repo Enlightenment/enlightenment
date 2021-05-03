@@ -78,7 +78,6 @@ void *alloca (size_t);
 # include <dlfcn.h>
 # include <math.h>
 # include <fcntl.h>
-# include <fnmatch.h>
 # include <limits.h>
 # include <ctype.h>
 # include <time.h>
