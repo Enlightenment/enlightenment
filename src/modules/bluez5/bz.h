@@ -24,6 +24,7 @@ struct _Obj {
    Eina_Bool ping_busy : 1;
    Eina_Bool ping_block : 1;
    Ecore_Timer *ping_timer;
+   Ecore_Timer *power_retry_timer;
    //// public data to read
    const char *path;
    Obj_Type type;

@@ -412,10 +412,31 @@ bz_obj_find(const char *path)
    return eina_hash_find(obj_table, path);
 }
 
-static void
-cb_power_on(void *data EINA_UNUSED, const Eldbus_Message *msg EINA_UNUSED, Eldbus_Pending *pending EINA_UNUSED)
+static Eina_Bool
+_cb_power_again(void *data)
 {
-   ERR_PRINT("Power On");
+   Obj *o = data;
+
+   o->power_retry_timer = NULL;
+   printf("Retry power on...");
+   bz_obj_power_on(o);
+   return EINA_FALSE;
+}
+
+static void
+cb_power_on(void *data, const Eldbus_Message *msg EINA_UNUSED, Eldbus_Pending *pending EINA_UNUSED)
+{
+   Obj *o = data;
+   const char *name, *text;
+
+   if (eldbus_message_error_get(msg, &name, &text))
+     {
+        printf("Error: %s.\n %s:\n %s\n", "Power On", name, text);
+        if (!strcmp(name, "org.bluez.Error.Busy"))
+          {
+             o->power_retry_timer = ecore_timer_add(0.5, _cb_power_again, o);
+          }
+     }
 }
 
 void
@@ -438,6 +459,11 @@ bz_obj_power_off(Obj *o)
 {
    Eina_Bool val = EINA_FALSE;
    if (!o->proxy) return;
+   if (o->power_retry_timer)
+     {
+        ecore_timer_del(o->power_retry_timer);
+        o->power_retry_timer = NULL;
+     }
    eldbus_proxy_property_set
      (o->proxy, "Powered", "b", (void *)(uintptr_t)val, cb_power_off, o);
 }
@@ -809,6 +835,11 @@ bz_obj_unref(Obj *o)
      {
         ecore_timer_del(o->ping_timer);
         o->ping_timer = NULL;
+     }
+   if (o->power_retry_timer)
+     {
+        ecore_timer_del(o->power_retry_timer);
+        o->power_retry_timer = NULL;
      }
    if (o->proxy)
      {
