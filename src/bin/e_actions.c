@@ -1126,8 +1126,8 @@ ACT_FN_GO(window_grow, )
         E_Client *ec = (E_Client *)obj, *cur;
         E_Desk *desk_current;
         int hdir = 0, vdir = 0;
-        int x1, y1, x2, y2, zx, zy, zw, zh;
-        int w, h, nw, nh, try_h = 2, try_v = 2, offset_x = 0, offset_y = 0;
+        int x1, y1, x2, y2, w, h;
+        int zx, zy, zw, zh;
 
         if (!strcmp(params, "left"))
           hdir = -1;
@@ -1167,102 +1167,86 @@ ACT_FN_GO(window_grow, )
         x2 = ec->x + ec->w;
         y2 = ec->y + ec->h;
 
+        if (hdir < 0)
+          x1 = zx;
+        else if (hdir > 0)
+          x2 = zx + zw;
+
+        if (vdir < 0)
+          y1 = zy;
+        else if (vdir > 0)
+          y2 = zy + zh;
+
+        w = x2 - x1;
+        h = y2 - y1;
+
+        e_client_resize_limit(ec, &w, &h);
+
         desk_current = e_desk_current_get(ec->zone);
 
-        while ((try_h + try_v) > 0)
+        E_CLIENT_FOREACH(cur)
           {
-             if (hdir < 0)
-               x1 = zx;
-             else if (hdir > 0)
-               x2 = zx + zw;
-
-             if (vdir < 0)
-               y1 = zy;
-             else if (vdir > 0)
-               y2 = zy + zh;
-
-             E_CLIENT_FOREACH(cur)
+             if (((cur->desk == desk_current) || (cur->sticky)) && (ec != cur) && (!cur->iconic))
                {
-                  if (((cur->desk == desk_current) || (cur->sticky)) && (ec != cur) && (!cur->iconic))
+                  if ((hdir < 0)
+                      && ((cur->x + cur->w) < ec->x)
+                      && (E_SPANS_COMMON(ec->y, ec->h, cur->y, cur->h)))
                     {
-                       if ((hdir < 0)
-                           && ((cur->x + cur->w) < (ec->x + offset_x))
+                       int nw = ec->w + (ec->x - cur->x - cur->w);
+                       int nh = h;
+                       e_client_resize_limit(ec, &nw, &nh);
+                       if ((nw > ec->w) && (nw < w))
+                         {
+                            x1 = cur->x + cur->w;
+                            w = nw;
+                            h = nh;
+                         }
+                    }
+                  else if ((hdir > 0)
+                           && (cur->x > (ec->x + ec->w))
                            && (E_SPANS_COMMON(ec->y, ec->h, cur->y, cur->h)))
-                         x1 = MAX(x1, cur->x + cur->w);
-                       else if ((hdir > 0)
-                                && (cur->x > (ec->x + ec->w + offset_x))
-                                && (E_SPANS_COMMON(ec->y, ec->h, cur->y, cur->h)))
-                         x2 = MIN(x2, cur->x);
+                    {
+                       int nw = cur->x - x1;
+                       int nh = h;
+                       e_client_resize_limit(ec, &nw, &nh);
+                       if ((nw > ec->w) && (nw < w))
+                         {
+                            w = nw;
+                            h = nh;
+                         }
+                    }
 
-                       if ((vdir < 0)
-                           && ((cur->y + cur->h) < (ec->y + offset_y))
+                  if ((vdir < 0)
+                      && ((cur->y + cur->h) < ec->y)
+                      && (E_SPANS_COMMON(ec->x, ec->w, cur->x, cur->w)))
+                    {
+                       int nw = w;
+                       int nh = y2 - (cur->y + cur->h);
+                       e_client_resize_limit(ec, &nw, &nh);
+                       if ((nh > ec->h) && (nh < h))
+                         {
+                            y1 = cur->y + cur->h;
+                            w = nw;
+                            h = nh;
+                         }
+                    }
+                  else if ((vdir > 0)
+                           && (cur->y > (ec->y + ec->h))
                            && (E_SPANS_COMMON(ec->x, ec->w, cur->x, cur->w)))
-                         y1 = MAX(y1, cur->y + cur->h);
-                       else if ((vdir > 0)
-                                && (cur->y > (ec->y + ec->h + offset_y))
-                                && (E_SPANS_COMMON(ec->x, ec->w, cur->x, cur->w)))
-                         y2 = MIN(y2, cur->y);
-                       if      (x1 < zx)        x1 = zx;
-                       else if (x2 > (zx + zw)) x2 = zx + zw;
-                       if      (y1 < zy)        y1 = zy;
-                       else if (y2 > (zy + zh)) y2 = zy + zh;
+                    {
+                       int nw = w;
+                       int nh = cur->y - y1;
+                       e_client_resize_limit(ec, &nw, &nh);
+                       if ((nh > ec->h) && (nh < h))
+                         {
+                            w = nw;
+                            h = nh;
+                         }
                     }
                }
-             w = nw = x2 - x1;
-             h = nh = y2 - y1;
-             e_client_resize_limit(ec, &w, &h);
-             if (hdir < 0)
-               x1 += (nw - w);
-             if (vdir < 0)
-               y1 += (nh - h);
-
-             // grow right but can't & not at screen edge & steps are limited
-             if ((hdir > 0) && (ec->w == w) && (x2 != (zx + zw))
-                 && (ec->icccm.step_w > 1))
-               {
-                  nw = ec->w;
-                  w = ec->w + ec->icccm.step_w;
-                  e_client_resize_limit(ec, &w, &h);
-                  offset_x = w - nw;
-                  try_h--;
-               }
-             // grow left but can't & not at screen edge & steps are limited
-             else if ((hdir < 0) && (ec->w == w) && (x1 != zx)
-                      && (ec->icccm.step_w > 1))
-               {
-                  nw = ec->w;
-                  w = ec->w + ec->icccm.step_w;
-                  e_client_resize_limit(ec, &w, &h);
-                  offset_x = -(w - nw);
-                  try_h--;
-               }
-             else try_h = 0;
-
-             // grow right but can't & not at screen edge & steps are limited
-             if ((vdir > 0) && (ec->h == h) && (y2 != (zy + zh))
-                 && (ec->icccm.step_h > 1))
-               {
-                  nh = ec->h;
-                  h = ec->w + ec->icccm.step_h;
-                  e_client_resize_limit(ec, &w, &h);
-                  offset_y = h - nh;
-                  try_v--;
-               }
-             // grow left but can't & not at screen edge & steps are limited
-             else if ((vdir < 0) && (ec->h == h) && (y1 != zy)
-                      && (ec->icccm.step_h > 1))
-               {
-                  nh = ec->h;
-                  h = ec->h + ec->icccm.step_h;
-                  e_client_resize_limit(ec, &w, &h);
-                  offset_y = -(h - nh);
-                  try_v--;
-               }
-             else try_v = 0;
           }
 
-        if ((x1 != ec->x) || (y1 != ec->y) ||
-            (w != ec->w) || (h != ec->h))
+        if ((x1 != ec->x) || (y1 != ec->y) || (w != ec->w) || (h != ec->h))
           {
              evas_object_move(ec->frame, x1, y1);
              evas_object_resize(ec->frame, w, h);
