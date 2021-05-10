@@ -1123,7 +1123,7 @@ ACT_FN_GO(window_grow, )
 
    if (params)
      {
-        E_Client *ec = (E_Client *)obj, *cur;
+        E_Client *ec = (E_Client *)((void *)obj), *cur;
         E_Desk *desk_current;
         int hdir = 0, vdir = 0;
         int x1, y1, x2, y2, w, h;
