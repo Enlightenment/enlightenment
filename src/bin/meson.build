@@ -564,3 +564,4 @@ suid_exes += join_paths(dir_e_utils, 'enlightenment_ckpasswd')
 
 subdir('e_fm')
 subdir('system')
+subdir('tools')

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Palette Editor
+Icon=e_paledit
+Exec=e_paledit
+Comment=A tool for editing color schemes and paletted for Enlightenment
+Categories=Settings;DesktopSettings;
+StartupWMClass=e_paledit
