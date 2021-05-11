@@ -1011,6 +1011,8 @@ e_pixmap_image_refresh(E_Pixmap *cp)
            cp->held_buffer_destroy_listener.notify =
              _e_pixmap_cb_held_buffer_destroy;
 
+           if (cp->held_buffer_destroy_listener.link.next)
+             wl_list_remove(&cp->held_buffer_destroy_listener.link);
            wl_signal_add(&cp->held_buffer->destroy_signal,
                          &cp->held_buffer_destroy_listener);
            return EINA_TRUE;
