@@ -17,7 +17,7 @@ palimg_update(Evas_Object *img, Elm_Palette *pal)
    while (pixn < 256)
      {
 #define PIX_WRITE(r, g, b, a) \
-   *((int *)p) = (a << 24) | (r << 16) | (g << 8) | (b); \
+   *((int *)(void *)p) = (a << 24) | (r << 16) | (g << 8) | (b); \
    p += sizeof(int); \
    pixn++; \
    x++; \
