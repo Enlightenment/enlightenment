@@ -373,7 +373,6 @@ _e_comp_cb_zone_change(void *d EINA_UNUSED, int type, void *event)
 static Eina_Bool
 _e_comp_cb_screensaver_active_delay(void *data EINA_UNUSED)
 {
-   ecore_animator_frametime_set(10.0);
    if (!e_comp->nocomp)
      ecore_evas_manual_render_set(e_comp->ee, EINA_TRUE);
    timer_post_screensaver_on = NULL;

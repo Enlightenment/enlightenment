@@ -1096,7 +1096,6 @@ _e_comp_screensaver_off(void *data EINA_UNUSED, int type EINA_UNUSED, void *even
    E_Zone *zone;
    E_Client *ec;
 
-   ecore_animator_frametime_set(ecore_frametime);
    if (!e_comp->saver) return ECORE_CALLBACK_RENEW;
    e_comp_override_del();
    e_comp->saver = EINA_FALSE;
