@@ -344,7 +344,7 @@ if get_option('wl') == true
                                  arguments: ['server-header', '@INPUT@', '@OUTPUT@'])
   gen_scanner_impl = generator(wayland_scanner,
                                output   : '@BASENAME@-protocol.c',
-                               arguments: ['code', '@INPUT@', '@OUTPUT@'])
+                               arguments: ['private-code', '@INPUT@', '@OUTPUT@'])
   config_h.set('HAVE_WAYLAND', '1')
 endif
 
