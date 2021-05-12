@@ -5307,6 +5307,17 @@ _e_comp_x_screensaver_on()
 
    if ((s) && (atoi(s) == 1))
      {
+        if (e_menu_is_active())
+          {
+             E_Menu *m = e_menu_active_get();
+
+             if (m)
+               {
+                  E_Menu *m2 = e_menu_root_get(m);
+
+                  if (m2) e_menu_deactivate(m2);
+               }
+          }
         if (!e_desklock_state_get())
           {
              _e_comp_pointer_ungrab();

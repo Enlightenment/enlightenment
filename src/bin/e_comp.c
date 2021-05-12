@@ -34,8 +34,6 @@ static Ecore_Timer *action_timeout = NULL;
 static Eina_Bool gl_avail = EINA_FALSE;
 static Eina_Bool shape_debug = EINA_FALSE;
 
-static double ecore_frametime = 0;
-
 static int _e_comp_log_dom = -1;
 
 E_API int E_EVENT_COMPOSITOR_UPDATE = -1;
@@ -1073,7 +1071,6 @@ _e_comp_screensaver_on(void *data EINA_UNUSED, int type EINA_UNUSED, void *event
    Eina_List *l;
    E_Zone *zone;
 
-   ecore_frametime = ecore_animator_frametime_get();
    if (e_comp->saver) return ECORE_CALLBACK_RENEW;
    e_comp_override_add();
    e_comp->saver = EINA_TRUE;
@@ -1200,7 +1197,6 @@ e_comp_init(void)
 {
    _e_comp_log_dom = eina_log_domain_register("e_comp", EINA_COLOR_YELLOW);
 
-   ecore_frametime = ecore_animator_frametime_get();
    shape_debug = !!getenv("E_SHAPE_DEBUG");
 
    E_EVENT_COMPOSITOR_UPDATE = ecore_event_type_new();

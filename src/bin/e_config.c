@@ -1917,9 +1917,9 @@ e_config_load(void)
    E_CONFIG_LIMIT(e_config->dpms_standby_enable, 0, 1);
    E_CONFIG_LIMIT(e_config->dpms_suspend_enable, 0, 1);
    E_CONFIG_LIMIT(e_config->dpms_off_enable, 0, 1);
-   E_CONFIG_LIMIT(e_config->dpms_standby_timeout, 30, 5400);
-   E_CONFIG_LIMIT(e_config->dpms_suspend_timeout, 30, 5400);
-   E_CONFIG_LIMIT(e_config->dpms_off_timeout, 30, 5400);
+   E_CONFIG_LIMIT(e_config->dpms_standby_timeout, 5, 5400);
+   E_CONFIG_LIMIT(e_config->dpms_suspend_timeout, 5, 5400);
+   E_CONFIG_LIMIT(e_config->dpms_off_timeout, 5, 5400);
 
    E_CONFIG_LIMIT(e_config->scale.min, 0.1, 40.0);
    E_CONFIG_LIMIT(e_config->scale.max, 0.1, 40.0);

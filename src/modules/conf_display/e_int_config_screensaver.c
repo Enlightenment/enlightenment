@@ -131,9 +131,9 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
        (e_config->backlight.timer > (e_config->screensaver_timeout)))
      {
         e_config->screensaver_timeout = e_config->backlight.timer;
-        e_config->dpms_standby_timeout = e_config->screensaver_timeout;
-        e_config->dpms_suspend_timeout = e_config->screensaver_timeout;
-        e_config->dpms_off_timeout = e_config->screensaver_timeout;
+        e_config->dpms_standby_timeout = e_config->screensaver_timeout + 5;
+        e_config->dpms_suspend_timeout = e_config->screensaver_timeout + 6;
+        e_config->dpms_off_timeout = e_config->screensaver_timeout + 7;
      }
 
    e_config->no_dpms_on_fullscreen = cfdata->no_dpms_on_fullscreen;

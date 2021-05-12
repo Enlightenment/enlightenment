@@ -783,6 +783,7 @@ e_pointer_idler_before(void)
 
    if (!e_config->show_cursor) return;
 
+   if (ecore_evas_manual_render_get(e_comp->ee)) return;
    EINA_LIST_FOREACH(_ptrs, l, ptr)
      {
         if ((!ptr->e_cursor) || (!ptr->buffer_evas)) continue;

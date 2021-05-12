@@ -21,9 +21,9 @@ static Ecore_Timer *suspend_timer;
 static Ecore_Timer *off_timer;
 #endif
 
-#define STANDBY 5
-#define SUSPEND 6
-#define OFF 7
+#define STANDBY 10
+#define SUSPEND 11
+#define OFF 12
 
 E_API void
 e_dpms_update(void)
