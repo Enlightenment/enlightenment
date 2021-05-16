@@ -30,6 +30,7 @@ _cb_name_ok_click(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EIN
                             free(evas_object_data_get(data, "pal_selected_palette"));
                             evas_object_data_set(data, "pal_selected_palette",
                                                  strdup(plain));
+                            elm_config_palette_save(pal, plain);
                             elm_config_palette_free(pal);
                          }
                     }
@@ -44,6 +45,7 @@ _cb_name_ok_click(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EIN
                                  free(evas_object_data_get(data, "pal_selected_palette"));
                                  evas_object_data_set(data, "pal_selected_palette",
                                                       strdup(plain));
+                                 elm_config_palette_save(pal, plain);
                                  elm_config_palette_free(pal);
                               }
                          }
