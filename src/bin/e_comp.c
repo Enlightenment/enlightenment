@@ -427,11 +427,11 @@ e_comp_frame_event_add(int info[4], double t)
 E_API void
 e_comp_client_frame_add(Evas_Object *obj EINA_UNUSED)
 {
-   int info[4] = { 0, 0, 0, 0 };
-   double t = ecore_time_get();
-
-   info[0] = E_COMP_FRAME_EVENT_CLIENT_DAMAGE;
-   e_comp_frame_event_add(info, t);
+   if (conf->fps_show)
+     {
+        int info[4] = { E_COMP_FRAME_EVENT_CLIENT_DAMAGE, 0, 0, 0 };
+        e_comp_frame_event_add(info, ecore_time_get());
+     }
 }
 
 static inline void
@@ -604,13 +604,13 @@ e_comp_fps_update(void)
                   else if (info0 == E_COMP_FRAME_EVENT_RENDER_BEGIN)
                     _e_comp_fps_draw_point(pix, pixstride, pixw, 3, 0xffff4433, px);
                   else if (info0 == E_COMP_FRAME_EVENT_IDLE_ENTER)
-                    _e_comp_fps_draw_point(pix, pixstride, pixw, 4, 0xff994499, px);
-                  else if (info0 == E_COMP_FRAME_EVENT_IDLE_EXIT)
-                    _e_comp_fps_draw_point(pix, pixstride, pixw, 5, 0xffff88ff, px);
+                    _e_comp_fps_draw_point(pix, pixstride, pixw, 4, 0xffff88ff, px);
                   else if (info0 == E_COMP_FRAME_EVENT_HANDLE_DAMAGE)
-                    _e_comp_fps_draw_point(pix, pixstride, pixw, 6, 0xff44ff22, px);
+                    _e_comp_fps_draw_point(pix, pixstride, pixw, 5, 0xff44ff22, px);
                   else if (info0 == E_COMP_FRAME_EVENT_CLIENT_DAMAGE)
-                    _e_comp_fps_draw_point(pix, pixstride, pixw, 7, 0xff4466ff, px);
+                    _e_comp_fps_draw_point(pix, pixstride, pixw, 6, 0xff4466ff, px);
+                  else if (info0 == E_COMP_FRAME_EVENT_IDLE_EXIT)
+                    _e_comp_fps_draw_point(pix, pixstride, pixw, 7, 0xff994499, px);
                }
              for (t = 0.0; t < 10.0; t += (1.0 / 60.0))
                {
@@ -662,37 +662,10 @@ _e_comp_cb_update(void)
    _e_comp_fps_update();
    if (conf->fps_show)
      {
-        double t = ecore_loop_time_get();
-        int info[4] = { 0, 0, 0, 0 };
-
-        info[0] = E_COMP_FRAME_EVENT_HANDLE_DAMAGE;
-        e_comp_frame_event_add(info, t);
+        int info[4] = { E_COMP_FRAME_EVENT_HANDLE_DAMAGE, 0, 0, 0 };
+        e_comp_frame_event_add(info, ecore_loop_time_get());
         e_comp_fps_update();
      }
-   /*
-      if (doframeinfo == -1)
-      {
-      doframeinfo = 0;
-      if (getenv("DFI")) doframeinfo = 1;
-      }
-      if (doframeinfo)
-      {
-      static double t0 = 0.0;
-      double td, t;
-
-      t = ecore_time_get();
-      td = t - t0;
-      if (td > 0.0)
-      {
-      int fps, i;
-
-      fps = 1.0 / td;
-      for (i = 0; i < fps; i+= 2) putchar('=');
-      printf(" : %3.3f", 1.0 / td);
-      }
-      t0 = t;
-      }
-    */
 nocomp:
    ec = _e_comp_fullscreen_check();
    if (ec)

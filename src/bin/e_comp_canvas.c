@@ -72,37 +72,45 @@ _e_comp_canvas_render_post_job(void *data EINA_UNUSED)
 static void
 _e_comp_canvas_render_track_pre(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   int info[4] = { 0, 0, 0, 0 };
-
-   info[0] = E_COMP_FRAME_EVENT_RENDER_BEGIN;
-   e_comp_frame_event_add(info, ecore_time_get());
+   E_Comp_Config *conf = e_comp_config_get();
+   if (conf->fps_show)
+     {
+        int info[4] = { E_COMP_FRAME_EVENT_RENDER_BEGIN, 0, 0, 0 };
+        e_comp_frame_event_add(info, ecore_time_get());
+     }
 }
 
 static void
 _e_comp_canvas_render_track_post(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   int info[4] = { 0, 0, 0, 0 };
-
-   info[0] = E_COMP_FRAME_EVENT_RENDER_END;
-   e_comp_frame_event_add(info, ecore_time_get());
+   E_Comp_Config *conf = e_comp_config_get();
+   if (conf->fps_show)
+     {
+        int info[4] = { E_COMP_FRAME_EVENT_RENDER_END, 0, 0, 0 };
+        e_comp_frame_event_add(info, ecore_time_get());
+     }
 }
 
 static void
 _e_comp_canvas_render_track_flush_pre(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   int info[4] = { 0, 0, 0, 0 };
-
-   info[0] = E_COMP_FRAME_EVENT_RENDER2_BEGIN;
-   e_comp_frame_event_add(info, ecore_time_get());
+   E_Comp_Config *conf = e_comp_config_get();
+   if (conf->fps_show)
+     {
+        int info[4] = { E_COMP_FRAME_EVENT_RENDER2_BEGIN, 0, 0, 0 };
+        e_comp_frame_event_add(info, ecore_time_get());
+     }
 }
 
 static void
 _e_comp_canvas_render_track_flush_post(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   int info[4] = { 0, 0, 0, 0 };
-
-   info[0] = E_COMP_FRAME_EVENT_RENDER2_END;
-   e_comp_frame_event_add(info, ecore_time_get());
+   E_Comp_Config *conf = e_comp_config_get();
+   if (conf->fps_show)
+     {
+        int info[4] = { E_COMP_FRAME_EVENT_RENDER2_END, 0, 0, 0 };
+        e_comp_frame_event_add(info, ecore_time_get());
+     }
 }
 
 static void
@@ -455,14 +463,15 @@ _e_comp_canvas_cb_zone_sort(const void *data1, const void *data2)
 static void
 _e_comp_canvas_prerender(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   int info[4] = { 0, 0, 0, 0 };
-   double t = ecore_time_get();
    E_Comp_Cb cb;
    Eina_List *l;
    E_Comp_Config *conf = e_comp_config_get();
 
-   info[0] = E_COMP_FRAME_EVENT_RENDER_BEGIN;
-   e_comp_frame_event_add(info, t);
+   if (conf->fps_show)
+     {
+        int info[4] = { E_COMP_FRAME_EVENT_RENDER_BEGIN, 0, 0, 0 };
+        e_comp_frame_event_add(info, ecore_time_get());
+     }
 
    e_comp->rendering = EINA_TRUE;
 
@@ -479,18 +488,24 @@ _e_comp_canvas_prerender(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *even
 static Eina_Bool
 _e_comp_canvas_cb_idle_enterer(void *data EINA_UNUSED)
 {
-   int info[4] = { 0, 0, 0, 0 };
-   info[0] = E_COMP_FRAME_EVENT_IDLE_ENTER;
-   e_comp_frame_event_add(info, ecore_time_get());
+   E_Comp_Config *conf = e_comp_config_get();
+   if (conf->fps_show)
+     {
+        int info[4] = { E_COMP_FRAME_EVENT_IDLE_ENTER, 0, 0, 0 };
+        e_comp_frame_event_add(info, ecore_time_get());
+     }
    return EINA_TRUE;
 }
 
 static Eina_Bool
 _e_comp_canvas_cb_idle_exiter(void *data EINA_UNUSED)
 {
-   int info[4] = { 0, 0, 0, 0 };
-   info[0] = E_COMP_FRAME_EVENT_IDLE_EXIT;
-   e_comp_frame_event_add(info, ecore_time_get());
+   E_Comp_Config *conf = e_comp_config_get();
+   if (conf->fps_show)
+   {
+      int info[4] = { E_COMP_FRAME_EVENT_IDLE_EXIT, 0, 0, 0 };
+      e_comp_frame_event_add(info, ecore_time_get());
+   }
    return EINA_TRUE;
 }
 
@@ -521,7 +536,7 @@ e_comp_canvas_init(int w, int h)
    if (!inited)
      {
         inited = 1;
-        ecore_idle_enterer_add(_e_comp_canvas_cb_idle_enterer, NULL);
+        ecore_idle_enterer_before_add(_e_comp_canvas_cb_idle_enterer, NULL);
         ecore_idle_exiter_add(_e_comp_canvas_cb_idle_exiter, NULL);
      }
    evas_event_callback_add(e_comp->evas, EVAS_CALLBACK_RENDER_PRE, _e_comp_canvas_render_track_pre, NULL);
