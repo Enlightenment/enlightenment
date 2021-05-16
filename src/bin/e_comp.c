@@ -488,7 +488,7 @@ e_comp_fps_update(void)
         t = ecore_time_get();
         e_comp->frameskip = 0;
 
-        pixh = 8;
+        pixh = 12;
         pixsz = 2;
 
         fps = _e_comp_frame_event_fps_calc(E_COMP_FRAME_EVENT_HANDLE_DAMAGE);
@@ -501,15 +501,23 @@ e_comp_fps_update(void)
         w += 16;
         h += 16;
         z = e_zone_current_get();
+        pixscale = 1000;
         if (z)
           {
+             if (z->w >= 2048) pixw = 2000;
+             else if (z->w >= 1600) pixw = 1500;
+             else if (z->w >= 1024) pixw = 1000;
+             else if (z->w >= 512) pixw = 500;
+             else if (z->w >= 256) pixw = 250;
+             else pixw = 125;
+
              switch (conf->fps_corner)
                {
                 case 3: // bottom-right
                   x = z->x + z->w - w;
                   y = z->y + z->h - h;
 
-                  gw = 500;
+                  gw = pixw;
                   gh = pixh * pixsz;
                   gx = x + w - gw;
                   gy = y - gh - 8;
@@ -523,7 +531,7 @@ e_comp_fps_update(void)
                   x = z->x;
                   y = z->y + z->h - h;
 
-                  gw = 500;
+                  gw = pixw;
                   gh = pixh * pixsz;
                   gx = x;
                   gy = y - gh - 8;
@@ -537,7 +545,7 @@ e_comp_fps_update(void)
                   x = z->x + z->w - w;
                   y = z->y;
 
-                  gw = 500;
+                  gw = pixw;
                   gh = pixh * pixsz;
                   gx = x + w - gw;
                   gy = y + h;
@@ -552,7 +560,7 @@ e_comp_fps_update(void)
                   x = z->x;
                   y = z->y;
 
-                  gw = 500;
+                  gw = pixw;
                   gh = pixh * pixsz;
                   gx = x;
                   gy = y + h;
@@ -564,8 +572,8 @@ e_comp_fps_update(void)
                   break;
                }
           }
-        pixscale = 1000;
-        pixw = 500;
+        else pixw = 500;
+
         evas_object_image_size_set(e_comp->canvas->fps_gr, pixw, pixh);
         evas_object_image_alpha_set(e_comp->canvas->fps_gr, EINA_TRUE);
         pixstride = evas_object_image_stride_get(e_comp->canvas->fps_gr);
@@ -603,6 +611,16 @@ e_comp_fps_update(void)
                     _e_comp_fps_draw_point(pix, pixstride, pixw, 6, 0xff44ff22, px);
                   else if (info0 == E_COMP_FRAME_EVENT_CLIENT_DAMAGE)
                     _e_comp_fps_draw_point(pix, pixstride, pixw, 7, 0xff4466ff, px);
+               }
+             for (t = 0.0; t < 10.0; t += (1.0 / 60.0))
+               {
+                  px = t * pixscale;
+                  px = pixw - px - 1;
+                  if (px < 0) break;
+                  _e_comp_fps_draw_point(pix, pixstride, pixw, 10, 0xffffffff, px);
+                  _e_comp_fps_draw_point(pix, pixstride, pixw, 11, 0xffffffff, px - 1);
+                  _e_comp_fps_draw_point(pix, pixstride, pixw, 11, 0xffffffff, px);
+                  _e_comp_fps_draw_point(pix, pixstride, pixw, 11, 0xffffffff, px + 1);
                }
              evas_object_image_data_set(e_comp->canvas->fps_gr, pix);
              evas_object_image_data_update_add(e_comp->canvas->fps_gr,

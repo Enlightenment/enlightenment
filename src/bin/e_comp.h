@@ -91,7 +91,7 @@ typedef struct E_Comp_Canvas
    Evas_Object *gadget_site; //desktop gadget site
 } E_Comp_Canvas;
 
-#define E_COMP_FRAME_EVENT_COUNT 1024
+#define E_COMP_FRAME_EVENT_COUNT 4096
 
 #define E_COMP_FRAME_EVENT_RENDER_BEGIN   1
 #define E_COMP_FRAME_EVENT_RENDER_END     2

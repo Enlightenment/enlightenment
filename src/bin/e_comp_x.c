@@ -6009,7 +6009,7 @@ e_comp_x_init(void)
      }
 
    // delay the x vsync animator hook by 0.5 frames
-   ecore_x_vsync_animator_tick_delay_set(0.5);
+//   ecore_x_vsync_animator_tick_delay_set(0.5);
 
    if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      ecore_x_io_error_handler_set(_e_main_cb_x_fatal, NULL);
