@@ -164,10 +164,10 @@ _help_button_cb(void *data, Evas_Object *obj EINA_UNUSED,
 
    // update title label
    if (inst->ctxt->v_maj != -1)
-     snprintf(buf, sizeof(buf), "PackageKit version: %d.%d.%d",
+     snprintf(buf, sizeof(buf), "PackageKit %d.%d.%d",
               inst->ctxt->v_maj, inst->ctxt->v_min, inst->ctxt->v_mic);
    else
-     snprintf(buf, sizeof(buf), _("Unknown PackageKit version"));
+     snprintf(buf, sizeof(buf), _("Unknown PackageKit"));
    elm_object_text_set(inst->popup_title_entry, buf);
 }
 
