@@ -357,13 +357,13 @@ _gl_item_double_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *p
 
    if (!strcmp(part, "elm.text"))
      {
-        return strdup(pkg->summary);
-     }
-   else
-     {
         char *s = malloc(strlen(pkg->name) + strlen(pkg->version) + 2);
         sprintf(s, "%s %s", pkg->name, pkg->version);
         return s;
+     }
+   else
+     {
+        return strdup(pkg->summary);
      }
 
    return NULL;
