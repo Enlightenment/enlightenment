@@ -221,7 +221,7 @@ _adv_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    cfdata->gui.popup_list = eina_list_append(cfdata->gui.popup_list, ow);
    e_widget_disabled_set(ow, !cfdata->popup.show);
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
-   ow = e_widget_slider_add(evas, 1, 0, _("%.0f pixels"), 20.0, 200.0, 1.0, 0, NULL,
+   ow = e_widget_slider_add(evas, 1, 0, _("%.0f pixels"), 20.0, 1000.0, 1.0, 0, NULL,
                             &(cfdata->popup.height), 100);
    cfdata->gui.popup_list = eina_list_append(cfdata->gui.popup_list, ow);
    e_widget_disabled_set(ow, !cfdata->popup.show);
@@ -240,7 +240,7 @@ _adv_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
                                cfdata->gui.popup_list);
    ow = e_widget_label_add(evas, _("Pager action popup height"));
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
-   ow = e_widget_slider_add(evas, 1, 0, _("%.0f pixels"), 20.0, 200.0, 1.0, 0, NULL,
+   ow = e_widget_slider_add(evas, 1, 0, _("%.0f pixels"), 20.0, 1000.0, 1.0, 0, NULL,
                             &(cfdata->popup.act_height), 100);
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Popup"), ol, 1, 1, 1, 0,

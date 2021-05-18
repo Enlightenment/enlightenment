@@ -990,11 +990,15 @@ e_deskmirror_util_wins_print(Evas_Object *obj)
 E_API void
 e_deskmirror_update_force(Evas_Object *obj)
 {
+   Mirror *m;
+
    API_ENTRY(obj);
 
    e_layout_freeze(sd->layout);
    sd->force = EINA_TRUE;
    _e_deskmirror_smart_hide(obj);
+   EINA_INLIST_FOREACH(sd->mirrors, m)
+     _e_deskmirror_mirror_reconfigure(m);
    _e_deskmirror_smart_reconfigure(sd);
    _e_deskmirror_smart_show(obj);
    sd->force = EINA_FALSE;
