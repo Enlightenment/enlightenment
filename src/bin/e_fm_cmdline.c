@@ -46,12 +46,13 @@ fm_open_reply(void *data EINA_UNUSED, const Eldbus_Message *msg,
               Eldbus_Pending *dbus_pending EINA_UNUSED)
 {
    const char *name, *txt;
+
    if (eldbus_message_error_get(msg, &name, &txt))
      {
         retval = EXIT_FAILURE;
         EINA_LOG_ERR("%s: %s", name, txt);
+        fprintf(stderr, "Did you unload the EFM module? Try loading it.\n");
      }
-
    pending--;
    if (!pending) ecore_main_loop_quit();
 }

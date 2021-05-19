@@ -1,4 +1,4 @@
-executable('e_paledit',
+executable('enlightenment_paledit',
            [ 'main.c',
              'main.h',
              'colsel.c',
@@ -12,9 +12,9 @@ executable('e_paledit',
            install            : true
           )
 
-install_data('e_paledit.desktop',
+install_data('enlightenment_paledit.desktop',
              install_dir: join_paths(dir_data, 'applications')
             )
-install_data('e_paledit.png',
+install_data('enlightenment_paledit.png',
              install_dir: join_paths(dir_data, 'icons/hicolor/128x128/apps')
             )
