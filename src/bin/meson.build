@@ -471,29 +471,6 @@ executable('enlightenment_start',
            install            : true
           )
 
-executable('enlightenment_filemanager',
-           [ 'e_fm_cmdline.c' ],
-           include_directories: include_directories('../..'),
-           dependencies       : [ dep_eina, dep_ecore, dep_ecore_file, dep_eldbus, dep_efreet ],
-           install_dir        : dir_bin,
-           install            : true
-          )
-
-executable('enlightenment_open',
-           [ 'e_open.c' ],
-           include_directories: include_directories('../..'),
-           dependencies       : [ dep_eina, dep_ecore, dep_efreet, dep_efreet_mime ],
-           install_dir        : dir_bin,
-           install            : true
-          )
-
-executable('enlightenment_askpass',
-           [ 'e_askpass_main.c' ],
-           dependencies: [ dep_elementary ],
-           install_dir : dir_bin,
-           install     : true
-          )
-
 executable('enlightenment_fm_op',
            [ 'e_fm_op.c' ],
            include_directories: include_directories('../..'),

@@ -399,7 +399,6 @@ subdir('data/fonts')
 subdir('data/icons')
 subdir('data/images')
 subdir('data/input_methods')
-subdir('data/tools')
 subdir('data/units')
 subdir('data/session')
 
