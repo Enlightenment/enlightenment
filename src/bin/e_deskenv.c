@@ -23,7 +23,8 @@ e_deskenv_init(void)
           {
 #if 1
              snprintf(buf2, sizeof(buf2), "xrdb -override %s", buf);
-             system(buf2);
+             if (system(buf2) != 0)
+               fprintf(stderr, "Execution of [%s] did not exit cleanly\n", buf2);
 #else
              // while this SHOULD work.. it ends up with mysterious problems
              // inside xlib that i seem to not be able to trap easily...
