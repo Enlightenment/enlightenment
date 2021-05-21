@@ -100,12 +100,16 @@ _proc_stats_client_move_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj 
    Evas_Coord ox, oy, ow, oh;
 
    item = data;
-   if (!item) return;
+
+   if ((!item) || (!item->popup)) return;
 
    evas_object_geometry_get(item->obj_swallow, &ox, &oy, &ow, &oh);
+   evas_object_move(item->popup, ox + (ow / 2), oy);
 
-   if (item->popup)
-     evas_object_move(item->popup, ox + (ow / 2), oy);
+   if ((item->client->hidden) || (item->client->iconic))
+     evas_object_hide(item->popup);
+   else
+     evas_object_show(item->popup);
 }
 
 static void
