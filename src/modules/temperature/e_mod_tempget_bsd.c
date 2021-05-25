@@ -102,6 +102,7 @@ _sysctl_init(void)
    size_t sdlen = sizeof(snsrdev);
    size_t slen = sizeof(snsr);
    int mib[5] = { CTL_HW, HW_SENSORS, 0, 0, 0 };
+   enum sensor_type type;
 
    for (dev = 0;; dev++)
      {
@@ -113,25 +114,32 @@ _sysctl_init(void)
              else
                continue;
           }
-        for (numt = 0; numt < snsrdev.maxnumt[SENSOR_TEMP]; numt++)
+        for (type = 0; type < SENSOR_MAX_TYPES; type++)
           {
-             mib[4] = numt;
-             slen = sizeof(snsr);
-             if (sysctl(mib, 5, &snsr, &slen, NULL, 0) == -1)
-               continue;
-             if (slen > 0 && (snsr.flags & SENSOR_FINVALID) == 0)
-               break;
-          }
-        slen = sizeof(snsr);
-        if (sysctl(mib, 5, &snsr, &slen, NULL, 0) == -1)
-          continue;
-        if (snsr.type != SENSOR_TEMP) continue;
+             mib[3] = type;
+             for (numt = 0; numt < snsrdev.sensors_count; numt++)
+               {
+                  mib[4] = numt;
+                  slen = sizeof(snsr);
+                  if (sysctl(mib, 5, &snsr, &slen, NULL, 0) == -1)
+                    continue;
+                  if ((!slen) || (snsr.flags & SENSOR_FINVALID))
+                    continue;
+                  if (snsr.type != SENSOR_TEMP)
+                    continue;
 
-        Temp *temp = malloc(sizeof(Temp));
-        temp->name = eina_stringshare_add(snsrdev.xname);
-        temp->label = eina_stringshare_add(snsrdev.xname);
-        memcpy(temp->mib, &mib, sizeof(mib));
-        mons = eina_list_append(mons, temp);
+                  Temp *temp = malloc(sizeof(Temp));
+                  if (temp)
+                    {
+                       char buf[64];
+                       temp->name = eina_stringshare_add(snsrdev.xname);
+                       snprintf(buf, sizeof(buf), "%s.temp%i", snsrdev.xname, numt);
+                       temp->label = eina_stringshare_add(buf);
+                       memcpy(temp->mib, &mib, sizeof(mib));
+                       mons = eina_list_append(mons, temp);
+                    }
+               }
+          }
      }
 }
 
