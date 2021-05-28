@@ -7,7 +7,6 @@ src/bin/e_actions.h
 src/bin/e_alert.c
 src/bin/e_alert.h
 src/bin/e_alert_main.c
-src/bin/e_askpass_main.c
 src/bin/e_atoms.c
 src/bin/e_atoms.h
 src/bin/e_auth.c
@@ -97,7 +96,6 @@ src/bin/e_filereg.h
 src/bin/e_flowlayout.c
 src/bin/e_flowlayout.h
 src/bin/e_fm.c
-src/bin/e_fm_cmdline.c
 src/bin/e_fm_custom.c
 src/bin/e_fm_custom.h
 src/bin/e_fm_device.c
@@ -225,7 +223,6 @@ src/bin/e_obj_dialog.c
 src/bin/e_obj_dialog.h
 src/bin/e_object.c
 src/bin/e_object.h
-src/bin/e_open.c
 src/bin/e_order.c
 src/bin/e_order.h
 src/bin/e_pan.c
@@ -377,6 +374,15 @@ src/bin/system/e_system_main.c
 src/bin/system/e_system_power.c
 src/bin/system/e_system_rfkill.c
 src/bin/system/e_system_storage.c
+src/bin/tools/askpass/e_askpass_main.c
+src/bin/tools/filemanager/e_fm_cmdline.c
+src/bin/tools/open/e_open.c
+src/bin/tools/paledit/colsel.c
+src/bin/tools/paledit/main.c
+src/bin/tools/paledit/main.h
+src/bin/tools/paledit/palcols.c
+src/bin/tools/paledit/palimg.c
+src/bin/tools/paledit/palsel.c
 src/bin/valgrind.h
 src/modules/appmenu/e_mod_appmenu_private.h
 src/modules/appmenu/e_mod_appmenu_render.c
@@ -617,6 +623,7 @@ src/modules/tasks/e_mod_main.h
 src/modules/temperature/e_mod_config.c
 src/modules/temperature/e_mod_main.c
 src/modules/temperature/e_mod_main.h
+src/modules/temperature/e_mod_tempget_bsd.c
 src/modules/temperature/e_mod_tempget.c
 src/modules/tiling/e_mod_config.c
 src/modules/tiling/e_mod_tiling.c
