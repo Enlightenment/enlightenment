@@ -43,7 +43,6 @@ static void _sink_input_set(int volume, Eina_Bool muted, void *data);
 static int _sink_input_min_get(void *data);
 static int _sink_input_max_get(void *data);
 static const char *_sink_input_name_get(void *data);
-static pid_t _get_ppid(pid_t pid);
 static void _sink_input_event(int type, Emix_Sink_Input *input);
 static void _events_cb(void *data, enum Emix_Event type, void *event_info);
 static Eina_Bool _desklock_cb(void *data, int type, void *info);
@@ -84,6 +83,8 @@ static E_Client_Menu_Hook *_border_hook = NULL;
 static int _notification_id = 0;
 static Ecore_Exe *_emixer_exe = NULL;
 static Ecore_Event_Handler *_emix_exe_event_del_handler = NULL;
+
+static const Emix_Source *_source_default = NULL;
 
 static E_Action *_action_incr = NULL;
 static E_Action *_action_decr = NULL;
@@ -133,7 +134,7 @@ _notify(const int val)
 }
 
 static void
-_volume_increase_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
+_volume_adjust(int step)
 {
    unsigned int i;
    Emix_Volume volume;
@@ -143,19 +144,21 @@ _volume_increase_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
 
    if (!s->volume.channel_count) return;
 
-   if (BARRIER_CHECK(s->volume.volumes[0], s->volume.volumes[0] + VOLUME_STEP))
-     return;
+   if (step > 0)
+     {
+        if (BARRIER_CHECK(s->volume.volumes[0], s->volume.volumes[0] + step))
+          return;
+     }
 
    volume.channel_count = s->volume.channel_count;
    volume.volumes = calloc(s->volume.channel_count, sizeof(int));
    for (i = 0; i < volume.channel_count; i++)
      {
-        if (s->volume.volumes[i] < (emix_max_volume_get()) - VOLUME_STEP)
-          volume.volumes[i] = s->volume.volumes[i] + VOLUME_STEP;
-        else if (s->volume.volumes[i] < emix_max_volume_get())
+        volume.volumes[i] = s->volume.volumes[i] + step;
+        if (volume.volumes[i] < 0)
+          volume.volumes[i] = 0;
+        else if (volume.volumes[i] > emix_max_volume_get())
           volume.volumes[i] = emix_max_volume_get();
-        else
-          volume.volumes[i] = s->volume.volumes[i];
      }
 
    emix_sink_volume_set(s, &volume);
@@ -165,26 +168,46 @@ _volume_increase_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
 }
 
 static void
+_volume_increase_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
+{
+   _volume_adjust(VOLUME_STEP);
+}
+
+static void
 _volume_decrease_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
+{
+   _volume_adjust(-VOLUME_STEP);
+}
+
+static void
+_volume_source_adjust(int step)
 {
    unsigned int i;
    Emix_Volume volume;
 
    EINA_SAFETY_ON_NULL_RETURN(_sink_default);
-   Emix_Sink *s = (Emix_Sink *)_sink_default;
+   Emix_Source *s = (Emix_Source *)_source_default;
+
+   if (!s->volume.channel_count) return;
+
+   if (step > 0)
+     {
+        if (BARRIER_CHECK(s->volume.volumes[0], s->volume.volumes[0] + step))
+          return;
+     }
+
    volume.channel_count = s->volume.channel_count;
    volume.volumes = calloc(s->volume.channel_count, sizeof(int));
    for (i = 0; i < volume.channel_count; i++)
      {
-        if (s->volume.volumes[i] > VOLUME_STEP)
-          volume.volumes[i] = s->volume.volumes[i] - VOLUME_STEP;
-        else if (s->volume.volumes[i] < VOLUME_STEP)
+        volume.volumes[i] = s->volume.volumes[i] + step;
+        if (volume.volumes[i] < 0)
           volume.volumes[i] = 0;
-        else
-          volume.volumes[i] = s->volume.volumes[i];
+        else if (volume.volumes[i] > emix_max_volume_get())
+          volume.volumes[i] = emix_max_volume_get();
      }
 
-   emix_sink_volume_set((Emix_Sink *)_sink_default, &volume);
+   emix_source_volume_set(s, &volume);
    emix_config_save_state_get();
    if (emix_config_save_get()) e_config_save_queue();
    free(volume.volumes);
@@ -497,8 +520,8 @@ _sink_input_name_get(void *data)
    return input->name;
 }
 
-static pid_t
-_get_ppid(pid_t pid)
+EINTERN pid_t
+backend_util_get_ppid(pid_t pid)
 {
    int fd;
    char buf[128];
@@ -564,7 +587,7 @@ _sink_input_event(int type, Emix_Sink_Input *input)
                      }
                 }
               if (found) break;
-              pid = _get_ppid(pid);
+              pid = backend_util_get_ppid(pid);
            }
          break;
       case EMIX_SINK_INPUT_REMOVED_EVENT:
@@ -590,6 +613,75 @@ _sink_input_event(int type, Emix_Sink_Input *input)
 }
 
 static void
+_source_event(int type, Emix_Source *source)
+{
+   const Eina_List *l;
+
+   if (type == EMIX_SOURCE_REMOVED_EVENT)
+     {
+        if (source == _source_default)
+          {
+             l = emix_sources_get();
+             if (l) _source_default = l->data;
+             else _source_default = NULL;
+             if (emix_config_save_get()) e_config_save_queue();
+             _backend_changed();
+          }
+     }
+   else if (type == EMIX_SOURCE_CHANGED_EVENT)
+     {
+        /* If pulseaudio changed the default sink, swap the UI to display it
+           instead of previously selected sink */
+        if (source->default_source)
+          _source_default = source;
+        if (_source_default == source)
+          {
+             static int prev_vol = -1;
+             int vol;
+
+             _backend_changed();
+             if (source->mute || !source->volume.channel_count) vol = 0;
+             else vol = source->volume.volumes[0];
+             if (vol != prev_vol)
+               {
+//                  _notify(vol);
+                  prev_vol = vol;
+               }
+          }
+     }
+   else
+     {
+        DBG("Source added");
+     }
+   /*
+     Only safe the state if we are not in init mode,
+     If we are in init mode, this is a result of the restore call.
+     Restore iterates over a list of sinks which would get deleted in the
+     save_state_get call.
+    */
+   if (!_backend_init_flag)
+     {
+        emix_config_save_state_get();
+        if (emix_config_save_get()) e_config_save_queue();
+//        ecore_event_add(E_EVENT_MIXER_SINKS_CHANGED, NULL, NULL, NULL);
+     }
+}
+
+static void
+_source_output_event(int type, Emix_Source_Output *output EINA_UNUSED)
+{
+   switch (type)
+     {
+      case EMIX_SOURCE_OUTPUT_ADDED_EVENT:
+         break;
+      case EMIX_SOURCE_OUTPUT_REMOVED_EVENT:
+         break;
+      case EMIX_SOURCE_OUTPUT_CHANGED_EVENT:
+         break;
+     }
+}
+
+static void
 _events_cb(void *data EINA_UNUSED, enum Emix_Event type, void *event_info)
 {
    switch (type)
@@ -609,6 +701,16 @@ _events_cb(void *data EINA_UNUSED, enum Emix_Event type, void *event_info)
       case EMIX_SINK_INPUT_REMOVED_EVENT:
       case EMIX_SINK_INPUT_CHANGED_EVENT:
          _sink_input_event(type, event_info);
+         break;
+      case EMIX_SOURCE_ADDED_EVENT:
+      case EMIX_SOURCE_CHANGED_EVENT:
+      case EMIX_SOURCE_REMOVED_EVENT:
+         _source_event(type, event_info);
+         break;
+      case EMIX_SOURCE_OUTPUT_ADDED_EVENT:
+      case EMIX_SOURCE_OUTPUT_CHANGED_EVENT:
+      case EMIX_SOURCE_OUTPUT_REMOVED_EVENT:
+         _source_output_event(type, event_info);
          break;
 
       default:
@@ -988,7 +1090,7 @@ _e_client_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
                   _client_sinks = eina_list_append(_client_sinks, sink);
                   return ECORE_CALLBACK_PASS_ON;
                }
-             pid = _get_ppid(pid);
+             pid = backend_util_get_ppid(pid);
           }
      }
    return ECORE_CALLBACK_PASS_ON;
@@ -1186,6 +1288,9 @@ backend_init(void)
    if (emix_sink_default_support())
      _sink_default = emix_sink_default_get();
 
+   if (emix_source_default_support())
+     _source_default = emix_source_default_get();
+
    _actions_register();
 
    _border_hook = e_int_client_menu_hook_add(_bd_hook, NULL);
@@ -1348,3 +1453,77 @@ backend_sink_default_get(void)
    return _sink_default;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+
+EINTERN Eina_Bool
+backend_source_active_get(void)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_source_default, EINA_FALSE);
+   if (emix_source_outputs_get()) return EINA_TRUE;
+   return EINA_FALSE;
+}
+
+EINTERN void
+backend_source_volume_decrease(void)
+{
+   EINA_SAFETY_ON_NULL_RETURN(_source_default);
+   _volume_source_adjust(-VOLUME_STEP);
+}
+
+EINTERN void
+backend_source_volume_increase(void)
+{
+   EINA_SAFETY_ON_NULL_RETURN(_source_default);
+   _volume_source_adjust(VOLUME_STEP);
+}
+
+EINTERN void
+backend_source_mute_set(Eina_Bool mute)
+{
+   EINA_SAFETY_ON_NULL_RETURN(_source_default);
+
+   DBG("Source default mute set %d", mute);
+   emix_source_mute_set((Emix_Source *)_source_default, mute);
+   emix_config_save_state_get();
+   if (emix_config_save_get()) e_config_save_queue();
+}
+
+EINTERN Eina_Bool
+backend_source_mute_get(void)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_source_default, EINA_FALSE);
+   return _source_default->mute;
+}
+
+EINTERN void
+backend_source_volume_set(unsigned int volume)
+{
+   EINA_SAFETY_ON_NULL_RETURN(_source_default);
+   DBG("Sink default mute set %d", volume);
+
+   VOLSET(volume, ((Emix_Source *)_source_default)->volume,
+          (Emix_Source *)_source_default, emix_source_volume_set);
+   emix_config_save_state_get();
+   if (emix_config_save_get()) e_config_save_queue();
+}
+
+EINTERN unsigned int
+backend_source_volume_get(void)
+{
+   unsigned int volume = 0, i;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_source_default, 0);
+   for (i = 0; i < _source_default->volume.channel_count; i++)
+     volume += _source_default->volume.volumes[i];
+   if (_source_default->volume.channel_count)
+     volume = volume / _source_default->volume.channel_count;
+
+   DBG("Source default volume get %d", volume);
+   return volume;
+}
+
+EINTERN const Emix_Source *
+backend_source_default_get(void)
+{
+   return _source_default;
+}

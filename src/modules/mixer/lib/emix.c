@@ -395,6 +395,45 @@ emix_source_volume_set(Emix_Source *source, Emix_Volume *volume)
    ctx->loaded->ebackend_source_volume_set(source, volume);
 }
 
+const Eina_List*
+emix_source_outputs_get(void)
+{
+   EINA_SAFETY_ON_FALSE_RETURN_VAL((ctx && ctx->loaded &&
+                                    ctx->loaded->ebackend_source_outputs_get),
+                                    NULL);
+   return ctx->loaded->ebackend_source_outputs_get();
+}
+
+void
+emix_source_output_mute_set(Emix_Source_Output *output, Eina_Bool mute)
+{
+   EINA_SAFETY_ON_FALSE_RETURN((ctx && ctx->loaded &&
+                                ctx->loaded->ebackend_source_output_mute_set &&
+                                output));
+
+   ctx->loaded->ebackend_source_output_mute_set(output, mute);
+}
+
+void
+emix_source_output_volume_set(Emix_Source_Output *output, Emix_Volume *volume)
+{
+   EINA_SAFETY_ON_FALSE_RETURN((ctx && ctx->loaded &&
+                                ctx->loaded->ebackend_source_output_volume_set &&
+                                output));
+
+   ctx->loaded->ebackend_source_output_volume_set(output, volume);
+}
+
+void
+emix_source_output_sink_change(Emix_Source_Output *output, Emix_Source *source)
+{
+   EINA_SAFETY_ON_FALSE_RETURN((ctx && ctx->loaded &&
+                                ctx->loaded->ebackend_source_output_source_change &&
+                                output && source));
+
+   ctx->loaded->ebackend_source_output_source_change(output, source);
+}
+
 Evas_Object *
 emix_advanced_options_add(Evas_Object *parent)
 {

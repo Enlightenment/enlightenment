@@ -37,6 +37,9 @@ enum Emix_Event {
    EMIX_SOURCE_ADDED_EVENT,
    EMIX_SOURCE_REMOVED_EVENT,
    EMIX_SOURCE_CHANGED_EVENT,
+   EMIX_SOURCE_OUTPUT_ADDED_EVENT,
+   EMIX_SOURCE_OUTPUT_REMOVED_EVENT,
+   EMIX_SOURCE_OUTPUT_CHANGED_EVENT,
    EMIX_CARD_ADDED_EVENT,
    EMIX_CARD_REMOVED_EVENT,
    EMIX_CARD_CHANGED_EVENT,
@@ -91,6 +94,15 @@ typedef struct _Emix_Source {
    const float *mon_buf; // LRLRLR unsigned char samples
 } Emix_Source;
 
+typedef struct _Emix_Source_Output {
+   const char *name;
+   Emix_Volume volume;
+   Eina_Bool mute;
+   Emix_Source *source;
+   pid_t pid;
+   const char *icon;
+} Emix_Source_Output;
+
 typedef struct _Emix_Profile {
    const char *name;
    const char *description;
@@ -140,6 +152,14 @@ typedef struct _Emix_Backend {
                                                      Eina_Bool mute);
    void                  (*ebackend_source_volume_set)(Emix_Source *source,
                                                        Emix_Volume *volume);
+
+   const Eina_List*      (*ebackend_source_outputs_get)(void);
+   void                  (*ebackend_source_output_mute_set)(
+                                        Emix_Source_Output *output, Eina_Bool mute);
+   void                  (*ebackend_source_output_volume_set)(
+                                    Emix_Source_Output *output, Emix_Volume *volume);
+   void                  (*ebackend_source_output_source_change)(
+                                       Emix_Source_Output *output, Emix_Source *source);
 
    Evas_Object*          (*ebackend_advanced_options_add)(Evas_Object *parent);
    const Eina_List*      (*ebackend_cards_get)(void);
@@ -208,6 +228,15 @@ E_API void                emix_source_mute_set(Emix_Source *source,
                                                   Eina_Bool mute);
 E_API void                emix_source_volume_set(Emix_Source *source,
                                                 Emix_Volume *volume);
+
+E_API const Eina_List*    emix_source_outputs_get(void);
+E_API void                emix_source_output_mute_set(Emix_Source_Output *output,
+                                                      Eina_Bool mute);
+E_API void                emix_source_output_volume_set(Emix_Source_Output *output,
+                                                        Emix_Volume *volume);
+E_API void                emix_source_output_sink_change(Emix_Source_Output *output,
+                                                         Emix_Source *source);
+
 E_API Evas_Object*        emix_advanced_options_add(Evas_Object *parent);
 
 E_API const Eina_List*    emix_cards_get(void);

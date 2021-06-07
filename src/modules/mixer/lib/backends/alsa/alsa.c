@@ -525,22 +525,26 @@ _alsa_backend =
    _alsa_sink_volume_set, /*volume_set*/
    NULL, /* port set */
    _alsa_support, /*change support*/
-   NULL, /*sink input get*/
-   NULL,/*sink input mute set*/
-   NULL,/*sink input volume set*/
-   NULL,/*sink input sink change*/
+   NULL, /*sink inputs get*/
+   NULL, /*sink input mute set*/
+   NULL, /*sink input volume set*/
+   NULL, /*sink input sink change*/
    _alsa_sources_get,/*source*/
    _alsa_support, /* source default support*/
    NULL, /*get*/
    NULL, /*set*/
    _alsa_sources_mute_set,/* source mute set */
    _alsa_sources_volume_set, /* source volume set */
+   NULL, /*source outputs get*/
+   NULL, /*source output mute set*/
+   NULL, /*source output volume set*/
+   NULL, /*source output source change*/
    NULL, /* advanced options */
    NULL, /* card list */
    NULL, /* card profile set */
    NULL, /* sink monitor set */
    NULL, /* sink input monitor set */
-   NULL /* ssource monitor set */
+   NULL  /* source monitor set */
 };
 
 E_API Emix_Backend *

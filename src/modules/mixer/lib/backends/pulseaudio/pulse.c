@@ -26,7 +26,7 @@ typedef struct _Context
    const void *userdata;
    Ecore_Timer *connect;
 
-   Eina_List *sinks, *sources, *inputs, *cards;
+   Eina_List *sinks, *sources, *inputs, *outputs, *cards;
    Eina_Bool connected;
 } Context;
 
@@ -58,6 +58,13 @@ typedef struct _Source
    int mon_count;
    pa_stream *mon_stream;
 } Source;
+
+typedef struct _Source_Output
+{
+   Emix_Source_Output base;
+   int idx, source_idx;
+   Eina_Bool running : 1;
+} Source_Output;
 
 typedef struct _Profile
 {
@@ -166,6 +173,21 @@ _source_del(Source *source)
    eina_stringshare_del(source->base.name);
    eina_stringshare_del(source->pulse_name);
    free(source);
+}
+
+static void
+_source_output_del(Source_Output *output)
+{
+   unsigned int i;
+   EINA_SAFETY_ON_NULL_RETURN(output);
+
+   free(output->base.volume.volumes);
+   for(i = 0; i < output->base.volume.channel_count; ++i)
+     eina_stringshare_del(output->base.volume.channel_names[i]);
+   free(output->base.volume.channel_names);
+   eina_stringshare_del(output->base.name);
+   eina_stringshare_del(output->base.icon);
+   free(output);
 }
 
 static void
@@ -729,6 +751,189 @@ _source_remove_cb(int index, void *data EINA_UNUSED)
 }
 
 static void
+_source_output_state_running_set(Source_Output *output, Eina_Bool running)
+{
+   output->running = running;
+}
+
+static void
+_source_output_cb(pa_context *c EINA_UNUSED, const pa_source_output_info *info,
+                  int eol, void *userdata EINA_UNUSED)
+{
+   Source_Output *output;
+   Eina_List *l;
+   Source *s;
+   const char *t;
+   unsigned int i;
+   EINA_SAFETY_ON_NULL_RETURN(ctx);
+
+   if (eol < 0)
+     {
+        if (pa_context_errno(c) == PA_ERR_NOENTITY)
+          return;
+
+        ERR("Source output callback failure");
+        return;
+     }
+
+   if (eol > 0)
+      return;
+
+   if ((info->name) && (!strcmp(info->name, "__e_mon"))) return;
+
+   output = calloc(1, sizeof(Source_Output));
+   EINA_SAFETY_ON_NULL_RETURN(output);
+
+   DBG("source output index: %d\nsink input name: %s", info->index,
+       info->name);
+
+   output->idx = info->index;
+   output->source_idx = info->source;
+
+   Eina_Strbuf *output_name;
+
+   output_name = eina_strbuf_new();
+   const char *application = pa_proplist_gets(info->proplist, PA_PROP_APPLICATION_NAME);
+   if (application)
+     {
+        eina_strbuf_append(output_name, application);
+        eina_strbuf_append(output_name, ":");
+        eina_strbuf_append(output_name, info->name);
+     }
+   else if (info->name)
+     {
+        eina_strbuf_append(output_name, info->name);
+     }
+   output->base.name = eina_stringshare_add(eina_strbuf_string_get(output_name));
+   eina_strbuf_free(output_name);
+   _pa_cvolume_convert(&info->volume, &output->base.volume);
+   output->base.volume.channel_names = calloc(output->base.volume.channel_count, sizeof(Emix_Channel));
+   for (i = 0; i < output->base.volume.channel_count; ++i)
+     output->base.volume.channel_names[i] = eina_stringshare_add(pa_channel_position_to_pretty_string(info->channel_map.map[i]));
+   output->base.mute = !!info->mute;
+   EINA_LIST_FOREACH(ctx->sources, l, s)
+     {
+        if (s->idx == (int)info->source)
+          output->base.source = (Emix_Source *)s;
+     }
+   output->base.icon = eina_stringshare_add(_icon_from_properties(info->proplist));
+   ctx->outputs = eina_list_append(ctx->outputs, output);
+
+   if ((t = pa_proplist_gets(info->proplist, PA_PROP_APPLICATION_PROCESS_ID)))
+     {
+        output->base.pid = atoi(t);
+     }
+   if (!info->corked) _source_output_state_running_set(output, EINA_TRUE);
+   else _source_output_state_running_set(output, EINA_FALSE);
+
+   if (ctx->cb)
+     ctx->cb((void *)ctx->userdata, EMIX_SOURCE_OUTPUT_ADDED_EVENT,
+             (Emix_Source_Output *)output);
+}
+
+static void
+_source_output_changed_cb(pa_context *c EINA_UNUSED,
+                          const pa_source_output_info *info, int eol,
+                          void *userdata EINA_UNUSED)
+{
+   Source_Output *output = NULL, *so;
+   Source *s = NULL;
+   Eina_List *l;
+   const char *t;
+   unsigned int i;
+
+   EINA_SAFETY_ON_NULL_RETURN(ctx);
+   if (eol < 0)
+     {
+        if (pa_context_errno(c) == PA_ERR_NOENTITY)
+           return;
+
+        ERR("Source output changed callback failure");
+        return;
+     }
+
+   if (eol > 0)
+      return;
+
+   if ((info->name) && (!strcmp(info->name, "__e_mon"))) return;
+
+   EINA_LIST_FOREACH(ctx->outputs, l, so)
+     {
+        if (so->idx == (int)info->index)
+          {
+            output = so;
+            break;
+          }
+     }
+
+   DBG("source output changed index: %d\n", info->index);
+
+   if (!output)
+     {
+        output = calloc(1, sizeof(Source_Output));
+        EINA_SAFETY_ON_NULL_RETURN(output);
+        ctx->outputs = eina_list_append(ctx->outputs, output);
+     }
+   output->idx = info->index;
+   output->source_idx = info->source;
+   if (output->base.volume.channel_count != info->volume.channels)
+     {
+        for (i = 0; i < output->base.volume.channel_count; ++i)
+          eina_stringshare_del(output->base.volume.channel_names[i]);
+        free(output->base.volume.channel_names);
+        output->base.volume.channel_names = calloc(info->volume.channels, sizeof(Emix_Channel));
+     }
+   _pa_cvolume_convert(&info->volume, &output->base.volume);
+   for (i = 0; i < output->base.volume.channel_count; ++i)
+     eina_stringshare_replace(&output->base.volume.channel_names[i],
+                              pa_channel_position_to_pretty_string(info->channel_map.map[i]));
+
+   output->base.mute = !!info->mute;
+
+   EINA_LIST_FOREACH(ctx->sources, l, s)
+     {
+        if (s->idx == (int)info->source)
+          output->base.source = (Emix_Source *)s;
+     }
+   if ((t = pa_proplist_gets(info->proplist, PA_PROP_APPLICATION_PROCESS_ID)))
+     {
+        output->base.pid = atoi(t);
+     }
+
+   if (!info->corked) _source_output_state_running_set(output, EINA_TRUE);
+   else _source_output_state_running_set(output, EINA_FALSE);
+
+   if (ctx->cb)
+     ctx->cb((void *)ctx->userdata, EMIX_SOURCE_OUTPUT_CHANGED_EVENT,
+             (Emix_Source_Output *)output);
+}
+
+static void
+_source_output_remove_cb(int index, void *data EINA_UNUSED)
+{
+   Source_Output *output;
+   Eina_List *l;
+   EINA_SAFETY_ON_NULL_RETURN(ctx);
+
+   DBG("Removing source output: %d", index);
+
+   EINA_LIST_FOREACH(ctx->outputs, l, output)
+     {
+        if (output->idx == index)
+          {
+             ctx->outputs = eina_list_remove_list(ctx->outputs, l);
+             if (ctx->cb)
+               ctx->cb((void *)ctx->userdata,
+                       EMIX_SOURCE_OUTPUT_REMOVED_EVENT,
+                       (Emix_Source_Output *)output);
+             _source_output_del(output);
+
+             break;
+          }
+     }
+}
+
+static void
 _sink_default_cb(pa_context *c EINA_UNUSED, const pa_sink_info *info, int eol,
                  void *userdata EINA_UNUSED)
 {
@@ -1093,6 +1298,33 @@ _subscribe_cb(pa_context *c, pa_subscription_event_type_t t,
             pa_operation_unref(o);
          }
        break;
+    case PA_SUBSCRIPTION_EVENT_SOURCE_OUTPUT:
+       if ((t & PA_SUBSCRIPTION_EVENT_TYPE_MASK) ==
+           PA_SUBSCRIPTION_EVENT_REMOVE)
+          _source_output_remove_cb(index, data);
+       else if ((t & PA_SUBSCRIPTION_EVENT_TYPE_MASK) ==
+                PA_SUBSCRIPTION_EVENT_NEW)
+         {
+            if (!(o = pa_context_get_source_output_info(c, index,
+                                                        _source_output_cb, data)))
+              {
+                 ERR("pa_context_get_source_info() failed");
+                 return;
+              }
+            pa_operation_unref(o);
+         }
+       else
+         {
+            if (!(o = pa_context_get_source_output_info(c, index,
+                                                        _source_output_changed_cb,
+                                                        data)))
+              {
+                 ERR("pa_context_get_source_info() failed");
+                 return;
+              }
+            pa_operation_unref(o);
+         }
+       break;
     case PA_SUBSCRIPTION_EVENT_SERVER:
        if (!(o = pa_context_get_server_info(c, _server_info_cb,
                                             data)))
@@ -1191,6 +1423,14 @@ _pulse_pa_state_cb(pa_context *context, void *data)
                                                   ctx)))
           {
              ERR("pa_context_get_source_info_list() failed");
+             return;
+          }
+        pa_operation_unref(o);
+
+        if (!(o = pa_context_get_source_output_info_list(context, _source_output_cb,
+                                                         ctx)))
+          {
+             ERR("pa_context_get_source_output_info_list() failed");
              return;
           }
         pa_operation_unref(o);
@@ -1405,13 +1645,6 @@ _sources_get(void)
    return ctx->sources;
 }
 
-static const Eina_List *
-_sink_inputs_get(void)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, NULL);
-   return ctx->inputs;
-}
-
 static void
 _sink_volume_set(Emix_Sink *sink, Emix_Volume *volume)
 {
@@ -1435,6 +1668,13 @@ _sink_mute_set(Emix_Sink *sink, Eina_Bool mute)
    if (!(o = pa_context_set_sink_mute_by_index(ctx->context,
                                                s->idx, mute, NULL, NULL)))
       ERR("pa_context_set_sink_mute() failed");
+}
+
+static const Eina_List *
+_sink_inputs_get(void)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, NULL);
+   return ctx->inputs;
 }
 
 static void
@@ -1477,6 +1717,55 @@ _sink_input_move(Emix_Sink_Input *input, Emix_Sink *sink)
                                                  i->idx, s->idx, NULL,
                                                  NULL)))
       ERR("pa_context_move_sink_input_by_index() failed");
+}
+
+static const Eina_List *
+_source_outputs_get(void)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, NULL);
+   return ctx->outputs;
+}
+
+static void
+_source_output_volume_set(Emix_Source_Output *output, Emix_Volume *volume)
+{
+   pa_operation* o;
+   Source_Output *source_output = (Source_Output *)output;
+   pa_cvolume vol = _emix_volume_convert(volume);
+   EINA_SAFETY_ON_FALSE_RETURN(ctx && ctx->context && output != NULL);
+
+   if (!(o = pa_context_set_source_output_volume(ctx->context,
+                                                 source_output->idx, &vol,
+                                                 NULL, NULL)))
+      ERR("pa_context_set_source_output_volume_by_index() failed");
+}
+
+static void
+_source_output_mute_set(Emix_Source_Output *output, Eina_Bool mute)
+{
+   pa_operation* o;
+   Source_Output *source_output = (Source_Output *)output;
+   EINA_SAFETY_ON_FALSE_RETURN(ctx && ctx->context && output != NULL);
+
+   if (!(o = pa_context_set_source_output_mute(ctx->context,
+                                               source_output->idx, mute,
+                                               NULL, NULL)))
+      ERR("pa_context_set_source_output_mute() failed");
+}
+
+static void
+_source_output_move(Emix_Source_Output *output, Emix_Source *source)
+{
+   pa_operation* o;
+   Source *s = (Source *)source;
+   Source_Output *i = (Source_Output *)output;
+   EINA_SAFETY_ON_FALSE_RETURN(ctx && ctx->context && output != NULL
+                               && source != NULL);
+
+   if (!(o = pa_context_move_source_output_by_index(ctx->context,
+                                                    i->idx, s->idx, NULL,
+                                                    NULL)))
+      ERR("pa_context_move_source_output_by_index() failed");
 }
 
 static Eina_Bool
@@ -1868,6 +2157,10 @@ _pulseaudio_backend =
    _source_default_set,
    _source_mute_set,
    _source_volume_set,
+   _source_outputs_get,
+   _source_output_mute_set,
+   _source_output_volume_set,
+   _source_output_move,
    NULL,
    _cards_get,
    _card_profile_set,
