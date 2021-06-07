@@ -33,6 +33,9 @@ static void _volume_mute_cb(E_Object *obj, const char *params);
 static void _volume_increase_app_cb(E_Object *obj, const char *params);
 static void _volume_decrease_app_cb(E_Object *obj, const char *params);
 static void _volume_mute_app_cb(E_Object *obj, const char *params);
+static void _volume_increase_source_cb(E_Object *obj, const char *params);
+static void _volume_decrease_source_cb(E_Object *obj, const char *params);
+static void _volume_mute_source_cb(E_Object *obj, const char *params);
 static void _actions_register(void);
 static void _actions_unregister(void);
 static void _sink_event(int type, void *info);
@@ -92,6 +95,9 @@ static E_Action *_action_mute = NULL;
 static E_Action *_action_incr_app = NULL;
 static E_Action *_action_decr_app = NULL;
 static E_Action *_action_mute_app = NULL;
+static E_Action *_action_incr_source = NULL;
+static E_Action *_action_decr_source = NULL;
+static E_Action *_action_mute_source = NULL;
 
 static void
 _notify_cb(void *data EINA_UNUSED, unsigned int id)
@@ -180,6 +186,13 @@ _volume_decrease_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
 }
 
 static void
+_volume_mute_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
+{
+   EINA_SAFETY_ON_NULL_RETURN(_sink_default);
+   backend_mute_set(!_sink_default->mute);
+}
+
+static void
 _volume_source_adjust(int step)
 {
    unsigned int i;
@@ -214,10 +227,22 @@ _volume_source_adjust(int step)
 }
 
 static void
-_volume_mute_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
+_volume_increase_source_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
 {
-   EINA_SAFETY_ON_NULL_RETURN(_sink_default);
-   backend_mute_set(!_sink_default->mute);
+   _volume_source_adjust(VOLUME_STEP);
+}
+
+static void
+_volume_decrease_source_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
+{
+   _volume_source_adjust(-VOLUME_STEP);
+}
+
+static void
+_volume_mute_source_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
+{
+   EINA_SAFETY_ON_NULL_RETURN(_source_default);
+   backend_source_mute_set(!_source_default->mute);
 }
 
 static void
@@ -266,7 +291,6 @@ _actions_register(void)
         e_action_predef_name_set("Mixer", _("Increase Volume"),
                                  "volume_increase", NULL, NULL, 0);
      }
-
    _action_decr = e_action_add("volume_decrease");
    if (_action_decr)
      {
@@ -274,13 +298,12 @@ _actions_register(void)
         e_action_predef_name_set("Mixer", _("Decrease Volume"),
                                  "volume_decrease", NULL, NULL, 0);
      }
-
    _action_mute = e_action_add("volume_mute");
    if (_action_mute)
      {
         _action_mute->func.go = _volume_mute_cb;
-        e_action_predef_name_set("Mixer", _("Mute volume"), "volume_mute",
-                                 NULL, NULL, 0);
+        e_action_predef_name_set("Mixer", _("Mute volume"),
+                                 "volume_mute", NULL, NULL, 0);
      }
    _action_incr_app = e_action_add("volume_increase_app");
    if (_action_incr_app)
@@ -306,6 +329,27 @@ _actions_register(void)
                                  _("Mute Volume of Focused Application"),
                                  "volume_mute_app", NULL, NULL, 0);
      }
+   _action_incr_source = e_action_add("volume_increase_mic");
+   if (_action_incr_source)
+     {
+        _action_incr_source->func.go = _volume_increase_source_cb;
+        e_action_predef_name_set("Mixer", _("Increase Mic Volume"),
+                                 "volume_increase_mic", NULL, NULL, 0);
+     }
+   _action_decr_source = e_action_add("volume_decrease_mic");
+   if (_action_decr_source)
+     {
+        _action_decr_source->func.go = _volume_decrease_source_cb;
+        e_action_predef_name_set("Mixer", _("Decrease Mic Volume"),
+                                 "volume_decrease_mic", NULL, NULL, 0);
+     }
+   _action_mute_source = e_action_add("volume_mute_mic");
+   if (_action_mute_source)
+     {
+        _action_mute_source->func.go = _volume_mute_source_cb;
+        e_action_predef_name_set("Mixer", _("Mute Mic volume"),
+                                 "volume_mute_mic", NULL, NULL, 0);
+     }
 
    e_comp_canvas_keys_ungrab();
    e_comp_canvas_keys_grab();
@@ -320,21 +364,18 @@ _actions_unregister(void)
         e_action_del("volume_increase");
         _action_incr = NULL;
      }
-
    if (_action_decr)
      {
         e_action_predef_name_del("Mixer", _("Decrease Volume"));
         e_action_del("volume_decrease");
         _action_decr = NULL;
      }
-
    if (_action_mute)
      {
         e_action_predef_name_del("Mixer", _("Mute Volume"));
         e_action_del("volume_mute");
         _action_mute = NULL;
      }
-
    if (_action_incr_app)
      {
         e_action_predef_name_del("Mixer",
@@ -342,7 +383,6 @@ _actions_unregister(void)
         e_action_del("volume_increase_app");
         _action_incr_app = NULL;
      }
-
    if (_action_decr_app)
      {
         e_action_predef_name_del("Mixer",
@@ -350,13 +390,30 @@ _actions_unregister(void)
         e_action_del("volume_decrease_app");
         _action_decr_app = NULL;
      }
-
    if (_action_mute_app)
      {
         e_action_predef_name_del("Mixer",
                                  _("Mute Volume of Focused Application"));
         e_action_del("volume_mute_app");
         _action_mute_app = NULL;
+     }
+   if (_action_incr_source)
+     {
+        e_action_predef_name_del("Mixer", _("Increase Mic Volume"));
+        e_action_del("volume_increase_mic");
+        _action_incr_source = NULL;
+     }
+   if (_action_decr_source)
+     {
+        e_action_predef_name_del("Mixer", _("Decrease Mic Volume"));
+        e_action_del("volume_decrease_mic");
+        _action_decr_source = NULL;
+     }
+   if (_action_mute_source)
+     {
+        e_action_predef_name_del("Mixer", _("Mute Mic Volume"));
+        e_action_del("volume_mute_mic");
+        _action_mute_source = NULL;
      }
 
    e_comp_canvas_keys_ungrab();
