@@ -527,7 +527,6 @@ _popup_playback_box_refill(Instance *inst)
      }
    EINA_LIST_FREE(del_list, o) evas_object_del(o);
    playbacks = (Eina_List *)emix_sink_inputs_get();
-   printf("MX: playbacks %p\n", playbacks);
    EINA_LIST_FOREACH(playbacks, l, s)
      {
         E_Client *ec = NULL;
@@ -536,7 +535,6 @@ _popup_playback_box_refill(Instance *inst)
 
         ic = NULL;
         pid = s->pid;
-        printf("MX: + PID %i\n", pid);
         for (;;)
           {
              if ((pid <= 1) || (pid == getpid())) return;
@@ -563,7 +561,6 @@ _popup_playback_box_refill(Instance *inst)
           }
         if (ic)
           {
-             printf("MX: + %p\n", ic);
              evas_object_size_hint_min_set(ic, 20 * e_scale, 20 * e_scale);
              elm_box_pack_end(inst->playback_box, ic);
              evas_object_show(ic);
