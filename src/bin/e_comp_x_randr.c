@@ -433,17 +433,41 @@ _mode_screen_find(Ecore_X_Window root, E_Randr2_Screen *s, Ecore_X_Randr_Output 
    return mode;
 }
 
+static E_Dialog *screen_error_dialog = NULL;
+
+static void
+_screen_error_remove_cb(void *data EINA_UNUSED, E_Dialog *dia EINA_UNUSED)
+{
+   screen_error_dialog = NULL;
+   e_object_del(E_OBJECT(dia));
+}
+
 static Eina_Bool
 _cb_no_outputs_timer(void *data EINA_UNUSED)
 {
-   e_util_dialog_show(_("Screen setup Error"),
-                      _("You seem to have no screens configured to<br>"
-                        "be on given the outputs you have. This should<br>"
-                        "be fixed by going to:<br>"
-                        "<br>"
-                        "<b>Settings -> Screen -> Screen Setup</><br>"
-                        "<br>"
-                        "And configure at least one screen to be on."));
+   if (!screen_error_dialog)
+     {
+        screen_error_dialog = e_dialog_new(NULL, "E", "_error_dialog");
+
+        e_dialog_title_set(screen_error_dialog, _("Screen setup Error"));
+        e_dialog_text_set(screen_error_dialog, _("You seem to have no screens configured to<br>"
+                                 "be on given the outputs you have. This should<br>"
+                                 "be fixed by going to:<br>"
+                                 "<br>"
+                                 "<b>Settings -> Screen -> Screen Setup</><br>"
+                                 "<br>"
+                                 "And configure at least one screen to be on."));
+       e_dialog_icon_set(screen_error_dialog, "dialog-error", 64);
+       e_dialog_button_add(screen_error_dialog, _("OK"), NULL, _screen_error_remove_cb, NULL);
+       e_dialog_button_focus_num(screen_error_dialog, 0);
+       elm_win_center(screen_error_dialog->win, 1, 1);
+       e_dialog_show(screen_error_dialog);
+     }
+   else
+     {
+       elm_win_raise(screen_error_dialog->win);
+     }
+
    return EINA_FALSE;
 }
 
