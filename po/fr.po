@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2021-05-18 16:34+0200\n"
-"PO-Revision-Date: 2021-05-18 17:17+0200\n"
+"PO-Revision-Date: 2021-06-08 16:52+0200\n"
 "Last-Translator: Philippe Jean Guillaumie <similar@orange.fr>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -27,7 +27,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Poedit 2.4.3\n"
+"X-Generator: Poedit 3.0\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
 #: src/bin/e_about.c:17
@@ -977,11 +977,11 @@ msgstr "Visible"
 
 #: src/bin/e_comp.c:1421
 msgid "Focus-Out"
-msgstr "Perdre le focus"
+msgstr "Sans focus"
 
 #: src/bin/e_comp.c:1426
 msgid "Focus-In"
-msgstr "Prendre le focus"
+msgstr "Avec focus"
 
 #: src/bin/e_comp.c:1431 src/bin/e_int_client_prop.c:515
 msgid "Hidden"
@@ -4823,7 +4823,7 @@ msgstr "Rétroéclairage"
 
 #: src/modules/backlight/e_mod_main.c:480
 msgid "Backlight Controls"
-msgstr "Réglages du rétroéclairage"
+msgstr "Contrôle du rétroéclairage"
 
 #: src/modules/battery/e_mod_config.c:62
 msgid "Battery Monitor Settings"
@@ -6290,7 +6290,7 @@ msgstr "Activer l'économie d'énergie (DPMS)"
 #: src/modules/conf_display/e_int_config_screensaver.c:194
 #: src/modules/syscon/e_int_config_syscon.c:174
 msgid "Timeout"
-msgstr "Temporisation"
+msgstr "Délai"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:197
 #, c-format
@@ -6726,7 +6726,7 @@ msgstr "%4.0f pixels/s"
 
 #: src/modules/conf_menus/e_int_config_menus.c:312
 msgid "Click Drag Timeout"
-msgstr "Temporisation du clic de glisser-déposer"
+msgstr "Délai du clic de glisser-déposer"
 
 #: src/modules/conf_menus/e_int_config_menus.c:314
 #, c-format
