@@ -98,7 +98,9 @@ typedef struct _Mon_Data
    Evas_Object *fr;
    Evas_Object *vu;
    Ecore_Animator *animator;
+   double last_time;
    float samp_max;
+   float samp_max2;
    int mon_skips;
    int mon_update;
    int mon_samps;
@@ -110,23 +112,35 @@ static Eina_Bool
 _cb_emix_monitor_update(void *data)
 {
    Mon_Data *md = data;
+   double t = ecore_loop_time_get();
+   double td = t - md->last_time;
+
+   if (md->samp_max2 < md->samp_max) md->samp_max2 = md->samp_max;
+   else
+     {
+        md->samp_max2 = md->samp_max2 * (1.0 - (0.5 * td));
+        if (md->samp_max2 < 0.001) md->samp_max2 = 0.0;
+     }
 
    if (md->mon_update == 0)
      {
         md->mon_skips++;
         if (md->mon_skips > 5)
           {
-             elm_progressbar_value_set(md->vu, 0.0);
+             elm_progressbar_part_value_set(md->vu, "elm.cur.progressbar", 0.0);
+             elm_progressbar_part_value_set(md->vu, "elm.cur.progressbar1", 0.0);
              md->animator = NULL;
              return EINA_FALSE;
           }
         return EINA_TRUE;
      }
-   elm_progressbar_value_set(md->vu, md->samp_max);
+   elm_progressbar_part_value_set(md->vu, "elm.cur.progressbar", md->samp_max);
+   elm_progressbar_part_value_set(md->vu, "elm.cur.progressbar1", md->samp_max2);
    md->mon_update = 0;
    md->samp_max = 0;
    md->mon_skips = 0;
    md->mon_samps = 0;
+   md->last_time = t;
    return EINA_TRUE;
 }
 
@@ -550,6 +564,7 @@ _emix_sink_add(Emix_Sink *sink)
    evas_object_show(hv);
 
    vu = elm_progressbar_add(win);
+   elm_object_style_set(vu, "double");
    elm_progressbar_unit_format_function_set(vu, _cb_vu_format_cb, NULL);
    evas_object_data_set(fr, "vu", vu);
    evas_object_size_hint_weight_set(vu, EVAS_HINT_EXPAND, 0.0);
@@ -1019,6 +1034,7 @@ _emix_sink_input_add(Emix_Sink_Input *input)
    evas_object_show(hv);
 
    vu = elm_progressbar_add(win);
+   elm_object_style_set(vu, "double");
    elm_progressbar_unit_format_function_set(vu, _cb_vu_format_cb, NULL);
    evas_object_data_set(fr, "vu", vu);
    evas_object_size_hint_weight_set(vu, EVAS_HINT_EXPAND, 0.0);
@@ -1463,6 +1479,7 @@ _emix_source_add(Emix_Source *source)
    evas_object_show(bxv);
 
    vu = elm_progressbar_add(win);
+   elm_object_style_set(vu, "double");
    elm_progressbar_unit_format_function_set(vu, _cb_vu_format_cb, NULL);
    evas_object_data_set(fr, "vu", vu);
    evas_object_size_hint_weight_set(vu, EVAS_HINT_EXPAND, 0.0);
