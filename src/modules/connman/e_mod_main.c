@@ -428,11 +428,12 @@ _econnman_menu_new(E_Connman_Instance *inst, Evas_Event_Mouse_Down *ev)
    int x, y;
 
    m = e_menu_new();
+/*
    mi = e_menu_item_new(m);
    e_menu_item_label_set(mi, _("Settings"));
    e_util_menu_item_theme_icon_set(mi, "configure");
    e_menu_item_callback_set(mi, _econnman_menu_cb_configure, inst);
-
+ */
    m = e_gadcon_client_util_menu_items_append(inst->gcc, m, 0);
    e_gadcon_canvas_zone_geometry_get(inst->gcc->gadcon, &x, &y, NULL, NULL);
    e_menu_activate_mouse(m,
