@@ -412,6 +412,7 @@ econnman_mod_manager_inout(struct Connman_Manager *cm)
      econnman_mod_manager_update(cm);
 }
 
+/*
 static void
 _econnman_menu_cb_configure(void *data, E_Menu *menu EINA_UNUSED,
                             E_Menu_Item *mi EINA_UNUSED)
@@ -419,12 +420,13 @@ _econnman_menu_cb_configure(void *data, E_Menu *menu EINA_UNUSED,
    E_Connman_Instance *inst = data;
    _econnman_app_launch(inst);
 }
+*/
 
 static void
 _econnman_menu_new(E_Connman_Instance *inst, Evas_Event_Mouse_Down *ev)
 {
    E_Menu *m;
-   E_Menu_Item *mi;
+//   E_Menu_Item *mi;
    int x, y;
 
    m = e_menu_new();
