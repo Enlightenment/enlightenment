@@ -97,9 +97,9 @@ auth_ui(Polkit_Session *ps)
    win = dia->win;
 
    if ((!ps->icon_name) || (!ps->icon_name[0]))
-     e_dialog_icon_set(dia, "enlightenment", 64);
+     e_dialog_icon_set(dia, "lock", 40);
    else
-     e_dialog_icon_set(dia, ps->icon_name, 64);
+     e_dialog_icon_set(dia, ps->icon_name, 40);
 
    evas_object_event_callback_add(win, EVAS_CALLBACK_DEL, _cb_del, NULL);
    elm_win_autodel_set(win, EINA_TRUE);
@@ -147,7 +147,7 @@ auth_ui(Polkit_Session *ps)
    if ((pass) && (pass->pw_name))
      snprintf(buf, sizeof(buf), _("Enter password for <b>%s</b>"), pass->pw_name);
    else
-     snprintf(buf, sizeof(buf), _("Enter passowrd for UID %u"), ps->target_uid);
+     snprintf(buf, sizeof(buf), _("Enter password for UID %u"), ps->target_uid);
    lab2 = o = elm_label_add(win);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
