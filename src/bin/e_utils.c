@@ -1557,3 +1557,12 @@ e_util_key_geometry_action_get(const char *key, int *x, int *y, int dx, int dy)
 
    return E_UTIL_ACTION_DO;
 }
+
+E_API const char *
+e_username_get(void)
+{
+   struct passwd *pw = getpwuid(getuid());
+
+   if (pw) return pw->pw_name;
+   return "";
+}

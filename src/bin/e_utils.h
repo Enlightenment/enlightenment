@@ -70,6 +70,8 @@ E_API Ecore_Exe *e_util_open(const char *exe, void *data);
 
 E_API Ecore_Exe *e_util_exe_safe_run(const char *cmd, void *data);
 
+E_API const char *e_username_get(void);
+
 typedef enum
 {
    E_UTIL_ACTION_NONE,

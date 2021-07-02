@@ -741,6 +741,64 @@ _lokker_check_auth(void)
    return 0;
 }
 
+static Eina_Bool
+_lokker_cb_fprint_available(void *data EINA_UNUSED,
+                            int type EINA_UNUSED,
+                            void *event)
+{
+   E_Event_Auth_Fprint_Available *ev = event;
+   Lokker_Popup *lp;
+   Eina_List *l;
+   const char *sig = "";
+
+   if (!edd) return ECORE_CALLBACK_PASS_ON;
+
+   if      (ev->type == E_AUTH_FPRINT_TYPE_UNKNOWN) sig = "e,fprint,unknown";
+   else if (ev->type == E_AUTH_FPRINT_TYPE_PRESS) sig = "e,fprint,press";
+   else if (ev->type == E_AUTH_FPRINT_TYPE_SWIPE) sig = "e,fprint,swipe";
+   EINA_LIST_FOREACH(edd->elock_wnd_list, l, lp)
+     {
+        if (lp->login_box) edje_object_signal_emit(lp->login_box, sig, "e");
+        if (lp->bg_object) edje_object_signal_emit(lp->bg_object, sig, "e");
+     }
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_lokker_cb_fprint_status(void *data EINA_UNUSED,
+                         int type EINA_UNUSED,
+                         void *event)
+{
+   E_Event_Auth_Fprint_Status *ev = event;
+   Lokker_Popup *lp;
+   Eina_List *l;
+   const char *sig = "";
+
+   if (!edd) return ECORE_CALLBACK_PASS_ON;
+
+   if      (ev->status == E_AUTH_FPRINT_STATUS_AUTH) sig = "e,fprint,auth,succeed";
+   else if (ev->status == E_AUTH_FPRINT_STATUS_NO_AUTH) sig = "e,fprint,auth,fail";
+   else if (ev->status == E_AUTH_FPRINT_STATUS_SHORT_SWIPE) sig = "e,fprint,auth,short";
+   else if (ev->status == E_AUTH_FPRINT_STATUS_NO_CENTER) sig = "e,fprint,auth,nocenter";
+   else if (ev->status == E_AUTH_FPRINT_STATUS_REMOVE_RETRY) sig = "e,fprint,auth,removeretry";
+   else if (ev->status == E_AUTH_FPRINT_STATUS_RETRY) sig = "e,fprint,auth,retry";
+   else if (ev->status == E_AUTH_FPRINT_STATUS_DISCONNECT) sig = "e,fprint,auth,disconnect";
+   else if (ev->status == E_AUTH_FPRINT_STATUS_ERROR) sig = "e,fprint,auth,error";
+
+   EINA_LIST_FOREACH(edd->elock_wnd_list, l, lp)
+     {
+        if (lp->login_box) edje_object_signal_emit(lp->login_box, sig, "e");
+        if (lp->bg_object) edje_object_signal_emit(lp->bg_object, sig, "e");
+     }
+   if (ev->status == E_AUTH_FPRINT_STATUS_AUTH)
+     {
+        /* security - null out passwd string once we are done with it */
+        _lokker_null();
+        e_desklock_hide();
+     }
+   return ECORE_CALLBACK_PASS_ON;
+}
+
 EINTERN Eina_Bool
 lokker_key_up(Ecore_Event_Key *ev)
 {
@@ -875,12 +933,18 @@ lokker_lock(void)
      edd->move_handler = ecore_event_handler_add(ECORE_EVENT_MOUSE_MOVE, _lokker_cb_mouse_move, NULL);
 
    _text_passwd_update();
+
+   e_auth_fprint_begin(e_username_get());
+   E_LIST_HANDLER_APPEND(edd->handlers, E_EVENT_AUTH_FPRINT_AVAILABLE, _lokker_cb_fprint_available, NULL);
+   E_LIST_HANDLER_APPEND(edd->handlers, E_EVENT_AUTH_FPRINT_STATUS, _lokker_cb_fprint_status, NULL);
+
    return EINA_TRUE;
 }
 
 EINTERN void
 lokker_unlock(void)
 {
+   e_auth_fprint_end();
    E_FREE_LIST(edd->elock_wnd_list, _lokker_popup_free);
    e_pointer_type_pop(e_comp->pointer, e_comp->pointer, "default");
    e_pointer_type_pop(e_comp->pointer, NULL, NULL);

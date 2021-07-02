@@ -859,6 +859,11 @@ main(int argc, char **argv)
    TS("E_Acpi Init Done");
    _e_main_shutdown_push(e_acpi_shutdown);
 
+   TS("E_Auth Init");
+   e_auth_init();
+   TS("E_Auth Init Done");
+   _e_main_shutdown_push(e_auth_shutdown);
+
    TS("E_Backlight Init");
    if (!e_backlight_init())
      {
