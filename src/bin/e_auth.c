@@ -126,8 +126,25 @@ _cb_verify_start(void *data EINA_UNUSED, const Eldbus_Message *m,
    printf("FP: verify start...\n");
    if (eldbus_message_error_get(m, &name, &text))
      {
-        fprintf(stderr, "Fprint err: %s %s\n", name, text);
+        fprintf(stderr, "FP: Fprint err: %s %s\n", name, text);
         return;
+     }
+}
+
+static void
+_cb_verify_stop(void *data EINA_UNUSED, const Eldbus_Message *m EINA_UNUSED,
+                Eldbus_Pending *p EINA_UNUSED)
+{
+   Eldbus_Message *m2;
+   Eldbus_Message_Iter *iter;
+
+   printf("FP: verify stop...\n");
+   m2 = eldbus_proxy_method_call_new(proxy_fprint_device, "VerifyStart");
+   if (m2)
+     {
+        iter = eldbus_message_iter_get(m2);
+        eldbus_message_iter_basic_append(iter, 's', finger_name);
+        eldbus_proxy_send(proxy_fprint_device, m2, _cb_verify_start, NULL, -1);
      }
 }
 
@@ -135,20 +152,12 @@ static void
 _verify_begin(void)
 {
    Eldbus_Message *m2;
-   Eldbus_Message_Iter *iter;
 
-   // brute force stop a previous verify - if its active - dont care about reply
+   printf("FP: verify begin...\n");
    m2 = eldbus_proxy_method_call_new(proxy_fprint_device, "VerifyStop");
    if (m2)
      {
-        eldbus_proxy_send(proxy_fprint_device, m2, NULL, NULL, -1);
-     }
-   m2 = eldbus_proxy_method_call_new(proxy_fprint_device, "VerifyStart");
-   if (m2)
-     {
-        iter = eldbus_message_iter_get(m2);
-        eldbus_message_iter_basic_append(iter, 's', finger_name);
-        eldbus_proxy_send(proxy_fprint_device, m2, _cb_verify_start, NULL, -1);
+        eldbus_proxy_send(proxy_fprint_device, m2, _cb_verify_stop, NULL, -1);
      }
 }
 
@@ -163,7 +172,7 @@ _cb_verify(void *data EINA_UNUSED, const Eldbus_Message *m)
    printf("FP: verify ...\n");
    if (eldbus_message_error_get(m, &name, &text))
      {
-        fprintf(stderr, "Fprint err: %s %s\n", name, text);
+        fprintf(stderr, "FP: Fprint err: %s %s\n", name, text);
         return;
      }
    if (!eldbus_message_arguments_get(m, "sb", &txt, &val)) return;
@@ -208,7 +217,7 @@ _cb_list_enrolled_fingers(void *data EINA_UNUSED, const Eldbus_Message *m,
    printf("FP: list fingers...\n");
    if (eldbus_message_error_get(m, &name, &text))
      {
-        fprintf(stderr, "Fprint err: %s %s\n", name, text);
+        fprintf(stderr, "FP: Fprint err: %s %s\n", name, text);
         return;
      }
    printf("FP: list fingers...\n");
@@ -250,7 +259,7 @@ _cb_claim(void *data EINA_UNUSED, const Eldbus_Message *m EINA_UNUSED,
    printf("FP: claim\n");
    if (eldbus_message_error_get(m, &name, &text))
      {
-        fprintf(stderr, "Fprint err: %s %s\n", name, text);
+        fprintf(stderr, "FP: Fprint err: %s %s\n", name, text);
         return;
      }
    // ListEnrolledFingrs '$USER' -> "as"
@@ -313,7 +322,7 @@ _cb_get_default_device(void *data EINA_UNUSED, const Eldbus_Message *m,
    printf("FP: get default device...\n");
    if (eldbus_message_error_get(m, &name, &text))
      {
-        fprintf(stderr, "Fprint err: %s %s\n", name, text);
+        fprintf(stderr, "FP: Fprint err: %s %s\n", name, text);
         return;
      }
    if (!eldbus_message_arguments_get(m, "o", &dev)) return;
