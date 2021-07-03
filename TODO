@@ -73,13 +73,12 @@ TODO:
   * freeze the zooms like a screenshot/xmag like thing
   * offer coordinates and measuring by pixel
 * pam/auth - exotic auth things like fingerprint readers etc. need to work
-  * fingerprint
   * smart card
   * face auth (howdy / pam-face / pam-face-authentication / pam-facial-auth)
   * yubikey
   * usb drive (pam_usb)
-  * support setting up fingerprint as auth (fprint)
-  * support settign up smartcard as auth
+  * support setting up fingerprint as auth (fprint-enroll)
+  * support setting up smartcard as auth
   * support setting up face auth (howdy / pam-face / pam-face-authentication / pam-facial-auth)
   * support setting up yubikey as auth
   * support setting up usb drive for auth (pam_usb)
