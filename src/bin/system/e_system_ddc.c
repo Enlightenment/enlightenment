@@ -334,7 +334,7 @@ _ddc_init(void)
    // brute force modprobe this as it likely is needed - probe will fail
    // if this doesn't work or find devices anyway
    if (system("modprobe i2c-dev") == 0)
-     usleep(200 * 1000); // and wait for the module to come up... 200ms
+     usleep(500 * 1000); // and wait for the module to come up... 200ms
 
    if (!_ddc_probe()) return EINA_FALSE;
 
