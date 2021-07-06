@@ -138,7 +138,8 @@ _cb_verify_stop(void *data EINA_UNUSED, const Eldbus_Message *m EINA_UNUSED,
    Eldbus_Message *m2;
    Eldbus_Message_Iter *iter;
 
-   printf("FP: verify stop...\n");
+   printf("FP: verify stop.... finger_name=%s\n", finger_name ? finger_name : "NULL");
+   if (!finger_name) finger_name = eina_stringshare_add("right-index-finger");
    m2 = eldbus_proxy_method_call_new(proxy_fprint_device, "VerifyStart");
    if (m2)
      {
