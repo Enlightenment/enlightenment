@@ -365,10 +365,12 @@ _popup_del(Instance *inst)
    inst->recslider = NULL;
    inst->reccheck = NULL;
    inst->recbx = NULL;
+   inst->recic = NULL;
    inst->recvu = NULL;
    inst->recording_box = NULL;
    emix_event_callback_del(_cb_emix_event, inst);
    if (inst->mon_data.sink) _sink_unmonitor(inst, inst->mon_data.sink);
+   if (inst->recmon_data.source) _source_unmonitor(inst, inst->recmon_data.source);
    E_FREE_FUNC(inst->popup, e_object_del);
 }
 
@@ -693,6 +695,7 @@ _popup_recording_fill(Instance *inst)
    inst->recslider = NULL;
    inst->reccheck = NULL;
    inst->recbx = NULL;
+   inst->recic = NULL;
    inst->recvu = NULL;
    inst->recording_box = NULL;
 
