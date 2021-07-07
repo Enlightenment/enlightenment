@@ -144,7 +144,7 @@ _cb_verify_stop(void *data EINA_UNUSED, const Eldbus_Message *m EINA_UNUSED,
    if (m2)
      {
         iter = eldbus_message_iter_get(m2);
-        eldbus_message_iter_basic_append(iter, 's', finger_name);
+        eldbus_message_iter_basic_append(iter, 's', "any");
         eldbus_proxy_send(proxy_fprint_device, m2, _cb_verify_start, NULL, -1);
      }
 }
