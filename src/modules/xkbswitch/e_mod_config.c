@@ -1078,7 +1078,7 @@ _cb_ctrl_up(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 
    if (!(cfdata = data)) return;
 
-   _popup_add(_("Switch Layout"), cfdata, optswitch,
+   _popup_add(_("Control"), cfdata, optctrl,
               &cfdata->cfg_ctrl_options, cfdata->ctrl_list);
 }
 
