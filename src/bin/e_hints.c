@@ -315,12 +315,17 @@ e_hints_client_list_set(void)
      {
         E_Client *ec;
         const Eina_List *ll;
+        const char *name;
 
         clients = calloc(e_clients_count(), sizeof(Ecore_X_Window));
         EINA_LIST_FOREACH(e_comp->clients, ll, ec)
           {
              if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_X) continue;
-             clients[i++] = e_client_util_win_get(ec);
+             name = evas_object_name_get(ec->frame);
+             if (!((name) && (!strcmp(name, "layer_obj"))))
+               {
+                  clients[i++] = e_client_util_win_get(ec);
+               }
           }
      }
    ecore_x_netwm_client_list_set(e_comp->root, clients, i);
