@@ -335,8 +335,9 @@ e_hints_client_stacking_set(void)
 {
 #ifdef HAVE_WAYLAND_ONLY
 #else
-   unsigned int c, i = 0, non_x = 0;
+   unsigned int c, i = 0, non_x = 0, count = 0;
    Ecore_X_Window *clients = NULL;
+   const char *name;
 
 //#define CLIENT_STACK_DEBUG
    /* Get client count */
@@ -355,7 +356,12 @@ e_hints_client_stacking_set(void)
                   non_x++;
                   continue;
                }
-             clients[i++] = e_client_util_win_get(ec);
+             name = evas_object_name_get(ec->frame);
+             if (!((name) && (!strcmp(name, "layer_obj"))))
+               {
+                  clients[i++] = e_client_util_win_get(ec);
+                  count++;
+               }
 #ifdef CLIENT_STACK_DEBUG
              ll = eina_list_append(ll, ec);
 #endif
@@ -384,7 +390,7 @@ e_hints_client_stacking_set(void)
     * to be returned in the list
     */
    if (i <= c)
-     ecore_x_netwm_client_list_stacking_set(e_comp->root, clients, c);
+     ecore_x_netwm_client_list_stacking_set(e_comp->root, clients, count);
    free(clients);
 #endif
 }
