@@ -138,6 +138,64 @@ _exif_entry_find(ExifData *ed, ExifTag tag)
 #endif
 
 /**--CREATE--**/
+#ifdef HAVE_LIBEXIF
+static inline int
+_parse_exif_digit(char c)
+{
+   if ((c >= '0') && (c <= '9')) return (c - '0');
+   return -1;
+}
+
+static inline int
+_parse_digits(const char **s, char end)
+{
+   int vnow = 0, v;
+
+   for (;;)
+     {
+        v = _parse_exif_digit(**s);
+        if (v < 0)
+          {
+             if (**s != end) return -1;
+             (*s)++;
+             return vnow;
+          }
+        else vnow = (vnow * 10) + v;
+        if (!(**s)) return -1;
+        (*s)++;
+     }
+   return vnow;
+}
+
+static int
+_parse_exif_time(const char *str, struct tm *tm)
+{
+   const char *s;
+   int v;
+
+   s = str;
+   v = _parse_digits(&s, ':');
+   if (v < 0) return -1;
+   tm->tm_year = v;
+   v = _parse_digits(&s, ':');
+   if (v < 0) return -1;
+   tm->tm_mon = v;
+   v = _parse_digits(&s, ' ');
+   if (v < 0) return -1;
+   tm->tm_mday = v;
+   v = _parse_digits(&s, ':');
+   if (v < 0) return -1;
+   tm->tm_hour = v;
+   v = _parse_digits(&s, ':');
+   if (v < 0) return -1;
+   tm->tm_min = v;
+   v = _parse_digits(&s, 0);
+   if (v < 0) return -1;
+   tm->tm_sec = v;
+   return 0;
+}
+#endif
+
 static void
 _fill_data(E_Config_Dialog_Data *cfdata, E_Fm2_Icon *ic)
 {
@@ -171,9 +229,7 @@ _fill_data(E_Config_Dialog_Data *cfdata, E_Fm2_Icon *ic)
              memset(&tm, 0, sizeof(tm));
              tm.tm_isdst = -1;
              // "YYYY:MM:DD HH:MM:SS"
-             if (sscanf(tbuf, "%i:%i:%i %i:%i:%i",
-                        &tm.tm_year, &tm.tm_mon, &tm.tm_mday,
-                        &tm.tm_hour, &tm.tm_min, &tm.tm_sec) == 6)
+             if (_parse_exif_time(tbuf, &tm) == 0)
                {
                   tm.tm_year -= 1900;
                   tm.tm_mon -= 1;
