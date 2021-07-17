@@ -82,6 +82,7 @@ TODO:
   * support setting up face auth (howdy / pam-face / pam-face-authentication / pam-facial-auth)
   * support setting up yubikey as auth
   * support setting up usb drive for auth (pam_usb)
+  * support fprint auth for polkit agent (ugh)
 * wifi/bt net: associate app/desktop(s) or actions to run when:
   * bt device comes or goes (alongside lock device feature)
   * wifi appears or disappears
