@@ -3,7 +3,7 @@ Enlightenment
 
 Please report bugs and submit patches at https://phab.enlightenment.org
 
-Requirements
+REQUIREMENTS
 ------------
 
 Must:
@@ -22,10 +22,16 @@ Highly suggested:
   * udisks2
   * gdb (If you want automatic bactraces in ~/.e-crashdump.txt)
 
+COMPILING AND INSTALLING
+------------------------
+
+For sample configuration options please look in the ./confs/ directory
+for scripts that pass in commonly used options.
+
+Please see the INSTALL file: https://git.enlightenment.org/core/enlightenment.git/tree/INSTALL
+
 NOTE: Users of DR16 will need to rename the $prefix/bin/enlightenment
 file prior to installing this release or it will be overwritten.
-
-Please see the INSTALL file for now to compile and install it.
 
 NOTE: If you do not want security issues make sure sysactions.conf is in
 /etc/enlightenment (not PREFIX/etc/enlightenment) as this is the first place
