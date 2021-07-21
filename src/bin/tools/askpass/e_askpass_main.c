@@ -8,6 +8,7 @@
 #define GUIDE_PWD  "Password"
 #define OK     "OK"
 #define CANCEL "Cancel"
+#define PADOUT "pad_large"
 #define PAD    "pad_medium"
 
 int ret = -1;
@@ -46,7 +47,7 @@ cb_cancel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info
 EAPI int
 elm_main(int argc, char **argv)
 {
-   Evas_Object *win, *bx, *fr, *lab, *en, *sep, *bx2, *bt;
+   Evas_Object *win, *bx, *fr, *bxv, *bxh, *fr2, *ic, *lab, *en, *sep, *bx2, *bt;
    const char *txt = NULL;
    Eina_Bool askpass = EINA_TRUE;
 
@@ -82,25 +83,50 @@ elm_main(int argc, char **argv)
          {
             fr = elm_frame_add(win);
             evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
-            elm_object_style_set(fr, PAD);
+            elm_object_style_set(fr, PADOUT);
             elm_box_pack_end(bx, fr);
+
+            bxv = elm_box_add(win);
+            elm_box_horizontal_set(bxv, EINA_FALSE);
+            evas_object_size_hint_align_set(bxv, EVAS_HINT_FILL, EVAS_HINT_FILL);
+            elm_object_content_set(fr, bxv);
+
+            bxh = elm_box_add(win);
+            elm_box_horizontal_set(bxh, EINA_TRUE);
+            evas_object_size_hint_align_set(bxh, EVAS_HINT_FILL, EVAS_HINT_FILL);
+            elm_box_pack_end(bxv, bxh);
             {
-               lab = elm_label_add(win);
-               evas_object_size_hint_align_set(lab, EVAS_HINT_FILL, 0.5);
-               if (txt)
-                 elm_object_text_set(lab, txt);
-               else
-                 elm_object_text_set(lab, TEXT);
-               elm_object_content_set(fr, lab);
-               evas_object_show(lab);
+               fr2 = elm_frame_add(win);
+               evas_object_size_hint_align_set(fr2, EVAS_HINT_FILL, EVAS_HINT_FILL);
+               elm_object_style_set(fr2, PAD);
+               elm_box_pack_end(bxh, fr2);
+               {
+                  ic = elm_icon_add(win);
+                  elm_icon_standard_set(ic, "lock");
+                  evas_object_size_hint_min_set(ic, ELM_SCALE_SIZE(40), ELM_SCALE_SIZE(40));
+                  elm_object_content_set(fr2, ic);
+                  evas_object_show(ic);
+               }
+               evas_object_show(fr2);
+
+               fr2 = elm_frame_add(win);
+               evas_object_size_hint_align_set(fr2, EVAS_HINT_FILL, EVAS_HINT_FILL);
+               elm_object_style_set(fr2, PAD);
+               elm_box_pack_end(bxh, fr2);
+               {
+                  lab = elm_label_add(win);
+                  evas_object_size_hint_align_set(lab, EVAS_HINT_FILL, 0.5);
+                  if (txt) elm_object_text_set(lab, txt);
+                  else elm_object_text_set(lab, TEXT);
+                  elm_object_content_set(fr2, lab);
+                  evas_object_show(lab);
+               }
+               evas_object_show(fr2);
             }
-            evas_object_show(fr);
-         }
-         {
-            fr = elm_frame_add(win);
-            evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
-            elm_object_style_set(fr, PAD);
-            elm_box_pack_end(bx, fr);
+            fr2 = elm_frame_add(win);
+            evas_object_size_hint_align_set(fr2, EVAS_HINT_FILL, EVAS_HINT_FILL);
+            elm_object_style_set(fr2, PAD);
+            elm_box_pack_end(bxv, fr2);
             {
                en = elm_entry_add(win);
                entry = en;
@@ -113,10 +139,14 @@ elm_main(int argc, char **argv)
                elm_entry_password_set(en, askpass);
                evas_object_smart_callback_add(en, "activated", cb_ok, NULL);
                evas_object_smart_callback_add(en, "aborted", cb_cancel, NULL);
-               elm_object_content_set(fr, en);
+               elm_object_content_set(fr2, en);
                evas_object_show(en);
                elm_object_focus_set(en, EINA_TRUE);
             }
+            evas_object_show(fr2);
+
+            evas_object_show(bxh);
+            evas_object_show(bxv);
             evas_object_show(fr);
          }
          {
@@ -130,7 +160,7 @@ elm_main(int argc, char **argv)
          {
             fr = elm_frame_add(win);
             evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
-            elm_object_style_set(fr, PAD);
+            elm_object_style_set(fr, PADOUT);
             elm_box_pack_end(bx, fr);
             {
                bx2 = elm_box_add(win);
