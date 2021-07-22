@@ -77,6 +77,7 @@ e_randr2_init(void)
    E_CONFIG_VAL(D, T, rel_mode, UCHAR);
    E_CONFIG_VAL(D, T, enabled, UCHAR);
    E_CONFIG_VAL(D, T, ignore_disconnect, UCHAR);
+   E_CONFIG_VAL(D, T, custom_label_screen, STR);
    E_CONFIG_VAL(D, T, profile, STR);
    E_CONFIG_VAL(D, T, scale_multiplier, DOUBLE);
 
@@ -411,6 +412,7 @@ _config_free(E_Config_Randr2 *cfg)
      {
         eina_stringshare_del(cs->id);
         eina_stringshare_del(cs->rel_to);
+        eina_stringshare_del(cs->custom_label_screen);
         eina_stringshare_del(cs->profile);
         free(cs);
      }

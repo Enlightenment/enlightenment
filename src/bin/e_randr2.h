@@ -120,6 +120,8 @@ struct _E_Config_Randr2_Screen
    unsigned char  enabled;
    unsigned char  ignore_disconnect;
 
+   const char    *custom_label_screen; // name of the screen device attached
+
    const char    *profile;
    double         scale_multiplier;
 };

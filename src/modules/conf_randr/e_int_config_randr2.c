@@ -120,6 +120,7 @@ _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
      {
         eina_stringshare_del(cs->id);
         eina_stringshare_del(cs->rel_to);
+        eina_stringshare_del(cs->custom_label_screen);
         eina_stringshare_del(cs->profile);
         free(cs);
      }
@@ -364,11 +365,15 @@ _basic_screen_info_fill(E_Config_Dialog_Data *cfdata, E_Config_Randr2_Screen *cs
    Elm_Object_Item *it, *it_sel;
    Elm_Widget_Item *iwt;
    void *dt;
+   const char *info_screen = "";
 
    if (!s) return;
    // fill all the screen status info
+   info_screen = s->info.screen;
+   if ((cs->custom_label_screen) && (cs->custom_label_screen[0])) info_screen = cs->custom_label_screen;
+   printf("RRR: [%s] [%s]", s->info.name, info_screen);
    elm_object_text_set(cfdata->name_obj, s->info.name);
-   elm_object_text_set(cfdata->screen_obj, s->info.screen);
+   elm_object_text_set(cfdata->screen_obj, info_screen);
    elm_check_state_set(cfdata->lid_obj, s->info.is_lid);
    elm_check_state_set(cfdata->backlight_obj, s->info.backlight);
    snprintf(buf, sizeof(buf), "%imm x %imm", s->info.size.w, s->info.size.h);
@@ -761,6 +766,18 @@ _cb_enabled_changed(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 }
 
 static void
+_cb_label_screen_edited(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+{
+   E_Config_Dialog_Data *cfdata = data;
+   E_Config_Randr2_Screen *cs = _config_screen_find(cfdata);
+   const char *str = elm_object_text_get(obj);
+   if (!cs) return;
+   printf("RR: change screen [%s]\n", str);
+   eina_stringshare_replace(&(cs->custom_label_screen), str);
+   e_config_dialog_changed_set(cfdata->cfd, EINA_TRUE);
+}
+
+static void
 _cb_ignore_disconnect_changed(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata = data;
@@ -876,7 +893,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas EINA_UNUSED, E_Config_Dialog_Data
 
         if (s->info.connected)
           {
-             E_Config_Randr2_Screen *cs;
+             E_Config_Randr2_Screen *cs, *cs2;
 
              cs = calloc(1, sizeof(E_Config_Randr2_Screen));
              if (cs)
@@ -896,6 +913,12 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas EINA_UNUSED, E_Config_Dialog_Data
                   cs->ignore_disconnect = s->config.ignore_disconnect;
                   if (s->config.profile)
                     cs->profile = eina_stringshare_add(s->config.profile);
+                  if (e_randr2_cfg)
+                    {
+                       cs2 = e_randr2_config_screen_find(s, e_randr2_cfg);
+                       if ((cs2) && (cs2->custom_label_screen) && (cs2->custom_label_screen[0]))
+                         cs->custom_label_screen = eina_stringshare_add(cs2->custom_label_screen);
+                    }
                   cs->scale_multiplier = s->config.scale_multiplier;
                   cfdata->screens = eina_list_append(cfdata->screens, cs);
                   it = elm_hoversel_item_add(o, s->info.name,
@@ -956,6 +979,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas EINA_UNUSED, E_Config_Dialog_Data
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_table_pack(tb, o, 0, 2, 1, 1);
+   evas_object_smart_callback_add(o, "changed,user", _cb_label_screen_edited, cfdata);
    evas_object_show(o);
    cfdata->screen_obj = o;
 
@@ -1233,6 +1257,9 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
         cs->rotation = cs2->rotation;
         cs->priority = cs2->priority;
         cs->rel_mode = cs2->rel_mode;
+        if (cs->custom_label_screen) eina_stringshare_del(cs->custom_label_screen);
+        cs->custom_label_screen = NULL;
+        if (cs2->custom_label_screen) cs->custom_label_screen = eina_stringshare_add(cs2->custom_label_screen);
         if (cs->profile) eina_stringshare_del(cs->profile);
         cs->profile = NULL;
         if (cs2->profile) cs->profile = eina_stringshare_add(cs2->profile);
