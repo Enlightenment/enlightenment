@@ -656,7 +656,6 @@ static void
 _pager_desk_switch(Pager_Desk *pd1, Pager_Desk *pd2)
 {
    int c;
-   E_Zone *zone1, *zone2;
    E_Desk *desk1, *desk2;
    Pager_Win *pw;
    Eina_List *l;
@@ -666,8 +665,6 @@ _pager_desk_switch(Pager_Desk *pd1, Pager_Desk *pd2)
 
    desk1 = pd1->desk;
    desk2 = pd2->desk;
-   zone1 = pd1->desk->zone;
-   zone2 = pd2->desk->zone;
 
    /* Move opened windows from on desk to the other */
    EINA_LIST_FOREACH(pd1->wins, l, pw)
