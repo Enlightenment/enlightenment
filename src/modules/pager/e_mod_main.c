@@ -741,18 +741,6 @@ _pager_desk_switch(Pager_Desk *pd1, Pager_Desk *pd2)
           }
      }
    if (c > 0) e_config_save();
-
-   /* If the current desktop has been switched, force to update of the screen */
-   if (desk2 == e_desk_current_get(zone2))
-     {
-        desk2->visible = 0;
-        e_desk_show(desk2);
-     }
-   if (desk1 == e_desk_current_get(zone1))
-     {
-        desk1->visible = 0;
-        e_desk_show(desk1);
-     }
 }
 
 static Pager_Win *
