@@ -2959,6 +2959,7 @@ e_comp_wl_query_dmabuf_formats(int max_formats, int *formats, int *num_formats)
 {
    *num_formats = 0;
 #if EVAS_GL_API_VERSION >= 7
+   if (!e_comp_wl->wl.glapi) return EINA_FALSE;
    if (!e_comp_wl->wl.glapi->evasglQueryDmaBufFormats) return EINA_FALSE;
    return e_comp_wl->wl.glapi->evasglQueryDmaBufFormats(e_comp_wl->wl.gl, max_formats, formats, num_formats);
 #else
@@ -2971,6 +2972,7 @@ e_comp_wl_query_dmabuf_modifiers(int format, int max_modifiers, uint64_t *modifi
 {
    *num_modifiers = 0;
 #if EVAS_GL_API_VERSION >= 7
+   if (!e_comp_wl->wl.glapi) return EINA_FALSE;
    if (!e_comp_wl->wl.glapi->evasglQueryDmaBufModifiers) return EINA_FALSE;
    return e_comp_wl->wl.glapi->evasglQueryDmaBufModifiers(e_comp_wl->wl.gl, format, max_modifiers, modifiers, external_only, num_modifiers);
 #else
@@ -2991,12 +2993,19 @@ _e_comp_wl_gl_init(void)
    if (!e_comp_wl->wl.glsfc) goto end;
    if (!evas_gl_make_current(e_comp_wl->wl.gl, e_comp_wl->wl.glsfc, e_comp_wl->wl.glctx)) goto end;
    e_comp_wl->wl.glapi = evas_gl_context_api_get(e_comp_wl->wl.gl, e_comp_wl->wl.glctx);
-   if (e_comp_wl->wl.glapi->evasglBindWaylandDisplay)
-     e_comp->gl = e_comp_wl->wl.glapi->evasglBindWaylandDisplay(e_comp_wl->wl.gl, e_comp_wl->wl.disp);
-   if (e_comp->gl)
+   if (e_comp_wl->wl.glapi)
      {
-        e_util_env_set("ELM_ACCEL", "gl");
-        return;
+        if (e_comp_wl->wl.glapi->evasglBindWaylandDisplay)
+          e_comp->gl = e_comp_wl->wl.glapi->evasglBindWaylandDisplay(e_comp_wl->wl.gl, e_comp_wl->wl.disp);
+        if (e_comp->gl)
+          {
+             e_util_env_set("ELM_ACCEL", "gl");
+             return;
+          }
+     }
+   else
+     {
+        ERR("Cannot get glapi. Is osmesa installed?");
      }
 end:
    _e_comp_wl_gl_shutdown();

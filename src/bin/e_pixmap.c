@@ -591,12 +591,13 @@ e_pixmap_refresh(E_Pixmap *cp)
              format = wl_shm_buffer_get_format(buffer->shm_buffer);
            else if (buffer->dmabuf_buffer)
              format = buffer->dmabuf_buffer->attributes.format;
-           else
+           else if (e_comp_wl->wl.glapi)
              {
                 e_comp_wl->wl.glapi->evasglQueryWaylandBuffer
                   (e_comp_wl->wl.gl, buffer->resource, EGL_TEXTURE_FORMAT,
                       &format);
              }
+           else return EINA_FALSE;
 
            switch (format)
              {
