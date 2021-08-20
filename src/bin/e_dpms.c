@@ -33,7 +33,7 @@ e_dpms_update(void)
    Eina_Bool changed = EINA_FALSE;
 
    enabled = ((e_config->screensaver_enable) &&
-              (!((e_util_fullscreen_current_any()) &&
+              (!((e_util_fullscreen_any()) &&
                  (e_config->no_dpms_on_fullscreen))));
    if (_e_dpms_enabled != enabled)
      {

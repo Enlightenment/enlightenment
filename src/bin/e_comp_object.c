@@ -1610,6 +1610,11 @@ _e_comp_intercept_hide(void *data, Evas_Object *obj)
 {
    E_Comp_Object *cw = data;
 
+   if (cw->ec->fullscreen)
+     {
+        cw->ec->desk->fullscreen_clients =
+          eina_list_remove(cw->ec->desk->fullscreen_clients, cw->ec);
+     }
    if (cw->ec->hidden)
      {
         /* hidden flag = just do it */
@@ -1661,6 +1666,12 @@ _e_comp_intercept_show_helper(E_Comp_Object *cw)
 {
    int w = 0, h = 0;
 
+   if (cw->ec->fullscreen)
+     {
+        if (!eina_list_data_find(cw->ec->desk->fullscreen_clients, cw->ec))
+          cw->ec->desk->fullscreen_clients =
+            eina_list_append(cw->ec->desk->fullscreen_clients, cw->ec);
+     }
    if (cw->ec->sticky)
      e_comp_object_signal_emit(cw->smart_obj, "e,state,sticky", "e");
    if (cw->visible)
