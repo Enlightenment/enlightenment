@@ -732,6 +732,7 @@ e_comp_x_randr_create(void)
 
    printf("RRR: ................. info get!\n");
    // do this to force xrandr to update its content
+   ecore_x_randr_screen_refresh(root);
    ecore_x_randr_config_timestamp_get(root);
    ecore_x_randr_screen_size_range_get(root, NULL, NULL, NULL, NULL);
    ecore_x_sync();
