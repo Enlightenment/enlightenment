@@ -61,6 +61,7 @@ struct _IBox_Icon
    Evas_Object *o_holder2;
    Evas_Object *o_icon2;
    E_Client    *client;
+   Ecore_Timer *fill_timer;
    struct
    {
       unsigned char start E_BITFIELD;
@@ -523,6 +524,7 @@ _ibox_cb_icon_fill_timer(void *data)
 {
    IBox_Icon *ic = data;
 
+   ic->fill_timer = NULL;
    _ibox_icon_fill(ic);
 
    return EINA_FALSE;
@@ -557,7 +559,7 @@ _ibox_icon_new(IBox *b, E_Client *ec)
    evas_object_pass_events_set(ic->o_holder2, 1);
    evas_object_show(ic->o_holder2);
 
-   ecore_timer_add(0.1, _ibox_cb_icon_fill_timer, ic);
+   ic->fill_timer = ecore_timer_add(0.1, _ibox_cb_icon_fill_timer, ic);
    return ic;
 }
 
@@ -566,6 +568,8 @@ _ibox_icon_free(IBox_Icon *ic)
 {
    if (ic->ibox->ic_drop_before == ic)
      ic->ibox->ic_drop_before = NULL;
+   if (ic->fill_timer) ecore_timer_del(ic->fill_timer);
+   ic->fill_timer = NULL;
    _ibox_icon_empty(ic);
    evas_object_del(ic->o_holder);
    evas_object_del(ic->o_holder2);
@@ -606,9 +610,10 @@ _ibox_icon_fill_preview(IBox_Icon *ic, Eina_Bool is_retry)
    ec = ic->client;
 
    img = e_comp_object_util_frame_mirror_add(ec->frame);
-   if (!img && !is_retry)
+   if ((!img) && (!is_retry))
      {
-        ecore_timer_add(0.5, _ibox_icon_fill_timer, ic);
+        if (!ic->fill_timer)
+          ic->fill_timer = ecore_timer_add(0.5, _ibox_icon_fill_timer, ic);
         return;
      }
    w = ec->client.w;
