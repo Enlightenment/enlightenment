@@ -15,17 +15,19 @@ static Ecore_Timer *_clients_timer = NULL;
 typedef struct _Proc_Stats Proc_Stats;
 struct _Proc_Stats
 {
-   E_Client    *client;
-   Evas_Object *obj;
-   Evas_Object *obj_swallow;
-   Evas_Object *popup;
-   pid_t        pid;
-   uint64_t     mem_size;
-   uint64_t     cpu_time;
-   uint64_t     cpu_time_prev;
+   E_Client       *client;
+   Evas_Object    *obj;
+   Evas_Object    *obj_swallow;
+   Evas_Object    *popup;
+   E_Object_Delfn *delfn;
+   pid_t           pid;
+   uint64_t        mem_size;
+   uint64_t        cpu_time;
+   uint64_t        cpu_time_prev;
 };
 
 static void _proc_stats_item_display(Proc_Stats *item);
+static void _proc_stats_item_remove(Proc_Stats *item);
 
 static Eina_Bool
 _memory_total(void)
@@ -78,19 +80,18 @@ _proc_stats_item_del(Proc_Stats *item)
    item->popup = NULL;
    edje_object_signal_emit(item->obj, "e,state,procstats,off", "e");
    evas_object_del(item->obj_swallow);
+   e_object_delfn_del(E_OBJECT(item->client), item->delfn);
+
    free(item);
    item = NULL;
 }
 
 static void
-_proc_stats_client_del_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+_proc_stats_client_del_cb(void *data, void *obj EINA_UNUSED)
 {
    Proc_Stats *item = data;
 
-   if (item->popup) evas_object_del(item->popup);
-   item->popup = NULL;
-   evas_object_hide(item->obj_swallow);
-   edje_object_signal_emit(obj, "e,state,procstats,off", "e");
+   _proc_stats_item_remove(item);
 }
 
 static void
@@ -208,8 +209,8 @@ _proc_stats_item_add(E_Client *ec, E_Module *module)
    edje_object_part_swallow(ec->frame_object, "e.procstats.swallow", ic);
    edje_object_signal_emit(ec->frame_object, "e,state,procstats,on", "e");
 
-   evas_object_event_callback_add(item->obj, EVAS_CALLBACK_DEL, _proc_stats_client_del_cb, item);
-   evas_object_event_callback_add(item->obj, EVAS_CALLBACK_MOVE, _proc_stats_client_move_cb, item);
+   item->delfn = e_object_delfn_add(E_OBJECT(ec), _proc_stats_client_del_cb, item);
+   evas_object_event_callback_add(ic, EVAS_CALLBACK_MOVE, _proc_stats_client_move_cb, item);
    evas_object_event_callback_add(ic, EVAS_CALLBACK_MOUSE_UP, _proc_stats_icon_clicked_cb, item);
 
    _clients = eina_list_append(_clients, item);
