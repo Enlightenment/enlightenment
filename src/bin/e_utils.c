@@ -748,10 +748,16 @@ _e_util_cb_delayed_del(void *data EINA_UNUSED)
 }
 
 static void
-_e_util_cb_delayed_cancel(void *data, void *obj EINA_UNUSED)
+_e_util_cb_delayed_cancel(void *data EINA_UNUSED, void *obj)
 {
-   unsigned long c = (unsigned long)data;
-   if (_delay_del_array) eina_array_data_set(_delay_del_array, c, NULL);
+   unsigned long c = eina_array_count_get(_delay_del_array);
+   unsigned long i;
+
+   for (i = 0; i < c; i++)
+     {
+        if (eina_array_data_get(_delay_del_array, i) == obj)
+          eina_array_data_set(_delay_del_array, i, NULL);
+     }
 }
 
 E_API void
@@ -771,10 +777,7 @@ e_util_defer_object_del(E_Object *obj)
         if (_delay_del_array)
           {
              if (eina_array_push(_delay_del_array, obj))
-               {
-                  unsigned long c = eina_array_count_get(_delay_del_array);
-                  e_object_delfn_add(obj, _e_util_cb_delayed_cancel, (void *)c);
-               }
+               e_object_delfn_add(obj, _e_util_cb_delayed_cancel, NULL);
           }
      }
 }
