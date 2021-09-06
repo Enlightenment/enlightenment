@@ -750,9 +750,11 @@ _e_util_cb_delayed_del(void *data EINA_UNUSED)
 static void
 _e_util_cb_delayed_cancel(void *data EINA_UNUSED, void *obj)
 {
-   unsigned long c = eina_array_count_get(_delay_del_array);
-   unsigned long i;
+   unsigned long c, i;
 
+   if (!_delay_del_array) return;
+
+   c = eina_array_count_get(_delay_del_array);
    for (i = 0; i < c; i++)
      {
         if (eina_array_data_get(_delay_del_array, i) == obj)
