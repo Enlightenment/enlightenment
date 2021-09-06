@@ -730,6 +730,7 @@ static Ecore_Idle_Enterer *_delay_del_idler = NULL;
 static Eina_Bool
 _e_util_cb_delayed_del(void *data EINA_UNUSED)
 {
+   _delay_del_idler = NULL;
    while (_delay_del_array)
      {
         Eina_Array *arr = _delay_del_array;
@@ -744,7 +745,6 @@ _e_util_cb_delayed_del(void *data EINA_UNUSED)
         eina_iterator_free(itr);
         eina_array_free(arr);
      }
-   _delay_del_idler = NULL;
    return ECORE_CALLBACK_CANCEL;
 }
 
