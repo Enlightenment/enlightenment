@@ -741,6 +741,7 @@ _e_util_cb_delayed_del(void *data EINA_UNUSED)
           {
              if (ptr) e_object_del(E_OBJECT(ptr));
           }
+        eina_iterator_free(itr);
         eina_array_free(arr);
      }
    _delay_del_idler = NULL;
