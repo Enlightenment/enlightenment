@@ -728,21 +728,37 @@ static Eina_Array *_delay_del_array = NULL;
 static Ecore_Idle_Enterer *_delay_del_idler = NULL;
 
 static Eina_Bool
+_e_util_del_array_contains(E_Object *obj)
+{
+   unsigned long c, i;
+
+   if (!_delay_del_array) return EINA_FALSE;
+
+   c = eina_array_count_get(_delay_del_array);
+   for (i = 0; i < c; i++)
+     {
+        if (eina_array_data_get(_delay_del_array, i) == obj) return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+static Eina_Bool
 _e_util_cb_delayed_del(void *data EINA_UNUSED)
 {
    _delay_del_idler = NULL;
+
    while (_delay_del_array)
      {
         Eina_Array *arr = _delay_del_array;
-        Eina_Iterator *itr = eina_array_iterator_new(arr);
-        void *ptr;
+        unsigned long c, i;
 
         _delay_del_array = NULL;
-        while (eina_iterator_next(itr, &ptr))
+        c = eina_array_count_get(arr);
+        for (i = 0; i < c; i++)
           {
-             if (ptr) e_object_del(E_OBJECT(ptr));
+             E_Object *obj = eina_array_data_get(arr, i);
+             if (obj) e_object_del(obj);
           }
-        eina_iterator_free(itr);
         eina_array_free(arr);
      }
    return ECORE_CALLBACK_CANCEL;
@@ -770,17 +786,20 @@ e_util_defer_object_del(E_Object *obj)
      e_object_del(obj);
    else
      {
-        if (!_delay_del_array)
+        if (!_e_util_del_array_contains(obj))
           {
-             _delay_del_array = eina_array_new(8);
-             if (!_delay_del_idler)
-               _delay_del_idler = ecore_idle_enterer_before_add
-                 (_e_util_cb_delayed_del, NULL);
-          }
-        if (_delay_del_array)
-          {
-             if (eina_array_push(_delay_del_array, obj))
-               e_object_delfn_add(obj, _e_util_cb_delayed_cancel, NULL);
+             if (!_delay_del_array)
+               {
+                  _delay_del_array = eina_array_new(8);
+                  if (!_delay_del_idler)
+                    _delay_del_idler = ecore_idle_enterer_before_add
+                      (_e_util_cb_delayed_del, NULL);
+               }
+             if (_delay_del_array)
+               {
+                  if (eina_array_push(_delay_del_array, obj))
+                    e_object_delfn_add(obj, _e_util_cb_delayed_cancel, NULL);
+               }
           }
      }
 }
