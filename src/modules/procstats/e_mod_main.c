@@ -427,8 +427,13 @@ _proc_stats_thread(void *data, Ecore_Thread *thread)
      {
         Eina_List *procs = proc_info_all_children_get();
         ecore_thread_feedback(thread, procs);
-        usleep(1000000 * module->poll_interval);
-        // e_powersave_sleeper_sleep(module->sleeper, module->poll_interval, EINA_TRUE);
+        for (int i = 0; i < 8 * module->poll_interval; i++)
+          {
+             if (ecore_thread_check(thread))
+               return;
+             usleep(125000);
+             // e_powersave_sleeper_sleep(module->sleeper, module->poll_interval, EINA_TRUE);
+          }
      }
 }
 
@@ -468,7 +473,6 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    Proc_Stats_Module *module = _this_module;
 
    ecore_thread_cancel(module->thread);
-   ecore_thread_wait(module->thread, 0.2);
 
    //e_powersave_sleeper_free(module->sleeper);
 
