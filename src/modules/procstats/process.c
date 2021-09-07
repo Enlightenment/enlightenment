@@ -203,11 +203,11 @@ _cmd_args(Proc_Info *p, char *name, size_t len)
                snprintf(name, len, "%s", ecore_file_file_get(line));
 
              n = line;
-             while (*n && (*n + 1))
+             while ((n) && (*n) && (*n + 1))
                {
                   eina_strbuf_append(buf, n);
                   n = strchr(n, '\0') + 1;
-                  if (*n && (*n + 1)) eina_strbuf_append(buf, " ");
+                  if ((n) && (*n) && (*n + 1)) eina_strbuf_append(buf, " ");
                }
              p->arguments = eina_strbuf_release(buf);
           }
