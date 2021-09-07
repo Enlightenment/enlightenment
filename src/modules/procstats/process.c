@@ -154,12 +154,14 @@ _mem_size(Proc_Info *proc)
 {
    FILE *f;
    char buf[1024];
+   char path[PATH_MAX];
    unsigned int dummy, size, shared, resident, data, text;
    static int pagesize = 0;
 
    if (!pagesize) pagesize = getpagesize();
 
-   f = fopen(eina_slstr_printf("/proc/%d/statm", proc->pid), "r");
+   snprintf(path, sizeof(path), "/proc/%i/statm", proc->pid);
+   f = fopen(path, "r");
    if (!f) return;
 
    if (fgets(buf, sizeof(buf), f))
@@ -182,32 +184,44 @@ static void
 _cmd_args(Proc_Info *p, char *name, size_t len)
 {
    char line[4096];
+   char path[PATH_MAX];
    int pid = p->pid;
 
-   char *link = ecore_file_readlink(eina_slstr_printf("/proc/%d/exe", pid));
+   snprintf(path, sizeof(path), "/proc/%i/exe", pid);
+   char *link = ecore_file_readlink(path);
    if (link)
      {
         snprintf(name, len, "%s", ecore_file_file_get(link));
         free(link);
      }
 
-   FILE *f = fopen(eina_slstr_printf("/proc/%d/cmdline", pid), "r");
+   snprintf(path, sizeof(path), "/proc/%i/cmdline", pid);
+   FILE *f = fopen(path, "r");
    if (f)
      {
         if (fgets(line, sizeof(line), f))
           {
+             int sz = ftell(f);
              Eina_Strbuf *buf = eina_strbuf_new();
-             const char *n;
 
              if (ecore_file_exists(line))
                snprintf(name, len, "%s", ecore_file_file_get(line));
 
-             n = line;
-             while ((n) && (*n) && (*n + 1))
+             const char *cp = line;
+             for (int i = 0; i < sz; i++)
                {
-                  eina_strbuf_append(buf, n);
-                  n = strchr(n, '\0') + 1;
-                  if ((n) && (*n) && (*n + 1)) eina_strbuf_append(buf, " ");
+                  if (line[i] == '\0')
+                    {
+                       if (*cp)
+                         eina_strbuf_append(buf, cp);
+                       if ((i + 1) < sz)
+                         {
+                            i++;
+                            cp = &line[i];
+                            if (*cp)
+                              eina_strbuf_append(buf, " ");
+                         }
+                    }
                }
              p->arguments = eina_strbuf_release(buf);
           }
@@ -225,9 +239,10 @@ _uid(int pid)
 {
    FILE *f;
    int uid = -1;
-   char line[1024];
+   char line[1024], path[PATH_MAX];
 
-   f = fopen(eina_slstr_printf("/proc/%d/status", pid), "r");
+   snprintf(path, sizeof(path), "/proc/%i/status", pid);
+   f = fopen(path, "r");
    if (!f) return -1;
 
    while ((fgets(line, sizeof(line), f)) != NULL)
@@ -324,6 +339,7 @@ _process_list_linux_get(void)
 {
    Eina_List *files, *list;
    char *n;
+   char path[PATH_MAX];
    Stat st;
 
    list = NULL;
@@ -336,7 +352,8 @@ _process_list_linux_get(void)
 
         if (!pid) continue;
 
-        if (!_stat(eina_slstr_printf("/proc/%d/stat", pid), &st))
+        snprintf(path, sizeof(path), "/proc/%i/stat", pid);
+        if (!_stat(path, &st))
           continue;
 
         if (st.flags & PF_KTHREAD && !proc_info_kthreads_show_get())
@@ -370,13 +387,16 @@ _proc_thread_info(Proc_Info *p)
    Eina_List *files;
    char *n;
    Stat st;
+   char path[PATH_MAX];
 
-   files = ecore_file_ls(eina_slstr_printf("/proc/%d/task", p->pid));
+   snprintf(path, sizeof(path), "/proc/%i/task", p->pid);
+   files = ecore_file_ls(path);
    EINA_LIST_FREE(files, n)
      {
         int tid = atoi(n);
         free(n);
-        if (!_stat(eina_slstr_printf("/proc/%d/task/%d/stat", p->pid, tid), &st))
+        snprintf(path, sizeof(path), "/proc/%i/task/%i/stat", p->pid, tid);
+        if (!_stat(path, &st))
           continue;
 
         Proc_Info *t = calloc(1, sizeof(Proc_Info));
@@ -401,8 +421,10 @@ Proc_Info *
 proc_info_by_pid(int pid)
 {
    Stat st;
+   char path[PATH_MAX];
 
-   if (!_stat(eina_slstr_printf("/proc/%d/stat", pid), &st))
+   snprintf(path, sizeof(path), "/proc/%i/stat", pid);
+   if (!_stat(path, &st))
      return NULL;
 
    Proc_Info *p = calloc(1, sizeof(Proc_Info));
