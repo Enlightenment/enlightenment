@@ -175,7 +175,7 @@ _proc_stats_icon_clicked_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
 static void
 _proc_stats_item_add(E_Client *ec, E_Module *module)
 {
-   Evas_Object *o, *ic;
+   Evas_Object *ic;
    Proc_Stats *item;
    char buf[PATH_MAX];
 
@@ -183,12 +183,7 @@ _proc_stats_item_add(E_Client *ec, E_Module *module)
    if (!ec->frame_object) return;
    if (_proc_stats_item_exists(ec)) return;
 
-   o = edje_object_add(evas_object_evas_get(ec->frame));
-
-   e_theme_edje_object_set(o, "base/theme/borders",
-                           "e/widgets/border/default/border");
-
-   if (!edje_object_part_exists(o, "e.procstats.swallow")) return;
+   if (!edje_object_part_exists(ec->frame_object, "e.procstats.swallow")) return;
 
    snprintf(buf, sizeof(buf), "%s/e-module-procstats.edj", e_module_dir_get(module));
 
@@ -329,7 +324,7 @@ _proc_stats_item_display(Proc_Stats *item)
 
    buf = eina_strbuf_new();
 
-   eina_strbuf_append_printf(buf, "%1.0f %%", val);
+   eina_strbuf_append_printf(buf, "%1.0f%%", val);
    elm_object_part_text_set(pb, "elm.text.status", eina_strbuf_string_get(buf));
    eina_strbuf_reset(buf);
 
