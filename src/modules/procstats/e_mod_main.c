@@ -131,7 +131,7 @@ _proc_stats_icon_clicked_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
 
    if (item->popup)
      {
-        elm_ctxpopup_dismiss(item->popup);
+        evas_object_del(item->popup);
         item->popup = NULL;
         return;
      }
