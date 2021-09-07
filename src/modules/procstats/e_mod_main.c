@@ -17,7 +17,7 @@ struct _Proc_Stats
 {
    E_Client       *client;
    Evas_Object    *obj;
-   Evas_Object    *obj_swallow;
+   Evas_Object    *frame_obj;
    Evas_Object    *popup;
    E_Object_Delfn *delfn;
    pid_t           pid;
@@ -78,8 +78,8 @@ _proc_stats_item_del(Proc_Stats *item)
 {
    if (item->popup) evas_object_del(item->popup);
    item->popup = NULL;
-   edje_object_signal_emit(item->obj, "e,state,procstats,off", "e");
-   evas_object_del(item->obj_swallow);
+   edje_object_signal_emit(item->frame_obj, "e,state,procstats,off", "e");
+   evas_object_del(item->obj);
    e_object_delfn_del(E_OBJECT(item->client), item->delfn);
 
    free(item);
@@ -104,7 +104,7 @@ _proc_stats_client_move_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj 
 
    if ((!item) || (!item->popup)) return;
 
-   evas_object_geometry_get(item->obj_swallow, &ox, &oy, &ow, &oh);
+   evas_object_geometry_get(item->obj, &ox, &oy, &ow, &oh);
    evas_object_move(item->popup, ox + (ow / 2), oy);
 
    if ((item->client->hidden) || (item->client->iconic))
@@ -136,7 +136,7 @@ _proc_stats_icon_clicked_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
         return;
      }
 
-   evas_object_geometry_get(item->obj_swallow, &ox, &oy, &ow, &oh);
+   evas_object_geometry_get(item->obj, &ox, &oy, &ow, &oh);
 
    item->popup = o = elm_ctxpopup_add(e_comp->elm);
    E_FILL(o); E_EXPAND(o);
@@ -175,7 +175,7 @@ _proc_stats_icon_clicked_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
 static void
 _proc_stats_item_add(E_Client *ec, E_Module *module)
 {
-   Evas_Object *ic;
+   Evas_Object *o;
    Proc_Stats *item;
    char buf[PATH_MAX];
 
@@ -185,28 +185,34 @@ _proc_stats_item_add(E_Client *ec, E_Module *module)
 
    if (!edje_object_part_exists(ec->frame_object, "e.procstats.swallow")) return;
 
-   snprintf(buf, sizeof(buf), "%s/e-module-procstats.edj", e_module_dir_get(module));
-
-   ic = elm_icon_add(e_comp->elm);
-   elm_image_file_set(ic, buf, "icon");
-   evas_object_size_hint_min_set(ic, ELM_SCALE_SIZE(16), ELM_SCALE_SIZE(16));
-   evas_object_size_hint_max_set(ic, ELM_SCALE_SIZE(16), ELM_SCALE_SIZE(16));
-   E_FILL(ic); E_EXPAND(ic);
-   evas_object_show(ic);
-
    item = calloc(1, sizeof(Proc_Stats));
    EINA_SAFETY_ON_NULL_RETURN(item);
+
+   o = edje_object_add(e_comp->evas);
+   if (!e_theme_edje_object_set(o, "base/theme/modules/procstats",
+                               "e/modules/procstats/border"))
+     {
+        evas_object_del(o);
+        snprintf(buf, sizeof(buf), "%s/e-module-procstats.edj", e_module_dir_get(module));
+        o = elm_icon_add(e_comp->elm);
+        elm_image_file_set(o, buf, "icon");
+     }
+   evas_object_size_hint_min_set(o, ELM_SCALE_SIZE(16), ELM_SCALE_SIZE(16));
+   evas_object_size_hint_max_set(o, ELM_SCALE_SIZE(16), ELM_SCALE_SIZE(16));
+   E_FILL(o); E_EXPAND(o);
+
+   item->obj = o;
+   item->frame_obj = ec->frame_object;
    item->pid = ec->netwm.pid;
    item->client = ec;
-   item->obj = ec->frame_object;
-   item->obj_swallow = ic;
 
-   edje_object_part_swallow(ec->frame_object, "e.procstats.swallow", ic);
+   edje_object_part_swallow(ec->frame_object, "e.procstats.swallow", item->obj);
+   evas_object_show(item->obj);
    edje_object_signal_emit(ec->frame_object, "e,state,procstats,on", "e");
 
    item->delfn = e_object_delfn_add(E_OBJECT(ec), _proc_stats_client_del_cb, item);
-   evas_object_event_callback_add(ic, EVAS_CALLBACK_MOVE, _proc_stats_client_move_cb, item);
-   evas_object_event_callback_add(ic, EVAS_CALLBACK_MOUSE_UP, _proc_stats_icon_clicked_cb, item);
+   evas_object_event_callback_add(item->obj, EVAS_CALLBACK_MOVE, _proc_stats_client_move_cb, item);
+   evas_object_event_callback_add(item->obj, EVAS_CALLBACK_MOUSE_UP, _proc_stats_icon_clicked_cb, item);
 
    _clients = eina_list_append(_clients, item);
 }
@@ -309,10 +315,11 @@ _proc_stats_item_display(Proc_Stats *item)
    msg->count = 5;
    msg->val[0] = eina_cpu_count();
    msg->val[1] = (item->cpu_time - item->cpu_time_prev) / POLL_TIME;
-   msg->val[2] = (int) _mem_total / 4096;
-   msg->val[3] = (int) item->mem_size / 4096;
+   msg->val[2] = (int) (_mem_total / 4096);
+   msg->val[3] = (int) (item->mem_size / 4096);
    msg->val[4] = 0;
-   edje_object_message_send(item->obj, EDJE_MESSAGE_INT_SET, 1, msg);
+   edje_object_message_send(item->frame_obj, EDJE_MESSAGE_INT_SET, 1973, msg);
+   edje_object_message_send(item->obj, EDJE_MESSAGE_INT_SET, 1973, msg);
    free(msg);
 
    if (!item->popup) return;
