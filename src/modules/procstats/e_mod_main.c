@@ -473,6 +473,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    Proc_Stats_Module *module = _this_module;
 
    ecore_thread_cancel(module->thread);
+   ecore_thread_wait(module->thread, 0.5);
 
    //e_powersave_sleeper_free(module->sleeper);
 
