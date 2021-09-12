@@ -320,7 +320,7 @@ _e_comp_object_layers_add(E_Comp_Object *cw, E_Comp_Object *above, E_Comp_Object
         if (below_ec)
           {
              if (e_comp->layers[cw->layer].obj == below_ec->frame)
-               CRI("ACK!");
+               ERR("ACK!");
           }
      }
 #endif
@@ -802,7 +802,7 @@ _e_comp_object_done_defer(void *data, Evas_Object *obj EINA_UNUSED, const char *
    //INF("DONE DEFER %p: %dx%d - %s", cw->ec, cw->w, cw->h, emission);
    /* visible clients which have never been sized are a bug */
    if ((!cw->ec->new_client) && (!cw->ec->changes.size) && ((cw->w < 0) || (cw->h < 0)) && (!strcmp(emission, "e,action,show,done")))
-     CRI("ACK!");
+     ERR("ACK!");
    if (!_e_comp_object_animating_end(cw)) return;
    if (cw->animating) return;
    /* hide only after animation finishes to guarantee a full run of the animation */
@@ -1199,7 +1199,7 @@ _e_comp_intercept_resize(void *data, Evas_Object *obj, int w, int h)
         INF("%p: CUR(%dx%d) || REQ(%dx%d)", cw->ec, cw->ec->client.w, cw->ec->client.h, iw, ih);
         cw->ec->client.w = iw;
         cw->ec->client.h = ih;
-        if ((cw->ec->client.w < 0) || (cw->ec->client.h < 0)) CRI("WTF");
+        if ((cw->ec->client.w < 0) || (cw->ec->client.h < 0)) ERR("WTF");
      }
    if ((!cw->ec->input_only) && cw->redirected && (!cw->ec->shading) && (!cw->ec->shaded) &&
        (e_pixmap_dirty_get(cw->ec->pixmap) || (!e_pixmap_size_get(cw->ec->pixmap, &pw, &ph))))
@@ -1408,7 +1408,7 @@ _e_comp_intercept_layer_set(void *data, Evas_Object *obj, int layer)
    if (evas_object_below_get(obj) == e_comp->layers[cw->layer].obj)
      {
         /* can't stack a client above its own layer marker */
-        CRI("STACKING ERROR!!!");
+        ERR("STACKING ERROR!!!");
      }
    if (!cw->visible) return;
    e_comp_render_queue();
@@ -1510,7 +1510,7 @@ _e_comp_intercept_stack_helper(E_Comp_Object *cw, Evas_Object *stack, E_Comp_Obj
    if (e_comp->layers[cw->layer].obj)
      if (evas_object_below_get(cw->smart_obj) == e_comp->layers[cw->layer].obj)
        {
-          CRI("STACKING ERROR!!!");
+          ERR("STACKING ERROR!!!");
        }
    if (cw->ec->new_client || (!ecstack) || (ecstack->frame != o))
      evas_object_data_del(cw->smart_obj, "client_restack");
@@ -1816,7 +1816,7 @@ _e_comp_intercept_focus(void *data, Evas_Object *obj, Eina_Bool focus)
    if (focus && ec->lock_focus_out) return;
    if (e_object_is_del(E_OBJECT(ec)) && focus)
      {
-        CRI("CAN'T FOCUS DELETED CLIENT!");
+        ERR("CAN'T FOCUS DELETED CLIENT!");
         return;
      }
 
@@ -2367,7 +2367,7 @@ _e_comp_smart_show(Evas_Object *obj)
    cw->defer_hide = 0;
    cw->visible = 1;
    if ((cw->w < 0) || (cw->h < 0))
-     CRI("ACK!");
+     ERR("ACK!");
 
    //INF("SMART SHOW: %p EC(%dx%d) CW(%dx%d)", cw->ec, cw->ec->w, cw->ec->h, cw->w, cw->h);
 
@@ -2552,7 +2552,7 @@ _e_comp_smart_resize(Evas_Object *obj, int w, int h)
    INTERNAL_ENTRY;
 
    //INF("RSZ(%p): %dx%d -> %dx%d", cw->ec, cw->w, cw->h, w, h);
-   if (!cw->effect_obj) CRI("ACK!");
+   if (!cw->effect_obj) ERR("ACK!");
    first = ((cw->w < 1) || (cw->h < 1));
    cw->w = w, cw->h = h;
    if ((!cw->ec->shading) && (!cw->ec->shaded))
@@ -2576,7 +2576,7 @@ _e_comp_smart_resize(Evas_Object *obj, int w, int h)
                   //evas_object_size_hint_min_set(cw->obj, pw, ph);
                //}
              if ((ww != pw) || (hh != ph))
-               CRI("CW RSZ: %dx%d || PX: %dx%d", ww, hh, pw, ph);
+               ERR("CW RSZ: %dx%d || PX: %dx%d", ww, hh, pw, ph);
           }
         evas_object_resize(cw->effect_obj, w, h);
         if (cw->zoomobj) e_zoomap_child_resize(cw->zoomobj, pw, ph);
@@ -3342,7 +3342,7 @@ e_comp_object_frame_geometry_set(Evas_Object *obj, int l, int r, int t, int b)
 
    API_ENTRY;
    if (cw->frame_object)
-     CRI("ACK!");
+     ERR("ACK!");
    if ((cw->client_inset.l == l) && (cw->client_inset.r == r) &&
        (cw->client_inset.t == t) && (cw->client_inset.b == b)) return;
    calc = cw->client_inset.calc;
@@ -3616,7 +3616,7 @@ e_comp_object_frame_theme_set(Evas_Object *obj, const char *name)
      }
    else
      {
-        CRI("USER IS USING A SHITTY THEME! ABORT!!!!");
+        ERR("USER IS USING A BAD THEME! ABORT!!!!");
         evas_object_del(o);
         E_FREE_FUNC(cw->frame_icon, evas_object_del);
         E_FREE_FUNC(cw->frame_volume, evas_object_del);
@@ -3815,7 +3815,7 @@ e_comp_object_render_update_add(Evas_Object *obj)
 
    if (cw->ec->input_only || (!cw->updates) || (!cw->redirected)) return;
    if (e_object_is_del(E_OBJECT(cw->ec)))
-     CRI("CAN'T RENDER A DELETED CLIENT!");
+     ERR("CAN'T RENDER A DELETED CLIENT!");
    if (!e_pixmap_usable_get(cw->ec->pixmap)) return;
    //if (e_client_util_resizing_get(cw->ec) && (e_pixmap_type_get(cw->ec->pixmap) == E_PIXMAP_TYPE_WL))
      //INF("WL RENDER UPDATE");

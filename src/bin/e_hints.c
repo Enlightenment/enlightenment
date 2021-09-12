@@ -346,7 +346,7 @@ e_hints_client_stacking_set(void)
 
 //#define CLIENT_STACK_DEBUG
    /* Get client count */
-   c = e_clients_count();
+   c = 20 + (e_clients_count() * 2);
    if (c)
      {
         E_Client *ec;
@@ -372,22 +372,9 @@ e_hints_client_stacking_set(void)
 #endif
              if (i > c)
                {
-                  CRI("Window list size greater than window count.");
+                  ERR("Window list size greater than window count.");
                   break;
                }
-          }
-
-        if (i < c - non_x)
-          {
-#ifdef CLIENT_STACK_DEBUG
-             Eina_List *lll = eina_list_clone(e_comp->clients);
-
-             EINA_LIST_FREE(ll, ec)
-               lll = eina_list_remove(lll, ec);
-             EINA_LIST_FREE(lll, ec)
-               WRN("Missing %p: %snew client", ec, ec->new_client ? "" : "not ");
-#endif
-             CRI("Window list size less than window count.");
           }
      }
    /* XXX: it should be "more correct" to be setting the stacking atom as "windows per root"
