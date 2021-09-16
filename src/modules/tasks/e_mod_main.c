@@ -386,6 +386,26 @@ _tasks_cb_iconify_provider(void *data, Evas_Object *obj, const char *signal)
    return EINA_FALSE;
 }
 
+static void
+_taks_client_remove(E_Client *ec)
+{
+   Tasks *tasks;
+   Eina_List *l;
+
+   if (!tasks_config) return;
+   EINA_LIST_FOREACH(tasks_config->tasks, l, tasks)
+     {
+        tasks->clients = eina_list_remove(tasks->clients, ec);
+     }
+   _tasks_refill_all();
+}
+
+static void
+_tasks_cb_client_del(void *data EINA_UNUSED, void *obj)
+{
+   _taks_client_remove(obj);
+}
+
 static Tasks *
 _tasks_new(Evas *e, E_Zone *zone, const char *id)
 {
@@ -403,7 +423,10 @@ _tasks_new(Evas *e, E_Zone *zone, const char *id)
      {
         if ((!e_client_util_ignored_get(ec)) && (!e_object_is_del(E_OBJECT(ec))) &&
             (!e_client_util_is_popup(ec)))
-          tasks->clients = eina_list_append(tasks->clients, ec);
+          {
+             e_object_delfn_add(E_OBJECT(ec), _tasks_cb_client_del, NULL);
+             tasks->clients = eina_list_append(tasks->clients, ec);
+          }
      }
 
    elm_box_homogeneous_set(tasks->o_items, 1);
@@ -421,7 +444,7 @@ _tasks_free(Tasks *tasks)
    e_comp_object_effect_mover_del(tasks->iconify_provider);
    EINA_LIST_FREE(tasks->items, item)
      _tasks_item_free(item);
-   eina_list_free(tasks->clients);
+   tasks->clients = eina_list_free(tasks->clients);
    evas_object_del(tasks->o_items);
    free(tasks);
 }
@@ -1178,7 +1201,10 @@ _tasks_cb_event_client_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *e
    EINA_LIST_FOREACH(tasks_config->tasks, l, tasks)
      {
         if ((!tasks->clients) || (!eina_list_data_find(tasks->clients, ev->ec)))
-          tasks->clients = eina_list_append(tasks->clients, ev->ec);
+          {
+             e_object_delfn_add(E_OBJECT(ev->ec), _tasks_cb_client_del, NULL);
+             tasks->clients = eina_list_append(tasks->clients, ev->ec);
+          }
      }
    _tasks_refill_all();
    return EINA_TRUE;
@@ -1188,14 +1214,8 @@ static Eina_Bool
 _tasks_cb_event_client_remove(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client *ev = event;
-   Tasks *tasks;
-   Eina_List *l;
 
-   EINA_LIST_FOREACH(tasks_config->tasks, l, tasks)
-     {
-        tasks->clients = eina_list_remove(tasks->clients, ev->ec);
-     }
-   _tasks_refill_all();
+   _taks_client_remove(ev->ec);
    return EINA_TRUE;
 }
 
