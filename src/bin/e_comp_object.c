@@ -3342,7 +3342,7 @@ e_comp_object_frame_geometry_set(Evas_Object *obj, int l, int r, int t, int b)
 
    API_ENTRY;
    if (cw->frame_object)
-     ERR("ACK!");
+     ERR("CSD call on win without CSD! %i %i %i %i", l, r, t, b);
    if ((cw->client_inset.l == l) && (cw->client_inset.r == r) &&
        (cw->client_inset.t == t) && (cw->client_inset.b == b)) return;
    calc = cw->client_inset.calc;
