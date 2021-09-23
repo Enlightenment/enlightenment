@@ -4833,12 +4833,34 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
               * this area should not be accounted for in sizing or
               * placement calculations.
               */
-             e_comp_object_frame_geometry_set(ec->frame,
-               -extents[0], -extents[1], -extents[2], -extents[3]);
-             if (ec->override &&
-                (ec->x == ec->comp_data->initial_attributes.x) &&
-                (ec->y == ec->comp_data->initial_attributes.y))
-               e_comp_object_frame_xy_adjust(ec->frame, ec->x, ec->y, &ec->x, &ec->y);
+             if (count >= 4)
+               {
+                  unsigned int extentscurrent;
+                  unsigned int extentsall =
+                    extents[0] | extents[1] | extents[2] | extents[3];
+                  int insl = 0, insr = 0, inst = 0, insb = 0;
+                  e_comp_object_frame_geometry_get(ec->frame, &insl, &insr,
+                                                   &inst, &insb);
+                  extentscurrent = insl | insr | inst | insb;
+
+                  extentsall = !!extentsall;
+                  extentscurrent = !!extentscurrent;
+                  if ((!e_comp_object_frame_exists(ec->frame)) &&
+                      (( extentsall &&  extentscurrent) ||
+                       (!extentsall &&  extentscurrent) ||
+                       ( extentsall && !extentscurrent)))
+                    {
+                       e_comp_object_frame_geometry_set(ec->frame,
+                                                        -extents[0],
+                                                        -extents[1],
+                                                        -extents[2],
+                                                        -extents[3]);
+                       if (ec->override &&
+                           (ec->x == ec->comp_data->initial_attributes.x) &&
+                           (ec->y == ec->comp_data->initial_attributes.y))
+                         e_comp_object_frame_xy_adjust(ec->frame, ec->x, ec->y, &ec->x, &ec->y);
+                    }
+               }
              free(extents);
           }
         cd->fetch_gtk_frame_extents = 0;
