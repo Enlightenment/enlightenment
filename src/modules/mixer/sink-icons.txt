@@ -13,4 +13,6 @@ Soundcore*|earbud
 *Buds*|earbud
 T1|earbud
 Echo*|speaker-box
+Plantronics Blackwire*|headphones
+PCM2912A*|headphones
 *|audio-volume
