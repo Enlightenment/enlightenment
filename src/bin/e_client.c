@@ -459,6 +459,8 @@ _e_client_revert_focus(E_Client *ec)
 static void
 _e_client_free(E_Client *ec)
 {
+   if (ec->desk)
+     ec->desk->fullscreen_clients = eina_list_remove(ec->desk->fullscreen_clients, ec);
    if (ec->restore_zone_id)
      {
         eina_stringshare_del(ec->restore_zone_id);
@@ -478,9 +480,7 @@ _e_client_free(E_Client *ec)
    E_OBJECT(ec)->references++;
    if (ec->fullscreen)
      {
-        ec->desk->fullscreen_clients = eina_list_remove(ec->desk->fullscreen_clients, ec);
-        if (!ec->desk->fullscreen_clients)
-          e_comp_render_queue();
+        if (!ec->desk->fullscreen_clients) e_comp_render_queue();
      }
    if (ec->new_client)
      e_comp->new_clients--;
@@ -2875,7 +2875,8 @@ e_client_desk_set(E_Client *ec, E_Desk *desk)
      {
         if (ec->desk)
           ec->desk->fullscreen_clients = eina_list_remove(ec->desk->fullscreen_clients, ec);
-        desk->fullscreen_clients = eina_list_append(desk->fullscreen_clients, ec);
+        if (!eina_list_data_find(desk->fullscreen_clients, ec))
+          desk->fullscreen_clients = eina_list_append(desk->fullscreen_clients, ec);
      }
    old_desk = ec->desk;
    ec->desk = desk;
@@ -4465,7 +4466,8 @@ e_client_fullscreen(E_Client *ec, E_Fullscreen policy)
         e_object_ref(E_OBJECT(ec));
         e_comp->nocomp_ec = ec;
      }
-   ec->desk->fullscreen_clients = eina_list_append(ec->desk->fullscreen_clients, ec);
+   if (!eina_list_data_find(ec->desk->fullscreen_clients, ec))
+     ec->desk->fullscreen_clients = eina_list_append(ec->desk->fullscreen_clients, ec);
    ec->pre_res_change.valid = 0;
 
    if (ec->maximized)

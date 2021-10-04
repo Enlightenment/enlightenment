@@ -1800,6 +1800,7 @@ _e_comp_intercept_focus(void *data, Evas_Object *obj, Eina_Bool focus)
    if (focus)
      {
         ec = e_client_stack_active_adjust(ec);
+        if (!ec) return;
         obj = ec->frame;
         cw = evas_object_data_get(obj, "comp_obj");
      }
