@@ -392,6 +392,125 @@ _e_mod_fileman_parse_gtk_bookmarks(E_Menu   *m,
 }
 
 static void
+_e_mod_menu_populate_cleanup_cb(void *obj)
+{
+   eina_stringshare_del(e_object_data_get(E_OBJECT(obj)));
+}
+
+static void
+_e_mod_menu_recent_cb(void           *data EINA_UNUSED,
+                      E_Menu         *m,
+                      E_Menu_Item    *mi)
+{
+   const char *file = e_object_data_get(E_OBJECT(mi));
+
+   if (file)
+     {
+        const char *mime = efreet_mime_type_get(file);
+
+        if (mime)
+          {
+             // XXX: need to share logic with _e_fileman_dbus_daemon_open_file_cb()
+             // and _e_fwin_file_open_dialog
+             Eina_List *handlers = efreet_util_desktop_mime_list(mime);
+             if (handlers)
+               {
+                  Efreet_Desktop *desktop;
+                  Eina_Bool hd = EINA_FALSE;
+
+                  handlers = e_fwin_suggested_apps_list_sort(mime, handlers, &hd);
+                  desktop = handlers->data;
+                  if (desktop)
+                    {
+                       Eina_List *files = NULL;
+
+                       files = eina_list_append(files, file);
+                       e_exec(m->zone, desktop, NULL, files, "fwin");
+                       files = eina_list_free(files);
+                    }
+                  EINA_LIST_FREE(handlers, desktop)
+                    {
+                       efreet_desktop_free(desktop);
+                    }
+               }
+          }
+     }
+}
+
+
+static void
+_e_mod_menu_populate_recent_cb(void      *data EINA_UNUSED,
+                               E_Menu      *m EINA_UNUSED,
+                               E_Menu_Item *mi EINA_UNUSED)
+{
+   Eina_List *l;
+   Eina_List *files = (Eina_List *)e_exec_recent_files_get();
+   E_Exec_Recent_File *fl;
+   E_Menu *subm;
+   E_Menu_Item *mi2;
+
+   subm = e_menu_new();
+   e_menu_item_submenu_set(mi, subm);
+   e_menu_freeze(subm);
+   EINA_LIST_FOREACH(files, l, fl)
+     {
+        const char *fname;
+
+        fname = ecore_file_file_get(fl->file);
+        if (fname)
+          {
+             const char *mime = efreet_mime_type_get(fl->file);
+
+             mi2 = e_menu_item_new(subm);
+             e_menu_item_label_set(mi2, fname);
+             e_object_data_set(E_OBJECT(mi2), eina_stringshare_add(fl->file));
+             e_object_free_attach_func_set(E_OBJECT(mi2),
+                                           _e_mod_menu_populate_cleanup_cb);
+             e_menu_item_callback_set(mi2, _e_mod_menu_recent_cb, NULL);
+             if (mime)
+               {
+                  char buf[1024];
+                  const char *icon_file, *edje_file;
+
+                  snprintf(buf, sizeof(buf), "e/icons/fileman/mime/%s", mime);
+                  edje_file = e_theme_edje_file_get("base/theme/icons", buf);
+                  if (edje_file)
+                    {
+                       e_menu_item_icon_edje_set(mi2, edje_file, buf);
+                    }
+                  else
+                    {
+                       icon_file = efreet_mime_type_icon_get(mime, e_config->icon_theme, 48);
+                       e_menu_item_icon_file_set(mi2, icon_file);
+                    }
+               }
+          }
+     }
+   e_menu_thaw(subm);
+}
+
+
+static void
+_e_mod_fileman_add_recent(E_Menu   *m,
+                          Eina_Bool need_separator)
+{
+   E_Menu_Item *mi;
+   const Eina_List *files = e_exec_recent_files_get();
+
+   if (!files) return;
+
+   if (need_separator)
+     {
+        mi = e_menu_item_new(m);
+        e_menu_item_separator_set(mi, 1);
+     }
+   mi = e_menu_item_new(m);
+   e_menu_item_label_set(mi, _("Recent"));
+   e_util_menu_item_theme_icon_set(mi, "folder");
+   e_menu_item_submenu_pre_callback_set(mi, _e_mod_menu_populate_recent_cb, NULL);
+}
+
+static void
 _e_mod_menu_free(void *data)
 {
    Eina_List *l;
@@ -528,6 +647,7 @@ _e_mod_menu_generate(void *data, E_Menu *m)
      }
 
    _e_mod_fileman_parse_gtk_bookmarks(m, need_separator || volumes_visible > 0);
+   _e_mod_fileman_add_recent(m, need_separator || volumes_visible > 0);
 
    e_menu_pre_activate_callback_set(m, NULL, NULL);
 }

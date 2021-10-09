@@ -131,6 +131,8 @@ Eina_Bool e_fwin_show     (const char *dev, const char *path);
 Eina_Bool e_fwin_nav_init(void);
 Eina_Bool e_fwin_nav_shutdown(void);
 
+Eina_List *e_fwin_suggested_apps_list_sort(const char *mime, Eina_List *desktops, Eina_Bool *has_default);
+
 /**
  * @addtogroup Optional_Fileman
  * @{

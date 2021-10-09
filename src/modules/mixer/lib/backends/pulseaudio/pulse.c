@@ -1491,7 +1491,9 @@ _pulse_connect(void *data)
 {
    pa_proplist *proplist;
    Context *c = data;
+   Eina_Bool ret = ECORE_CALLBACK_DONE;
 
+   printf("PULSE CONN...\n");
    proplist = pa_proplist_new();
    pa_proplist_sets(proplist, PA_PROP_APPLICATION_NAME, "Efl Volume Control");
    pa_proplist_sets(proplist, PA_PROP_APPLICATION_ID,
@@ -1512,7 +1514,10 @@ _pulse_connect(void *data)
      {
         pa_context_set_state_callback(c->context, _pulse_pa_state_cb, c);
         if (pa_context_connect(c->context, NULL, PA_CONTEXT_NOFLAGS, NULL) < 0)
-          ERR("Could not connect to pulse");
+          {
+             ret = EINA_TRUE;
+             ERR("Could not connect to pulse");
+          }
      }
 #if !defined(EMIXER_BUILD) && defined(HAVE_WAYLAND) && !defined(HAVE_WAYLAND_ONLY)
    if (e_comp->comp_type != E_PIXMAP_TYPE_X)
@@ -1526,7 +1531,7 @@ _pulse_connect(void *data)
 #endif
 
    pa_proplist_free(proplist);
-   return ECORE_CALLBACK_DONE;
+   return ret;
 }
 
 static Eina_Bool pulse_started;

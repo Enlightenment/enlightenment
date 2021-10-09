@@ -1275,8 +1275,8 @@ _e_fwin_defaults_apps_get(const char *mime, const char *path)
    return apps;
 }
 
-static Eina_List *
-_e_fwin_suggested_apps_list_sort(const char *mime, Eina_List *desktops, Eina_Bool *has_default)
+Eina_List *
+e_fwin_suggested_apps_list_sort(const char *mime, Eina_List *desktops, Eina_Bool *has_default)
 {
    char path[PATH_MAX];
    Eina_List *order, *l;
@@ -1359,7 +1359,7 @@ _e_fwin_suggested_apps_list_get(Eina_List *files,
 
              if (mime_list) *mime_list = eina_list_append(*mime_list, mime);
 
-             desktops = _e_fwin_suggested_apps_list_sort(mime, desktops, &hd);
+             desktops = e_fwin_suggested_apps_list_sort(mime, desktops, &hd);
              if ((hd) && (has_default))
                *has_default = EINA_TRUE;
 

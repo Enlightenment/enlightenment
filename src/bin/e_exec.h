@@ -1,6 +1,7 @@
 #ifdef E_TYPEDEFS
 
 typedef struct _E_Exec_Instance E_Exec_Instance;
+typedef struct _E_Exec_Recent_File E_Exec_Recent_File;
 
 #else
 #ifndef E_EXEC_H
@@ -24,6 +25,12 @@ struct _E_Exec_Instance
    Eina_Bool       deleted E_BITFIELD;
 };
 
+struct _E_Exec_Recent_File
+{
+   const char     *file;
+   double          timestamp;
+};
+
 typedef enum
 {
    E_EXEC_WATCH_STARTED,
@@ -44,6 +51,7 @@ E_API void e_exec_instance_found(E_Exec_Instance *inst);
 E_API void e_exec_instance_watcher_add(E_Exec_Instance *inst, void (*func) (void *data, E_Exec_Instance *inst, E_Exec_Watch_Type type), const void *data);
 E_API void e_exec_instance_watcher_del(E_Exec_Instance *inst, void (*func) (void *data, E_Exec_Instance *inst, E_Exec_Watch_Type type), const void *data);
 E_API const Eina_List *e_exec_desktop_instances_find(const Efreet_Desktop *desktop);
+E_API const Eina_List *e_exec_recent_files_get(void);
 
 E_API const Eina_Hash *e_exec_instances_get(void);
 E_API void e_exec_instance_client_add(E_Exec_Instance *inst, E_Client *ec);

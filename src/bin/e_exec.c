@@ -12,6 +12,7 @@
 typedef struct _E_Exec_Launch E_Exec_Launch;
 typedef struct _E_Exec_Search E_Exec_Search;
 typedef struct _E_Exec_Watch  E_Exec_Watch;
+typedef struct _E_Exec_Recent E_Exec_Recent;
 
 struct _E_Exec_Launch
 {
@@ -44,6 +45,11 @@ struct _E_Config_Dialog_Data
    Ecore_Exe_Event_Data *read;
 
    char                 *label, *exit, *signal;
+};
+
+struct _E_Exec_Recent
+{
+   Eina_List *files;
 };
 
 /* local subsystem functions */
@@ -82,6 +88,94 @@ E_API int E_EVENT_EXEC_NEW = -1;
 E_API int E_EVENT_EXEC_NEW_CLIENT = -1;
 E_API int E_EVENT_EXEC_DEL = -1;
 
+static E_Exec_Recent * _e_exec_recent = NULL;
+static Ecore_Idler *_e_exec_recent_idler = NULL;
+
+static Eina_Bool
+_e_exec_cb_recent_idler(void *data EINA_UNUSED)
+{
+   char buf[4096];
+   FILE *f;
+   Eina_List *l;
+   E_Exec_Recent_File *fl;
+
+   e_user_dir_snprintf(buf, sizeof(buf), "recent-files.txt");
+   if ((_e_exec_recent) && (_e_exec_recent->files))
+     {
+        f = fopen(buf, "w");
+        if (f)
+          {
+             EINA_LIST_FOREACH(_e_exec_recent->files, l, fl)
+               {
+                  fprintf(f, "%1.0f %s\n", fl->timestamp * 100.0, fl->file);
+               }
+             fclose(f);
+          }
+     }
+   _e_exec_recent_idler = NULL;
+   return EINA_FALSE;
+}
+
+static void
+_e_exec_recent_file_append(const char *file, double tim)
+{
+   Eina_List *l;
+   E_Exec_Recent_File *fl = calloc(1, sizeof(E_Exec_Recent_File));
+   E_Exec_Recent_File *fl2;
+
+   if (!fl) return;
+   if (!_e_exec_recent)
+     _e_exec_recent = calloc(1, sizeof(E_Exec_Recent));
+   if (!_e_exec_recent)
+     {
+        free(fl);
+        return;
+     }
+   fl->file = eina_stringshare_add(file);
+   fl->timestamp = tim;
+   EINA_LIST_FOREACH(_e_exec_recent->files, l, fl2)
+     {
+        if (!strcmp(fl2->file, fl->file))
+          {
+             _e_exec_recent->files = eina_list_remove_list(_e_exec_recent->files, l);
+             eina_stringshare_del(fl2->file);
+             free(fl2);
+             break;
+          }
+     }
+   _e_exec_recent->files = eina_list_prepend(_e_exec_recent->files, fl);
+   if (eina_list_count(_e_exec_recent->files) > 30)
+     {
+        l = eina_list_last(_e_exec_recent->files);
+        if (l)
+          {
+             fl = l->data;
+             _e_exec_recent->files = eina_list_remove_list(_e_exec_recent->files, l);
+             eina_stringshare_del(fl->file);
+             free(fl);
+          }
+     }
+   if (!_e_exec_recent_idler)
+     _e_exec_recent_idler = ecore_idler_add(_e_exec_cb_recent_idler, NULL);
+}
+
+static void
+_e_exec_recent_clean(void)
+{
+   E_Exec_Recent_File *fl;
+
+   if (!_e_exec_recent) return;
+   EINA_LIST_FREE(_e_exec_recent->files, fl)
+     {
+        eina_stringshare_del(fl->file);
+        free(fl);
+     }
+   free(_e_exec_recent);
+   _e_exec_recent = NULL;
+   if (_e_exec_recent_idler) ecore_idler_del(_e_exec_recent_idler);
+   _e_exec_recent_idler = NULL;
+}
+
 /* externally accessible functions */
 EINTERN int
 e_exec_init(void)
@@ -102,6 +196,7 @@ e_exec_init(void)
 EINTERN int
 e_exec_shutdown(void)
 {
+   _e_exec_recent_clean();
    if (_e_exec_exit_handler) ecore_event_handler_del(_e_exec_exit_handler);
    if (_e_exec_desktop_update_handler)
      ecore_event_handler_del(_e_exec_desktop_update_handler);
@@ -117,6 +212,43 @@ e_exec_executor_set(E_Exec_Instance *(*func)(void *data, E_Zone * zone, Efreet_D
    _e_exec_executor_data = (void *)data;
 }
 
+E_API const Eina_List *
+e_exec_recent_files_get(void)
+{
+   if (!_e_exec_recent)
+     {
+        FILE *f;
+        char buf[4096];
+
+        e_user_dir_snprintf(buf, sizeof(buf), "recent-files.txt");
+        f = fopen(buf, "r");
+        if (f)
+          {
+             long long timi;
+
+             while (fscanf(f, "%lli %4095[^\n]\n", &timi, buf) == 2)
+               {
+                  E_Exec_Recent_File *fl = calloc(1, sizeof(E_Exec_Recent_File));
+
+                  if (!fl) free(fl);
+                  if (!_e_exec_recent)
+                    _e_exec_recent = calloc(1, sizeof(E_Exec_Recent));
+                  if (!_e_exec_recent)
+                    {
+                       free(fl);
+                       break;
+                    }
+                  fl->file = eina_stringshare_add(buf);
+                  fl->timestamp = (double)timi / 100.0;
+                  _e_exec_recent->files = eina_list_prepend(_e_exec_recent->files, fl);
+               }
+             fclose(f);
+          }
+     }
+   if (!_e_exec_recent) return NULL;
+   return _e_exec_recent->files;
+}
+
 E_API E_Exec_Instance *
 e_exec(E_Zone *zone, Efreet_Desktop *desktop, const char *exec,
        Eina_List *files, const char *launch_method)
@@ -126,6 +258,28 @@ e_exec(E_Zone *zone, Efreet_Desktop *desktop, const char *exec,
 
    if ((!desktop) && (!exec)) return NULL;
 
+   if (files)
+     {
+        const char *s;
+        Eina_List *l;
+        char buf[4096], buf2[8192+128];
+        double tim;
+
+        if (getcwd(buf, sizeof(buf)))
+          {
+             tim = ecore_time_unix_get();
+             EINA_LIST_FOREACH(files, l, s)
+               {
+                  if (s[0] == '/')
+                    _e_exec_recent_file_append(s, tim);
+                  else
+                    {
+                       snprintf(buf2, sizeof(buf2), "%s/%s", buf, s);
+                       _e_exec_recent_file_append(buf2, tim);
+                    }
+               }
+          }
+     }
    if (_e_exec_executor_func)
      return _e_exec_executor_func(_e_exec_executor_data, zone,
                                   desktop, exec, files, launch_method);
