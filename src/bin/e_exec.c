@@ -117,6 +117,36 @@ _e_exec_cb_recent_idler(void *data EINA_UNUSED)
 }
 
 static void
+_e_exec_recent_load(void)
+{
+   FILE *f;
+   char buf[4096];
+   long long timi;
+
+   if (_e_exec_recent) return;
+
+   e_user_dir_snprintf(buf, sizeof(buf), "recent-files.txt");
+   f = fopen(buf, "r");
+   if (!f) return;
+   while (fscanf(f, "%lli %4095[^\n]\n", &timi, buf) == 2)
+     {
+        E_Exec_Recent_File *fl = calloc(1, sizeof(E_Exec_Recent_File));
+
+        if (!fl) free(fl);
+        if (!_e_exec_recent) _e_exec_recent = calloc(1, sizeof(E_Exec_Recent));
+        if (!_e_exec_recent)
+          {
+             free(fl);
+             break;
+          }
+        fl->file = eina_stringshare_add(buf);
+        fl->timestamp = (double)timi / 100.0;
+        _e_exec_recent->files = eina_list_prepend(_e_exec_recent->files, fl);
+     }
+   fclose(f);
+}
+
+static void
 _e_exec_recent_file_append(const char *file, double tim)
 {
    Eina_List *l;
@@ -124,6 +154,7 @@ _e_exec_recent_file_append(const char *file, double tim)
    E_Exec_Recent_File *fl2;
 
    if (!fl) return;
+   _e_exec_recent_load();
    if (!_e_exec_recent)
      _e_exec_recent = calloc(1, sizeof(E_Exec_Recent));
    if (!_e_exec_recent)
@@ -215,36 +246,7 @@ e_exec_executor_set(E_Exec_Instance *(*func)(void *data, E_Zone * zone, Efreet_D
 E_API const Eina_List *
 e_exec_recent_files_get(void)
 {
-   if (!_e_exec_recent)
-     {
-        FILE *f;
-        char buf[4096];
-
-        e_user_dir_snprintf(buf, sizeof(buf), "recent-files.txt");
-        f = fopen(buf, "r");
-        if (f)
-          {
-             long long timi;
-
-             while (fscanf(f, "%lli %4095[^\n]\n", &timi, buf) == 2)
-               {
-                  E_Exec_Recent_File *fl = calloc(1, sizeof(E_Exec_Recent_File));
-
-                  if (!fl) free(fl);
-                  if (!_e_exec_recent)
-                    _e_exec_recent = calloc(1, sizeof(E_Exec_Recent));
-                  if (!_e_exec_recent)
-                    {
-                       free(fl);
-                       break;
-                    }
-                  fl->file = eina_stringshare_add(buf);
-                  fl->timestamp = (double)timi / 100.0;
-                  _e_exec_recent->files = eina_list_prepend(_e_exec_recent->files, fl);
-               }
-             fclose(f);
-          }
-     }
+   _e_exec_recent_load();
    if (!_e_exec_recent) return NULL;
    return _e_exec_recent->files;
 }
