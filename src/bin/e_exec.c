@@ -91,6 +91,24 @@ E_API int E_EVENT_EXEC_DEL = -1;
 static E_Exec_Recent * _e_exec_recent = NULL;
 static Ecore_Idler *_e_exec_recent_idler = NULL;
 
+static void
+_e_exec_recent_exists_filter(void)
+{
+   Eina_List *l, *ll;
+   E_Exec_Recent_File *fl;
+
+   if ((!_e_exec_recent) || (!_e_exec_recent->files)) return;
+   EINA_LIST_FOREACH_SAFE(_e_exec_recent->files, l, ll, fl)
+     {
+        if (!ecore_file_exists(fl->file))
+          {
+             _e_exec_recent->files =
+               eina_list_remove_list(_e_exec_recent->files, l);
+             free(fl);
+          }
+     }
+}
+
 static Eina_Bool
 _e_exec_cb_recent_idler(void *data EINA_UNUSED)
 {
@@ -99,9 +117,10 @@ _e_exec_cb_recent_idler(void *data EINA_UNUSED)
    Eina_List *l;
    E_Exec_Recent_File *fl;
 
-   e_user_dir_snprintf(buf, sizeof(buf), "recent-files.txt");
+   _e_exec_recent_exists_filter();
    if ((_e_exec_recent) && (_e_exec_recent->files))
      {
+        e_user_dir_snprintf(buf, sizeof(buf), "recent-files.txt");
         f = fopen(buf, "w");
         if (f)
           {
@@ -248,6 +267,7 @@ e_exec_recent_files_get(void)
 {
    _e_exec_recent_load();
    if (!_e_exec_recent) return NULL;
+   _e_exec_recent_exists_filter();
    return _e_exec_recent->files;
 }
 
