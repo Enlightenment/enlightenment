@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-15 21:35+0200\n"
-"PO-Revision-Date: 2021-07-15 22:06+0200\n"
+"POT-Creation-Date: 2021-10-16 21:27+0200\n"
+"PO-Revision-Date: 2021-10-17 09:06+0200\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: General\n"
 "Language: it\n"
@@ -354,7 +354,7 @@ msgstr "Commuta stato attaccata"
 #: src/bin/e_int_config_comp_match.c:83 src/bin/e_int_config_comp_match.c:418
 #: src/bin/e_int_menus.c:193 src/bin/e_int_shelf_config.c:285
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:119
-#: src/modules/fileman/e_mod_menu.c:482 src/modules/gadman/e_mod_gadman.c:119
+#: src/modules/fileman/e_mod_menu.c:601 src/modules/gadman/e_mod_gadman.c:119
 #: src/modules/ibox/e_mod_config.c:158
 msgid "Desktop"
 msgstr "Desktop"
@@ -895,11 +895,11 @@ msgstr "Layout di tastiera precedente"
 msgid "Set As Background"
 msgstr "Imposta come sfondo"
 
-#: src/bin/e_client.c:4913
+#: src/bin/e_client.c:4915
 msgid "Client Error!"
 msgstr "Errore del client!"
 
-#: src/bin/e_client.c:4913
+#: src/bin/e_client.c:4915
 msgid "Something has attempted to set a border when it shouldn't! Report this!"
 msgstr "Qualcosa ha tentato indebitamente di impostare un bordo! Riportatelo!"
 
@@ -977,14 +977,14 @@ msgstr "Nascosto"
 msgid "Title"
 msgstr "Titolo"
 
-#: src/bin/e_comp_wl.c:3031
+#: src/bin/e_comp_wl.c:3040
 #, c-format
 msgid "Enlightenment cannot initialize Wayland client connection.\n"
 msgstr ""
 "Enlightenment non riesce ad inizializzare la connessione client con "
 "Wayland.\n"
 
-#: src/bin/e_comp_wl.c:3046
+#: src/bin/e_comp_wl.c:3055
 #, c-format
 msgid "Enlightenment cannot create a Wayland Compositor.\n"
 msgstr "Enlightenment non riesce a creare un compositor Wayland.\n"
@@ -1006,11 +1006,11 @@ msgstr ""
 "compositing è necessaria<ps/>una GPU in grado di supportare OpenGL 2.0 (o "
 "OpenGL<ps/>ES 2.0)."
 
-#: src/bin/e_comp_x.c:5829
+#: src/bin/e_comp_x.c:5851
 msgid "Lock Failed"
 msgstr "Blocco fallito"
 
-#: src/bin/e_comp_x.c:5830
+#: src/bin/e_comp_x.c:5852
 msgid ""
 "Locking the desktop failed because some application<ps/>has grabbed either "
 "the keyboard or the mouse or both<ps/>and their grab is unable to be broken."
@@ -1019,11 +1019,11 @@ msgstr ""
 "catturato la tastiera e/o il<ps/>mouse e questa cattura non può essere "
 "sciolta."
 
-#: src/bin/e_comp_x.c:5848
+#: src/bin/e_comp_x.c:5870
 msgid "Another compositor is already running on your display server."
 msgstr "Un altro compositor è già in esecuzione sul vostro server grafico."
 
-#: src/bin/e_comp_x.c:5873
+#: src/bin/e_comp_x.c:5895
 msgid ""
 "Your display server does not support the compositor overlay window.\n"
 "This is needed for Enlightenment to function."
@@ -1031,12 +1031,12 @@ msgstr ""
 "Il vostro server grafico non supporta la finestra overlay del compositor. "
 "Ciò è necessario per il funzionamento di Enlightenment."
 
-#: src/bin/e_comp_x.c:6007
+#: src/bin/e_comp_x.c:6029
 #, c-format
 msgid "Enlightenment cannot initialize X Connection...\n"
 msgstr "Enlightenment non riesce ad inizializzare la connessione con X...\n"
 
-#: src/bin/e_comp_x.c:6022
+#: src/bin/e_comp_x.c:6044
 msgid ""
 "Your display server does not support XComposite, or Ecore-X was built "
 "without XComposite support. Note that for composite support you will also "
@@ -1046,7 +1046,7 @@ msgstr ""
 "compilato senza supporto per XComposite. Notare che il supporto per il "
 "compositing richiede anche il supporto per XRender e XFixes in X11 ed Ecore."
 
-#: src/bin/e_comp_x.c:6031
+#: src/bin/e_comp_x.c:6053
 msgid ""
 "Your display server does not support XDamage or Ecore was built without "
 "XDamage support."
@@ -1054,7 +1054,7 @@ msgstr ""
 "Il vostro server grafico non supporta XDamage o Ecore è stato compilato "
 "senza il supporto per XDamage."
 
-#: src/bin/e_comp_x.c:6137
+#: src/bin/e_comp_x.c:6159
 msgid "Enlightenment cannot initialize the XSettings system.\n"
 msgstr "Enlightenment non riesce a inizializzare il suo sistema XSettings.\n"
 
@@ -1074,7 +1074,7 @@ msgstr ""
 
 #: src/bin/e_comp_x_randr.c:461 src/bin/e_config_dialog.c:274
 #: src/bin/e_desktop_editor.c:907 src/bin/e_desktop_editor.c:971
-#: src/bin/e_entry_dialog.c:126 src/bin/e_exec.c:721 src/bin/e_fm.c:10212
+#: src/bin/e_entry_dialog.c:126 src/bin/e_exec.c:897 src/bin/e_fm.c:10212
 #: src/bin/e_fm.c:10979 src/bin/e_fm_prop.c:769
 #: src/bin/e_import_config_dialog.c:360 src/bin/e_int_client_remember.c:358
 #: src/bin/e_int_client_remember.c:553 src/bin/e_int_config_comp_match.c:583
@@ -1398,38 +1398,38 @@ msgstr "Selezionare un'icona per '%s'"
 msgid "Select an Executable"
 msgstr "Seleziona un'eseguibile"
 
-#: src/bin/e_exec.c:444 src/bin/e_exec.c:452 src/bin/e_exec.c:463
-#: src/bin/e_exec.c:522 src/bin/e_remember.c:51
+#: src/bin/e_exec.c:620 src/bin/e_exec.c:628 src/bin/e_exec.c:639
+#: src/bin/e_exec.c:698 src/bin/e_remember.c:51
 #: src/modules/conf_intl/e_int_config_imc.c:274
 #: src/modules/conf_intl/e_int_config_imc.c:561
 msgid "Run Error"
 msgstr "Errore di esecuzione"
 
-#: src/bin/e_exec.c:445
+#: src/bin/e_exec.c:621
 msgid "Enlightenment was unable to get current directory"
 msgstr "Enlightenment non ha potuto ottenere la directory corrente"
 
-#: src/bin/e_exec.c:453
+#: src/bin/e_exec.c:629
 #, c-format
 msgid "Enlightenment was unable to change to directory:<ps/><ps/>%s"
 msgstr "Enlightenment non ha potuto spostarsi nella directory:<ps/><ps/>%s"
 
-#: src/bin/e_exec.c:464
+#: src/bin/e_exec.c:640
 #, c-format
 msgid "Enlightenment was unable to restore to directory:<ps/><ps/>%s"
 msgstr "Enlightenment non ha potuto tornare alla directory:<ps/><ps/>%s"
 
-#: src/bin/e_exec.c:523
+#: src/bin/e_exec.c:699
 #, c-format
 msgid "Enlightenment was unable to fork a child process:<ps/><ps/>%s"
 msgstr ""
 "Enlightenment non ha potuto fare il fork di un processo figlio:<ps/><ps/>%s"
 
-#: src/bin/e_exec.c:712
+#: src/bin/e_exec.c:888
 msgid "Application run error"
 msgstr "Errore d'esecuzione dell'applicazione"
 
-#: src/bin/e_exec.c:714
+#: src/bin/e_exec.c:890
 #, c-format
 msgid ""
 "Enlightenment was unable to run the application:<ps/><ps/>%s<ps/><ps/>The "
@@ -1438,107 +1438,107 @@ msgstr ""
 "Enlightenment non ha potuto avviare l'applicazione:<ps/><ps/>%s<ps/><ps/"
 ">L'applicazione non è partita"
 
-#: src/bin/e_exec.c:860
+#: src/bin/e_exec.c:1036
 msgid "Application Execution Error"
 msgstr "Errore d'esecuzione dell'applicazione"
 
-#: src/bin/e_exec.c:873 src/bin/e_exec.c:875
+#: src/bin/e_exec.c:1049 src/bin/e_exec.c:1051
 #, c-format
 msgid "%s stopped running unexpectedly."
 msgstr "L'esecuzione di %s è terminata inaspettatamente"
 
-#: src/bin/e_exec.c:881
+#: src/bin/e_exec.c:1057
 #, c-format
 msgid "An exit code of %i was returned from %s."
 msgstr "%2$s ha restituito il codice d'uscita %1$i."
 
-#: src/bin/e_exec.c:889
+#: src/bin/e_exec.c:1065
 #, c-format
 msgid "%s was interrupted by an Interrupt Signal."
 msgstr "%s è stato fermato da un segnale d'interruzione"
 
-#: src/bin/e_exec.c:892
+#: src/bin/e_exec.c:1068
 #, c-format
 msgid "%s was interrupted by a Quit Signal."
 msgstr "%s è stato fermato da un segnale di uscita"
 
-#: src/bin/e_exec.c:896
+#: src/bin/e_exec.c:1072
 #, c-format
 msgid "%s was interrupted by an Abort Signal."
 msgstr "%s è stato fermato da un segnale di aborto"
 
-#: src/bin/e_exec.c:899
+#: src/bin/e_exec.c:1075
 #, c-format
 msgid "%s was interrupted by a Floating Point Error."
 msgstr "%s è stato fermato da un errore di virgola mobile"
 
-#: src/bin/e_exec.c:903
+#: src/bin/e_exec.c:1079
 #, c-format
 msgid "%s was interrupted by an Uninterruptable Kill Signal."
 msgstr "%s è stato fermato da un segnale di uccisione ininterrompibile"
 
-#: src/bin/e_exec.c:907
+#: src/bin/e_exec.c:1083
 #, c-format
 msgid "%s was interrupted by a Segmentation Fault."
 msgstr "%s è stato fermato da un errore di segmentazione"
 
-#: src/bin/e_exec.c:911
+#: src/bin/e_exec.c:1087
 #, c-format
 msgid "%s was interrupted by a Broken Pipe."
 msgstr "%s è stato fermato da una pipe rotta"
 
-#: src/bin/e_exec.c:914
+#: src/bin/e_exec.c:1090
 #, c-format
 msgid "%s was interrupted by a Termination Signal."
 msgstr "%s è stato fermato da un segnale di terminazione"
 
-#: src/bin/e_exec.c:918
+#: src/bin/e_exec.c:1094
 #, c-format
 msgid "%s was interrupted by a Bus Error."
 msgstr "%s è stato fermato da un errore del bus"
 
-#: src/bin/e_exec.c:921
+#: src/bin/e_exec.c:1097
 #, c-format
 msgid "%s was interrupted by the signal number %i."
 msgstr "%s è stato fermato dal segnale numero %i"
 
-#: src/bin/e_exec.c:977
+#: src/bin/e_exec.c:1153
 msgid ""
 "***The remaining output has been truncated. Save the output to view.***\n"
 msgstr ""
 "***L'output rimanente è stato troncato. Salvare l'output per vederlo.***\n"
 
-#: src/bin/e_exec.c:1036 src/bin/e_exec.c:1114 src/bin/e_exec.c:1121
+#: src/bin/e_exec.c:1212 src/bin/e_exec.c:1290 src/bin/e_exec.c:1297
 msgid "Error Logs"
 msgstr "Log di errore"
 
-#: src/bin/e_exec.c:1042 src/bin/e_exec.c:1122
+#: src/bin/e_exec.c:1218 src/bin/e_exec.c:1298
 msgid "There was no error message."
 msgstr "Non ci sono messaggi d'errore."
 
-#: src/bin/e_exec.c:1046 src/bin/e_exec.c:1129
+#: src/bin/e_exec.c:1222 src/bin/e_exec.c:1305
 msgid "Save This Message"
 msgstr "Salva questo messaggio"
 
-#: src/bin/e_exec.c:1051 src/bin/e_exec.c:1054 src/bin/e_exec.c:1134
-#: src/bin/e_exec.c:1137
+#: src/bin/e_exec.c:1227 src/bin/e_exec.c:1230 src/bin/e_exec.c:1310
+#: src/bin/e_exec.c:1313
 #, c-format
 msgid "This error log will be saved as %s/%s.log"
 msgstr "Questo log di errore verrà salvato come %s/%s.log"
 
-#: src/bin/e_exec.c:1080
+#: src/bin/e_exec.c:1256
 msgid "Error Information"
 msgstr "Informazioni sull'errore"
 
-#: src/bin/e_exec.c:1088
+#: src/bin/e_exec.c:1264
 msgid "Error Signal Information"
 msgstr "Informazioni sui segnali d'errore"
 
-#: src/bin/e_exec.c:1098 src/bin/e_exec.c:1105
+#: src/bin/e_exec.c:1274 src/bin/e_exec.c:1281
 msgid "Output Data"
 msgstr "Dati dell'output"
 
-#: src/bin/e_exec.c:1106
+#: src/bin/e_exec.c:1282
 msgid "There was no output."
 msgstr "Non ci sono output."
 
@@ -1588,7 +1588,7 @@ msgstr "Impossibile espellere il dispositivo"
 #: src/bin/e_fm.c:10546 src/bin/e_fm.c:10550 src/bin/e_fm.c:10554
 #: src/bin/e_fm.c:10582 src/bin/e_fm.c:10587 src/bin/e_fm.c:10591
 #: src/bin/e_fm.c:10650 src/bin/e_fm.c:10880 src/bin/e_fm_prop.c:363
-#: src/bin/e_shelf.c:2268 src/modules/pager/e_mod_main.c:2105
+#: src/bin/e_shelf.c:2268 src/modules/pager/e_mod_main.c:2090
 #: src/modules/xwayland/e_mod_main.c:272 src/modules/xwayland/e_mod_main.c:347
 msgid "Error"
 msgstr "Errore"
@@ -2336,7 +2336,7 @@ msgid "Window"
 msgstr "Finestra"
 
 #: src/bin/e_int_client_menu.c:156
-#: src/modules/conf_randr/e_int_config_randr2.c:1076
+#: src/modules/conf_randr/e_int_config_randr2.c:1100
 msgid "Align"
 msgstr "Allinea"
 
@@ -2519,10 +2519,10 @@ msgid "Window List"
 msgstr "Lista finestre"
 
 #: src/bin/e_int_client_menu.c:1643 src/modules/pager/e_mod_main.c:350
-#: src/modules/pager/e_mod_main.c:2119 src/modules/pager/e_mod_main.c:2126
-#: src/modules/pager/e_mod_main.c:2133 src/modules/pager/e_mod_main.c:2135
-#: src/modules/pager/e_mod_main.c:2137 src/modules/pager/e_mod_main.c:2139
-#: src/modules/pager/e_mod_main.c:2141 src/modules/pager/e_mod_main.c:2143
+#: src/modules/pager/e_mod_main.c:2104 src/modules/pager/e_mod_main.c:2111
+#: src/modules/pager/e_mod_main.c:2118 src/modules/pager/e_mod_main.c:2120
+#: src/modules/pager/e_mod_main.c:2122 src/modules/pager/e_mod_main.c:2124
+#: src/modules/pager/e_mod_main.c:2126 src/modules/pager/e_mod_main.c:2128
 msgid "Pager"
 msgstr "Pager"
 
@@ -2616,9 +2616,9 @@ msgstr "Statico"
 #: src/modules/clock/e_mod_config.c:143
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:356
 #: src/modules/conf_performance/e_int_config_powermanagement.c:200
-#: src/modules/conf_randr/e_int_config_randr2.c:464
-#: src/modules/conf_randr/e_int_config_randr2.c:683
-#: src/modules/conf_randr/e_int_config_randr2.c:1043
+#: src/modules/conf_randr/e_int_config_randr2.c:469
+#: src/modules/conf_randr/e_int_config_randr2.c:688
+#: src/modules/conf_randr/e_int_config_randr2.c:1067
 #: src/modules/conf_theme/e_int_config_fonts.c:742
 #: src/modules/conf_theme/e_int_config_transitions.c:199
 #: src/modules/conf_theme/e_int_config_transitions.c:253
@@ -2630,16 +2630,16 @@ msgid "None"
 msgstr "Nessuno"
 
 #: src/bin/e_int_client_prop.c:307
-#: src/modules/conf_randr/e_int_config_randr2.c:472
-#: src/modules/conf_randr/e_int_config_randr2.c:727
-#: src/modules/conf_randr/e_int_config_randr2.c:1047
+#: src/modules/conf_randr/e_int_config_randr2.c:477
+#: src/modules/conf_randr/e_int_config_randr2.c:732
+#: src/modules/conf_randr/e_int_config_randr2.c:1071
 msgid "Above"
 msgstr "Al di sopra"
 
 #: src/bin/e_int_client_prop.c:311
-#: src/modules/conf_randr/e_int_config_randr2.c:474
-#: src/modules/conf_randr/e_int_config_randr2.c:738
-#: src/modules/conf_randr/e_int_config_randr2.c:1048
+#: src/modules/conf_randr/e_int_config_randr2.c:479
+#: src/modules/conf_randr/e_int_config_randr2.c:743
+#: src/modules/conf_randr/e_int_config_randr2.c:1072
 msgid "Below"
 msgstr "Al di sotto"
 
@@ -2766,10 +2766,10 @@ msgstr "Richiede posizione"
 #: src/modules/everything/evry_gadget.c:683
 #: src/modules/everything/evry_plug_settings.c:183
 #: src/modules/geolocation/e_mod_main.c:235 src/modules/ibar/e_mod_main.c:497
-#: src/modules/ibar/e_mod_main.c:1638 src/modules/ibox/e_mod_main.c:357
-#: src/modules/ibox/e_mod_main.c:786 src/modules/mixer/e_mod_main.c:958
+#: src/modules/ibar/e_mod_main.c:1638 src/modules/ibox/e_mod_main.c:358
+#: src/modules/ibox/e_mod_main.c:791 src/modules/mixer/e_mod_main.c:958
 #: src/modules/music-control/ui.c:329 src/modules/packagekit/e_mod_main.c:47
-#: src/modules/pager/e_mod_main.c:1041 src/modules/tasks/e_mod_main.c:915
+#: src/modules/pager/e_mod_main.c:1026 src/modules/tasks/e_mod_main.c:938
 #: src/modules/temperature/e_mod_main.c:231
 #: src/modules/tiling/e_mod_tiling.c:2169 src/modules/wizard/page_150.c:31
 #: src/modules/xkbswitch/e_mod_main.c:308
@@ -3231,7 +3231,7 @@ msgid "Types"
 msgstr "Tipi"
 
 #: src/bin/e_int_config_comp_match.c:466
-#: src/modules/conf_randr/e_int_config_randr2.c:1012
+#: src/modules/conf_randr/e_int_config_randr2.c:1036
 msgid "On"
 msgstr "Attivato"
 
@@ -4648,7 +4648,7 @@ msgstr ""
 "Ho fallito la creazione della directory: %s.<ps/>Esiste già un file con lo "
 "stesso nome."
 
-#: src/bin/e_utils.c:887
+#: src/bin/e_utils.c:912
 msgid ""
 "Configuration data needed upgrading. Your old configuration<ps/>has been "
 "wiped and a new set of defaults initialized. This<ps/>will happen regularly "
@@ -4668,12 +4668,12 @@ msgstr ""
 "nuove funzionalità. Adesso è<ps/>possibile riconfigurare le cose a proprio "
 "piacimento. Ci scusiamo per il disagio.<ps/>"
 
-#: src/bin/e_utils.c:896 src/bin/e_utils.c:920
+#: src/bin/e_utils.c:921 src/bin/e_utils.c:945
 #, c-format
 msgid "%s Configuration Updated"
 msgstr "Configurazione %s aggiornata"
 
-#: src/bin/e_utils.c:909
+#: src/bin/e_utils.c:934
 msgid ""
 "Your module configuration is NEWER than the module version. This is very<ps/"
 ">strange. This should not happen unless you downgraded<ps/>the module or "
@@ -4689,55 +4689,55 @@ msgstr ""
 "precauzionale ai valori predefiniti. Ci scusiamo<ps/>per l'inconveniente.<ps/"
 ">"
 
-#: src/bin/e_utils.c:993 src/modules/packagekit/e_mod_config.c:76
+#: src/bin/e_utils.c:1018 src/modules/packagekit/e_mod_config.c:76
 #: src/modules/packagekit/e_mod_config.c:86
 #, c-format
 msgid "Never"
 msgstr "Mai"
 
-#: src/bin/e_utils.c:997
+#: src/bin/e_utils.c:1022
 #, c-format
 msgid "A second"
 msgid_plural "%li Seconds"
 msgstr[0] "Un secondo"
 msgstr[1] "%li secondi"
 
-#: src/bin/e_utils.c:1001
+#: src/bin/e_utils.c:1026
 #, c-format
 msgid "One year"
 msgid_plural "%li Years"
 msgstr[0] "Un anno"
 msgstr[1] "%li anni"
 
-#: src/bin/e_utils.c:1006
+#: src/bin/e_utils.c:1031
 #, c-format
 msgid "One month"
 msgid_plural "%li Months"
 msgstr[0] "Un mese"
 msgstr[1] "%li mesi"
 
-#: src/bin/e_utils.c:1011
+#: src/bin/e_utils.c:1036
 #, c-format
 msgid "One week"
 msgid_plural "%li Weeks"
 msgstr[0] "Una settimana"
 msgstr[1] "%li settimane"
 
-#: src/bin/e_utils.c:1016
+#: src/bin/e_utils.c:1041
 #, c-format
 msgid "One day"
 msgid_plural "%li Days"
 msgstr[0] "Un giorno"
 msgstr[1] "%li giorni"
 
-#: src/bin/e_utils.c:1021
+#: src/bin/e_utils.c:1046
 #, c-format
 msgid "An hour"
 msgid_plural "%li Hours"
 msgstr[0] "Un'ora"
 msgstr[1] "%li ore"
 
-#: src/bin/e_utils.c:1026
+#: src/bin/e_utils.c:1051
 #, c-format
 msgid "A minute"
 msgid_plural "%li Minutes"
@@ -4834,7 +4834,7 @@ msgstr "Menù applicazioni"
 
 #: src/modules/backlight/e_mod_main.c:354
 #: src/modules/conf_display/e_mod_main.c:36
-#: src/modules/conf_randr/e_int_config_randr2.c:973
+#: src/modules/conf_randr/e_int_config_randr2.c:997
 msgid "Backlight"
 msgstr "Backlight"
 
@@ -6669,7 +6669,7 @@ msgid "Main Menu"
 msgstr "Menù principale"
 
 #: src/modules/conf_menus/e_int_config_menus.c:260
-#: src/modules/fileman/e_mod_menu.c:490
+#: src/modules/fileman/e_mod_menu.c:609
 msgid "Favorites"
 msgstr "Preferiti"
 
@@ -6905,100 +6905,100 @@ msgstr "Gestione alimentazione"
 msgid "Screen Setup"
 msgstr "Impostazioni schermo"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:466
-#: src/modules/conf_randr/e_int_config_randr2.c:694
-#: src/modules/conf_randr/e_int_config_randr2.c:782
-#: src/modules/conf_randr/e_int_config_randr2.c:1044
-#: src/modules/conf_randr/e_int_config_randr2.c:1186
+#: src/modules/conf_randr/e_int_config_randr2.c:471
+#: src/modules/conf_randr/e_int_config_randr2.c:699
+#: src/modules/conf_randr/e_int_config_randr2.c:799
+#: src/modules/conf_randr/e_int_config_randr2.c:1068
+#: src/modules/conf_randr/e_int_config_randr2.c:1210
 msgid "Clone"
 msgstr "Clona"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:468
-#: src/modules/conf_randr/e_int_config_randr2.c:705
-#: src/modules/conf_randr/e_int_config_randr2.c:1045
+#: src/modules/conf_randr/e_int_config_randr2.c:473
+#: src/modules/conf_randr/e_int_config_randr2.c:710
+#: src/modules/conf_randr/e_int_config_randr2.c:1069
 msgid "Left of"
 msgstr "A sinistra"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:470
-#: src/modules/conf_randr/e_int_config_randr2.c:716
-#: src/modules/conf_randr/e_int_config_randr2.c:1046
+#: src/modules/conf_randr/e_int_config_randr2.c:475
+#: src/modules/conf_randr/e_int_config_randr2.c:721
+#: src/modules/conf_randr/e_int_config_randr2.c:1070
 msgid "Right of"
 msgstr "A destra"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:476
+#: src/modules/conf_randr/e_int_config_randr2.c:481
 msgid "Unconfigured"
 msgstr "Non configurato"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:780
-#: src/modules/conf_randr/e_int_config_randr2.c:1189
+#: src/modules/conf_randr/e_int_config_randr2.c:797
+#: src/modules/conf_randr/e_int_config_randr2.c:1213
 msgid "Ignore"
 msgstr "Ignora"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:781
-#: src/modules/conf_randr/e_int_config_randr2.c:1187
+#: src/modules/conf_randr/e_int_config_randr2.c:798
+#: src/modules/conf_randr/e_int_config_randr2.c:1211
 msgid "Extend"
 msgstr "Estendi"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:783
-#: src/modules/conf_randr/e_int_config_randr2.c:1188
+#: src/modules/conf_randr/e_int_config_randr2.c:800
+#: src/modules/conf_randr/e_int_config_randr2.c:1212
 msgid "Ask"
 msgstr "Chiedi"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:786
+#: src/modules/conf_randr/e_int_config_randr2.c:803
 #, c-format
 msgid "Hotplug Policy (%s)"
 msgstr "Regole per hotplug (%s)"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:864
+#: src/modules/conf_randr/e_int_config_randr2.c:881
 #: src/modules/mixer/emixer.c:1954
 msgid "Outputs"
 msgstr "Uscite"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:965
+#: src/modules/conf_randr/e_int_config_randr2.c:989
 msgid "Laptop lid"
 msgstr "Coperchio del portatile"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1021
+#: src/modules/conf_randr/e_int_config_randr2.c:1045
 msgid "Ignore Disconnect"
 msgstr "Ignora disconnessione"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1030
+#: src/modules/conf_randr/e_int_config_randr2.c:1054
 msgid "Priority"
 msgstr "Priorità"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1042
+#: src/modules/conf_randr/e_int_config_randr2.c:1066
 msgid "Relative"
 msgstr "Relativo"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1056
+#: src/modules/conf_randr/e_int_config_randr2.c:1080
 msgid "To"
 msgstr "A"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1096
+#: src/modules/conf_randr/e_int_config_randr2.c:1120
 msgid "Use Profile"
 msgstr "Usa profilo"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1112
+#: src/modules/conf_randr/e_int_config_randr2.c:1136
 msgid "Custom Scale"
 msgstr "Scalatura personalizzata"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1121
+#: src/modules/conf_randr/e_int_config_randr2.c:1145
 msgid "Scale"
 msgstr "Scalatura"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1146
+#: src/modules/conf_randr/e_int_config_randr2.c:1170
 msgid "Response"
 msgstr "Responso"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1158
+#: src/modules/conf_randr/e_int_config_randr2.c:1182
 msgid "Restore setup on start"
 msgstr "Ripristina impostazioni all'avvio"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1167
+#: src/modules/conf_randr/e_int_config_randr2.c:1191
 msgid "Monitor hotplug"
 msgstr "Gestisci connessione monitor"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1176
+#: src/modules/conf_randr/e_int_config_randr2.c:1200
 msgid "Lid Events"
 msgstr "Gestisci chiusura coperchio"
 
@@ -8945,19 +8945,23 @@ msgstr "Nessun oggetto elencabile"
 msgid "GTK Bookmarks"
 msgstr "Segnalibri GTK"
 
-#: src/modules/fileman/e_mod_menu.c:468
+#: src/modules/fileman/e_mod_menu.c:508
+msgid "Recent"
+msgstr "Recenti"
+
+#: src/modules/fileman/e_mod_menu.c:587
 msgid "Current Directory"
 msgstr "Directory attuale"
 
-#: src/modules/fileman/e_mod_menu.c:474
+#: src/modules/fileman/e_mod_menu.c:593
 msgid "Home"
 msgstr "Home"
 
-#: src/modules/fileman/e_mod_menu.c:504
+#: src/modules/fileman/e_mod_menu.c:623
 msgid "Root"
 msgstr "File system"
 
-#: src/modules/fileman/e_mod_menu.c:551
+#: src/modules/fileman/e_mod_menu.c:671
 msgid "Navigate..."
 msgstr "Esplora..."
 
@@ -9238,7 +9242,7 @@ msgstr "Mostra finestre di tutti i desktop"
 msgid "Show windows from active desktop"
 msgstr "Mostra finestre del desktop attivo"
 
-#: src/modules/ibox/e_mod_main.c:274
+#: src/modules/ibox/e_mod_main.c:275
 msgid "IBox"
 msgstr "IBox"
 
@@ -9675,45 +9679,45 @@ msgstr ""
 "usato dal codice<ps/>interno per il menù contestuale.<ps/>Questo tasto "
 "funziona solo nel popup."
 
-#: src/modules/pager/e_mod_main.c:1053
+#: src/modules/pager/e_mod_main.c:1038
 msgid "All desktop settings"
 msgstr "Impostazioni per tutti i desktop"
 
-#: src/modules/pager/e_mod_main.c:1064
+#: src/modules/pager/e_mod_main.c:1049
 msgid "This desktop name and wallpaper settings"
 msgstr "Il nome di questo desktop e le impostazioni dello sfondo"
 
-#: src/modules/pager/e_mod_main.c:2105
+#: src/modules/pager/e_mod_main.c:2090
 msgid "Pager module cannot be loaded at the same time as Pager Plain!"
 msgstr ""
 "Il modulo Pager non può essere caricato se è già caricato il modulo Pager "
 "Plain!"
 
-#: src/modules/pager/e_mod_main.c:2126
+#: src/modules/pager/e_mod_main.c:2111
 msgid "Show Pager Popup"
 msgstr "Mostra popup del pager"
 
-#: src/modules/pager/e_mod_main.c:2133
+#: src/modules/pager/e_mod_main.c:2118
 msgid "Popup Desk Right"
 msgstr "Desktop a destra nel popup"
 
-#: src/modules/pager/e_mod_main.c:2135
+#: src/modules/pager/e_mod_main.c:2120
 msgid "Popup Desk Left"
 msgstr "Desktop a sinistra nel popup"
 
-#: src/modules/pager/e_mod_main.c:2137
+#: src/modules/pager/e_mod_main.c:2122
 msgid "Popup Desk Up"
 msgstr "Desktop sopra nel popup"
 
-#: src/modules/pager/e_mod_main.c:2139
+#: src/modules/pager/e_mod_main.c:2124
 msgid "Popup Desk Down"
 msgstr "Desktop sotto nel popup"
 
-#: src/modules/pager/e_mod_main.c:2141
+#: src/modules/pager/e_mod_main.c:2126
 msgid "Popup Desk Next"
 msgstr "Desktop successivo nel popup"
 
-#: src/modules/pager/e_mod_main.c:2143
+#: src/modules/pager/e_mod_main.c:2128
 msgid "Popup Desk Previous"
 msgstr "Desktop precedente nel popup"
 
@@ -9731,35 +9735,35 @@ msgstr "Inserire password per <b>%s</b>"
 msgid "Enter password for UID %u"
 msgstr "Inserire password per lo UID %u"
 
-#: src/modules/procstats/e_mod_main.c:273
+#: src/modules/procstats/e_mod_main.c:292
 msgid "B"
 msgstr "B"
 
-#: src/modules/procstats/e_mod_main.c:273
+#: src/modules/procstats/e_mod_main.c:292
 msgid "KiB"
 msgstr "KiB"
 
-#: src/modules/procstats/e_mod_main.c:273
+#: src/modules/procstats/e_mod_main.c:292
 msgid "MiB"
 msgstr "MiB"
 
-#: src/modules/procstats/e_mod_main.c:273
+#: src/modules/procstats/e_mod_main.c:292
 msgid "GiB"
 msgstr "GiB"
 
-#: src/modules/procstats/e_mod_main.c:274
+#: src/modules/procstats/e_mod_main.c:293
 msgid "TiB"
 msgstr "TiB"
 
-#: src/modules/procstats/e_mod_main.c:274
+#: src/modules/procstats/e_mod_main.c:293
 msgid "PiB"
 msgstr "PiB"
 
-#: src/modules/procstats/e_mod_main.c:274
+#: src/modules/procstats/e_mod_main.c:293
 msgid "EiB"
 msgstr "EiB"
 
-#: src/modules/procstats/e_mod_main.c:274
+#: src/modules/procstats/e_mod_main.c:293
 msgid "ZiB"
 msgstr "ZiB"
 
@@ -10314,7 +10318,7 @@ msgstr "Mostra"
 msgid "Preview Size"
 msgstr "Dimensione anteprima"
 
-#: src/modules/tasks/e_mod_main.c:309 src/modules/tasks/e_mod_main.c:922
+#: src/modules/tasks/e_mod_main.c:309 src/modules/tasks/e_mod_main.c:945
 msgid "Tasks"
 msgstr "Tasks"
 
