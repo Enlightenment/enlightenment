@@ -1683,6 +1683,10 @@ e_bindings_swipe_handle(E_Binding_Context ctxt, E_Object *obj, double direction,
             angle_accepted(binding->direction - binding->error, binding->direction + binding->error, direction))
           {
              act = e_action_find(binding->action);
+             if (!act) {
+               ERR("Action %s cannot be found!", binding->action);
+               return NULL;
+             }
              act->func.go(obj, binding->params);
           }
      }
