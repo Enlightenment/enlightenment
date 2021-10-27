@@ -1517,10 +1517,8 @@ _ibar_cb_icon_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
    E_FREE_FUNC(ic->hide_timer, ecore_timer_del);
    if (!ic->ibar->inst->ci->dont_icon_menu_mouseover)
      {
-        if (ic->show_timer)
-          ecore_timer_loop_reset(ic->show_timer);
-        else
-          ic->show_timer = ecore_timer_loop_add(0.2, _ibar_icon_mouse_in_timer, ic);
+        E_FREE_FUNC(ic->show_timer, ecore_timer_del);
+        ic->show_timer = ecore_timer_loop_add(0.2, _ibar_icon_mouse_in_timer, ic);
      }
 }
 
