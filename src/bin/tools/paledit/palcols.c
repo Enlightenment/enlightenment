@@ -366,9 +366,14 @@ _pal_hover_add(Evas_Object *win, Evas_Object *button)
    tlb = o = elm_toolbar_add(win);
    elm_toolbar_homogeneous_set(o, EINA_TRUE);
    it = elm_toolbar_item_append(tlb, NULL, "Basic", _cb_hover_basic, win);
-   elm_toolbar_item_append(tlb, NULL, "Extended", _cb_hover_extended, win);
-   elm_toolbar_item_append(tlb, NULL, "Advanced", _cb_hover_advanced, win);
    elm_toolbar_item_selected_set(it, EINA_TRUE);
+   elm_object_item_tooltip_text_set(it, "The basic set of colors you can modify");
+   it = elm_toolbar_item_append(tlb, NULL, "Extended", _cb_hover_extended, win);
+   elm_object_item_tooltip_text_set(it, "An extended set of colors that will override the basic colors<br>"
+                                    "allowing very specific elements and states to have special colors set");
+   it = elm_toolbar_item_append(tlb, NULL, "Advanced", _cb_hover_advanced, win);
+   elm_object_item_tooltip_text_set(it, "If you know what you are doing and know precisely which color class<br>"
+                                    "names are used in themes, then you can type one in here by hand");
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
    elm_table_pack(tb, o, 0, 0, 1, 1);
@@ -453,6 +458,7 @@ _pal_hover_add(Evas_Object *win, Evas_Object *button)
    elm_box_pack_end(bxh, o);
    evas_object_show(o);
    evas_object_data_set(win, "pal_class_entry", o);
+   elm_object_tooltip_text_set(o, "Name of color entry to add or delete from the palette");
 
    btn = o = elm_button_add(win);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
@@ -460,6 +466,7 @@ _pal_hover_add(Evas_Object *win, Evas_Object *button)
    evas_object_smart_callback_add(o, "clicked", _cb_add_click, win);
    elm_box_pack_end(bxh, o);
    evas_object_show(o);
+   elm_object_tooltip_text_set(o, "Add this new color entry to the palette");
 
    o = elm_icon_add(win);
    elm_icon_standard_set(o, "add");
@@ -472,6 +479,7 @@ _pal_hover_add(Evas_Object *win, Evas_Object *button)
    evas_object_smart_callback_add(o, "clicked", _cb_del_click, win);
    elm_box_pack_end(bxh, o);
    evas_object_show(o);
+   elm_object_tooltip_text_set(o, "Delete this color entry from the palette");
 
    o = elm_icon_add(win);
    elm_icon_standard_set(o, "sub");
@@ -511,6 +519,7 @@ palcols_add(Evas_Object *win)
    elm_object_text_set(o, "Select palette");
    elm_box_pack_end(bxl, o);
    evas_object_show(o);
+   elm_object_tooltip_text_set(o, "Select another palette to use from abvailable palettes");
 
    o = evas_object_rectangle_add(evas_object_evas_get(win));
    evas_object_size_hint_min_set(o, ELM_SCALE_SIZE(240), 0);
@@ -534,6 +543,7 @@ palcols_add(Evas_Object *win)
    elm_box_pack_end(bxh, o);
    evas_object_show(o);
    evas_object_data_set(win, "pal_name", o);
+   elm_object_tooltip_text_set(o, "Name of the selected palette");
 
    o = palimg_add(win);
    elm_box_pack_end(bxh, o);
@@ -546,6 +556,7 @@ palcols_add(Evas_Object *win)
    elm_box_pack_end(bxl, o);
    evas_object_show(o);
    evas_object_data_set(win, "pal_class_list", o);
+   elm_object_tooltip_text_set(o, "Colors listed in this palette");
 
    btn = o = elm_button_add(win);
    evas_object_size_hint_weight_set(o, 1.0, 0.0);
@@ -555,6 +566,7 @@ palcols_add(Evas_Object *win)
    elm_object_text_set(o, "Change entries");
    elm_box_pack_end(bxl, o);
    evas_object_show(o);
+   elm_object_tooltip_text_set(o, "Add or remove entries from this palette to fine-tune colors");
 
    o = elm_icon_add(win);
    elm_icon_standard_set(o, "go-up");

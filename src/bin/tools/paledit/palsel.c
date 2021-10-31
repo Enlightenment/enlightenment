@@ -91,6 +91,7 @@ _palsel_name_request(Evas_Object *win, const char *name, const char *op)
    evas_object_data_set(win, "name_entry", o);
    elm_entry_select_all(o);
    elm_object_focus_set(o, EINA_TRUE);
+   elm_object_tooltip_text_set(o, "New palette name");
 
    o = elm_button_add(win);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0);
@@ -309,6 +310,7 @@ palsel_add(Evas_Object *win)
    evas_object_smart_callback_add(o, "clicked", _cb_select_new_click, win);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
+   elm_object_tooltip_text_set(o, "Create a new empty palette");
 
    o = elm_button_add(win);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0);
@@ -317,6 +319,7 @@ palsel_add(Evas_Object *win)
    evas_object_smart_callback_add(o, "clicked", _cb_select_del_click, win);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
+   elm_object_tooltip_text_set(o, "Delete private palette or reset the selected palette to it's system version");
    evas_object_data_set(win, "pal_popup_list_del_button", o);
 
    o = elm_button_add(win);
@@ -326,6 +329,7 @@ palsel_add(Evas_Object *win)
    evas_object_smart_callback_add(o, "clicked", _cb_select_copy_click, win);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
+   elm_object_tooltip_text_set(o, "Make a copy of the selected palette under a new name");
 
    o = evas_object_rectangle_add(evas_object_evas_get(win));
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

@@ -322,14 +322,16 @@ colsel_add(Evas_Object *win)
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb2, o, 0, 0, 1, 1);
    evas_object_show(o);
+   elm_object_tooltip_text_set(o, "Sample of selected color");
 
    o = evas_object_rectangle_add(evas_object_evas_get(win));
    evas_object_size_hint_min_set(o, ELM_SCALE_SIZE(60), ELM_SCALE_SIZE(40));
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_color_set(o, 128, 64, 0, 128);
+   evas_object_pass_events_set(o, EINA_TRUE);
    elm_table_pack(tb2, o, 0, 0, 1, 1);
-   evas_object_data_set(win, "pal_color_rect", o);
    evas_object_show(o);
+   evas_object_data_set(win, "pal_color_rect", o);
 
    o = elm_colorselector_add(win);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
@@ -349,6 +351,7 @@ colsel_add(Evas_Object *win)
    elm_box_pack_end(bxr, o);
    evas_object_show(o);
    evas_object_data_set(win, "pal_color_entry", o);
+   elm_object_tooltip_text_set(o, "Hex code for color. Just watch it change or type it in here to modify a color");
 
    tb2 = o = elm_table_add(win);
    elm_table_padding_set(o, ELM_SCALE_SIZE(10), ELM_SCALE_SIZE(10));
