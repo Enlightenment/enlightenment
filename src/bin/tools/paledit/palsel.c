@@ -120,7 +120,9 @@ _cb_select_new_click(void *data, Evas_Object *obj EINA_UNUSED, void *event_info 
 static void
 _cb_select_del_click(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
+   Evas_Object *win = data;
    char *palname = evas_object_data_get(data, "pal_selected_palette");
+
    if (palname)
      {
         Elm_Object_Item *it_sel, *it = NULL;
@@ -131,14 +133,23 @@ _cb_select_del_click(void *data, Evas_Object *obj EINA_UNUSED, void *event_info 
              it = elm_genlist_item_next_get(it_sel);
              if (!it) it = elm_genlist_item_prev_get(it_sel);
           }
-        elm_object_item_del(it_sel);
-        elm_config_palette_delete(palname);
-        evas_object_data_del(data, "pal_selected_palette");
-        free(palname);
-        if (it)
+        if (elm_config_palette_system_has(palname))
           {
-             elm_genlist_item_show(it, ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
-             elm_genlist_item_selected_set(it, EINA_TRUE);
+             elm_config_palette_delete(palname);
+             pal_load(win);
+             elm_popup_dismiss(evas_object_data_get(win, "pal_popup"));
+          }
+        else
+          {
+             elm_object_item_del(it_sel);
+             elm_config_palette_delete(palname);
+             evas_object_data_del(data, "pal_selected_palette");
+             free(palname);
+             if (it)
+               {
+                  elm_genlist_item_show(it, ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
+                  elm_genlist_item_selected_set(it, EINA_TRUE);
+               }
           }
      }
 }
@@ -199,12 +210,16 @@ _cb_palette_gl_del(void *data, Evas_Object *obj EINA_UNUSED)
 static void
 _cb_palette_gl_sel(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-   Evas_Object *win = data;
+   Evas_Object *win = data, *o;
    Elm_Object_Item *it = event_info;
+   char *palname;
 
    free(evas_object_data_get(win, "pal_selected_palette"));
-   evas_object_data_set(win, "pal_selected_palette",
-                        strdup(elm_object_item_data_get(it)));
+   palname = elm_object_item_data_get(it);
+   evas_object_data_set(win, "pal_selected_palette", strdup(palname));
+   o = evas_object_data_get(win, "pal_popup_list_del_button");
+   if (elm_config_palette_system_has(palname)) elm_object_text_set(o, "Reset");
+   else elm_object_text_set(o, "Del");
 }
 
 static void
@@ -237,10 +252,14 @@ _palette_list_fill(Evas_Object *win, Evas_Object *list)
      }
    elm_config_palette_list_free(palettes);
    elm_genlist_item_class_free(itc);
+   free(evas_object_data_get(win, "pal_selected_palette"));
+   evas_object_data_del(win, "pal_selected_palette");
    if (sel_it)
      {
         elm_genlist_item_show(sel_it, ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
         elm_genlist_item_selected_set(sel_it, EINA_TRUE);
+        evas_object_data_set(win, "pal_selected_palette",
+                             strdup(elm_object_item_data_get(sel_it)));
      }
 }
 
@@ -276,8 +295,6 @@ palsel_add(Evas_Object *win)
    evas_object_show(o);
    evas_object_data_set(win, "pal_popup_list", o);
 
-   _palette_list_fill(win, li);
-
    bx = o = elm_box_add(win);
    elm_box_homogeneous_set(o, EINA_TRUE);
    elm_box_padding_set(o, ELM_SCALE_SIZE(5), 0);
@@ -300,6 +317,7 @@ palsel_add(Evas_Object *win)
    evas_object_smart_callback_add(o, "clicked", _cb_select_del_click, win);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
+   evas_object_data_set(win, "pal_popup_list_del_button", o);
 
    o = elm_button_add(win);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0);
@@ -328,6 +346,8 @@ palsel_add(Evas_Object *win)
    evas_object_smart_callback_add(o, "clicked", _cb_select_cancel_click, win);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
+
+   _palette_list_fill(win, li);
 
    return pop;
 }
