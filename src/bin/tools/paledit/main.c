@@ -101,6 +101,9 @@ elm_main(int argc, char **argv)
 
    colsel_update(win);
 
+   Eina_List *ccs = elm_theme_color_class_list(NULL);
+   elm_theme_color_class_list_free(ccs);
+
    if (argc > 1)
      {
         evas_object_data_set(win, "pal_selected_palette", strdup(argv[1]));

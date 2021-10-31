@@ -209,10 +209,293 @@ palcols_fill(Evas_Object *win)
      }
 }
 
+static void
+_cb_hover_down(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win = data, *o;
+
+   o = evas_object_data_get(win, "pal_class_hover");
+   elm_hover_dismiss(o);
+}
+
+static void
+_hover_list_enable_disable(Evas_Object *win)
+{
+   Elm_Palette *pal = evas_object_data_get(win, "pal");
+   Elm_Palette_Color *col;
+   Elm_Widget_Item *it;
+   Eina_List *l;
+
+   for (it = elm_genlist_first_item_get(evas_object_data_get(win, "pal_class_list_basic"));
+        it; it = elm_genlist_item_next_get(it))
+     {
+        const char *s = elm_object_item_data_get(it);
+
+        if (s)
+          {
+             EINA_LIST_FOREACH(pal->colors, l, col)
+               {
+                  if ((col->name) && (!strcmp(s, col->name)))
+                    {
+                       elm_object_item_disabled_set(it, EINA_TRUE);
+                       break;
+                    }
+               }
+             if (!l) elm_object_item_disabled_set(it, EINA_FALSE);
+          }
+     }
+   for (it = elm_genlist_first_item_get(evas_object_data_get(win, "pal_class_list_extended"));
+        it; it = elm_genlist_item_next_get(it))
+     {
+        const char *s = elm_object_item_data_get(it);
+
+        if (s)
+          {
+             EINA_LIST_FOREACH(pal->colors, l, col)
+               {
+                  if ((col->name) && (!strcmp(s, col->name)))
+                    {
+                       elm_object_item_disabled_set(it, EINA_TRUE);
+                       break;
+                    }
+               }
+             if (!l) elm_object_item_disabled_set(it, EINA_FALSE);
+          }
+     }
+}
+
+static void
+_cb_hover_basic(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win = data;
+
+   evas_object_show(evas_object_data_get(win, "pal_class_list_basic"));
+   evas_object_hide(evas_object_data_get(win, "pal_class_list_extended"));
+   evas_object_hide(evas_object_data_get(win, "pal_class_label"));
+}
+
+static void
+_cb_hover_extended(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win = data;
+
+   evas_object_hide(evas_object_data_get(win, "pal_class_list_basic"));
+   evas_object_show(evas_object_data_get(win, "pal_class_list_extended"));
+   evas_object_hide(evas_object_data_get(win, "pal_class_label"));
+}
+
+static void
+_cb_hover_advanced(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win = data;
+
+   evas_object_hide(evas_object_data_get(win, "pal_class_list_basic"));
+   evas_object_hide(evas_object_data_get(win, "pal_class_list_extended"));
+   evas_object_show(evas_object_data_get(win, "pal_class_label"));
+}
+
+static int
+_cb_class_insert_cc_cmp(const void *pa, const void *pb)
+{
+   const char *cc1 = elm_object_item_data_get(pa);
+   const char *cc2 = elm_object_item_data_get(pb);
+   return strcmp(cc1, cc2);
+}
+
+static char *
+_cb_class_gl_class_label_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
+{
+   return strdup(data);
+}
+
+static void
+_cb_class_gl_cc_sel(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Evas_Object *win = data;
+   Elm_Object_Item *it = event_info;
+   const char *cc = elm_object_item_data_get(it);
+
+   elm_object_text_set(evas_object_data_get(win, "pal_class_entry"), cc);
+}
+
+static void
+_pal_hover_add(Evas_Object *win, Evas_Object *button)
+{
+   Evas_Object *o, *btn, *hv, *tb, *tlb, *bxh;
+   Elm_Widget_Item *it;
+   Eina_List *ccs, *l;
+   Elm_Genlist_Item_Class *itc;
+   const char *s;
+
+   ccs = elm_theme_color_class_list(NULL);
+
+   hv = o = elm_hover_add(win);
+   elm_object_style_set(o, "popout");
+   elm_hover_parent_set(o, win);
+   elm_hover_target_set(o, button);
+   evas_object_data_set(win, "pal_class_hover", o);
+
+   btn = o = elm_button_add(win);
+   evas_object_size_hint_weight_set(o, 1.0, 0.0);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_smart_callback_add(o, "clicked", _cb_hover_down, win);
+   elm_object_text_set(o, "Change entries");
+   elm_object_part_content_set(hv, "middle", o);
+   evas_object_show(o);
+
+   o = elm_icon_add(win);
+   elm_icon_standard_set(o, "go-down");
+   elm_object_content_set(btn, o);
+   evas_object_show(o);
+
+
+
+   tb = o = elm_table_add(win);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
+   elm_table_padding_set(o, ELM_SCALE_SIZE(5), ELM_SCALE_SIZE(5));
+   elm_object_part_content_set(hv, "top", o);
+   evas_object_show(o);
+
+   o = evas_object_rectangle_add(evas_object_evas_get(win));
+   evas_object_size_hint_min_set(o, ELM_SCALE_SIZE(240), ELM_SCALE_SIZE(300));
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_table_pack(tb, o, 0, 0, 1, 3);
+
+   tlb = o = elm_toolbar_add(win);
+   elm_toolbar_homogeneous_set(o, EINA_TRUE);
+   it = elm_toolbar_item_append(tlb, NULL, "Basic", _cb_hover_basic, win);
+   elm_toolbar_item_append(tlb, NULL, "Extended", _cb_hover_extended, win);
+   elm_toolbar_item_append(tlb, NULL, "Advanced", _cb_hover_advanced, win);
+   elm_toolbar_item_selected_set(it, EINA_TRUE);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
+   elm_table_pack(tb, o, 0, 0, 1, 1);
+   evas_object_show(o);
+
+   itc = elm_genlist_item_class_new();
+   itc->item_style = "default";
+   itc->func.text_get = _cb_class_gl_class_label_get;
+
+   // Basic tab
+
+   o = elm_genlist_add(win);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_table_pack(tb, o, 0, 1, 1, 1);
+   evas_object_show(o);
+   evas_object_data_set(win, "pal_class_list_basic", o);
+
+   EINA_LIST_FOREACH(ccs, l, s)
+     {
+        if (s[0] == ':')
+          {
+             elm_genlist_item_sorted_insert(o, itc, s,
+                                            NULL, ELM_GENLIST_ITEM_NONE,
+                                            _cb_class_insert_cc_cmp,
+                                            _cb_class_gl_cc_sel, win);
+          }
+     }
+
+   // Extended tab
+
+   o = elm_genlist_add(win);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_table_pack(tb, o, 0, 1, 1, 1);
+   evas_object_data_set(win, "pal_class_list_extended", o);
+
+   EINA_LIST_FOREACH(ccs, l, s)
+     {
+        if (s[0] == '/')
+          {
+             elm_genlist_item_sorted_insert(o, itc, s,
+                                            NULL, ELM_GENLIST_ITEM_NONE,
+                                            _cb_class_insert_cc_cmp,
+                                            _cb_class_gl_cc_sel, win);
+          }
+     }
+
+   // Advanced tab
+
+   o = elm_label_add(win);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set
+   (o, "Adding a custom entry below requires<br>"
+       "knowing which color classes are used by<br>"
+       "theme EDJ files and is intended for<br>"
+       "advanced usage.<br>"
+       "<br>"
+       "You may also use this to remove any entry<br>"
+       "from the above palette."
+   );
+   elm_table_pack(tb, o, 0, 1, 1, 1);
+   evas_object_data_set(win, "pal_class_label", o);
+
+   // Entry + Add + Del
+
+   bxh = o = elm_box_add(win);
+   elm_box_padding_set(o, ELM_SCALE_SIZE(10), 0);
+   elm_box_horizontal_set(o, EINA_TRUE);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_table_pack(tb, o, 0, 2, 1, 1);
+   evas_object_show(o);
+   evas_object_data_set(win, "pal_class_add_del", o);
+
+   o = elm_entry_add(win);
+   elm_entry_single_line_set(o, EINA_TRUE);
+   elm_entry_scrollable_set(o, EINA_TRUE);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bxh, o);
+   evas_object_show(o);
+   evas_object_data_set(win, "pal_class_entry", o);
+
+   btn = o = elm_button_add(win);
+   evas_object_size_hint_weight_set(o, 0.0, 0.0);
+   evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_smart_callback_add(o, "clicked", _cb_add_click, win);
+   elm_box_pack_end(bxh, o);
+   evas_object_show(o);
+
+   o = elm_icon_add(win);
+   elm_icon_standard_set(o, "add");
+   elm_object_content_set(btn, o);
+   evas_object_show(o);
+
+   btn = o = elm_button_add(win);
+   evas_object_size_hint_weight_set(o, 0.0, 0.0);
+   evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_smart_callback_add(o, "clicked", _cb_del_click, win);
+   elm_box_pack_end(bxh, o);
+   evas_object_show(o);
+
+   o = elm_icon_add(win);
+   elm_icon_standard_set(o, "sub");
+   elm_object_content_set(btn, o);
+   evas_object_show(o);
+
+   evas_object_data_set(win, "class_cc_list", ccs);
+//   elm_theme_color_class_list_free(ccs);
+}
+
+static void
+_cb_modify_click(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win = data, *o;
+
+   _hover_list_enable_disable(win);
+   o = evas_object_data_get(win, "pal_class_hover");
+   evas_object_show(o);
+}
+
 Evas_Object *
 palcols_add(Evas_Object *win)
 {
-   Evas_Object *o, *bxl, *btn, *bxh2;
+   Evas_Object *o, *bxl, *btn, *bxh;
 
    bxl = o = elm_box_add(win);
    elm_box_padding_set(o, 0, ELM_SCALE_SIZE(10));
@@ -234,7 +517,7 @@ palcols_add(Evas_Object *win)
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bxl, o);
 
-   bxh2 = o = elm_box_add(win);
+   bxh = o = elm_box_add(win);
    elm_box_padding_set(o, ELM_SCALE_SIZE(10), 0);
    elm_box_horizontal_set(o, EINA_TRUE);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
@@ -248,12 +531,12 @@ palcols_add(Evas_Object *win)
    elm_entry_editable_set(o, EINA_FALSE);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(bxh2, o);
+   elm_box_pack_end(bxh, o);
    evas_object_show(o);
    evas_object_data_set(win, "pal_name", o);
 
    o = palimg_add(win);
-   elm_box_pack_end(bxh2, o);
+   elm_box_pack_end(bxh, o);
    evas_object_show(o);
    evas_object_data_set(win, "pal_image", o);
 
@@ -264,46 +547,21 @@ palcols_add(Evas_Object *win)
    evas_object_show(o);
    evas_object_data_set(win, "pal_class_list", o);
 
-   bxh2 = o = elm_box_add(win);
-   elm_box_padding_set(o, ELM_SCALE_SIZE(10), 0);
-   elm_box_horizontal_set(o, EINA_TRUE);
+   btn = o = elm_button_add(win);
+   evas_object_size_hint_weight_set(o, 1.0, 0.0);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_smart_callback_add(o, "clicked", _cb_modify_click, win);
+   elm_object_text_set(o, "Change entries");
    elm_box_pack_end(bxl, o);
    evas_object_show(o);
 
-   o = elm_entry_add(win);
-   elm_entry_single_line_set(o, EINA_TRUE);
-   elm_entry_scrollable_set(o, EINA_TRUE);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(bxh2, o);
-   evas_object_show(o);
-   evas_object_data_set(win, "pal_class_entry", o);
-
-   btn = o = elm_button_add(win);
-   evas_object_size_hint_weight_set(o, 0.0, 0.0);
-   evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_smart_callback_add(o, "clicked", _cb_add_click, win);
-   elm_box_pack_end(bxh2, o);
-   evas_object_show(o);
-
    o = elm_icon_add(win);
-   elm_icon_standard_set(o, "add");
+   elm_icon_standard_set(o, "go-up");
    elm_object_content_set(btn, o);
    evas_object_show(o);
 
-   btn = o = elm_button_add(win);
-   evas_object_size_hint_weight_set(o, 0.0, 0.0);
-   evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_smart_callback_add(o, "clicked", _cb_del_click, win);
-   elm_box_pack_end(bxh2, o);
-   evas_object_show(o);
-
-   o = elm_icon_add(win);
-   elm_icon_standard_set(o, "sub");
-   elm_object_content_set(btn, o);
-   evas_object_show(o);
+   _pal_hover_add(win, btn);
 
    return bxl;
 }
