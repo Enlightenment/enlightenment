@@ -4,7 +4,8 @@ executable('enlightenment_paledit',
              'colsel.c',
              'palcols.c',
              'palimg.c',
-             'palsel.c'
+             'palsel.c',
+             'undoredo.c'
            ],
            include_directories: include_directories('.'),
            dependencies       : [ dep_elementary, deps ],

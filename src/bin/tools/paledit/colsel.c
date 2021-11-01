@@ -12,6 +12,11 @@ _spinner_to_rect(Evas_Object *win)
      {
         Elm_Palette_Color *col = elm_object_item_data_get(it);
         Elm_Palette *pal = evas_object_data_get(win, "pal");
+
+        undoredo_op_col_change(win, col->name,
+                               col->r, col->g, col->b, col->a,
+                               r, g, b, a);
+        elm_config_palette_color_set(pal, col->name, r, g, b, a);
         col->r = r;
         col->g = g;
         col->b = b;

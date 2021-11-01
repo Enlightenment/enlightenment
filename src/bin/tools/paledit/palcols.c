@@ -121,6 +121,7 @@ _pal_color_add(Evas_Object *win)
                        if (!strcmp(col->name, plain)) goto exists;
                     }
                   elm_colorselector_color_get(evas_object_data_get(win, "pal_colorsel"), &r, &g, &b, &a);
+                  undoredo_op_col_add(win, plain, r, g, b, a);
                   elm_config_palette_color_set(pal, plain, r, g, b, a);
                   EINA_LIST_FOREACH(pal->colors, l, col)
                     {
@@ -157,6 +158,7 @@ _pal_color_del(Evas_Object *win)
      {
         Elm_Palette *pal = evas_object_data_get(win, "pal");
         Elm_Palette_Color *col = elm_object_item_data_get(it);
+        undoredo_op_col_del(win, col->name, col->r, col->g, col->b, col->a);
         if (col->name) elm_config_palette_color_unset(pal, col->name);
         it_sel = elm_genlist_item_next_get(it);
         if (!it_sel) it_sel = elm_genlist_item_prev_get(it);
@@ -491,6 +493,22 @@ _pal_hover_add(Evas_Object *win, Evas_Object *button)
 }
 
 static void
+_cb_undo_click(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win = data;
+
+   underedo_undo(win);
+}
+
+static void
+_cb_redo_click(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win = data;
+
+   underedo_redo(win);
+}
+
+static void
 _cb_modify_click(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win = data, *o;
@@ -550,6 +568,32 @@ palcols_add(Evas_Object *win)
    evas_object_show(o);
    evas_object_data_set(win, "pal_image", o);
 
+   btn = o = elm_button_add(win);
+   evas_object_size_hint_weight_set(o, 0.0, 0.0);
+   evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_smart_callback_add(o, "clicked", _cb_undo_click, win);
+   elm_box_pack_end(bxh, o);
+   evas_object_show(o);
+   elm_object_tooltip_text_set(o, "Undo");
+
+   o = elm_icon_add(win);
+   elm_icon_standard_set(o, "edit-undo");
+   elm_object_content_set(btn, o);
+   evas_object_show(o);
+
+   btn = o = elm_button_add(win);
+   evas_object_size_hint_weight_set(o, 0.0, 0.0);
+   evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_smart_callback_add(o, "clicked", _cb_redo_click, win);
+   elm_box_pack_end(bxh, o);
+   evas_object_show(o);
+   elm_object_tooltip_text_set(o, "Redo");
+
+   o = elm_icon_add(win);
+   elm_icon_standard_set(o, "edit-redo");
+   elm_object_content_set(btn, o);
+   evas_object_show(o);
+
    o = elm_genlist_add(win);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -559,7 +603,6 @@ palcols_add(Evas_Object *win)
    elm_object_tooltip_text_set(o, "Colors listed in this palette");
 
    btn = o = elm_button_add(win);
-   evas_object_size_hint_weight_set(o, 1.0, 0.0);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_smart_callback_add(o, "clicked", _cb_modify_click, win);

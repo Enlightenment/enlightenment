@@ -19,6 +19,7 @@ pal_load(Evas_Object *win)
    if (!palname) return;
    Elm_Palette *pal = elm_config_palette_load(palname);
    if (!pal) return;
+   undoredo_reset(win);
    evas_object_data_set(win, "pal", pal);
    palcols_fill(win);
    palimg_update(evas_object_data_get(win, "pal_image"), pal);
@@ -32,6 +33,19 @@ _cb_close_click(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_
    evas_object_del(data);
 }
 
+static void
+_cb_key_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Evas_Object *win = data;
+   Evas_Event_Key_Down *ev = event_info;
+
+   if (!strcmp(ev->key, "Escape"))
+     {
+        underedo_undo(win);
+     }
+}
+
+
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
@@ -41,6 +55,11 @@ elm_main(int argc, char **argv)
 
    win = elm_win_util_standard_add("e_paledit", "Palette Editor");
    elm_win_autodel_set(win, EINA_TRUE);
+
+   o = evas_object_rectangle_add(evas_object_evas_get(win));
+   if (!evas_object_key_grab(o, "Escape", 0, 0, EINA_FALSE)) printf("Can't grab...\n");
+   evas_object_event_callback_add(o, EVAS_CALLBACK_KEY_DOWN,
+                                  _cb_key_down, win);
 
    fr = o = elm_frame_add(win);
    elm_object_style_set(o, "pad_medium");
