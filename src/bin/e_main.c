@@ -1589,7 +1589,6 @@ _e_main_screens_init(void)
         _e_main_shutdown(101);
      }
    TS("E_Dnd Init Done");
-   _e_main_shutdown_push(e_dnd_shutdown);
 #endif
 
    return 1;
@@ -1601,6 +1600,7 @@ _e_main_screens_shutdown(void)
    e_win_shutdown();
    e_menu_shutdown();
    e_shelf_shutdown();
+   e_dnd_shutdown();
    e_comp_shutdown();
    e_client_volume_shutdown();
    e_screensaver_shutdown();
