@@ -149,6 +149,7 @@ _player_name_update(E_Music_Control_Instance *inst)
 {
    Edje_Message_String msg;
    msg.str = (char *)music_player_players[inst->ctxt->config->player_selected].name;
+   EINA_SAFETY_ON_NULL_RETURN(msg.str);
    edje_object_message_send(inst->content_popup, EDJE_MESSAGE_STRING, 0, &msg);
 }
 
