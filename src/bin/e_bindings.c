@@ -1667,7 +1667,6 @@ angle_accepted(double min, double max, double direction)
    return EINA_FALSE;
 }
 
-
 E_API E_Action*
 e_bindings_swipe_handle(E_Binding_Context ctxt, E_Object *obj, double direction, double length, unsigned int fingers)
 {
@@ -1683,16 +1682,16 @@ e_bindings_swipe_handle(E_Binding_Context ctxt, E_Object *obj, double direction,
             angle_accepted(binding->direction - binding->error, binding->direction + binding->error, direction))
           {
              act = e_action_find(binding->action);
-             if (!act) {
-               ERR("Action %s cannot be found!", binding->action);
-               return NULL;
-             }
+             if (!act)
+               {
+                  ERR("Action %s cannot be found!", binding->action);
+                  return NULL;
+               }
              act->func.go(obj, binding->params);
           }
      }
    return act;
 }
-
 
 E_API Eina_Inarray*
 e_bindings_swipe_find_candidates(E_Binding_Context ctxt, double direction, double length, unsigned int fingers)
