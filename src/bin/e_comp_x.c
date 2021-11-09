@@ -1052,10 +1052,13 @@ _e_comp_x_evas_comp_hidden_cb(void *data, Evas_Object *obj EINA_UNUSED, void *ev
      }
 
    if ((ec->internal) && (win == e_client_util_win_get(ec))) return;
-   if (ec->comp_hidden)
-     ecore_x_composite_window_events_disable(win);
-   else
-     ecore_x_composite_window_events_enable(win);
+   if (!ec->override)
+     {
+        if (ec->comp_hidden)
+          ecore_x_composite_window_events_disable(win);
+        else
+          ecore_x_composite_window_events_enable(win);
+     }
     ecore_x_window_ignore_set(win, ec->comp_hidden);
 }
 
