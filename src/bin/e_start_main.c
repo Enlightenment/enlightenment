@@ -349,16 +349,35 @@ _e_ptrace_continue(int child, int back, Eina_Bool really_know)
 #endif
 }
 
-static int
-_e_start_child(char **args, Eina_Bool really_know)
+static void
+_e_start_stdout_err_redir(const char *home)
 {
+   int logfd;
+   char *logf = NULL, *logf_old = NULL;
+
+   // rename old olg file
+   myasprintf(&logf, "%s/.e-log.log", home);
+   myasprintf(&logf_old, "%s/.e-log.log.old", home);
+   rename(logf, logf_old);
+   // open new log file and move stdout/err to it
+   logfd = open(logf, O_WRONLY | O_CREAT | O_TRUNC, 0600);
+   printf("Enlightenment: See logs in: %s\n", logf);
+   if (logfd < 0) return;
+   dup2(logfd, 1); // stdout to file
+   dup2(logfd, 2); // stderr to file
+}
+
+static int
+_e_start_child(const char *home, char **args, Eina_Bool really_know)
+{
+   // have e process die with parent enlightenment_start
 #ifdef HAVE_PRCTL
    prctl(PR_SET_PDEATHSIG, SIGTERM);
 #elif defined(HAVE_PROCCTL)
    int sig = SIGTERM;
    procctl(P_PID, 0, PROC_PDEATHSIG_CTL, &sig);
 #endif
-
+   _e_start_stdout_err_redir(home);
    _e_ptrace_traceme(really_know);
    execv(args[0], args);
    // We failed, 0 means normal exit from E with no restart or crash so
@@ -367,7 +386,7 @@ _e_start_child(char **args, Eina_Bool really_know)
 }
 
 static Eina_Bool
-_e_ptrace_kernel_check(void)
+_e_ptrace_kernel_check(const char *home)
 {
 #ifdef __linux__
    // Check if patch to prevent ptrace to another process is present
@@ -379,6 +398,23 @@ _e_ptrace_kernel_check(void)
         char c;
         ret = read(fd, &c, (sizeof(c)) == sizeof(c)) && (c != '0');
         close(fd);
+     }
+   if (ret)
+     {
+        char *buf = NULL;
+        FILE *f;
+
+        myasprintf(&buf, "%s/.e-crashdump.txt", home);
+        f = fopen(buf, "a");
+        if (f)
+          {
+             fprintf(f,
+                     "ERROR: /proc/sys/kernel/yama/ptrace_scope is 1 disallowing remote\n"
+                     "attachment to a process. This means a gdb backtrace cannot be logged.\n"
+                     "To fix this, as root please do:\n"
+                     "  echo 0 > /proc/sys/kernel/yama/ptrace_scope\n");
+             fclose(f);
+          }
      }
    return ret;
 #else
@@ -579,7 +615,7 @@ main(int argc, char **argv)
    myasprintf(&buf, "%s/enlightenment", eina_prefix_bin_get(pfx));
 
    args = alloca((argc + 1) * sizeof(char *));
-   printf("CMD: [%s]\n", buf);
+   printf("Enlightenment: Command: %s\n", buf);
    args[0] = buf;
    copy_args(&args[1], argv + 1, argc - 1);
    args[argc] = NULL;
@@ -604,7 +640,7 @@ main(int argc, char **argv)
           }
         else if (child == 0)
           { // we are in the child fork - so exec
-             ret = _e_start_child(args, really_know);
+             ret = _e_start_child(home, args, really_know);
              break;
           }
 
@@ -646,7 +682,7 @@ not_done:
                   usleep(200000);
 
                   /* And call gdb if available */
-                  if (home && !_e_ptrace_kernel_check())
+                  if (home && !_e_ptrace_kernel_check(home))
                     r = _e_call_gdb(child, home, &backtrace_str);
                   else
                     r = 0;
