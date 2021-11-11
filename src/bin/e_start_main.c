@@ -75,7 +75,7 @@
 
 static Eina_Bool stop_ptrace = EINA_FALSE;
 
-static void env_set(const char *var, const char *val);
+static void  env_set(const char *var, const char *val);
 E_API int    prefix_determine(char *argv0);
 
 static void
@@ -121,77 +121,6 @@ prefix_determine(char *argv0)
                          PACKAGE_DATA_DIR, LOCALE_DIR);
    if (!pfx) return 0;
    return 1;
-}
-
-static int
-find_valgrind(char *path, size_t path_len)
-{
-   const char *env = getenv("PATH");
-
-   while (env)
-     {
-        const char *p = strchr(env, ':');
-        ssize_t p_len;
-
-        if (p) p_len = p - env;
-        else p_len = strlen(env);
-        if (p_len <= 0) goto next;
-        else if (p_len + sizeof("/valgrind") >= path_len)
-          goto next;
-        memcpy(path, env, p_len);
-        memcpy(path + p_len, "/valgrind", sizeof("/valgrind"));
-        if (access(path, X_OK | R_OK) == 0) return 1;
-next:
-        if (p) env = p + 1;
-        else break;
-     }
-   path[0] = '\0';
-   return 0;
-}
-
-/* maximum number of arguments added above */
-#define VALGRIND_MAX_ARGS 11
-/* bitmask with all supported bits set */
-#define VALGRIND_MODE_ALL 15
-
-static int
-valgrind_append(char **dst, int valgrind_gdbserver, int valgrind_mode, int valgrind_tool, char *valgrind_path, const char *valgrind_log)
-{
-   int i = 0;
-
-   if (valgrind_tool)
-     {
-        dst[i++] = valgrind_path;
-        switch (valgrind_tool)
-          {
-           case 1: dst[i++] = "--tool=massif"; break;
-
-           case 2: dst[i++] = "--tool=callgrind"; break;
-          }
-        return i;
-     }
-   if (valgrind_gdbserver) dst[i++] = "--db-attach=yes";
-   if (!valgrind_mode) return 0;
-   dst[i++] = valgrind_path;
-   dst[i++] = "--num-callers=40";
-   dst[i++] = "--track-origins=yes";
-   dst[i++] = "--malloc-fill=13"; /* invalid pointer, make it crash */
-   if (valgrind_log)
-     {
-        static char logparam[PATH_MAX + sizeof("--log-file=")];
-
-        snprintf(logparam, sizeof(logparam), "--log-file=%s", valgrind_log);
-        dst[i++] = logparam;
-     }
-   if (valgrind_mode & 2) dst[i++] = "--trace-children=yes";
-   if (valgrind_mode & 4)
-     {
-        dst[i++] = "--leak-check=full";
-        dst[i++] = "--leak-resolution=high";
-        dst[i++] = "--track-fds=yes";
-     }
-   if (valgrind_mode & 8) dst[i++] = "--show-reachable=yes";
-   return i;
 }
 
 static void
@@ -321,22 +250,7 @@ _sighup(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
 static void
 _print_usage(const char *hstr)
 {
-   printf("Options:\n"
-          "\t-valgrind[=MODE]\n"
-          "\t\tRun enlightenment from inside valgrind, mode is OR of:\n"
-          "\t\t   1 = plain valgrind to catch crashes (default)\n"
-          "\t\t   2 = trace children (thumbnailer, efm slaves, ...)\n"
-          "\t\t   4 = check leak\n"
-          "\t\t   8 = show reachable after processes finish.\n"
-          "\t\t all = all of above\n"
-          "\t-massif\n"
-          "\t\tRun enlightenment from inside massif valgrind tool.\n"
-          "\t-callgrind\n"
-          "\t\tRun enlightenment from inside callgrind valgrind tool.\n"
-          "\t-valgrind-log-file=<FILENAME>\n"
-          "\t\tSave valgrind log to file, see valgrind's --log-file for details.\n"
-          "\n"
-          "Please run:\n"
+   printf("Please run:\n"
           "\tenlightenment %s\n"
           "for more options.\n",
           hstr);
@@ -443,7 +357,8 @@ _e_start_child(char **args, Eina_Bool really_know)
 {
    _e_ptrace_traceme(really_know);
    execv(args[0], args);
-   /* We failed, 0 mean normal exit from E with no restart or crash so let's exit */
+   // We failed, 0 means normal exit from E with no restart or crash so
+   // let's exit
    return 0;
 }
 
@@ -451,16 +366,17 @@ static Eina_Bool
 _e_ptrace_kernel_check()
 {
 #ifdef __linux__
-   /* Check if patch to prevent ptrace to another process is present in the kernel. */
+   // Check if patch to prevent ptrace to another process is present
+   // in the kernel
    Eina_Bool ret = EINA_FALSE;
    int fd = open("/proc/sys/kernel/yama/ptrace_scope", O_RDONLY);
    if (fd != -1)
-    {
-       char c;
-       ret = (read(fd, &c, sizeof (c)) == sizeof (c) && c != '0');
-       close(fd);
-    }
-    return ret;
+     {
+        char c;
+        ret = (read(fd, &c, sizeof (c)) == sizeof (c) && c != '0');
+        close(fd);
+     }
+   return ret;
 #else
    return EINA_FALSE;
 #endif
@@ -566,16 +482,11 @@ done:
 int
 main(int argc, char **argv)
 {
-   int i, valgrind_mode = 0;
-   int valgrind_tool = 0;
-   int valgrind_gdbserver = 0;
+   int i, ret = -1;
    char *buf = NULL, *buf2 = NULL, *buf3 = NULL, **args, *home;
-   char *valgrind_path = NULL;
-   const char *valgrind_log = NULL;
    const char *bindir;
    Eina_Bool really_know = EINA_FALSE;
    struct sigaction action;
-   int ret = -1;
    pid_t child = -1;
    Eina_Bool restart = EINA_TRUE;
 
@@ -627,42 +538,10 @@ main(int argc, char **argv)
           {
              _print_usage(argv[i]);
           }
-        if (!strcmp(argv[i], "-valgrind-gdb"))
-          valgrind_gdbserver = 1;
-        else if (!strcmp(argv[i], "-massif"))
-          valgrind_tool = 1;
-        else if (!strcmp(argv[i], "-callgrind"))
-          valgrind_tool = 2;
         else if (!strcmp(argv[i], "-display"))
           {
              i++;
              env_set("DISPLAY", argv[i]);
-          }
-        else if (!strncmp(argv[i], "-valgrind", sizeof("-valgrind") - 1))
-          {
-             const char *val = argv[i] + sizeof("-valgrind") - 1;
-             switch (*val)
-               {
-                case '\0':
-                  valgrind_mode = 1;
-                  break;
-                case '=':
-                  val++;
-                  if (!strcmp(val, "all")) valgrind_mode = VALGRIND_MODE_ALL;
-                  else valgrind_mode = atoi(val);
-                  break;
-                case '-':
-                  val++;
-                  if (!strncmp(val, "log-file=", sizeof("log-file=") - 1))
-                    {
-                       valgrind_log = val + sizeof("log-file=") - 1;
-                       if (*valgrind_log == '\0') valgrind_log = NULL;
-                    }
-                  break;
-                default:
-                  printf("Unknown valgrind option: %s\n", argv[i]);
-                  break;
-               }
           }
         else if (!strcmp(argv[i], "-i-really-know-what-i-am-doing-and-accept"
                                   "-full-responsibility-for-it"))
@@ -686,32 +565,13 @@ main(int argc, char **argv)
               eina_prefix_lib_get(pfx));
    putenv(buf3);
 
-   if (valgrind_mode || valgrind_tool)
-     {
-        valgrind_path = alloca(PATH_MAX);
-        if (!find_valgrind(valgrind_path, PATH_MAX))
-          {
-             printf("E - valgrind required but no binary found! Ignoring request.\n");
-             valgrind_mode = 0;
-          }
-     }
-
-   printf("E - PID=%i, valgrind=%d", getpid(), valgrind_mode);
-   if (valgrind_mode && valgrind_path)
-     {
-        printf(" valgrind-command='%s'", valgrind_path);
-        if (valgrind_log) printf(" valgrind-log-file='%s'", valgrind_log);
-     }
-   putchar('\n');
-
    home = getenv("HOME");
    if (home)
      {
         const char *tmps = getenv("XDG_DATA_HOME");
 
-        if (tmps) myasprintf(&buf, "%s/Applications/.bin", tmps);
-        else      myasprintf(&buf, "%s/Applications/.bin", home);
-
+        if (tmps)        myasprintf(&buf, "%s/Applications/.bin", tmps);
+        else             myasprintf(&buf, "%s/Applications/.bin", home);
         if (really_know) _env_path_append("PATH", buf);
         else             _env_path_prepend("PATH", buf);
      }
@@ -719,22 +579,17 @@ main(int argc, char **argv)
    /* run e directly now */
    myasprintf(&buf, "%s/enlightenment", eina_prefix_bin_get(pfx));
 
-   args = alloca((argc + 2 + VALGRIND_MAX_ARGS) * sizeof(char *));
-   i = valgrind_append(args, valgrind_gdbserver, valgrind_mode, valgrind_tool,
-                       valgrind_path, valgrind_log);
-   printf("== [%s]\n", buf);
-   args[i++] = buf;
-   copy_args(args + i, argv + 1, argc - 1);
-   args[i + argc - 1] = NULL;
-
-   if (valgrind_tool || valgrind_mode)
-     really_know = EINA_TRUE;
+   args = alloca((argc + 1) * sizeof(char *));
+   printf("CMD: [%s]\n", buf);
+   args[0] = buf;
+   copy_args(&args[1], argv + 1, argc - 1);
+   args[argc] = NULL;
 
    /* Now looping until */
    while (restart)
      {
         pid_t result;
-        int status;
+        int status, back;
         Eina_Bool done = EINA_FALSE;
         Eina_Bool remember_sigill = EINA_FALSE;
         Eina_Bool remember_sigusr1 = EINA_FALSE;
@@ -746,7 +601,7 @@ main(int argc, char **argv)
         if (child < 0)
           {
              ret = -1;
-            break;
+             break;
           }
         else if (child == 0)
           { // we are in the child fork - so exec
@@ -778,8 +633,8 @@ not_done:
                   int r = _e_ptrace_getsiginfo(child, &sig,
                                                really_know);
 
-                  int back = (r == 0 && sig.si_signo != SIGTRAP)
-                              ? sig.si_signo : 0;
+                  back = (r == 0 && sig.si_signo != SIGTRAP)
+                          ? sig.si_signo : 0;
 
                   _sig_remember(sig, &remember_sigusr1, &remember_sigill);
 
@@ -789,6 +644,7 @@ not_done:
                        goto not_done;
                     }
                   _e_ptrace_detach(child, back, really_know);
+                  usleep(200000);
 
                   /* And call gdb if available */
                   if (home && !_e_ptrace_kernel_check())
