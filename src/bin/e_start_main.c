@@ -9,6 +9,11 @@
 #include <sys/wait.h>
 #include <sys/stat.h>
 #include <sys/utsname.h>
+#ifdef HAVE_PRCTL
+# include <sys/prctl.h>
+#elif defined(HAVE_PROCCTL)
+# include <sys/procctl.h>
+#endif
 
 /* the ptrace interface used here is really linux specific -
  * FreeBSD, NetBSD and Mac OS X use slightly different ptrace API that should
@@ -126,8 +131,7 @@ prefix_determine(char *argv0)
 static void
 copy_args(char **dst, char **src, size_t count)
 {
-   for (; count > 0; count--, dst++, src++)
-     *dst = *src;
+   for (; count > 0; count--, dst++, src++) *dst = *src;
 }
 
 static void
@@ -212,7 +216,7 @@ _sigusr1(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
 {
    struct sigaction action;
 
-   /* release ptrace */
+   // release ptrace
    stop_ptrace = EINA_TRUE;
 
    action.sa_sigaction = _sigusr1;
@@ -252,7 +256,7 @@ _print_usage(const char *hstr)
 {
    printf("Please run:\n"
           "\tenlightenment %s\n"
-          "for more options.\n",
+          "\tfor more options.\n",
           hstr);
    exit(0);
 }
@@ -260,10 +264,10 @@ _print_usage(const char *hstr)
 static Eina_Bool
 _sig_continue(siginfo_t sig)
 {
-   return (sig.si_signo != SIGSEGV &&
-           sig.si_signo != SIGFPE &&
-//         sig.si_signo != SIGBUS &&
-           sig.si_signo != SIGABRT);
+   return ((sig.si_signo != SIGSEGV) &&
+           (sig.si_signo != SIGFPE) &&
+//         (sig.si_signo != SIGBUS) &&
+           (sig.si_signo != SIGABRT));
 }
 
 static void
@@ -273,8 +277,7 @@ _sig_remember(siginfo_t sig, Eina_Bool *susr1, Eina_Bool *sill)
      {
         if (*sill) *susr1 = EINA_TRUE;
      }
-   else
-     *sill = (sig.si_signo == SIGILL);
+   else *sill = (sig.si_signo == SIGILL);
 }
 
 static int
@@ -283,14 +286,12 @@ _e_ptrace_attach(int child, int *status, Eina_Bool really_know)
    int result = 0;
 
 #ifdef HAVE_SYS_PTRACE_H
-   if (really_know)
-     return waitpid(child, status, 0);
+   if (really_know) return waitpid(child, status, 0);
 
    ptrace(PT_ATTACH, child, NULL, 0);
    result = waitpid(child, status, 0);
 
-   if (!stop_ptrace && WIFSTOPPED(*status))
-     ptrace(PT_CONTINUE, child, NULL, 0);
+   if (!stop_ptrace && WIFSTOPPED(*status)) ptrace(PT_CONTINUE, child, NULL, 0);
 #else
    (void)child;
    (void)really_know;
@@ -304,8 +305,7 @@ static void
 _e_ptrace_detach(int child, int back, Eina_Bool really_know)
 {
 #ifdef HAVE_SYS_PTRACE_H
-   if (!really_know)
-     ptrace(PT_DETACH, child, NULL, back);
+   if (!really_know) ptrace(PT_DETACH, child, NULL, back);
 #else
    (void)child;
    (void)back;
@@ -317,8 +317,7 @@ static void
 _e_ptrace_traceme(Eina_Bool really_know)
 {
 #ifdef HAVE_SYS_PTRACE_H
-   if (!really_know)
-     ptrace(PT_TRACE_ME, 0, NULL, 0);
+   if (!really_know) ptrace(PT_TRACE_ME, 0, NULL, 0);
 #else
    (void)really_know;
 #endif
@@ -329,8 +328,7 @@ _e_ptrace_getsiginfo(int child, siginfo_t *sig, Eina_Bool really_know)
 {
    memset(sig, 0, sizeof(siginfo_t));
 #ifdef HAVE_SYS_PTRACE_H
-   if (!really_know)
-     return ptrace(PT_GETSIGINFO, child, NULL, sig);
+   if (!really_know) return ptrace(PT_GETSIGINFO, child, NULL, sig);
 #else
    (void)child;
    (void)sig;
@@ -343,8 +341,7 @@ static void
 _e_ptrace_continue(int child, int back, Eina_Bool really_know)
 {
 #ifdef HAVE_SYS_PTRACE_H
-   if (!really_know)
-     ptrace(PT_CONTINUE, child, NULL, back);
+   if (!really_know) ptrace(PT_CONTINUE, child, NULL, back);
 #else
    (void)child;
    (void)back;
@@ -355,6 +352,13 @@ _e_ptrace_continue(int child, int back, Eina_Bool really_know)
 static int
 _e_start_child(char **args, Eina_Bool really_know)
 {
+#ifdef HAVE_PRCTL
+   prctl(PR_SET_PDEATHSIG, SIGTERM);
+#elif defined(HAVE_PROCCTL)
+   int sig = SIGTERM;
+   procctl(P_PID, 0, PROC_PDEATHSIG_CTL, &sig);
+#endif
+
    _e_ptrace_traceme(really_know);
    execv(args[0], args);
    // We failed, 0 means normal exit from E with no restart or crash so
@@ -363,7 +367,7 @@ _e_start_child(char **args, Eina_Bool really_know)
 }
 
 static Eina_Bool
-_e_ptrace_kernel_check()
+_e_ptrace_kernel_check(void)
 {
 #ifdef __linux__
    // Check if patch to prevent ptrace to another process is present
@@ -373,7 +377,7 @@ _e_ptrace_kernel_check()
    if (fd != -1)
      {
         char c;
-        ret = (read(fd, &c, sizeof (c)) == sizeof (c) && c != '0');
+        ret = read(fd, &c, (sizeof(c)) == sizeof(c)) && (c != '0');
         close(fd);
      }
    return ret;
@@ -400,13 +404,8 @@ _e_call_gdb(int child, const char *home, char **backtrace_str)
               home);
    r = system(buf);
 
-   fprintf(stderr, "called gdb with '%s' = %i\n",
-           buf, WEXITSTATUS(r));
-
-   myasprintf(&buf,
-              "%s/.e-crashdump.txt",
-              home);
-
+   fprintf(stderr, "called gdb with '%s' = %i\n", buf, WEXITSTATUS(r));
+   myasprintf(&buf, "%s/.e-crashdump.txt", home);
    *backtrace_str = strdup(buf);
    return WEXITSTATUS(r);
 }
@@ -633,12 +632,12 @@ not_done:
                   int r = _e_ptrace_getsiginfo(child, &sig,
                                                really_know);
 
-                  back = (r == 0 && sig.si_signo != SIGTRAP)
+                  back = ((r == 0) && (sig.si_signo != SIGTRAP))
                           ? sig.si_signo : 0;
 
                   _sig_remember(sig, &remember_sigusr1, &remember_sigill);
 
-                  if (r != 0 || _sig_continue(sig))
+                  if ((r != 0) || (_sig_continue(sig)))
                     {
                        _e_ptrace_continue(child, back, really_know);
                        goto not_done;
