@@ -42,7 +42,6 @@
 #define myasprintf(__b, __fmt, args...) do { \
    char __bb[sizeof(__fmt) + 1]; \
    int __cnt = snprintf(__bb, sizeof(__bb), __fmt, ##args); \
-   printf("cnt=%i\n", __cnt); \
    if (__cnt >= 0) { \
       *(__b) = alloca(__cnt + 1); \
       snprintf(*(__b), __cnt + 1, __fmt, ##args); \
@@ -564,27 +563,6 @@ done:
    return ret;
 }
 
-/*
-static void
-rmrf(const char *path)
-{
-   Eina_Iterator *iter = eina_file_direct_ls(path);
-
-   if (iter)
-     {
-        Eina_File_Direct_Info *info;
-
-        EINA_ITERATOR_FOREACH(iter, info)
-          {
-             if (info->type == EINA_FILE_DIR) rmrf(info->path);
-             else eina_file_unlink(info->path);
-          }
-        eina_iterator_free(iter);
-     }
-   eina_file_unlink(path);
-}
-*/
-
 int
 main(int argc, char **argv)
 {
@@ -597,8 +575,6 @@ main(int argc, char **argv)
    const char *bindir;
    Eina_Bool really_know = EINA_FALSE;
    struct sigaction action;
-//   struct stat st;
-//   const char *s;
    int ret = -1;
    pid_t child = -1;
    Eina_Bool restart = EINA_TRUE;
@@ -623,26 +599,6 @@ main(int argc, char **argv)
    sigemptyset(&action.sa_mask);
    sigaction(SIGHUP, &action, NULL);
 
-/* leave XDG_RUNTIME_DIR alone - if distro/os doesn't use it - too bad
-   s = getenv("XDG_RUNTIME_DIR");
-   if ((!s) || (stat(s, &st) != 0) || (!S_ISDIR(st.st_mode)))
-     {
-        const char *dir;
-
-        myasprintf(&buf, "/tmp/xdg-XXXXXX");
-        dir = mkdtemp(buf);
-        if (!dir) dir = "/tmp";
-        else
-          {
-             FILE *f;
-
-             myasprintf(&buf2, "%s/.e-deleteme", dir);
-             f = fopen(buf2, "w");
-             if (f) fclose(f);
-          }
-        env_set("XDG_RUNTIME_DIR", dir);
-     }
- */
    eina_init();
 
    /* reexcute myself with dbus-launch if dbus-launch is not running yet */
@@ -790,7 +746,7 @@ main(int argc, char **argv)
         if (child < 0)
           {
              ret = -1;
-             break;
+            break;
           }
         else if (child == 0)
           { // we are in the child fork - so exec
@@ -907,15 +863,6 @@ not_done:
           }
         if (!done) goto not_done;
      }
-   // clean up xdg runtime_dir if we created it
-/* leave XDG_RUNTIME_DIR alone - if distro/os doesn't use it - too bad
-   s = getenv("XDG_RUNTIME_DIR");
-   if ((s) && (stat(s, &st) == 0) && (S_ISDIR(st.st_mode)))
-     {
-        myasprintf(&buf, "%s/.e-deleteme", s);
-        if (stat(buf, &st) == 0) rmrf(s);
-     }
- */
    return ret;
 }
 
