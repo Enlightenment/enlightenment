@@ -230,17 +230,18 @@ _e_connman_widget_size_set(E_Connman_Instance *inst, Evas_Object *widget, Evas_C
    zone = e_gadcon_client_zone_get(inst->gcc);
    e_zone_useful_geometry_get(zone, NULL, NULL, &zw, &zh);
 
-   w = zw * percent_w / 100.0;
-   h = zh * percent_h / 100.0;
+   w = (zw * percent_w) / 100.0;
+   h = (zh * percent_h) / 100.0;
 
-   if (w < min_w)
-     w = min_w;
-   else if (w > max_w)
-     w = max_w;
-   if (h < min_h)
-     h = min_h;
-   else if (h > max_h)
-     h = max_h;
+   min_w *= elm_config_scale_get();
+   max_w *= elm_config_scale_get();
+   min_h *= elm_config_scale_get();
+   max_h *= elm_config_scale_get();
+
+   if      (w < min_w) w = min_w;
+   else if (w > max_w) w = max_w;
+   if      (h < min_h) h = min_h;
+   else if (h > max_h) h = max_h;
 
    e_widget_size_min_set(widget, w, h);
 }
@@ -297,7 +298,7 @@ _econnman_popup_new(E_Connman_Instance *inst)
      }
 
    /* 30,40 % -- min vga, max uvga */
-   _e_connman_widget_size_set(inst, list, 10, 30, 192, 192, 384, 384);
+   _e_connman_widget_size_set(inst, list, 10, 30, 192, 240, 360, 400);
    e_gadcon_popup_content_set(inst->popup, list);
    e_comp_object_util_autoclose(inst->popup->comp_object, _econnman_popup_del, NULL, inst);
    e_gadcon_popup_show(inst->popup);
