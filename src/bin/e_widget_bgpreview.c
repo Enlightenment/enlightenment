@@ -254,12 +254,7 @@ _e_wid_reconfigure(E_Widget_Data *wd)
    EINA_LIST_FOREACH_SAFE(wd->desks, l, ll, dw)
      {
         if (!(dd = evas_object_data_get(dw, "desk_data"))) continue;
-        if ((dd->x < wd->dx) && (dd->y < wd->dy))
-          {
-             evas_object_size_hint_min_set(dw, mw, mh);
-             evas_object_size_hint_max_set(dw, mw, mh);
-          }
-        else
+        if (!((dd->x < wd->dx) && (dd->y < wd->dy)))
           {
              evas_object_del(dd->live);
              evas_object_del(dw);
@@ -292,9 +287,8 @@ _e_wid_reconfigure(E_Widget_Data *wd)
                                             _e_wid_desk_cb_config, dd);
              evas_object_show(dd->icon);
              evas_object_data_set(dd->icon, "desk_data", dd);
-             evas_object_size_hint_min_set(dp, mw, mh);
-             evas_object_size_hint_max_set(dp, mw, mh);
-             evas_object_size_hint_aspect_set(dp, EVAS_ASPECT_CONTROL_BOTH, zone->w, zone->h);
+             evas_object_size_hint_align_set(dp, -1, -1);
+             evas_object_size_hint_weight_set(dp, 1, 1);
              evas_object_table_pack(wd->table, dp, x, y, 1, 1);
              wd->desks = eina_list_append(wd->desks, dp);
           }
