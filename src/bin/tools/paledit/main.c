@@ -53,7 +53,7 @@ elm_main(int argc, char **argv)
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
-   win = elm_win_util_standard_add("e_paledit", "Palette Editor");
+   win = elm_win_util_standard_add("main", "Palette Editor");
    elm_win_autodel_set(win, EINA_TRUE);
 
    o = evas_object_rectangle_add(evas_object_evas_get(win));
