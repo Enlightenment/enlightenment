@@ -1,0 +1,855 @@
+images {
+   image: "hands.png" COMP;
+   image: "left_hand.png" COMP;
+   image: "right_hand.png" COMP;
+image: "fingerprint_icon-160.png" COMP;
+   set { name: "fingerprint_icon";
+      image { image: "fingerprint_icon-160.png" COMP; size: 81 81 16000 16000; }
+      image { image: "fingerprint_icon-080.png" COMP; size: 41 41    80    80; }
+      image { image: "fingerprint_icon-040.png" COMP; size:  0  0    40    40; }
+   }
+#define IM140(_name) \
+   set { name: _name; \
+      image { image: _name"-560.png" COMP; size: 281 281 16000 16000; } \
+      image { image: _name"-280.png" COMP; size: 141 141    280  280; } \
+      image { image: _name"-140.png" COMP; size:   0   0    140  140; } \
+   }
+   IM140("1_0")
+   IM140("1_1")
+   IM140("1_1_failed")
+   IM140("1_2")
+   IM140("1_2_failed")
+   IM140("1_3")
+   IM140("1_3_failed")
+   IM140("1_4")
+   IM140("1_4_failed")
+   IM140("1_5")
+   IM140("1_5_failed")
+}
+
+collections {
+   base_scale: 1.0;
+   group { "hands";
+      parts {
+         // LEFT HAND
+         image { "hands";
+            scale: 1;
+            desc { "default";
+               min: 650 400;
+               max: 650 400;
+               image.normal: "hands.png";
+               color_class: ":fg";
+            }
+         }
+         image { "left-little-finger";
+            scale: 1;
+            desc { "default";
+               min: 40 40;
+               max: 40 40;
+               image.normal: "fingerprint_icon";
+               rel.to: "hands";
+               rel1.relative: (35/609) (125/375);
+               rel2.relative: (35/609) (125/375);
+               color_class: ":bg-light";
+            }
+            desc { "enrolled";
+               inherit: "default";
+               color_class: ":success";
+            }
+         }
+         swallow {"swallow_left-little-finger";
+            desc { "default";
+               rel.to: "left-little-finger";
+            }
+         }
+         image { "left-ring-finger";
+            scale: 1;
+            desc { "default";
+               min: 40 40;
+               max: 40 40;
+               image.normal: "fingerprint_icon";
+               rel.to: "hands";
+               rel1.relative: (92/609) (82/375);
+               rel2.relative: (92/609) (82/375);
+               color_class: ":bg-light";
+            }
+            desc { "enrolled";
+               inherit: "default";
+               color_class: ":success";
+            }
+         }
+         swallow {"swallow_left-ring-finger";
+            desc { "default";
+               rel.to: "left-ring-finger";
+            }
+         }
+
+         image { "left-middle-finger";
+            scale: 1;
+            desc { "default";
+               min: 40 40;
+               max: 40 40;
+               image.normal: "fingerprint_icon";
+               rel.to: "hands";
+               rel1.relative: (150/609) (51/375);
+               rel2.relative: (150/609) (51/375);
+               color_class: ":bg-light";
+            }
+            desc { "enrolled";
+               inherit: "default";
+               color_class: ":success";
+            }
+         }
+         swallow {"swallow_left-middle-finger";
+            desc { "default";
+               rel.to: "left-middle-finger";
+            }
+         }
+
+         image { "left-index-finger";
+            scale: 1;
+            desc { "default";
+               min: 40 40;
+               max: 40 40;
+               image.normal: "fingerprint_icon";
+               rel.to: "hands";
+               rel1.relative: (208/609) (75/375);
+               rel2.relative: (208/609) (75/375);
+               color_class: ":bg-light";
+            }
+            desc { "enrolled";
+               inherit: "default";
+               color_class: ":success";
+            }
+         }
+         swallow {"swallow_left-index-finger";
+            desc { "default";
+               rel.to: "left-index-finger";
+            }
+         }
+
+         image { "left-thumb";
+            scale: 1;
+            desc { "default";
+               min: 40 40;
+               max: 40 40;
+               image.normal: "fingerprint_icon";
+               rel.to: "hands";
+               rel1.relative: (265/609) (209/375);
+               rel2.relative: (265/609) (209/375);
+               color_class: ":bg-light";
+            }
+            desc { "enrolled";
+               inherit: "default";
+               color_class: ":success";
+            }
+         }
+         swallow {"swallow_left-thumb";
+            desc { "default";
+               rel.to: "left-thumb";
+            }
+         }
+
+         // RIGHT HAND
+         image { "right-little-finger";
+            scale: 1;
+            desc { "default";
+               min: 40 40;
+               max: 40 40;
+               image.normal: "fingerprint_icon";
+               rel.to: "hands";
+               rel1.relative: (341/609) (209/375);
+               rel2.relative: (341/609) (209/375);
+               color_class: ":bg-light";
+            }
+            desc { "enrolled";
+               inherit: "default";
+               color_class: ":success";
+            }
+         }
+         swallow {"swallow_right-little-finger";
+            desc { "default";
+               rel.to: "right-little-finger";
+            }
+         }
+         image { "right-ring-finger";
+            scale: 1;
+            desc { "default";
+               min: 40 40;
+               max: 40 40;
+               image.normal: "fingerprint_icon";
+               rel.to: "hands";
+               rel1.relative: (399/609) (75/375);
+               rel2.relative: (399/609) (75/375);
+               color_class: ":bg-light";
+            }
+            desc { "enrolled";
+               inherit: "default";
+               color_class: ":success";
+            }
+         }
+         swallow {"swallow_right-ring-finger";
+            desc { "default";
+               rel.to: "right-ring-finger";
+            }
+         }
+
+         image { "right-middle-finger";
+            scale: 1;
+            desc { "default";
+               min: 40 40;
+               max: 40 40;
+               image.normal: "fingerprint_icon";
+               rel.to: "hands";
+               rel1.relative: (458/609) (51/375);
+               rel2.relative: (458/609) (51/375);
+               color_class: ":bg-light";
+            }
+            desc { "enrolled";
+               inherit: "default";
+               color_class: ":success";
+            }
+         }
+         swallow {"swallow_right-middle-finger";
+            desc { "default";
+               rel.to: "right-middle-finger";
+            }
+         }
+
+         image { "right-index-finger";
+            scale: 1;
+            desc { "default";
+               min: 40 40;
+               max: 40 40;
+               image.normal: "fingerprint_icon";
+               rel.to: "hands";
+               rel1.relative: (515/609) (82/375);
+               rel2.relative: (515/609) (82/375);
+               color_class: ":bg-light";
+            }
+            desc { "enrolled";
+               inherit: "default";
+               color_class: ":success";
+            }
+         }
+         swallow {"swallow_right-index-finger";
+            desc { "default";
+               rel.to: "right-index-finger";
+            }
+         }
+
+         image { "right-thumb";
+            scale: 1;
+            desc { "default";
+               min: 40 40;
+               max: 40 40;
+               image.normal: "fingerprint_icon";
+               rel.to: "hands";
+               rel1.relative: (572/609) (125/375);
+               rel2.relative: (572/609) (125/375);
+               color_class: ":bg-light";
+            }
+            desc { "enrolled";
+               inherit: "default";
+               color_class: ":success";
+            }
+         }
+         swallow {"swallow_right-thumb";
+            desc { "default";
+               rel.to: "right-thumb";
+            }
+         }
+      }
+      programs {
+         program { signal: "enrolled_finger"; source: "*";
+            script {
+               set_state(get_part_id(src), "enrolled", 0.0);
+            }
+         }
+         program { signal: "reset_finger"; source: "reset_finger";
+            action: STATE_SET "default" 0.0;
+            transition: LINEAR 0.2;
+            target: "left-little-finger";
+            target: "left-ring-finger";
+            target: "left-middle-finger";
+            target: "left-index-finger";
+            target: "left-thumb";
+            target: "right-little-finger";
+            target: "right-ring-finger";
+            target: "right-middle-finger";
+            target: "right-index-finger";
+            target: "right-thumb";
+         }
+      }
+   }
+
+   group { "right_hand";
+      parts {
+         image { "right_hand";
+            scale: 1;
+            desc { "default";
+               min: 650 400;
+               max: 650 400;
+               image.normal: "right_hand.png";
+               color_class: ":fg";
+            }
+         }
+         image { "right-little-finger";
+            scale: 1;
+            desc { "default";
+               min: 40 40;
+               max: 40 40;
+               image.normal: "fingerprint_icon";
+               rel.to: "right_hand";
+               rel1.relative: (422/609) (125/375);
+               rel2.relative: (422/609) (125/375);
+               color_class: ":bg-light";
+            }
+            desc { "enrolled";
+               inherit: "default";
+               color_class: ":success";
+            }
+         }
+         swallow {"swallow_right-little-finger";
+            desc { "default";
+               rel.to: "right-little-finger";
+            }
+         }
+
+         image { "right-ring-finger";
+            scale: 1;
+            desc { "default";
+               min: 40 40;
+               max: 40 40;
+               image.normal: "fingerprint_icon";
+               rel.to: "right_hand";
+               rel1.relative: (365/609) (82/375);
+               rel2.relative: (365/609) (82/375);
+               color_class: ":bg-light";
+            }
+            desc { "enrolled";
+               inherit: "default";
+               color_class: ":success";
+            }
+         }
+         swallow {"swallow_right-ring-finger";
+            desc { "default";
+               rel.to: "right-ring-finger";
+            }
+         }
+
+         image { "right-middle-finger";
+            scale: 1;
+            desc { "default";
+               min: 40 40;
+               max: 40 40;
+               image.normal: "fingerprint_icon";
+               rel.to: "right_hand";
+               rel1.relative: (307/609) (51/375);
+               rel2.relative: (307/609) (51/375);
+               color_class: ":bg-light";
+            }
+            desc { "enrolled";
+               inherit: "default";
+               color_class: ":success";
+            }
+         }
+         swallow {"swallow_right-middle-finger";
+            desc { "default";
+               rel.to: "right-middle-finger";
+            }
+         }
+
+         image { "right-index-finger";
+            scale: 1;
+            desc { "default";
+               min: 40 40;
+               max: 40 40;
+               image.normal: "fingerprint_icon";
+               rel.to: "right_hand";
+               rel1.relative: (250/609) (75/375);
+               rel2.relative: (250/609) (75/375);
+               color_class: ":bg-light";
+            }
+            desc { "enrolled";
+               inherit: "default";
+               color_class: ":success";
+            }
+         }
+         swallow {"swallow_right-index-finger";
+            desc { "default";
+               rel.to: "right-index-finger";
+            }
+         }
+
+         image { "right-thumb";
+            scale: 1;
+            desc { "default";
+               min: 40 40;
+               max: 40 40;
+               image.normal: "fingerprint_icon";
+               rel.to: "right_hand";
+               rel1.relative: (192/609) (209/375);
+               rel2.relative: (192/609) (209/375);
+               color_class: ":bg-light";
+            }
+            desc { "enrolled";
+               inherit: "default";
+               color_class: ":success";
+            }
+         }
+         swallow {"swallow_right-thumb";
+            desc { "default";
+               rel.to: "right-thumb";
+            }
+         }
+
+         // LIST SWALLOW
+         swallow {"swallow_hand_switch";
+            scale: 1;
+            desc { "default";
+               min: 40 40;
+               max: 40 40;
+               rel1.to_y: "right_hand";
+               rel1.relative: 0.6 0.0;
+            }
+         }
+      }
+      programs {
+         program { signal: "enrolled_finger"; source: "*";
+            script {
+               set_state(get_part_id(src), "enrolled", 0.0);
+            }
+         }
+         program { signal: "reset_finger"; source: "reset_finger";
+            action: STATE_SET "default" 0.0;
+            transition: LINEAR 0.2;
+            target: "right-little-finger";
+            target: "right-ring-finger";
+            target: "right-middle-finger";
+            target: "right-index-finger";
+            target: "right-thumb";
+         }
+      }
+   }
+
+   group { "left_hand";
+      parts {
+         image { "left_hand";
+            scale: 1;
+            desc { "default";
+               min: 650 400;
+               max: 650 400;
+               image.normal: "left_hand.png";
+               color_class: ":fg";
+            }
+         }
+         image { "left-little-finger";
+            scale: 1;
+            desc { "default";
+               min: 40 40;
+               max: 40 40;
+               image.normal: "fingerprint_icon";
+               rel.to: "left_hand";
+               rel1.relative: (186/609) (125/375);
+               rel2.relative: (186/609) (125/375);
+               color_class: ":bg-light";
+            }
+            desc { "enrolled";
+               inherit: "default";
+               color_class: ":success";
+            }
+         }
+         swallow {"swallow_left-little-finger";
+            desc { "default";
+               rel.to: "left-little-finger";
+            }
+         }
+
+         image { "left-ring-finger";
+            scale: 1;
+            desc { "default";
+               min: 40 40;
+               max: 40 40;
+               image.normal: "fingerprint_icon";
+               rel.to: "left_hand";
+               rel1.relative: (243/609) (82/375);
+               rel2.relative: (243/609) (82/375);
+               color_class: ":bg-light";
+            }
+            desc { "enrolled";
+               inherit: "default";
+               color_class: ":success";
+            }
+         }
+         swallow {"swallow_left-ring-finger";
+            desc { "default";
+               rel.to: "left-ring-finger";
+            }
+         }
+
+         image { "left-middle-finger";
+            scale: 1;
+            desc { "default";
+               min: 40 40;
+               max: 40 40;
+               image.normal: "fingerprint_icon";
+               rel.to: "left_hand";
+               rel1.relative: (300/609) (51/375);
+               rel2.relative: (300/609) (51/375);
+               color_class: ":bg-light";
+            }
+            desc { "enrolled";
+               inherit: "default";
+               color_class: ":success";
+            }
+         }
+         swallow {"swallow_left-middle-finger";
+            desc { "default";
+               rel.to: "left-middle-finger";
+            }
+         }
+
+         image { "left-index-finger";
+            scale: 1;
+            desc { "default";
+               min: 40 40;
+               max: 40 40;
+               image.normal: "fingerprint_icon";
+               rel.to: "left_hand";
+               rel1.relative: (358/609) (75/375);
+               rel2.relative: (358/609) (75/375);
+               color_class: ":bg-light";
+            }
+            desc { "enrolled";
+               inherit: "default";
+               color_class: ":success";
+            }
+         }
+         swallow {"swallow_left-index-finger";
+            desc { "default";
+               rel.to: "left-index-finger";
+            }
+         }
+
+         image { "left-thumb";
+            scale: 1;
+            desc { "default";
+               min: 40 40;
+               max: 40 40;
+               image.normal: "fingerprint_icon";
+               rel.to: "left_hand";
+               rel1.relative: (416/609) (209/375);
+               rel2.relative: (416/609) (209/375);
+               color_class: ":bg-light";
+            }
+            desc { "enrolled";
+               inherit: "default";
+               color_class: ":success";
+            }
+         }
+         swallow {"swallow_left-thumb";
+            desc { "default";
+               rel.to: "left-thumb";
+            }
+         }
+
+         // LIST SWALLOW
+         swallow {"swallow_hand_switch";
+            scale: 1;
+            desc { "default";
+               min: 40 40;
+               max: 40 40;
+               rel1.to_y: "left_hand";
+               rel1.relative: 0.6 0.0;
+            }
+         }
+      }
+      programs {
+         program { signal: "enrolled_finger"; source: "*";
+            script {
+               set_state(get_part_id(src), "enrolled", 0.0);
+            }
+         }
+         program { signal: "reset_finger"; source: "reset_finger";
+            action: STATE_SET "default" 0.0;
+            transition: LINEAR 0.2;
+            target: "left-little-finger";
+            target: "left-ring-finger";
+            target: "left-middle-finger";
+            target: "left-index-finger";
+            target: "left-thumb";
+         }
+      }
+   }
+
+   group { "finger";
+      parts {
+         swallow {"swallow_select-finger-left";
+            scale: 1;
+            desc { "default";
+               align: 0 0.5;
+               min: 140 140;
+               max: 140 140;
+            }
+         }
+         image { "fingerprint_icon";
+            scale: 1;
+            desc { "default";
+               align: 0.0 0.0;
+               min: 200 200;
+               max: 200 200;
+               image.normal: "1_0";
+               rel1.to_x: "swallow_select-finger-left";
+               rel1.relative: 1.0 0.0;
+               color_class: ":fg";
+            }
+            desc { "enrolled";
+               inherit: "default";
+               color_class: ":success";
+            }
+         }
+         swallow {"swallow_select-finger";
+            scale: 1;
+            desc { "default";
+               align: 0.0 0.0;
+               min: 200 200;
+               max: 200 200;
+               rel1.to_x: "swallow_select-finger-left";
+               rel1.relative: 1.0 0.0;
+            }
+         }
+
+         swallow {"swallow_select-finger-right";
+            scale: 1;
+            desc { "default";
+               align: 1.0 0.5;
+               min: 140 140;
+               max: 140 140;
+               rel1.to_x: "fingerprint_icon";
+               rel1.relative: 1.0 0.0;
+            }
+         }
+      }
+      programs {
+         program { signal: "enrolled_finger"; source: "enrolled_finger";
+            script {
+               set_state(get_part_id("fingerprint_icon"), "enrolled", 0.0);
+            }
+         }
+         program { signal: "not_enrolled_finger"; source: "not_enrolled_finger";
+            script {
+               set_state(get_part_id("fingerprint_icon"), "default", 0.0);
+            }
+         }
+      }
+   }
+
+   group { "enroll";
+      parts {
+         image { "0";
+            scale: 1;
+            desc { "default";
+               min: 140 140;
+               max: 140 140;
+               image.normal: "1_0";
+               color_class: ":fg";
+            }
+            desc { "failed";
+               inherit: "default";
+               color_class: ":success";
+            }
+         }
+         image { "1";
+            scale: 1;
+            desc { "default";
+               min: 140 140;
+               max: 140 140;
+               visible: 0;
+               image.normal: "1_1";
+               color_class: ":fg";
+            }
+            desc { "success";
+               inherit: "default";
+               visible: 1;
+               color_class: ":success";
+            }
+            desc { "failed";
+               inherit: "default";
+               visible: 1;
+               image.normal: "1_1_failed";
+               color_class: ":selected-alt";
+            }
+         }
+         image { "2";
+            scale: 1;
+            desc { "default";
+               min: 140 140;
+               max: 140 140;
+               visible: 0;
+               image.normal: "1_2";
+               color_class: ":fg";
+            }
+            desc { "success";
+               inherit: "default";
+               visible: 1;
+               color_class: ":success";
+            }
+            desc { "failed";
+               inherit: "default";
+               visible: 1;
+               image.normal: "1_2_failed";
+               color_class: ":selected-alt";
+            }
+         }
+         image { "3";
+            scale: 1;
+            desc { "default";
+               min: 140 140;
+               max: 140 140;
+               visible: 0;
+               image.normal: "1_3";
+               color_class: ":fg";
+            }
+            desc { "success";
+               inherit: "default";
+               visible: 1;
+               color_class: ":success";
+            }
+            desc { "failed";
+               inherit: "default";
+               visible: 1;
+               image.normal: "1_3_failed";
+               color_class: ":selected-alt";
+            }
+         }
+         image { "4";
+            scale: 1;
+            desc { "default";
+               min: 140 140;
+               max: 140 140;
+               visible: 0;
+               image.normal: "1_4";
+               color_class: ":fg";
+            }
+            desc { "success";
+               inherit: "default";
+               visible: 1;
+               color_class: ":success";
+            }
+            desc { "failed";
+               inherit: "default";
+               visible: 1;
+               image.normal: "1_4_failed";
+               color_class: ":selected-alt";
+            }
+         }
+         image { "5";
+            scale: 1;
+            desc { "default";
+               min: 140 140;
+               max: 140 140;
+               visible: 0;
+               image.normal: "1_5";
+               color_class: ":fg";
+            }
+            desc { "success";
+               inherit: "default";
+               visible: 1;
+               color_class: ":success";
+            }
+            desc { "failed";
+               inherit: "default";
+               visible: 1;
+               image.normal: "1_5_failed";
+               color_class: ":selected-alt";
+            }
+         }
+      }
+      programs {
+         program { signal: "success"; source: "*";
+            script {
+               set_state(get_part_id(src), "success", 0.0);
+            }
+         }
+         program { signal: "failed"; source: "*";
+            script {
+               set_state(get_part_id(src), "failed", 0.0);
+            }
+         }
+         program { signal: "enrolled__failed"; source: "enrolled__failed";
+            action: STATE_SET "failed" 0.0;
+            transition: LINEAR 0.2;
+            target: "0";
+         }
+         program { signal: "enrolled__failed"; source: "enrolled__failed";
+            action: STATE_SET "default" 0.0;
+            transition: LINEAR 0.2;
+            target: "1";
+            target: "2";
+            target: "3";
+            target: "4";
+            target: "5";
+         }
+      }
+   }
+
+   group { "verify";
+      parts {
+         image { "0";
+            scale: 1;
+            desc { "default";
+               min: 140 140;
+               max: 140 140;
+               image.normal: "1_0";
+               color_class: ":fg";
+            }
+            desc { "success";
+               inherit: "default";
+               color_class: ":success";
+            }
+            desc { "failed";
+               inherit: "default";
+               color_class: ":selected-alt";
+            }
+         }
+      }
+      programs {
+         program { signal: "success"; source: "success";
+            action: STATE_SET "success" 0.0;
+            transition: LINEAR 0.2;
+            target: "0";
+            after: "reset1";
+         }
+         program { name: "reset1";
+            action: STATE_SET "default" 0.0;
+            transition: ACCEL 4.0;
+            target: "0";
+         }
+         program { signal: "failed"; source: "failed";
+            transition: LINEAR 0.2;
+            action: STATE_SET "failed" 0.0;
+            target: "0";
+            after: "reset";
+         }
+         program { name: "reset";
+            action: STATE_SET "default" 0.0;
+            transition: ACCEL 2.0;
+            target: "0";
+         }
+      }
+   }
+
+   group { "icon";
+      parts {
+         image { "0";
+            scale: 1;
+            desc { "default";
+               image.normal: "1_0";
+               color_class: ":success";
+            }
+         }
+      }
+   }
+
+}
