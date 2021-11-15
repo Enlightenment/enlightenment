@@ -179,8 +179,8 @@ collections {
                max: 40 40;
                image.normal: "fingerprint_icon";
                rel.to: "hands";
-               rel1.relative: (399/609) (75/375);
-               rel2.relative: (399/609) (75/375);
+               rel1.relative: (515/609) (82/375);
+               rel2.relative: (515/609) (82/375);
                color_class: ":bg-light";
             }
             desc { "enrolled";
@@ -223,8 +223,8 @@ collections {
                max: 40 40;
                image.normal: "fingerprint_icon";
                rel.to: "hands";
-               rel1.relative: (515/609) (82/375);
-               rel2.relative: (515/609) (82/375);
+               rel1.relative: (399/609) (75/375);
+               rel2.relative: (399/609) (75/375);
                color_class: ":bg-light";
             }
             desc { "enrolled";
