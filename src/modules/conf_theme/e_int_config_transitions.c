@@ -19,6 +19,8 @@ struct _E_Config_Dialog_Data
    char        *transition_desk;
    char        *transition_change;
 
+   double       duration_factor;
+
    Evas_Object *event_list;
    Evas_Object *trans_list;
    Evas_Object *tp;
@@ -58,6 +60,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
      cfdata->transition_desk = strdup(e_config->transition_desk);
    if (e_config->transition_change)
      cfdata->transition_change = strdup(e_config->transition_change);
+   cfdata->duration_factor = elm_config_transition_duration_factor_get();
 }
 
 static void *
@@ -93,7 +96,9 @@ _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
           (cfdata->transition_desk && e_config->transition_desk &&
            strcmp(cfdata->transition_desk, e_config->transition_desk)) ||
           (cfdata->transition_change && e_config->transition_change &&
-           strcmp(cfdata->transition_change, e_config->transition_change));
+           strcmp(cfdata->transition_change, e_config->transition_change)) ||
+          (!EINA_DBL_EQ(elm_config_transition_duration_factor_get(),
+                        cfdata->duration_factor));
 }
 
 static int
@@ -150,6 +155,14 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata
         /*   e_config->transition_change = eina_stringshare_add(cfdata->transition_change); */
      }
 
+   if (!EINA_DBL_EQ(elm_config_transition_duration_factor_get(),
+                    cfdata->duration_factor))
+     {
+        elm_config_transition_duration_factor_set(cfdata->duration_factor);
+        elm_config_save();
+        elm_config_all_flush();
+     }
+
    e_config_save_queue();
 
    EINA_LIST_FREE(trans, str)
@@ -162,7 +175,7 @@ static Evas_Object *
 _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    E_Zone *zone;
-   Evas_Object *o, *of, *il;
+   Evas_Object *o, *of, *il, *sl;
    Eina_List *l;
    char *t;
 
@@ -216,6 +229,11 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    e_widget_framelist_object_append(of, il);
    e_widget_table_object_append(o, of, 0, 1, 2, 1, 1, 1, 1, 1);
 
+   of = e_widget_framelist_add(evas, _("Animation Period Multiplier"), 0);
+   sl = e_widget_slider_add(evas, 1, 0, _("%1.1f"), 0.0, 5.0, 0.1, 0,
+                            &(cfdata->duration_factor), NULL, 150);
+   e_widget_framelist_object_append(of, sl);
+   e_widget_table_object_append(o, of, 0, 2, 2, 1, 1, 1, 1, 1);
 
    return o;
 }
