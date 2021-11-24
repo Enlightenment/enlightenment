@@ -47,6 +47,38 @@ _e_mod_menu_theme_add(void *data EINA_UNUSED, E_Menu *m)
    e_menu_item_callback_set(mi, _e_mod_run_theme_cb, NULL);
 }
 
+static void
+_e_mod_run_colors_cb(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
+{
+   e_configure_registry_call("appearance/colors", NULL, NULL);
+}
+
+static void
+_e_mod_menu_colors_add(void *data EINA_UNUSED, E_Menu *m)
+{
+   E_Menu_Item *mi;
+
+   mi = e_menu_item_new(m);
+   e_menu_item_label_set(mi, _("Palette"));
+   e_util_menu_item_theme_icon_set(mi, "preferences-desktop-color");
+   e_menu_item_callback_set(mi, _e_mod_run_colors_cb, NULL);
+}
+
+E_Config_Dialog *
+e_int_config_colors(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
+{
+   Efreet_Desktop *desktop;
+
+   desktop = efreet_util_desktop_file_id_find("enlightenment_paledit.desktop");
+   if (desktop)
+     {
+        e_exec(e_zone_current_get(), desktop,
+               "enlightenment_paledit", NULL, "conf_theme");
+        efreet_desktop_free(desktop);
+     }
+   return NULL;
+}
+
 E_API void *
 e_modapi_init(E_Module *m)
 {
@@ -68,11 +100,9 @@ e_modapi_init(E_Module *m)
    e_configure_registry_item_add("appearance/xsettings", 20, _("Application Theme"), NULL,
                                  "preferences-desktop-theme",
                                  e_int_config_xsettings);
-// This is currently broken and does nothing other than list colorclasses
-// so no point having a broken dialog in E
-//   e_configure_registry_item_add("appearance/colors", 30, _("Colors"), NULL,
-//                                 "preferences-desktop-color",
-//                                 e_int_config_color_classes);
+   e_configure_registry_item_add("appearance/colors", 30, _("Palette"), NULL,
+                                 "preferences-desktop-color",
+                                 e_int_config_colors);
    e_configure_registry_item_add("appearance/fonts", 40, _("Fonts"), NULL,
                                  "preferences-desktop-font",
                                  e_int_config_fonts);
@@ -92,6 +122,9 @@ e_modapi_init(E_Module *m)
    maug[1] =
      e_int_menus_menu_augmentation_add_sorted("config/1", _("Theme"),
                                               _e_mod_menu_theme_add, NULL, NULL, NULL);
+   maug[2] =
+     e_int_menus_menu_augmentation_add_sorted("config/1", _("Palette"),
+                                              _e_mod_menu_colors_add, NULL, NULL, NULL);
 
    conf_module = m;
 
@@ -113,6 +146,11 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
      {
         e_int_menus_menu_augmentation_del("config/1", maug[1]);
         maug[1] = NULL;
+     }
+   if (maug[2])
+     {
+        e_int_menus_menu_augmentation_del("config/1", maug[2]);
+        maug[2] = NULL;
      }
 
    while ((cfd = e_config_dialog_get("E", "appearance/scale")))
