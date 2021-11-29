@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-16 21:27+0200\n"
-"PO-Revision-Date: 2021-10-17 09:06+0200\n"
+"POT-Creation-Date: 2021-11-30 00:31+0100\n"
+"PO-Revision-Date: 2021-11-30 00:36+0100\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: General\n"
 "Language: it\n"
@@ -1006,11 +1006,11 @@ msgstr ""
 "compositing è necessaria<ps/>una GPU in grado di supportare OpenGL 2.0 (o "
 "OpenGL<ps/>ES 2.0)."
 
-#: src/bin/e_comp_x.c:5851
+#: src/bin/e_comp_x.c:5854
 msgid "Lock Failed"
 msgstr "Blocco fallito"
 
-#: src/bin/e_comp_x.c:5852
+#: src/bin/e_comp_x.c:5855
 msgid ""
 "Locking the desktop failed because some application<ps/>has grabbed either "
 "the keyboard or the mouse or both<ps/>and their grab is unable to be broken."
@@ -1019,11 +1019,11 @@ msgstr ""
 "catturato la tastiera e/o il<ps/>mouse e questa cattura non può essere "
 "sciolta."
 
-#: src/bin/e_comp_x.c:5870
+#: src/bin/e_comp_x.c:5873
 msgid "Another compositor is already running on your display server."
 msgstr "Un altro compositor è già in esecuzione sul vostro server grafico."
 
-#: src/bin/e_comp_x.c:5895
+#: src/bin/e_comp_x.c:5898
 msgid ""
 "Your display server does not support the compositor overlay window.\n"
 "This is needed for Enlightenment to function."
@@ -1031,12 +1031,12 @@ msgstr ""
 "Il vostro server grafico non supporta la finestra overlay del compositor. "
 "Ciò è necessario per il funzionamento di Enlightenment."
 
-#: src/bin/e_comp_x.c:6029
+#: src/bin/e_comp_x.c:6032
 #, c-format
 msgid "Enlightenment cannot initialize X Connection...\n"
 msgstr "Enlightenment non riesce ad inizializzare la connessione con X...\n"
 
-#: src/bin/e_comp_x.c:6044
+#: src/bin/e_comp_x.c:6047
 msgid ""
 "Your display server does not support XComposite, or Ecore-X was built "
 "without XComposite support. Note that for composite support you will also "
@@ -1046,7 +1046,7 @@ msgstr ""
 "compilato senza supporto per XComposite. Notare che il supporto per il "
 "compositing richiede anche il supporto per XRender e XFixes in X11 ed Ecore."
 
-#: src/bin/e_comp_x.c:6053
+#: src/bin/e_comp_x.c:6056
 msgid ""
 "Your display server does not support XDamage or Ecore was built without "
 "XDamage support."
@@ -1054,7 +1054,7 @@ msgstr ""
 "Il vostro server grafico non supporta XDamage o Ecore è stato compilato "
 "senza il supporto per XDamage."
 
-#: src/bin/e_comp_x.c:6159
+#: src/bin/e_comp_x.c:6162
 msgid "Enlightenment cannot initialize the XSettings system.\n"
 msgstr "Enlightenment non riesce a inizializzare il suo sistema XSettings.\n"
 
@@ -1247,7 +1247,7 @@ msgid "Apply"
 msgstr "Applica"
 
 #: src/bin/e_configure.c:29 src/modules/conf_shelves/e_mod_main.c:21
-#: src/modules/connman/e_mod_main.c:609 src/modules/gadman/e_mod_main.c:23
+#: src/modules/connman/e_mod_main.c:610 src/modules/gadman/e_mod_main.c:23
 #: src/modules/mixer/e_mod_main.c:1109 src/modules/notification/e_mod_main.c:55
 msgid "Extensions"
 msgstr "Estensioni"
@@ -1260,14 +1260,14 @@ msgid "Modules"
 msgstr "Moduli"
 
 #: src/bin/e_configure.c:31 src/bin/e_gadcon.c:1841
-#: src/bin/e_int_config_modules.c:53 src/modules/conf_theme/e_mod_main.c:60
+#: src/bin/e_int_config_modules.c:53 src/modules/conf_theme/e_mod_main.c:92
 msgid "Look"
 msgstr "Aspetto"
 
 #: src/bin/e_configure.c:34 src/modules/battery/e_mod_config.c:283
 #: src/modules/conf_applications/e_mod_main.c:60
 #: src/modules/conf_display/e_mod_main.c:40
-#: src/modules/conf_theme/e_mod_main.c:53
+#: src/modules/conf_theme/e_mod_main.c:85
 msgid "Internal"
 msgstr "Interno"
 
@@ -1706,7 +1706,7 @@ msgid "Eject"
 msgstr "Espelli"
 
 #: src/bin/e_fm.c:9389 src/bin/e_int_client_remember.c:807
-#: src/modules/ibar/e_mod_main.c:1645
+#: src/modules/ibar/e_mod_main.c:1643
 msgid "Properties"
 msgstr "Proprietà"
 
@@ -2020,7 +2020,7 @@ msgstr "Altri:"
 
 #: src/bin/e_fm_prop.c:625 src/bin/e_import_config_dialog.c:299
 #: src/bin/e_widget_fsel.c:348
-#: src/modules/conf_theme/e_int_config_transitions.c:214
+#: src/modules/conf_theme/e_int_config_transitions.c:227
 #: src/modules/conf_theme/e_int_config_xsettings.c:514
 #: src/modules/ibox/e_mod_config.c:100 src/modules/tasks/e_mod_config.c:120
 msgid "Preview"
@@ -2415,7 +2415,7 @@ msgstr "Ridimensiona con la tastiera"
 msgid "Skip"
 msgstr "Salta"
 
-#: src/bin/e_int_client_menu.c:821 src/modules/conf_theme/e_mod_main.c:57
+#: src/bin/e_int_client_menu.c:821 src/modules/conf_theme/e_mod_main.c:89
 msgid "Border"
 msgstr "Bordo"
 
@@ -2620,9 +2620,9 @@ msgstr "Statico"
 #: src/modules/conf_randr/e_int_config_randr2.c:688
 #: src/modules/conf_randr/e_int_config_randr2.c:1067
 #: src/modules/conf_theme/e_int_config_fonts.c:742
-#: src/modules/conf_theme/e_int_config_transitions.c:199
-#: src/modules/conf_theme/e_int_config_transitions.c:253
-#: src/modules/conf_theme/e_int_config_transitions.c:285
+#: src/modules/conf_theme/e_int_config_transitions.c:212
+#: src/modules/conf_theme/e_int_config_transitions.c:271
+#: src/modules/conf_theme/e_int_config_transitions.c:303
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:117
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:130
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:144
@@ -2766,9 +2766,9 @@ msgstr "Richiede posizione"
 #: src/modules/everything/evry_gadget.c:683
 #: src/modules/everything/evry_plug_settings.c:183
 #: src/modules/geolocation/e_mod_main.c:235 src/modules/ibar/e_mod_main.c:497
-#: src/modules/ibar/e_mod_main.c:1638 src/modules/ibox/e_mod_main.c:358
+#: src/modules/ibar/e_mod_main.c:1636 src/modules/ibox/e_mod_main.c:358
 #: src/modules/ibox/e_mod_main.c:791 src/modules/mixer/e_mod_main.c:958
-#: src/modules/music-control/ui.c:329 src/modules/packagekit/e_mod_main.c:47
+#: src/modules/music-control/ui.c:330 src/modules/packagekit/e_mod_main.c:47
 #: src/modules/pager/e_mod_main.c:1026 src/modules/tasks/e_mod_main.c:938
 #: src/modules/temperature/e_mod_main.c:231
 #: src/modules/tiling/e_mod_tiling.c:2169 src/modules/wizard/page_150.c:31
@@ -4269,7 +4269,7 @@ msgstr "Rinomina mensola"
 
 #: src/bin/e_shelf.c:2362 src/modules/conf_shelves/e_int_config_shelf.c:145
 #: src/modules/ibar/e_mod_config.c:118 src/modules/ibar/e_mod_main.c:491
-#: src/modules/ibar/e_mod_main.c:1632
+#: src/modules/ibar/e_mod_main.c:1630
 msgid "Contents"
 msgstr "Contenuti"
 
@@ -6087,9 +6087,9 @@ msgstr "Impostazioni desktop"
 #: src/modules/conf_display/e_int_config_desk.c:153
 #: src/modules/conf_display/e_int_config_desklock.c:373
 #: src/modules/conf_theme/e_mod_main.c:28
-#: src/modules/conf_theme/e_mod_main.c:55
-#: src/modules/conf_theme/e_mod_main.c:62
-#: src/modules/conf_theme/e_mod_main.c:90
+#: src/modules/conf_theme/e_mod_main.c:87
+#: src/modules/conf_theme/e_mod_main.c:94
+#: src/modules/conf_theme/e_mod_main.c:120
 msgid "Wallpaper"
 msgstr "Sfondo"
 
@@ -6459,6 +6459,7 @@ msgstr "Accelerazione"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:258
 #: src/modules/conf_interaction/e_int_config_mouse.c:292
+#: src/modules/conf_theme/e_int_config_transitions.c:233
 #: src/modules/fileman/e_mod_config.c:483
 #, c-format
 msgid "%1.1f"
@@ -6783,7 +6784,7 @@ msgstr "Immagini"
 
 #: src/modules/conf_paths/e_int_config_paths.c:74
 #: src/modules/conf_theme/e_int_config_fonts.c:436
-#: src/modules/conf_theme/e_mod_main.c:76
+#: src/modules/conf_theme/e_mod_main.c:106
 msgid "Fonts"
 msgstr "Font"
 
@@ -7397,30 +7398,34 @@ msgstr ""
 "Enlightenment non ha potuto importare il tema<ps/>a causa di un errore di "
 "copia."
 
-#: src/modules/conf_theme/e_int_config_transitions.c:46
+#: src/modules/conf_theme/e_int_config_transitions.c:48
 msgid "Transition Settings"
 msgstr "Impostazioni transizione"
 
-#: src/modules/conf_theme/e_int_config_transitions.c:173
+#: src/modules/conf_theme/e_int_config_transitions.c:186
 msgid "Events"
 msgstr "Eventi"
 
-#: src/modules/conf_theme/e_int_config_transitions.c:181
+#: src/modules/conf_theme/e_int_config_transitions.c:194
 msgid "Startup"
 msgstr "Avvio"
 
-#: src/modules/conf_theme/e_int_config_transitions.c:182
+#: src/modules/conf_theme/e_int_config_transitions.c:195
 msgid "Desk Change"
 msgstr "Cambio desktop"
 
-#: src/modules/conf_theme/e_int_config_transitions.c:183
+#: src/modules/conf_theme/e_int_config_transitions.c:196
 msgid "Background Change"
 msgstr "Cambio sfondo"
 
-#: src/modules/conf_theme/e_int_config_transitions.c:191
-#: src/modules/conf_theme/e_mod_main.c:82
+#: src/modules/conf_theme/e_int_config_transitions.c:204
+#: src/modules/conf_theme/e_mod_main.c:112
 msgid "Transitions"
 msgstr "Transizioni"
+
+#: src/modules/conf_theme/e_int_config_transitions.c:232
+msgid "Animation Period Multiplier"
+msgstr "Moltiplicatore tempo animazione"
 
 #: src/modules/conf_theme/e_int_config_wallpaper.c:104
 msgid "Wallpaper Settings"
@@ -7487,20 +7492,26 @@ msgid "Enable icon theme for Enlightenment"
 msgstr "Abilita tema icone per Enlightenment"
 
 #: src/modules/conf_theme/e_mod_main.c:45
-#: src/modules/conf_theme/e_mod_main.c:65
-#: src/modules/conf_theme/e_mod_main.c:93
+#: src/modules/conf_theme/e_mod_main.c:97
+#: src/modules/conf_theme/e_mod_main.c:123
 msgid "Theme"
 msgstr "Tema"
 
-#: src/modules/conf_theme/e_mod_main.c:68
+#: src/modules/conf_theme/e_mod_main.c:62
+#: src/modules/conf_theme/e_mod_main.c:103
+#: src/modules/conf_theme/e_mod_main.c:126
+msgid "Palette"
+msgstr "Tavolozza"
+
+#: src/modules/conf_theme/e_mod_main.c:100
 msgid "Application Theme"
 msgstr "Tema applicazione"
 
-#: src/modules/conf_theme/e_mod_main.c:79
+#: src/modules/conf_theme/e_mod_main.c:109
 msgid "Borders"
 msgstr "Bordi"
 
-#: src/modules/conf_theme/e_mod_main.c:85
+#: src/modules/conf_theme/e_mod_main.c:115
 msgid "Scaling"
 msgstr "Scalatura"
 
@@ -8111,11 +8122,11 @@ msgstr ""
 "Questo modulo vuole eseguire l'applicazione esterna EConnMan che non esiste."
 "<ps/>Si prega di installare l'applicazione <b>EConnMan</b>."
 
-#: src/modules/connman/e_mod_main.c:284
+#: src/modules/connman/e_mod_main.c:285
 msgid "Wifi On"
 msgstr "Wifi attivo"
 
-#: src/modules/connman/e_mod_main.c:294
+#: src/modules/connman/e_mod_main.c:295
 #: src/modules/everything/evry_config.c:377
 msgid "Configure"
 msgstr "Configura"
@@ -9169,28 +9180,28 @@ msgstr ""
 msgid "Are you sure you want to delete this bar source?"
 msgstr "Siete sicuri di voler rimuovere questa sorgente per Ibar?"
 
-#: src/modules/ibar/e_mod_main.c:370 src/modules/ibar/e_mod_main.c:2893
+#: src/modules/ibar/e_mod_main.c:370 src/modules/ibar/e_mod_main.c:2891
 msgid "IBar"
 msgstr "IBar"
 
-#: src/modules/ibar/e_mod_main.c:480 src/modules/ibar/e_mod_main.c:1621
+#: src/modules/ibar/e_mod_main.c:480 src/modules/ibar/e_mod_main.c:1619
 msgid "Create new Icon"
 msgstr "Crea nuova icona"
 
-#: src/modules/ibar/e_mod_main.c:1652
+#: src/modules/ibar/e_mod_main.c:1650
 msgid "Add to bar"
 msgstr "Aggiungi alla barra"
 
-#: src/modules/ibar/e_mod_main.c:1658
+#: src/modules/ibar/e_mod_main.c:1656
 msgid "Remove from bar"
 msgstr "Elimina dalla barra"
 
-#: src/modules/ibar/e_mod_main.c:1664
+#: src/modules/ibar/e_mod_main.c:1662
 #, c-format
 msgid "Icon %s"
 msgstr "Icona %s"
 
-#: src/modules/ibar/e_mod_main.c:2893
+#: src/modules/ibar/e_mod_main.c:2891
 msgid "Focus IBar"
 msgstr "Fuoco di Ibar"
 
@@ -9371,19 +9382,19 @@ msgstr "Configurazione di Emix"
 msgid "Music controller"
 msgstr "Controller musicale"
 
-#: src/modules/music-control/ui.c:216
+#: src/modules/music-control/ui.c:217
 msgid "Music Player"
 msgstr "Riproduttore musicale"
 
-#: src/modules/music-control/ui.c:226
+#: src/modules/music-control/ui.c:227
 msgid "* Your player must be configured to export the DBus interface MPRIS2."
 msgstr "* Il vostro riproduttore deve esportare l'interfaccia DBus MPRIS2."
 
-#: src/modules/music-control/ui.c:229
+#: src/modules/music-control/ui.c:230
 msgid "Pause music when screen is locked"
 msgstr "Poni in pausa al blocco dello schermo"
 
-#: src/modules/music-control/ui.c:298
+#: src/modules/music-control/ui.c:299
 msgid "Music control Settings"
 msgstr "Impostazioni controllo musicale"
 
