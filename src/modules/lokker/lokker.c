@@ -947,7 +947,7 @@ lokker_unlock(void)
    e_auth_fprint_end();
    E_FREE_LIST(edd->elock_wnd_list, _lokker_popup_free);
    e_pointer_type_pop(e_comp->pointer, e_comp->pointer, "default");
-   e_pointer_type_pop(e_comp->pointer, NULL, NULL);
+   //e_pointer_type_pop(e_comp->pointer, NULL, NULL);
    E_FREE_LIST(edd->handlers, ecore_event_handler_del);
    if (edd->move_handler) ecore_event_handler_del(edd->move_handler);
 
