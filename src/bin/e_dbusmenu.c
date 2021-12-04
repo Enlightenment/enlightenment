@@ -450,12 +450,14 @@ e_dbusmenu_unload(E_DBusMenu_Ctx *ctx)
 E_API void
 e_dbusmenu_pop_request_cb_set(E_DBusMenu_Ctx *ctx, E_DBusMenu_Pop_Request_Cb cb)
 {
+   EINA_SAFETY_ON_NULL_RETURN(ctx);
    ctx->pop_request_cb = cb;
 }
 
 E_API void
 e_dbusmenu_update_cb_set(E_DBusMenu_Ctx *ctx, E_DBusMenu_Update_Cb cb)
 {
+   EINA_SAFETY_ON_NULL_RETURN(ctx);
    ctx->update_cb = cb;
 }
 
