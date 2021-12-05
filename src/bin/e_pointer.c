@@ -250,14 +250,25 @@ _e_pointer_cb_hot_show(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA
 }
 
 static void
+_del_cb(void *data, const Efl_Event *ev EINA_UNUSED) {
+  E_Pointer *ptr = data;
+  INF("Cursor-Object (%p) of %p was removed!", ptr->o_ptr, data);
+  ptr->o_ptr = NULL;
+  return;
+}
+
+static void
 _e_pointer_pointer_canvas_init(E_Pointer *ptr, Evas *e, Evas_Object **o_ptr, Evas_Object **o_hot)
 {
    /* create pointer object */
    *o_ptr = edje_object_add(e);
 
+   efl_event_callback_add(*o_ptr, EFL_EVENT_DEL, _del_cb, ptr);
+
    /* create hotspot object */
    *o_hot = evas_object_rectangle_add(e);
    evas_object_color_set(*o_hot, 0, 0, 0, 0);
+
 
    evas_object_event_callback_add(*o_hot, EVAS_CALLBACK_MOVE,
                                   _e_pointer_cb_hot_move, ptr);
@@ -622,6 +633,9 @@ e_pointer_hide(E_Pointer *ptr)
 E_API void
 e_pointer_show(E_Pointer *ptr)
 {
+   EINA_SAFETY_ON_NULL_RETURN(ptr);
+   EINA_SAFETY_ON_NULL_RETURN(ptr->o_ptr);
+
    if ((!ptr->buffer_evas) && ptr->win) _e_pointer_canvas_add(ptr);
    if (ptr->canvas)
      evas_object_show(ptr->o_ptr);
@@ -633,6 +647,7 @@ e_pointer_type_push(E_Pointer *ptr, void *obj, const char *type)
    E_Pointer_Stack *stack;
 
    EINA_SAFETY_ON_NULL_RETURN(ptr);
+   EINA_SAFETY_ON_NULL_RETURN(obj);
 
    _e_pointer_type_set(ptr, type);
 
@@ -788,6 +803,10 @@ e_pointer_idler_before(void)
      {
         if ((!ptr->e_cursor) || (!ptr->buffer_evas)) continue;
 
+        if (!ptr->o_ptr) {
+          EINA_SAFETY_ERROR("ptr->o_ptr is NULL should not be NULL!");
+        }
+
         if (ptr->hot.update)
           _e_pointer_type_set(ptr, ptr->type);
 
@@ -825,6 +844,9 @@ e_pointer_object_set(E_Pointer *ptr, Evas_Object *obj, int x, int y)
    Evas_Object *o;
    E_Client *ec;
    int px, py;
+
+   EINA_SAFETY_ON_NULL_RETURN(ptr);
+   EINA_SAFETY_ON_NULL_RETURN(ptr->o_ptr);
 
    ecore_evas_cursor_get(ptr->ee, &o, NULL, &px, &py);
    if (o)
@@ -872,6 +894,9 @@ e_pointer_window_add(E_Pointer *ptr, Ecore_Window win)
 E_API void
 e_pointer_grab_set(E_Pointer *ptr, Eina_Bool grab)
 {
+   EINA_SAFETY_ON_NULL_RETURN(ptr);
+   EINA_SAFETY_ON_NULL_RETURN(ptr->o_ptr);
+
    if (grab) ptr->grabcount++;
    else
      {
