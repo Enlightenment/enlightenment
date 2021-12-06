@@ -1924,6 +1924,7 @@ ui_edit(Evas_Object *window, Evas_Object *o_bg, E_Zone *zone,
    elm_table_pack(tb, o, 0, 0, 5, 5);
 
    sc = o = elm_scroller_add(win);
+   evas_object_data_set(win, "scroll/main", o);
    elm_object_style_set(o, "noclip");
    elm_scroller_gravity_set(o, 0.5, 0.5);
    elm_object_focus_next_object_set(o, o, ELM_FOCUS_PREVIOUS);
@@ -1939,6 +1940,7 @@ ui_edit(Evas_Object *window, Evas_Object *o_bg, E_Zone *zone,
    evas_object_show(o);
 
    sc2 = o = elm_scroller_add(win);
+   evas_object_data_set(win, "scroll/tools", o);
    elm_object_style_set(o, "noclip");
    elm_scroller_content_min_limit(o, EINA_TRUE, EINA_FALSE);
    elm_scroller_gravity_set(o, 0.0, 0.0);

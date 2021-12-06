@@ -50,7 +50,7 @@ mods = [
   'battery',
   'cpufreq',
   'clock',
-# custyom sub modules and custom data
+# custom sub modules and custom data
   'wizard',
 # also standard modules, just with only a desktop file using a generic icon
   'conf_theme',

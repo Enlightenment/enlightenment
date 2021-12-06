@@ -49,6 +49,22 @@ _quality_change_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EI
    quality = elm_slider_value_get(obj);
 }
 
+static int
+_scroller_child_fits(Evas_Object *o, Evas_Coord *smaller_w, Evas_Coord *smaller_h)
+{
+   int ret = 0;
+   Evas_Coord x = 0, y = 0, w = 0, h = 0, cw = 0, ch = 0;
+
+   elm_scroller_child_size_get(o, &cw, &ch);
+   elm_scroller_region_get(o, &x, &y, &w, &h);
+   *smaller_w = *smaller_h = 0;
+   if (cw <= w) ret |= 1;
+   else *smaller_w = cw - w;
+   if (ch <= h) ret |= 2;
+   else *smaller_h = ch - h;
+   return ret;
+}
+
 void
 preview_dialog_show(E_Zone *zone, E_Client *ec, const char *params, void *dst,
                     int sx, int sy, int sw, int sh)
@@ -146,7 +162,29 @@ preview_dialog_show(E_Zone *zone, E_Client *ec, const char *params, void *dst,
      }
    else
      {
+        Eina_Bool scroll_main_ok = EINA_FALSE, scroll_tools_ok = EINA_FALSE;
+        Evas_Coord maxw, maxh, minw, minh;
+        Evas_Object *sc_main, *sc_tool;
+        int loops = 0;
+
         elm_slider_value_set(o_sl, quality);
+
+        if (!zone) zone = e_zone_current_get();
+        maxw = (zone->w - (40 * 2 * e_scale)) * 0.9;
+        maxh = (zone->h - (40 * 2 * e_scale)) * 0.9;
+
+        sc_main = evas_object_data_get(win, "scroll/main");
+        sc_tool = evas_object_data_get(win, "scroll/tools");
+        elm_scroller_content_min_limit(sc_main, EINA_TRUE, EINA_TRUE);
+        elm_scroller_content_min_limit(sc_tool, EINA_TRUE, EINA_TRUE);
+        evas_smart_objects_calculate(evas_object_evas_get(win));
+        evas_object_size_hint_min_get(o_bg, &minw, &minh);
+        if (minw > maxw) minw = maxw;
+        if (minh > maxh) minh = maxh;
+        elm_scroller_content_min_limit(sc_main, EINA_FALSE, EINA_FALSE);
+        elm_scroller_content_min_limit(sc_tool, EINA_TRUE, EINA_FALSE);
+        evas_smart_objects_calculate(evas_object_evas_get(win));
+        evas_object_resize(win, minw, minh);
         elm_win_center(win, 1, 1);
         evas_object_show(win);
         e_win_client_icon_set(win, "screenshot");
