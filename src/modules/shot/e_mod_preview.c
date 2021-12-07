@@ -49,22 +49,6 @@ _quality_change_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EI
    quality = elm_slider_value_get(obj);
 }
 
-static int
-_scroller_child_fits(Evas_Object *o, Evas_Coord *smaller_w, Evas_Coord *smaller_h)
-{
-   int ret = 0;
-   Evas_Coord x = 0, y = 0, w = 0, h = 0, cw = 0, ch = 0;
-
-   elm_scroller_child_size_get(o, &cw, &ch);
-   elm_scroller_region_get(o, &x, &y, &w, &h);
-   *smaller_w = *smaller_h = 0;
-   if (cw <= w) ret |= 1;
-   else *smaller_w = cw - w;
-   if (ch <= h) ret |= 2;
-   else *smaller_h = ch - h;
-   return ret;
-}
-
 void
 preview_dialog_show(E_Zone *zone, E_Client *ec, const char *params, void *dst,
                     int sx, int sy, int sw, int sh)
@@ -162,10 +146,8 @@ preview_dialog_show(E_Zone *zone, E_Client *ec, const char *params, void *dst,
      }
    else
      {
-        Eina_Bool scroll_main_ok = EINA_FALSE, scroll_tools_ok = EINA_FALSE;
         Evas_Coord maxw, maxh, minw, minh;
         Evas_Object *sc_main, *sc_tool;
-        int loops = 0;
 
         elm_slider_value_set(o_sl, quality);
 
