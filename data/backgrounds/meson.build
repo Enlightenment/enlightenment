@@ -1,4 +1,6 @@
-install_data([ 'Brown_Rock_Hi.edj',
+install_data([ 'Flat-Fan.edj',
+
+               'Brown_Rock_Hi.edj',
                'Colorful_Roses.edj',
                'Darkconcrete.edj',
                'Dark_Gradient.edj',
