@@ -3,6 +3,10 @@ install_data([ 'Flat-Fan.edj',
 
                'Flat-Stone-Pattern.edj',
 
+               'Mountain.edj',
+
+
+
                'Brown_Rock_Hi.edj',
                'Colorful_Roses.edj',
                'Darkconcrete.edj',
