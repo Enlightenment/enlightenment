@@ -601,7 +601,12 @@ init(Tempthread *tth)
                {
                   EINA_LIST_FOREACH(mon->temps, ll, temp)
                     {
-                       tth->sensor_name = eina_stringshare_add(temp->path);
+                       char buf[256];
+
+                       snprintf(buf, sizeof(buf), "%s - %s",
+                                mon->label ? mon->label : mon->name,
+                                temp->label ? temp->label : temp->name);
+                       tth->sensor_name = eina_stringshare_add(buf);
                        break;
                     }
                }
@@ -630,7 +635,12 @@ check(Tempthread *tth)
           {
              EINA_LIST_FOREACH(mon->temps, ll, temp)
                {
-                  if (!strcmp(tth->sensor_name, temp->path))
+                  char buf[256];
+
+                  snprintf(buf, sizeof(buf), "%s - %s",
+                           mon->label ? mon->label : mon->name,
+                           temp->label ? temp->label : temp->name);
+                  if (!strcmp(tth->sensor_name, buf))
                     {
                        t =  temp->temp;
                        break;

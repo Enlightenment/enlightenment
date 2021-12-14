@@ -81,7 +81,7 @@ _fill_data_tempget(E_Config_Dialog_Data *cfdata)
    EINA_LIST_FREE(sensors, sen)
      {
         if ((cfdata->inst->sensor_name) &&
-            (!strcmp(sen->name, cfdata->inst->sensor_name)))
+            (!strcmp(sen->label, cfdata->inst->sensor_name)))
           cfdata->sensor = n;
         cfdata->sensors = eina_list_append(cfdata->sensors, sen);
         n++;
@@ -192,7 +192,7 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 
    sen = eina_list_nth(cfdata->sensors, cfdata->sensor);
    if (sen)
-     eina_stringshare_replace(&(cfdata->inst->sensor_name), sen->name);
+     eina_stringshare_replace(&(cfdata->inst->sensor_name), sen->label);
 
    e_config_save_queue();
    temperature_face_update_config(cfdata->inst);
