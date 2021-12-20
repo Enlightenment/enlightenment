@@ -1,6 +1,10 @@
 install_data([ 'Flat-Fan.edj',
                'Sunset-Hills.edj',
                'Dunes.edj',
+               'Squiggle.edj',
+               'Squiggle-Dark.edj',
+               'Squiggle-Mid.edj',
+               'Squiggle-Light.edj',
 
                'Flat-Stone-Pattern.edj',
                'Paper-Flower.edj',
