@@ -1,5 +1,6 @@
 install_data([ 'Flat-Fan.edj',
                'Sunset-Hills.edj',
+               'Dunes.edj',
 
                'Flat-Stone-Pattern.edj',
                'Paper-Flower.edj',
