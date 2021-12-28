@@ -3512,6 +3512,7 @@ _e_comp_x_hook_client_pre_frame_assign(void *d EINA_UNUSED, E_Client *ec)
      }
    if (!ec->internal)
      ecore_x_window_save_set_add(win);
+   ec->ignore_first_unmap++;
    ecore_x_window_reparent(win, pwin, 0, 0);
    e_pixmap_alias(ep, E_PIXMAP_TYPE_X, pwin);
 
