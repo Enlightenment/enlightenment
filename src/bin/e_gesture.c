@@ -208,10 +208,41 @@ _shutdown_for_x11(void)
    elput_shutdown();
 }
 
+static int
+_detect_vm(void)
+{
+   static int on_vm = -1;
+   int ret;
+
+   if (on_vm >= 0) return on_vm;
+   ret = system("systemd-detect-virt");
+   if      (ret == 0) on_vm = 1;
+   else if (ret == 1) on_vm = 0;
+   else
+     {
+        ret = system("hostnamectl status | grep 'Chassis: vm'");
+        if      (ret == 0) on_vm = 1;
+        else if (ret == 1) on_vm = 0;
+        // fallback to assuming not on vm
+        else  on_vm = 0;
+     }
+   return on_vm;
+}
 
 E_API int
 e_gesture_init(void)
 {
+   // we have some bizarre bug on vbox -> this causes xorg to stop displaying
+   // the screen output even though it's rendered and you can grab it through
+   // screenshots, xrandr reports a perfectly well configured display.
+   // somehow using elput to get input devices from logind causes xorg
+   // internally to not handle e's first restart after wizard - as if
+   // the xserver goes into some bixarre internal state - it doesn't report
+   // any errors though. this works around that by just avoiding the gesture
+   // support on vm's - they wont have touchpads anyway as they will emulate
+   // a normal mouse mostly... :)
+   if (_detect_vm()) return 1;
+
    if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      {
         _init_for_x11();
@@ -230,6 +261,8 @@ e_gesture_init(void)
 E_API int
 e_gesture_shutdown(void)
 {
+//   if (_detect_vm()) return 1;
+
    if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      {
         _shutdown_for_x11();
