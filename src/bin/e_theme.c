@@ -134,7 +134,23 @@ e_theme_border_find(const char *border)
 E_API Eina_List *
 e_theme_border_list(void)
 {
-   return e_theme_collection_items_find(NULL, "e/widgets/border");
+   Eina_List *list, *l;
+   const char *s;
+
+   list = e_theme_collection_items_find(NULL, "e/widgets/border");
+   // XXX: a horrible hack due to history and bad group naming choices
+   // but filter out volume as a border because it is the volume gadget
+   // thing not a border
+   EINA_LIST_FOREACH(list, l, s)
+     {
+        if (!strcmp(s, "volume"))
+          {
+             list = eina_list_remove_list(list, l);
+             eina_stringshare_del(s);
+             break;
+          }
+     }
+   return list;
 }
 
 E_API int
