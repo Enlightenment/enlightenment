@@ -174,6 +174,7 @@ e_icon_file_set(Evas_Object *obj, const char *file)
 
    if ((sd->url) && (!strcmp(sd->url, file))) return;
    /* smart code here */
+   sd->edje = EINA_FALSE;
    _e_icon_obj_prepare(obj, sd);
    /* FIXME: 64x64 - unhappy about this. use icon size */
    sd->loading = 0;
