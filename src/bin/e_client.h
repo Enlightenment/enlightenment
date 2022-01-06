@@ -815,6 +815,7 @@ E_API Eina_Bool e_client_focus_track_enabled(void);
 E_API void e_client_focus_track_freeze(void);
 E_API void e_client_focus_track_thaw(void);
 E_API void e_client_refocus(void);
+E_API void e_client_revert_focus(E_Client *ec);
 E_API void e_client_focus_set_with_pointer(E_Client *ec);
 E_API void e_client_activate(E_Client *ec, Eina_Bool just_do_it);
 E_API E_Client *e_client_focused_get(void);
