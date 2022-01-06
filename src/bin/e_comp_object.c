@@ -1877,8 +1877,9 @@ _e_comp_intercept_focus(void *data, Evas_Object *obj, Eina_Bool focus)
      }
    else
      {
-        if (e_client_focused_get() == ec)
-          e_client_focused_set(NULL);
+        if (e_client_focused_get() == ec) {
+          e_client_revert_focus(ec);
+        }
      }
    evas_object_focus_set(obj, focus);
 }

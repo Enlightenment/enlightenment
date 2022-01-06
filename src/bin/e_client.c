@@ -400,8 +400,8 @@ _e_client_mouse_action_end(E_Client *ec)
    E_FREE_FUNC(ec->cur_mouse_action, e_object_unref);
 }
 
-static void
-_e_client_revert_focus(E_Client *ec)
+E_API void
+e_client_revert_focus(E_Client *ec)
 {
    E_Client *pec;
    E_Desk *desk;
@@ -644,7 +644,7 @@ _e_client_del(E_Client *ec)
      evas_object_hide(ec->internal_elm_win);
 
    if (ec->focused)
-     _e_client_revert_focus(ec);
+     e_client_revert_focus(ec);
    if (ec->frame) evas_object_focus_set(ec->frame, 0);
 
    E_FREE_FUNC(ec->ping_poller, ecore_poller_del);
@@ -1560,7 +1560,7 @@ _e_client_cb_evas_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
    if (!ec->hidden)
      {
         if (ec->focused)
-          _e_client_revert_focus(ec);
+          e_client_revert_focus(ec);
      }
    ec->want_focus = ec->take_focus = 0;
 
@@ -4642,7 +4642,7 @@ e_client_iconify(E_Client *ec)
      {
         if (!ec->new_client)
           {
-             _e_client_revert_focus(ec);
+             e_client_revert_focus(ec);
              evas_object_hide(ec->frame);
           }
         e_client_urgent_set(ec, ec->icccm.urgent);
