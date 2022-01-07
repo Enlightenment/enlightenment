@@ -459,6 +459,14 @@ e_client_revert_focus(E_Client *ec)
 static void
 _e_client_free(E_Client *ec)
 {
+   if (focused == ec)
+     {
+        focused = NULL;
+#ifndef HAVE_WAYLAND_ONLY
+        if (e_comp->comp_type != E_PIXMAP_TYPE_WL)
+           ecore_x_window_focus(e_comp->root);
+#endif
+     }
    if (ec->desk)
      ec->desk->fullscreen_clients = eina_list_remove(ec->desk->fullscreen_clients, ec);
    if (ec->restore_zone_id)
