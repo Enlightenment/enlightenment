@@ -438,6 +438,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    Config_Adapter *ad;
    Config_Device *dev;
 
+   e_gadcon_provider_unregister(&_gc_class);
    if (zero_adapters_check_timer)
      {
         ecore_timer_del(zero_adapters_check_timer);
