@@ -36,7 +36,10 @@ cb_obj_prop_entry(void *data, const void *key, Eldbus_Message_Iter *var)
      {
         Eina_Bool val = EINA_FALSE;
         if (eldbus_message_iter_arguments_get(var, "b", &val))
-          o->connected = val;
+          {
+             o->connected = val;
+             printf("BZ: change connected for %s to %i\n", o->address, o->connected);
+          }
      }
    else if (!strcmp(skey, "Trusted"))
      {

@@ -48,16 +48,6 @@ _devices_eval(void)
              if (dev)
                {
                   printf("=== dev: %s|%s [%s]\n", dev->addr, o->address, o->name);
-                  if ((dev->force_connect) && (!o->connected))
-                    {
-                       printf("=== %s force con, not conn, ping ok=%i\n", o->address, o->ping_ok);
-                       if (o->ping_ok)
-                         {
-                            printf("=== %s force con, not conn, ping ok=%i\n", o->address, o->ping_ok);
-                            bz_obj_connect(o);
-                         }
-                       else need_ping = EINA_TRUE;
-                    }
                   if (dev->unlock)
                     {
                        printf("=== unlock...\n");
@@ -300,24 +290,6 @@ _cb_unlock_stop(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    printf("BZ5: unlock stop %s\n", o->address);
    ebluez5_device_prop_unlock_set(o->address, EINA_FALSE);
    ebluez5_popup_device_change(o);
-   _unflip(o, obj);
-}
-
-static void
-_cb_force_connect_start(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
-{
-   Obj *o = data;
-   ebluez5_device_prop_force_connect_set(o->address, EINA_TRUE);
-   ebluez5_popup_adapter_change(o);
-   _unflip(o, obj);
-}
-
-static void
-_cb_force_connect_stop(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
-{
-   Obj *o = data;
-   ebluez5_device_prop_force_connect_set(o->address, EINA_FALSE);
-   ebluez5_popup_adapter_change(o);
    _unflip(o, obj);
 }
 
@@ -579,23 +551,6 @@ _cb_dev_content_get(void *data, Evas_Object *obj,
                                                  _("Make this auto unlock when detected (and lock when not)"));
                        evas_object_data_set(bt, "genlist", obj);
                        evas_object_smart_callback_add(bt, "clicked", _cb_unlock_start, o);
-                    }
-                  elm_box_pack_end(bx, bt);
-                  evas_object_show(bt);
-
-                  if ((dev) && (dev->force_connect))
-                    {
-                       bt = util_button_icon_add(obj, "bt-force-connect-off",
-                                                 _("Stop this device from being forcefully connected"));
-                       evas_object_data_set(bt, "genlist", obj);
-                       evas_object_smart_callback_add(bt, "clicked", _cb_force_connect_stop, o);
-                    }
-                  else
-                    {
-                       bt = util_button_icon_add(obj, "bt-force-connect-on",
-                                                 _("Force this device to be connected when detected"));
-                       evas_object_data_set(bt, "genlist", obj);
-                       evas_object_smart_callback_add(bt, "clicked", _cb_force_connect_start, o);
                     }
                   elm_box_pack_end(bx, bt);
                   evas_object_show(bt);
