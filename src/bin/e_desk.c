@@ -454,8 +454,9 @@ e_desk_last_focused_focus(E_Desk *desk)
           evas_object_raise(ecs->frame);
         return ecs;
      }
-   if (e_client_focused_get())
-     evas_object_focus_set(e_client_focused_get()->frame, 0);
+   if (e_client_focused_get()) {
+     e_client_revert_focus(e_client_focused_get());
+   }
    return NULL;
 }
 

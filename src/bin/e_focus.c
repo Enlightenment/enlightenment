@@ -35,8 +35,9 @@ e_focus_event_mouse_out(E_Client *ec)
      {
         if (!ec->lock_focus_in)
           {
-             if (ec->focused)
-               evas_object_focus_set(ec->frame, 0);
+             if (ec->focused) {
+               e_client_revert_focus(ec);
+             }
           }
      }
    E_FREE_FUNC(ec->raise_timer, ecore_timer_del);
