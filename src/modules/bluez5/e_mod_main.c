@@ -294,7 +294,7 @@ ebluez5_instances_update(void)
 static void
 _device_prop_clean(Config_Device *dev)
 {
-   if ((!dev->unlock) && (!dev->force_connect))
+   if (!dev->unlock)
      {
         ebluez5_config->devices = eina_list_remove(ebluez5_config->devices, dev);
         eina_stringshare_del(dev->addr);
@@ -330,27 +330,6 @@ ebluez5_device_prop_find(const char *address)
           return dev;
      }
    return NULL;
-}
-
-
-void
-ebluez5_device_prop_force_connect_set(const char *address, Eina_Bool enable)
-{
-   Config_Device *dev;
-
-   if (!address) return;
-   dev = ebluez5_device_prop_find(address);
-   if (dev)
-     {
-        dev->force_connect = enable;
-        _device_prop_clean(dev);
-        return;
-     }
-   if (enable)
-     {
-        dev = _device_prop_new(address);
-        dev->force_connect = enable;
-     }
 }
 
 void
@@ -405,7 +384,6 @@ e_modapi_init(E_Module *m)
 #define T Config_Device
 #define D conf_device_edd
    E_CONFIG_VAL(D, T, addr, STR);
-   E_CONFIG_VAL(D, T, force_connect, UCHAR);
    E_CONFIG_VAL(D, T, unlock, UCHAR);
 
    conf_edd = E_CONFIG_DD_NEW("Config", Config);

@@ -32,7 +32,6 @@ typedef struct _Config_Device Config_Device;
 struct _Config_Device
 {
    const char *addr;
-   Eina_Bool force_connect;
    Eina_Bool unlock;
 };
 
