@@ -1878,7 +1878,7 @@ _e_comp_intercept_focus(void *data, Evas_Object *obj, Eina_Bool focus)
    else
      {
         if (e_client_focused_get() == ec) {
-          e_client_revert_focus(ec);
+          e_client_focused_set(NULL);
         }
      }
    evas_object_focus_set(obj, focus);
@@ -2353,8 +2353,9 @@ _e_comp_smart_hide(Evas_Object *obj)
           edje_object_play_set(cw->frame_object, 0);
      }
    /* ensure focus-out */
-   if (cw->ec->focused)
-     evas_object_focus_set(cw->ec->frame, 0);
+   if (cw->ec->focused) {
+     e_client_revert_focus(cw->ec);
+   }
    e_comp_render_queue(); //force nocomp recheck
    e_comp_shape_queue();
 }

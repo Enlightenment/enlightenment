@@ -2884,7 +2884,7 @@ _e_comp_x_focus_out(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_
         else if (ev->detail == ECORE_X_EVENT_DETAIL_INFERIOR)
           return ECORE_CALLBACK_PASS_ON;
      }
-   evas_object_focus_set(ec->frame, 0);
+   e_client_revert_focus(ec);
    return ECORE_CALLBACK_PASS_ON;
 }
 
