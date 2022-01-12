@@ -1078,7 +1078,7 @@ _e_fwin_page_favorites_add(E_Fwin_Page *page)
    e_widget_scrollframe_focus_object_set(o, page->flist);
 
    page->flist_frame = o;
-   evas_object_size_hint_min_set(o, 128, 0);
+   evas_object_size_hint_min_set(o, 128 * e_scale, 0);
    edje_object_part_swallow(page->fwin->bg_obj, "e.swallow.favorites", o);
 }
 
