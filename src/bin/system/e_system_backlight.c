@@ -153,7 +153,7 @@ _cb_worker_message(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED, void *m
 
    if (lig->max > 0)
      {
-        val = ((1000 * lig->val) + 500) / lig->max;
+        val = (1000 * lig->val) / lig->max;
         if (val < 0) val = 0;
         else if (val > 1000) val = 1000;
      }

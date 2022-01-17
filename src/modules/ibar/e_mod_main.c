@@ -1948,10 +1948,22 @@ _ibar_cb_icon_move(void *data, Evas *e, Evas_Object *obj, void *event_info EINA_
         if (!zone)
           zone = eina_list_data_get(e_comp->zones);
      }
-   if (chx - (len / 2) < zone->x)
+   if ((ic->ibar->inst->orient == E_GADCON_ORIENT_LEFT) ||
+       (ic->ibar->inst->orient == E_GADCON_ORIENT_CORNER_LT) ||
+       (ic->ibar->inst->orient == E_GADCON_ORIENT_CORNER_LB))
      sig = "e,origin,left";
-   else if ((chx + (len / 2) > cw) || ((chx + (len / 2) > zone->x + zone->w)))
+   else if ((ic->ibar->inst->orient == E_GADCON_ORIENT_RIGHT) ||
+            (ic->ibar->inst->orient == E_GADCON_ORIENT_CORNER_RT) ||
+            (ic->ibar->inst->orient == E_GADCON_ORIENT_CORNER_RB))
      sig = "e,origin,right";
+   else
+     {
+        if (chx - (len / 2) < zone->x)
+          sig = "e,origin,left";
+        else if ((chx + (len / 2) > cw) || ((chx + (len / 2) > zone->x + zone->w)))
+          sig = "e,origin,right";
+     }
+   printf("EMIT: %p %s\n", ic, sig);
    _ibar_icon_signal_emit(ic, sig, "e");
 }
 
