@@ -1963,7 +1963,6 @@ _ibar_cb_icon_move(void *data, Evas *e, Evas_Object *obj, void *event_info EINA_
         else if ((chx + (len / 2) > cw) || ((chx + (len / 2) > zone->x + zone->w)))
           sig = "e,origin,right";
      }
-   printf("EMIT: %p %s\n", ic, sig);
    _ibar_icon_signal_emit(ic, sig, "e");
 }
 
