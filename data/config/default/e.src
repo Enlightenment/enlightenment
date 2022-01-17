@@ -1,5 +1,5 @@
 group "E_Config" struct {
-  value "config_version" int: 1000033;
+  value "config_version" int: 1000035;
   value "config_type" uint: 0; // this profile seems to just be super minimalist
   value "desktop_default_name" string: "%i-%i";
   value "desktop_default_window_profile" string: "";
@@ -207,6 +207,7 @@ group "E_Config" struct {
   value "backlight.timer" double: 30.0;
   value "backlight.battery_timer" double: 20.0;
   value "backlight.idle_dim" uchar: 1;
+  value "backlight.ddc" uchar: 0;
   value "device_desktop" int: 0;
   value "device_auto_mount" int: 0;
   value "device_auto_open" int: 0;
