@@ -17,6 +17,7 @@ struct _E_Config_Dialog_Data
    Evas_Object *backlight_slider_fade;
 
    int enable_idle_dim;
+   int ddc;
 
    double backlight_normal;
    double backlight_dim;
@@ -56,6 +57,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    cfdata->backlight_dim = e_config->backlight.dim * 100.0;
    cfdata->backlight_transition = e_config->backlight.transition;
    cfdata->enable_idle_dim = e_config->backlight.idle_dim;
+   cfdata->ddc = e_config->backlight.ddc;
    cfdata->backlight_timeout = e_config->backlight.timer;
    cfdata->backlight_battery_timeout = e_config->backlight.battery_timer;
 }
@@ -87,6 +89,7 @@ _apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
    e_config->backlight.timer = lround(cfdata->backlight_timeout);
    e_config->backlight.battery_timer = lround(cfdata->backlight_battery_timeout);
    e_config->backlight.idle_dim = cfdata->enable_idle_dim;
+   e_config->backlight.ddc = cfdata->ddc;
 
    e_backlight_mode_set(NULL, E_BACKLIGHT_MODE_NORMAL);
    e_backlight_level_set(NULL, e_config->backlight.normal, -1.0);
@@ -121,7 +124,8 @@ _advanced_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *
           (!EINA_DBL_EQ(e_config->backlight.transition, cfdata->backlight_transition)) ||
           (!EINA_DBL_EQ(e_config->backlight.timer, cfdata->backlight_timeout)) ||
           (!EINA_DBL_EQ(e_config->backlight.battery_timer, cfdata->backlight_battery_timeout)) ||
-          (e_config->backlight.idle_dim != cfdata->enable_idle_dim);
+          (e_config->backlight.idle_dim != cfdata->enable_idle_dim) ||
+          (e_config->backlight.ddc != cfdata->ddc);
 }
 
 static int
@@ -150,6 +154,9 @@ _advanced_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_
    e_widget_list_object_append(o, ob, 1, 1, 0.5);
    ob = e_widget_slider_add(evas, 1, 0, _("%3.0f"), 0.0, 100.0, 1.0, 0,
                             &(cfdata->backlight_dim), NULL, 100);
+   e_widget_list_object_append(o, ob, 1, 1, 0.5);
+
+   ob = e_widget_check_add(evas, _("Desktop Monitor Support (DDC)"), &(cfdata->ddc));
    e_widget_list_object_append(o, ob, 1, 1, 0.5);
 
    ob = e_widget_check_add(evas, _("Idle Fade Time"), &(cfdata->enable_idle_dim));

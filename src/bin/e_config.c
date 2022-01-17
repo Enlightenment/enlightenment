@@ -942,6 +942,7 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, backlight.battery_timer, DOUBLE);
    E_CONFIG_VAL(D, T, backlight.sysdev, STR);
    E_CONFIG_VAL(D, T, backlight.idle_dim, UCHAR);
+   E_CONFIG_VAL(D, T, backlight.ddc, UCHAR);
 
    E_CONFIG_VAL(D, T, deskenv.load_xrdb, UCHAR);
    E_CONFIG_VAL(D, T, deskenv.load_xmodmap, UCHAR);
@@ -1808,6 +1809,12 @@ e_config_load(void)
                e_config->scale.set_xapp_dpi = 1;
                e_config_save_queue();
             }
+          CONFIG_VERSION_CHECK(35)
+            {
+               CONFIG_VERSION_UPDATE_INFO(35);
+               e_config->backlight.ddc = 1;
+               e_config_save_queue();
+            }
      }
    elm_config_profile_set(_e_config_profile);
    if (!e_config->remember_internal_fm_windows)
@@ -1992,6 +1999,7 @@ e_config_load(void)
    E_CONFIG_LIMIT(e_config->backlight.normal, 0.05, 1.0);
    E_CONFIG_LIMIT(e_config->backlight.dim, 0.05, 1.0);
    E_CONFIG_LIMIT(e_config->backlight.idle_dim, 0, 1);
+   E_CONFIG_LIMIT(e_config->backlight.ddc, 0, 1);
 
    E_CONFIG_LIMIT(e_config->keyboard.repeat_delay, -1, 1000); // 1 second
    E_CONFIG_LIMIT(e_config->keyboard.repeat_rate, -1, 1000); // 1 second

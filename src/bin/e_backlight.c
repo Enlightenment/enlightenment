@@ -254,7 +254,8 @@ _backlight_devices_device_set(Backlight_Device *bd, double val)
 //        fprintf(stderr, "BL: ddc bklight %1.3f @ %1.3f\n", bd->val, ecore_time_get());
         if (bd->ddc_max) fval = bd->val * (double)bd->ddc_max;
         else fval = bd->val * 100.0;
-        e_system_send("ddc-val-set", "%s %i %i", bd->dev + 4, 0x10, (int)(fval)); // backlight val in e_system_ddc.c
+        if (e_config->backlight.ddc)
+          e_system_send("ddc-val-set", "%s %i %i", bd->dev + 4, 0x10, (int)(fval)); // backlight val in e_system_ddc.c
         ecore_event_add(E_EVENT_BACKLIGHT_CHANGE, NULL, NULL, NULL);
      }
    else

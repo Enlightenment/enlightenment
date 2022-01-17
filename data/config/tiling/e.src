@@ -1,5 +1,5 @@
 group "E_Config" struct {
-    value "config_version" int: 1000033;
+    value "config_version" int: 1000035;
     value "config_type" uint: 3;
     value "desktop_default_name" string: "%i-%i";
     value "desktop_default_window_profile" string: "standard";
@@ -200,6 +200,7 @@ group "E_Config" struct {
     value "backlight.timer" double: 30.0;
     value "backlight.battery_timer" double: 20.0;
     value "backlight.idle_dim" uchar: 1;
+    value "backlight.ddc" uchar: 1;
     value "deskenv.load_xrdb" uchar: 1;
     value "deskenv.load_xmodmap" uchar: 1;
     value "deskenv.load_gnome" uchar: 0;
