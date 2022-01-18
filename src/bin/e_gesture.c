@@ -22,6 +22,7 @@ typedef struct {
 static int gesture_capable_devices = 0;
 static E_Bindings_Swipe_Live_Update live_update;
 static void* live_update_data;
+static Eina_List *handlers = NULL;
 
 static Swipe_Stats*
 _find_swipe_gesture_recognizition(Elput_Device *dev)
@@ -250,10 +251,10 @@ e_gesture_init(void)
 
    active_gestures = eina_hash_pointer_new(_stats_free);
 
-   ecore_event_handler_add(ELPUT_EVENT_SWIPE_BEGIN, _swipe_cb, NULL);
-   ecore_event_handler_add(ELPUT_EVENT_SWIPE_UPDATE, _swipe_cb, NULL);
-   ecore_event_handler_add(ELPUT_EVENT_SWIPE_END, _swipe_cb, NULL);
-   ecore_event_handler_add(ELPUT_EVENT_SEAT_CAPS, _debug, NULL);
+   E_LIST_HANDLER_APPEND(handlers, ELPUT_EVENT_SWIPE_BEGIN, _swipe_cb, NULL);
+   E_LIST_HANDLER_APPEND(handlers, ELPUT_EVENT_SWIPE_UPDATE, _swipe_cb, NULL);
+   E_LIST_HANDLER_APPEND(handlers, ELPUT_EVENT_SWIPE_END, _swipe_cb, NULL);
+   E_LIST_HANDLER_APPEND(handlers, ELPUT_EVENT_SEAT_CAPS, _debug, NULL);
 
    return 1;
 }
@@ -261,7 +262,20 @@ e_gesture_init(void)
 E_API int
 e_gesture_shutdown(void)
 {
-//   if (_detect_vm()) return 1;
+   Ecore_Event_Handler *hand;
+
+   if (_detect_vm()) return 1;
+
+   if (active_gestures)
+     {
+        eina_hash_free(active_gestures);
+        active_gestures = NULL;
+     }
+
+   EINA_LIST_FREE(handlers, hand)
+     {
+        ecore_event_handler_del(hand);
+     }
 
    if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      {

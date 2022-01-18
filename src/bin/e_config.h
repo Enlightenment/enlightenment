@@ -291,6 +291,8 @@ struct _E_Config
 
    int                       thumb_nice;
 
+   unsigned char             gesture_open_input_devices; // GUI
+
    int                       ping_clients_interval; // GUI
 
    int                       thumbscroll_enable; // GUI
