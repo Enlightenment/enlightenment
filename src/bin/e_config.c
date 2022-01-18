@@ -879,6 +879,8 @@ _e_config_edd_init(Eina_Bool old)
 
    E_CONFIG_VAL(D, T, thumb_nice, INT);
 
+   E_CONFIG_VAL(D, T, gesture_open_input_devices, UCHAR);
+
    E_CONFIG_VAL(D, T, menu_icons_hide, UCHAR);
    E_CONFIG_VAL(D, T, menu_favorites_show, INT);
    E_CONFIG_VAL(D, T, menu_apps_show, INT);
@@ -1919,6 +1921,8 @@ e_config_load(void)
    E_CONFIG_LIMIT(e_config->desk_auto_switch, 0, 1);
 
    E_CONFIG_LIMIT(e_config->screen_limits, 0, 2);
+   E_CONFIG_LIMIT(e_config->thumb_nice, -20, 20);
+   E_CONFIG_LIMIT(e_config->gesture_open_input_devices, 0, 1);
 
    E_CONFIG_LIMIT(e_config->dpms_enable, 0, 1);
    E_CONFIG_LIMIT(e_config->dpms_standby_enable, 0, 1);

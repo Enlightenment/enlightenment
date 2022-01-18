@@ -24,6 +24,7 @@ struct _E_Config_Dialog_Data
       double error;
       double length;
       unsigned int fingers;
+      int gesture_open_input_devices;
    } locals;
    struct
    {
@@ -74,6 +75,15 @@ _auto_apply_changes(E_Config_Dialog_Data *cfdata)
    E_Config_Binding_Swipe *bi;
    E_Action_Group *actg;
    E_Action_Description *actd;
+
+   if (cfdata->locals.gesture_open_input_devices != e_config->gesture_open_input_devices)
+     {
+        E_Action *act;
+
+        e_config->gesture_open_input_devices = cfdata->locals.gesture_open_input_devices;
+        act = e_action_find("restart");
+        if ((act) && (act->func.go)) act->func.go(NULL, NULL);
+     }
 
    if ((!cfdata->locals.cur) || (!cfdata->locals.cur[0]) ||
        (!cfdata->locals.action) || (!cfdata->locals.action[0])) return;
@@ -133,6 +143,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    cfdata->locals.source = eina_stringshare_add("");
    cfdata->locals.cur = NULL;
    cfdata->locals.dia = NULL;
+   cfdata->locals.gesture_open_input_devices = e_config->gesture_open_input_devices;
    cfdata->binding.swipe = NULL;
 
    EINA_LIST_FOREACH(e_bindings->swipe_bindings, l, bi)
@@ -912,7 +923,7 @@ _help_swipe_bindings_cb(void *data EINA_UNUSED, void *data2 EINA_UNUSED)
 static Evas_Object *
 _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
-   Evas_Object *o, *ol, *ot, *of, *ob;
+   Evas_Object *o, *ol, *ot, *of, *ob, *oc;
 
    cfdata->evas = evas;
    o = e_widget_list_add(evas, 0, 0);
@@ -962,6 +973,9 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cf
    e_widget_list_object_append(ol, ot, 1, 1, 0.5);
 
    e_widget_list_object_append(o, ol, 1, 1, 0.5);
+
+   oc = e_widget_check_add(evas, _("Open input devices"), &(cfdata->locals.gesture_open_input_devices));
+   e_widget_list_object_append(o, oc, 1, 1, 0.5);
 
    _update_swipe_binding_list(cfdata);
    _fill_actions_list(cfdata);
