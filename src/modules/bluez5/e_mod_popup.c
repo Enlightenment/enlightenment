@@ -43,9 +43,10 @@ _devices_eval(void)
         if (o->paired)
           {
              Eina_Bool need_ping = EINA_FALSE;
+             Obj *adapter = bz_obj_find(o->adapter);
 
              dev = _devices_conifg_find(o->address);
-             if (dev)
+             if ((dev) && (adapter) && (adapter->powered))
                {
                   printf("=== dev: %s|%s [%s]\n", dev->addr, o->address, o->name);
                   if (dev->unlock)
