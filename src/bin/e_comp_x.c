@@ -2872,10 +2872,12 @@ _e_comp_x_focus_out(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_
      {
         /* for firefox/thunderbird (xul) menu walking */
         /* NB: why did i disable this before? */
+        return ECORE_CALLBACK_PASS_ON;
+        /* why only filter these out for an ungrab? skip all ungrabs...
         if (ev->detail == ECORE_X_EVENT_DETAIL_INFERIOR)
           return ECORE_CALLBACK_PASS_ON;
         else if (ev->detail == ECORE_X_EVENT_DETAIL_POINTER)
-          return ECORE_CALLBACK_PASS_ON;
+          return ECORE_CALLBACK_PASS_ON; */
      }
    else if (ev->mode == ECORE_X_EVENT_MODE_WHILE_GRABBED)
      {
