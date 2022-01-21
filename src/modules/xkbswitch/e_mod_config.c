@@ -232,9 +232,7 @@ _create_data(E_Config_Dialog *cfd)
 static void
 _list_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
-   Evas_Object **o;
-
-   o = data;
+   Evas_Object **o = data;
 
    *o = NULL;
 }
@@ -246,12 +244,29 @@ _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 
    _xkb.cfd = NULL;
 
-   if (cfdata->compose_list)
-     evas_object_event_callback_del(cfdata->compose_list, EVAS_CALLBACK_DEL, _list_del);
-   if (cfdata->lv3_list)
-     evas_object_event_callback_del(cfdata->lv3_list, EVAS_CALLBACK_DEL, _list_del);
-   if (cfdata->switch_list)
-     evas_object_event_callback_del(cfdata->switch_list, EVAS_CALLBACK_DEL, _list_del);
+#define FRAME_DEL(list) \
+   if (list) { \
+      evas_object_del(list); \
+      list = NULL; \
+   }
+   FRAME_DEL(cfdata->compose_list);
+   FRAME_DEL(cfdata->lv3_list);
+   FRAME_DEL(cfdata->switch_list);
+   FRAME_DEL(cfdata->led_list);
+   FRAME_DEL(cfdata->ctrl_list);
+   FRAME_DEL(cfdata->keypad_list);
+   FRAME_DEL(cfdata->delkeypad_list);
+   FRAME_DEL(cfdata->capslock_list);
+   FRAME_DEL(cfdata->altwin_list);
+   FRAME_DEL(cfdata->currency_list);
+   FRAME_DEL(cfdata->lv5_list);
+   FRAME_DEL(cfdata->spacebar_list);
+   FRAME_DEL(cfdata->japan_list);
+   FRAME_DEL(cfdata->korean_list);
+   FRAME_DEL(cfdata->esperanto_list);
+   FRAME_DEL(cfdata->solaris_list);
+   FRAME_DEL(cfdata->terminate_list);
+   FRAME_DEL(cfdata->misc_list);
 
    EINA_LIST_FREE(cfdata->cfg_layouts, cl)
      {
