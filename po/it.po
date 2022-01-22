@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-30 00:31+0100\n"
-"PO-Revision-Date: 2021-11-30 00:36+0100\n"
+"POT-Creation-Date: 2022-01-22 18:24+0100\n"
+"PO-Revision-Date: 2022-01-22 20:32+0100\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: General\n"
 "Language: it\n"
@@ -25,7 +25,7 @@ msgstr "Informazioni su Enlightenment"
 #: src/bin/e_int_client_menu.c:244 src/bin/e_int_client_prop.c:81
 #: src/bin/e_startup.c:110 src/bin/e_theme_about.c:22
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:872
-#: src/modules/conf_bindings/e_int_config_swipebindings.c:908
+#: src/modules/conf_bindings/e_int_config_swipebindings.c:919
 #: src/modules/conf/e_conf.c:159 src/modules/everything/evry_plug_windows.c:370
 #: src/modules/fileman/e_fwin.c:2657 src/modules/vkbd/e_kbd_cfg.c:188
 msgid "Close"
@@ -41,15 +41,11 @@ msgstr "Enlightenment"
 
 #: src/bin/e_about.c:26
 msgid ""
-"<title>Copyright &copy; 2000-2021, by the Enlightenment Development Team</"
+"<title>Copyright &copy; 2000-2022, by the Enlightenment Development Team</"
 "><ps/><ps/>We hope you enjoy using this software as much as we enjoyed "
 "writing it.<ps/><ps/>To contact us please visit:<ps/><hilight>http://www."
 "enlightenment.org</><ps/><ps/>"
-msgstr ""
-"<title>Copyright &copy; 2000-2021, dell'Enlightenment Development Team.</"
-"><ps/><ps/>Ci auguriamo che vi piacerà usare questo software tanto quanto a "
-"noi è piaciuto scriverlo.<ps/><ps/>Per contattarci visitate:<ps/"
-"><hilight>http://www.enlightenment.org</><ps/><ps/>"
+msgstr "<title>Copyright &copy; 2000-2022, dell'Enlightenment Development Team.</><ps/><ps/>Ci auguriamo che vi piacerà usare questo software tanto quanto a noi è piaciuto scriverlo.<ps/><ps/>Per contattarci visitate:<ps/><hilight>http://www.enlightenment.org</><ps/><ps/>"
 
 #: src/bin/e_about.c:69
 msgid "<title>The Team</><ps/><ps/>"
@@ -92,8 +88,8 @@ msgstr "Uccidi"
 #: src/bin/e_actions.c:369 src/bin/e_actions.c:2272 src/bin/e_actions.c:2347
 #: src/bin/e_actions.c:2407 src/bin/e_actions.c:2464 src/bin/e_actions.c:2526
 #: src/bin/e_actions.c:2628 src/bin/e_confirm_dialog.c:53 src/bin/e_fm.c:10706
-#: src/bin/e_fm.c:11059 src/modules/bluez5/e_mod_popup.c:548
-#: src/modules/bluez5/e_mod_popup.c:549
+#: src/bin/e_fm.c:11059 src/modules/bluez5/e_mod_popup.c:521
+#: src/modules/bluez5/e_mod_popup.c:522
 #: src/modules/quickaccess/e_mod_quickaccess.c:1308
 msgid "No"
 msgstr "No"
@@ -113,7 +109,7 @@ msgstr "Siete sicuri di voler uscire da Enlightement?"
 #: src/bin/e_actions.c:2270 src/bin/e_actions.c:2345 src/bin/e_actions.c:2405
 #: src/bin/e_actions.c:2462 src/bin/e_actions.c:2524 src/bin/e_actions.c:2626
 #: src/bin/e_confirm_dialog.c:52 src/bin/e_fm.c:10709
-#: src/modules/bluez5/e_mod_popup.c:548 src/modules/bluez5/e_mod_popup.c:549
+#: src/modules/bluez5/e_mod_popup.c:521 src/modules/bluez5/e_mod_popup.c:522
 #: src/modules/quickaccess/e_mod_quickaccess.c:1308
 msgid "Yes"
 msgstr "Sì"
@@ -895,11 +891,11 @@ msgstr "Layout di tastiera precedente"
 msgid "Set As Background"
 msgstr "Imposta come sfondo"
 
-#: src/bin/e_client.c:4915
+#: src/bin/e_client.c:4923
 msgid "Client Error!"
 msgstr "Errore del client!"
 
-#: src/bin/e_client.c:4915
+#: src/bin/e_client.c:4923
 msgid "Something has attempted to set a border when it shouldn't! Report this!"
 msgstr "Qualcosa ha tentato indebitamente di impostare un bordo! Riportatelo!"
 
@@ -919,9 +915,9 @@ msgstr "Seleziona"
 #: src/bin/e_desktop_editor.c:973 src/bin/e_entry_dialog.c:128
 #: src/bin/e_fm.c:10213 src/bin/e_fm_prop.c:770
 #: src/bin/e_import_config_dialog.c:361 src/bin/e_import_dialog.c:197
-#: src/modules/bluez5/e_mod_popup.c:660
+#: src/modules/bluez5/e_mod_popup.c:616
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:624
-#: src/modules/conf_bindings/e_int_config_swipebindings.c:667
+#: src/modules/conf_bindings/e_int_config_swipebindings.c:678
 #: src/modules/conf_intl/e_int_config_imc_import.c:123
 #: src/modules/conf_theme/e_int_config_theme_import.c:122
 #: src/modules/connman/agent.c:254
@@ -931,9 +927,9 @@ msgstr "Seleziona"
 #: src/modules/quickaccess/e_mod_quickaccess.c:396
 #: src/modules/shot/e_mod_delay.c:86 src/modules/shot/e_mod_preview.c:104
 #: src/modules/shot/e_mod_share.c:224 src/modules/shot/e_mod_share.c:252
-#: src/modules/syscon/e_syscon.c:92 src/modules/xkbswitch/e_mod_config.c:878
-#: src/modules/xkbswitch/e_mod_config.c:1009
-#: src/modules/xkbswitch/e_mod_config.c:1434
+#: src/modules/syscon/e_syscon.c:92 src/modules/xkbswitch/e_mod_config.c:893
+#: src/modules/xkbswitch/e_mod_config.c:1024
+#: src/modules/xkbswitch/e_mod_config.c:1449
 msgid "Cancel"
 msgstr "Annulla"
 
@@ -955,7 +951,7 @@ msgstr "Imposta opacità finestra corrente"
 msgid "Toggle focused client's redirect state"
 msgstr "Commuta stato redirect del client a fuoco"
 
-#: src/bin/e_comp.c:1416 src/modules/bluez5/e_mod_popup.c:486
+#: src/bin/e_comp.c:1416 src/modules/bluez5/e_mod_popup.c:459
 msgid "Visible"
 msgstr "Visibile"
 
@@ -1006,11 +1002,11 @@ msgstr ""
 "compositing è necessaria<ps/>una GPU in grado di supportare OpenGL 2.0 (o "
 "OpenGL<ps/>ES 2.0)."
 
-#: src/bin/e_comp_x.c:5854
+#: src/bin/e_comp_x.c:5857
 msgid "Lock Failed"
 msgstr "Blocco fallito"
 
-#: src/bin/e_comp_x.c:5855
+#: src/bin/e_comp_x.c:5858
 msgid ""
 "Locking the desktop failed because some application<ps/>has grabbed either "
 "the keyboard or the mouse or both<ps/>and their grab is unable to be broken."
@@ -1019,11 +1015,11 @@ msgstr ""
 "catturato la tastiera e/o il<ps/>mouse e questa cattura non può essere "
 "sciolta."
 
-#: src/bin/e_comp_x.c:5873
+#: src/bin/e_comp_x.c:5876
 msgid "Another compositor is already running on your display server."
 msgstr "Un altro compositor è già in esecuzione sul vostro server grafico."
 
-#: src/bin/e_comp_x.c:5898
+#: src/bin/e_comp_x.c:5901
 msgid ""
 "Your display server does not support the compositor overlay window.\n"
 "This is needed for Enlightenment to function."
@@ -1031,12 +1027,12 @@ msgstr ""
 "Il vostro server grafico non supporta la finestra overlay del compositor. "
 "Ciò è necessario per il funzionamento di Enlightenment."
 
-#: src/bin/e_comp_x.c:6032
+#: src/bin/e_comp_x.c:6035
 #, c-format
 msgid "Enlightenment cannot initialize X Connection...\n"
 msgstr "Enlightenment non riesce ad inizializzare la connessione con X...\n"
 
-#: src/bin/e_comp_x.c:6047
+#: src/bin/e_comp_x.c:6050
 msgid ""
 "Your display server does not support XComposite, or Ecore-X was built "
 "without XComposite support. Note that for composite support you will also "
@@ -1046,7 +1042,7 @@ msgstr ""
 "compilato senza supporto per XComposite. Notare che il supporto per il "
 "compositing richiede anche il supporto per XRender e XFixes in X11 ed Ecore."
 
-#: src/bin/e_comp_x.c:6056
+#: src/bin/e_comp_x.c:6059
 msgid ""
 "Your display server does not support XDamage or Ecore was built without "
 "XDamage support."
@@ -1054,7 +1050,7 @@ msgstr ""
 "Il vostro server grafico non supporta XDamage o Ecore è stato compilato "
 "senza il supporto per XDamage."
 
-#: src/bin/e_comp_x.c:6162
+#: src/bin/e_comp_x.c:6165
 msgid "Enlightenment cannot initialize the XSettings system.\n"
 msgstr "Enlightenment non riesce a inizializzare il suo sistema XSettings.\n"
 
@@ -1081,13 +1077,13 @@ msgstr ""
 #: src/bin/e_module.c:480 src/bin/e_module.c:707 src/bin/e_sys.c:982
 #: src/bin/e_update.c:70 src/bin/e_utils.c:401
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:623
-#: src/modules/conf_bindings/e_int_config_swipebindings.c:666
+#: src/modules/conf_bindings/e_int_config_swipebindings.c:677
 #: src/modules/conf_intl/e_int_config_imc_import.c:119
 #: src/modules/conf_theme/e_int_config_theme_import.c:118
 #: src/modules/cpufreq/e_mod_main.c:551 src/modules/cpufreq/e_mod_main.c:619
 #: src/modules/fileman/e_int_config_mime_edit.c:313
 #: src/modules/polkit/auth_ui.c:184 src/modules/shot/e_mod_delay.c:79
-#: src/modules/xkbswitch/e_mod_config.c:1433
+#: src/modules/xkbswitch/e_mod_config.c:1448
 msgid "OK"
 msgstr "OK"
 
@@ -1178,7 +1174,7 @@ msgstr "Decrittazione fallita."
 msgid "The error is unknown to Enlightenment."
 msgstr "L'errore è sconosciuto a Enlightenment."
 
-#: src/bin/e_config.c:1247
+#: src/bin/e_config.c:1250
 msgid ""
 "Settings data needed upgrading. Your old settings have<ps/>been wiped and a "
 "new set of defaults initialized. This<ps/>will happen regularly during "
@@ -1198,7 +1194,7 @@ msgstr ""
 "nuove funzionalità.<ps/>Adesso è possibile riconfigurare le cose a proprio "
 "piacimento.<ps/>Ci scusiamo per il disagio.<ps/>"
 
-#: src/bin/e_config.c:1264
+#: src/bin/e_config.c:1267
 msgid ""
 "Your settings are NEWER than Enlightenment. This is very<ps/>strange. This "
 "should not happen unless you downgraded<ps/>Enlightenment or copied the "
@@ -1214,7 +1210,7 @@ msgstr ""
 "precauzionale ai valori predefiniti. Ci<ps/>scusiamo per l'inconveniente.<ps/"
 ">"
 
-#: src/bin/e_config.c:1380
+#: src/bin/e_config.c:1383
 msgid ""
 "Your bindings settings version does not match the current settings version."
 "<ps/>As a result, all bindings have been reloaded from defaults.<ps/>Sorry "
@@ -1224,7 +1220,7 @@ msgstr ""
 ">dell'attuale configurazione, quindi tutte le associazioni sono state<ps/"
 ">riportate ai valori predefiniti.<ps/> Ci scusiamo per l'inconveniente."
 
-#: src/bin/e_config.c:2706
+#: src/bin/e_config.c:2718
 msgid "Settings Upgraded"
 msgstr "Impostazioni aggiornate"
 
@@ -1672,7 +1668,7 @@ msgstr "Copia"
 #: src/modules/conf_bindings/e_int_config_keybindings.c:240
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:290
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:789
-#: src/modules/conf_bindings/e_int_config_swipebindings.c:934
+#: src/modules/conf_bindings/e_int_config_swipebindings.c:945
 #: src/modules/conf_dialogs/e_int_config_profiles.c:136
 #: src/modules/conf_dialogs/e_int_config_profiles.c:341
 #: src/modules/conf_paths/e_int_config_env.c:343
@@ -3173,7 +3169,7 @@ msgstr "Utilità"
 #: src/bin/e_widget_filepreview.c:696 src/bin/e_widget_filepreview.c:697
 #: src/bin/e_widget_filepreview.c:698 src/bin/e_widget_filepreview.c:728
 #: src/bin/e_widget_filepreview.c:739 src/modules/battery/e_mod_main.c:265
-#: src/modules/bluez5/e_mod_popup.c:537 src/modules/bluez5/e_mod_popup.c:538
+#: src/modules/bluez5/e_mod_popup.c:510 src/modules/bluez5/e_mod_popup.c:511
 #: src/modules/bluez5/e_mod_util.c:261
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:429
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:1235
@@ -3259,13 +3255,13 @@ msgstr "Effetto"
 
 #: src/bin/e_int_config_comp_match.c:741 src/bin/e_widget_config_list.c:80
 #: src/modules/conf_applications/e_int_config_apps.c:348
-#: src/modules/xkbswitch/e_mod_config.c:697
+#: src/modules/xkbswitch/e_mod_config.c:712
 msgid "Up"
 msgstr "Su"
 
 #: src/bin/e_int_config_comp_match.c:743 src/bin/e_widget_config_list.c:86
 #: src/modules/conf_applications/e_int_config_apps.c:352
-#: src/modules/xkbswitch/e_mod_config.c:706
+#: src/modules/xkbswitch/e_mod_config.c:721
 msgid "Down"
 msgstr "Giù"
 
@@ -3279,16 +3275,16 @@ msgstr "Giù"
 #: src/modules/conf_bindings/e_int_config_keybindings.c:237
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:288
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:786
-#: src/modules/conf_bindings/e_int_config_swipebindings.c:927
+#: src/modules/conf_bindings/e_int_config_swipebindings.c:938
 #: src/modules/conf_dialogs/e_int_config_profiles.c:134
 #: src/modules/conf_paths/e_int_config_env.c:337
 #: src/modules/conf_shelves/e_int_config_shelf.c:137
-#: src/modules/ibar/e_mod_config.c:114 src/modules/xkbswitch/e_mod_config.c:680
+#: src/modules/ibar/e_mod_config.c:114 src/modules/xkbswitch/e_mod_config.c:695
 msgid "Add"
 msgstr "Aggiungi"
 
 #: src/bin/e_int_config_comp_match.c:747
-#: src/modules/xkbswitch/e_mod_config.c:688
+#: src/modules/xkbswitch/e_mod_config.c:703
 msgid "Del"
 msgstr "Elimina"
 
@@ -3578,7 +3574,7 @@ msgstr "Mostra sui desktop specificati"
 msgid "Toolbar Settings"
 msgstr "Impostazioni barra strumenti"
 
-#: src/bin/e_int_toolbar_config.c:77 src/modules/xkbswitch/e_mod_config.c:1392
+#: src/bin/e_int_toolbar_config.c:77 src/modules/xkbswitch/e_mod_config.c:1407
 msgid "Layout"
 msgstr "Posizione"
 
@@ -3858,7 +3854,7 @@ msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di gestione della cattura dell'input.\n"
 
-#: src/bin/e_main.c:954 src/bin/e_main.c:1093
+#: src/bin/e_main.c:954 src/bin/e_main.c:1096
 msgid "Enlightenment cannot set up its module system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
@@ -3930,16 +3926,16 @@ msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di ordinamento file.\n"
 
-#: src/bin/e_main.c:1101 src/modules/wizard/e_wizard.c:262
+#: src/bin/e_main.c:1104 src/modules/wizard/e_wizard.c:262
 msgid "Welcome to Enlightenment"
 msgstr "Benvenuti in Enlightenment"
 
-#: src/bin/e_main.c:1249
+#: src/bin/e_main.c:1252
 #, c-format
 msgid "Version: %s\n"
 msgstr "Versione: %s\n"
 
-#: src/bin/e_main.c:1258
+#: src/bin/e_main.c:1261
 #, c-format
 msgid ""
 "Options:\n"
@@ -3994,7 +3990,7 @@ msgstr ""
 "\t\tSe hai bisogno di questo aiuto non hai bisogno di questa opzione.\n"
 "\t-versione\n"
 
-#: src/bin/e_main.c:1312
+#: src/bin/e_main.c:1315
 msgid ""
 "You are executing enlightenment directly. This is\n"
 "bad. Please do not execute the \"enlightenment\"\n"
@@ -4011,17 +4007,17 @@ msgstr ""
 "altre cose simili prima di cominciare l'esecuzione di\n"
 "enlightenment stesso.\n"
 
-#: src/bin/e_main.c:1575
+#: src/bin/e_main.c:1578
 msgid "Enlightenment cannot create a compositor.\n"
 msgstr "Enlightenment non riesce a creare un compositor.\n"
 
-#: src/bin/e_main.c:1588
+#: src/bin/e_main.c:1591
 msgid "Enlightenment cannot set up its dnd system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di 'drag & drop'.\n"
 
-#: src/bin/e_main.c:1749
+#: src/bin/e_main.c:1752
 #, c-format
 msgid ""
 "Enlightenment crashed early on start and has<ps/>been restarted. There was "
@@ -4032,11 +4028,11 @@ msgstr ""
 "C'è stato un errore nel<ps/>caricamento del modulo: %s. Questo modulo è "
 "stato<ps/>disabilitato e non verrà caricato."
 
-#: src/bin/e_main.c:1754 src/bin/e_main.c:1770
+#: src/bin/e_main.c:1757 src/bin/e_main.c:1773
 msgid "Enlightenment crashed early on start and has been restarted"
 msgstr "Enlightenment è andato subito in crash ed è stato riavviato"
 
-#: src/bin/e_main.c:1755
+#: src/bin/e_main.c:1758
 #, c-format
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<ps/>There was "
@@ -4047,7 +4043,7 @@ msgstr ""
 ">C'è stato un errore nel caricamento del modulo: %s.<ps/><ps/>Questo modulo "
 "è stato disabilitato e non verrà caricato."
 
-#: src/bin/e_main.c:1763
+#: src/bin/e_main.c:1766
 msgid ""
 "Enlightenment crashed early on start and has<ps/>been restarted. All modules "
 "have been disabled<ps/>and will not be loaded to help remove any problem<ps/"
@@ -4060,7 +4056,7 @@ msgstr ""
 "finestra di configurazione<ps/>dei moduli dovrebbe permettervi di "
 "selezionare<ps/>nuovamente i vostri moduli.\n"
 
-#: src/bin/e_main.c:1771
+#: src/bin/e_main.c:1774
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<ps/>All modules "
 "have been disabled and will not be loaded to help<ps/>remove any problem "
@@ -4759,7 +4755,7 @@ msgid "%3.1f%%"
 msgstr "%3.1f%%"
 
 #: src/bin/e_widget_filepreview.c:413
-#: src/modules/conf_bindings/e_int_config_swipebindings.c:695
+#: src/modules/conf_bindings/e_int_config_swipebindings.c:706
 msgid "Length:"
 msgstr "Lunghezza:"
 
@@ -5049,49 +5045,49 @@ msgstr ""
 "comando sia corretto e che all'utente sia consentito usare<br>l'azione di "
 "sblocco di rfkill. Controllare utenti e gruppi per sicurezza."
 
-#: src/modules/bluez5/e_mod_popup.c:421
+#: src/modules/bluez5/e_mod_popup.c:394
 msgid "Adapters"
 msgstr "Adattatori"
 
-#: src/modules/bluez5/e_mod_popup.c:422
+#: src/modules/bluez5/e_mod_popup.c:395
 msgid "Devices"
 msgstr "Dispositivi"
 
-#: src/modules/bluez5/e_mod_popup.c:457
+#: src/modules/bluez5/e_mod_popup.c:430
 msgid "Unknown Address"
 msgstr "Indirizzo sconosciuto"
 
-#: src/modules/bluez5/e_mod_popup.c:480
+#: src/modules/bluez5/e_mod_popup.c:453
 msgid "Power"
 msgstr "Alimentazione"
 
-#: src/modules/bluez5/e_mod_popup.c:480
+#: src/modules/bluez5/e_mod_popup.c:453
 msgid "Enable power for this adapter"
 msgstr "Abilita alimentazione per questo adattatore"
 
-#: src/modules/bluez5/e_mod_popup.c:486
+#: src/modules/bluez5/e_mod_popup.c:459
 msgid "Make this adapter visible to other devices"
 msgstr "Rendi questo adattatore visibile ad altri dispositivi"
 
-#: src/modules/bluez5/e_mod_popup.c:492
+#: src/modules/bluez5/e_mod_popup.c:465
 msgid "Scan"
 msgstr "Ricerca"
 
-#: src/modules/bluez5/e_mod_popup.c:492
+#: src/modules/bluez5/e_mod_popup.c:465
 msgid "Scan for other devices"
 msgstr "Ricerca altri dispositivi"
 
-#: src/modules/bluez5/e_mod_popup.c:498
+#: src/modules/bluez5/e_mod_popup.c:471
 msgid "Pairable"
 msgstr "Associabile"
 
-#: src/modules/bluez5/e_mod_popup.c:498
+#: src/modules/bluez5/e_mod_popup.c:471
 msgid "Allow this adapter to have other devices request to pair with it"
 msgstr ""
 "Consenti ad altri dispositivi di richiedere associazione con questo "
 "adattatore"
 
-#: src/modules/bluez5/e_mod_popup.c:531
+#: src/modules/bluez5/e_mod_popup.c:504
 #, c-format
 msgid ""
 "Address: %s (%s)<br>Services: %s%s%s%s%s%s%s%s%s<br>Trusted: %s<br>Blocked: "
@@ -5100,90 +5096,82 @@ msgstr ""
 "Indirizzo: %s (%s)<br>Servizi: %s%s%s%s%s%s%s%s%s<br>Fidato: %s<br>Bloccato: "
 "%s<br>"
 
-#: src/modules/bluez5/e_mod_popup.c:539
+#: src/modules/bluez5/e_mod_popup.c:512
 msgid "Limited-Discoverable "
 msgstr "Limitato-Visibile "
 
-#: src/modules/bluez5/e_mod_popup.c:540
+#: src/modules/bluez5/e_mod_popup.c:513
 msgid "Positioning "
 msgstr "Posizionamento "
 
-#: src/modules/bluez5/e_mod_popup.c:541
+#: src/modules/bluez5/e_mod_popup.c:514
 msgid "Networking "
 msgstr "Rete "
 
-#: src/modules/bluez5/e_mod_popup.c:542
+#: src/modules/bluez5/e_mod_popup.c:515
 msgid "Rendering "
 msgstr "Rendering "
 
-#: src/modules/bluez5/e_mod_popup.c:543
+#: src/modules/bluez5/e_mod_popup.c:516
 msgid "Capture "
 msgstr "Cattura "
 
-#: src/modules/bluez5/e_mod_popup.c:544
+#: src/modules/bluez5/e_mod_popup.c:517
 msgid "OBEX "
 msgstr "OBEX "
 
-#: src/modules/bluez5/e_mod_popup.c:545
+#: src/modules/bluez5/e_mod_popup.c:518
 msgid "Audio "
 msgstr "Audio "
 
-#: src/modules/bluez5/e_mod_popup.c:546
+#: src/modules/bluez5/e_mod_popup.c:519
 msgid "Telephony "
 msgstr "Telefonia "
 
-#: src/modules/bluez5/e_mod_popup.c:547
+#: src/modules/bluez5/e_mod_popup.c:520
 msgid "Information "
 msgstr "Informazione "
 
-#: src/modules/bluez5/e_mod_popup.c:572
+#: src/modules/bluez5/e_mod_popup.c:545
 msgid "Stop this from being an unlock device"
 msgstr "Impedisci a questo di essere un dispositivo sbloccato"
 
-#: src/modules/bluez5/e_mod_popup.c:579
+#: src/modules/bluez5/e_mod_popup.c:552
 msgid "Make this auto unlock when detected (and lock when not)"
 msgstr ""
 "Rendi questo sbloccato automaticamente quando rilevato (e bloccato quando "
 "non rilevato)"
 
-#: src/modules/bluez5/e_mod_popup.c:589
-msgid "Stop this device from being forcefully connected"
-msgstr "Impedisci a questo di essere connesso con la forza"
-
-#: src/modules/bluez5/e_mod_popup.c:596
-msgid "Force this device to be connected when detected"
-msgstr "Impedisci a questo di essere connesso quando rilevato"
-
-#: src/modules/bluez5/e_mod_popup.c:606
+#: src/modules/bluez5/e_mod_popup.c:562
 msgid "Disconnect this device"
 msgstr "Disconnetti questo dispositivo"
 
-#: src/modules/bluez5/e_mod_popup.c:613
+#: src/modules/bluez5/e_mod_popup.c:569
 msgid "Connect this device"
 msgstr "Connetti questo dispositivo"
 
-#: src/modules/bluez5/e_mod_popup.c:623
+#: src/modules/bluez5/e_mod_popup.c:579
 msgid "Disrust this device"
 msgstr "Considera non fidato questo dispositivo"
 
-#: src/modules/bluez5/e_mod_popup.c:630
+#: src/modules/bluez5/e_mod_popup.c:586
 msgid "Trust this device"
 msgstr "Considera fidato questo dispositivo"
 
-#: src/modules/bluez5/e_mod_popup.c:642 src/modules/bluez5/e_mod_popup.c:703
-#: src/modules/bluez5/e_mod_popup.c:725
+#: src/modules/bluez5/e_mod_popup.c:598 src/modules/bluez5/e_mod_popup.c:659
+#: src/modules/bluez5/e_mod_popup.c:681
 msgid "Pair with this device"
 msgstr "Associa a questo dispositivo"
 
-#: src/modules/bluez5/e_mod_popup.c:652
+#: src/modules/bluez5/e_mod_popup.c:608
 msgid "Unpair with this device"
 msgstr "Dissocia da questo dispositivo"
 
-#: src/modules/bluez5/e_mod_popup.c:711 src/modules/bluez5/e_mod_popup.c:732
+#: src/modules/bluez5/e_mod_popup.c:667 src/modules/bluez5/e_mod_popup.c:688
 msgid "Reject pairing"
 msgstr "Respingi associazione"
 
-#: src/modules/bluez5/e_mod_popup.c:764
+#: src/modules/bluez5/e_mod_popup.c:720
 msgid "Options for device like connect, pair etc."
 msgstr "Opzioni per il dispositivo come connessione, associazione ecc."
 
@@ -5404,7 +5392,7 @@ msgstr "Associazioni ACPI"
 #: src/modules/conf_bindings/e_int_config_keybindings.c:257
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:308
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:802
-#: src/modules/conf_bindings/e_int_config_swipebindings.c:949
+#: src/modules/conf_bindings/e_int_config_swipebindings.c:960
 msgid "Action"
 msgstr "Azione"
 
@@ -5413,7 +5401,7 @@ msgstr "Azione"
 #: src/modules/conf_bindings/e_int_config_keybindings.c:264
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:315
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:809
-#: src/modules/conf_bindings/e_int_config_swipebindings.c:956
+#: src/modules/conf_bindings/e_int_config_swipebindings.c:967
 msgid "Action Params"
 msgstr "Parametri azione"
 
@@ -5625,7 +5613,7 @@ msgstr "Modifica"
 #: src/modules/conf_bindings/e_int_config_keybindings.c:248
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:298
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:793
-#: src/modules/conf_bindings/e_int_config_swipebindings.c:938
+#: src/modules/conf_bindings/e_int_config_swipebindings.c:949
 msgid "Delete All"
 msgstr "Cancella tutto"
 
@@ -5633,7 +5621,7 @@ msgstr "Cancella tutto"
 #: src/modules/conf_bindings/e_int_config_keybindings.c:252
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:302
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:797
-#: src/modules/conf_bindings/e_int_config_swipebindings.c:942
+#: src/modules/conf_bindings/e_int_config_swipebindings.c:953
 msgid "Restore Default Bindings"
 msgstr "Ripristina associazioni predefinite"
 
@@ -5912,23 +5900,23 @@ msgstr "Associazioni con segnali"
 msgid "Signal Bindings Settings"
 msgstr "Impostazione associazioni con segnali"
 
-#: src/modules/conf_bindings/e_int_config_swipebindings.c:664
+#: src/modules/conf_bindings/e_int_config_swipebindings.c:675
 msgid "Add Swipe Binding"
 msgstr "Aggiungi associazione con strisciamento"
 
-#: src/modules/conf_bindings/e_int_config_swipebindings.c:675
+#: src/modules/conf_bindings/e_int_config_swipebindings.c:686
 msgid "Direction:"
 msgstr "Direzione:"
 
-#: src/modules/conf_bindings/e_int_config_swipebindings.c:685
+#: src/modules/conf_bindings/e_int_config_swipebindings.c:696
 msgid "Error:"
 msgstr "Errore:"
 
-#: src/modules/conf_bindings/e_int_config_swipebindings.c:705
+#: src/modules/conf_bindings/e_int_config_swipebindings.c:716
 msgid "Fingers:"
 msgstr "Dita:"
 
-#: src/modules/conf_bindings/e_int_config_swipebindings.c:753
+#: src/modules/conf_bindings/e_int_config_swipebindings.c:764
 #, c-format
 msgid ""
 "Using %d Fingers<br> <b>Direction</b> %f <b>Length</b> %f <b>Error</b> %f"
@@ -5936,21 +5924,21 @@ msgstr ""
 "Sto usando %d dita<br> <b>Direzione</b> %f <b>Lunghezza</b> %f <b>Errore</b> "
 "%f"
 
-#: src/modules/conf_bindings/e_int_config_swipebindings.c:769
+#: src/modules/conf_bindings/e_int_config_swipebindings.c:780
 msgid "Swipe recognition"
 msgstr "Direzione strisciamento"
 
-#: src/modules/conf_bindings/e_int_config_swipebindings.c:770
+#: src/modules/conf_bindings/e_int_config_swipebindings.c:781
 msgid "Do your swipe gesture.<br><br>Press <hilight>Escape</hilight> to abort"
 msgstr ""
 "Eseguire un'azione di strisciamento.<ps/><ps/>Premere <hilight>Esc</hilight> "
 "per abortire."
 
-#: src/modules/conf_bindings/e_int_config_swipebindings.c:906
+#: src/modules/conf_bindings/e_int_config_swipebindings.c:917
 msgid "Swipe Bindings Help"
 msgstr "Aiuto associazioni strisciamento"
 
-#: src/modules/conf_bindings/e_int_config_swipebindings.c:907
+#: src/modules/conf_bindings/e_int_config_swipebindings.c:918
 msgid ""
 "Enlightenment is using libinput to detect swipe gesture. In case there are "
 "problems:<br> 1. Test gestures while executing \"libinput debug-events\" in "
@@ -5967,21 +5955,25 @@ msgstr ""
 "si svolge sotto Xorg, assicurarsi che l'utente faccia parte del gruppo "
 "libinput.<br>"
 
-#: src/modules/conf_bindings/e_int_config_swipebindings.c:921
+#: src/modules/conf_bindings/e_int_config_swipebindings.c:932
 #: src/modules/conf_bindings/e_mod_main.c:38
 msgid "Swipe Bindings"
 msgstr "Associazioni strisciamento"
 
-#: src/modules/conf_bindings/e_int_config_swipebindings.c:930
+#: src/modules/conf_bindings/e_int_config_swipebindings.c:941
 msgid "Add by props"
 msgstr "Aggiungi per propietà"
 
-#: src/modules/conf_bindings/e_int_config_swipebindings.c:944
+#: src/modules/conf_bindings/e_int_config_swipebindings.c:955
 #: src/modules/tiling/e_mod_config.c:219
 msgid "Help"
 msgstr "Aiuto"
 
-#: src/modules/conf_bindings/e_int_config_swipebindings.c:1031
+#: src/modules/conf_bindings/e_int_config_swipebindings.c:977
+msgid "Open input devices"
+msgstr "Apri dispositivi di input"
+
+#: src/modules/conf_bindings/e_int_config_swipebindings.c:1045
 msgid "Swipe Bindings Settings"
 msgstr "Configurazione associazioni strisciamento"
 
@@ -6246,50 +6238,54 @@ msgstr "Animazioni"
 msgid "Flip"
 msgstr "Cambio desktop"
 
-#: src/modules/conf_display/e_int_config_dpms.c:46
+#: src/modules/conf_display/e_int_config_dpms.c:47
 msgid "Backlight Settings"
 msgstr "Impostazioni retroilluminazione"
 
-#: src/modules/conf_display/e_int_config_dpms.c:143
+#: src/modules/conf_display/e_int_config_dpms.c:147
 msgid "Normal Backlight"
 msgstr "Retroilluminazione normale"
 
-#: src/modules/conf_display/e_int_config_dpms.c:145
-#: src/modules/conf_display/e_int_config_dpms.c:151
+#: src/modules/conf_display/e_int_config_dpms.c:149
+#: src/modules/conf_display/e_int_config_dpms.c:155
 #: src/modules/cpufreq/e_mod_config.c:106
 #: src/modules/cpufreq/e_mod_config.c:112
 #, c-format
 msgid "%3.0f"
 msgstr "%3.0f"
 
-#: src/modules/conf_display/e_int_config_dpms.c:149
+#: src/modules/conf_display/e_int_config_dpms.c:153
 msgid "Dim Backlight"
 msgstr "Retroilluminazione bassa"
 
-#: src/modules/conf_display/e_int_config_dpms.c:155
+#: src/modules/conf_display/e_int_config_dpms.c:159
+msgid "Desktop Monitor Support (DDC)"
+msgstr "Supporto monitoraggio desktop (DDC)"
+
+#: src/modules/conf_display/e_int_config_dpms.c:162
 msgid "Idle Fade Time"
 msgstr "Ritardo attenuazione per inattività"
 
-#: src/modules/conf_display/e_int_config_dpms.c:157
-#: src/modules/conf_display/e_int_config_dpms.c:166
+#: src/modules/conf_display/e_int_config_dpms.c:164
+#: src/modules/conf_display/e_int_config_dpms.c:173
 #, c-format
 msgid "%1.0f second(s)"
 msgstr "%1.0f secondi"
 
-#: src/modules/conf_display/e_int_config_dpms.c:162
+#: src/modules/conf_display/e_int_config_dpms.c:169
 msgid "Fade Time on Battery"
 msgstr "Tempo di attenuazione sotto batteria"
 
-#: src/modules/conf_display/e_int_config_dpms.c:172
+#: src/modules/conf_display/e_int_config_dpms.c:179
 msgid "Fade Time"
 msgstr "Tempo di attenuazione"
 
-#: src/modules/conf_display/e_int_config_dpms.c:174
+#: src/modules/conf_display/e_int_config_dpms.c:181
 #, c-format
 msgid "%1.1f second(s)"
 msgstr "%1.1f secondi"
 
-#: src/modules/conf_display/e_int_config_dpms.c:180
+#: src/modules/conf_display/e_int_config_dpms.c:187
 msgid "Dimming"
 msgstr "Attenuazione"
 
@@ -6756,8 +6752,8 @@ msgstr "%2.2f s"
 #: src/modules/conf_menus/e_int_config_menus.c:317
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:377
 #: src/modules/notification/e_mod_config.c:161
-#: src/modules/xkbswitch/e_mod_config.c:797
-#: src/modules/xkbswitch/e_mod_config.c:1225
+#: src/modules/xkbswitch/e_mod_config.c:812
+#: src/modules/xkbswitch/e_mod_config.c:1240
 msgid "Miscellaneous"
 msgstr "Miscellanea"
 
@@ -9180,7 +9176,7 @@ msgstr ""
 msgid "Are you sure you want to delete this bar source?"
 msgstr "Siete sicuri di voler rimuovere questa sorgente per Ibar?"
 
-#: src/modules/ibar/e_mod_main.c:370 src/modules/ibar/e_mod_main.c:2891
+#: src/modules/ibar/e_mod_main.c:370 src/modules/ibar/e_mod_main.c:2902
 msgid "IBar"
 msgstr "IBar"
 
@@ -9201,7 +9197,7 @@ msgstr "Elimina dalla barra"
 msgid "Icon %s"
 msgstr "Icona %s"
 
-#: src/modules/ibar/e_mod_main.c:2891
+#: src/modules/ibar/e_mod_main.c:2902
 msgid "Focus IBar"
 msgstr "Fuoco di Ibar"
 
@@ -10062,103 +10058,103 @@ msgstr "Ritardo"
 msgid "%1.1f sec"
 msgstr "%1.1f s"
 
-#: src/modules/shot/e_mod_edit.c:1960
+#: src/modules/shot/e_mod_edit.c:1962
 msgid "Tools"
 msgstr "Strumenti"
 
-#: src/modules/shot/e_mod_edit.c:1972
+#: src/modules/shot/e_mod_edit.c:1974
 msgid "Select crop area"
 msgstr "Selezionare area da ritagliare"
 
-#: src/modules/shot/e_mod_edit.c:1973
+#: src/modules/shot/e_mod_edit.c:1975
 msgid "Modify objects"
 msgstr "Modifica oggetti"
 
-#: src/modules/shot/e_mod_edit.c:1974
+#: src/modules/shot/e_mod_edit.c:1976
 msgid "Delete objects"
 msgstr "Elimina oggetti"
 
-#: src/modules/shot/e_mod_edit.c:1983
+#: src/modules/shot/e_mod_edit.c:1985
 msgid "Single arrow line"
 msgstr "Linea freccia singola"
 
-#: src/modules/shot/e_mod_edit.c:1984
+#: src/modules/shot/e_mod_edit.c:1986
 msgid "Double arrow line"
 msgstr "Linea freccia doppia"
 
-#: src/modules/shot/e_mod_edit.c:1985
+#: src/modules/shot/e_mod_edit.c:1987
 msgid "Plain line"
 msgstr "Linea liscia"
 
-#: src/modules/shot/e_mod_edit.c:1986
+#: src/modules/shot/e_mod_edit.c:1988
 msgid "Solid box"
 msgstr "Rettangolo pieno"
 
-#: src/modules/shot/e_mod_edit.c:1988
+#: src/modules/shot/e_mod_edit.c:1990
 msgid "Malloc"
 msgstr "Malloc"
 
-#: src/modules/shot/e_mod_edit.c:1989
+#: src/modules/shot/e_mod_edit.c:1991
 msgid "Malloc (evil)"
 msgstr "Malloc (male)"
 
-#: src/modules/shot/e_mod_edit.c:1990
+#: src/modules/shot/e_mod_edit.c:1992
 msgid "Pointing finger"
 msgstr "Dita puntatore"
 
-#: src/modules/shot/e_mod_edit.c:1991
+#: src/modules/shot/e_mod_edit.c:1993
 msgid "Enlightenment logo"
 msgstr "Logo di Enlightenment"
 
-#: src/modules/shot/e_mod_edit.c:1993
+#: src/modules/shot/e_mod_edit.c:1995
 msgid "Foot"
 msgstr "Piedi"
 
-#: src/modules/shot/e_mod_edit.c:1994
+#: src/modules/shot/e_mod_edit.c:1996
 msgid "Silly walk"
 msgstr "Camminata strana"
 
-#: src/modules/shot/e_mod_edit.c:1995
+#: src/modules/shot/e_mod_edit.c:1997
 msgid "Box outline"
 msgstr "Bordo rettangolo"
 
-#: src/modules/shot/e_mod_edit.c:1996
+#: src/modules/shot/e_mod_edit.c:1998
 msgid "Circle outline"
 msgstr "Bordo cerchio"
 
-#: src/modules/shot/e_mod_edit.c:1998
+#: src/modules/shot/e_mod_edit.c:2000
 msgid "Plain text"
 msgstr "Testo semplice"
 
-#: src/modules/shot/e_mod_edit.c:1999
+#: src/modules/shot/e_mod_edit.c:2001
 msgid "Text box"
 msgstr "Cornice di testo"
 
-#: src/modules/shot/e_mod_edit.c:2000
+#: src/modules/shot/e_mod_edit.c:2002
 msgid "Text thought bubble"
 msgstr "Fumetto di testo"
 
-#: src/modules/shot/e_mod_edit.c:2001
+#: src/modules/shot/e_mod_edit.c:2003
 msgid "Text thought bubble 2"
 msgstr "Fumetto di testo 2"
 
-#: src/modules/shot/e_mod_edit.c:2003
+#: src/modules/shot/e_mod_edit.c:2005
 msgid "Speech bubble"
 msgstr "Fumetto parlato"
 
-#: src/modules/shot/e_mod_edit.c:2004
+#: src/modules/shot/e_mod_edit.c:2006
 msgid "Speech bubble 2"
 msgstr "Fumetto parlato 2"
 
-#: src/modules/shot/e_mod_edit.c:2005
+#: src/modules/shot/e_mod_edit.c:2007
 msgid "Kaboom splat"
 msgstr "Schianto"
 
-#: src/modules/shot/e_mod_edit.c:2006
+#: src/modules/shot/e_mod_edit.c:2008
 msgid "Pow explode"
 msgstr "Esplosione"
 
-#: src/modules/shot/e_mod_edit.c:2014
+#: src/modules/shot/e_mod_edit.c:2016
 msgid "Color"
 msgstr "Colore"
 
@@ -10782,130 +10778,130 @@ msgstr "Abilita taskbar"
 msgid "Keyboard Settings"
 msgstr "Impostazioni della tastiera"
 
-#: src/modules/xkbswitch/e_mod_config.c:525
-#: src/modules/xkbswitch/e_mod_config.c:1490
-#: src/modules/xkbswitch/e_mod_config.c:1616
+#: src/modules/xkbswitch/e_mod_config.c:540
+#: src/modules/xkbswitch/e_mod_config.c:1505
+#: src/modules/xkbswitch/e_mod_config.c:1631
 msgid "No Name"
 msgstr "Nessun nome"
 
-#: src/modules/xkbswitch/e_mod_config.c:615
+#: src/modules/xkbswitch/e_mod_config.c:630
 msgid "Do not apply any keyboard settings ever"
 msgstr "Non applicare mai alcuna impostazione di tastiera"
 
-#: src/modules/xkbswitch/e_mod_config.c:624
+#: src/modules/xkbswitch/e_mod_config.c:639
 msgid "Label only in gadgets"
 msgstr "Etichette solo nei gadget"
 
-#: src/modules/xkbswitch/e_mod_config.c:641
-#: src/modules/xkbswitch/e_mod_config.c:842
+#: src/modules/xkbswitch/e_mod_config.c:656
+#: src/modules/xkbswitch/e_mod_config.c:857
 msgid "Default keyboard layout"
 msgstr "Layout di tastiera predefinito"
 
-#: src/modules/xkbswitch/e_mod_config.c:747
-#: src/modules/xkbswitch/e_mod_config.c:1036
+#: src/modules/xkbswitch/e_mod_config.c:762
+#: src/modules/xkbswitch/e_mod_config.c:1051
 msgid "Compose"
 msgstr "Tasto 'compose'"
 
-#: src/modules/xkbswitch/e_mod_config.c:748
-#: src/modules/xkbswitch/e_mod_config.c:1047
+#: src/modules/xkbswitch/e_mod_config.c:763
+#: src/modules/xkbswitch/e_mod_config.c:1062
 msgid "Third level"
 msgstr "Terzo livello"
 
-#: src/modules/xkbswitch/e_mod_config.c:749
+#: src/modules/xkbswitch/e_mod_config.c:764
 msgid "Switch layout"
 msgstr "Cambia layout"
 
-#: src/modules/xkbswitch/e_mod_config.c:783
-#: src/modules/xkbswitch/e_mod_config.c:1069
+#: src/modules/xkbswitch/e_mod_config.c:798
+#: src/modules/xkbswitch/e_mod_config.c:1084
 msgid "Led"
 msgstr "Led"
 
-#: src/modules/xkbswitch/e_mod_config.c:784
-#: src/modules/xkbswitch/e_mod_config.c:1081
+#: src/modules/xkbswitch/e_mod_config.c:799
+#: src/modules/xkbswitch/e_mod_config.c:1096
 msgid "Control"
 msgstr "Tasto 'control'"
 
-#: src/modules/xkbswitch/e_mod_config.c:785
-#: src/modules/xkbswitch/e_mod_config.c:1092
+#: src/modules/xkbswitch/e_mod_config.c:800
+#: src/modules/xkbswitch/e_mod_config.c:1107
 msgid "Keypad"
 msgstr "Tastierino numerico"
 
-#: src/modules/xkbswitch/e_mod_config.c:786
-#: src/modules/xkbswitch/e_mod_config.c:1104
+#: src/modules/xkbswitch/e_mod_config.c:801
+#: src/modules/xkbswitch/e_mod_config.c:1119
 msgid "Keypad delete key"
 msgstr "Tasto 'canc' del tastierino"
 
-#: src/modules/xkbswitch/e_mod_config.c:787
-#: src/modules/xkbswitch/e_mod_config.c:1115
+#: src/modules/xkbswitch/e_mod_config.c:802
+#: src/modules/xkbswitch/e_mod_config.c:1130
 msgid "Capslock"
 msgstr "Blocco maiuscole"
 
-#: src/modules/xkbswitch/e_mod_config.c:788
+#: src/modules/xkbswitch/e_mod_config.c:803
 msgid "Alt win"
 msgstr "Alt win"
 
-#: src/modules/xkbswitch/e_mod_config.c:789
-#: src/modules/xkbswitch/e_mod_config.c:1137
+#: src/modules/xkbswitch/e_mod_config.c:804
+#: src/modules/xkbswitch/e_mod_config.c:1152
 msgid "Currency"
 msgstr "Valuta"
 
-#: src/modules/xkbswitch/e_mod_config.c:790
-#: src/modules/xkbswitch/e_mod_config.c:1148
+#: src/modules/xkbswitch/e_mod_config.c:805
+#: src/modules/xkbswitch/e_mod_config.c:1163
 msgid "Fifth level"
 msgstr "Quinto livello"
 
-#: src/modules/xkbswitch/e_mod_config.c:791
-#: src/modules/xkbswitch/e_mod_config.c:1159
+#: src/modules/xkbswitch/e_mod_config.c:806
+#: src/modules/xkbswitch/e_mod_config.c:1174
 msgid "Spacebar"
 msgstr "Barra spaziatrice"
 
-#: src/modules/xkbswitch/e_mod_config.c:792
-#: src/modules/xkbswitch/e_mod_config.c:1170
+#: src/modules/xkbswitch/e_mod_config.c:807
+#: src/modules/xkbswitch/e_mod_config.c:1185
 msgid "Japan"
 msgstr "Giapponese"
 
-#: src/modules/xkbswitch/e_mod_config.c:793
-#: src/modules/xkbswitch/e_mod_config.c:1181
+#: src/modules/xkbswitch/e_mod_config.c:808
+#: src/modules/xkbswitch/e_mod_config.c:1196
 msgid "Korean"
 msgstr "Coreano"
 
-#: src/modules/xkbswitch/e_mod_config.c:794
-#: src/modules/xkbswitch/e_mod_config.c:1192
+#: src/modules/xkbswitch/e_mod_config.c:809
+#: src/modules/xkbswitch/e_mod_config.c:1207
 msgid "Esperanto"
 msgstr "Esperanto"
 
-#: src/modules/xkbswitch/e_mod_config.c:795
-#: src/modules/xkbswitch/e_mod_config.c:1203
+#: src/modules/xkbswitch/e_mod_config.c:810
+#: src/modules/xkbswitch/e_mod_config.c:1218
 msgid "Solaris"
 msgstr "Solaris"
 
-#: src/modules/xkbswitch/e_mod_config.c:796
-#: src/modules/xkbswitch/e_mod_config.c:1214
+#: src/modules/xkbswitch/e_mod_config.c:811
+#: src/modules/xkbswitch/e_mod_config.c:1229
 msgid "Terminate X"
 msgstr "Termina X"
 
-#: src/modules/xkbswitch/e_mod_config.c:1058
+#: src/modules/xkbswitch/e_mod_config.c:1073
 msgid "Switch Layout"
 msgstr "Cambia layout"
 
-#: src/modules/xkbswitch/e_mod_config.c:1126
+#: src/modules/xkbswitch/e_mod_config.c:1141
 msgid "Alternate win key"
 msgstr "Tasto win alternativo"
 
-#: src/modules/xkbswitch/e_mod_config.c:1368
+#: src/modules/xkbswitch/e_mod_config.c:1383
 msgid "Add New Configuration"
 msgstr "Aggiungi nuova configurazione"
 
-#: src/modules/xkbswitch/e_mod_config.c:1395
+#: src/modules/xkbswitch/e_mod_config.c:1410
 msgid "Model"
 msgstr "Modello"
 
-#: src/modules/xkbswitch/e_mod_config.c:1397
+#: src/modules/xkbswitch/e_mod_config.c:1412
 msgid "Variant"
 msgstr "Variante"
 
-#: src/modules/xkbswitch/e_mod_config.c:1517
-#: src/modules/xkbswitch/e_mod_config.c:1602
+#: src/modules/xkbswitch/e_mod_config.c:1532
+#: src/modules/xkbswitch/e_mod_config.c:1617
 msgid "No Description"
 msgstr "Nessuna descrizione"
 
