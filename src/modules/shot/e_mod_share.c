@@ -89,10 +89,11 @@ _img_write_end_cb(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *event)
 
    if (ev->exe != img_write_exe) return EINA_TRUE;
    _share_done();
-   if (cnp)
+   if ((cnp) && (cnp_file))
      {
         _cnp_file(cnp_file);
         eina_stringshare_replace(&cnp_file, NULL);
+        cnp = EINA_FALSE;
      }
    return EINA_FALSE;
 }
