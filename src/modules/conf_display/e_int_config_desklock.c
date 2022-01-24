@@ -289,7 +289,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
         grp++;
      }
    e_widget_toolbook_page_append(otb, NULL, _("Keyboard Layout"), ol,
-                                 1, 1, 1, 0, 0.0, 0.0);
+                                 1, 1, 1, 1, 0.0, 0.0);
 
    /* Login */
    ol = e_widget_list_add(evas, 0, 0);
