@@ -406,7 +406,10 @@ _e_mod_menu_recent_cb(void           *data EINA_UNUSED,
 
    if (file)
      {
-        const char *mime = efreet_mime_type_get(file);
+        const char *mime = efreet_mime_special_type_get(file);
+
+        if (!mime) mime = efreet_mime_globs_type_get(file);
+        if (!mime) mime = efreet_mime_fallback_type_get(file);
 
         if (mime)
           {
@@ -459,7 +462,10 @@ _e_mod_menu_populate_recent_cb(void      *data EINA_UNUSED,
         fname = ecore_file_file_get(fl->file);
         if (fname)
           {
-             const char *mime = efreet_mime_type_get(fl->file);
+             const char *mime = efreet_mime_special_type_get(fl->file);
+
+             if (!mime) mime = efreet_mime_globs_type_get(fl->file);
+             if (!mime) mime = efreet_mime_fallback_type_get(fl->file);
 
              mi2 = e_menu_item_new(subm);
              e_menu_item_label_set(mi2, fname);
