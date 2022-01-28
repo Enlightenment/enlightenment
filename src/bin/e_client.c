@@ -433,12 +433,17 @@ e_client_revert_focus(E_Client *ec)
                }
           }
      }
-   else if ((ec->parent) &&
-            (ec->parent->desk == desk) && (ec->parent->modal == ec))
+   else if ((ec->parent) && (ec->parent->desk == desk))
      {
-        evas_object_focus_set(ec->parent->frame, 1);
+        E_Client *goal_ec = NULL;
+        if (ec->parent->modal != ec && ec->parent->modal) {
+          goal_ec = ec->parent->modal;
+        } else {
+          goal_ec = ec->parent;
+        }
+        evas_object_focus_set(goal_ec->frame, 1);
         if (e_config->raise_on_revert_focus)
-          evas_object_raise(ec->parent->frame);
+          evas_object_raise(goal_ec->frame);
      }
    else if (e_config->focus_revert_on_hide_or_close)
      {
