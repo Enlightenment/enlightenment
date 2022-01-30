@@ -163,7 +163,10 @@ _e_mod_menu_populate_item(void *data, Eio_File *handler EINA_UNUSED, const Eina_
                        return;
                     }
                }
-             mime = efreet_mime_type_get(mi->label);
+             mime = efreet_mime_special_type_get(path);
+
+             if (!mime) mime = efreet_mime_globs_type_get(path);
+             if (!mime) mime = efreet_mime_fallback_type_get(path);
              if (!mime) return;
              if (!strncmp(mime, "image/", 6))
                {
@@ -440,13 +443,12 @@ _e_mod_menu_recent_cb(void           *data EINA_UNUSED,
      }
 }
 
-
 static void
-_e_mod_menu_populate_recent_cb(void      *data EINA_UNUSED,
+_e_mod_menu_populate_recent_cb(void        *data EINA_UNUSED,
                                E_Menu      *m EINA_UNUSED,
                                E_Menu_Item *mi EINA_UNUSED)
 {
-   Eina_List *l;
+   Eina_List *l, *ll;
    Eina_List *files = (Eina_List *)e_exec_recent_files_get();
    E_Exec_Recent_File *fl;
    E_Menu *subm;
@@ -475,26 +477,31 @@ _e_mod_menu_populate_recent_cb(void      *data EINA_UNUSED,
              e_menu_item_callback_set(mi2, _e_mod_menu_recent_cb, NULL);
              if (mime)
                {
+                  const char *icon = NULL;
                   char buf[1024];
-                  const char *icon_file, *edje_file;
+                  const E_Config_Mime_Icon *minf;
 
-                  snprintf(buf, sizeof(buf), "e/icons/fileman/mime/%s", mime);
-                  edje_file = e_theme_edje_file_get("base/theme/icons", buf);
-                  if (edje_file)
+                  EINA_LIST_FOREACH(e_config->mime_icons, ll, minf)
                     {
-                       e_menu_item_icon_edje_set(mi2, edje_file, buf);
+                       if (!strcmp(minf->mime, mime))
+                         {
+                            icon = minf->icon;
+                            break;
+                         }
                     }
+                  if ((icon) && (!strcmp(icon, "THUMB")))
+                    e_menu_item_icon_file_set(mi2, fl->file);
                   else
                     {
-                       icon_file = efreet_mime_type_icon_get(mime, e_config->icon_theme, 48);
-                       e_menu_item_icon_file_set(mi2, icon_file);
+                       snprintf(buf, sizeof(buf), "fileman/mime/%s", mime);
+                       if (!e_util_menu_item_theme_icon_set(mi2, buf))
+                         e_util_menu_item_theme_icon_set(mi2, "fileman/mime/unknown");
                     }
                }
           }
      }
    e_menu_thaw(subm);
 }
-
 
 static void
 _e_mod_fileman_add_recent(E_Menu   *m,

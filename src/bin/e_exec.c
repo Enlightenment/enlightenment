@@ -104,6 +104,7 @@ _e_exec_recent_exists_filter(void)
           {
              _e_exec_recent->files =
                eina_list_remove_list(_e_exec_recent->files, l);
+             eina_stringshare_del(fl->file);
              free(fl);
           }
      }
@@ -160,7 +161,7 @@ _e_exec_recent_load(void)
           }
         fl->file = eina_stringshare_add(buf);
         fl->timestamp = (double)timi / 100.0;
-        _e_exec_recent->files = eina_list_prepend(_e_exec_recent->files, fl);
+        _e_exec_recent->files = eina_list_append(_e_exec_recent->files, fl);
      }
    fclose(f);
 }
