@@ -1158,12 +1158,13 @@ _pager_cb_event_desk_show(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev
 {
    E_Event_Desk_Show *ev = event;
    Eina_List *l;
-   Pager *p;
+   Pager *p = NULL;
    Pager_Popup *pp;
    Pager_Desk *pd;
 
    if (!eina_list_count(pagers)) return ECORE_CALLBACK_PASS_ON;
 
+   current_desk = ev->desk;
    EINA_LIST_FOREACH(pagers, l, p)
      {
         if (p->zone != ev->desk->zone) continue;
@@ -1172,20 +1173,29 @@ _pager_cb_event_desk_show(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev
 
         if (p->popup)
           edje_object_part_text_set(p->popup->o_bg, "e.text.label", ev->desk->name);
+        break;
      }
 
    if ((pager_config->popup) && (!act_popup) &&
        ((ecore_time_get() - _pager_start_time) > 0.5)) //. not at start
      {
         if ((pp = _pager_popup_find(ev->desk->zone)))
-          evas_object_show(pp->popup);
+          {
+             evas_object_show(pp->popup);
+             pd = _pager_desk_find(pp->pager, current_desk);
+             if (pd) _pager_desk_select(pd);
+          }
         else
-          pp = _pager_popup_new(ev->desk->zone, 0, EINA_TRUE);
+          {
+             pp = _pager_popup_new(ev->desk->zone, 0, EINA_TRUE);
+          }
         if (pp->timer)
           ecore_timer_loop_reset(pp->timer);
         else
           pp->timer = ecore_timer_add(pager_config->popup_speed,
                                       _pager_popup_cb_timeout, pp);
+        if (p)
+          p->popup = pp;
      }
 
    return ECORE_CALLBACK_PASS_ON;
@@ -1853,6 +1863,17 @@ static Eina_Bool
 _pager_popup_cb_timeout(void *data)
 {
    Pager_Popup *pp =  data;
+   Eina_List *l;
+   Pager *p;
+
+   EINA_LIST_FOREACH(pagers, l, p)
+     {
+        if (p->popup == pp)
+          {
+             p->popup = NULL;
+             break;
+          }
+     }
 
    pp->timer = NULL;
    _pager_popup_free(pp);
@@ -1883,7 +1904,6 @@ static int
 _pager_popup_show(void)
 {
    E_Zone *zone;
-   int x, y, w, h;
    Pager_Popup *pp;
 
    if ((act_popup) || (input_window)) return 0;
@@ -1916,7 +1936,6 @@ _pager_popup_show(void)
          (ECORE_EVENT_MOUSE_WHEEL, _pager_popup_cb_mouse_wheel, NULL));
 
    act_popup = _pager_popup_new(zone, 1, EINA_FALSE);
-   evas_object_geometry_get(act_popup->pager->o_table, &x, &y, &w, &h);
    current_desk = e_desk_current_get(zone);
    return 1;
 }
