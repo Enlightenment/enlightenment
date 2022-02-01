@@ -2854,6 +2854,8 @@ _e_comp_x_focus_out(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_
           return ECORE_CALLBACK_PASS_ON;
         else if (ev->detail == ECORE_X_EVENT_DETAIL_NON_LINEAR_VIRTUAL)
           return ECORE_CALLBACK_PASS_ON;
+        else if (ev->detail == ECORE_X_EVENT_DETAIL_POINTER)
+          return ECORE_CALLBACK_PASS_ON;
      }
    else if (ev->mode == ECORE_X_EVENT_MODE_GRAB)
      {
@@ -2884,6 +2886,8 @@ _e_comp_x_focus_out(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_
         if (ev->detail == ECORE_X_EVENT_DETAIL_ANCESTOR)
           return ECORE_CALLBACK_PASS_ON;
         else if (ev->detail == ECORE_X_EVENT_DETAIL_INFERIOR)
+          return ECORE_CALLBACK_PASS_ON;
+        else if (ev->detail == ECORE_X_EVENT_DETAIL_NON_LINEAR)
           return ECORE_CALLBACK_PASS_ON;
      }
    e_client_revert_focus(ec);
