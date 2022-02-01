@@ -786,6 +786,7 @@ _e_module_whitelist_check(void)
       "policy_mobile",
       "geolocation",
       "xwayland",
+      "procstats",
       NULL   // end marker
    };
 
