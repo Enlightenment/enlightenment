@@ -105,7 +105,7 @@ suid_ldflags = []
 dep_crypt    = []
 if freebsd == true or host_machine.system().startswith('pcbsd')
   dep_crypt = cc.find_library('crypt', required: true)
-  if cc.links('', args: '-fPIE', link_args: '-pie') == true
+  if cc.links('', args: ['-fPIE', '-pie']) == true
     suid_cflags  = '-fPIE'
     suid_ldflags = '-pie'
   endif
