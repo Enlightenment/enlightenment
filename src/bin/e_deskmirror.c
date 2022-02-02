@@ -79,6 +79,7 @@ _e_deskmirror_visible_get(E_Smart_Data *sd, Mirror *m)
          */
         if (m->sd->handlers && m->ec->iconic)
           visible = evas_object_visible_get(m->ec->frame);
+        if (m->ec->iconic) visible = EINA_FALSE;
         if (visible)
           {
              visible = (sd->desk == m->ec->desk) || (m->ec->sticky && (!m->ec->hidden));
