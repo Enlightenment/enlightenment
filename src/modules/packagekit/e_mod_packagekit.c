@@ -37,6 +37,7 @@ packagekit_icon_update(E_PackageKit_Module_Context *ctxt,
                      count++;
                      break;
                   default:
+                     count++;
                      break;
                }
           }
