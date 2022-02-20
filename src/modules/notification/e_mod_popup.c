@@ -271,7 +271,6 @@ static Popup_Data *
 _notification_popup_new(E_Notification_Notify *n, unsigned id)
 {
    Popup_Data *popup;
-   char buf[PATH_MAX];
    Eina_List *l;
    int pos = next_pos;
    E_Zone *zone = NULL;
@@ -305,10 +304,7 @@ _notification_popup_new(E_Notification_Notify *n, unsigned id)
    popup->e = e_comp->evas;
 
    /* Setup the theme */
-   snprintf(buf, sizeof(buf), "%s/e-module-notification.edj",
-            notification_mod->dir);
    popup->theme = edje_object_add(popup->e);
-
    e_theme_edje_object_set(popup->theme,
                            "base/theme/modules/notification",
                            "e/modules/notification/main");
@@ -489,19 +485,10 @@ _notification_popup_refresh(Popup_Data *popup)
 
    if (!popup->app_icon)
      {
-        char buf[PATH_MAX];
-
-        snprintf(buf, sizeof(buf), "%s/e-module-notification.edj",
-                 notification_mod->dir);
         popup->app_icon = edje_object_add(popup->e);
-        if (!e_theme_edje_object_set(popup->app_icon,
-                                     "base/theme/modules/notification",
-                                     "e/modules/notification/logo"))
-          if (!e_theme_edje_object_set(popup->app_icon,
-                                       "base/theme/modules/notification",
-                                       "modules/notification/logo"))
-            edje_object_file_set(popup->app_icon, buf,
-                                 "modules/notification/logo");
+        e_theme_edje_object_set(popup->app_icon,
+                                "base/theme/modules/notification",
+                                "e/modules/notification/logo");
         w = width;
         h = height;
      }
