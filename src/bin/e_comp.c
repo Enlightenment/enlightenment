@@ -756,6 +756,60 @@ _e_comp_shapes_update_object_checker_function_thingy(Evas_Object *o)
    return EINA_FALSE;
 }
 
+static Eina_Bool
+_tiler_obj_visible(Evas_Object *o)
+{
+   Evas_Object *o2;
+
+   if (!evas_object_visible_get(o)) return EINA_FALSE;
+   o2 = evas_object_clip_get(o);
+   if (!o2) return EINA_TRUE;
+   return _tiler_obj_visible(o2);
+}
+
+static void
+_tiler_add_input_sub(Evas_Object *par, Eina_Tiler *tb)
+{
+   Eina_List *objs = evas_object_smart_members_get(par);
+   Evas_Coord x, y, w, h;
+   Evas_Object *o;
+   const char *type;
+   void *sd;
+
+   EINA_LIST_FREE(objs, o)
+     {
+        if ((_tiler_obj_visible(o)) &&
+            (!evas_object_pass_events_get(o)))
+          {
+             type = evas_object_type_get(o);
+
+             if (type)
+               {
+                  if (!strcmp(type, "rectangle"))
+                    {
+                       if (!evas_object_clipees_has(o))
+                         {
+                            evas_object_geometry_get(o, &x, &y, &w, &h);
+                            eina_tiler_rect_add(tb, &(Eina_Rectangle){x, y, w, h});
+                         }
+                    }
+                  else if ((!strcmp(type, "image")) ||
+                           (!strcmp(type, "text")) ||
+                           (!strcmp(type, "textblock"))
+                           )
+                    {
+                    }
+                  else if ((!strcmp(type, "edje")) ||
+                           (!strcmp(type, "e_zoomap")))
+                    {
+                       sd = evas_object_smart_data_get(o);
+                       if (sd) _tiler_add_input_sub(o, tb);
+                    }
+               }
+          }
+     }
+}
+
 static void
 _e_comp_shapes_update_comp_client_shape_comp_helper(E_Client *ec, Eina_Tiler *tb, Eina_List **rl)
 {
@@ -823,6 +877,7 @@ _e_comp_shapes_update_comp_client_shape_comp_helper(E_Client *ec, Eina_Tiler *tb
              eina_tiler_rect_del(tb, &(Eina_Rectangle){x, y, w, h});
              SHAPE_INF("DEL: %d,%d@%dx%d", x, y, w, h);
           }
+        _tiler_add_input_sub(ec->frame, tb);
         return;
      }
 
@@ -849,6 +904,8 @@ _e_comp_shapes_update_comp_client_shape_comp_helper(E_Client *ec, Eina_Tiler *tb
         eina_tiler_rect_del(tb, &(Eina_Rectangle){ec->client.x, ec->client.y, ec->client.w, ec->client.h});
         SHAPE_INF("DEL: %d,%d@%dx%d", ec->client.x, ec->client.y, ec->client.w, ec->client.h);
      }
+
+   _tiler_add_input_sub(ec->frame, tb);
 }
 
 static void

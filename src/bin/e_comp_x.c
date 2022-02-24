@@ -2606,29 +2606,43 @@ _e_comp_x_mouse_in_job(void *d EINA_UNUSED)
    mouse_in_job = NULL;
 }
 
+static E_Client *
+_e_comp_x_e_client_obj_get(Evas_Object *o)
+{
+   Evas_Object *par;
+
+   if (evas_object_data_get(o, "comp_object"))
+     return e_comp_object_client_get(o);
+   par = evas_object_smart_parent_get(o);
+   if (!par) return NULL;
+   return _e_comp_x_e_client_obj_get(par);
+}
+
 static Eina_Bool
 _e_comp_x_mouse_in_fix_check_timer_cb(void *data EINA_UNUSED)
 {
    E_Client *ec = NULL, *cec;
+   Eina_List *l, *in_list;
+   Evas_Object *o;
    int x, y;
 
    mouse_in_fix_check_timer = NULL;
    if (e_grabinput_key_win_get() || e_grabinput_mouse_win_get())
      return EINA_FALSE;
    ecore_evas_pointer_xy_get(e_comp->ee, &x, &y);
-   E_CLIENT_REVERSE_FOREACH(cec)
+
+   in_list = evas_tree_objects_at_xy_get(e_comp->evas, NULL, x, y);
+   EINA_LIST_FOREACH(in_list, l, o)
      {
-        /* If a border was specified which should be excluded from the list
-         * (because it will be closed shortly for example), skip */
-        if ((!e_client_util_desk_visible(cec, e_desk_current_get(e_zone_current_get())))) continue;
-        if (!evas_object_visible_get(cec->frame)) continue;
-        if (!E_INSIDE(x, y, cec->x, cec->y, cec->w, cec->h))
-          continue;
-        /* If the layer is higher, the position of the window is higher
-         * (always on top vs always below) */
-        if (!ec || (cec->layer > ec->layer))
-          ec = cec;
+        ec = _e_comp_x_e_client_obj_get(o);
+        if (ec)
+          {
+             if ((!e_client_util_desk_visible
+                  (ec, e_desk_current_get(e_zone_current_get())))) continue;
+             break;
+          }
      }
+   eina_list_free(in_list);
    if (ec)
      {
         mouse_client = ec;
