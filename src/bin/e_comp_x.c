@@ -2621,7 +2621,7 @@ _e_comp_x_e_client_obj_get(Evas_Object *o)
 static Eina_Bool
 _e_comp_x_mouse_in_fix_check_timer_cb(void *data EINA_UNUSED)
 {
-   E_Client *ec = NULL, *cec;
+   E_Client *ec = NULL;
    Eina_List *l, *in_list;
    Evas_Object *o;
    int x, y;
