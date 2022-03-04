@@ -154,7 +154,7 @@ e_modapi_init(E_Module *m)
         config->minw = 100;
         config->minh = 32;
         config->preview = 0;
-        config->preview_size = 32;
+        config->preview_size = 240;
         tasks_config->items = eina_list_append(tasks_config->items, config);
      }
 
