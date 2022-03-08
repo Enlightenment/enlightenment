@@ -799,6 +799,13 @@ _tiler_add_input_sub(Evas_Object *par, Eina_Tiler *tb)
                            (!strcmp(type, "textblock"))
                            )
                     {
+                       const char *name = evas_object_name_get(o);
+
+                       evas_object_geometry_get(o, &x, &y, &w, &h);
+                       if ((name) && (!strcmp(name, "cw->obj")))
+                         eina_tiler_rect_del(tb, &(Eina_Rectangle){x, y, w, h});
+                       else
+                         eina_tiler_rect_add(tb, &(Eina_Rectangle){x, y, w, h});
                     }
                   else if ((!strcmp(type, "edje")) ||
                            (!strcmp(type, "e_zoomap")))
