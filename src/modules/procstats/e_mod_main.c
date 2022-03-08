@@ -32,6 +32,7 @@ typedef struct
    uint64_t        mem_size;
    uint64_t        cpu_time;
    uint64_t        cpu_time_prev;
+   Eina_Bool       was_maximized;
 } Proc_Stats_Client;
 
 static void       _proc_stats_client_add(E_Client *ec);
@@ -42,6 +43,8 @@ static void       _proc_stats_client_del(Proc_Stats_Client *client);
 static Eina_Bool  _proc_stats_client_gone(Proc_Stats_Client *client);
 static void       _proc_stats_client_children_update(Eina_List *children, Proc_Stats_Client *client);
 static void       _proc_stats_client_update(Eina_List *procs, Proc_Stats_Client *client);
+static void       _proc_stats_client_popup_add(Proc_Stats_Client *client);
+static void       _proc_stats_client_popup_del(Proc_Stats_Client *client);
 
 static Eina_Bool
 _memory_total(void)
@@ -91,8 +94,7 @@ _proc_stats_client_exists(E_Client *ec)
 static void
 _proc_stats_client_del(Proc_Stats_Client *client)
 {
-   if (client->popup) evas_object_del(client->popup);
-   client->popup = NULL;
+   _proc_stats_client_popup_del(client);
    edje_object_signal_emit(client->frame_obj, "e,state,procstats,off", "e");
    evas_object_del(client->obj);
    e_object_delfn_del(E_OBJECT(client->ec), client->delfn);
@@ -110,47 +112,11 @@ _proc_stats_client_del_cb(void *data, void *obj EINA_UNUSED)
 }
 
 static void
-_proc_stats_client_move_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_proc_stats_client_popup_add(Proc_Stats_Client *client)
 {
-   Proc_Stats_Client *client;
-   Evas_Coord ox, oy, ow, oh;
-
-   client = data;
-
-   if ((!client) || (!client->popup)) return;
-
-   evas_object_geometry_get(client->obj, &ox, &oy, &ow, &oh);
-   evas_object_move(client->popup, ox + (ow / 2), oy);
-
-   if ((client->ec->hidden) || (client->ec->iconic))
-     evas_object_hide(client->popup);
-   else
-     evas_object_show(client->popup);
-}
-
-static void
-_proc_stats_icon_clicked_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
-{
-   Evas_Event_Mouse_Up *ev;
-   Proc_Stats_Client *client;
    Evas_Object *o, *tb;
    Evas_Object *pb;
    Evas_Coord ox, oy, ow, oh;
-
-   ev = event_info;
-   client = data;
-
-   if (ev->button != 1) return;
-
-   if (!client) return;
-
-   if (client->popup)
-     {
-        evas_object_del(client->popup);
-        client->popup = NULL;
-        return;
-     }
-
    evas_object_geometry_get(client->obj, &ox, &oy, &ow, &oh);
 
    client->popup = o = elm_ctxpopup_add(e_comp->elm);
@@ -179,12 +145,92 @@ _proc_stats_icon_clicked_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
 
    _proc_stats_client_display_update(client);
 
-   elm_ctxpopup_direction_priority_set(o, ELM_CTXPOPUP_DIRECTION_UP,
-                                       ELM_CTXPOPUP_DIRECTION_DOWN,
-                                       ELM_CTXPOPUP_DIRECTION_LEFT,
-                                       ELM_CTXPOPUP_DIRECTION_RIGHT);
-   evas_object_move(o, ox + (ow / 2), oy);
+   if (client->ec->maximized)
+     {
+        elm_ctxpopup_direction_priority_set(o, ELM_CTXPOPUP_DIRECTION_DOWN,
+                                               ELM_CTXPOPUP_DIRECTION_UP,
+                                               ELM_CTXPOPUP_DIRECTION_LEFT,
+                                               ELM_CTXPOPUP_DIRECTION_RIGHT);
+        evas_object_move(o, ox + (ow / 2), oy + ow);
+     }
+   else
+     {
+        elm_ctxpopup_direction_priority_set(o, ELM_CTXPOPUP_DIRECTION_UP,
+                                               ELM_CTXPOPUP_DIRECTION_DOWN,
+                                               ELM_CTXPOPUP_DIRECTION_LEFT,
+                                               ELM_CTXPOPUP_DIRECTION_RIGHT);
+        evas_object_move(o, ox + (ow / 2), oy);
+     }
    evas_object_show(o);
+}
+
+static void
+_proc_stats_client_popup_del(Proc_Stats_Client *client)
+{
+   if (!client) return;
+
+   if (client->popup)
+     evas_object_del(client->popup);
+   client->popup = NULL;
+}
+
+static void
+_proc_stats_client_resize_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Proc_Stats_Client *client;
+
+   client = data;
+
+   if ((!client) || (!client->popup)) return;
+
+   if (client->was_maximized != client->ec->maximized)
+     {
+        _proc_stats_client_popup_del(client);
+        _proc_stats_client_popup_add(client);
+     }
+
+   client->was_maximized = client->ec->maximized;
+}
+
+static void
+_proc_stats_client_move_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Proc_Stats_Client *client;
+   Evas_Coord ox, oy, ow, oh;
+
+   client = data;
+
+   if ((!client) || (!client->popup)) return;
+
+   evas_object_geometry_get(client->obj, &ox, &oy, &ow, &oh);
+   evas_object_move(client->popup, ox + (ow / 2), oy);
+
+   if ((client->ec->hidden) || (client->ec->iconic))
+     evas_object_hide(client->popup);
+   else
+     evas_object_show(client->popup);
+}
+
+static void
+_proc_stats_icon_clicked_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Evas_Event_Mouse_Up *ev;
+   Proc_Stats_Client *client;
+
+   ev = event_info;
+   client = data;
+
+   if (ev->button != 1) return;
+
+   if (!client) return;
+
+   if (client->popup)
+     {
+        _proc_stats_client_popup_del(client);
+        return;
+     }
+
+   _proc_stats_client_popup_add(client);
 }
 
 static void
@@ -229,6 +275,7 @@ _proc_stats_client_add(E_Client *ec)
    client->delfn = e_object_delfn_add(E_OBJECT(ec), _proc_stats_client_del_cb, client);
    evas_object_event_callback_add(client->obj, EVAS_CALLBACK_MOVE, _proc_stats_client_move_cb, client);
    evas_object_event_callback_add(client->obj, EVAS_CALLBACK_MOUSE_UP, _proc_stats_icon_clicked_cb, client);
+   evas_object_event_callback_add(client->frame_obj, EVAS_CALLBACK_RESIZE, _proc_stats_client_resize_cb, client);
 
    module->clients = eina_list_append(module->clients, client);
 }
