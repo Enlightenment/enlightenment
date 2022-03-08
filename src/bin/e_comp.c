@@ -778,6 +778,7 @@ _tiler_add_input_sub(Evas_Object *par, Eina_Tiler *tb)
 
    EINA_LIST_FREE(objs, o)
      {
+        if (evas_object_clipees_has(o)) continue;
         if ((_tiler_obj_visible(o)) &&
             (!evas_object_pass_events_get(o)))
           {
