@@ -778,7 +778,7 @@ _e_winlist_large_item_height_set(Evas_Coord h)
         edje_object_size_min_calc(ww->bg_object, &mw, &mh);
         evas_object_size_hint_min_set(ww->bg_object, mw, mh);
         rowlen += mw;
-        if (rowlen > lw)
+        if ((rowlen > lw) && (mw != rowlen))
           {
              rowlen = 0;
              boxes = elm_box_children_get(bl->data);
