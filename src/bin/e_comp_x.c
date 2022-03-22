@@ -5214,6 +5214,11 @@ _e_comp_x_hook_client_del(void *d EINA_UNUSED, E_Client *ec)
    else
 #endif
      {
+        // work around broken clients that withdraw windows and don't
+        // remove WM_STATE themselves... like qt6 + telegram and media
+        // window popups.
+        ecore_x_window_prop_property_del(e_client_util_win_get(ec),
+                                         ECORE_X_ATOM_WM_STATE);
         if (e_pixmap_free(ec->pixmap))
           e_pixmap_client_set(ec->pixmap, NULL);
         ec->pixmap = NULL;
