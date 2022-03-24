@@ -2510,6 +2510,7 @@ _e_comp_x_mapping_change(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_E
    E_Client *ec;
 
    if (_e_comp_x_mapping_change_disabled) return ECORE_CALLBACK_RENEW;
+   printf("COMPX: _e_comp_x_mapping_change\n");
    e_comp_canvas_keys_ungrab();
    EINA_LIST_FOREACH(e_comp->clients, l, ec)
      {
