@@ -4533,6 +4533,7 @@ e_client_fullscreen(E_Client *ec, E_Fullscreen policy)
      evas_object_layer_set(ec->frame, E_LAYER_CLIENT_FULLSCREEN);
 
    ec->fullscreen = 1;
+   ec->fullscreen_time = ecore_time_get();
    ec->unfullscreen_forced = 0;
 #ifndef HAVE_WAYLAND_ONLY
    if ((eina_list_count(e_comp->zones) > 1) ||

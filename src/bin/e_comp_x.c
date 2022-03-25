@@ -2704,6 +2704,12 @@ _e_comp_x_mouse_out(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_
      return ECORE_CALLBACK_PASS_ON;
    ec = _e_comp_x_client_find_by_window(ev->win);
    if (!ec) return ECORE_CALLBACK_RENEW;
+   // if we're fullscreen and see a mout out within a short time of having
+   // set this client ot fullscreen - it's a "false flag" that is a bi-product
+   // of things moving around while becoming fullscreen, so ignore it
+   if ((ec->fullscreen) &&
+       (ecore_time_get() - ec->fullscreen_time) < 0.2) // 0.2sec enough
+     return ECORE_CALLBACK_RENEW;
    if (_e_comp_x_client_data_get(ec)->deleted) return ECORE_CALLBACK_RENEW;
    if (mouse_client == ec)
      {
