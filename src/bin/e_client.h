@@ -693,6 +693,8 @@ struct E_Client
       int           x, y;
    } drag;
 
+   double                     fullscreen_time;
+
    Ecore_Timer               *raise_timer;
    E_Client_Move_Intercept_Cb move_intercept_cb;
    E_Remember                *remember;
