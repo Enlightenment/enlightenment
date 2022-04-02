@@ -2601,8 +2601,20 @@ _e_comp_x_powersave(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 static void
 _e_comp_x_mouse_in_job(void *d EINA_UNUSED)
 {
+   E_Client *ecf = e_client_focused_get();
+
+   // if we're fullscreen and see a mout out within a short time of having
+   // set this client ot fullscreen - it's a "false flag" that is a bi-product
+   // of things moving around while becoming fullscreen, so ignore it
+   if ((ecf) && (ecf != mouse_client))
+     {
+        if ((ecf->fullscreen) &&
+            (ecore_time_get() - ecf->fullscreen_time) < 0.2) // 0.2sec enough
+          goto done;
+     }
    if (mouse_client)
      e_client_mouse_in(mouse_client, e_comp_canvas_x_root_adjust(mouse_in_coords.x), e_comp_canvas_y_root_adjust(mouse_in_coords.y));
+done:
    mouse_in_job = NULL;
 }
 
