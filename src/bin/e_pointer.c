@@ -922,7 +922,9 @@ e_pointer_reset(E_Pointer *ptr)
    E_FREE_LIST(ptr->stack, _e_pointer_stack_free);
 
    eina_stringshare_del(ptr->type);
+   ptr->type = NULL;
    eina_stringshare_del(ptr->deferred_type);
+   ptr->deferred_type = NULL;
 
    /* reset pointer to default */
    e_pointer_type_push(ptr, ptr, "default");
