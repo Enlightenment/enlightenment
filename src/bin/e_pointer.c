@@ -16,10 +16,13 @@ static Eina_Bool init = EINA_FALSE;
 static inline void
 _e_pointer_theme_buf(E_Pointer *ptr, char cursor[1024])
 {
+   const char *type = ptr->type;
+
+   if (!type) type = "default";
    if (ptr->color)
-     snprintf(cursor, 1024, "e/pointer/enlightenment/%s/color", ptr->type);
+     snprintf(cursor, 1024, "e/pointer/enlightenment/%s/color", type);
    else
-     snprintf(cursor, 1024, "e/pointer/enlightenment/%s/mono", ptr->type);
+     snprintf(cursor, 1024, "e/pointer/enlightenment/%s/mono", type);
 }
 
 static inline void
