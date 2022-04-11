@@ -3285,15 +3285,18 @@ ACT_FN_GO(window_focus, EINA_UNUSED)
           }
         if (dir == -1) /* next */
           {
-             if (ec_next) e_client_focus_set_with_pointer(ec_next);
-             else if (ec_first) e_client_focus_set_with_pointer(ec_first);
+             if (ec_next) goto do_focus;
+             else if (ec_first) ec_next = ec_first;
+             else return;
           }
         else if (dir == -2)
           {
-             if (ec_prev) e_client_focus_set_with_pointer(ec_prev);
-             else if (ec_last) e_client_focus_set_with_pointer(ec_last);
+             if (ec_prev) ec_next = ec_prev;
+             else if (ec_last) ec_next = ec_last;
+             else return;
           }
-        return;
+        else return;
+        goto do_focus;
      }
 
    cx = ec_orig->x + (ec_orig->w / 2);
@@ -3368,8 +3371,18 @@ ACT_FN_GO(window_focus, EINA_UNUSED)
         ec_next = ec;
         distance = d;
      }
+do_focus:
+   if (!ec_next) return;
 
-   if (ec_next) e_client_focus_set_with_pointer(ec_next);
+   ec = ec_next;
+   if (ec->iconic) e_client_uniconify(ec);
+   if (ec->shaded) e_client_unshade(ec, ec->shade_dir);
+   if (!ec->lock_user_stacking)
+     {
+        evas_object_raise(ec->frame);
+        e_client_raise_latest_set(ec);
+     }
+   e_client_focus_set_with_pointer(ec);
 }
 
 /* local subsystem globals */
