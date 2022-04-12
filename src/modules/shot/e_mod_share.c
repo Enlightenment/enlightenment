@@ -248,8 +248,9 @@ share_confirm(void)
    if (cd) return;
    cd = e_confirm_dialog_show
      (_("Confirm Share"), NULL,
-      _("This image will be uploaded<ps/>"
-        "to enlightenment.org. It will be publicly visible."),
+      _("This image will be uploaded without any encryption<ps/>"
+        "to enlightenment.org. All screenshots uploaded are<ps/>"
+        "available to everyone with no restrictions."),
       _("Confirm"), _("Cancel"),
       _win_share_confirm_yes, NULL,
       NULL, NULL, _win_share_confirm_del, NULL);
