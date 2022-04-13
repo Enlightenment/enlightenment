@@ -200,28 +200,35 @@ _handle_dev_prop(int dev_slot, const char *dev, const char *prop, Device_Flags d
      {
         // 7 val, 8 bit bit 0 = off, >0 mouse button reported
         // TR, BR, TL, BL, F1, F2, F3
-        // 0, 0, 0, 0, 1, 2, 3 <- tap to click
+        // 1, 1, 1, 0, 1, 3, 2 <- tap to click
         unsigned char *val = ecore_x_input_device_property_get
           (dev_slot, prop, &num, &fmt, &size);
+        const char tapval[7]   =  { 1, 1, 1, 0, 1, 3, 2 };
+        const char notapval[7] =  { 0, 0, 0, 0, 0, 0, 0 };
+        Eina_Bool have_tapval = EINA_FALSE;
+        Eina_Bool have_notapval = EINA_FALSE;
+        int i;
+
+        if (num >= 7)
+          {
+             have_tapval = EINA_TRUE;
+             for (i = 0; i < 7; i++) if (val[i] != tapval[i]) have_tapval = EINA_FALSE;
+             have_notapval = EINA_TRUE;
+             for (i = 0; i < 7; i++) if (val[i] != notapval[i]) have_notapval = EINA_FALSE;
+          }
         if ((val) && (size == 8) && (num >= 7) &&
-            (((e_config->touch_tap_to_click) &&
-              ((val[4] != 1) || (val[5] != 2) || (val[6] != 3))) ||
-             ((!e_config->touch_tap_to_click) &&
-              ((val[4] != 0) || (val[5] != 0) || (val[6] != 0)))))
+            (((e_config->touch_tap_to_click) && (!have_tapval)) ||
+             ((!e_config->touch_tap_to_click) && (!have_notapval))))
           {
              if (e_config->touch_tap_to_click)
                {
-                  val[4] = 1;
-                  val[5] = 2;
-                  val[6] = 3;
+                  for (i = 0; i < 7; i++) val[i] = tapval[i];
                }
              else
                {
-                  val[4] = 0;
-                  val[5] = 0;
-                  val[6] = 0;
+                  for (i = 0; i < 7; i++) val[i] = notapval[i];
                }
-             printf("DEV: change [%s] [%s] -> %i %i %i\n", dev, prop, val[4], val[5], val[6]);
+             printf("DEV: change [%s] [%s] -> %i %i %i %i %i %i %i\n", dev, prop, val[0], val[1], val[2], val[3], val[4], val[5], val[6]);
              ecore_x_input_device_property_set
                (dev_slot, prop, val, num, fmt, size);
           }
