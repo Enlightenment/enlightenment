@@ -8,6 +8,8 @@
 
 #define POLL_INTERVAL 2.0
 
+static Ecore_Event_Handler *_proc_stats_handler_fullscreen = NULL;
+
 static int64_t         _mem_total;
 
 typedef struct
@@ -75,6 +77,28 @@ _memory_total(void)
      return 0;
 #endif
    return 1;
+}
+
+static Eina_Bool
+_proc_stats_handler_fullscreen_check_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Proc_Stats_Client *client;
+   E_Event_Client *ev;
+   Eina_List *l;
+   Proc_Stats_Module *module = _this_module;
+
+   ev = event;
+
+   EINA_LIST_FOREACH(module->clients, l, client)
+     {
+        if (client->ec == ev->ec)
+          {
+             _proc_stats_client_remove(client);
+             break;
+          }
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
 }
 
 static Eina_Bool
@@ -505,6 +529,8 @@ e_modapi_init(E_Module *m)
    //module->sleeper = e_powersave_sleeper_new();
    module->poll_interval = POLL_INTERVAL;
 
+   _proc_stats_handler_fullscreen = ecore_event_handler_add
+      (E_EVENT_CLIENT_FULLSCREEN, _proc_stats_handler_fullscreen_check_cb, NULL);
    _proc_stats_thread_feedback_cb(module, NULL, proc_info_all_children_get());
 
    module->thread = ecore_thread_feedback_run(_proc_stats_thread,
@@ -523,6 +549,9 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    ecore_thread_wait(module->thread, 0.5);
 
    //e_powersave_sleeper_free(module->sleeper);
+
+   ecore_event_handler_del(_proc_stats_handler_fullscreen);
+   _proc_stats_handler_fullscreen = NULL;
 
    EINA_LIST_FREE(module->clients, client)
      _proc_stats_client_del(client);
