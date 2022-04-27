@@ -1821,7 +1821,6 @@ e_gadcon_client_util_menu_items_append(E_Gadcon_Client *gcc, E_Menu *menu_gadget
              else if ((!gcc->style) &&
                       (!e_util_strcmp(gcc->client_class->default_style, E_GADCON_CLIENT_STYLE_PLAIN)))
                e_menu_item_toggle_set(mi, 1);
-             e_menu_item_disabled_set(mi, mi->toggle);
              e_menu_item_callback_set(mi, _e_gadcon_client_cb_menu_style_plain, gcc);
 
              mi = e_menu_item_new(mo);
@@ -1834,7 +1833,6 @@ e_gadcon_client_util_menu_items_append(E_Gadcon_Client *gcc, E_Menu *menu_gadget
              else if ((!gcc->style) &&
                       (!e_util_strcmp(gcc->client_class->default_style, E_GADCON_CLIENT_STYLE_INSET)))
                e_menu_item_toggle_set(mi, 1);
-             e_menu_item_disabled_set(mi, mi->toggle);
              e_menu_item_callback_set(mi, _e_gadcon_client_cb_menu_style_inset, gcc);
 
              mi = e_menu_item_new(menu_gadget);
