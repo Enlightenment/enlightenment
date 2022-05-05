@@ -72,6 +72,9 @@ E_API Ecore_Exe *e_util_exe_safe_run(const char *cmd, void *data);
 
 E_API const char *e_username_get(void);
 
+E_API void e_pid_nice_priority_fg(int pid);
+E_API void e_pid_nice_priority_bg(int pid);
+
 typedef enum
 {
    E_UTIL_ACTION_NONE,

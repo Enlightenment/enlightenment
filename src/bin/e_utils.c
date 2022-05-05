@@ -1591,3 +1591,151 @@ e_username_get(void)
    if (pw) return pw->pw_name;
    return "";
 }
+
+typedef struct
+{
+   int        pid;
+   int        pri_set, pri_adj;
+   int        pri_only_filter;
+   Eina_Bool  do_adj : 1;
+   Eina_Bool  do_adj_children : 1;
+   Eina_Bool  do_children : 1;
+} E_Pri_Set_Adj_Data;
+
+static void
+_pri_adj(int pid, int pri_set, int pri_adj, int pri_only_filter,
+         Eina_Bool do_adj, Eina_Bool do_adj_children, Eina_Bool do_children)
+{
+   Eina_List *files;
+   char *file, buf[PATH_MAX];
+   int pid2, ppid, newpri, ret;
+   FILE *f;
+
+   newpri = getpriority(PRIO_PROCESS, pid) + pri_adj;
+   if ((pri_only_filter == -99) || (pri_only_filter != newpri))
+     {
+        if (do_adj) newpri += pri_adj;
+        else        newpri = pri_set;
+        if (newpri > 19) newpri = 19;
+//        printf("PRI: %i -> %i (adj=%i, adj_ch=%i ch=%i)\n", pid, newpri, do_adj, do_adj_children, do_children);
+        ret = setpriority(PRIO_PROCESS, pid, newpri);
+//        if (ret < 0) printf("PRI: ret = %i | %s\n", ret, strerror(errno));
+     }
+// shouldn't need to do this as default ionice class is "none" (0), and
+// this inherits io priority FROM nice level
+//        ioprio_set(IOPRIO_WHO_PROCESS, pid,
+//                   IOPRIO_PRIO_VALUE(2, 5));
+   if (do_children)
+     {
+// yes - this is /proc specific... so this may not work on some
+// os's - works on linux. too bad for others.
+        files = ecore_file_ls("/proc");
+        EINA_LIST_FREE(files, file)
+          {
+             if (isdigit(file[0]))
+               {
+                  snprintf(buf, sizeof(buf), "/proc/%s/stat", file);
+                  f = fopen(buf, "r");
+                  if (f)
+                    {
+                       pid2 = ppid = -1;
+                       ret = fscanf(f, "%i %*s %*s %i %*s", &pid2, &ppid);
+                       fclose(f);
+                       if (ret == 2)
+                         {
+                            if (ppid == pid)
+                              {
+                                 if (do_adj_children)
+                                   _pri_adj(pid2, pri_set, pri_adj,
+                                            pri_only_filter,
+                                            EINA_TRUE,
+                                            do_adj_children,
+                                            do_children);
+                                 else
+                                   _pri_adj(pid2, pri_set, pri_adj,
+                                            pri_only_filter,
+                                            do_adj,
+                                            do_adj_children,
+                                            do_children);
+                              }
+                         }
+                    }
+               }
+             free(file);
+          }
+     }
+}
+
+static void
+_e_pid_nice_priority_set_adjust_thread(void *data,
+                                       Ecore_Thread *eth EINA_UNUSED)
+{
+   E_Pri_Set_Adj_Data *dat = data;
+
+//   printf("PRI: --------\n");
+   _pri_adj(dat->pid, dat->pri_set, dat->pri_adj, dat->pri_only_filter,
+            dat->do_adj, dat->do_adj_children, dat->do_children);
+   free(dat);
+}
+
+static void
+_e_pid_nice_priority_set_adjust(int pid, int pri_set, int pri_adj,
+                                int pri_only_filter,
+                                Eina_Bool do_adj, Eina_Bool do_adj_children,
+                                Eina_Bool do_children)
+{
+   E_Pri_Set_Adj_Data *dat = calloc(1, sizeof(E_Pri_Set_Adj_Data));
+
+   if (!dat) return;
+   dat->pid             = pid;
+   dat->pri_set         = pri_set;
+   dat->pri_adj         = pri_adj;
+   dat->pri_only_filter = pri_only_filter;
+   dat->do_adj          = do_adj;
+   dat->do_adj_children = do_adj_children;
+   dat->do_children     = do_children;
+   ecore_thread_run(_e_pid_nice_priority_set_adjust_thread, NULL, NULL, dat);
+}
+
+static Eina_Bool
+_e_pid_nice_priority_lower_can(void)
+{
+#ifdef RLIMIT_NICE
+   static int checked = -1;
+   struct rlimit rlim;
+
+again:
+   if      (checked == 0) return EINA_FALSE;
+   else if (checked == 1) return EINA_TRUE;
+
+   checked = 1;
+   if (getrlimit(RLIMIT_NICE, &rlim) == 0)
+     {
+        // if we can't lower pri to at least 20 (nice 0 ...) then assume
+        // we can only raise nice level never lower it
+        if (rlim.rlim_cur < 20) checked = 0;
+     }
+   goto again; // set checked now - try again
+#endif
+   return EINA_TRUE;
+}
+
+E_API void
+e_pid_nice_priority_fg(int pid)
+{
+   int pri = e_config->priority - 1;
+
+   if (!_e_pid_nice_priority_lower_can()) pri = e_config->priority;
+   _e_pid_nice_priority_set_adjust(pid, pri, -1, -99, // only these procs
+                                   EINA_FALSE, EINA_FALSE, EINA_FALSE);
+}
+
+E_API void
+e_pid_nice_priority_bg(int pid)
+{
+   int pri = e_config->priority;
+
+   if (!_e_pid_nice_priority_lower_can()) pri = e_config->priority;
+   _e_pid_nice_priority_set_adjust(pid, pri, 1, -99, // only these procs
+                                   EINA_FALSE, EINA_FALSE, EINA_FALSE);
+}

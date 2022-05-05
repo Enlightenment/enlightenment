@@ -535,58 +535,11 @@ _e_comp_wl_evas_cb_multi_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *o
 }
 
 static void
-_e_comp_wl_client_priority_adjust(int pid, int set, int adj, Eina_Bool use_adj, Eina_Bool adj_child, Eina_Bool do_child)
-{
-   Eina_List *files;
-   char *file, buff[PATH_MAX];
-   FILE *f;
-   int pid2, ppid;
-   int num_read;
-   int n;
-
-   if (use_adj)
-     n = (getpriority(PRIO_PROCESS, pid) + adj);
-   else
-     n = set;
-
-   setpriority(PRIO_PROCESS, pid, n);
-
-   if (adj_child)
-     use_adj = EINA_TRUE;
-
-   if (!do_child) return;
-
-   files = ecore_file_ls("/proc");
-   EINA_LIST_FREE(files, file)
-      {
-         if (!isdigit(file[0]))
-           continue;
-
-         snprintf(buff, sizeof(buff), "/proc/%s/stat", file);
-         if ((f = fopen(buff, "r")))
-           {
-              pid2 = -1;
-              ppid = -1;
-              num_read = fscanf(f, "%i %*s %*s %i %*s", &pid2, &ppid);
-              fclose(f);
-              if (num_read == 2 && ppid == pid)
-                _e_comp_wl_client_priority_adjust(pid2, set,
-                                                  adj, use_adj,
-                                                  adj_child, do_child);
-           }
-
-         free(file);
-      }
-}
-
-static void
 _e_comp_wl_client_priority_raise(E_Client *ec)
 {
    if (ec->netwm.pid <= 0) return;
    if (ec->netwm.pid == getpid()) return;
-   _e_comp_wl_client_priority_adjust(ec->netwm.pid,
-                                     e_config->priority - 1, -1,
-                                     EINA_FALSE, EINA_TRUE, EINA_FALSE);
+   e_pid_nice_priority_fg(ec->netwm.pid);
 }
 
 static void
@@ -594,8 +547,7 @@ _e_comp_wl_client_priority_normal(E_Client *ec)
 {
    if (ec->netwm.pid <= 0) return;
    if (ec->netwm.pid == getpid()) return;
-   _e_comp_wl_client_priority_adjust(ec->netwm.pid, e_config->priority, 1,
-                                     EINA_FALSE, EINA_TRUE, EINA_FALSE);
+   e_pid_nice_priority_bg(ec->netwm.pid);
 }
 
 static Eina_Bool
