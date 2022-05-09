@@ -27,7 +27,7 @@ msgstr ""
 "Project-Id-Version: Enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-19 16:15+0200\n"
-"PO-Revision-Date: 2020-04-18 14:50+0200\n"
+"PO-Revision-Date: 2022-05-06 11:31+0200\n"
 "Last-Translator: Simon Tischer <simon@t-tischer.de>\n"
 "Language-Team: E17-de\n"
 "Language: de\n"
@@ -35,7 +35,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 2.3\n"
+"X-Generator: Poedit 3.0.1\n"
 "X-Poedit-Basepath: ../src\n"
 "X-Poedit-KeywordsList: N_;_\n"
 "X-Poedit-SearchPath-0: .\n"
@@ -4738,11 +4738,11 @@ msgstr "Sprechblase"
 
 #: src/modules/shot/e_mod_edit.c:1978
 msgid "Kaboom splat"
-msgstr "Kaboom! Patch!"
+msgstr "Kaboom! Patsch!"
 
 #: src/modules/shot/e_mod_edit.c:1979
 msgid "Pow explode"
-msgstr "Zack! Explosion!"
+msgstr "Zack! Explosion"
 
 #: src/modules/shot/e_mod_edit.c:1987
 msgid "Color"
@@ -5487,15 +5487,17 @@ msgid_plural ""
 ">The default keys which must be held to activate these bindings<ps/>is '%s'. "
 "Configure the modifiers for this binding below."
 msgstr[0] ""
-"Enlightenment nutzt mausgesteuerte Aktionen für Fenster. <br> Diese Aktionen "
-"beinhalten:<br>* <b>Bewegen</b> (Linke Taste)<br>* <b>Größe ändern</b> "
-"(Mittlere Taste)<br>* <b>Menu öffnen</b> (Rechte Taste)<br> Die standard "
-"Taste um diese Aktionen bei klick zu aktivieren<br> ist %s."
+"Voreingestellte Enlightenment Maus-Aktionen <br> Die voreingestellten "
+"Aktionen beinhalten:<br>* <b>Bewegen</b> (Linke Taste)<br>* <b>Größe ändern</"
+"b> (Mittlere Taste)<br>* <b>Menu öffnen</b> (Rechte Taste)<br> Die Tastatur-"
+"Taste, die gedrückt werden muß, damit dies aktiv ist,<br> ist %s. Die "
+"Einstellungen dieser Tasten-Aktionen können unten eingestellt werden."
 msgstr[1] ""
-"Enlightenment nutzt mausgesteuerte Aktionen für Fenster. <br> Diese Aktionen "
-"beinhalten:<br>* <b>Bewegen</b> (Linke Taste)<br>* <b>Größe ändern</b> "
-"(Mittlere Taste)<br>* <b>Menu öffnen</b> (Rechte Taste)<br> Die standard "
-"Tasten um diese Aktionen bei klick zu aktivieren<br> sind %s.<br>"
+"Voreingestellte Enlightenment Maus-Aktionen <br> Die voreingestellten "
+"Aktionen beinhalten:<br>* <b>Bewegen</b> (Linke Taste)<br>* <b>Größe ändern</"
+"b> (Mittlere Taste)<br>* <b>Menu öffnen</b> (Rechte Taste)<br> Die Tastatur-"
+"Tasten, die gedrückt werden müssen, damit dies aktiv ist,<br> sind %s. Die "
+"Einstellungen dieser Tasten-Aktionen können unten eingestellt werden."
 
 #: src/modules/wizard/page_150.c:28
 msgid "Compositing"
@@ -5862,7 +5864,7 @@ msgid ""
 "correctly installed and running"
 msgstr ""
 "Fehler bei der Initialisierung von D-Bus! Prüfen Sie, ob D-Bus korrekt "
-"installiert ist und auch läuft."
+"installiert ist und auch läuft"
 
 #: src/modules/luncher/config.c:172
 msgid "Create new Luncher source"
@@ -6163,11 +6165,11 @@ msgstr "Keine Sortirung"
 
 #: src/modules/everything/evry_config.c:506
 msgid "By usage"
-msgstr "nach Verwendung"
+msgstr "Nach Verwendung"
 
 #: src/modules/everything/evry_config.c:509
 msgid "Most used"
-msgstr "nach meist verwendet"
+msgstr "Nach am Meisten verwendet"
 
 #: src/modules/everything/evry_config.c:512
 msgid "Last used"
@@ -7113,7 +7115,7 @@ msgstr "Die Tastenbelegung die Sie eingegeben haben wird bereits verwendet!"
 #: src/modules/quickaccess/e_mod_quickaccess.c:833 src/bin/e_shelf.c:2384
 #: src/bin/e_bryce.c:813
 msgid "Autohide"
-msgstr "autom. ausblenden"
+msgstr "Autom. ausblenden"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:839
 msgid "Hide Instead Of Raise"
@@ -9479,7 +9481,7 @@ msgstr "Gadget Leiste"
 
 #: src/bin/e_bryce.c:807
 msgid "Autosize"
-msgstr "autom. Größe"
+msgstr "Autom. Größe"
 
 #: src/bin/e_bryce.c:819
 msgid "Bar Settings"
@@ -9540,9 +9542,9 @@ msgid ""
 "<hilight>Backspace</hilight> or <hilight>Delete</hilight> to remove all "
 "gadgets from this screen"
 msgstr ""
-"Zum Beenden auf <hilight>Esc</hilight> drücken oder auf den Hintergrund "
-"klicken. <ps/><hilight>Rücktaste</hilight> oder <hilight>Entf.</hilight>, "
-"entfernt alle Gadgets von diesem Bildschirm."
+"Zum Beenden <hilight>Esc</hilight> drücken oder auf den Hintergrund klicken. "
+"<ps/><hilight>Rücklöschen</hilight> oder <hilight>Entf.</hilight> entfernt "
+"alle Gadgets von diesem Bildschirm"
 
 #: src/bin/e_color_dialog.c:25
 msgid "Color Selector"
@@ -10030,7 +10032,7 @@ msgstr ""
 
 #: src/bin/e_module.c:237
 msgid "Module does not contain all needed functions"
-msgstr "Das Modul enthält nicht alle benötigten Funktionen."
+msgstr "Das Modul enthält nicht alle benötigten Funktionen"
 
 #: src/bin/e_module.c:252
 #, c-format
@@ -10701,7 +10703,7 @@ msgstr "Zu unterer Arbeitsfläche wechseln"
 
 #: src/bin/e_actions.c:3414
 msgid "Flip Desktop By..."
-msgstr "Arbeitsfläche um ... wechseln"
+msgstr "Arbeitsfläche ...mal wechseln"
 
 #: src/bin/e_actions.c:3420
 msgid "Flip To Previous Desktop"
@@ -10717,15 +10719,15 @@ msgstr "Modulablage anzeigen"
 
 #: src/bin/e_actions.c:3436
 msgid "Flip Desktop To..."
-msgstr "Zu Arbeitsfläche ... wechseln"
+msgstr "Zu Arbeitsfläche ... wechseln."
 
 #: src/bin/e_actions.c:3441
 msgid "Switch Desktop To... On Screen..."
-msgstr "Zu Arbeitsfläche ... auf Bildschirm ... wechseln"
+msgstr "Zu Arbeitsfläche ... auf Bildschirm ... wechseln."
 
 #: src/bin/e_actions.c:3447
 msgid "Flip Desktop Linearly..."
-msgstr "Linear zu Arbeitsfläche wechseln um... "
+msgstr "Linear zu Arbeitsfläche wechseln um..."
 
 #: src/bin/e_actions.c:3453
 msgid "Switch To Desktop 0"
@@ -10777,7 +10779,7 @@ msgstr "Zu Arbeitsfläche 11 wechseln"
 
 #: src/bin/e_actions.c:3477
 msgid "Switch To Desktop..."
-msgstr "Zu Arbeitsfläche ... wechseln"
+msgstr "Zu Arbeitsfläche ... wechseln."
 
 #: src/bin/e_actions.c:3483
 msgid "Flip Desktop Left (All Screens)"
@@ -10809,7 +10811,7 @@ msgstr "Arbeitsfläche linear nach ... klappen (alle Bildschirme)"
 
 #: src/bin/e_actions.c:3509
 msgid "Flip Desktop In Direction..."
-msgstr "Arbeitsfläche in Richtung ... klappen"
+msgstr "Arbeitsfläche in Richtung ... wechseln."
 
 #: src/bin/e_actions.c:3514
 msgid "Switch To Desktop 0 (All Screens)"
@@ -10881,7 +10883,7 @@ msgstr "Maus auf Bildschirm 1 verschieben"
 
 #: src/bin/e_actions.c:3557
 msgid "Send Mouse To Screen..."
-msgstr "Maus auf Bildschirm ... verschieben"
+msgstr "Mauszeiger auf Bildschirm ... verschieben"
 
 #: src/bin/e_actions.c:3563
 msgid "Send Mouse Forward 1 Screen"
@@ -10893,16 +10895,16 @@ msgstr "Maus einen Bildschirm zurückschieben"
 
 #: src/bin/e_actions.c:3567
 msgid "Send Mouse Forward/Back Screens..."
-msgstr "Maus ... Bildschirme weiter/zurückschieben"
+msgstr "Maus ... Bildschirme weiter/zurückschieben."
 
 #: src/bin/e_actions.c:3572
 msgid "Dim"
-msgstr "abdunkeln"
+msgstr "Abdunkeln"
 
 # better ideas, anyone?
 #: src/bin/e_actions.c:3575
 msgid "Undim"
-msgstr "aufhellen"
+msgstr "Aufhellen"
 
 #: src/bin/e_actions.c:3578
 msgid "Backlight Set"
@@ -11539,12 +11541,12 @@ msgstr "Klicken Sie auf ein Objekt, an dem eine Ausrichtung erfolgen soll."
 
 #: src/bin/e_int_client_menu.c:1203
 msgid "On window..."
-msgstr "auf Fenster..."
+msgstr "Auf Fenster..."
 
 #: src/bin/e_int_client_menu.c:1214 src/bin/e_int_client_menu.c:1225
 #: src/bin/e_int_client_menu.c:1236 src/bin/e_int_client_menu.c:1247
 msgid "Of window..."
-msgstr "von Fenster ..."
+msgstr "Von Fenster ..."
 
 #: src/bin/e_int_client_menu.c:1274
 #, c-format
