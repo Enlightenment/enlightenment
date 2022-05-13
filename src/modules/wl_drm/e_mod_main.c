@@ -738,6 +738,12 @@ _drm2_randr_apply(void)
    if (nh > maxh) nh = maxh;
    if (nw < minw) nw = minw;
    if (nh < minh) nh = minh;
+
+     {
+        Evas *e = ecore_evas_get(e_comp->ee);
+        Evas_Object *o = evas_object_name_find(e, "__e_wl_watermark");
+        if (o) evas_object_move(o, nw - 40 - 16, 16);
+     }
    printf("RRR: set vsize: %ix%i, rot=%i\n", nw, nh, ecore_evas_rotation_get(e_comp->ee));
    ecore_drm2_device_calibrate(dev, nw, nh);
    rot = ecore_evas_rotation_get(e_comp->ee);
@@ -986,6 +992,20 @@ e_modapi_init(E_Module *m)
    efl_event_callback_array_priority_add(e_comp->evas, arr,
                                          EFL_CALLBACK_PRIORITY_BEFORE, NULL);
 
+     {
+        Evas_Object *o;
+        char buf[PATH_MAX];
+
+        o = evas_object_image_filled_add(ecore_evas_get(e_comp->ee));
+        evas_object_name_set(o, "__e_wl_watermark");
+        e_prefix_data_concat_static(buf, "data/images/wayland.png");
+        evas_object_image_file_set(o, buf, NULL);
+        evas_object_move(o, w - 40 - 16, 16);
+        evas_object_resize(o, 40, 40);
+        evas_object_pass_events_set(o, EINA_TRUE);
+        evas_object_layer_set(o, EVAS_LAYER_MAX);
+        evas_object_show(o);
+     }
    return m;
 }
 

@@ -566,6 +566,27 @@ main(int argc, char **argv)
    env_set("E_START", argv[0]);
    putenv("E_START_MANAGER=1");
 
+   if ((!getenv("DISPLAY")) && (!getenv("E_WL_FORCE")))
+     {
+        printf("***************************************************************\n");
+        printf("*  You are probably starting Enlightenment in wayland DRM/KMS *\n");
+        printf("***************************************************************\n");
+        printf("                                                               \n");
+        printf("  Wayland support is experimental. It may work for you.        \n");
+        printf("  It may not. If you wish you help out then please do, but     \n");
+        printf("  for a proper experience use Enlightenment in X11.            \n");
+        printf("                                                               \n");
+        printf("  If you do not want this pause and message, please set        \n");
+        printf("  the following environment variable:                          \n");
+        printf("                                                               \n");
+        printf("    E_WL_FORCE=drm                                             \n");
+        printf("                                                               \n");
+        printf("  Example:                                                     \n");
+        printf("                                                               \n");
+        printf("    E_WL_FORCE=drm enlightenment_start                         \n");
+        printf("                                                               \n");
+        sleep(10);
+     }
    for (i = 1; i < argc; i++)
      {
         if ((!strcmp(argv[i], "-h")) || (!strcmp(argv[i], "-help")) ||
