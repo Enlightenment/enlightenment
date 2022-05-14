@@ -593,7 +593,7 @@ _e_deskmirror_mirror_setup(Mirror *m)
         evas_object_pass_events_set(m->mirror, !m->ec);
      }
    if (m->ec) evas_object_data_set(m->mirror, "E_Client", m->ec);
-   evas_object_precise_is_inside_set(m->mirror, m->ec && (m->ec->shaped || m->ec->shaped_input));
+   evas_object_precise_is_inside_set(m->mirror, m->ec && (m->ec->shaped));
    e_layout_pack(m->sd->layout, m->mirror);
    _e_deskmirror_mirror_reconfigure(m);
    if (m->sd->handlers) // no handlers = we're setting up = there's no possible listeners

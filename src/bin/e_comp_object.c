@@ -972,7 +972,7 @@ _e_comp_object_pixels_get(void *data, Evas_Object *obj)
      }
    if (e_object_is_del(E_OBJECT(ec))) return;
    /* shaped clients get precise mouse events to handle transparent pixels */
-   evas_object_precise_is_inside_set(cw->obj, ec->shaped || ec->shaped_input);
+   evas_object_precise_is_inside_set(cw->obj, ec->shaped);
 
    //INF("%p PX(%dx%d) EC(%dx%d) CW(%dx%d)", ec, pw, ph, ec->w, ec->h, cw->w, cw->h);
    //e_comp_object_frame_wh_adjust(cw->smart_obj, pw, ph, &pw, &ph);
