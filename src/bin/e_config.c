@@ -190,7 +190,7 @@ _e_config_pending_file_del(const char *path)
 
         eina_hash_del(_e_config_pending_files, path, ef);
         eina_lock_release(&_e_config_pending_files_lock);
-        eet_close(ef);
+        err = eet_sync_sync(ef);
         switch (err)
           {
            case EET_ERROR_NONE:
@@ -255,6 +255,7 @@ _e_config_pending_file_del(const char *path)
              erstr = _("The error is unknown to Enlightenment.");
              break;
           }
+        eet_close(ef);
         if (!ok) printf("CF: Write Error: %s\n", erstr);
      }
    else
