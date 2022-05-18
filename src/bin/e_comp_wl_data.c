@@ -962,7 +962,7 @@ _e_comp_wl_clipboard_create(void)
 E_API void
 e_comp_wl_data_device_send_enter(E_Client *ec)
 {
-   struct wl_resource *data_device_res, *offer_res;
+   struct wl_resource *data_device_res = NULL, *offer_res = NULL;
    uint32_t serial;
    int x, y;
 
