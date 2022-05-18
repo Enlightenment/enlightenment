@@ -63,18 +63,20 @@ _notification_popup_merge(E_Notification_Notify *n)
    len = strlen(popup->notif->body);
    len += strlen(n->body);
    len += 5; /* \xE2\x80\xA9 or <PS/> */
-   if (len < 8192) body_final = alloca(len + 1);
-   else body_final = malloc(len + 1);
-   /* Hack to allow e to include markup */
-   snprintf(body_final, len + 1, "%s<ps/>%s", popup->notif->body, n->body);
+   body_final = malloc(len + 1);
+   if (body_final)
+     {
+        /* Hack to allow e to include markup */
+        snprintf(body_final, len + 1, "%s<ps/>%s", popup->notif->body, n->body);
 
-   /* printf("set body %s\n", body_final); */
+        /* printf("set body %s\n", body_final); */
 
-   eina_stringshare_replace(&n->body, body_final);
+        eina_stringshare_replace(&n->body, body_final);
 
-   e_object_del(E_OBJECT(popup->notif));
-   popup->notif = n;
-   if (len >= 8192) free(body_final);
+        e_object_del(E_OBJECT(popup->notif));
+        popup->notif = n;
+        free(body_final);
+     }
 
    return popup;
 }
