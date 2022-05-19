@@ -1250,7 +1250,7 @@ _e_main_parse_arguments(int argc, char **argv)
                  (!strcmp(argv[i], "--version")))
           {
              printf(_("Version: %s\n"), PACKAGE_VERSION);
-             _e_main_shutdown(0);
+             _e_main_shutdown(11);
           }
         else if ((!strcmp(argv[i], "-h")) ||
                  (!strcmp(argv[i], "-help")) ||
@@ -1283,7 +1283,7 @@ _e_main_parse_arguments(int argc, char **argv)
                  "\t-version\n"
                  )
                );
-             _e_main_shutdown(0);
+             _e_main_shutdown(11);
           }
      }
 
