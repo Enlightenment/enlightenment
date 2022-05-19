@@ -1259,28 +1259,28 @@ _e_main_parse_arguments(int argc, char **argv)
              printf
                (_(
                  "Options:\n"
-                 "\t-display DISPLAY\n"
-                 "\t\tConnect to display named DISPLAY.\n"
-                 "\t\tEG: -display :1.0\n"
-                 "\t-fake-xinerama-screen WxH+X+Y\n"
-                 "\t\tAdd a FAKE xinerama screen (instead of the real ones)\n"
-                 "\t\tgiven the geometry. Add as many as you like. They all\n"
-                 "\t\treplace the real xinerama screens, if any. This can\n"
-                 "\t\tbe used to simulate xinerama.\n"
-                 "\t\tEG: -fake-xinerama-screen 800x600+0+0 -fake-xinerama-screen 800x600+800+0\n"
-                 "\t-profile CONF_PROFILE\n"
-                 "\t\tUse the configuration profile CONF_PROFILE instead of the user selected default or just \"default\".\n"
-                 "\t-good\n"
-                 "\t\tBe good.\n"
-                 "\t-evil\n"
-                 "\t\tBe evil.\n"
-                 "\t-psychotic\n"
-                 "\t\tBe psychotic.\n"
-                 "\t-locked\n"
-                 "\t\tStart with desklock on, so password will be asked.\n"
-                 "\t-i-really-know-what-i-am-doing-and-accept-full-responsibility-for-it\n"
-                 "\t\tIf you need this help, you don't need this option.\n"
-                 "\t-version\n"
+                 "  -display DISPLAY\n"
+                 "    Connect to display named DISPLAY.\n"
+                 "    EG: -display :1.0\n"
+                 "  -fake-xinerama-screen WxH+X+Y\n"
+                 "    Add a FAKE xinerama screen (instead of the real ones)\n"
+                 "    given the geometry. Add as many as you like. They all\n"
+                 "    replace the real xinerama screens, if any. This can\n"
+                 "    be used to simulate xinerama.\n"
+                 "    EG: -fake-xinerama-screen 800x600+0+0 -fake-xinerama-screen 800x600+800+0\n"
+                 "  -profile CONF_PROFILE\n"
+                 "    Use the configuration profile CONF_PROFILE instead of the user selected default or just \"default\".\n"
+                 "  -good\n"
+                 "    Be good.\n"
+                 "  -evil\n"
+                 "    Be evil.\n"
+                 "  -psychotic\n"
+                 "    Be psychotic.\n"
+                 "  -locked\n"
+                 "    Start with desklock on, so password will be asked.\n"
+                 "  -i-really-know-what-i-am-doing-and-accept-full-responsibility-for-it\n"
+                 "    If you need this help, you don't need this option.\n"
+                 "  -version\n"
                  )
                );
              _e_main_shutdown(11);
@@ -1564,13 +1564,13 @@ _e_main_path_shutdown(void)
 static int
 _e_main_screens_init(void)
 {
-   TS("\tscreens: client");
+   TS("  screens: client");
    if (!e_client_init()) return 0;
    TS("E_Screensaver Init");
    if (!e_screensaver_init()) return 0;
-   TS("\tscreens: client volume");
+   TS("  screens: client volume");
    if (!e_client_volume_init()) return 0;
-   TS("\tscreens: win");
+   TS("  screens: win");
    if (!e_win_init()) return 0;
    TS("Compositor Init");
    if (!e_comp_init())
