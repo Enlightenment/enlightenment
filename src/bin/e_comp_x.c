@@ -3439,6 +3439,31 @@ _e_comp_x_hook_client_post_new_client(void *d EINA_UNUSED, E_Client *ec)
 }
 
 static void
+_e_comp_x_frame_extents_adjust(E_Client *ec, int exl, int exr, int ext, int exb)
+{
+   unsigned int extentscurrent;
+   unsigned int extentsall = exl | exr | ext | exb;
+   int insl = 0, insr = 0, inst = 0, insb = 0;
+
+   e_comp_object_frame_geometry_get(ec->frame, &insl, &insr, &inst, &insb);
+   extentscurrent = insl | insr | inst | insb;
+
+   extentsall = !!extentsall;
+   extentscurrent = !!extentscurrent;
+   if ((!e_comp_object_frame_exists(ec->frame)) &&
+       (( extentsall &&  extentscurrent) ||
+        (!extentsall &&  extentscurrent) ||
+        ( extentsall && !extentscurrent)))
+     {
+        e_comp_object_frame_geometry_set(ec->frame, -exl, -exr, -ext, -exb);
+        if (ec->override &&
+            (ec->x == ec->comp_data->initial_attributes.x) &&
+            (ec->y == ec->comp_data->initial_attributes.y))
+          e_comp_object_frame_xy_adjust(ec->frame, ec->x, ec->y, &ec->x, &ec->y);
+     }
+}
+
+static void
 _e_comp_x_hook_client_pre_frame_assign(void *d EINA_UNUSED, E_Client *ec)
 {
    Ecore_X_Window win, pwin;
@@ -4816,33 +4841,17 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
               */
              if (count >= 4)
                {
-                  unsigned int extentscurrent;
-                  unsigned int extentsall =
-                    extents[0] | extents[1] | extents[2] | extents[3];
-                  int insl = 0, insr = 0, inst = 0, insb = 0;
-                  e_comp_object_frame_geometry_get(ec->frame, &insl, &insr,
-                                                   &inst, &insb);
-                  extentscurrent = insl | insr | inst | insb;
-
-                  extentsall = !!extentsall;
-                  extentscurrent = !!extentscurrent;
-                  if ((!e_comp_object_frame_exists(ec->frame)) &&
-                      (( extentsall &&  extentscurrent) ||
-                       (!extentsall &&  extentscurrent) ||
-                       ( extentsall && !extentscurrent)))
-                    {
-                       e_comp_object_frame_geometry_set(ec->frame,
-                                                        -extents[0],
-                                                        -extents[1],
-                                                        -extents[2],
-                                                        -extents[3]);
-                       if (ec->override &&
-                           (ec->x == ec->comp_data->initial_attributes.x) &&
-                           (ec->y == ec->comp_data->initial_attributes.y))
-                         e_comp_object_frame_xy_adjust(ec->frame, ec->x, ec->y, &ec->x, &ec->y);
-                    }
+                  printf("GTK-FRM: get %i %i %i %i\n",
+                         extents[0], extents[1], extents[2], extents[3]);
+                  _e_comp_x_frame_extents_adjust
+                    (ec, extents[0], extents[1], extents[2], extents[3]);
                }
              free(extents);
+          }
+        else
+          {
+             printf("GTK-FRM: get fail\n");
+             _e_comp_x_frame_extents_adjust(ec, 0, 0, 0, 0);
           }
         cd->fetch_gtk_frame_extents = 0;
      }
