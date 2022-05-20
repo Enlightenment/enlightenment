@@ -259,12 +259,119 @@ _e_fwin_client_hook_focus_unset(void *d EINA_UNUSED, E_Client *ec)
      evas_object_focus_set(fwin->cur_page->fm_obj, 1);
 }
 
+typedef struct _E_Fwin_Mime_Handler
+{
+   const char *mime;
+   Efreet_Desktop *desktop;
+   E_Fm2_Mime_Handler *handler;
+} E_Fwin_Mime_Handler;
+
+static Ecore_Event_Handler *_e_fwin_efreet_desktop_update_handler = NULL;
+static Eina_List *_e_fwin_mime_all_handlers_list = NULL;
+
+static int
+_e_fwin_cb_dir_mime_handler_test(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *path)
+{
+   if (ecore_file_is_dir(path)) return 1;
+   if (e_fm2_real_path_get(obj))
+     {
+        evas_object_data_set(obj, "fileman_terminal_realpath", (void*)1);
+        return 1;
+     }
+   return 0;
+}
+
+static void
+_e_fwin_cb_dir_mime_handler(void *data, Evas_Object *obj EINA_UNUSED, const char *path)
+{
+   E_Fwin_Mime_Handler *h = data;
+   Eina_Stringshare *rp;
+   Eina_List *files = NULL;
+
+   rp = e_fm2_real_path_get(obj);
+   if (rp && (rp != path) && (evas_object_data_del(obj, "fileman_terminal_realpath"))) //icon menu; use rp
+     path = rp;
+   files = eina_list_append(files, path);
+   e_exec(e_zone_current_get(), h->desktop, NULL, files, "fileman");
+   eina_list_free(files);
+}
+
+static void
+_e_fwin_mime_all_handlers_fill(void)
+{
+   E_Fwin_Mime_Handler *h;
+   Eina_List *desktops;
+   Efreet_Desktop *desktop;
+
+   desktops = efreet_util_desktop_name_glob_list("*");
+   EINA_LIST_FREE(desktops, desktop)
+     {
+        const char *mime = eina_hash_find
+          (desktop->x, "X-Enlightenment-Action-Mime");
+        if (!mime) continue;
+        h = calloc(1, sizeof(E_Fwin_Mime_Handler));
+        if (!h) continue;
+        h->mime = eina_stringshare_add(mime);
+        h->desktop = desktop;
+        efreet_desktop_ref(desktop);
+        h->handler = e_fm2_mime_handler_new
+          (desktop->name, desktop->icon,
+           _e_fwin_cb_dir_mime_handler, h,
+           _e_fwin_cb_dir_mime_handler_test, h);
+        e_fm2_mime_handler_mime_add(h->handler, h->mime);
+        _e_fwin_mime_all_handlers_list =
+          eina_list_append(_e_fwin_mime_all_handlers_list, h);
+     }
+}
+
+static void
+_e_fwin_mime_all_handlers_clear(void)
+{
+   E_Fwin_Mime_Handler *h;
+
+   EINA_LIST_FREE(_e_fwin_mime_all_handlers_list, h)
+     {
+        efreet_desktop_free(h->desktop);
+        e_fm2_mime_handler_mime_del(h->handler, h->mime);
+        e_fm2_mime_handler_free(h->handler);
+        eina_stringshare_del(h->mime);
+        free(h);
+     }
+}
+
+static Eina_Bool
+_e_fwin_cb_efreet_cache_update(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev EINA_UNUSED)
+{
+   _e_fwin_mime_all_handlers_clear();
+   _e_fwin_mime_all_handlers_fill();
+   return ECORE_CALLBACK_RENEW;
+}
+
+static void
+_e_fwin_mime_all_handlers_init(void)
+{
+   _e_fwin_efreet_desktop_update_handler =
+     ecore_event_handler_add(EFREET_EVENT_DESKTOP_CACHE_UPDATE,
+                             _e_fwin_cb_efreet_cache_update, NULL);
+   _e_fwin_mime_all_handlers_fill();
+}
+
+static void
+_e_fwin_mime_all_handlers_shutdown(void)
+{
+   _e_fwin_mime_all_handlers_clear();
+   ecore_event_handler_del(_e_fwin_efreet_desktop_update_handler);
+}
+
 /* externally accessible functions */
 int
 e_fwin_init(void)
 {
    focus_out_hook = e_client_hook_add(E_CLIENT_HOOK_FOCUS_UNSET, _e_fwin_client_hook_focus_unset, NULL);
    fwin_class = eina_stringshare_add("e_fwin");
+
+   _e_fwin_mime_all_handlers_init();
+
    tdesktop = e_util_terminal_desktop_get();
    if (!tdesktop) return 1;
    dir_handler = e_fm2_mime_handler_new(_("Open Terminal here"),
@@ -272,6 +379,7 @@ e_fwin_init(void)
                                    _e_fwin_cb_dir_handler, NULL,
                                    _e_fwin_cb_dir_handler_test, NULL);
    e_fm2_mime_handler_mime_add(dir_handler, "inode/directory");
+
    return 1;
 }
 
@@ -283,16 +391,26 @@ e_fwin_shutdown(void)
    EINA_LIST_FREE(fwins, fwin)
      e_object_del(E_OBJECT(fwin));
 
-   eina_stringshare_replace(&fwin_class, NULL);
    if (dir_handler)
      {
         e_fm2_mime_handler_mime_del(dir_handler, "inode/directory");
         e_fm2_mime_handler_free(dir_handler);
+        dir_handler = NULL;
      }
-   efreet_desktop_free(tdesktop);
+   if (tdesktop)
+     {
+        efreet_desktop_free(tdesktop);
+        tdesktop = NULL;
+     }
 
-   tdesktop = NULL;
-   dir_handler = NULL;
+   _e_fwin_mime_all_handlers_shutdown();
+
+   eina_stringshare_replace(&fwin_class, NULL);
+   if (focus_out_hook)
+     {
+        e_client_hook_del(focus_out_hook);
+        focus_out_hook = NULL;
+     }
 
    return 1;
 }
