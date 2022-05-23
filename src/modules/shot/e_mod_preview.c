@@ -49,6 +49,15 @@ _quality_change_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EI
    quality = elm_slider_value_get(obj);
 }
 
+static void
+_cb_key_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
+{
+   Evas_Event_Key_Down *ev = event;
+
+   if (!strcmp(ev->key, "Escape"))
+     E_FREE_FUNC(win, evas_object_del);
+}
+
 void
 preview_dialog_show(E_Zone *zone, E_Client *ec, const char *params, void *dst,
                     int sx, int sy, int sw, int sh)
@@ -58,6 +67,7 @@ preview_dialog_show(E_Zone *zone, E_Client *ec, const char *params, void *dst,
    Evas_Object *o_bx;
    int w, h;
    char smode[128], squal[128], sscreen[128];
+   Evas_Modifier_Mask mask;
 
    win = o = elm_win_add(NULL, NULL, ELM_WIN_BASIC);
    evas = evas_object_evas_get(o);
@@ -70,6 +80,10 @@ preview_dialog_show(E_Zone *zone, E_Client *ec, const char *params, void *dst,
    elm_win_resize_object_add(win, o);
    e_theme_edje_object_set(o, "base/theme/dialog", "e/widgets/dialog/main");
    evas_object_show(o);
+
+   mask = 0;
+   if (evas_object_key_grab(o, "Escape", mask, ~mask, 0))
+     evas_object_event_callback_add(o, EVAS_CALLBACK_KEY_DOWN, _cb_key_down, win);
 
    o_bx = o = ui_edit(win, o_bg, zone, ec, dst, sx, sy, sw, sh, &o_img);
 
