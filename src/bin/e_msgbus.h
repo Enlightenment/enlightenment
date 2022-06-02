@@ -10,7 +10,7 @@ typedef struct _E_Msgbus_Data E_Msgbus_Data;
 
 struct _E_Msgbus_Data
 {
-   Eldbus_Connection *conn;
+   Eldbus_Connection        *conn;
    Eldbus_Service_Interface *iface;
 };
 

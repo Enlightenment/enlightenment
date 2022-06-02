@@ -40,36 +40,33 @@ e_msgbus_init(void)
         WRN("Cannot get ELDBUS_CONNECTION_TYPE_SESSION");
         return 0;
      }
-
-   _e_msgbus_data->iface = eldbus_service_interface_register
+   _e_msgbus_data->e_iface = eldbus_service_interface_register
      (_e_msgbus_data->conn, E_PATH, &core_desc);
-   eldbus_name_request(_e_msgbus_data->conn,
-                       E_BUS, 0, _e_msgbus_request_name_cb, NULL);
+   eldbus_name_request(_e_msgbus_data->conn, E_BUS, 0,
+                       _e_msgbus_request_name_cb, NULL);
    return 1;
 }
 
 EINTERN int
 e_msgbus_shutdown(void)
 {
-   if (_e_msgbus_data->iface)
-     eldbus_service_object_unregister(_e_msgbus_data->iface);
+   if (_e_msgbus_data->e_iface)
+     eldbus_service_object_unregister(_e_msgbus_data->e_iface);
    if (_e_msgbus_data->conn)
      {
-        eldbus_name_release(_e_msgbus_data->conn,
-                            E_BUS, NULL, NULL);
+        eldbus_name_release(_e_msgbus_data->conn, E_BUS, NULL, NULL);
         eldbus_connection_unref(_e_msgbus_data->conn);
      }
    eldbus_shutdown();
 
    E_FREE(_e_msgbus_data);
-   _e_msgbus_data = NULL;
    return 1;
 }
 
 E_API Eldbus_Service_Interface *
 e_msgbus_interface_attach(const Eldbus_Service_Interface_Desc *desc)
 {
-   if (!_e_msgbus_data->iface) return NULL;
+   if (!_e_msgbus_data->e_iface) return NULL;
    return eldbus_service_interface_register(_e_msgbus_data->conn, E_PATH, desc);
 }
 
@@ -84,13 +81,11 @@ _e_msgbus_request_name_cb(void *data EINA_UNUSED, const Eldbus_Message *msg,
         ERR("Could not request bus name");
         return;
      }
-
    if (!eldbus_message_arguments_get(msg, "u", &flag))
      {
         ERR("Could not get arguments on on_name_request");
         return;
      }
-
    if (!(flag & ELDBUS_NAME_REQUEST_REPLY_PRIMARY_OWNER))
      WRN("Name already in use\n");
 }
@@ -101,6 +96,7 @@ _e_msgbus_core_version_cb(const Eldbus_Service_Interface *iface EINA_UNUSED,
                           const Eldbus_Message *msg)
 {
    Eldbus_Message *reply = eldbus_message_method_return_new(msg);
+
    EINA_SAFETY_ON_NULL_RETURN_VAL(reply, NULL);
    eldbus_message_arguments_append(reply, "s", VERSION);
    return reply;
