@@ -1,6 +1,8 @@
 #include "e.h"
 
-#define PATH "/org/enlightenment/wm/RemoteObject"
+#define E_BUS   "org.enlightenment.wm.service"
+#define E_IFACE "org.enlightenment.wm.service"
+#define E_PATH  "/org/enlightenment/wm/RemoteObject"
 
 /* local subsystem functions */
 static void            _e_msgbus_request_name_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending);
@@ -18,7 +20,7 @@ static const Eldbus_Method core_methods[] =
 };
 
 static const Eldbus_Service_Interface_Desc core_desc = {
-   "org.enlightenment.wm.Core", core_methods, NULL, NULL, NULL, NULL
+   E_IFACE, core_methods, NULL, NULL, NULL, NULL
 };
 
 /* local subsystem globals */
@@ -40,10 +42,9 @@ e_msgbus_init(void)
      }
 
    _e_msgbus_data->iface = eldbus_service_interface_register
-     (_e_msgbus_data->conn, PATH, &core_desc);
+     (_e_msgbus_data->conn, E_PATH, &core_desc);
    eldbus_name_request(_e_msgbus_data->conn,
-                       "org.enlightenment.wm.service",
-                       0, _e_msgbus_request_name_cb, NULL);
+                       E_BUS, 0, _e_msgbus_request_name_cb, NULL);
    return 1;
 }
 
@@ -55,8 +56,7 @@ e_msgbus_shutdown(void)
    if (_e_msgbus_data->conn)
      {
         eldbus_name_release(_e_msgbus_data->conn,
-                            "org.enlightenment.wm.service",
-                            NULL, NULL);
+                            E_BUS, NULL, NULL);
         eldbus_connection_unref(_e_msgbus_data->conn);
      }
    eldbus_shutdown();
@@ -70,7 +70,7 @@ E_API Eldbus_Service_Interface *
 e_msgbus_interface_attach(const Eldbus_Service_Interface_Desc *desc)
 {
    if (!_e_msgbus_data->iface) return NULL;
-   return eldbus_service_interface_register(_e_msgbus_data->conn, PATH, desc);
+   return eldbus_service_interface_register(_e_msgbus_data->conn, E_PATH, desc);
 }
 
 static void
