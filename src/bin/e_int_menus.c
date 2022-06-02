@@ -12,6 +12,7 @@ struct _Main_Data
    E_Menu *enlightenment;
    E_Menu *config;
    E_Menu *lost_clients;
+   E_Menu *inhibitors;
 };
 
 /* local subsystem functions */
@@ -63,6 +64,7 @@ static void         _e_int_menus_desk_item_cb(void *data, E_Menu *m, E_Menu_Item
 static void         _e_int_menus_item_label_set(Efreet_Menu *entry, E_Menu_Item *mi);
 static Efreet_Menu *_e_int_menus_apps_thread_new(E_Menu *m, const char *dir);
 static Eina_Bool    _e_int_menus_efreet_desktop_cache_update(void *d, int type, void *e);
+static void         _e_int_menus_inhibit_cb(void *data, E_Menu *m, E_Menu_Item *mi);
 //static void _e_int_menus_apps_drag_finished(E_Drag *drag, int dropped EINA_UNUSED);
 
 /* local subsystem globals */
@@ -193,6 +195,16 @@ e_int_menus_main_new(void)
    e_menu_item_label_set(mi, _("Desktop"));
    e_util_menu_item_theme_icon_set(mi, "preferences-desktop");
    e_menu_item_submenu_set(mi, subm);
+
+   if ((e_msgbus_data) && (e_msgbus_data->screensaver_inhibits))
+     {
+        subm = e_int_menus_inhibitors_new();
+        dat->inhibitors = subm;
+        mi = e_menu_item_new(m);
+        e_menu_item_label_set(mi, _("Blanking Block"));
+        e_util_menu_item_theme_icon_set(mi, "preferences-screen-normal");
+        e_menu_item_submenu_set(mi, subm);
+     }
 
    subm = e_int_menus_clients_new();
    dat->clients = subm;
@@ -418,6 +430,37 @@ e_int_menus_lost_clients_new(void)
    return m;
 }
 
+static void
+_e_int_menus_inhibit_cb(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
+{
+   uintptr_t cookie = (uintptr_t)data;
+
+   e_msgbus_screensaver_inhibit_remove((unsigned int)cookie);
+}
+
+E_API E_Menu *
+e_int_menus_inhibitors_new(void)
+{
+   E_Menu *m;
+   E_Menu_Item *mi;
+   Eina_List *l;
+   E_Msgbus_Data_Screensaver_Inhibit *inhibit;
+
+   m = e_menu_new();
+   if (!((e_msgbus_data) && (e_msgbus_data->screensaver_inhibits)))
+     return NULL;
+   EINA_LIST_FOREACH(e_msgbus_data->screensaver_inhibits, l, inhibit)
+     {
+        mi = e_menu_item_new(m);
+        e_menu_item_label_set(mi, inhibit->application);
+        e_menu_item_check_set(mi, 1);
+        e_menu_item_toggle_set(mi, 1);
+        e_menu_item_callback_set(mi, _e_int_menus_inhibit_cb,
+                                 (void *)((uintptr_t)inhibit->cookie));
+     }
+   return m;
+}
+
 E_API E_Int_Menu_Augmentation *
 e_int_menus_menu_augmentation_add_sorted(const char *menu,
                                          const char *sort_key,
@@ -593,6 +636,7 @@ _e_int_menus_main_del_hook(void *obj)
    if (dat->lost_clients) e_object_del(E_OBJECT(dat->lost_clients));
    if (dat->enlightenment) e_object_del(E_OBJECT(dat->enlightenment));
    if (dat->config) e_object_del(E_OBJECT(dat->config));
+   if (dat->inhibitors) e_object_del(E_OBJECT(dat->inhibitors));
    free(dat);
 
    _e_int_menus_augmentation_del(m, _e_int_menus_augmentation_find("main/0"));

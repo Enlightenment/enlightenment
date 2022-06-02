@@ -114,6 +114,10 @@ e_screensaver_update(void)
          (!((e_util_fullscreen_current_any()) &&
             (e_config->no_dpms_on_fullscreen)))))
      timeout = 0;
+   if (e_msgbus_data)
+     {
+        if (e_msgbus_data->screensaver_inhibits) timeout = 0;
+     }
 
    if (_e_screensaver_timeout != timeout)
      {
