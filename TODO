@@ -77,12 +77,10 @@ TODO:
   * face auth (howdy / pam-face / pam-face-authentication / pam-facial-auth)
   * yubikey
   * usb drive (pam_usb)
-  * support setting up fingerprint as auth (fprint-enroll)
   * support setting up smartcard as auth
   * support setting up face auth (howdy / pam-face / pam-face-authentication / pam-facial-auth)
   * support setting up yubikey as auth
   * support setting up usb drive for auth (pam_usb)
-  * support fprint auth for polkit agent (ugh)
 * wifi/bt net: associate app/desktop(s) or actions to run when:
   * bt device comes or goes (alongside lock device feature)
   * wifi appears or disappears
@@ -323,7 +321,6 @@ TODO:
     * need to allow a CONT every now and again to unblock buffers
 * set backlight and dim timeout per powersave level
 * battery - set powersave levels based on ac or battery level
-* efl: flat theme redo
 * efl/eo: start using efl loop as core loop
   * begin to move some login out into efl threads+loops
     * to change ui - callsync/async back to ui/main loop
