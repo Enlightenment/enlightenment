@@ -48,6 +48,7 @@ E_API E_Sys_Con_Action *e_sys_con_extra_action_register(const char *label,
 E_API void e_sys_con_extra_action_unregister(E_Sys_Con_Action *sca);
 E_API const Eina_List *e_sys_con_extra_action_list_get(void);
 E_API Eina_Bool e_sys_on_the_way_out_get(void);
+E_API void e_sys_locked_set(Eina_Bool locked);
 
 #endif
 #endif

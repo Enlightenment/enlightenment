@@ -318,6 +318,7 @@ _desklock_show_internal(Eina_Bool suspend)
 
    if (getenv("E_START_MANAGER")) kill(getppid(), SIGUSR2);
    _e_desklock_state = EINA_TRUE;
+   e_sys_locked_set(_e_desklock_state);
    e_bindings_disabled_set(1);
    e_screensaver_update();
    e_dpms_force_update();
@@ -386,6 +387,7 @@ _desklock_hide_internal(void)
      }
 
    _e_desklock_state = EINA_FALSE;
+   e_sys_locked_set(_e_desklock_state);
    e_bindings_disabled_set(0);
    ev = E_NEW(E_Event_Desklock, 1);
    ev->on = 0;

@@ -48,6 +48,7 @@ static const int E_LOGOUT_WAIT_TIME = 3.0;
 static Ecore_Timer *action_timeout = NULL;
 
 static Eldbus_Proxy *login1_manger_proxy = NULL;
+static Eldbus_Proxy *login1_session_proxy = NULL;
 
 static int _e_sys_comp_waiting = 0;
 
@@ -380,12 +381,75 @@ _e_sys_systemd_signal_prepare_sleep(void *data EINA_UNUSED, const Eldbus_Message
      }
 }
 
+static void
+_e_sys_systemd_signal_session_lock(void *data EINA_UNUSED, const Eldbus_Message *msg EINA_UNUSED)
+{
+   printf("SSS: systemd said to lock\n");
+   if (!e_desklock_state_get())
+     {
+        e_desklock_show(EINA_FALSE);
+     }
+}
+
+static void
+_e_sys_systemd_signal_session_unlock(void *data EINA_UNUSED, const Eldbus_Message *msg EINA_UNUSED)
+{
+   printf("SSS: systemd said to unlock\n");
+   if (e_desklock_state_get())
+     {
+        e_desklock_hide();
+     }
+}
+
+static Eina_Bool _e_sys_session_locked = EINA_FALSE;
+
+E_API void
+e_sys_locked_set(Eina_Bool locked)
+{
+   Eldbus_Message *m;
+
+   if (_e_sys_session_locked == locked) return;
+   _e_sys_session_locked = locked;
+   if (!login1_session_proxy) return;
+   m = eldbus_proxy_method_call_new(login1_session_proxy, "SetLockedHint");
+   eldbus_message_arguments_append(m, "b", _e_sys_session_locked);
+   eldbus_proxy_send(login1_manger_proxy, m, NULL, NULL, -1);
+}
+
+static void
+_e_sys_systemd_getsession_cb(void *data EINA_UNUSED, const Eldbus_Message *m, Eldbus_Pending *p EINA_UNUSED)
+{
+   const char *path = NULL;
+   Eldbus_Connection *conn;
+   Eldbus_Object *obj;
+   Eldbus_Message *m2;
+
+   if (eldbus_message_error_get(m, NULL, NULL)) return;
+   if (!eldbus_message_arguments_get(m, "o", &path)) return;
+
+   printf("SSS: session path [%s]\n", path);
+   conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   obj = eldbus_object_get(conn, "org.freedesktop.login1", path);
+   login1_session_proxy = eldbus_proxy_get(obj,
+                                           "org.freedesktop.login1.Session");
+   eldbus_proxy_signal_handler_add(login1_session_proxy, "Lock",
+                                   _e_sys_systemd_signal_session_lock,
+                                   NULL);
+   eldbus_proxy_signal_handler_add(login1_session_proxy, "Unlock",
+                                   _e_sys_systemd_signal_session_unlock,
+                                   NULL);
+   m2 = eldbus_proxy_method_call_new(login1_session_proxy, "SetLockedHint");
+   eldbus_message_arguments_append(m2, "b", _e_sys_session_locked);
+   eldbus_proxy_send(login1_manger_proxy, m2, NULL, NULL, -1);
+}
+
 /* externally accessible functions */
 EINTERN int
 e_sys_init(void)
 {
    Eldbus_Connection *conn;
    Eldbus_Object *obj;
+   Eldbus_Message *m;
 
    conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
    obj = eldbus_object_get(conn, "org.freedesktop.login1",
@@ -401,6 +465,33 @@ e_sys_init(void)
    eldbus_name_owner_get(conn, "org.freedesktop.login1",
                          _e_sys_systemd_exists_cb, NULL);
    _e_sys_systemd_handle_inhibit();
+
+   if (login1_manger_proxy)
+     {
+        char buf[256];
+        int fd;
+        ssize_t siz;
+
+        fd = open("/proc/self/sessionid", O_RDONLY);
+        if (fd >= 0)
+          {
+             siz = read(fd, buf, 255);
+             close(fd);
+             if ((siz > 0) && (siz < 255))
+               {
+                  buf[siz] = 0;
+                  m = eldbus_proxy_method_call_new
+                    (login1_manger_proxy, "GetSession");
+                  if (m)
+                    {
+                       eldbus_message_arguments_append(m, "s", buf);
+                       eldbus_proxy_send(login1_manger_proxy, m,
+                                         _e_sys_systemd_getsession_cb,
+                                         NULL, -1);
+                    }
+               }
+          }
+     }
 
    E_EVENT_SYS_SUSPEND = ecore_event_type_new();
    E_EVENT_SYS_HIBERNATE = ecore_event_type_new();
@@ -429,6 +520,18 @@ e_sys_shutdown(void)
    _e_sys_resume_delay_timer = NULL;
    _e_sys_screensaver_unignore_timer = NULL;
    _e_sys_acpi_handler = NULL;
+   if (login1_session_proxy)
+     {
+         Eldbus_Connection *conn;
+         Eldbus_Object *obj;
+
+         obj = eldbus_proxy_object_get(login1_session_proxy);
+         conn = eldbus_object_connection_get(obj);
+         eldbus_proxy_unref(login1_session_proxy);
+         eldbus_object_unref(obj);
+         eldbus_connection_unref(conn);
+         login1_session_proxy = NULL;
+     }
    if (login1_manger_proxy)
      {
          Eldbus_Connection *conn;
