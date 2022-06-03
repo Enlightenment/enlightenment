@@ -4902,8 +4902,8 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
               */
              if (count >= 4)
                {
-                  printf("GTK-FRM: get %i %i %i %i\n",
-                         extents[0], extents[1], extents[2], extents[3]);
+//                  printf("GTK-FRM: get %i %i %i %i\n",
+//                         extents[0], extents[1], extents[2], extents[3]);
                   _e_comp_x_frame_extents_adjust
                     (ec, extents[0], extents[1], extents[2], extents[3]);
                }
@@ -4911,7 +4911,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
           }
         else
           {
-             printf("GTK-FRM: get fail\n");
+//             printf("GTK-FRM: get fail\n");
              _e_comp_x_frame_extents_adjust(ec, 0, 0, 0, 0);
           }
         cd->fetch_gtk_frame_extents = 0;
