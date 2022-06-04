@@ -50,9 +50,9 @@
       * bt tethering
       * usb tehtering
       * wifi tethering
-  * S fix vkbd to work in wl - e_kbd_send.c - look at ecore_wl2_input.c
-* S clean up some old actions that are handled better by newer ones
-  * S like suspend intelligently is better than regular suspend but
+  * fix vkbd to work in wl - e_kbd_send.c - look at ecore_wl2_input.c
+* clean up some old actions that are handled better by newer ones
+  * like suspend intelligently is better than regular suspend but
     suspend now is very explicit and worth keeping
 * clock - add event/alarm/appointment tracking and notifications etc.
   * this perhaps can be merged with the cron front-end
@@ -243,8 +243,10 @@
   * display other devices in above list separately
   * handle string capacity values like Full, High, Normal, Low, Critical...
 * randr: get auto layout to handle screens laid out like:
+```
   [dp2-2][dp2-1] <- 2 external monitors
       [edp-1] <- laptop main display
+```
 * randr: when losing a zone/screen, put windows in purgatory and then have
   purgatory screens available via pager to drag onto a current screen,
   or the specific virtual desktops from purgator to be accessible even
@@ -290,15 +292,15 @@
 * look into libratbag too for gaming mouse stuff if its worth using it or
   just doing the same
   stuff ourselves as we will probably have to via libinput
-* S some kind of game mode and detection that will do things like:
-  * S disable screen dimming/blanking
-  * S set cpu to max performance
-  * S lower priority/nice of non-game processes or even sigstop procs
-  * S disable notifications
-  * S explicit toggle and possible auto-detect of games running
+* some kind of game mode and detection that will do things like:
+  * disable screen dimming/blanking
+  * set cpu to max performance
+  * lower priority/nice of non-game processes or even sigstop procs
+  * disable notifications
+  * explicit toggle and possible auto-detect of games running
 * per app environment launch config - allow different TZ, LOCALE etc.
   per app and set up env appropriately
-* apps - ability to flag apps as "single run" so launchgin again from
+* apps - ability to flag apps as "single run" so launching again from
   menu/ibar will just focus the current window/jump to it etc.
 * back-end e system process for monitoring/polling and launching etc.
   * split e up into front vs back-end with back-end doing things like
@@ -330,12 +332,6 @@
     * have edje object stash
 * mixer: improve ui in emixer
   * emixer - support selecting recording dev for apps like pavucontrol
-  * look at showing vu bars per recoridng or maybe output devices
   * offer ability to show vu output in mixer gadget
 * weather
-  * forecasts will due feb 2021. yahoo shutting down free api.
-    given all the changes needed to do a new api...
-    may as well write a whole new weather gadget.
-  * free api:
-    * https://api.met.no/weatherapi/locationforecast/2.0/documentation
-  * a dependency of this (so we can provide lat/lon)
+  * bring in forecasts into core e
