@@ -164,6 +164,8 @@ ninja -C build -v
 output logs are put in `~/.e-log.log`. The previous log for the
 previous execution of Enlightenment will be moved to `~/.e-log.log.old`.
 
+-----
+
 **NOTE:** If you install enlightenment to the default compile prefix
 (`/usr/local`) then you might want to ensure the session file is
 accessible to your login manager (assuming you use one) by doing
