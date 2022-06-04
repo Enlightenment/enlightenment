@@ -15,6 +15,9 @@ Shell". It replaces your environment that runs your day to day GUI
 Desktop. It includes a built-in file manager, Launcher, Shelves,
 Settings dialogs, Menus, Audo Mixer controls and much much more.
 
+It is primarly developed for X11, but does have an experimental
+Wayland mode
+
 ![Screenshot 2](/data/readme/screenshot2.png)
 ![Screenshot 3](/data/readme/screenshot3.png)
 ![Screenshot 4](/data/readme/screenshot4.png)
@@ -143,6 +146,38 @@ How to build with verbose output (full commands run):
 ```sh
 ninja -C build -v
 ```
+-----
+
+**NOTE:** If you install enlightenment to the default compile prefix
+(`/usr/local`) then you might want to ensure the session file is
+accessible to your login manager (assuming you use one) by doing
+something like:
+
+```sh
+sudo ln -s /usr/local/share/xsessions/enlightenment.desktop /usr/share/xsessions/enlightenment.desktop
+```
+
+You can also just set up a custom launcher script. Edit the
+`~/.xinitrc` file in your home directory and have it have this content:
+
+```sh
+#!/bin/sh
+exec /usr/local/bin/enlightenment_start >& ~/.xsession-errors
+```
+
+You may also want your `~/.xsession` file ot be the same, so make a
+link:
+
+```sh
+ln -s .xinitrc .xsession
+```
+
+This assumes `/usr/local` as well ans just modify based on your
+install prefix location.
+
+If you do not use a login manager you can just log into a text console
+and run `startx` after the above `.xinitrc` file is set up.
+
 -----
 
 **NOTE:** If you do not want security issues make sure `sysactions.conf` is in
