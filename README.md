@@ -17,6 +17,12 @@ Settings dialogs, Menus, Audo Mixer controls and much much more.
 
 -----
 
+Thigs that need doing:
+
+[TODO](TODO.md)
+
+-----
+
 ## Requirements
 
 Must:

@@ -1,4 +1,3 @@
-TODO:
 * need a better "extra" that allows shot-module like sharing of:
   * themes
   * wallpapers
