@@ -136,7 +136,8 @@ ninja -C build -v
 **NOTE:** If you do not want security issues make sure `sysactions.conf` is in
 `/etc/enlightenment` (not `PREFIX/etc/enlightenment`) as this is the first
 place it looks at. This file is intended to be customized by packagers and
-system integrators to match your policies and scripts/tools.
+system integrators to match your policies and scripts/tools. This also
+applies to `system.conf` in the same directory.
 
 **NOTE:** To enable Wayland support (still considered experimental and not for
 regular end users) use the meson -Dwl=true option. To run Enlightenment in
