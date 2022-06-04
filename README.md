@@ -184,7 +184,8 @@ exec /usr/local/bin/enlightenment_start >& ~/.xsession-errors
 ```
 
 (`exec` tells the shell to replace itself with the following command
-and this ensures all output is logged to the  `~/.xsession-errors`).
+and `>& ~/.xsession-errors` ensures all output is logged to the
+`~/.xsession-errors` file).
 
 You may also want your `~/.xsession` file to be the same, so make a link:
 
