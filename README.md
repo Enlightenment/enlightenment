@@ -11,12 +11,24 @@
 -----
 
 Enlightenment is a Window Manager, Compositor and basic "Desktop
-Shell". It replaces your environment that runs your day to day GUI
-Desktop. It includes a built-in file manager, Launcher, Shelves,
-Settings dialogs, Menus, Audo Mixer controls and much much more.
+Shell". It replaces your GUI environment that runs your day to day
+graphical Desktop. It includes a built-in File Manager, Application
+Launcher, Shelves, Settings Dialogs, Menus, Audio Mixer Controls, Network
+Control front-end (for Connman), Battery Monitoring, CPU Frequency
+Controls, Screen Blanking and Backlight controls, Screenshotting and
+editing, Clock and Calendar, Temperature Guages, Mpris2 Music Controls,
+Packagekit Update Front-end, Bluetooth controls for BlueZ 5, Screen
+resolution and layout controls and much much more.
 
-It is primarly developed for X11, but does have an experimental
-Wayland mode
+Enlightenment is one of the lowest resource environments around
+relative to its featureset.
+
+Enlightenment is primarly developed for X11, but does have an
+experimental Wayland mode that will have issues, so only try it if
+you are adventurous or willing to work on it.
+
+For more information please see
+[Enlightenment's About Page](https://www.enlightenment.org/about-enlightenment).
 
 ![Screenshot 2](/data/readme/screenshot2.png)
 ![Screenshot 3](/data/readme/screenshot3.png)
@@ -148,6 +160,10 @@ ninja -C build -v
 ```
 -----
 
+**NOTE:** Once Enlightenment is started by `enlightenment_start`, all
+output logs are put in `~/.e-log.log`. The previous log for the
+previous execution of Enlightenment will be moved to `~/.e-log.log.old`.
+
 **NOTE:** If you install enlightenment to the default compile prefix
 (`/usr/local`) then you might want to ensure the session file is
 accessible to your login manager (assuming you use one) by doing
@@ -165,14 +181,16 @@ You can also just set up a custom launcher script. Edit the
 exec /usr/local/bin/enlightenment_start >& ~/.xsession-errors
 ```
 
-You may also want your `~/.xsession` file ot be the same, so make a
-link:
+(`exec` tells the shell to replace itself with the following command
+and this ensures all output is logged to the  ~/.xsession-errors).
+
+You may also want your `~/.xsession` file to be the same, so make a link:
 
 ```sh
 ln -s .xinitrc .xsession
 ```
 
-This assumes `/usr/local` as well ans just modify based on your
+This assumes `/usr/local` as well and just modify based on your
 install prefix location.
 
 If you do not use a login manager you can just log into a text console
@@ -186,8 +204,10 @@ place it looks at. This file is intended to be customized by packagers and
 system integrators to match your policies and scripts/tools. This also
 applies to `system.conf` in the same directory.
 
+-----
+
 **NOTE:** To enable Wayland support (still considered experimental and not for
 regular end users) use the meson -Dwl=true option. To run Enlightenment in
-Eayland mode, just log on on any text VT and run enlightenment_start. If you
+Eayland mode, just log on on any text VT and run `enlightenment_start`. If you
 wish to debug and see all the output try using something like screen then
 attaching to the remote screen session by sshing in etc.
