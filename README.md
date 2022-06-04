@@ -133,15 +133,13 @@ ninja -C build -v
 ```
 -----
 
-**NOTE:** If you do not want security issues make sure sysactions.conf is in
-/etc/enlightenment (not PREFIX/etc/enlightenment) as this is the first place
-it looks at. This file is intended to be customized by packagers and
+**NOTE:** If you do not want security issues make sure `sysactions.conf` is in
+`/etc/enlightenment` (not `PREFIX/etc/enlightenment`) as this is the first
+place it looks at. This file is intended to be customized by packagers and
 system integrators to match your policies and scripts/tools.
 
-**NOTE:** To enable wayland support (still considered experimental and not for
-regular end users) use the meson -Dwl=true option. To run enlightenment in
-wayland mode, just log on on any VT and run enlightenment_start. If you
+**NOTE:** To enable Wayland support (still considered experimental and not for
+regular end users) use the meson -Dwl=true option. To run Enlightenment in
+Eayland mode, just log on on any text VT and run enlightenment_start. If you
 wish to debug and see all the output try using something like screen then
 attaching to the remote screen session by sshing in etc.
-
-
