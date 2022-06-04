@@ -1,5 +1,5 @@
-![Enlightenment](/data/icons/enlightenment.png)
-#Enlightenment
+![Enlightenment](/data/readme/enlightenment.png)
+# Enlightenment
 
 ![Screenshot](/data/readme/screenshot.png)
 
