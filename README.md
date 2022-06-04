@@ -210,7 +210,7 @@ applies to `system.conf` in the same directory.
 -----
 
 **NOTE:** To enable Wayland support (still considered experimental and not for
-regular end users) use the meson -Dwl=true option. To run Enlightenment in
+regular end users) use the meson `-Dwl=true option`. To run Enlightenment in
 Eayland mode, just log on on any text VT and run `enlightenment_start`. If you
 wish to debug and see all the output try using something like screen then
 attaching to the remote screen session by sshing in etc.
