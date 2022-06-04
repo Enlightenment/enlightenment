@@ -15,9 +15,15 @@ Shell". It replaces your environment that runs your day to day GUI
 Desktop. It includes a built-in file manager, Launcher, Shelves,
 Settings dialogs, Menus, Audo Mixer controls and much much more.
 
+![Screenshot 2](/data/readme/screenshot2.png)
+![Screenshot 3](/data/readme/screenshot3.png)
+![Screenshot 4](/data/readme/screenshot4.png)
+![Screenshot 5](/data/readme/screenshot5.png)
+![Screenshot 6](/data/readme/screenshot6.png)
+
 -----
 
-Thigs that need doing:
+Things that need doing:
 
 [TODO](TODO.md)
 
