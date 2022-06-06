@@ -1,4 +1,4 @@
-![Enlightenment](/data/about/enlightenment.png)
+![Enlightenment](/data/readme/enlightenment.png)
 # Enlightenment
 
 ![Screenshot](/data/readme/screenshot.png)
