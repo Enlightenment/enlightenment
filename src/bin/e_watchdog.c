@@ -26,7 +26,7 @@ _cb_watchdog_thread_pingpong(void *data EINA_UNUSED, Ecore_Thread *thread)
    while (!ecore_thread_check(thread))
      {
         // send ping
-        seq_new = malloc(sizeof(unsigned long));
+        seq_new = malloc(sizeof(unsigned long long));
         if (seq_new)
           {
              seq++;
