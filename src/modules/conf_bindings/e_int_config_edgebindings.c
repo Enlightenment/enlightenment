@@ -30,7 +30,7 @@ static void         _binding_change_cb(void *data);
 static void         _action_change_cb(void *data);
 static void         _delete_all_edge_binding_cb(void *data, void *data2);
 static void         _delete_edge_binding_cb(void *data, void *data2);
-static void         _restore_edge_binding_defaults_cb(void *data, void *data2);
+// static void         _restore_edge_binding_defaults_cb(void *data, void *data2);
 static void         _add_edge_binding_cb(void *data, void *data2);
 static void         _modify_edge_binding_cb(void *data, void *data2);
 
@@ -270,8 +270,8 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cf
    cfdata->gui.o_del_all = ob;
    e_widget_disabled_set(ob, 1);
    e_widget_frametable_object_append(of, ob, 1, 2, 1, 1, 1, 0, 1, 0);
-   ob = e_widget_button_add(evas, _("Restore Default Bindings"), "enlightenment", _restore_edge_binding_defaults_cb, cfdata, NULL);
-   e_widget_frametable_object_append(of, ob, 0, 3, 2, 1, 1, 0, 1, 0);
+//    ob = e_widget_button_add(evas, _("Restore Default Bindings"), "enlightenment", _restore_edge_binding_defaults_cb, cfdata, NULL);
+//    e_widget_frametable_object_append(of, ob, 0, 3, 2, 1, 1, 0, 1, 0);
    e_widget_list_object_append(ol, of, 1, 1, 0.5);
 
    ot = e_widget_table_add(e_win_evas_win_get(evas), 0);
@@ -496,7 +496,7 @@ _delete_edge_binding_cb(void *data, void *data2 EINA_UNUSED)
         e_widget_label_text_set(cfdata->gui.o_button, NULL);
         _update_buttons(cfdata);
      }
-}
+}/*
 
 static void
 _restore_edge_binding_defaults_cb(void *data, void *data2 EINA_UNUSED)
@@ -543,7 +543,7 @@ _restore_edge_binding_defaults_cb(void *data, void *data2 EINA_UNUSED)
    e_widget_ilist_unselect(cfdata->gui.o_action_list);
    e_widget_entry_clear(cfdata->gui.o_params);
    e_widget_disabled_set(cfdata->gui.o_params, 1);
-}
+}*/
 
 /**************** Updates ***********/
 static void
