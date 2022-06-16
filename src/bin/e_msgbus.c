@@ -2,7 +2,7 @@
 
 ///////////////////////////////////////////////////////////////////////////
 #define E_BUS   "org.enlightenment.wm.service"
-#define E_IFACE "org.enlightenment.wm.service"
+#define E_IFACE "org.enlightenment.wm.Core"
 #define E_PATH  "/org/enlightenment/wm/RemoteObject"
 static void            _e_msgbus_core_request_name_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending);
 static Eldbus_Message *_e_msgbus_core_version_cb(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg);
