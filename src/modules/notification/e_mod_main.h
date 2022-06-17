@@ -31,34 +31,37 @@ typedef enum
 
 struct _Config
 {
-  E_Config_Dialog *cfd;
+   E_Config_Dialog *cfd;
 
-  int version;
-  int show_low;
-  int show_normal;
-  int show_critical;
-  int force_timeout;
-  int ignore_replacement;
-  Popup_Display_Policy dual_screen;
-  float timeout;
-  Popup_Corner corner;
+   int version;
+   int show_low;
+   int show_normal;
+   int show_critical;
+   int force_timeout;
+   int ignore_replacement;
+   Popup_Display_Policy dual_screen;
+   float timeout;
+   Popup_Corner corner;
 
-  Eina_List  *popups;
-  unsigned int         next_id;
+   Eina_List  *popups;
+   unsigned int         next_id;
 };
 
 struct _Popup_Data
 {
-  unsigned id;
-  E_Notification_Notify *notif;
-  Evas_Object *win;
-  Eina_List *mirrors;
-  Evas *e;
-  Evas_Object *theme;
-  const char  *app_name;
-  Evas_Object *app_icon;
-  Ecore_Timer *timer;
-  Eina_Bool pending E_BITFIELD;
+   unsigned id;
+   E_Notification_Notify *notif;
+   Evas_Object *win;
+   Eina_List *mirrors;
+   Evas *e;
+   Evas_Object *theme;
+   const char  *app_name;
+   Evas_Object *app_icon;
+   Evas_Object *desktop_icon;
+   Evas_Object *action_box;
+   Eina_List *actions;
+   Ecore_Timer *timer;
+   Eina_Bool pending E_BITFIELD;
 };
 
 

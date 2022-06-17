@@ -28,11 +28,20 @@ _notification_notify(E_Notification_Notify *n)
 E_API E_Module_Api e_modapi = {E_MODULE_API_VERSION, "Notification"};
 
 static const E_Notification_Server_Info server_info = {
-   .name = "e17",
-   .vendor = "enlightenment.org",
-   .version = "0.17",
+   .name = "Notification Service",
+   .vendor = "Enlightenment",
+   .version = PACKAGE_VERSION,
    .spec_version = "1.2",
-   .capabilities = { "body", "body-markup", NULL }
+   .capabilities = {
+      "body", "body-markup",
+      "body-hyperlinks", "body-images",
+      "actions", "action-icons",
+//      "icon-multi",
+// or
+//      "icon-static",
+      "persistence",
+//      "sound",
+      NULL }
 };
 
 /* Callbacks */

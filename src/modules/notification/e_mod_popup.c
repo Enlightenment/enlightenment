@@ -240,6 +240,61 @@ _notification_theme_cb_find(Popup_Data *popup,
 }
 
 static void
+_notification_theme_cb_anchor(Popup_Data *popup EINA_UNUSED,
+                              Evas_Object *obj EINA_UNUSED,
+                              const char  *emission,
+                              const char  *source EINA_UNUSED)
+{
+   if (!strncmp(emission, "anchor,mouse,clicked,1,",
+                strlen("anchor,mouse,clicked,1,")))
+     {
+        const char *href = emission + strlen("anchor,mouse,clicked,1,");
+        Eina_Strbuf *buf = eina_strbuf_new();
+
+        if (buf)
+          {
+             const char *s;
+
+             eina_strbuf_append(buf, href);
+             s = eina_strbuf_string_get(buf);
+             if ((s) && (*s == '"'))
+               {
+                  eina_strbuf_remove(buf, 0, 1);
+                  s = eina_strbuf_string_get(buf);
+                  if ((s) && (strlen(s) > 0) && (s[strlen(s) - 1] == '"'))
+                    eina_strbuf_replace_last(buf, "\"", "");
+               }
+             if ((s) && (*s == '\''))
+               {
+                  eina_strbuf_remove(buf, 0, 1);
+                  s = eina_strbuf_string_get(buf);
+                  if ((s) && (strlen(s) > 0) && (s[strlen(s) - 1] == '\''))
+                    eina_strbuf_replace_last(buf, "'", "");
+               }
+             printf("NOT: clicked=[%s]\n", eina_strbuf_string_get(buf));
+             e_util_open(eina_strbuf_string_get(buf), NULL);
+             eina_strbuf_free(buf);
+          }
+     }
+}
+
+static void
+_notification_theme_cb_action(Popup_Data *popup,
+                              Evas_Object *obj,
+                              const char  *emission EINA_UNUSED,
+                              const char  *source EINA_UNUSED)
+{
+   const char *action = evas_object_data_get(obj, "action");
+
+   if (action)
+     {
+        printf("NOT: action=[%s]\n", action);
+        e_notification_notify_action(popup->notif, action);
+     }
+}
+
+
+static void
 _notification_popup_place_coords_get(int zw, int zh, int ow, int oh, int pos, int *x, int *y)
 {
    /* XXX for now ignore placement requests */
@@ -267,6 +322,22 @@ _notification_popup_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
    Popup_Data *popup = data;
 
    popup->win = NULL;
+}
+
+static Evas_Object *
+_cb_item_provider(void *data, Evas_Object *obj EINA_UNUSED, const char *part, const char *item)
+{
+   Popup_Data *popup = data;
+
+   printf("NOT: PROVIDER.... [%s] item: [%s]\n", part, item);
+//   if (!strcmp(part, "notification.textblock.message"))
+     {
+        Evas_Object *o = e_icon_add(popup->e);
+
+        e_icon_file_set(o, item);
+        return o;
+     }
+   return NULL;
 }
 
 static Popup_Data *
@@ -307,6 +378,7 @@ _notification_popup_new(E_Notification_Notify *n, unsigned id)
 
    /* Setup the theme */
    popup->theme = edje_object_add(popup->e);
+   edje_object_item_provider_set(popup->theme, _cb_item_provider, popup);
    e_theme_edje_object_set(popup->theme,
                            "base/theme/modules/notification",
                            "e/modules/notification/main");
@@ -318,14 +390,17 @@ _notification_popup_new(E_Notification_Notify *n, unsigned id)
    evas_object_event_callback_add(popup->win, EVAS_CALLBACK_DEL, _notification_popup_del_cb, popup);
 
    edje_object_signal_callback_add
-     (popup->theme, "notification,deleted", "theme",
+     (popup->theme, "notification,deleted", "*",
      (Edje_Signal_Cb)_notification_theme_cb_deleted, popup);
    edje_object_signal_callback_add
-     (popup->theme, "notification,close", "theme",
+     (popup->theme, "notification,close", "*",
      (Edje_Signal_Cb)_notification_theme_cb_close, popup);
    edje_object_signal_callback_add
-     (popup->theme, "notification,find", "theme",
+     (popup->theme, "notification,find", "*",
      (Edje_Signal_Cb)_notification_theme_cb_find, popup);
+   edje_object_signal_callback_add
+     (popup->theme, "anchor,mouse,clicked,1,*", "notification.textblock.message",
+     (Edje_Signal_Cb)_notification_theme_cb_anchor, popup);
 
    _notification_popup_refresh(popup);
    next_pos = _notification_popup_place(popup, next_pos);
@@ -386,15 +461,33 @@ _notification_popup_refresh(Popup_Data *popup)
    const char *app_icon_max;
    int w, h, width = 80, height = 80;
    E_Zone *zone;
+   Evas_Object *o;
 
    if (!popup) return;
 
    popup->app_name = popup->notif->app_name;
 
+   EINA_LIST_FREE(popup->actions, o)
+     {
+        evas_object_del(o);
+     }
+   if (popup->action_box)
+     {
+        e_comp_object_util_del_list_remove(popup->win, popup->action_box);
+        E_FREE_FUNC(popup->action_box, evas_object_del);
+        edje_object_signal_emit(popup->theme, "e,state,actions,hide", "e");
+     }
+
    if (popup->app_icon)
      {
         e_comp_object_util_del_list_remove(popup->win, popup->app_icon);
         E_FREE_FUNC(popup->app_icon, evas_object_del);
+     }
+
+   if (popup->desktop_icon)
+     {
+        e_comp_object_util_del_list_remove(popup->win, popup->desktop_icon);
+        E_FREE_FUNC(popup->desktop_icon, evas_object_del);
      }
 
    app_icon_max = edje_object_data_get(popup->theme, "app_icon_max");
@@ -452,7 +545,7 @@ _notification_popup_refresh(Popup_Data *popup)
                     icon_path = new_path;
                   else
                     {
-                       Evas_Object *o = e_icon_add(popup->e);
+                       o = e_icon_add(popup->e);
                        if (!e_util_icon_theme_set(o, icon_path))
                          evas_object_del(o);
                        else
@@ -510,12 +603,79 @@ _notification_popup_refresh(Popup_Data *popup)
                             popup->app_icon);
    edje_object_signal_emit(popup->theme, "notification,icon", "notification");
 
+   if ((popup->notif->desktop_entry) &&
+       (edje_object_part_exists(popup->theme, "notification.swallow.desktop_icon")))
+     {
+        Efreet_Desktop *desktop;
+        unsigned int size;
+        const char *icon_path;
+        char buf[1024];
+
+        snprintf(buf, sizeof(buf), "%s.desktop", popup->notif->desktop_entry);
+        desktop = efreet_util_desktop_file_id_find(buf);
+        if ((desktop) && (desktop->icon))
+          {
+             size = e_util_icon_size_normalize(width * e_scale);
+             icon_path = efreet_icon_path_find(e_config->icon_theme,
+                                               desktop->icon, size);
+             efreet_desktop_free(desktop);
+
+             o = e_icon_add(popup->e);
+             if (!e_util_icon_theme_set(o, icon_path))
+               evas_object_del(o);
+             else
+               {
+                  popup->desktop_icon = o;
+                  edje_object_part_swallow(popup->theme,
+                                           "notification.swallow.desktop_icon",
+                                           popup->desktop_icon);
+                  evas_object_show(o);
+                  e_comp_object_util_del_list_append(popup->win, o);
+               }
+          }
+     }
    /* Fill up the event message */
    _notification_format_message(popup);
+
+   if (popup->notif->actions)
+     {
+        int i;
+
+        o = popup->action_box = elm_box_add(e_comp->elm);
+        elm_box_homogeneous_set(o, EINA_TRUE);
+        elm_box_horizontal_set(o, EINA_TRUE);
+        e_comp_object_util_del_list_append(popup->win, o);
+        for (i = 0; popup->notif->actions[i].action; i++)
+          {
+             o = edje_object_add(popup->e);
+             e_theme_edje_object_set(o,
+                                     "base/theme/modules/notification",
+                                     "e/modules/notification/action");
+             evas_object_data_set(o, "action", popup->notif->actions[i].action);
+             edje_object_part_text_unescaped_set(o, "e.text.label",
+                                                 popup->notif->actions[i].label);
+             edje_object_signal_callback_add
+               (o, "e,action,clicked", "e",
+                (Edje_Signal_Cb)_notification_theme_cb_action, popup);
+             edje_object_size_min_calc(o, &w, &h);
+             evas_object_size_hint_min_set(o, w, h);
+             printf("NOT: act %ix%i\n", w, h);
+             elm_box_pack_end(popup->action_box, o);
+             evas_object_show(o);
+          }
+//        evas_smart_objects_calculate(popup->e);
+//        edje_message_signal_process();
+        evas_smart_objects_calculate(popup->e);
+        evas_object_size_hint_min_get(popup->action_box, &w, &h);
+        printf("NOT: actbox %ix%i\n", w, h);
+        edje_object_part_swallow(popup->theme, "notification.swallow.actions", popup->action_box);
+        edje_object_signal_emit(popup->theme, "e,state,actions,show", "e");
+     }
 
    /* Compute the new size of the popup */
    edje_object_calc_force(popup->theme);
    edje_object_size_min_calc(popup->theme, &w, &h);
+   printf("NOT: min %ix%i\n", w, h);
    if ((zone = e_comp_object_util_zone_get(popup->win)))
      {
         w = MIN(w, zone->w / 2);
@@ -585,13 +745,18 @@ _notification_format_message(Popup_Data *popup)
 {
    Evas_Object *o = popup->theme;
    Eina_Strbuf *buf = eina_strbuf_new();
+
+   printf("NOT: set message... [%s]\n", popup->notif->body);
    edje_object_part_text_unescaped_set(o, "notification.text.title",
-                             popup->notif->summary);
+                                       popup->notif->summary);
    /* FIXME: Filter to only include allowed markup? */
    /* We need to replace \n with <ps/>. FIXME: We need to handle all the
    * newline kinds, and paragraph separator. ATM this will suffice. */
    eina_strbuf_append(buf, popup->notif->body);
    eina_strbuf_replace_all(buf, "\n", "<br/>");
+   // message is thge shadow sizer part
+   edje_object_part_text_set(o, "message",
+                             eina_strbuf_string_get(buf));
    edje_object_part_text_set(o, "notification.textblock.message",
                              eina_strbuf_string_get(buf));
    eina_strbuf_free(buf);

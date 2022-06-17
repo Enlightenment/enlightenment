@@ -7,35 +7,39 @@
 
 typedef enum _E_Notification_Notify_Urgency
 {
-  E_NOTIFICATION_NOTIFY_URGENCY_LOW,
-  E_NOTIFICATION_NOTIFY_URGENCY_NORMAL,
-  E_NOTIFICATION_NOTIFY_URGENCY_CRITICAL
+  E_NOTIFICATION_NOTIFY_URGENCY_LOW = 0,
+  E_NOTIFICATION_NOTIFY_URGENCY_NORMAL = 1,
+  E_NOTIFICATION_NOTIFY_URGENCY_CRITICAL = 2
 } E_Notification_Notify_Urgency;
 
 typedef enum _E_Notification_Notify_Closed_Reason
 {
-  E_NOTIFICATION_NOTIFY_CLOSED_REASON_EXPIRED, /** The notification expired. */
-  E_NOTIFICATION_NOTIFY_CLOSED_REASON_DISMISSED, /** The notification was dismissed by the user. */
-  E_NOTIFICATION_NOTIFY_CLOSED_REASON_REQUESTED, /** The notification was closed by a call to CloseNotification method. */
-  E_NOTIFICATION_NOTIFY_CLOSED_REASON_UNDEFINED /** Undefined/reserved reasons. */
+  E_NOTIFICATION_NOTIFY_CLOSED_REASON_EXPIRED   = 1,
+  E_NOTIFICATION_NOTIFY_CLOSED_REASON_DISMISSED = 2,
+  E_NOTIFICATION_NOTIFY_CLOSED_REASON_REQUESTED = 3,
+  E_NOTIFICATION_NOTIFY_CLOSED_REASON_UNDEFINED = 4
 } E_Notification_Notify_Closed_Reason;
+
+typedef struct _E_Notification_Notify_Action
+{
+   const char *action;
+   const char *label;
+} E_Notification_Notify_Action;
 
 typedef struct _E_Notification_Notify
 {
    E_Object e_obj_inherit;
    unsigned int id;
    const char *app_name;
-   unsigned replaces_id;
+   unsigned int replaces_id;
    const char *summary;
    const char *body;
-   int timeout;
+   int timeout; // time in ms
    E_Notification_Notify_Urgency urgency;
-   struct
-   {
+   struct {
       const char *icon;
       const char *icon_path;
-      struct
-      {
+      struct {
          int width;
          int height;
          int rowstride;
@@ -46,6 +50,17 @@ typedef struct _E_Notification_Notify
          int data_size;
       } raw;
    } icon;
+   const char *category;
+   const char *desktop_entry;
+   const char *sound_file;
+   const char *sound_name;
+   int x, y;
+   Eina_Bool have_xy;
+   Eina_Bool icon_actions;
+   Eina_Bool resident;
+   Eina_Bool suppress_sound;
+   Eina_Bool transient;
+   E_Notification_Notify_Action *actions;
 } E_Notification_Notify;
 
 typedef unsigned int (*E_Notification_Notify_Cb)(void *data, E_Notification_Notify *n);
@@ -80,7 +95,9 @@ E_API Evas_Object *e_notification_notify_raw_image_get(E_Notification_Notify *no
 
 //client
 typedef void (*E_Notification_Client_Send_Cb)(void *data, unsigned int id);
+
 E_API Eina_Bool e_notification_client_send(E_Notification_Notify *notify, E_Notification_Client_Send_Cb cb, const void *data);
+E_API void e_notification_notify_action(E_Notification_Notify *notify, const char *action);
 E_API Eina_Bool e_notification_util_send(const char *summary, const char *body);
 #endif
 
