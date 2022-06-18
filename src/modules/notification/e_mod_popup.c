@@ -645,6 +645,21 @@ _notification_popup_refresh(Popup_Data *popup)
                }
           }
      }
+
+   if (popup->notif->category)
+     {
+        char buf[1024];
+
+        snprintf(buf, sizeof(buf), "e,category,%s", popup->notif->category);
+        edje_object_signal_emit(popup->theme, buf, "e");
+     }
+   if (popup->notif->urgency == E_NOTIFICATION_NOTIFY_URGENCY_LOW)
+     edje_object_signal_emit(popup->theme, "e,urgency,low", "e");
+   else if (popup->notif->urgency == E_NOTIFICATION_NOTIFY_URGENCY_NORMAL)
+     edje_object_signal_emit(popup->theme, "e,urgency,normal", "e");
+   else if (popup->notif->urgency == E_NOTIFICATION_NOTIFY_URGENCY_CRITICAL)
+     edje_object_signal_emit(popup->theme, "e,urgency,critical", "e");
+
    /* Fill up the event message */
    _notification_format_message(popup);
 
@@ -674,8 +689,8 @@ _notification_popup_refresh(Popup_Data *popup)
              elm_box_pack_end(popup->action_box, o);
              evas_object_show(o);
           }
-//        evas_smart_objects_calculate(popup->e);
-//        edje_message_signal_process();
+        evas_smart_objects_calculate(popup->e);
+        edje_message_signal_process();
         evas_smart_objects_calculate(popup->e);
         evas_object_size_hint_min_get(popup->action_box, &w, &h);
         printf("NOT: actbox %ix%i\n", w, h);
