@@ -613,6 +613,17 @@ _notification_popup_refresh(Popup_Data *popup)
 
         snprintf(buf, sizeof(buf), "%s.desktop", popup->notif->desktop_entry);
         desktop = efreet_util_desktop_file_id_find(buf);
+        if (!desktop)
+          { // some apps name their desktops with capitals - err... Firefox
+             char *buf2 = strdup(buf);
+
+             if (buf2)
+               {
+                  eina_str_tolower(&buf2);
+                  desktop = efreet_util_desktop_file_id_find(buf2);
+                  free(buf2);
+               }
+          }
         if ((desktop) && (desktop->icon))
           {
              size = e_util_icon_size_normalize(width * e_scale);
