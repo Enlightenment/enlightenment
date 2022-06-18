@@ -708,6 +708,15 @@ _notification_popup_refresh(Popup_Data *popup)
         h = MIN(h, zone->h / 2);
      }
    evas_object_resize(popup->win, w, h);
+
+   if (popup->notif->sound_file)
+     {
+        e_sound_file_play(popup->notif->sound_file, 1.0);
+     }
+// we don't do sound themes/schemes .. but we know about it...
+//   else if (popup->notif->sound_name)
+//     {
+//     }
 }
 
 static Popup_Data *

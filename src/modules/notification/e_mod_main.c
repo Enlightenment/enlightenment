@@ -35,12 +35,13 @@ static const E_Notification_Server_Info server_info = {
    .capabilities = {
       "body", "body-markup",
       "body-hyperlinks", "body-images",
-      "actions", "action-icons",
+      "actions",
+//      "action-icons",
 //      "icon-multi",
 // or
-//      "icon-static",
+      "icon-static",
       "persistence",
-//      "sound",
+      "sound",
       NULL }
 };
 
