@@ -200,29 +200,6 @@ hints_dict_iter(void *data, const void *key, Eldbus_Message_Iter *var)
      }
 }
 
-/* this function should be external in edje for use in cases such as this module.
- *
- * happily, it was decided that the function would not be external so that it could
- * be duplicated into the module in full.
- */
-
-static int
-_text_escape(Eina_Strbuf *txt, const char *text)
-{
-   const char *escaped;
-   int advance;
-
-   escaped = evas_textblock_string_escape_get(text, &advance);
-   if (!escaped)
-     {
-        eina_strbuf_append_char(txt, text[0]);
-        advance = 1;
-     }
-   else
-     eina_strbuf_append(txt, escaped);
-   return advance;
-}
-
 static int
 _tag_len(const char *txt)
 {
