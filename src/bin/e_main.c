@@ -800,6 +800,10 @@ main(int argc, char **argv)
    TS("E_Powersave Init Done");
    _e_main_shutdown_push(e_powersave_shutdown);
 
+   TS("E_Sound Init");
+   e_sound_init();
+   _e_main_shutdown_push(e_sound_shutdown);
+
    TS("Screens Init");
    if (!_e_main_screens_init())
      {
