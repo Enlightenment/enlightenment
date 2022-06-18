@@ -25,6 +25,7 @@ deps_e = [
   dep_ecore_con,
   dep_ecore_input,
   dep_ecore_input_evas,
+  dep_ecore_audio,
   dep_evas,
   dep_efreet,
   dep_efreet_mime,
@@ -59,6 +60,7 @@ requires_e = ' '.join([
   'ecore-con',
   'ecore-input',
   'ecore-input-evas',
+  'ecore-audio',
   'evas',
   'efreet',
   'efreet-mime',
@@ -224,6 +226,7 @@ src = [
   'e_zoomap.c',
   'e_zone.c',
   'e_gesture.c',
+  'e_sound.c',
   'efx/efx_bumpmapping.c',
   'efx/efx.c',
   'efx/efx_fade.c',
@@ -403,7 +406,8 @@ hdr = [
   'e_xsettings.h',
   'e_zoomap.h',
   'e_zone.h',
-  'e_gesture.h'
+  'e_gesture.h',
+  'e_sound.h'
 ]
 
 if config_h.has('HAVE_WAYLAND') == true

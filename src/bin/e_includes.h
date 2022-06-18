@@ -155,6 +155,7 @@
 #include "e_comp_x_randr.h"
 #include "e_watchdog.h"
 #include "e_gesture.h"
+#include "e_sound.h"
 
 #ifdef HAVE_WAYLAND
 # include "e_comp_wl.h"
