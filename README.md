@@ -214,3 +214,11 @@ regular end users) use the meson `-Dwl=true option`. To run Enlightenment in
 Wayland mode, just login on any text VT and run `enlightenment_start`. If you
 wish to debug and see all the output try using something like screen then
 attaching to the remote screen session by sshing in etc.
+
+-----
+
+**NOTE:** Nvidia support - do *not* enable Wayland support if you have
+Nvidia cards and use Nvidia drivers. You will need to use full
+OpenGL+GLX with EFL for those to not have problems and this conflicts
+with any **DRM* and **Wayland** support.
+
