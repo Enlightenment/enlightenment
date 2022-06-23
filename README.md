@@ -218,7 +218,8 @@ attaching to the remote screen session by sshing in etc.
 -----
 
 **NOTE:** Nvidia support - do *not* enable Wayland support if you have
-Nvidia cards and use Nvidia drivers. You will need to use full
-OpenGL+GLX with EFL for those to not have problems and this conflicts
-with any **DRM* and **Wayland** support.
+Nvidia cards and use Nvidia drivers. You will need to use **full**
+OpenGL+GLX with EFL instead of the default OpenGL-ES/EFL for those to not
+have problems and this conflicts with any **DRM** and **Wayland** support.
+You will
 
