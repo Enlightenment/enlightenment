@@ -3463,6 +3463,16 @@ _e_comp_x_frame_extents_adjust(E_Client *ec, int exl, int exr, int ext, int exb)
      }
 }
 
+static Eina_Bool
+_cb_e_comp_x_ignore_first_unmap_clear_timer(void *data)
+{
+   E_Client *ec = data;
+
+   ec->ignore_first_unmap_clear_timer = NULL;
+   if (ec->ignore_first_unmap > 0) ec->ignore_first_unmap--;
+   return EINA_FALSE;
+}
+
 static void
 _e_comp_x_hook_client_pre_frame_assign(void *d EINA_UNUSED, E_Client *ec)
 {
@@ -3515,6 +3525,9 @@ _e_comp_x_hook_client_pre_frame_assign(void *d EINA_UNUSED, E_Client *ec)
    if (!ec->internal)
      ecore_x_window_save_set_add(win);
    ec->ignore_first_unmap++;
+   E_FREE_FUNC(ec->ignore_first_unmap_clear_timer, ecore_timer_del);
+   ec->ignore_first_unmap_clear_timer = ecore_timer_add
+     (0.2, _cb_e_comp_x_ignore_first_unmap_clear_timer, ec);
    ecore_x_window_reparent(win, pwin, 0, 0);
    e_pixmap_alias(ep, E_PIXMAP_TYPE_X, pwin);
 
@@ -5746,6 +5759,9 @@ _e_comp_x_manage_windows(void)
                   evas_object_geometry_set(ec->frame, ec->client.x, ec->client.y, ec->client.w, ec->client.h);
                }
              ec->ignore_first_unmap = 1;
+             E_FREE_FUNC(ec->ignore_first_unmap_clear_timer, ecore_timer_del);
+             ec->ignore_first_unmap_clear_timer = ecore_timer_add
+               (0.2, _cb_e_comp_x_ignore_first_unmap_clear_timer, ec);
              if (ec->override || (!ec->icccm.fetch.hints))
                evas_object_show(ec->frame);
              _e_comp_x_client_stack(ec);

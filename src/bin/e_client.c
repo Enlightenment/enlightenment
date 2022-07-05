@@ -586,6 +586,8 @@ _e_client_free(E_Client *ec)
    if (ec->stack.prev) ec->stack.prev->stack.next = ec->stack.next;
    if (ec->stack.next) ec->stack.next->stack.prev = ec->stack.prev;
 
+   E_FREE_FUNC(ec->ignore_first_unmap_clear_timer, ecore_timer_del);
+
    ec->e.state.profile.wait_desk = NULL;
    evas_object_del(ec->frame);
    E_OBJECT(ec)->references--;

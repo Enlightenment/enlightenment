@@ -302,6 +302,7 @@ struct E_Client
 
    unsigned char      ignore_first_unmap;
    E_Pointer_Mode     resize_mode;
+   Ecore_Timer       *ignore_first_unmap_clear_timer;
 
    struct
    {
