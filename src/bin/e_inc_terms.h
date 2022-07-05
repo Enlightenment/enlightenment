@@ -1,0 +1,5 @@
+"terminology.desktop",
+"xterm.desktop",
+"rxvt.desktop",
+"gnome-terminal.desktop",
+"konsole.desktop",
