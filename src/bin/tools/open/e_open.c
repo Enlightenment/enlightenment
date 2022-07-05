@@ -154,6 +154,98 @@ get_command(void *data, Efreet_Desktop *desktop EINA_UNUSED, char *command, int 
    return NULL;
 }
 
+static Efreet_Desktop *
+_terminal_get(const char *defaults_list)
+{
+   Efreet_Desktop *tdesktop = NULL;
+   Efreet_Ini *ini;
+   const char *s;
+
+   ini = efreet_ini_new(defaults_list);
+   if ((ini) && (ini->data) &&
+       (efreet_ini_section_set(ini, "Default Applications")) &&
+       (ini->section))
+     {
+        s = efreet_ini_string_get(ini, "x-scheme-handler/terminal");
+        if (s) tdesktop = efreet_util_desktop_file_id_find(s);
+     }
+   if (ini) efreet_ini_free(ini);
+   return tdesktop;
+}
+
+static char **
+terminal_open(void)
+{
+   const char *terms[] =
+   {
+      "terminology.desktop",
+      "xterm.desktop",
+      "rxvt.desktop",
+      "gnome-terimnal.desktop",
+      "konsole.desktop",
+      NULL
+   };
+   const char *s;
+   char buf[PATH_MAX], **ret;
+   Efreet_Desktop *tdesktop = NULL, *td;
+   Eina_List *l;
+   int i;
+
+   s = efreet_data_home_get();
+   if (s)
+     {
+        snprintf(buf, sizeof(buf), "%s/mimeapps.list",
+                 efreet_config_home_get());
+        tdesktop = _terminal_get(buf);
+     }
+   if (tdesktop) goto have_desktop;
+   EINA_LIST_FOREACH(efreet_data_dirs_get(), l, s)
+     {
+        snprintf(buf, sizeof(buf), "%s/applications/defaults.list", s);
+        tdesktop = _terminal_get(buf);
+        if (tdesktop) goto have_desktop;
+     }
+
+   for (i = 0; terms[i]; i++)
+     {
+        tdesktop = efreet_util_desktop_file_id_find(terms[i]);
+        if (tdesktop) goto have_desktop;
+     }
+   if (!tdesktop)
+     {
+        l = efreet_util_desktop_category_list("TerminalEmulator");
+        if (l)
+          {
+             // just take first one since above list doesn't work.
+             tdesktop = l->data;
+             EINA_LIST_FREE(l, td)
+               {
+                  // free/unref the desktosp we are not going to use
+                  if (td != tdesktop) efreet_desktop_free(td);
+               }
+          }
+     }
+   if (!tdesktop) return NULL;
+have_desktop:
+   if (!tdesktop->exec)
+     {
+        efreet_desktop_free(tdesktop);
+        return NULL;
+     }
+   ret = malloc(sizeof(char *) * 2);
+   if (!ret) return NULL;
+   ret[0] = strdup(tdesktop->exec);
+   ret[1] = NULL;
+   if (!ret[0])
+     {
+        free(ret);
+        efreet_desktop_free(tdesktop);
+        return NULL;
+     }
+   efreet_desktop_free(tdesktop);
+   return ret;
+}
+
 static char **
 mime_open(const char *mime, const char *const *argv, int argc)
 {
@@ -178,10 +270,38 @@ mime_open(const char *mime, const char *const *argv, int argc)
         ret = calloc(eina_list_count(cmds) + 1, sizeof(char *));
         if (ret)
           {
-             unsigned int i = 0;
+             unsigned int i = 0, j;
+
              EINA_LIST_FREE(cmds, c)
                {
-                  ret[i] = c; /* was strdup by efreet_desktop_command_get() */
+                  if (desktop->terminal)
+                    {
+                       Eina_Strbuf *buf = eina_strbuf_new();
+                       char **tcmds = terminal_open();
+
+                       if ((tcmds) && (buf))
+                         {
+                            for (j = 0; tcmds[j]; j++)
+                              {
+                                 eina_strbuf_append(buf, tcmds[j]);
+                                 eina_strbuf_append(buf, " ");
+                              }
+                            eina_strbuf_append(buf, "-e ");
+                            eina_strbuf_append(buf, c);
+                            ret[i] = eina_strbuf_string_steal(buf);
+                         }
+                       if (tcmds)
+                         {
+                            for (j = 0; tcmds[j]; j++) free(tcmds[j]);
+                            free(tcmds);
+                         }
+                       if (buf) eina_strbuf_free(buf);
+                       free(c);
+                    }
+                  else
+                    {
+                       ret[i] = c; /* was strdup by efreet_desktop_command_get() */
+                    }
                   i++;
                }
              ret[i] = NULL;
@@ -192,7 +312,6 @@ mime_open(const char *mime, const char *const *argv, int argc)
                free(c);
           }
      }
-
    eina_list_free(files);
 
    return ret;
@@ -291,98 +410,6 @@ single_command_open(const char *command, const char *const *argv, int argc)
    ret[0] = eina_strbuf_string_steal(b);
    eina_strbuf_free(b);
 
-   return ret;
-}
-
-static Efreet_Desktop *
-_terminal_get(const char *defaults_list)
-{
-   Efreet_Desktop *tdesktop = NULL;
-   Efreet_Ini *ini;
-   const char *s;
-
-   ini = efreet_ini_new(defaults_list);
-   if ((ini) && (ini->data) &&
-       (efreet_ini_section_set(ini, "Default Applications")) &&
-       (ini->section))
-     {
-        s = efreet_ini_string_get(ini, "x-scheme-handler/terminal");
-        if (s) tdesktop = efreet_util_desktop_file_id_find(s);
-     }
-   if (ini) efreet_ini_free(ini);
-   return tdesktop;
-}
-
-static char **
-terminal_open(void)
-{
-   const char *terms[] =
-   {
-      "terminology.desktop",
-      "xterm.desktop",
-      "rxvt.desktop",
-      "gnome-terimnal.desktop",
-      "konsole.desktop",
-      NULL
-   };
-   const char *s;
-   char buf[PATH_MAX], **ret;
-   Efreet_Desktop *tdesktop = NULL, *td;
-   Eina_List *l;
-   int i;
-
-   s = efreet_data_home_get();
-   if (s)
-     {
-        snprintf(buf, sizeof(buf), "%s/mimeapps.list",
-                 efreet_config_home_get());
-        tdesktop = _terminal_get(buf);
-     }
-   if (tdesktop) goto have_desktop;
-   EINA_LIST_FOREACH(efreet_data_dirs_get(), l, s)
-     {
-        snprintf(buf, sizeof(buf), "%s/applications/defaults.list", s);
-        tdesktop = _terminal_get(buf);
-        if (tdesktop) goto have_desktop;
-     }
-
-   for (i = 0; terms[i]; i++)
-     {
-        tdesktop = efreet_util_desktop_file_id_find(terms[i]);
-        if (tdesktop) goto have_desktop;
-     }
-   if (!tdesktop)
-     {
-        l = efreet_util_desktop_category_list("TerminalEmulator");
-        if (l)
-          {
-             // just take first one since above list doesn't work.
-             tdesktop = l->data;
-             EINA_LIST_FREE(l, td)
-               {
-                  // free/unref the desktosp we are not going to use
-                  if (td != tdesktop) efreet_desktop_free(td);
-               }
-          }
-     }
-   if (!tdesktop) return NULL;
-have_desktop:
-   if (!tdesktop->exec)
-     {
-        efreet_desktop_free(tdesktop);
-        return NULL;
-     }
-   ret = malloc(sizeof(char *) * 2);
-   if (!ret) return NULL;
-   ret[0] = strdup(tdesktop->exec);
-   ret[1] = NULL;
-   if (!ret[0])
-     {
-        free(ret);
-        efreet_desktop_free(tdesktop);
-        return NULL;
-     }
-   efreet_desktop_free(tdesktop);
    return ret;
 }
 
