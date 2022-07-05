@@ -319,6 +319,7 @@ terminal_open(void)
    const char *terms[] =
    {
       "terminology.desktop",
+      "xterm.desktop",
       "rxvt.desktop",
       "gnome-terimnal.desktop",
       "konsole.desktop",
