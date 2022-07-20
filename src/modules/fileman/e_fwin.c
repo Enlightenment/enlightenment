@@ -272,55 +272,75 @@ static Eina_List *_e_fwin_mime_all_handlers_list = NULL;
 static int
 _e_fwin_cb_dir_mime_handler_test(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *path)
 {
-   if (ecore_file_is_dir(path)) return 1;
-   if (e_fm2_real_path_get(obj))
-     {
-        evas_object_data_set(obj, "fileman_terminal_realpath", (void*)1);
-        return 1;
-     }
+   const char *rp;
+
+   rp = e_fm2_real_path_get(obj);
+   if ((rp) && (!strcmp(path, rp))) return 1;
+   if (rp) return 1;
    return 0;
 }
 
 static void
-_e_fwin_cb_dir_mime_handler(void *data, Evas_Object *obj EINA_UNUSED, const char *path)
+_e_fwin_cb_dir_mime_handler(void *data, Evas_Object *obj, const char *path)
 {
    E_Fwin_Mime_Handler *h = data;
    Eina_Stringshare *rp;
    Eina_List *files = NULL;
+   const char *f;
 
    rp = e_fm2_real_path_get(obj);
-   if (rp && (rp != path) && (evas_object_data_del(obj, "fileman_terminal_realpath"))) //icon menu; use rp
-     path = rp;
-   files = eina_list_append(files, path);
+   if ((rp) && (rp == path) &&
+       (!evas_object_data_del(obj, "fileman_terminal_realpath")))
+     {
+        files = eina_list_append(files, eina_stringshare_add(rp));
+     }
+   else
+     {
+        Eina_List *selected;
+        E_Fm2_Icon_Info *ici;
+
+        selected = e_fm2_selected_list_get(obj);
+        EINA_LIST_FREE(selected, ici)
+          {
+             files = eina_list_append(files, eina_stringshare_add(ici->file));
+          }
+     }
+
    e_exec(e_zone_current_get(), h->desktop, NULL, files, "fileman");
-   eina_list_free(files);
+   EINA_LIST_FREE(files, f) eina_stringshare_del(f);
 }
 
 static void
 _e_fwin_mime_all_handlers_fill(void)
 {
    E_Fwin_Mime_Handler *h;
-   Eina_List *desktops;
+   Eina_List *desktops, *mimes;
    Efreet_Desktop *desktop;
 
    desktops = efreet_util_desktop_name_glob_list("*");
    EINA_LIST_FREE(desktops, desktop)
      {
-        const char *mime = eina_hash_find
+        const char *m, *mime = eina_hash_find
           (desktop->x, "X-Enlightenment-Action-Mime");
         if (!mime) continue;
-        h = calloc(1, sizeof(E_Fwin_Mime_Handler));
-        if (!h) continue;
-        h->mime = eina_stringshare_add(mime);
-        h->desktop = desktop;
-        efreet_desktop_ref(desktop);
-        h->handler = e_fm2_mime_handler_new
-          (desktop->name, desktop->icon,
-           _e_fwin_cb_dir_mime_handler, h,
-           _e_fwin_cb_dir_mime_handler_test, h);
-        e_fm2_mime_handler_mime_add(h->handler, h->mime);
-        _e_fwin_mime_all_handlers_list =
-          eina_list_append(_e_fwin_mime_all_handlers_list, h);
+
+        mimes = efreet_desktop_string_list_parse(mime);
+        EINA_LIST_FREE(mimes, m)
+          {
+             h = calloc(1, sizeof(E_Fwin_Mime_Handler));
+             if (!h) continue;
+             h->mime = eina_stringshare_add(m);
+             h->desktop = desktop;
+             efreet_desktop_ref(desktop);
+             h->handler = e_fm2_mime_handler_new
+               (desktop->name, desktop->icon,
+                _e_fwin_cb_dir_mime_handler, h,
+                _e_fwin_cb_dir_mime_handler_test, h);
+             e_fm2_mime_handler_mime_add(h->handler, h->mime);
+             _e_fwin_mime_all_handlers_list =
+               eina_list_append(_e_fwin_mime_all_handlers_list, h);
+             eina_stringshare_del(m);
+          }
      }
 }
 
