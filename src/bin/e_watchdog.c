@@ -8,7 +8,7 @@ static void
 _cb_watchdog_thread_pingpong_pipe(void *data EINA_UNUSED, void *buf, unsigned int bytes)
 {
    unsigned long long *seq = buf;
-   unsigned long long seq_num = bytes / sizeof(int);
+   unsigned long long seq_num = bytes / sizeof(unsigned long long);
 
    if (seq_num < 1)
      {
@@ -54,8 +54,9 @@ _cb_watchdog_thread_pingpong(void *data EINA_UNUSED, Ecore_Thread *thread)
 static void
 _cb_watchdog_thread_pingpong_reply(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED, void *msg)
 {
-   // repluy back to mainloop with same ping number
+   // reply back to mainloop with same ping number
    unsigned long long *seq = msg;
+
    ecore_pipe_write(_watchdog_pipe, seq, sizeof(unsigned long long));
    free(seq);
 }
