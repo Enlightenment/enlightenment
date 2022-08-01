@@ -62,12 +62,15 @@ _e_msgbus_window_list_cb(const Eldbus_Service_Interface *iface EINA_UNUSED,
    EINA_LIST_FOREACH(e_comp->clients, l, ec)
      {
         Eldbus_Message_Iter *s;
+        const char *name;
 
         if (e_client_util_ignored_get(ec)) continue;
 
         eldbus_message_iter_arguments_append(array, "(si)", &s);
         if (!s) continue;
-        eldbus_message_iter_arguments_append(s, "si", ec->icccm.name,
+        name = ec->icccm.name;
+        if (!name) name = "";
+        eldbus_message_iter_arguments_append(s, "si", name,
                                             e_client_util_win_get(ec));
         eldbus_message_iter_container_close(array, s);
      }
