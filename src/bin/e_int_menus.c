@@ -445,6 +445,7 @@ e_int_menus_inhibitors_new(void)
    E_Menu_Item *mi;
    Eina_List *l;
    E_Msgbus_Data_Screensaver_Inhibit *inhibit;
+   char buf[1024];
 
    m = e_menu_new();
    if (!((e_msgbus_data) && (e_msgbus_data->screensaver_inhibits)))
@@ -452,7 +453,15 @@ e_int_menus_inhibitors_new(void)
    EINA_LIST_FOREACH(e_msgbus_data->screensaver_inhibits, l, inhibit)
      {
         mi = e_menu_item_new(m);
-        e_menu_item_label_set(mi, inhibit->application);
+        if ((inhibit->application) && (inhibit->reason))
+          snprintf(buf, sizeof(buf), "%s (%s)", inhibit->application, inhibit->reason);
+        else if (inhibit->application)
+          snprintf(buf, sizeof(buf), "%s", inhibit->application);
+        else if (inhibit->reason)
+          snprintf(buf, sizeof(buf), "(%s)", inhibit->reason);
+        else
+          snprintf(buf, sizeof(buf), "???");
+        e_menu_item_label_set(mi, buf);
         e_menu_item_check_set(mi, 1);
         e_menu_item_toggle_set(mi, 1);
         e_menu_item_callback_set(mi, _e_int_menus_inhibit_cb,
