@@ -26,6 +26,7 @@ static const Eldbus_Service_Interface_Desc _e_core_desc = {
 #define SCREENSAVER_BUS   "org.freedesktop.ScreenSaver"
 #define SCREENSAVER_IFACE "org.freedesktop.ScreenSaver"
 #define SCREENSAVER_PATH  "/org/freedesktop/ScreenSaver"
+#define SCREENSAVER_PATH2 "/ScreenSaver"
 static void            _e_msgbus_screensaver_request_name_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending);
 static void            _e_msgbus_screensaver_inhibit_free(E_Msgbus_Data_Screensaver_Inhibit *inhibit);
 static void            _e_msgbus_screensaver_owner_change_cb(void *data EINA_UNUSED, const char *bus, const char *old_id, const char *new_id);
@@ -69,6 +70,8 @@ e_msgbus_init(void)
 
    e_msgbus_data->screensaver_iface = eldbus_service_interface_register
      (e_msgbus_data->conn, SCREENSAVER_PATH, &_screensaver_core_desc);
+   e_msgbus_data->screensaver_iface2 = eldbus_service_interface_register
+     (e_msgbus_data->conn, SCREENSAVER_PATH2, &_screensaver_core_desc);
    eldbus_name_request(e_msgbus_data->conn, SCREENSAVER_BUS, 0,
                        _e_msgbus_screensaver_request_name_cb, NULL);
    return 1;
@@ -79,6 +82,10 @@ e_msgbus_shutdown(void)
 {
    E_Msgbus_Data_Screensaver_Inhibit *inhibit;
 
+   if (e_msgbus_data->screensaver_iface2)
+     eldbus_service_object_unregister(e_msgbus_data->screensaver_iface2);
+   if (e_msgbus_data->screensaver_iface)
+     eldbus_service_object_unregister(e_msgbus_data->screensaver_iface);
    if (e_msgbus_data->e_iface)
      eldbus_service_object_unregister(e_msgbus_data->e_iface);
    if (e_msgbus_data->conn)

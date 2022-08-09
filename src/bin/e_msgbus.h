@@ -14,6 +14,7 @@ struct _E_Msgbus_Data
    Eldbus_Connection        *conn;
    Eldbus_Service_Interface *e_iface;
    Eldbus_Service_Interface *screensaver_iface;
+   Eldbus_Service_Interface *screensaver_iface2;
    Eina_List                *screensaver_inhibits;
 };
 
