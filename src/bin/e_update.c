@@ -146,8 +146,12 @@ static void
 _update_machid_get(void)
 {
    FILE *f;
-   char buf[4096], *c;
+   static const char appid[] = "EnL+7',xkDv&!@*)df%@#hcs$;l%o$fc#^$%&%$FDFeJ$%c^$#";
+   static const char hex[] = "0123456789abcdef";
+   char buf[4096], buf2[4096 + 1024], *c;
+   unsigned char sha[20];
    size_t len;
+   int i;
 
    f = fopen("/etc/machine-id", "r");
    if (!f) f = fopen("/var/lib/dbus/machine-id", "r");
@@ -159,7 +163,7 @@ _update_machid_get(void)
    if (f)
      {
         len = fread(buf, 1, sizeof(buf) - 1, f);
-        if (len > 10)
+        if ((len > 10) && (len < 4000))
           {
              buf[len] = 0;
              for (c = buf; *c; c++)
@@ -170,6 +174,14 @@ _update_machid_get(void)
                        break;
                     }
                }
+             snprintf(buf2, sizeof(buf2), "{{%s}}/{{%s}}", buf, appid);
+             e_sha1_sum((unsigned char *)buf2, strlen(buf2), sha);
+             for (i = 0; i < 20; i++)
+               {
+                  buf[(i * 2) + 0] = hex[((sha[i] >> 4) & 0xf)];
+                  buf[(i * 2) + 1] = hex[((sha[i]     ) & 0xf)];
+               }
+             buf[(i * 2)] = 0;
              machid = strdup(buf);
              fclose(f);
              return;
@@ -187,7 +199,6 @@ _update_machid_get(void)
         t = ecore_time_unix_get();
         fprintf(f, "%1.16f-%i-%i\n", t, rand(), rand());
         fclose(f);
-        _update_machid_get();
         return;
      }
    // this just is all a wash - just use this
@@ -259,6 +270,7 @@ e_update_init(void)
              _update_timeout_cb(NULL);
              e_config->update.check = 1;
           }
+        _update_machid_get();
      }
    return 1;
 }
