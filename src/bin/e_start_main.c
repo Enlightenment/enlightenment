@@ -585,6 +585,11 @@ main(int argc, char **argv)
         printf("                                                               \n");
         printf("    E_WL_FORCE=drm enlightenment_start                         \n");
         printf("                                                               \n");
+        printf("  If you wish to set software or GL rendering too then also:   \n");
+        printf("                                                               \n");
+        printf("    E_WL_FORCE=drm E_COMP_ENGINE=gl enlightenment_start        \n");
+        printf("    E_WL_FORCE=drm E_COMP_ENGINE=sw enlightenment_start        \n");
+        printf("                                                               \n");
         sleep(10);
      }
    for (i = 1; i < argc; i++)
