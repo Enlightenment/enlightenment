@@ -144,12 +144,12 @@ hints_dict_iter(void *data, const void *key, Eldbus_Message_Iter *var)
         // 1== remove  notification when action invoked - no timeout
         n->resident = val;
      }
-   else if (!strcmp(key, "supress-sound"))
+   else if (!strcmp(key, "suppress-sound"))
      {
         Eina_Bool val = 0;
 
         eldbus_message_iter_arguments_get(var, "b", &val);
-        printf("NOT: supress-sound=%i\n", val);
+        printf("NOT: suppress-sound=%i\n", val);
         // 1== remove  notification when action invoked - no timeout
         n->suppress_sound = val;
      }
