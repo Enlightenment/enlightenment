@@ -749,7 +749,7 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
         else
           edje_object_part_swallow(cw->shobj, "e.swallow.content", cw->obj);
      }
-   if (cw->input_objs)
+   if ((cw->input_objs) || ((cw->ec) && (cw->ec->shaped)))
      evas_object_pass_events_set(cw->obj, 1);
    else
      evas_object_pass_events_set(cw->obj, 0);
