@@ -34,5 +34,5 @@ Comment[sr]=Пријавите се за коришћење Просвећења
 Comment[tr]=Enlightenment kullanarak giriş yaın (Version @VERSION@)
 Icon=@prefix@/share/enlightenment/data/images/enlightenment.png
 TryExec=@prefix@/bin/enlightenment_start
-Exec=E_WL_FORCE=drm E_COMP_ENGINE=gl @prefix@/bin/enlightenment_start
+Exec=env E_WL_FORCE=drm E_COMP_ENGINE=gl @prefix@/bin/enlightenment_start
 DesktopNames=Enlightenment
