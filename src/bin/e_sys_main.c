@@ -358,6 +358,19 @@ main(int argc,
 
 /* local subsystem functions */
 #ifdef HAVE_EEZE_MOUNT
+
+static Eina_Bool
+check_is_num_to_comma(const char *s)
+{
+   const char *p;
+
+   for (p = s; *p && (*p != ','); p++)
+     {
+        if (!((*p >= '0') && (*p <= '9'))) return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
 static Eina_Bool
 mountopts_check(const char *opts)
 {
@@ -400,6 +413,8 @@ mountopts_check(const char *opts)
         {
            p += 4;
            errno = 0;
+
+           if (!check_is_num_to_comma(p)) return EINA_FALSE;
            muid = strtoul(p, &end, 10);
            if (muid == ULONG_MAX) return EINA_FALSE;
            if (errno) return EINA_FALSE;
@@ -415,12 +430,52 @@ mountopts_check(const char *opts)
 }
 
 static Eina_Bool
+check_is_alpha_num(char c)
+{
+   if (((c >= '0') && (c <= '9')) ||
+       ((c >= 'a') && (c <= 'z')) ||
+       ((c >= 'A') && (c <= 'Z'))) return EINA_TRUE;
+   return EINA_FALSE;
+}
+
+static Eina_Bool
 check_uuid(const char *uuid)
 {
    const char *p;
 
    for (p = uuid; p[0]; p++)
-     if ((!isalnum(*p)) && (*p != '-')) return EINA_FALSE;
+     {
+        if ((!check_is_alpha_num(*p)) && (*p != '-')) return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+check_sane_path(const char *path)
+{
+   const char *forbidden_ch = "`~!#$%^&*()[]{}|\\;'\"<>?";
+   const char *p;
+
+   if (strstr(path, "..")) return EINA_FALSE; // just don't allow .. anywhere
+   for (p = forbidden_ch; *p; p++) // no invalid chars like above
+     {
+        if (strchr(path, *p)) return EINA_FALSE;
+     }
+   for (p = path; *p; p++) // nothing in lower ascii ctrl chars or high ascii
+     {
+        if ((*p <= ' ') || (*p >= 0x7f)) return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+check_sane_dev(const char *dev)
+{
+   struct stat st;
+
+   if (strncmp(dev, "/dev/", 5)) return EINA_FALSE; // not a /dev file
+   if (!check_sane_path(dev)) return EINA_FALSE;
+   if (stat(dev, &st)) return EINA_FALSE; // must actually exist
    return EINA_TRUE;
 }
 
@@ -428,9 +483,9 @@ static Eina_Bool
 mount_args_check(int argc, char **argv, const char *action)
 {
    Eina_Bool opts = EINA_FALSE;
-   struct stat st;
    const char *node;
    char buf[PATH_MAX];
+   struct stat st;
 
    if (!strcmp(action, "mount"))
      {
@@ -451,9 +506,9 @@ mount_args_check(int argc, char **argv, const char *action)
           }
         else
           {
-             if (strncmp(argv[4], "/dev/", 5)) return EINA_FALSE;
-             if (stat(argv[4], &st)) return EINA_FALSE;
+             if (!check_sane_dev(argv[4])) return EINA_FALSE;
           }
+        if (!check_sane_path(argv[5])) return EINA_FALSE;
 
         node = strrchr(argv[5], '/');
         if (!node) return EINA_FALSE;
@@ -468,8 +523,7 @@ mount_args_check(int argc, char **argv, const char *action)
            /path/to/umount /dev/$devnode
          */
         if (argc != 3) return EINA_FALSE;
-        if (strncmp(argv[2], "/dev/", 5)) return EINA_FALSE;
-        if (stat(argv[2], &st)) return EINA_FALSE;
+        if (!check_sane_dev(argv[2])) return EINA_FALSE;
         node = strrchr(argv[2], '/');
         if (!node) return EINA_FALSE;
         if (!node[1]) return EINA_FALSE;
@@ -488,8 +542,7 @@ mount_args_check(int argc, char **argv, const char *action)
            /path/to/eject /dev/$devnode
          */
         if (argc != 3) return EINA_FALSE;
-        if (strncmp(argv[2], "/dev/", 5)) return EINA_FALSE;
-        if (stat(argv[2], &st)) return EINA_FALSE;
+        if (!check_sane_dev(argv[2])) return EINA_FALSE;
         node = strrchr(argv[2], '/');
         if (!node) return EINA_FALSE;
         if (!node[1]) return EINA_FALSE;
