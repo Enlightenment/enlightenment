@@ -925,7 +925,7 @@ e_pointer_object_set(E_Pointer *ptr, Evas_Object *obj, int x, int y)
 
    return;
 misst:
-   ERR("Failure with %p", ptr);
+   INF("The ptr object of pointer %p is missing.", ptr);
 }
 
 E_API void
