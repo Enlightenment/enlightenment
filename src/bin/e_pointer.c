@@ -496,6 +496,7 @@ _e_pointer_type_set(E_Pointer *ptr, const char *type)
              edje_object_message_signal_process(ptr->o_ptr);
              init = EINA_TRUE;
           }
+        if (e_comp->comp_type != E_PIXMAP_TYPE_WL)
         _e_pointer_x11_setup(ptr, cursor);
         if (!cursor[0]) return;
 
