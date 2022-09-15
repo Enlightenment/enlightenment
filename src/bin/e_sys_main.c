@@ -598,10 +598,8 @@ auth_action_ok(char *a,
     */
    ret = auth_etc_enlightenment_sysactions(a, usr, grp);
    if (ret == 1) return 1;
-   else if (ret == -1)
-     return 0;
-   /* the DEFAULT - allow */
-   return 1;
+   else if (ret == -1) return 0;
+   return 0; // no sysactions.conf file found - just say no. bad system
 }
 
 static int
