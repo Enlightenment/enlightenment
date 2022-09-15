@@ -849,7 +849,7 @@ e_pointer_object_set(E_Pointer *ptr, Evas_Object *obj, int x, int y)
    int px, py;
 
    EINA_SAFETY_ON_NULL_RETURN(ptr);
-   EINA_SAFETY_ON_NULL_RETURN(ptr->o_ptr);
+   EINA_SAFETY_ON_NULL_GOTO(ptr->o_ptr, misst);
 
    ecore_evas_cursor_get(ptr->ee, &o, NULL, &px, &py);
    if (o)
@@ -885,6 +885,10 @@ e_pointer_object_set(E_Pointer *ptr, Evas_Object *obj, int x, int y)
    ptr->client.ec = ec;
    ptr->client.x = x;
    ptr->client.y = y;
+
+   return;
+misst:
+   ERR("Failure with %p", ptr);
 }
 
 E_API void
