@@ -391,26 +391,17 @@ _e_pointer_cb_free(E_Pointer *ptr)
    free(ptr);
 }
 
+/*
+ * Fallback to x11 setting the correct cursor and shape.
+ *
+ * Not rendering any application rendered canvas, only works for x11 compositors
+ */
 static void
-_e_pointer_x11_setup(E_Pointer *ptr, const char *cursor)
+_e_pointer_x11_fallback_to_x11_pointer(E_Pointer *ptr)
 {
-   if (ptr->e_cursor && (e_comp->comp_type != E_PIXMAP_TYPE_WL))
-     {
-        /* create a pointer canvas if we need to */
-        if ((!ptr->buffer_evas) && ptr->win) _e_pointer_canvas_add(ptr);
-        if (ptr->buffer_o_ptr && (ptr->buffer_o_ptr != ptr->o_ptr))
-          {
-             e_theme_edje_object_set(ptr->buffer_o_ptr, "base/theme/pointer", cursor);
-             edje_object_part_swallow(ptr->buffer_o_ptr, "e.swallow.hotspot", ptr->buffer_o_hot);
-             if (!init)
-               {
-                  edje_object_signal_emit(ptr->o_ptr, "e,state,init", "e");
-                  edje_object_message_signal_process(ptr->o_ptr);
-                  init = EINA_TRUE;
-               }
-          }
-        return;
-     }
+   EINA_SAFETY_ON_FALSE_RETURN((e_comp->comp_type != E_PIXMAP_TYPE_WL));
+
+   // Remove any application rendered pointer canvas, x11 is going to render
    if (ptr->buffer_evas) _e_pointer_canvas_del(ptr);
 #ifndef HAVE_WAYLAND_ONLY
    if (!e_comp_util_has_x()) return;
@@ -459,6 +450,43 @@ _e_pointer_x11_setup(E_Pointer *ptr, const char *cursor)
 #endif
 }
 
+static Eina_Bool
+_e_pointer_theme_object_setup(Evas_Object *edje, const char *cursor, Evas_Object *hotspot)
+{
+    /* try to set the edje object theme */
+    if (!e_theme_edje_object_set(edje, "base/theme/pointer", cursor))
+      return EINA_FALSE;
+    if (!edje_object_part_swallow(edje, "e.swallow.hotspot", hotspot))
+      return EINA_FALSE;
+    if (!init)
+      {
+         edje_object_signal_emit(edje, "e,state,init", "e");
+         edje_object_message_signal_process(edje);
+         init = EINA_TRUE;
+      }
+    return EINA_TRUE;
+}
+
+static void
+_e_pointer_x11_setup(E_Pointer *ptr, const char *cursor)
+{
+   EINA_SAFETY_ON_FALSE_RETURN((e_comp->comp_type != E_PIXMAP_TYPE_WL));
+   if (ptr->e_cursor)
+     {
+        /* create a pointer canvas if we need to */
+        if ((!ptr->buffer_evas) && ptr->win) _e_pointer_canvas_add(ptr);
+        if (ptr->buffer_o_ptr && (ptr->buffer_o_ptr != ptr->o_ptr))
+          {
+             if (!_e_pointer_theme_object_setup(ptr->buffer_o_ptr, cursor, ptr->buffer_o_hot))
+               {
+                  _e_pointer_x11_fallback_to_x11_pointer(ptr);
+               }
+          }
+        return;
+     }
+   _e_pointer_x11_fallback_to_x11_pointer(ptr);
+}
+
 static void
 _e_pointer_type_set(E_Pointer *ptr, const char *type)
 {
@@ -486,19 +514,17 @@ _e_pointer_type_set(E_Pointer *ptr, const char *type)
         if ((!ptr->buffer_evas) && ptr->win) _e_pointer_canvas_add(ptr);
         _e_pointer_theme_buf(ptr, cursor);
 
-        /* try to set the edje object theme */
-        if (!e_theme_edje_object_set(ptr->o_ptr, "base/theme/pointer", cursor))
-          cursor[0] = 0;
-        edje_object_part_swallow(ptr->o_ptr, "e.swallow.hotspot", ptr->o_hot);
-        if (!init)
+        if (!_e_pointer_theme_object_setup(ptr->o_ptr, cursor, ptr->o_hot))
           {
-             edje_object_signal_emit(ptr->o_ptr, "e,state,init", "e");
-             edje_object_message_signal_process(ptr->o_ptr);
-             init = EINA_TRUE;
+             if (e_comp->comp_type != E_PIXMAP_TYPE_WL)
+               {
+                  _e_pointer_x11_setup(ptr, cursor);
+               }
+             else
+               {
+                  _e_pointer_theme_object_setup(ptr->o_ptr, "default", ptr->o_hot);
+               }
           }
-        if (e_comp->comp_type != E_PIXMAP_TYPE_WL)
-        _e_pointer_x11_setup(ptr, cursor);
-        if (!cursor[0]) return;
 
         _hot_update(ptr);
 
@@ -508,7 +534,17 @@ _e_pointer_type_set(E_Pointer *ptr, const char *type)
           evas_object_show(ptr->o_ptr);
      }
    else
-     _e_pointer_x11_setup(ptr, NULL);
+     {
+        if (e_comp->comp_type != E_PIXMAP_TYPE_WL)
+          {
+             _e_pointer_x11_fallback_to_x11_pointer(ptr);
+          }
+        else
+          {
+             CRI("WL must always use the application pointer!!!");
+             _e_pointer_theme_object_setup(ptr->o_ptr, "default", ptr->o_hot);
+          }
+     }
 }
 
 EINTERN int
