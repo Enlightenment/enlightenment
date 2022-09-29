@@ -91,11 +91,7 @@ wizard_page_init(E_Wizard_Page *pg EINA_UNUSED, Eina_Bool *need_xdg_desktops EIN
 {
    FILE *output;
 
-#ifdef __OpenBSD__
-   output = popen("ls /usr/share/locale", "r");
-#else
    output = popen("locale -a", "r");
-#endif
    if (output)
      {
         char line[32];
