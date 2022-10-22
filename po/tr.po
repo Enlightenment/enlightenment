@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: E17\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-19 16:15+0200\n"
-"PO-Revision-Date: 2014-05-24 08:28+0000\n"
-"Last-Translator: H. İbrahim Güngör <h.ibrahim.gungor@gmail.com>\n"
+"PO-Revision-Date: 2020-07-16 00:13+0300\n"
+"Last-Translator: Cihan Alkan <cihanalk@gmail.com>\n"
 "Language-Team: Turkish <kde-i18n-doc@kde.org>\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Launchpad-Export-Date: 2014-05-25 05:40+0000\n"
-"X-Generator: Launchpad (build 17017)\n"
+"X-Generator: Poedit 2.3.1\n"
 "X-Poedit-Bookmarks: -1,-1,-1,-1,-1,50,-1,-1,-1,-1\n"
 
 #: src/modules/conf_paths/e_int_config_paths.c:59
@@ -173,7 +173,7 @@ msgstr "Güvenli silme iptal edildi"
 #: src/modules/fileman/e_fwin.c:3085
 #, c-format
 msgid "Unknown operation from slave is aborted"
-msgstr "Bağlının bilinmeyen işlemi iptal edildi."
+msgstr "Bağlının bilinmeyen işlemi iptal edildi"
 
 #: src/modules/fileman_opinfo/e_mod_main.c:131
 #: src/modules/fileman/e_fwin.c:3095
@@ -254,9 +254,8 @@ msgid "Pair? PIN: <hilight>%s</hilight>"
 msgstr ""
 
 #: src/modules/bluez5/e_mod_agent.c:75
-#, fuzzy
 msgid "Enter PIN"
-msgstr "PIN kullan"
+msgstr "PIN Gir"
 
 #: src/modules/bluez5/e_mod_agent.c:93 src/modules/bluez5/e_mod_agent.c:111
 #, c-format
@@ -264,34 +263,29 @@ msgid "Pair? PIN: <hilight>%06u</hilight>"
 msgstr ""
 
 #: src/modules/bluez5/e_mod_agent.c:127
-#, fuzzy
 msgid "Connect?"
-msgstr "Bağlan"
+msgstr "Bağlan?"
 
 #: src/modules/bluez5/e_mod_popup.c:420
-#, fuzzy
 msgid "Adapters"
 msgstr "Güç adaptörü"
 
 #: src/modules/bluez5/e_mod_popup.c:421
-#, fuzzy
 msgid "Devices"
 msgstr "Aygıt"
 
 #: src/modules/bluez5/e_mod_popup.c:456
-#, fuzzy
 msgid "Unknown Address"
-msgstr "Bilinmeyen İsim"
+msgstr "Bilinmeyen Adres"
 
 #: src/modules/bluez5/e_mod_popup.c:479
 #: src/modules/sysinfo/batman/batman_config.c:303
-#, fuzzy
 msgid "Power"
-msgstr "Açık"
+msgstr "Güç"
 
 #: src/modules/bluez5/e_mod_popup.c:479
 msgid "Enable power for this adapter"
-msgstr ""
+msgstr "Bu adaptör için gücü etkinleştir"
 
 #: src/modules/bluez5/e_mod_popup.c:485 src/bin/e_comp.c:1243
 msgid "Visible"
@@ -299,16 +293,15 @@ msgstr "Görünür"
 
 #: src/modules/bluez5/e_mod_popup.c:485
 msgid "Make this adapter visible to other devices"
-msgstr ""
+msgstr "Bu bağdaştırıcıyı diğer cihazlara görünür yap"
 
 #: src/modules/bluez5/e_mod_popup.c:491
 msgid "Scan"
-msgstr ""
+msgstr "Tara"
 
 #: src/modules/bluez5/e_mod_popup.c:491
-#, fuzzy
 msgid "Scan for other devices"
-msgstr "Diğer masaüstlerinden simgeleştir"
+msgstr "Diğer cihazları tara"
 
 #: src/modules/bluez5/e_mod_popup.c:497
 msgid "Pairable"
@@ -317,6 +310,7 @@ msgstr "Eşleşebilir"
 #: src/modules/bluez5/e_mod_popup.c:497
 msgid "Allow this adapter to have other devices request to pair with it"
 msgstr ""
+"Bu bağdaştırıcının diğer cihazların onunla eşleşmesini istemesine izin ver"
 
 #: src/modules/bluez5/e_mod_popup.c:530
 #, c-format
@@ -343,27 +337,23 @@ msgstr "Bilinmiyor"
 
 #: src/modules/bluez5/e_mod_popup.c:538
 msgid "Limited-Discoverable "
-msgstr ""
+msgstr "Sınırlı-Bulunabilir "
 
 #: src/modules/bluez5/e_mod_popup.c:539
-#, fuzzy
 msgid "Positioning "
-msgstr "Konum"
+msgstr "Konum "
 
 #: src/modules/bluez5/e_mod_popup.c:540
-#, fuzzy
 msgid "Networking "
-msgstr "Ağ Aygıtı"
+msgstr "Ağ Aygıtı "
 
 #: src/modules/bluez5/e_mod_popup.c:541
-#, fuzzy
 msgid "Rendering "
-msgstr "İşleyici"
+msgstr "İşleyici "
 
 #: src/modules/bluez5/e_mod_popup.c:542
-#, fuzzy
 msgid "Capture "
-msgstr "Yakala"
+msgstr "Yakala "
 
 #: src/modules/bluez5/e_mod_popup.c:543
 msgid "OBEX "
@@ -371,16 +361,15 @@ msgstr ""
 
 #: src/modules/bluez5/e_mod_popup.c:544
 msgid "Audio "
-msgstr ""
+msgstr "Ses "
 
 #: src/modules/bluez5/e_mod_popup.c:545
 msgid "Telephony "
 msgstr ""
 
 #: src/modules/bluez5/e_mod_popup.c:546
-#, fuzzy
 msgid "Information "
-msgstr "Bilgi"
+msgstr "Bilgi "
 
 #: src/modules/bluez5/e_mod_popup.c:547 src/modules/bluez5/e_mod_popup.c:548
 #: src/modules/quickaccess/e_mod_quickaccess.c:1308 src/bin/e_desklock.c:673
@@ -402,46 +391,44 @@ msgstr "Hayır"
 
 #: src/modules/bluez5/e_mod_popup.c:571
 msgid "Stop this from being an unlock device"
-msgstr ""
+msgstr "Bunun bir kilit açma cihazı olmasını engelle"
 
 #: src/modules/bluez5/e_mod_popup.c:578
 msgid "Make this auto unlock when detected (and lock when not)"
-msgstr ""
+msgstr "Tespit edildiğinde bu otomatik kilidini aç (ve olmadığında kilitle)"
 
 #: src/modules/bluez5/e_mod_popup.c:588
 msgid "Stop this device from being forcefully connected"
-msgstr ""
+msgstr "Bu cihazın zorla bağlanmasını engelleyin"
 
 #: src/modules/bluez5/e_mod_popup.c:595
 msgid "Force this device to be connected when detected"
-msgstr ""
+msgstr "Bu cihazı algılandığında bağlanmaya zorla"
 
 #: src/modules/bluez5/e_mod_popup.c:605
-#, fuzzy
 msgid "Disconnect this device"
-msgstr "Ağ servisinin bağlantısını kes."
+msgstr "Ağ servisinin bağlantısını kes"
 
 #: src/modules/bluez5/e_mod_popup.c:612
-#, fuzzy
 msgid "Connect this device"
-msgstr "Aygıt çıkarılamıyor"
+msgstr "Bu cihazı bağla"
 
 #: src/modules/bluez5/e_mod_popup.c:622
 msgid "Disrust this device"
-msgstr ""
+msgstr "Bu cihazı yoksay"
 
 #: src/modules/bluez5/e_mod_popup.c:629
 msgid "Trust this device"
-msgstr ""
+msgstr "Bu cihaza güven"
 
 #: src/modules/bluez5/e_mod_popup.c:641 src/modules/bluez5/e_mod_popup.c:702
 #: src/modules/bluez5/e_mod_popup.c:724
 msgid "Pair with this device"
-msgstr ""
+msgstr "Bu cihazla eşle"
 
 #: src/modules/bluez5/e_mod_popup.c:651
 msgid "Unpair with this device"
-msgstr ""
+msgstr "Bu cihazla eşleştirmeyi kaldır"
 
 #: src/modules/bluez5/e_mod_popup.c:659
 #: src/modules/conf_theme/e_int_config_theme_import.c:122
@@ -465,22 +452,20 @@ msgid "Cancel"
 msgstr "İptal"
 
 #: src/modules/bluez5/e_mod_popup.c:710 src/modules/bluez5/e_mod_popup.c:731
-#, fuzzy
 msgid "Reject pairing"
-msgstr "İşleyici"
+msgstr "Eşleştirmeyi reddet"
 
 #: src/modules/bluez5/e_mod_popup.c:740
 msgid "Options for device like connect, pair etc."
-msgstr ""
+msgstr "Bağlan, eşleştir vs. gibi cihaz seçenekleri."
 
 #: src/modules/bluez5/e_mod_main.c:215
-#, fuzzy
 msgid "Bluez5"
-msgstr "Bluetooth"
+msgstr "Bluez5"
 
 #: src/modules/bluez5/e_mod_main.c:297
 msgid "Bluetooth rfkill run Error"
-msgstr ""
+msgstr "Bluetooth RFID Çalıştırma Hatası"
 
 #: src/modules/bluez5/e_mod_main.c:298
 msgid ""
@@ -489,25 +474,30 @@ msgid ""
 "user is<br>permitted to use the rfkill unblock action. Check the<br>users "
 "and groups there to be sure."
 msgstr ""
+"Bluetooth bağdaştırıcısının engellemesini kaldırmayı denemek başarısız oldu."
+"<br>rfkill'in kurulu mu? Komutun doğru olduğundan ve kullanıcınızın rfkill "
+"engelleme eylemini kullanmasına izin verildiğinden emin olmak için "
+"sysactions.conf<br>adresini kontrol edin. Emin olmak için<br>kullanıcıları "
+"ve grupları kontrol edin."
 
 #: src/modules/bluez5/bz_agent.c:115 src/modules/bluez5/bz_agent.c:131
 #: src/modules/bluez5/bz_agent.c:285 src/modules/wireless/wireless.c:1045
 msgid "Bluetooth"
-msgstr ""
+msgstr "Bluetooth"
 
 #: src/modules/bluez5/bz_agent.c:116
 #, c-format
 msgid "Could not register default agent:<br>%s %s"
-msgstr ""
+msgstr "Varsayılan ajan kaydedilemedi:<br>%s %s"
 
 #: src/modules/bluez5/bz_agent.c:132
 #, c-format
 msgid "Could not register agent:<br>%s %s\n"
-msgstr ""
+msgstr "Ajan kaydedilemedi:<br>%s %s\n"
 
 #: src/modules/bluez5/bz_agent.c:286
 msgid "Could not call RegisterAgent\n"
-msgstr ""
+msgstr "RegisterAgent çağırılamadı\n"
 
 #: src/modules/gadman/e_mod_config.c:21 src/modules/gadman/e_mod_config.c:229
 #: src/modules/time/config.c:534
@@ -698,9 +688,8 @@ msgid "Show/hide gadgets"
 msgstr "Araçları göster/gizle"
 
 #: src/modules/gadman/e_mod_main.c:180 src/bin/e_int_menus.c:365
-#, fuzzy
 msgid "Change Wallpaper"
-msgstr "Exchange duvar kağıtları"
+msgstr "Duvar kağıdını değiştir"
 
 #: src/modules/gadman/e_mod_main.c:198
 msgid "Change Gadgets"
@@ -777,12 +766,12 @@ msgid "Enter a name for this new source:"
 msgstr "Yeni kaynak için bir isim girin:"
 
 #: src/modules/ibar/e_mod_config.c:204 src/modules/luncher/config.c:184
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "You requested to delete \"%s\".<ps/><ps/>Are you sure you want to delete "
 "this bar source?"
 msgstr ""
-"\"%s\"'i silmek istediniz.<br><br>Bu çubuk kaynağını silmek istediğinizden "
+"\"%s\"'i silmek istediniz.<ps/><ps/>Bu çubuk kaynağını silmek istediğinizden "
 "emin misiniz?"
 
 #: src/modules/ibar/e_mod_config.c:208 src/modules/luncher/config.c:187
@@ -912,7 +901,7 @@ msgstr "Seviye"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:170
 msgid "e.g. Saving to disk"
-msgstr "Örneğin diske yazma"
+msgstr "örneğin diske yazma"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:200
 #: src/modules/conf_theme/e_int_config_fonts.c:742
@@ -971,7 +960,7 @@ msgstr "Çok Yüksek"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:375
 msgid "Connected standby instead of suspend"
-msgstr ""
+msgstr "Askıya almak yerine bağlı bekleme"
 
 #: src/modules/conf_performance/e_mod_main.c:18
 msgid "Performance"
@@ -1328,31 +1317,29 @@ msgstr "Bulunamayan Uygulama"
 
 #: src/modules/conf_theme/e_int_config_theme.c:530
 #: src/modules/conf_theme/e_int_config_wallpaper.c:332
-#, fuzzy
 msgid ""
 "This module wants to execute an external application<ps/> that does not "
 "exist.<ps/>Please install <b>extra</b> application.<ps/>https://git."
 "enlightenment.org/apps/extra.git/"
 msgstr ""
-"Bu modül EConnMan harici uygulamasının çalışmasını gerektiriyor fakat "
-"uygulama yok. <br>Lütfen <b>EConnMan</b> uygulamasını kurun."
+"Bu modül, var olmayan bir harici uygulama <ps /> yürütmek istiyor. <Ps /> "
+"Lütfen <b> ekstra </b> uygulama yükleyin. <Ps /> https://git.enlightenment."
+"org/apps/extra .git /"
 
 #: src/modules/conf_theme/e_int_config_theme.c:611
 msgid "Theme File Error"
 msgstr "Tema Dosya Hatası"
 
 #: src/modules/conf_theme/e_int_config_theme.c:612
-#, fuzzy, c-format
+#, c-format
 msgid "The listed files are probably not E themes:<ps/>%s"
-msgstr "%s E17 teması olmayabilir!"
+msgstr "Listelenen dosyalar muhtemelen E teması değildir: <ps />%s"
 
 #: src/modules/conf_theme/e_int_config_theme.c:769
-#, fuzzy
 msgid " Import File..."
 msgstr " İçe Aktar..."
 
 #: src/modules/conf_theme/e_int_config_theme.c:775
-#, fuzzy
 msgid " Import Online..."
 msgstr " Çevrim içi..."
 
@@ -1514,18 +1501,17 @@ msgid "Theme Import Error"
 msgstr "Tema İçe Aktarma Hatası"
 
 #: src/modules/conf_theme/e_int_config_theme_import.c:263
-#, fuzzy
 msgid ""
 "Enlightenment was unable to import the theme.<ps/><ps/>Are you sure this is "
 "really a valid theme?"
 msgstr ""
-"Enlightenment temayı içe aktaramadı.<br><br>Bunun geçerli bir tema olduğuna "
-"emin misiniz?"
+"Enlightenment temayı içe aktaramadı.<ps/><ps/>Bunun geçerli bir tema "
+"olduğuna emin misiniz?"
 
 #: src/modules/conf_theme/e_int_config_theme_import.c:272
-#, fuzzy
 msgid "Enlightenment was unable to import the theme<ps/>due to a copy error."
-msgstr "Enlightenment bir kopyalama hatası nedeniyle temayı<br>içe aktaramadı."
+msgstr ""
+"Enlightenment bir kopyalama hatası nedeniyle temayı<ps/>içe aktaramadı."
 
 #: src/modules/conf_theme/e_int_config_transitions.c:46
 msgid "Transition Settings"
@@ -1569,15 +1555,13 @@ msgstr "Tema Duvarkağıdını Kullan"
 
 #: src/modules/conf_theme/e_int_config_wallpaper.c:510
 #: src/modules/conf_theme/e_int_config_wallpaper.c:709
-#, fuzzy
 msgid "Import File..."
 msgstr "İçe aktar..."
 
 #: src/modules/conf_theme/e_int_config_wallpaper.c:517
 #: src/modules/conf_theme/e_int_config_wallpaper.c:717
-#, fuzzy
 msgid "Import Online..."
-msgstr " Çevrim içi..."
+msgstr "Çevrim içi..."
 
 #: src/modules/conf_theme/e_int_config_wallpaper.c:740
 msgid "Where to place the Wallpaper"
@@ -1630,19 +1614,17 @@ msgstr "Ekran Ayarı"
 #: src/modules/conf_randr/e_int_config_randr2.c:985
 #: src/modules/conf_randr/e_int_config_randr2.c:1115
 msgid "Clone"
-msgstr ""
+msgstr "Klon"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:453
 #: src/modules/conf_randr/e_int_config_randr2.c:690
 #: src/modules/conf_randr/e_int_config_randr2.c:986
-#, fuzzy
 msgid "Left of"
 msgstr "Sol"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:455
 #: src/modules/conf_randr/e_int_config_randr2.c:701
 #: src/modules/conf_randr/e_int_config_randr2.c:987
-#, fuzzy
 msgid "Right of"
 msgstr "Sağ"
 
@@ -1661,9 +1643,8 @@ msgid "Below"
 msgstr "Altında"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:461
-#, fuzzy
 msgid "Unconfigured"
-msgstr "Yapılandır"
+msgstr "Yapılandırılmamış"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:754
 #: src/modules/conf_randr/e_int_config_randr2.c:1118
@@ -1672,29 +1653,27 @@ msgstr "Yoksay"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:755
 #: src/modules/conf_randr/e_int_config_randr2.c:1116
-#, fuzzy
 msgid "Extend"
 msgstr "Eklentiler"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:757
 #: src/modules/conf_randr/e_int_config_randr2.c:1117
 msgid "Ask"
-msgstr ""
+msgstr "Sor"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:760
 #, c-format
 msgid "Hotplug Policy (%s)"
-msgstr ""
+msgstr "Çalışırken Çalıştırma Politikası (%s)"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:837
 #: src/modules/mixer/emixer.c:1354
-#, fuzzy
 msgid "Outputs"
-msgstr "Çıktı"
+msgstr "Çıktılar"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:922
 msgid "Laptop lid"
-msgstr ""
+msgstr "Dizüstü kapağı"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:962
 #: src/modules/wireless/wireless.c:1089 src/modules/time/config.c:414
@@ -1704,7 +1683,7 @@ msgstr "Açık"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:971
 msgid "Priority"
-msgstr ""
+msgstr "Öncelik"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:983
 msgid "Relative"
@@ -1743,7 +1722,7 @@ msgstr "Başlangıçta yenile"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:1096
 msgid "Monitor hotplug"
-msgstr ""
+msgstr "Hotplug ekran"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:1105
 #, fuzzy
@@ -1761,7 +1740,7 @@ msgstr "Ayarla"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:64
 msgid "Screen Blank Settings"
-msgstr ""
+msgstr "Ekran Boş Ayarları"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:198
 msgid "Enable screen blanking"
@@ -1769,7 +1748,7 @@ msgstr "Ekranı kapatma etkin"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:201
 msgid "Use Power Saving (DPMS)"
-msgstr ""
+msgstr "Güç Tasarrufu Kullan (DPMS)"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:205
 #: src/modules/syscon/e_int_config_syscon.c:174
@@ -1777,13 +1756,13 @@ msgid "Timeout"
 msgstr "Zaman Aşımı"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:208
-#, fuzzy, c-format
+#, c-format
 msgid "%1.1f minutes"
-msgstr "%1.0f dakika"
+msgstr "%1.1f dakika"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:213
 msgid "Special timeout when locked (0 is off)"
-msgstr ""
+msgstr "Kilitliyken özel zaman aşımı (0 kapalı)"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:216
 #: src/modules/conf_display/e_int_config_screensaver.c:247
@@ -1813,9 +1792,9 @@ msgid "Suspend delay"
 msgstr "Askıya alma gecikmesi"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:239
-#, fuzzy, c-format
+#, c-format
 msgid "%1.0f hours"
-msgstr "%1.0f Karakter"
+msgstr "%1.0f saat"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:243
 #: src/modules/conf_display/e_int_config_desklock.c:373
@@ -1825,7 +1804,7 @@ msgstr "%1.0f dakika"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:253
 msgid "Disable blanking for Fullscreen Windows"
-msgstr ""
+msgstr "Tam Ekran Pencere için boşluğu devre dışı bırak"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:257
 #: src/modules/conf_display/e_mod_main.c:32
@@ -1907,9 +1886,8 @@ msgid "Wrap desktops around when flipping"
 msgstr "Masaüstlerini değiştirirken bük"
 
 #: src/modules/conf_display/e_int_config_desks.c:204
-#, fuzzy
 msgid "Animation"
-msgstr "Boşta"
+msgstr "Animasyon"
 
 #: src/modules/conf_display/e_int_config_desks.c:225
 msgid "Flip"
@@ -2084,12 +2062,11 @@ msgstr "%i MHz"
 #: src/modules/sysinfo/cpuclock/cpuclock.c:247
 #: src/modules/sysinfo/cpuclock/cpuclock.c:421
 msgid "GHz"
-msgstr ""
+msgstr "GHz"
 
 #: src/modules/sysinfo/cpuclock/cpuclock.c:263
-#, fuzzy
 msgid "Frequency"
-msgstr "CPU Frekansı"
+msgstr "Frekans"
 
 #: src/modules/sysinfo/cpuclock/cpuclock_config.c:263
 #, fuzzy
@@ -2249,7 +2226,7 @@ msgstr "%i MHz"
 #: src/modules/cpufreq/e_mod_main.c:324
 #, c-format
 msgid "%'.1f GHz"
-msgstr ""
+msgstr "%'.1f GHz"
 
 #: src/modules/sysinfo/thermal/thermal_config.c:155
 #, fuzzy
@@ -2272,9 +2249,8 @@ msgid "Fahrenheit"
 msgstr "Fahrenheit"
 
 #: src/modules/sysinfo/thermal/thermal_config.c:298
-#, fuzzy
 msgid "Temperature Limits"
-msgstr "Sıcaklık"
+msgstr "Sıcaklık Limitleri"
 
 #: src/modules/sysinfo/thermal/thermal_config.c:310
 #, fuzzy
@@ -2294,7 +2270,7 @@ msgstr "Sıcaklık"
 #: src/modules/sysinfo/memusage/memusage.c:146
 #, c-format
 msgid "Memory Usage (Available %ld MB)"
-msgstr ""
+msgstr "Bellek Kullanımı (Kullanılabilir %ld MB)"
 
 #: src/modules/sysinfo/memusage/memusage.c:158
 #, fuzzy
@@ -2303,7 +2279,7 @@ msgstr "Dolu:"
 
 #: src/modules/sysinfo/memusage/memusage.c:172
 msgid "Buffers"
-msgstr ""
+msgstr "Tamponlar"
 
 #: src/modules/sysinfo/memusage/memusage.c:186
 #, fuzzy
@@ -2318,7 +2294,7 @@ msgstr "Paylaş"
 #: src/modules/sysinfo/memusage/memusage.c:212
 #, c-format
 msgid "Swap Usage (Available %ld MB)"
-msgstr ""
+msgstr "Takas Kullanımı (Kullanılabilir %ld MB)"
 
 #: src/modules/sysinfo/memusage/memusage_config.c:69
 #, fuzzy
@@ -2332,7 +2308,7 @@ msgstr "Bildirim Yapılandırması"
 
 #: src/modules/sysinfo/cpumonitor/cpumonitor.c:91
 msgid "Total CPU Usage"
-msgstr ""
+msgstr "Toplam CPU Kullanımı"
 
 #: src/modules/sysinfo/batman/batman.c:102
 #, fuzzy, c-format
@@ -2347,17 +2323,17 @@ msgstr "Pil Göstergesi"
 #: src/modules/sysinfo/batman/batman.c:106
 #, c-format
 msgid "Battery Fully Charged"
-msgstr ""
+msgstr "Pil Tamamen Şarj Edildi"
 
 #: src/modules/sysinfo/batman/batman.c:108
 #, c-format
 msgid "Time Remaining: %i:%02i"
-msgstr ""
+msgstr "Kalan Süre: %i:%02i"
 
 #: src/modules/sysinfo/batman/batman.c:488
-#, fuzzy, c-format
+#, c-format
 msgid "AC power is recommended. %i:%02i Remaining"
-msgstr "AC güce geçmeniz önerilir."
+msgstr "AC gücü önerilir. %i:%02i Kalan"
 
 #: src/modules/sysinfo/batman/batman.c:494
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:354
@@ -2434,16 +2410,15 @@ msgstr "Güç Yönetimi Zamanlayıcısı"
 
 #: src/modules/sysinfo/netstatus/netstatus.c:112
 msgid "Network Throughput"
-msgstr ""
+msgstr "Ağ Çıkışı"
 
 #: src/modules/sysinfo/netstatus/netstatus.c:122
 msgid "Receiving"
-msgstr ""
+msgstr "Alınıyor"
 
 #: src/modules/sysinfo/netstatus/netstatus.c:142
-#, fuzzy
 msgid "Sending"
-msgstr "Askıya alınıyor"
+msgstr "Gönderiliyor"
 
 #: src/modules/sysinfo/netstatus/netstatus_config.c:82
 #: src/modules/sysinfo/netstatus/netstatus_config.c:112
@@ -2451,9 +2426,8 @@ msgstr "Askıya alınıyor"
 #: src/modules/sysinfo/netstatus/netstatus_config.c:324
 #: src/modules/sysinfo/netstatus/netstatus_config.c:374
 #: src/modules/sysinfo/netstatus/netstatus_config.c:377
-#, fuzzy
 msgid "Bytes"
-msgstr "Bytecode"
+msgstr "Byte"
 
 #: src/modules/sysinfo/netstatus/netstatus_config.c:87
 #: src/modules/sysinfo/netstatus/netstatus_config.c:117
@@ -2461,9 +2435,8 @@ msgstr "Bytecode"
 #: src/modules/sysinfo/netstatus/netstatus_config.c:330
 #: src/modules/sysinfo/netstatus/netstatus_config.c:380
 #: src/modules/sysinfo/netstatus/netstatus_config.c:383
-#, fuzzy
 msgid "KB"
-msgstr "B"
+msgstr "KB"
 
 #: src/modules/sysinfo/netstatus/netstatus_config.c:92
 #: src/modules/sysinfo/netstatus/netstatus_config.c:122
@@ -2471,9 +2444,8 @@ msgstr "B"
 #: src/modules/sysinfo/netstatus/netstatus_config.c:336
 #: src/modules/sysinfo/netstatus/netstatus_config.c:386
 #: src/modules/sysinfo/netstatus/netstatus_config.c:389
-#, fuzzy
 msgid "MB"
-msgstr "B"
+msgstr "MB"
 
 #: src/modules/sysinfo/netstatus/netstatus_config.c:97
 #: src/modules/sysinfo/netstatus/netstatus_config.c:127
@@ -2481,9 +2453,8 @@ msgstr "B"
 #: src/modules/sysinfo/netstatus/netstatus_config.c:342
 #: src/modules/sysinfo/netstatus/netstatus_config.c:392
 #: src/modules/sysinfo/netstatus/netstatus_config.c:395
-#, fuzzy
 msgid "GB"
-msgstr "G"
+msgstr "GG"
 
 #: src/modules/sysinfo/netstatus/netstatus_config.c:187
 #, fuzzy
@@ -2497,16 +2468,15 @@ msgstr "En büyük yükseklik"
 
 #: src/modules/sysinfo/netstatus/netstatus_config.c:293
 msgid "Use Automatic Maximums"
-msgstr ""
+msgstr "Otomatik Maksimumları Kullan"
 
 #: src/modules/sysinfo/netstatus/netstatus_config.c:303
-#, fuzzy
 msgid "Receive:"
-msgstr "Son Dosyalar"
+msgstr "Al:"
 
 #: src/modules/sysinfo/netstatus/netstatus_config.c:356
 msgid "Send:"
-msgstr ""
+msgstr "Gönder:"
 
 #: src/modules/winlist/e_mod_main.c:28 src/modules/tiling/e_mod_tiling.c:1903
 #: src/modules/conf_window_manipulation/e_mod_main.c:17
@@ -2725,9 +2695,8 @@ msgstr "Klavye Ayarları"
 #: src/modules/xkbswitch/e_mod_config.c:525
 #: src/modules/xkbswitch/e_mod_config.c:1490
 #: src/modules/xkbswitch/e_mod_config.c:1616
-#, fuzzy
 msgid "No Name"
-msgstr "<Ad Yok>"
+msgstr "Ad Yok"
 
 #: src/modules/xkbswitch/e_mod_config.c:615
 msgid "Do not apply any keyboard settings ever"
@@ -2739,9 +2708,8 @@ msgstr "Araçlarda sadece etiket"
 
 #: src/modules/xkbswitch/e_mod_config.c:641
 #: src/modules/xkbswitch/e_mod_config.c:842
-#, fuzzy
 msgid "Default keyboard layout"
-msgstr "Sonraki klavye yerleşimi"
+msgstr "Varsayılan klavye düzeni"
 
 #: src/modules/xkbswitch/e_mod_config.c:688
 #: src/bin/e_int_config_comp_match.c:747
@@ -2783,9 +2751,8 @@ msgid "Led"
 msgstr "Kapak"
 
 #: src/modules/xkbswitch/e_mod_config.c:784
-#, fuzzy
 msgid "Control"
-msgstr "Kontroller"
+msgstr "Kontrol"
 
 #: src/modules/xkbswitch/e_mod_config.c:785
 #: src/modules/xkbswitch/e_mod_config.c:1092
@@ -2799,14 +2766,12 @@ msgstr ""
 
 #: src/modules/xkbswitch/e_mod_config.c:787
 #: src/modules/xkbswitch/e_mod_config.c:1115
-#, fuzzy
 msgid "Capslock"
-msgstr "Saat"
+msgstr "Capslock"
 
 #: src/modules/xkbswitch/e_mod_config.c:788
-#, fuzzy
 msgid "Alt win"
-msgstr "Tüm pencereler"
+msgstr "Alt win"
 
 #: src/modules/xkbswitch/e_mod_config.c:789
 #: src/modules/xkbswitch/e_mod_config.c:1137
@@ -2828,12 +2793,12 @@ msgstr "Kenar Çubuğu"
 #: src/modules/xkbswitch/e_mod_config.c:792
 #: src/modules/xkbswitch/e_mod_config.c:1170
 msgid "Japan"
-msgstr ""
+msgstr "Japon"
 
 #: src/modules/xkbswitch/e_mod_config.c:793
 #: src/modules/xkbswitch/e_mod_config.c:1181
 msgid "Korean"
-msgstr ""
+msgstr "Kore"
 
 #: src/modules/xkbswitch/e_mod_config.c:794
 #: src/modules/xkbswitch/e_mod_config.c:1192
@@ -2861,9 +2826,8 @@ msgstr "Çeşitli"
 
 #: src/modules/xkbswitch/e_mod_config.c:1058
 #: src/modules/xkbswitch/e_mod_config.c:1081
-#, fuzzy
 msgid "Switch Layout"
-msgstr "Yerleşim Planı"
+msgstr "Düzeni Değiştir"
 
 #: src/modules/xkbswitch/e_mod_config.c:1126
 msgid "Alternate win key"
@@ -2887,9 +2851,8 @@ msgstr "Türev"
 
 #: src/modules/xkbswitch/e_mod_config.c:1517
 #: src/modules/xkbswitch/e_mod_config.c:1602
-#, fuzzy
 msgid "No Description"
-msgstr "Seçim yok"
+msgstr "Açıklama yok"
 
 #: src/modules/xkbswitch/e_mod_main.c:76
 #: src/modules/conf_bindings/e_mod_main.c:17
@@ -2921,11 +2884,11 @@ msgstr "Hata"
 
 #: src/modules/xwayland/e_mod_main.c:272
 msgid "Could not open X11 socket connection."
-msgstr ""
+msgstr "X11 soket bağlantısı açılamadı."
 
 #: src/modules/xwayland/e_mod_main.c:347
 msgid "Cannot launch XWayland from X11 display."
-msgstr ""
+msgstr "X11 ekranından XWayland başlatılamıyor."
 
 #: src/modules/clock/e_mod_config.c:36
 msgid "Clock Settings"
@@ -2974,7 +2937,7 @@ msgstr "Sadece Tarih"
 
 #: src/modules/clock/e_mod_config.c:111 src/modules/time/config.c:10
 msgid "ISO 8601"
-msgstr ""
+msgstr "ISO 8601"
 
 #: src/modules/clock/e_mod_config.c:116
 msgid "Week"
@@ -3085,9 +3048,9 @@ msgid "Name:"
 msgstr "Ad:"
 
 #: src/modules/conf_dialogs/e_int_config_profiles.c:337
-#, fuzzy, c-format
+#, c-format
 msgid "You want to delete the \"%s\" profile.<ps/><ps/>Are you sure?"
-msgstr "\"%s\" profilini silmek istediniz.<br><br>Emin misiniz?"
+msgstr "\"%s\" profilini silmek istediniz.<ps/><ps/>Emin misiniz?"
 
 #: src/modules/conf_dialogs/e_int_config_profiles.c:339
 msgid "Are you sure you want to delete this profile?"
@@ -3127,25 +3090,24 @@ msgid "Auto"
 msgstr "Otomatik"
 
 #: src/modules/wireless/wireless.c:34
-#, fuzzy
 msgid "Direct"
-msgstr "Dizin"
+msgstr "Direkt"
 
 #: src/modules/wireless/wireless.c:273
 msgid "Proxy Servers"
-msgstr ""
+msgstr "Proxy Sunucuları"
 
 #: src/modules/wireless/wireless.c:276
 msgid "Proxy Excludes"
-msgstr ""
+msgstr "Proxy Hariç Tutulur"
 
 #: src/modules/wireless/wireless.c:283
 msgid "Proxy Address"
-msgstr ""
+msgstr "Proxy adresi"
 
 #: src/modules/wireless/wireless.c:551
 msgid "Proxy Type"
-msgstr ""
+msgstr "Proxy Türü"
 
 #: src/modules/wireless/wireless.c:577
 #, fuzzy
@@ -3164,12 +3126,11 @@ msgstr "Arama Dizinleri"
 
 #: src/modules/wireless/wireless.c:641
 msgid "Hide Service Types"
-msgstr ""
+msgstr "Hizmet Türlerini Gizle"
 
 #: src/modules/wireless/wireless.c:653
-#, fuzzy
 msgid "Hide Wifi"
-msgstr "Listeyi sakla"
+msgstr "Gizli Wifi"
 
 #: src/modules/wireless/wireless.c:665
 #, fuzzy
@@ -3178,15 +3139,15 @@ msgstr "Gizlenme zaman aşımı"
 
 #: src/modules/wireless/wireless.c:677
 msgid "Hide Cellular"
-msgstr ""
+msgstr "Hücreyi Gizle"
 
 #: src/modules/wireless/wireless.c:709
 msgid "Method"
-msgstr ""
+msgstr "Metod"
 
 #: src/modules/wireless/wireless.c:738
 msgid "Address"
-msgstr ""
+msgstr "Adres"
 
 #: src/modules/wireless/wireless.c:745
 #, fuzzy
@@ -3203,11 +3164,11 @@ msgstr ""
 
 #: src/modules/wireless/wireless.c:883
 msgid "Edit Connection Details: <b>Ethernet</b>"
-msgstr ""
+msgstr "Bağlantı Ayrıntılarını Düzenle: <b>Ethernet</b>"
 
 #: src/modules/wireless/wireless.c:885
 msgid "Edit Connection Details"
-msgstr ""
+msgstr "Bağlantı Ayrıntılarını Düzenle"
 
 #: src/modules/wireless/wireless.c:904 src/bin/e_desktop_editor.c:759
 #: src/bin/e_config_dialog.c:251
@@ -3216,16 +3177,15 @@ msgstr "Temel"
 
 #: src/modules/wireless/wireless.c:906
 msgid "Proxy"
-msgstr ""
+msgstr "Ağ Vekili"
 
 #: src/modules/wireless/wireless.c:907
 msgid "DNS/Time"
 msgstr ""
 
 #: src/modules/wireless/wireless.c:908
-#, fuzzy
 msgid "Services"
-msgstr "Aygıt"
+msgstr "Servisler"
 
 #: src/modules/wireless/wireless.c:922
 #, fuzzy
@@ -3233,17 +3193,16 @@ msgid "Deal with it"
 msgstr "DPI değerine göre ölçekle"
 
 #: src/modules/wireless/wireless.c:930
-#, fuzzy
 msgid "Forget Network"
-msgstr "Unut"
+msgstr "Ağı Unut"
 
 #: src/modules/wireless/wireless.c:986
 msgid "<SSID hidden>"
-msgstr ""
+msgstr "<SSID gizli>"
 
 #: src/modules/wireless/wireless.c:1043
 msgid "Ethernet"
-msgstr ""
+msgstr "Kablolu"
 
 #: src/modules/wireless/wireless.c:1044
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:377
@@ -3252,19 +3211,19 @@ msgstr "Wifi"
 
 #: src/modules/wireless/wireless.c:1046
 msgid "Cellular"
-msgstr ""
+msgstr "Hücresel"
 
 #: src/modules/wireless/wireless.c:1166
 msgid "Error: Connman not detected!"
-msgstr ""
+msgstr "Hata: Connman algılanmadı!"
 
 #: src/modules/wireless/wireless.c:1176
 msgid "Method:"
-msgstr ""
+msgstr "Metod:"
 
 #: src/modules/wireless/wireless.c:1178
 msgid "Address:"
-msgstr ""
+msgstr "Adres:"
 
 #: src/modules/wireless/wireless.c:1180
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:637
@@ -3272,29 +3231,27 @@ msgid "Signal:"
 msgstr "Sinyal:"
 
 #: src/modules/wireless/wireless.c:1566
-#, fuzzy
 msgid "Authentication Required"
-msgstr "Kimlik doğrulama sistemi hatası"
+msgstr "Kimlik Doğrulaması Gerekiyor"
 
 #: src/modules/wireless/wireless.c:1584
-#, fuzzy, c-format
+#, c-format
 msgid "Show %s"
-msgstr "Eklenti %s göster"
+msgstr "%s göster"
 
 #: src/modules/wireless/wireless.c:1647
 #, c-format
 msgid "Ethernet connection wants to open a url:<ps/>%s"
-msgstr ""
+msgstr "Ethernet bağlantısı bir URL açmak istiyor: <ps/>%s"
 
 #: src/modules/wireless/wireless.c:1649
 #, c-format
 msgid "Network '%s' wants to open a url:<ps/>%s"
-msgstr ""
+msgstr "'%s' ağı bir URL açmak istiyor: <ps/>%s"
 
 #: src/modules/wireless/connman.c:1024
-#, fuzzy
 msgid "Connection Error"
-msgstr "Bağlantı Yöneticisi"
+msgstr "Bağlantı Hatası"
 
 #: src/modules/systray/e_mod_main.c:87
 msgid "Systray Settings"
@@ -3379,7 +3336,7 @@ msgstr "Yüzen bölme modunu etkinleştir"
 
 #: src/modules/tiling/e_mod_config.c:180
 msgid "Enable/disable tiling per desktop."
-msgstr "Her masaüstü için döşemeyi aç/kapat"
+msgstr "Her masaüstü için döşemeyi aç/kapat."
 
 #: src/modules/tiling/e_mod_config.c:213
 msgid "Padding between windows"
@@ -3394,9 +3351,9 @@ msgid "Tiling Configuration"
 msgstr "Döşeme Yapılandırması"
 
 #: src/modules/tiling/e_mod_tiling.c:873
-#, fuzzy, c-format
+#, c-format
 msgid "Window %s cannot be tiled\n"
-msgstr "Pencere Özellikleri"
+msgstr "%s penceresi döşenemiyor\n"
 
 #: src/modules/tiling/e_mod_tiling.c:877 src/modules/tiling/e_mod_tiling.c:1872
 #: src/modules/tiling/e_mod_tiling.c:1905
@@ -3406,9 +3363,8 @@ msgid "Tiling"
 msgstr "Döşeme"
 
 #: src/modules/tiling/e_mod_tiling.c:879
-#, fuzzy
 msgid "Window cannot be tiled"
-msgstr "Pencere Özellikleri"
+msgstr "Pencere döşenemez"
 
 #: src/modules/tiling/e_mod_tiling.c:1588
 msgid "Floating"
@@ -3435,9 +3391,8 @@ msgid "Move the focused window right"
 msgstr "Odaklanan pencereyi sağa taşı"
 
 #: src/modules/tiling/e_mod_tiling.c:1891
-#, fuzzy
 msgid "Toggle split mode for new windows."
-msgstr "Bölme modunu değiştir"
+msgstr "Yeni pencereler için bölme modunu aç/kapat."
 
 #: src/modules/tiling/e_mod_tiling.c:1893
 msgid "Swap window"
@@ -3618,12 +3573,11 @@ msgid "Shading"
 msgstr "Gölgeleme"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:259
-#, fuzzy, c-format
+#, c-format
 msgid "%1.2f seconds"
-msgstr "%.2f saniye"
+msgstr "%1.2f saniye"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:283
-#, fuzzy
 msgid "Maximizing"
 msgstr "Azamileştirme"
 
@@ -3672,7 +3626,7 @@ msgstr "İstemcileri yokla"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_process.c:107
 msgid "Ping interval:"
-msgstr "Yoklama aralığı"
+msgstr "Yoklama aralığı:"
 
 #: src/modules/conf_window_manipulation/e_mod_main.c:19
 #: src/modules/wizard/page_060.c:26
@@ -3901,7 +3855,7 @@ msgstr "Diğer Ayarlar"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:358
 msgid "Always pass click events to programs"
-msgstr "Programdaki tıklama olaylarını her zaman pas geç."
+msgstr "Programdaki tıklama olaylarını her zaman pas geç"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:361
 msgid "Click raises the window"
@@ -3917,7 +3871,7 @@ msgstr "Masaüstü değiştiğinde bir önceki pencereye tekrar odaklan"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:370
 msgid "Allow focusing of sticky windows when reverting focus"
-msgstr ""
+msgstr "Odağı geri döndürürken yapışkan pencerelerin odaklanmasına izin ver"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:373
 msgid "Focus last focused window on lost focus"
@@ -4075,9 +4029,8 @@ msgid "Signal Bindings"
 msgstr "Sinyal bağlantıları"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:71
-#, fuzzy
 msgid "ACPI Bindings Settings"
-msgstr "Kısayol Tuş Ayarları"
+msgstr "ACPI Bağlama Ayarları"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:209
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:278
@@ -4255,18 +4208,14 @@ msgid "ACPI Binding"
 msgstr "ACPI Bağlantıları"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:524
-#, fuzzy
 msgid ""
 "Please trigger the ACPI event you wish to bind to, <ps/><ps/>or "
 "<hilight>Escape</hilight> to abort."
 msgstr ""
-"Please trigger the ACPI event you wish to bind to, <br><br>or "
-"<hilight>Escape</hilight> to abort.\r\n"
-"Lütfen bu ACPI olayına bağlamak için girin, veya <hilight>Esc</hilight> ile "
-"iptal edin."
+"Lütfen bağlamak istediğiniz ACPI etkinliğini, <ps/> <ps/> veya iptal etmek "
+"için <hilight> Escape </hilight> öğelerini tetikleyin."
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:5
-#, fuzzy
 msgid ""
 "Please select an edge,<ps/>or click <hilight>Close</hilight> to abort.<ps/"
 "><ps/>You can either specify a delay of this<ps/> action using the slider, "
@@ -4274,7 +4223,7 @@ msgid ""
 msgstr ""
 "Lütfen bir köşe seçin,<br>veya <hilight>Kapat</hilight>a tıklayarak iptal "
 "edin.<br><br>Bu kaydırıcıyı kullanarak zaman aşımını <br> veya köşe "
-"tıklamalarına verilecek tepkileri belirleyebilirsiniz."
+"tıklamalarına verilecek tepkileri belirleyebilirsiniz:"
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:106
 msgid "Edge Bindings Settings"
@@ -4344,22 +4293,21 @@ msgid "Drag only"
 msgstr "Sadece sürükle"
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:938
-#, fuzzy
 msgid "No edge selected"
-msgstr "Birim seçilmedi."
+msgstr "Birim seçilmedi"
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:1231
 msgid "Edge Binding Error"
 msgstr "Kenar bağlantı hatası"
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:1232
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The edge binding that you chose is already used by<ps/><hilight>%s</hilight> "
 "action.<ps/>Please choose another edge to bind."
 msgstr ""
-"Seçtiğiniz kenar bağlantısı zaten <br><hilight>%s</hilight> eylemi için "
-"kullanılıyor.<br>Lütfen başka bir kenar seçin."
+"Seçtiğiniz kenar bağlantısı zaten <ps/><hilight>%s</hilight> eylemi için "
+"kullanılıyor.<ps/>Lütfen başka bir kenar seçin."
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:1371
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1125
@@ -4417,9 +4365,8 @@ msgid "(clickable)"
 msgstr "(tıklanabilir)"
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:1443
-#, fuzzy
 msgid "(drag only)"
-msgstr "Sadece sürükle"
+msgstr "(sadece sürükle)"
 
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:103
 msgid "Mouse Bindings Settings"
@@ -4662,9 +4609,9 @@ msgid "No selection"
 msgstr "Seçim yok"
 
 #: src/modules/shot/e_mod_share.c:71
-#, fuzzy, c-format
+#, c-format
 msgid "Uploaded %i%%"
-msgstr "Gönderildi %s / %s"
+msgstr "Güncellendi %i%%"
 
 #: src/modules/shot/e_mod_share.c:85
 msgid "Error - Upload Failed"
@@ -4710,9 +4657,8 @@ msgid "Confirm"
 msgstr "Onayla"
 
 #: src/modules/shot/e_mod_edit.c:1933
-#, fuzzy
 msgid "Tools"
-msgstr "Bilgi pencereleri"
+msgstr "Araçlar"
 
 #: src/modules/shot/e_mod_edit.c:1945
 #, fuzzy
@@ -4760,9 +4706,8 @@ msgid "Pointing finger"
 msgstr "İşaretçi"
 
 #: src/modules/shot/e_mod_edit.c:1964
-#, fuzzy
 msgid "Enlightenment logo"
-msgstr "Enlightenment"
+msgstr "Enlightenment logosu"
 
 #: src/modules/shot/e_mod_edit.c:1966
 msgid "Foot"
@@ -4773,9 +4718,8 @@ msgid "Silly walk"
 msgstr ""
 
 #: src/modules/shot/e_mod_edit.c:1968
-#, fuzzy
 msgid "Box outline"
-msgstr "Çıktı:"
+msgstr "Çıktı"
 
 #: src/modules/shot/e_mod_edit.c:1969
 msgid "Circle outline"
@@ -4787,9 +4731,8 @@ msgid "Plain text"
 msgstr "Düz"
 
 #: src/modules/shot/e_mod_edit.c:1972
-#, fuzzy
 msgid "Text box"
-msgstr "Metin"
+msgstr "Metin kutusu"
 
 #: src/modules/shot/e_mod_edit.c:1973
 msgid "Text thought bubble"
@@ -4816,9 +4759,8 @@ msgid "Pow explode"
 msgstr ""
 
 #: src/modules/shot/e_mod_edit.c:1987
-#, fuzzy
 msgid "Color"
-msgstr "Renkler"
+msgstr "Renk"
 
 #: src/modules/shot/e_mod_main.c:312 src/modules/shot/e_mod_main.c:366
 msgid "Take Shot"
@@ -4838,9 +4780,8 @@ msgid "Cannot initialize network"
 msgstr "Ağ başlatılamadı"
 
 #: src/modules/shot/e_mod_main.c:358
-#, fuzzy
 msgid "Take Screenshot with Delay"
-msgstr "Ekran Görüntüsü Yakala"
+msgstr "Gecikme ile Ekran Görüntüsü Yakala"
 
 #: src/modules/shot/e_mod_main.c:366 src/bin/e_actions.c:3263
 #: src/bin/e_actions.c:3274 src/bin/e_actions.c:3293 src/bin/e_actions.c:3298
@@ -4869,12 +4810,12 @@ msgstr "Paylaş"
 
 #: src/modules/shot/e_mod_preview.c:93 src/modules/shot/e_mod_delay.c:59
 msgid "Delay"
-msgstr ""
+msgstr "Gecikme"
 
 #: src/modules/shot/e_mod_delay.c:61
-#, fuzzy, c-format
+#, c-format
 msgid "%1.1f sec"
-msgstr "%1.1f s"
+msgstr "%1.1f sn"
 
 #: src/modules/shot/e_mod_save.c:201
 #, fuzzy
@@ -4886,6 +4827,8 @@ msgid ""
 "No filemanager action and/or module was found.<br>Cannot show the location "
 "of your screenshots."
 msgstr ""
+"Dosya yöneticisi eylemi ve / veya modülü bulunamadı. <br> Ekran "
+"görüntülerinizin yeri gösterilemiyor."
 
 #: src/modules/time/config.c:8
 msgid "Numeric"
@@ -4905,48 +4848,40 @@ msgid "Time string:"
 msgstr ""
 
 #: src/modules/time/config.c:397
-#, fuzzy
 msgid "24-hour Display:"
-msgstr "Görüntüle"
+msgstr "24 saatlik ekran:"
 
 #: src/modules/time/config.c:409
-#, fuzzy
 msgid "Show Seconds:"
-msgstr "Saniye"
+msgstr "Saniyeleri Göster:"
 
 #: src/modules/time/config.c:464
 msgid "Simple"
-msgstr ""
+msgstr "Basit"
 
 #: src/modules/time/config.c:473
-#, fuzzy
 msgid "Date Display:"
-msgstr "Görüntüle"
+msgstr "Tarihi Göster:"
 
 #: src/modules/time/config.c:500
-#, fuzzy
 msgid "Weekend Start:"
-msgstr "Haftasonu"
+msgstr "Haftasonu:"
 
 #: src/modules/time/config.c:511
-#, fuzzy
 msgid "Weekend End:"
-msgstr "Haftasonu"
+msgstr "Haftasonu:"
 
 #: src/modules/time/config.c:522
-#, fuzzy
 msgid "Timezone:"
-msgstr "Zaman Aşımı"
+msgstr "Zaman Aşımı:"
 
 #: src/modules/time/config.c:535
-#, fuzzy
 msgid "Foreground"
-msgstr "Arka plan"
+msgstr "Ön plan"
 
 #: src/modules/packagekit/e_mod_config.c:72
-#, fuzzy
 msgid "Refresh Packages"
-msgstr "Görünümü Yenile"
+msgstr "Paketleri Yenile"
 
 #: src/modules/packagekit/e_mod_config.c:76
 #: src/modules/packagekit/e_mod_config.c:86 src/bin/e_utils.c:980
@@ -4957,33 +4892,31 @@ msgstr "Asla"
 #: src/modules/packagekit/e_mod_config.c:78
 #: src/modules/packagekit/e_mod_config.c:87
 msgid "Hourly"
-msgstr ""
+msgstr "Saatlik"
 
 #: src/modules/packagekit/e_mod_config.c:80
 #: src/modules/packagekit/e_mod_config.c:88
 msgid "Daily"
-msgstr ""
+msgstr "Günlük"
 
 #: src/modules/packagekit/e_mod_config.c:82
 #: src/modules/packagekit/e_mod_config.c:89
-#, fuzzy
 msgid "Weekly"
-msgstr "Hafta"
+msgstr "Haftalık"
 
 #: src/modules/packagekit/e_mod_config.c:99
 msgid "Package list"
-msgstr ""
+msgstr "Paket listesi"
 
 #: src/modules/packagekit/e_mod_config.c:103
 #: src/modules/packagekit/e_mod_config.c:109
-#, fuzzy
 msgid "Compact (package name)"
-msgstr "Paket yöneticisini çalıştır"
+msgstr "Kompakt (paket adı)"
 
 #: src/modules/packagekit/e_mod_config.c:105
 #: src/modules/packagekit/e_mod_config.c:110
 msgid "Extended (name and description)"
-msgstr ""
+msgstr "Genişletilmiş (ad ve açıklama)"
 
 #: src/modules/packagekit/e_mod_config.c:120
 #, fuzzy
@@ -4991,9 +4924,8 @@ msgid "Package Manager"
 msgstr "Paket yöneticisini çalıştır"
 
 #: src/modules/packagekit/e_mod_main.c:150
-#, fuzzy
 msgid "Refresh package list"
-msgstr "Görünümü Yenile"
+msgstr "Paket listesini yenile"
 
 #: src/modules/packagekit/e_mod_main.c:157
 #: src/modules/packagekit/e_mod_packagekit.c:569
@@ -5006,11 +4938,11 @@ msgstr "Sistem Güncellemeleri"
 
 #: src/modules/packagekit/e_mod_packagekit.c:81
 msgid "Low priority update"
-msgstr ""
+msgstr "Düşük öncelikli güncelleme"
 
 #: src/modules/packagekit/e_mod_packagekit.c:83
 msgid "Enhancement update"
-msgstr ""
+msgstr "Geliştirme güncellemesi"
 
 #: src/modules/packagekit/e_mod_packagekit.c:85
 #, fuzzy
@@ -5056,9 +4988,8 @@ msgid "Your system is updated"
 msgstr "Sisteminiz güncel"
 
 #: src/modules/packagekit/e_mod_packagekit.c:283
-#, fuzzy
 msgid "Please wait"
-msgstr "Lütfen Bekleyiniz..."
+msgstr "Lütfen Bekleyiniz"
 
 #: src/modules/packagekit/e_mod_packagekit.c:288
 #, fuzzy
@@ -5074,8 +5005,8 @@ msgstr "Kullanılabilir güncellemeleri denetle"
 #, c-format
 msgid "Install the selected update"
 msgid_plural "Install %d selected updates"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Seçilen güncellemeyi yükle"
+msgstr[1] "%d güncellemeyi yükle"
 
 #: src/modules/appmenu/e_mod_main.c:89
 msgid "Application Menu"
@@ -5317,9 +5248,8 @@ msgid "Launch"
 msgstr "Başlat"
 
 #: src/modules/fileman/e_mod_main.c:68
-#, fuzzy
 msgid "Show Dir"
-msgstr "Pencereyi göster"
+msgstr "Dizini göster"
 
 #: src/modules/fileman/e_mod_main.c:71
 msgid "Navigate"
@@ -5511,9 +5441,8 @@ msgid "%2.2f s"
 msgstr "%2.2f s"
 
 #: src/modules/polkit/auth_ui.c:88
-#, fuzzy
 msgid "Please enter password"
-msgstr "Lütfen kilit açma parolanızı girin"
+msgstr "Lütfen parolanızı girin"
 
 #: src/modules/wizard/page_011.c:189 src/modules/wizard/page_020.c:115
 #: src/modules/wizard/page_010.c:216
@@ -5562,7 +5491,7 @@ msgstr "Son Değiştirme:"
 
 #: src/modules/wizard/page_065.c:105
 msgid "Keys:"
-msgstr ""
+msgstr "Tuşlar:"
 
 #: src/modules/wizard/page_065.c:111
 #, c-format
@@ -5743,7 +5672,7 @@ msgstr "Sistem Kontrolleri"
 
 #: src/modules/syscon/e_int_config_syscon.c:43
 msgid "System Controls Settings"
-msgstr ""
+msgstr "Sistem Kontrol Ayarları"
 
 #: src/modules/syscon/e_int_config_syscon.c:153
 #: src/modules/mixer/gadget/backend.c:1046 src/bin/e_int_menus.c:154
@@ -5781,9 +5710,8 @@ msgid "Default Action"
 msgstr "Öntanımlı Eylem"
 
 #: src/modules/vkbd/e_mod_main.c:70 src/modules/vkbd/e_mod_main.c:109
-#, fuzzy
 msgid "Show"
-msgstr "Menüyü Göster"
+msgstr "Göster"
 
 #: src/modules/vkbd/e_mod_main.c:84 src/modules/vkbd/e_mod_main.c:119
 msgid "Toggle"
@@ -5810,9 +5738,8 @@ msgid "Float"
 msgstr "Float"
 
 #: src/modules/vkbd/e_kbd_cfg.c:69
-#, fuzzy
 msgid "Virtual Keyboard Settings"
-msgstr "Klavye Ayarları"
+msgstr "Sanal Klavye Ayarları"
 
 #: src/modules/vkbd/e_kbd_cfg.c:91
 #, fuzzy
@@ -5834,7 +5761,7 @@ msgstr "Aciliyet"
 
 #: src/modules/notification/e_mod_config.c:100
 msgid "Levels of urgency to display:"
-msgstr "Görüntülemek için aciliyet seviyesi"
+msgstr "Görüntülemek için aciliyet seviyesi:"
 
 #: src/modules/notification/e_mod_config.c:106
 msgid "Critical"
@@ -5970,7 +5897,7 @@ msgid ""
 "correctly installed and running"
 msgstr ""
 "Sunucu olarak başka modül çalışmadığından ve DBus'un doğru kurulmuş ve "
-"çalışıyor olduğundan emin olun."
+"çalışıyor olduğundan emin olun"
 
 #: src/modules/luncher/config.c:172
 #, fuzzy
@@ -5983,13 +5910,12 @@ msgid "Luncher Configuration"
 msgstr "Yapılandırma"
 
 #: src/modules/luncher/config.c:343
-#, fuzzy
 msgid "Luncher Type:"
-msgstr "Başlatıcı Çubuğu"
+msgstr "Başlatıcı Türü:"
 
 #: src/modules/luncher/config.c:353
 msgid "Launcher and Taskbar"
-msgstr ""
+msgstr "Başlatıcı ve Görev Çubuğu"
 
 #: src/modules/luncher/config.c:364
 #, fuzzy
@@ -6012,26 +5938,22 @@ msgid "Hide tooltips"
 msgstr "Listeyi sakla"
 
 #: src/modules/luncher/config.c:425
-#, fuzzy
 msgid "Preview Size:"
-msgstr "Önizleme"
+msgstr "Önizleme Boyutu:"
 
 #: src/modules/luncher/config.c:535
-#, fuzzy
 msgid "Create New Icon"
-msgstr "Yeni simge oluştur"
+msgstr "Yeni Simge Oluştur"
 
 #: src/modules/luncher/bar.c:549
-#, fuzzy
 msgid "Icon Properties"
-msgstr "Simge Özelliklerini Değiştir"
+msgstr "Simge Özellikleri"
 
 #: src/modules/luncher/bar.c:556
 msgid "Remove Icon"
 msgstr "Simgeyi Kaldır"
 
 #: src/modules/luncher/bar.c:563
-#, fuzzy
 msgid "Add Icon"
 msgstr "Simge Ekle"
 
@@ -6513,37 +6435,37 @@ msgstr "CPU Frekansı"
 #: src/modules/geolocation/e_mod_main.c:141
 #, c-format
 msgid "Latitude:  %f"
-msgstr ""
+msgstr "Enlem: %f"
 
 #: src/modules/geolocation/e_mod_main.c:80
 #: src/modules/geolocation/e_mod_main.c:145
 #, c-format
 msgid "Longitude:  %f"
-msgstr ""
+msgstr "Boylam: %f"
 
 #: src/modules/geolocation/e_mod_main.c:84
 #: src/modules/geolocation/e_mod_main.c:150
 #, c-format
 msgid "Altitude:  %f"
-msgstr ""
+msgstr "Yükseklik: %f"
 
 #: src/modules/geolocation/e_mod_main.c:86
 #: src/modules/geolocation/e_mod_main.c:152
 #, c-format
 msgid "Altitude:  N/A"
-msgstr ""
+msgstr "Yükseklik: N/A"
 
 #: src/modules/geolocation/e_mod_main.c:91
 #: src/modules/geolocation/e_mod_main.c:158
 #, c-format
 msgid "Speed:  %f"
-msgstr ""
+msgstr "Hız:  %f"
 
 #: src/modules/geolocation/e_mod_main.c:93
 #: src/modules/geolocation/e_mod_main.c:160
 #, c-format
 msgid "Speed: N/A"
-msgstr ""
+msgstr "Hız: N/A"
 
 #: src/modules/geolocation/e_mod_main.c:98
 #: src/modules/geolocation/e_mod_main.c:166
@@ -6700,6 +6622,8 @@ msgstr "Yerel"
 msgid ""
 "Target URI could not be shown.<ps/>Hold [Ctrl] to disable link fetching."
 msgstr ""
+"Hedef URI gösterilemedi. <ps/> Bağlantı getirmeyi devre dışı bırakmak için "
+"[Ctrl] tuşunu basılı tutun."
 
 #: src/modules/teamwork/e_mod_config.c:80
 msgid "Disable remote media fetching"
@@ -6865,7 +6789,7 @@ msgstr "Eşik"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:240
 msgid "Tap to click"
-msgstr ""
+msgstr "Tıklama"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:246
 #: src/modules/conf_interaction/e_mod_main.c:24
@@ -6911,22 +6835,22 @@ msgstr "Bağlantı Yöneticisi"
 
 #: src/modules/connman/e_connman.c:904
 msgid "Connman Service Missing"
-msgstr ""
+msgstr "Connman Hizmeti Eksik"
 
 #: src/modules/connman/e_connman.c:905
 msgid ""
 "The Connman service is not able to be found.<br>Is <b>connmand</b> daemon "
 "running?"
 msgstr ""
+"Connman hizmeti bulunamadı. <br> <b> connmand </b> daemon çalışıyor mu?"
 
 #: src/modules/connman/e_mod_main.c:191
-#, fuzzy
 msgid ""
 "This module wants to execute an external application EConnMan that does not "
 "exist.<ps/>Please install <b>EConnMan</b> application."
 msgstr ""
 "Bu modül EConnMan harici uygulamasının çalışmasını gerektiriyor fakat "
-"uygulama yok. <br>Lütfen <b>EConnMan</b> uygulamasını kurun."
+"uygulama yok. <ps/>Lütfen <b>EConnMan</b> uygulamasını kurun."
 
 #: src/modules/connman/e_mod_main.c:282
 msgid "Wifi On"
@@ -6962,9 +6886,8 @@ msgstr "Favori Uygulamalar"
 #: src/modules/conf_applications/e_mod_main.c:33
 #: src/modules/conf_applications/e_int_config_apps.c:87
 #: src/modules/conf_applications/e_int_config_apps.c:101
-#, fuzzy
 msgid "Launcher Applications"
-msgstr "IBar Uygulamaları"
+msgstr "Başlatıcı Uygulamaları"
 
 #: src/modules/conf_applications/e_mod_main.c:37
 #: src/modules/conf_applications/e_int_config_apps.c:147
@@ -6998,9 +6921,8 @@ msgid "Desktop Environments"
 msgstr "Masaüstü ortamı"
 
 #: src/modules/conf_applications/e_mod_main.c:62
-#, fuzzy
 msgid "Launcher Other"
-msgstr "Başlatıcı Çubuğu"
+msgstr "Diğer Başlatıcı"
 
 #: src/modules/conf_applications/e_int_config_defapps.c:297
 msgid "Custom Browser Command"
@@ -7073,13 +6995,12 @@ msgid "Start KDE services on login"
 msgstr "Girişte KDE servislerini başlat"
 
 #: src/modules/conf_applications/e_int_config_deskenv.c:168
-#, fuzzy
 msgid "Show applications only for Environment"
-msgstr "Uygulamanın sağladığı simgeyi tercih et"
+msgstr "Uygulamaları yalnızca Environment için göster"
 
 #: src/modules/quickaccess/e_mod_config.c:229
 msgid "Enter a unique name for this entry"
-msgstr "Bu girdi için benzersiz bir isim belirleyin."
+msgstr "Bu girdi için benzersiz bir isim belirleyin"
 
 #: src/modules/quickaccess/e_mod_config.c:250
 msgid "Disable Warning Dialogs"
@@ -7329,7 +7250,7 @@ msgstr "Hızlıerişim Demosu"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:1246
 msgid "This is a demo dialog used in the Quickaccess tutorial"
-msgstr "Bu Hızlıerişim öğreticisinde kullanılan bir demo penceresidir."
+msgstr "Bu Hızlıerişim öğreticisinde kullanılan bir demo penceresidir"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:1268
 #, fuzzy
@@ -7376,9 +7297,8 @@ msgid "Mute on lock"
 msgstr "Sesi Kapat"
 
 #: src/modules/mixer/e_mod_config.c:439
-#, fuzzy
 msgid "Backend to use:"
-msgstr "Arkaplan Seçenekleri"
+msgstr "Arka uç kullanımı:"
 
 #: src/modules/mixer/e_mod_config.c:491
 #, fuzzy
@@ -7410,27 +7330,23 @@ msgid "Decrease Volume"
 msgstr "Sesi Azalt"
 
 #: src/modules/mixer/gadget/backend.c:259
-#, fuzzy
 msgid "Mute volume"
-msgstr "Sesi Kapat"
+msgstr "Sesi kapat"
 
 #: src/modules/mixer/gadget/backend.c:267
 #: src/modules/mixer/gadget/backend.c:318
-#, fuzzy
 msgid "Increase Volume of Focused Application"
-msgstr "Ekran kilidi açma uygulamaları"
+msgstr "Odaklanmış Uygulama Hacmini Artır"
 
 #: src/modules/mixer/gadget/backend.c:275
 #: src/modules/mixer/gadget/backend.c:326
-#, fuzzy
 msgid "Decrease Volume of Focused Application"
-msgstr "Ekran kilidi açma uygulamaları"
+msgstr "Odaklanmış Uygulama Hacmini Azalt"
 
 #: src/modules/mixer/gadget/backend.c:283
 #: src/modules/mixer/gadget/backend.c:334
-#, fuzzy
 msgid "Mute Volume of Focused Application"
-msgstr "Seçili Uygulama"
+msgstr "Odaklanmış Uygulamanın Sesini Kapat"
 
 #: src/modules/mixer/gadget/backend.c:310
 msgid "Mute Volume"
@@ -7441,9 +7357,8 @@ msgid "Playback"
 msgstr "Oynat"
 
 #: src/modules/mixer/emixer.c:1355
-#, fuzzy
 msgid "Inputs"
-msgstr "Giriş"
+msgstr "Girişler"
 
 #: src/modules/mixer/emixer.c:1356
 msgid "Cards"
@@ -7490,7 +7405,7 @@ msgstr ""
 
 #: src/modules/music-control/ui.c:180
 msgid "Pause music when screen is locked"
-msgstr "Ekran kilitlendiğinde müziği beklet."
+msgstr "Ekran kilitlendiğinde müziği beklet"
 
 #: src/modules/music-control/ui.c:249
 msgid "Music control Settings"
@@ -7626,19 +7541,16 @@ msgid "Pager"
 msgstr "Sayfalayıcı"
 
 #: src/modules/pager/e_mod_main.c:904
-#, fuzzy
 msgid "All desktop settings"
-msgstr "Sanal Masaüstü Ayarları"
+msgstr "Tüm Masaüstü Ayarları"
 
 #: src/modules/pager/e_mod_main.c:915
 msgid "This desktop name and wallpaper settings"
-msgstr ""
+msgstr "Bu masaüstü adı ve duvar kağıdı ayarları"
 
 #: src/modules/pager/e_mod_main.c:2089
-#, fuzzy
 msgid "Pager module cannot be loaded at the same time as Pager Plain!"
-msgstr ""
-"Sayfalayıcı modülü Sayfalayıcı16'da olduğu gibi aynı zamanda yüklenemedi."
+msgstr "Çağrı modülü, Çağrı Cihazı ile aynı anda yüklenemez!"
 
 #: src/modules/pager/e_mod_main.c:2110 src/modules/pager/gadget/pager.c:2970
 msgid "Show Pager Popup"
@@ -7684,14 +7596,14 @@ msgid "Configure virtual deskstops"
 msgstr "Sanal Masaüstlerini Yapılandır"
 
 #: src/modules/pager/gadget/config.c:451 src/modules/pager/gadget/config.c:497
-#, fuzzy, c-format
+#, c-format
 msgid "%.0f"
-msgstr "%.0f s"
+msgstr "%.0f"
 
 #: src/modules/pager/gadget/config.c:474 src/modules/pager/gadget/config.c:573
 #, c-format
 msgid "%.1f"
-msgstr ""
+msgstr "%.1f"
 
 #: src/modules/pager/gadget/config.c:511 src/modules/pager/gadget/config.c:664
 #: src/bin/e_int_client_prop.c:479
@@ -7705,11 +7617,11 @@ msgstr "Önemli ileti süresi"
 
 #: src/modules/pager/gadget/config.c:598
 msgid "Always Use Plain Style"
-msgstr ""
+msgstr "Daima Düz Stil Kullan"
 
 #: src/modules/pager/gadget/config.c:610
 msgid "Switch to Plain Style When Saving Power"
-msgstr ""
+msgstr "Güç Tasarrufu Yaparken Düz Tarza Geç"
 
 #: src/modules/pager/gadget/config.c:650
 #, fuzzy
@@ -7793,9 +7705,8 @@ msgid "Battery Meter"
 msgstr "Pil Göstergesi"
 
 #: src/bin/e_acpi.c:132
-#, fuzzy
 msgid "ACPI Error"
-msgstr "Hata"
+msgstr "ACPI Hatası"
 
 #: src/bin/e_acpi.c:133
 msgid ""
@@ -8011,7 +7922,7 @@ msgstr "Ayarlar Yükseltildi"
 
 #: src/bin/e_config.c:2615
 msgid "The EET file handle is bad."
-msgstr "EET Dosya işleyicisi sorunlu"
+msgstr "EET Dosya işleyicisi sorunlu."
 
 #: src/bin/e_config.c:2619
 msgid "The file data is empty."
@@ -8082,7 +7993,7 @@ msgstr "Özellik gerçeklenmedi."
 
 #: src/bin/e_config.c:2675
 msgid "PRNG was not seeded."
-msgstr "PRNG çalıştırılamadı"
+msgstr "PRNG çalıştırılamadı."
 
 #: src/bin/e_config.c:2679
 msgid "Encryption failed."
@@ -8303,40 +8214,39 @@ msgid "Cannot exit - immortal windows."
 msgstr "Çıkamıyor - Ölümsüz Pencereler."
 
 #: src/bin/e_utils.c:135
-#, fuzzy
 msgid ""
 "Some windows are left still around with the Lifespan lock enabled. This "
 "means<ps/>that Enlightenment will not allow itself to exit until these "
 "windows have<ps/>been closed or have the lifespan lock removed.<ps/>"
 msgstr ""
-"Bazı pencereler Lifespan lock aktif olarak bırakılmış. Bu "
-"nedenle<br>Enlightenment bu pencereler<br>kapatılana ya da Lifespan lock "
-"kaldırılana kadar çıkmaya izin vermeyecek.<br>"
+"Bazı pencereler Lifespan lock aktif olarak bırakılmış. Bu nedenle<ps/"
+">Enlightenment bu pencereler<ps/>kapatılana ya da Lifespan lock kaldırılana "
+"kadar çıkmaya izin vermeyecek.<ps/>"
 
 #: src/bin/e_utils.c:553
 #, c-format
 msgid "%'.0f bytes"
-msgstr ""
+msgstr "%'.0f byte"
 
 #: src/bin/e_utils.c:557
 #, c-format
 msgid "%'.0f KiB"
-msgstr ""
+msgstr "%'.0f KB"
 
 #: src/bin/e_utils.c:561
 #, c-format
 msgid "%'.1f MiB"
-msgstr "%'.1f MiB"
+msgstr "%'.1f MB"
 
 #: src/bin/e_utils.c:565
 #, c-format
 msgid "%'.1f GiB"
-msgstr "%'.1f GiB"
+msgstr "%'.1f GB"
 
 #: src/bin/e_utils.c:569
 #, c-format
 msgid "%'.1f TiB"
-msgstr ""
+msgstr "%'.1f TB"
 
 #: src/bin/e_utils.c:588
 #, c-format
@@ -8535,15 +8445,14 @@ msgid "WARNING"
 msgstr "UYARI"
 
 #: src/bin/e_int_config_comp.c:173
-#, fuzzy
 msgid ""
 "This option WILL break your desktop if you don't know what you're doing.<ps/"
 ">Do not file bugs about anything that occurs with this option enabled.<ps/"
 ">You have been warned."
 msgstr ""
-"Eğer ne yaptığınızı bilmiyorsanız bu seçenek masaüstünüzü bozacaktır.<br>Bu "
+"Eğer ne yaptığınızı bilmiyorsanız bu seçenek masaüstünüzü bozacaktır.<ps/>Bu "
 "seçeneğin açılmasıyla oluşabilecek hiçbirşey için hata bildirimi yapmayın."
-"<br>Bu konuda uyarıldınız."
+"<ps/>Bu konuda uyarıldınız."
 
 #: src/bin/e_int_config_comp.c:209
 msgid "Edit window matches"
@@ -8583,7 +8492,7 @@ msgstr "OpenGL"
 
 #: src/bin/e_int_config_comp.c:246
 msgid "OpenGL options:"
-msgstr "OpenGL seçenekleri"
+msgstr "OpenGL seçenekleri:"
 
 #: src/bin/e_int_config_comp.c:249 src/bin/e_int_config_comp.c:517
 msgid "Tear-free updates (VSynced)"
@@ -8712,9 +8621,8 @@ msgid "Enlightenment cannot initialize Ecore!\n"
 msgstr "Enlightenment Ecore'u başlatamadı.\n"
 
 #: src/bin/e_main.c:406
-#, fuzzy
 msgid "Enlightenment cannot initialize EFX!\n"
-msgstr "Enlightenment Eet'i başlatamadı!\n"
+msgstr "Enlightenment EFX'i başlatamadı!\n"
 
 #: src/bin/e_main.c:415
 msgid "Enlightenment cannot initialize EIO!\n"
@@ -8769,15 +8677,15 @@ msgid "Enlightenment cannot initialize Emotion!\n"
 msgstr "Enlightenment Emotion'u başatamadı!\n"
 
 #: src/bin/e_main.c:511
-#, fuzzy
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Wayland SHM\n"
 "rendering in Evas. Please check your installation of Evas and\n"
 "Ecore and check they support the Wayland SHM rendering engine."
 msgstr ""
-"Enligthtenment ecore_evas 'ın Evas içerisinde Software X11\n"
-"gerçekleme desteğinin olmadığını farketti. Lütfen Evas ve Ecore yüklemenizi\n"
-"kontrol edin ve Software X11 gerçekleme motoruyla uyumlu olduğundan emin olun"
+"Aydınlanma bulundu ecore_evas Wayland SHM'yi desteklemiyor\n"
+"görüntü oluşturma. Lütfen Evas kurulumunuzu kontrol edin ve\n"
+"Ecore ve Wayland SHM render motorunu destekleyip desteklemediklerini kontrol "
+"edin."
 
 #: src/bin/e_main.c:521
 msgid ""
@@ -8787,7 +8695,8 @@ msgid ""
 msgstr ""
 "Enligthtenment ecore_evas 'ın Evas içerisinde Software X11\n"
 "gerçekleme desteğinin olmadığını farketti. Lütfen Evas ve Ecore yüklemenizi\n"
-"kontrol edin ve Software X11 gerçekleme motoruyla uyumlu olduğundan emin olun"
+"kontrol edin ve Software X11 gerçekleme motoruyla uyumlu olduğundan emin "
+"olun."
 
 #: src/bin/e_main.c:530
 msgid ""
@@ -8798,7 +8707,7 @@ msgstr ""
 "Enligthtenment ecore_evas 'ın Evas içerisinde Software Buffer\n"
 "gerçekleme desteğinin olmadığını farketti. Lütfen Evas ve Ecore yüklemenizi\n"
 "kontrol edin ve Software Buffer gerçekleme motoruyla uyumlu olduğundan emin "
-"olun"
+"olun."
 
 #: src/bin/e_main.c:544
 msgid "Enlightenment cannot initialize E_Intl!\n"
@@ -8855,6 +8764,11 @@ msgid ""
 "machine.\n"
 "If you're sure you know what you're doing, export E_NO_DBUS_SESSION=1"
 msgstr ""
+"Aydınlanma bir dbus oturum bağlantısı oluşturamaz.\n"
+"En iyi ihtimalle bu birçok şeyi kıracak, en kötüsü makinenizi sert bir "
+"şekilde kilitleyecektir.\n"
+"Ne yaptığınızı bildiğinizden eminseniz, E_NO_DBUS_SESSION = 1 dosyasını dışa "
+"aktarın"
 
 #: src/bin/e_main.c:736
 msgid ""
@@ -8984,9 +8898,9 @@ msgid "Enlightenment cannot set up its order file system.\n"
 msgstr "Enlightenment dosya sıralama sistemini ayarlayamadı.\n"
 
 #: src/bin/e_main.c:1234
-#, fuzzy, c-format
+#, c-format
 msgid "Version: %s\n"
-msgstr "İzinler"
+msgstr "Sürüm: %s\n"
 
 #: src/bin/e_main.c:1243
 #, fuzzy, c-format
@@ -9117,9 +9031,8 @@ msgstr ""
 "seçmenize izin verecektir."
 
 #: src/bin/e_gadget_runner.c:250
-#, fuzzy
 msgid "Command:"
-msgstr "Komut"
+msgstr "Komut:"
 
 #: src/bin/e_gadget_runner.c:260
 #, fuzzy
@@ -9132,9 +9045,9 @@ msgid "Restart"
 msgstr "Yeniden Başlat"
 
 #: src/bin/e_gadget_runner.c:837
-#, fuzzy, c-format
+#, c-format
 msgid "Version: %s"
-msgstr "İzinler"
+msgstr "Sürüm: %s"
 
 #: src/bin/e_gadget_runner.c:851
 msgid "Report bug"
@@ -9331,9 +9244,8 @@ msgstr ""
 "ziyaret edin :<br><hilight>http://www.enlightenment.org</><br><br>"
 
 #: src/bin/e_about.c:69
-#, fuzzy
 msgid "<title>The Team</><ps/><ps/>"
-msgstr "<title>Ekip</><br><br>"
+msgstr "<title>Ekip</><ps/><ps/>"
 
 #: src/bin/e_sys.c:732
 #, fuzzy, c-format
@@ -9416,9 +9328,8 @@ msgid "EEK! This should not happen"
 msgstr "OYY! Bu olmamalıydı"
 
 #: src/bin/e_system.c:30
-#, fuzzy
 msgid "Error in Enlightenment System Service"
-msgstr "Enlightenment başlayınca kilitle"
+msgstr "Aydınlanma Sistemi Hizmetinde Hata"
 
 #: src/bin/e_system.c:31
 #, fuzzy
@@ -9591,14 +9502,12 @@ msgid "Use"
 msgstr "Kullan"
 
 #: src/bin/e_bryce.c:786 src/bin/e_bryce.c:847
-#, fuzzy
 msgid "Gadget Bar"
-msgstr "Araç hatası"
+msgstr "Araç Çubuğu"
 
 #: src/bin/e_bryce.c:807
-#, fuzzy
 msgid "Autosize"
-msgstr "Otomatik Gizle"
+msgstr "Otomatik Boyut"
 
 #: src/bin/e_bryce.c:819
 #, fuzzy
@@ -9627,7 +9536,7 @@ msgstr "Yeniden boyutlandırma geometrisi"
 
 #: src/bin/e_gadget.c:2569
 msgid "Deny"
-msgstr ""
+msgstr "Reddet"
 
 #: src/bin/e_gadget.c:2577
 msgid "Allow"
@@ -9650,7 +9559,7 @@ msgstr "Katmanı Yapılandır"
 
 #: src/bin/e_gadget.c:3000
 msgid "ERROR: NO NAME PROVIDED"
-msgstr ""
+msgstr "HATA: İSİM YOK"
 
 #: src/bin/e_gadget.c:3423
 #, c-format
@@ -9776,7 +9685,7 @@ msgstr "Çözünürlük:"
 
 #: src/bin/e_widget_filepreview.c:101
 msgid "Mime-type:"
-msgstr "Dosya Türü"
+msgstr "Dosya Türü:"
 
 #: src/bin/e_widget_filepreview.c:407
 #, c-format
@@ -9901,7 +9810,7 @@ msgstr "'%s' İçin yapılan son DND işlemi başarısız oldu."
 
 #: src/bin/e_fm.c:6854
 msgid "A link to the requested URL already exists!"
-msgstr "İstenen URL'nin bağlantısı zaten mevcut."
+msgstr "İstenen URL'nin bağlantısı zaten mevcut!"
 
 #: src/bin/e_fm.c:9009 src/bin/e_fm.c:9158
 msgid "Refresh View"
@@ -9975,7 +9884,7 @@ msgstr "Bu dizin için zaten yeni bir dosya oluşturuluyor!"
 #: src/bin/e_fm.c:9865 src/bin/e_fm.c:9886
 #, c-format
 msgid "%s can't be written to!"
-msgstr "%s yazılmış olamaz."
+msgstr "%s yazılmış olamaz!"
 
 #: src/bin/e_fm.c:9905
 msgid "Directory"
@@ -10038,7 +9947,7 @@ msgstr "%s zaten mevcut!"
 #: src/bin/e_fm.c:10540 src/bin/e_fm.c:10577
 #, c-format
 msgid "%s could not be renamed because it is protected"
-msgstr "%s Korumalı olduğu için adı değiştirilemez."
+msgstr "%s Korumalı olduğu için adı değiştirilemez"
 
 #: src/bin/e_fm.c:10544 src/bin/e_fm.c:10581
 msgid "Internal filemanager error :("
@@ -10195,7 +10104,7 @@ msgstr "Biliyorum"
 
 #: src/bin/e_bryce_editor.c:156
 msgid "Finishing touches... (4/4)"
-msgstr ""
+msgstr "Son dokunuşlar ... (4/4)"
 
 #: src/bin/e_bryce_editor.c:164
 #, fuzzy
@@ -10209,23 +10118,23 @@ msgstr "Otomatik"
 
 #: src/bin/e_bryce_editor.c:190
 msgid "Do not stack above windows"
-msgstr ""
+msgstr "Pencerelerin üstünde istiflemeyin"
 
 #: src/bin/e_bryce_editor.c:206
 msgid "Finish!"
-msgstr ""
+msgstr "Bitti!"
 
 #: src/bin/e_bryce_editor.c:224
 msgid "Choose style (3/4)"
-msgstr ""
+msgstr "Stil seçin (3/4)"
 
 #: src/bin/e_bryce_editor.c:289
 msgid "Choose position (2/4)"
-msgstr ""
+msgstr "Konum seçin (2/4)"
 
 #: src/bin/e_bryce_editor.c:344
 msgid "Choose screen edge (1/4)"
-msgstr ""
+msgstr "Ekran kenarını seçin (1/4)"
 
 #: src/bin/e_toolbar.c:128
 msgid "EFM Toolbar"
@@ -10338,7 +10247,7 @@ msgstr "Hata Kayıtları"
 
 #: src/bin/e_exec.c:1034 src/bin/e_exec.c:1114
 msgid "There was no error message."
-msgstr "Hata mesajı yoktu"
+msgstr "Hata mesajı yoktu."
 
 #: src/bin/e_exec.c:1038 src/bin/e_exec.c:1121
 msgid "Save This Message"
@@ -10348,7 +10257,7 @@ msgstr "Mesajı Kaydet"
 #: src/bin/e_exec.c:1129
 #, c-format
 msgid "This error log will be saved as %s/%s.log"
-msgstr "Bu hata kaydı %s/%s.log olarak kaydedildi."
+msgstr "Bu hata kaydı %s/%s.log olarak kaydedildi"
 
 #: src/bin/e_exec.c:1072
 msgid "Error Information"
@@ -10540,7 +10449,7 @@ msgstr "Hakkında"
 
 #: src/bin/e_int_menus.c:261
 msgid "Report Bug"
-msgstr ""
+msgstr "Hata Bildir"
 
 #: src/bin/e_int_menus.c:280 src/bin/e_actions.c:2125 src/bin/e_actions.c:3735
 msgid "Exit"
@@ -10669,7 +10578,7 @@ msgstr "Hata bilgisi"
 #: src/bin/e_actions.c:3122
 #, c-format
 msgid "Invalid parameter: %s"
-msgstr ""
+msgstr "Geçersiz parametre: %s"
 
 #: src/bin/e_actions.c:3247
 #, fuzzy
@@ -10828,7 +10737,7 @@ msgstr "Masaüstünü Aşağı Çevir"
 
 #: src/bin/e_actions.c:3414
 msgid "Flip Desktop By..."
-msgstr "Masaüstünü ...ile Çevir"
+msgstr "Masaüstünü ...ile Çevir."
 
 #: src/bin/e_actions.c:3420
 msgid "Flip To Previous Desktop"
@@ -10844,7 +10753,7 @@ msgstr "Rafı Göster"
 
 #: src/bin/e_actions.c:3436
 msgid "Flip Desktop To..."
-msgstr "Masaüstünü ...'e çevir"
+msgstr "Masaüstünü ...'e çevir."
 
 #: src/bin/e_actions.c:3441
 #, fuzzy
@@ -10853,7 +10762,7 @@ msgstr "Masaüstü...'e geç (Tüm Ekranlar)"
 
 #: src/bin/e_actions.c:3447
 msgid "Flip Desktop Linearly..."
-msgstr "Masaüstünü Doğrusal Olarak Çevir"
+msgstr "Masaüstünü Doğrusal Olarak Çevir."
 
 #: src/bin/e_actions.c:3453
 msgid "Switch To Desktop 0"
@@ -10905,7 +10814,7 @@ msgstr "Masaüstü 11 'e geç"
 
 #: src/bin/e_actions.c:3477
 msgid "Switch To Desktop..."
-msgstr "Masaüstü ... geç"
+msgstr "Masaüstü ... geç."
 
 #: src/bin/e_actions.c:3483
 msgid "Flip Desktop Left (All Screens)"
@@ -10997,7 +10906,7 @@ msgstr "Pencereye geç..."
 
 #: src/bin/e_actions.c:3548
 msgid "Jump to window... or start..."
-msgstr "Pencere... veya başlangıca... atla"
+msgstr "Pencere... veya başlangıca... atla."
 
 #: src/bin/e_actions.c:3553
 msgid "Send Mouse To Screen 0"
@@ -11009,7 +10918,7 @@ msgstr "Fareyi Ekran 1'e Gönder"
 
 #: src/bin/e_actions.c:3557
 msgid "Send Mouse To Screen..."
-msgstr "Fareyi ekran... Gönder"
+msgstr "Fareyi Ekrana... Gönder."
 
 #: src/bin/e_actions.c:3563
 msgid "Send Mouse Forward 1 Screen"
@@ -11061,7 +10970,7 @@ msgstr "Arka Işık Azalt"
 
 #: src/bin/e_actions.c:3597
 msgid "Update and re-apply screen setup"
-msgstr ""
+msgstr "Ekran kurulumunu güncelleme ve yeniden uygulama"
 
 #: src/bin/e_actions.c:3602
 msgid "Move To Center"
@@ -11069,35 +10978,35 @@ msgstr "Merkeze Taşı"
 
 #: src/bin/e_actions.c:3607
 msgid "Move/resize to upper-left quadrant"
-msgstr ""
+msgstr "Sol üst çeyreğe taşı/yeniden boyutlandır"
 
 #: src/bin/e_actions.c:3612
 msgid "Move/resize to upper-right quadrant"
-msgstr ""
+msgstr "Sağ üst çeyreğe taşı/yeniden boyutlandır"
 
 #: src/bin/e_actions.c:3617
 msgid "Move/resize to lower-left quadrant"
-msgstr ""
+msgstr "Sol alt çeyreğe taşı/yeniden boyutlandır"
 
 #: src/bin/e_actions.c:3622
 msgid "Move/resize to lower-right quadrant"
-msgstr ""
+msgstr "Sağ alt çeyreğe taşı/yeniden boyutlandır"
 
 #: src/bin/e_actions.c:3627
 msgid "Move To Coordinates..."
-msgstr "Koordinatlara Taşı"
+msgstr "Koordinatlara Taşı..."
 
 #: src/bin/e_actions.c:3632
 msgid "Move By Coordinate Offset..."
-msgstr "Koordinat Karşılığına Göre Taşı"
+msgstr "Koordinat Karşılığına Göre Taşı.."
 
 #: src/bin/e_actions.c:3638
 msgid "Resize By..."
-msgstr "... ile Ölçeklendir"
+msgstr "... ile Ölçeklendir."
 
 #: src/bin/e_actions.c:3644
 msgid "Push in Direction..."
-msgstr "... doğrultusuna it"
+msgstr "... doğrultusuna it."
 
 #: src/bin/e_actions.c:3650
 msgid "Drag Icon..."
@@ -11186,7 +11095,7 @@ msgstr "İstemciler Menüsünü Göster"
 
 #: src/bin/e_actions.c:3707
 msgid "Show Menu..."
-msgstr "Menüyü... Göster"
+msgstr "Menüyü... Göster."
 
 #: src/bin/e_actions.c:3717 src/bin/e_int_client_prop.c:473
 msgid "Command"
@@ -11254,9 +11163,8 @@ msgid "Hibernate Now"
 msgstr "Şimdi uykuya geçir"
 
 #: src/bin/e_actions.c:3802
-#, fuzzy
 msgid "Hibernate Intelligently"
-msgstr "Uykuya alma başarısız."
+msgstr "Uykuya alma başarısız"
 
 #: src/bin/e_actions.c:3810
 msgid "Lock"
@@ -11287,12 +11195,11 @@ msgid "Previous keyboard layout"
 msgstr "Önceki klavye yerleşimi"
 
 #: src/bin/e_grab_dialog.c:3
-#, fuzzy
 msgid ""
 "Please press a key combination.<ps/><ps/>Press <hilight>Escape</hilight> to "
 "abort."
 msgstr ""
-"Lütfen tuş dizisi girin,<br><br>ya da çıkmak için<hilight>Escape</hilight> "
+"Lütfen tuş dizisi girin,<ps/><ps/>ya da çıkmak için<hilight>Escape</hilight> "
 "tuşuna basın."
 
 #: src/bin/e_grab_dialog.c:5
@@ -11369,9 +11276,8 @@ msgid "Style:"
 msgstr "Biçim:"
 
 #: src/bin/e_int_config_comp_match.c:158
-#, fuzzy
 msgid "Effect:"
-msgstr "Efektler"
+msgstr "Efekt:"
 
 #: src/bin/e_int_config_comp_match.c:352
 msgid "Edit E_Comp_Match"
@@ -11410,9 +11316,8 @@ msgid "Flags"
 msgstr "İşaretler"
 
 #: src/bin/e_int_config_comp_match.c:577
-#, fuzzy
 msgid "Effect"
-msgstr "Efektler"
+msgstr "Efekt"
 
 #: src/bin/e_int_config_comp_match.c:774
 msgid "Overrides"
@@ -11427,13 +11332,12 @@ msgid "Composite Match Settings"
 msgstr "Bileşiklik eşleşme ayarları"
 
 #: src/bin/e_client.c:4868
-#, fuzzy
 msgid "Client Error!"
-msgstr "Pencere Listesi Hatası"
+msgstr "Müşteri Hatası!"
 
 #: src/bin/e_client.c:4868
 msgid "Something has attempted to set a border when it shouldn't! Report this!"
-msgstr ""
+msgstr "Bir şey olmaması gerektiğinde kenarlık koymaya çalıştı! Bunu rapor et!"
 
 #: src/bin/e_int_client_prop.c:132
 #, c-format
@@ -11652,15 +11556,15 @@ msgstr "Klavye Kısayolu Oluştur"
 
 #: src/bin/e_int_client_menu.c:715
 msgid "Edit Color Scheme"
-msgstr ""
+msgstr "Renk Şemasını Düzenle"
 
 #: src/bin/e_int_client_menu.c:774
 msgid "Move with keyboard"
-msgstr ""
+msgstr "Klavyeyle taşıma"
 
 #: src/bin/e_int_client_menu.c:788
 msgid "Resize with keyboard"
-msgstr ""
+msgstr "Klavye ile yeniden boyutlandır"
 
 #: src/bin/e_int_client_menu.c:811
 msgid "Skip"
@@ -11672,18 +11576,16 @@ msgstr "ICCCM/NetWM"
 
 #: src/bin/e_int_client_menu.c:1032
 msgid "Click an object to align with."
-msgstr ""
+msgstr "Hizalanacak nesneyi tıklatın."
 
 #: src/bin/e_int_client_menu.c:1203
-#, fuzzy
 msgid "On window..."
-msgstr "Pencereye geç..."
+msgstr "Pencerede..."
 
 #: src/bin/e_int_client_menu.c:1214 src/bin/e_int_client_menu.c:1225
 #: src/bin/e_int_client_menu.c:1236 src/bin/e_int_client_menu.c:1247
-#, fuzzy
 msgid "Of window..."
-msgstr "Pencereye geç..."
+msgstr "Pencerenin ..."
 
 #: src/bin/e_int_client_menu.c:1274
 #, c-format
