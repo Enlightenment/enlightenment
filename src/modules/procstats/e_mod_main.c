@@ -37,6 +37,10 @@ typedef struct
    Eina_Bool       was_maximized;
 } Proc_Stats_Client;
 
+static void _proc_stats_client_move_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
+static void _proc_stats_client_resize_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
+static void _proc_stats_icon_clicked_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info);
+
 static void       _proc_stats_client_add(E_Client *ec);
 static void       _proc_stats_client_display_update(Proc_Stats_Client *client);
 static void       _proc_stats_client_remove(Proc_Stats_Client *client);
@@ -118,6 +122,9 @@ _proc_stats_client_exists(E_Client *ec)
 static void
 _proc_stats_client_del(Proc_Stats_Client *client)
 {
+   evas_object_event_callback_del_full(client->obj, EVAS_CALLBACK_MOVE, _proc_stats_client_move_cb, client);
+   evas_object_event_callback_del_full(client->obj, EVAS_CALLBACK_MOUSE_UP, _proc_stats_icon_clicked_cb, client);
+   evas_object_event_callback_del_full(client->frame_obj, EVAS_CALLBACK_RESIZE, _proc_stats_client_resize_cb, client);
    _proc_stats_client_popup_del(client);
    edje_object_signal_emit(client->frame_obj, "e,state,procstats,off", "e");
    evas_object_del(client->obj);
