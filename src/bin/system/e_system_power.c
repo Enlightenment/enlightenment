@@ -90,9 +90,12 @@ _power_suspend_init(void)
 static void
 _power_hibernate_init(void)
 {
-#if defined (__FreeBSD__) || defined (__OpenBSD__)
+#if defined (__FreeBSD__)
    if (ecore_file_app_installed("acpiconf"))
      _cmd_hibernate = strdup("acpiconf -s4");
+#elif defined (__OpenBSD__)
+   if (ecore_file_app_installed("ZZZ"))
+     _cmd_suspend = strdup("ZZZ");
 #else
    if (ecore_file_app_installed("systemctl"))
      _cmd_hibernate = strdup("systemctl hibernate");
@@ -106,7 +109,8 @@ _power_hibernate_init(void)
      _cmd_hibernate = strdup("/etc/acpi/pm-hibernate");
 #endif
    // linux systemd: PATH/systemctl hibernate
-   // bsd: acpiconf -s4
+   // FreeBSD: acpiconf -s4
+   // OpenBSD: ZZZ
    // if exist:
    //    PATH/hibernate.sh
    //    /etc/acpi/hibernate.sh force
