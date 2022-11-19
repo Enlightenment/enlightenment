@@ -522,26 +522,20 @@ e_sys_shutdown(void)
    _e_sys_acpi_handler = NULL;
    if (login1_session_proxy)
      {
-         Eldbus_Connection *conn;
          Eldbus_Object *obj;
 
          obj = eldbus_proxy_object_get(login1_session_proxy);
-         conn = eldbus_object_connection_get(obj);
          eldbus_proxy_unref(login1_session_proxy);
          eldbus_object_unref(obj);
-         eldbus_connection_unref(conn);
          login1_session_proxy = NULL;
      }
    if (login1_manger_proxy)
      {
-         Eldbus_Connection *conn;
          Eldbus_Object *obj;
 
          obj = eldbus_proxy_object_get(login1_manger_proxy);
-         conn = eldbus_object_connection_get(obj);
          eldbus_proxy_unref(login1_manger_proxy);
          eldbus_object_unref(obj);
-         eldbus_connection_unref(conn);
          login1_manger_proxy = NULL;
      }
    if (_e_sys_systemd_inhibit_fd >= 0)

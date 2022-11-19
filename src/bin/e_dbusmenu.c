@@ -434,16 +434,13 @@ e_dbusmenu_item_unref(E_DBusMenu_Item *m)
 E_API void
 e_dbusmenu_unload(E_DBusMenu_Ctx *ctx)
 {
-   Eldbus_Connection *conn;
    Eldbus_Object *obj;
    EINA_SAFETY_ON_NULL_RETURN(ctx);
 
    if (ctx->root_menu) e_dbusmenu_item_unref(ctx->root_menu);
    obj = eldbus_proxy_object_get(ctx->proxy);
-   conn = eldbus_object_connection_get(obj);
    eldbus_proxy_unref(ctx->proxy);
    eldbus_object_unref(obj);
-   eldbus_connection_unref(conn);
    free(ctx);
 }
 
