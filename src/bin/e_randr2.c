@@ -1164,7 +1164,7 @@ again:
              if (!common)
                {
                   modes = eina_list_remove_list(modes, l);
-                  // the list is no longer save to walk - so let's just
+                  // the list is no longer safe to walk - so let's just
                   // walk it again from scratch
                   goto again;
                }
@@ -1238,11 +1238,13 @@ _screen_config_do(E_Randr2_Screen *s)
    _config_do_recurse++;
    // find dependent clones and find a common config res
    cloneset = _screen_clones_find(e_randr2->screens, s);
+   printf("RRR: '%s' cloneset %p %i\n", s->info.name, cloneset, eina_list_count(cloneset));
    if (cloneset)
      {
         _screen_clones_common_sync(cloneset);
         eina_list_free(cloneset);
      }
+   printf("RRR: _screen_config_do 2\n");
    // if screen has a dependency...
    if ((s->config.relative.mode != E_RANDR2_RELATIVE_UNKNOWN) &&
        (s->config.relative.mode != E_RANDR2_RELATIVE_NONE) &&
@@ -1258,9 +1260,11 @@ _screen_config_do(E_Randr2_Screen *s)
              if (!s2->config.enabled) s2 = NULL;
           }
      }
+   printf("RRR: _screen_config_do 3\n");
    s->config.geom.x = 0;
    s->config.geom.y = 0;
    printf("RRR: screen config do %ix%i rotation=%i\n", s->config.mode.w, s->config.mode.h, s->config.rotation);
+   printf("RRR: _screen_config_do 4\n");
    if ((s->config.rotation == 0) || (s->config.rotation == 180))
      {
         s->config.geom.w = s->config.mode.w;
@@ -1273,6 +1277,7 @@ _screen_config_do(E_Randr2_Screen *s)
      }
    if (s2)
      {
+        printf("RRR: _screen_config_do 5\n");
         if (s->config.relative.mode == E_RANDR2_RELATIVE_CLONE)
           {
              printf("RRR: clone relative\n");
@@ -1321,6 +1326,7 @@ _screen_config_do(E_Randr2_Screen *s)
      }
    else
      {
+        printf("RRR: _screen_config_do 6\n");
         if ((s->config.relative.mode == E_RANDR2_RELATIVE_CLONE) &&
             (s->config.relative.to))
           {

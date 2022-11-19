@@ -20,6 +20,7 @@ static Eina_Bool _rotation_exists(int rot, Ecore_X_Randr_Crtc_Info *info);
 static Ecore_X_Randr_Mode _mode_screen_find(Ecore_X_Window root, E_Randr2_Screen *s, Ecore_X_Randr_Output out);
 
 static Eina_List *handlers;
+static int use_xrandr = -1;
 
 E_Comp_Screen_Iface xiface =
 {
@@ -501,9 +502,142 @@ e_comp_x_randr_shutdown(void)
    E_FREE_LIST(handlers, ecore_event_handler_del);
 }
 
-E_API void
-e_comp_x_randr_config_apply(void)
+static void
+_e_comp_xrandr_cmd(void)
 {
+   Eina_List *l;
+   E_Randr2_Screen *s;
+   Ecore_X_Window root = ecore_x_window_root_first_get();
+   int top_priority = 0;
+   Ecore_X_Randr_Crtc *crtcs = NULL;
+   Ecore_X_Randr_Output *outputs = NULL, out, *outconf;
+   E_Randr2_Screen **screenconf;
+   Ecore_X_Randr_Crtc_Info *info;
+   int crtcs_num = 0, outputs_num = 0, i, numout;
+
+   crtcs = ecore_x_randr_crtcs_get(root, &crtcs_num);
+   outputs = ecore_x_randr_outputs_get(root, &outputs_num);
+
+   printf("RRR: crtcs=%p outputs=%p\n", crtcs, outputs);
+   if ((crtcs) && (outputs))
+     {
+        outconf = alloca(crtcs_num * sizeof(Ecore_X_Randr_Output));
+        screenconf = alloca(crtcs_num * sizeof(E_Randr2_Screen *));
+        memset(outconf, 0, crtcs_num * sizeof(Ecore_X_Randr_Output));
+        memset(screenconf, 0, crtcs_num * sizeof(E_Randr2_Screen *));
+
+        // decide which outputs get which crtcs
+        EINA_LIST_FOREACH(e_randr2->screens, l, s)
+          {
+             printf("RRR: find output for '%s'\n", s->info.name);
+             // XXX: find clones and set them as outputs in an array
+             if ((s->config.configured) &&
+                 (_output_name_find(root, s->info.name, outputs,
+                                    outputs_num, &out)))
+               {
+                  printf("RRR:   enabled: %i\n", s->config.enabled);
+                  if (s->config.enabled)
+                    {
+                       if (s->config.priority > top_priority)
+                         top_priority = s->config.priority;
+                       for (i = 0; i < crtcs_num; i++)
+                         {
+                            if (!outconf[i])
+                              {
+                                 printf("RRR:     crtc slot empty: %i\n", i);
+                                 info = ecore_x_randr_crtc_info_get(root,
+                                                                    crtcs[i]);
+                                 if (info)
+                                   {
+                                      if (_output_exists(out, info) &&
+                                          _rotation_exists(s->config.rotation,
+                                                           info))
+                                        {
+                                           printf("RRR:       assign slot out: %x\n", out);
+                                           outconf[i] = out;
+                                           screenconf[i] = s;
+                                           ecore_x_randr_crtc_info_free(info);
+                                           break;
+                                        }
+                                      ecore_x_randr_crtc_info_free(info);
+                                   }
+                              }
+                         }
+                    }
+               }
+          }
+        numout = 0;
+        for (i = 0; i < crtcs_num; i++)
+          {
+             if (outconf[i]) numout++;
+          }
+        if (numout)
+          {
+             Eina_Strbuf *sb;
+             E_Randr2_Screen *sc;
+
+             sb = eina_strbuf_new();
+             eina_strbuf_append(sb, "xrandr ");
+             // set up a crtc to drive each output (or not)
+             for (i = 0; i < crtcs_num; i++)
+               {
+                  sc = screenconf[i];
+                  if (!sc) continue;
+                  if (!sc->info.name) continue;
+                  eina_strbuf_append_printf(sb, "--output '%s' ",
+                                            sc->info.name);
+                  // XXX: find clones and set them as outputs in an array
+                  if (outconf[i])
+                    {
+                       eina_strbuf_append_printf(sb, "--mode %ix%i ",
+                                                 sc->config.mode.w,
+                                                 sc->config.mode.h);
+                       eina_strbuf_append_printf(sb, "--refresh %i.%02i ",
+                                                 (int)sc->config.mode.refresh,
+                                                 (int)((sc->config.mode.refresh - (int)sc->config.mode.refresh) * 100));
+                       eina_strbuf_append_printf(sb, "--rotate ");
+                       if (screenconf[i]->config.rotation == 0)
+                         eina_strbuf_append_printf(sb, "normal ");
+                       else if (screenconf[i]->config.rotation == 90)
+                         eina_strbuf_append_printf(sb, "left ");
+                       else if (screenconf[i]->config.rotation == 180)
+                         eina_strbuf_append_printf(sb, "inverted ");
+                       else if (screenconf[i]->config.rotation == 270)
+                         eina_strbuf_append_printf(sb, "right ");
+                       eina_strbuf_append_printf(sb, "--pos %ix%i ",
+                                                 sc->config.geom.x,
+                                                 sc->config.geom.y);
+                       if (screenconf[i]->config.priority == top_priority)
+                         {
+                            eina_strbuf_append_printf(sb, "--primary ");
+                            top_priority = -1;
+                         }
+                    }
+                  else
+                    {
+                       printf("RRR: crtc off: %i\n", i);
+                       eina_strbuf_append_printf(sb, "--off ");
+                    }
+               }
+             printf("RRR: XRANDR: %s\n", eina_strbuf_string_get(sb));
+             ecore_exe_run(eina_strbuf_string_get(sb), NULL);
+             eina_strbuf_free(sb);
+          }
+        else
+          {
+             printf("RRR: EERRRRRROOOORRRRRRR no outputs to configure!\n");
+             ecore_timer_add(5.0, _cb_no_outputs_timer, NULL);
+             ecore_x_root_screen_barriers_set(NULL, 0);
+          }
+     }
+   free(outputs);
+   free(crtcs);
+}
+
+static void
+_e_comp_xrandr_ecore_x(void)
+{
+
    Eina_List *l;
    E_Randr2_Screen *s;
    Ecore_X_Window root = ecore_x_window_root_first_get();
@@ -548,6 +682,7 @@ e_comp_x_randr_config_apply(void)
    crtcs = ecore_x_randr_crtcs_get(root, &crtcs_num);
    outputs = ecore_x_randr_outputs_get(root, &outputs_num);
 
+   printf("RRR: crtcs=%p outputs=%p\n", crtcs, outputs);
    if ((crtcs) && (outputs))
      {
         outconf = alloca(crtcs_num * sizeof(Ecore_X_Randr_Output));
@@ -637,7 +772,7 @@ e_comp_x_randr_config_apply(void)
                               screenconf[i]->config.geom.x,
                               screenconf[i]->config.geom.y,
                               mode, orient))
-                       printf("RRR:   failed to set crtc!!!!!!\n");
+                         printf("RRR:   failed to set crtc!!!!!!\n");
                        if (E_INSIDE(px, py,
                                     screenconf[i]->config.geom.x,
                                     screenconf[i]->config.geom.y,
@@ -689,7 +824,7 @@ e_comp_x_randr_config_apply(void)
    free(outputs);
    free(crtcs);
 
-   printf("RRR: set vsize: %ix%i\n", nw, nh);
+   printf("RRR: set vsize2: %ix%i\n", nw, nh);
    ecore_x_randr_screen_current_size_set(root, nw, nh, -1, -1);
      {
         int dww = 0, dhh = 0, dww2 = 0, dhh2 = 0;
@@ -704,12 +839,23 @@ e_comp_x_randr_config_apply(void)
    ecore_x_randr_screen_size_range_get(root, NULL, NULL, NULL, NULL);
    ecore_x_ungrab();
    ecore_x_sync();
-
    // ignore the next batch of randr events - we caused them ourselves
    // XXX: a problem. thew first time we configure the screen we may not
    // get any events back to clear the ignore flag below, so only apply
    // here if the randr config now doesn't match what we want to set up.
 //   event_ignore = EINA_TRUE;
+}
+
+E_API void
+e_comp_x_randr_config_apply(void)
+{
+   if (use_xrandr == -1)
+     {
+        if (ecore_file_app_installed("xrandr")) use_xrandr = 1;
+        else use_xrandr = 0;
+     }
+   if (use_xrandr == 1) _e_comp_xrandr_cmd();
+   else _e_comp_xrandr_ecore_x();
 }
 
 E_API Eina_Bool
