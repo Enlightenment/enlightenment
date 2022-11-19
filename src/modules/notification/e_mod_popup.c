@@ -199,6 +199,7 @@ _notification_theme_cb_close(Popup_Data *popup,
                              const char  *emission EINA_UNUSED,
                              const char  *source EINA_UNUSED)
 {
+   if (popup->pending) return;
    _notification_popup_del(popup->id, E_NOTIFICATION_NOTIFY_CLOSED_REASON_DISMISSED);
 }
 
