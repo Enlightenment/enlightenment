@@ -63,12 +63,18 @@ _e_mod_drm_cb_activate(void *data EINA_UNUSED, int type EINA_UNUSED, void *event
         ecore_evas_pointer_warp(e_comp->ee, e_comp_wl->ptr.x, e_comp_wl->ptr.y);
         if (e_comp->pointer->client.ec)
           {
-             ecore_evas_object_cursor_set(e_comp->ee, e_comp->pointer->client.ec->frame,
-               E_LAYER_MAX - 1, e_comp->pointer->client.x, e_comp->pointer->client.y);
+             ecore_evas_object_cursor_set(e_comp->ee,
+                                          e_comp->pointer->client.ec->frame,
+                                          E_LAYER_MAX - 1,
+                                          e_comp->pointer->client.x,
+                                          e_comp->pointer->client.y);
           }
         else
-          ecore_evas_object_cursor_set(e_comp->pointer->ee, e_comp->pointer->o_ptr,
-            E_LAYER_MAX - 1, e_comp->pointer->hot.x, e_comp->pointer->hot.y);
+          ecore_evas_object_cursor_set(e_comp->pointer->ee,
+                                       e_comp->pointer->o_ptr,
+                                       E_LAYER_MAX - 1,
+                                       e_comp->pointer->hot.x,
+                                       e_comp->pointer->hot.y);
      }
    else
      {
@@ -696,14 +702,29 @@ _drm2_randr_apply(void)
                        relmode = ECORE_DRM2_RELATIVE_MODE_NONE;
                        switch (screenconf[i]->config.relative.mode)
                          {
-                          case E_RANDR2_RELATIVE_UNKNOWN:  relmode = ECORE_DRM2_RELATIVE_MODE_UNKNOWN; break;
-                          case E_RANDR2_RELATIVE_NONE:     relmode = ECORE_DRM2_RELATIVE_MODE_NONE; break;
-                          case E_RANDR2_RELATIVE_CLONE:    relmode = ECORE_DRM2_RELATIVE_MODE_CLONE; break;
-                          case E_RANDR2_RELATIVE_TO_LEFT:  relmode = ECORE_DRM2_RELATIVE_MODE_TO_LEFT; break;
-                          case E_RANDR2_RELATIVE_TO_RIGHT: relmode = ECORE_DRM2_RELATIVE_MODE_TO_RIGHT; break;
-                          case E_RANDR2_RELATIVE_TO_ABOVE: relmode = ECORE_DRM2_RELATIVE_MODE_TO_ABOVE; break;
-                          case E_RANDR2_RELATIVE_TO_BELOW: relmode = ECORE_DRM2_RELATIVE_MODE_TO_BELOW; break;
-                          default: break;
+                          case E_RANDR2_RELATIVE_UNKNOWN:
+                            relmode = ECORE_DRM2_RELATIVE_MODE_UNKNOWN;
+                            break;
+                          case E_RANDR2_RELATIVE_NONE:
+                            relmode = ECORE_DRM2_RELATIVE_MODE_NONE;
+                            break;
+                          case E_RANDR2_RELATIVE_CLONE:
+                            relmode = ECORE_DRM2_RELATIVE_MODE_CLONE;
+                            break;
+                          case E_RANDR2_RELATIVE_TO_LEFT:
+                            relmode = ECORE_DRM2_RELATIVE_MODE_TO_LEFT;
+                            break;
+                          case E_RANDR2_RELATIVE_TO_RIGHT:
+                            relmode = ECORE_DRM2_RELATIVE_MODE_TO_RIGHT;
+                            break;
+                          case E_RANDR2_RELATIVE_TO_ABOVE:
+                            relmode = ECORE_DRM2_RELATIVE_MODE_TO_ABOVE;
+                            break;
+                          case E_RANDR2_RELATIVE_TO_BELOW:
+                            relmode = ECORE_DRM2_RELATIVE_MODE_TO_BELOW;
+                            break;
+                          default:
+                            break;
                          }
                        ecore_drm2_output_relative_mode_set(outconf[i], relmode);
 
@@ -744,7 +765,8 @@ _drm2_randr_apply(void)
         Evas_Object *o = evas_object_name_find(e, "__e_wl_watermark");
         if (o) evas_object_move(o, nw - 40 - 16, 16);
      }
-   printf("RRR: set vsize: %ix%i, rot=%i\n", nw, nh, ecore_evas_rotation_get(e_comp->ee));
+   printf("RRR: set vsize: %ix%i, rot=%i\n", nw, nh,
+          ecore_evas_rotation_get(e_comp->ee));
    ecore_drm2_device_calibrate(dev, nw, nh);
    rot = ecore_evas_rotation_get(e_comp->ee);
    if ((rot == 90) || (rot == 270))
@@ -906,10 +928,12 @@ _drm_device_del(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Eo *seat = event->info;
 
-   if (efl_input_device_type_get(event->info) == EFL_INPUT_DEVICE_TYPE_SEAT) return;
+   if (efl_input_device_type_get(event->info) == EFL_INPUT_DEVICE_TYPE_SEAT)
+     return;
    seat = efl_input_device_seat_get(event->info);
 
-   if (seat != evas_default_device_get(e_comp->evas, EVAS_DEVICE_CLASS_SEAT)) return;
+   if (seat != evas_default_device_get(e_comp->evas, EVAS_DEVICE_CLASS_SEAT))
+     return;
    if (!efl_input_device_is_pointer_type_get(event->info)) return;
    if (efl_input_device_pointer_device_count_get(seat) == 1)
      ecore_evas_cursor_device_unset(e_comp->ee, event->info);
