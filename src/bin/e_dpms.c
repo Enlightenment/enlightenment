@@ -21,10 +21,6 @@ static Ecore_Timer *suspend_timer;
 static Ecore_Timer *off_timer;
 #endif
 
-#define STANDBY 10
-#define SUSPEND 11
-#define OFF 12
-
 E_API void
 e_dpms_update(void)
 {
@@ -53,9 +49,9 @@ e_dpms_update(void)
    if (e_config->screensaver_enable)
      {
         off = suspend = standby = e_screensaver_timeout_get(EINA_FALSE);
-        standby += STANDBY;
-        suspend += SUSPEND;
-        off += OFF;
+        standby += E_DPMS_STANDBY;
+        suspend += E_DPMS_SUSPEND;
+        off += E_DPMS_OFF;
      }
    if (_e_dpms_timeout_standby != standby)
      {
@@ -101,9 +97,9 @@ e_dpms_force_update(void)
    if (e_config->screensaver_enable)
      {
         off = suspend = standby = e_screensaver_timeout_get(EINA_FALSE);
-        standby += STANDBY;
-        suspend += SUSPEND;
-        off += OFF;
+        standby += E_DPMS_STANDBY;
+        suspend += E_DPMS_SUSPEND;
+        off += E_DPMS_OFF;
      }
 #ifndef HAVE_WAYLAND_ONLY
    if (e_comp->comp_type != E_PIXMAP_TYPE_X) return;
@@ -171,9 +167,9 @@ _e_dpms_off(void *d EINA_UNUSED)
 static Eina_Bool
 _e_dpms_screensaver_on()
 {
-   standby_timer = ecore_timer_loop_add(STANDBY, _e_dpms_standby, NULL);
-   suspend_timer = ecore_timer_loop_add(SUSPEND, _e_dpms_suspend, NULL);
-   off_timer = ecore_timer_loop_add(OFF, _e_dpms_off, NULL);
+   standby_timer = ecore_timer_loop_add(E_DPMS_STANDBY, _e_dpms_standby, NULL);
+   suspend_timer = ecore_timer_loop_add(E_DPMS_SUSPEND, _e_dpms_suspend, NULL);
+   off_timer = ecore_timer_loop_add(E_DPMS_OFF, _e_dpms_off, NULL);
    return ECORE_CALLBACK_RENEW;
 }
 

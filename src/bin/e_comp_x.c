@@ -77,6 +77,7 @@ static int screen_size_index = -1;
 static Ecore_X_Atom backlight_atom = 0;
 
 static Ecore_Timer *mouse_in_fix_check_timer = NULL;
+static Ecore_Timer *_e_comp_x_blank_apply_timer = NULL;
 
 static Eina_Hash *dead_wins;
 
@@ -6031,6 +6032,13 @@ _e_comp_x_screens_setup(void)
    return EINA_FALSE;
 }
 
+static Eina_Bool
+_e_comp_x_blank_apply(void *data EINA_UNUSED)
+{
+   e_screensaver_force_update();
+   return EINA_TRUE;
+}
+
 E_API Eina_Bool
 e_comp_x_init(void)
 {
@@ -6198,6 +6206,8 @@ e_comp_x_init(void)
                                 e_config->screensaver_blanking,
                                 e_config->screensaver_expose);
         e_comp_x_devices_config_apply(EINA_FALSE);
+        _e_comp_x_blank_apply_timer = ecore_timer_add
+          (10.0, _e_comp_x_blank_apply, NULL);
      }
    else
      e_dnd_init();
@@ -6208,6 +6218,11 @@ e_comp_x_init(void)
 E_API void
 e_comp_x_shutdown(void)
 {
+   if (_e_comp_x_blank_apply_timer)
+     {
+        ecore_timer_del(_e_comp_x_blank_apply_timer);
+        _e_comp_x_blank_apply_timer = NULL;
+     }
    _e_comp_x_del(e_comp);
    E_FREE_LIST(handlers, ecore_event_handler_del);
    E_FREE_FUNC(clients_win_hash, eina_hash_free);

@@ -88,6 +88,65 @@ e_screensaver_ignore_get(void)
    return _screensaver_ignore;
 }
 
+static int
+_e_screensaver_timeout_get(void)
+{
+   int timeout = e_screensaver_timeout_get(EINA_TRUE);
+
+   if (!((e_config->screensaver_enable) &&
+         (!((e_util_fullscreen_current_any()) &&
+            (e_config->no_dpms_on_fullscreen)))))
+     timeout = 0;
+   if ((e_msgbus_data) &&
+       (e_msgbus_data->screensaver_inhibits))
+     timeout = 0;
+   return timeout;
+}
+
+E_API void
+e_screensaver_force_update(void)
+{
+#ifndef HAVE_WAYLAND_ONLY
+   if (e_comp->comp_type != E_PIXMAP_TYPE_WL)
+     {
+        int timeout = _e_screensaver_timeout_get();
+        int x_timeout = ecore_x_screensaver_timeout_get();
+
+        if (!e_config->screensaver_dpms_off)
+          {
+             Eina_Bool x_dpms = ecore_x_dpms_enabled_get();
+             unsigned int x_standby = 0, x_suspend = 0, x_off = 0;
+             unsigned int standby = 0, suspend = 0, off = 0;
+
+             if (e_config->screensaver_enable != x_dpms)
+               {
+                  printf("SCRSV: someone else messed with screen dpms!\n");
+                  ecore_x_dpms_enabled_set(e_config->screensaver_enable);
+               }
+             off = suspend = standby = e_screensaver_timeout_get(EINA_FALSE);
+             standby += E_DPMS_STANDBY;
+             suspend += E_DPMS_SUSPEND;
+             off += E_DPMS_OFF;
+             ecore_x_dpms_timeouts_get(&x_standby, &x_suspend, &x_off);
+             if ((x_standby != standby) || (x_suspend != suspend) ||
+                 (x_off != off))
+               {
+                  printf("SCRSV: someone else messed with screen dpms timeouts!\n");
+                  ecore_x_dpms_timeouts_set(standby, suspend, off);
+               }
+          }
+        if (timeout != x_timeout)
+          {
+             printf("SCRSV: someone else messed with screen blanking!\n");
+             ecore_x_screensaver_set(timeout,
+                                     e_config->screensaver_interval,
+                                     e_config->screensaver_blanking,
+                                     e_config->screensaver_expose);
+          }
+     }
+#endif
+}
+
 E_API void
 e_screensaver_update(void)
 {
@@ -109,15 +168,7 @@ e_screensaver_update(void)
    _e_screensaver_cfg_timeout = e_config->screensaver_timeout;
    _e_screensaver_cfg_dim = dim_timeout;
 
-   timeout = e_screensaver_timeout_get(EINA_TRUE);
-   if (!((e_config->screensaver_enable) &&
-         (!((e_util_fullscreen_current_any()) &&
-            (e_config->no_dpms_on_fullscreen)))))
-     timeout = 0;
-   if (e_msgbus_data)
-     {
-        if (e_msgbus_data->screensaver_inhibits) timeout = 0;
-     }
+   timeout = _e_screensaver_timeout_get();
 
    if (_e_screensaver_timeout != timeout)
      {
@@ -153,7 +204,7 @@ e_screensaver_update(void)
              // screen doesn't turn off at all because x thinks internally
              // that the monitor is still off... so this is odd, but it's
              // necessary on some hardware.
-             if ((real_changed) && (!e_config->screensaver_dpms_off))
+             if (real_changed && (!e_config->screensaver_dpms_off))
                {
                   ecore_x_dpms_enabled_set(!e_config->screensaver_enable);
                   ecore_x_dpms_enabled_set(e_config->screensaver_enable);
