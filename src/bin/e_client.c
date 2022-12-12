@@ -2298,6 +2298,29 @@ _e_client_eval(E_Client *ec)
                     }
                }
           }
+        if (!ec->desktop && ec->icccm.class)
+          {
+             const char *p = strchr(ec->icccm.class, ' ');
+
+             if (p)
+               {
+                  char *sp, *dup = strdup(ec->icccm.class);
+
+                  if (dup)
+                    {
+                       for (sp = dup; *dup; sp++)
+                         {
+                            if (*sp == ' ')
+                              {
+                                 *sp = 0;
+                                 break;
+                              }
+                         }
+                       ec->desktop = efreet_util_desktop_exec_find(dup);
+                       free(dup);
+                    }
+               }
+          }
         if (!ec->desktop && ec->icccm.name)
           {
              /* this works for most cases as fallback. useful when app is
