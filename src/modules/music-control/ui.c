@@ -274,7 +274,10 @@ _cfg_data_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
    inst->ctxt->config->pause_on_desklock = cfdata->pause_on_desklock;
 
    if (inst->ctxt->config->pause_on_desklock)
-      desklock_handler = ecore_event_handler_add(E_EVENT_DESKLOCK, _desklock_cb, inst->ctxt);
+     {
+        if (!desklock_handler)
+          desklock_handler = ecore_event_handler_add(E_EVENT_DESKLOCK, _desklock_cb, inst->ctxt);
+     }
    else
      E_FREE_FUNC(desklock_handler, ecore_event_handler_del);
 
