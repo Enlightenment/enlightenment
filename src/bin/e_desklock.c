@@ -507,8 +507,6 @@ _e_desklock_cb_run(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    E_Order *desk_run;
    char buf[PATH_MAX];
 
-   if (!ev->suspend) return ECORE_CALLBACK_PASS_ON;
-
    if (ev->on)
      {
         e_user_dir_concat_static(buf, "applications/desk-lock/.order");
