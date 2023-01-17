@@ -27,6 +27,9 @@ static Eina_Bool  _e_bl_suspend = EINA_FALSE;
 static void _backlight_devices_device_set(Backlight_Device *bd, double val);
 static void _backlight_devices_device_update(Backlight_Device *bd);
 
+#define MAX_BL_DIFF 0.15
+#define SET_RETRIES 5
+
 static Eina_Bool
 _backlight_retry_timer_cb(void *data)
 {
@@ -45,17 +48,17 @@ _backlight_mismatch_retry(Backlight_Device *bd)
        ((fabs(bd->expected_val - 1.0) < DBL_EPSILON) ||
         (fabs(bd->expected_val - e_config->backlight.normal) < DBL_EPSILON) ||
         (fabs(bd->expected_val - e_config->backlight.dim) < DBL_EPSILON)) &&
-       // and the delta between expected and val >= 0.05
-       (fabs(bd->expected_val - bd->val) >= 0.05) &&
-       // and we retried < 20 times
-       (bd->retries < 10) &&
+       // and the delta between expected and val >= MAX_BL_DIFF
+       (fabs(bd->expected_val - bd->val) >= MAX_BL_DIFF) &&
+       // and we retried < SET_RETRIES times
+       (bd->retries < SET_RETRIES) &&
        (_own_vt))
      { // try again
         printf("RETRY backlight set as %1.2f != %1.2f (expected) try=%i\n",
                bd->val, bd->expected_val, bd->retries);
         bd->retries++;
         if (bd->retry_timer) ecore_timer_del(bd->retry_timer);
-        bd->retry_timer = ecore_timer_add(0.1, _backlight_retry_timer_cb, bd);
+        bd->retry_timer = ecore_timer_add(0.3, _backlight_retry_timer_cb, bd);
      } // or give up
    else bd->retries = 0;
 }
@@ -73,10 +76,10 @@ _backlight_system_get_cb(void *data, const char *params)
    if (!!strcmp(bd->dev, dev)) return;
    e_system_handler_del("bklight-val", _backlight_system_get_cb, bd);
    fval = (double)val / 1000.0;
-   if (fabs(fval - bd->val) >= DBL_EPSILON)
+   if (fabs(fval - bd->val) >= MAX_BL_DIFF)
      {
-        bd->val = fval;
-        ecore_event_add(E_EVENT_BACKLIGHT_CHANGE, NULL, NULL, NULL);
+//        bd->val = fval;
+//        ecore_event_add(E_EVENT_BACKLIGHT_CHANGE, NULL, NULL, NULL);
         _backlight_mismatch_retry(bd);
      }
 }
@@ -97,10 +100,10 @@ _backlight_system_ddc_get_cb(void *data, const char *params)
    if (val < 0) fval = -1.0;
    else fval = (double)val / 100.0;
    bd->ddc_max = max;
-   if ((fabs(fval - bd->val) >= DBL_EPSILON) || (val == -1))
+   if ((fabs(fval - bd->val) >= MAX_BL_DIFF) || (val == -1))
      {
-        bd->val = fval;
-        ecore_event_add(E_EVENT_BACKLIGHT_CHANGE, NULL, NULL, NULL);
+//        bd->val = fval;
+//        ecore_event_add(E_EVENT_BACKLIGHT_CHANGE, NULL, NULL, NULL);
         _backlight_mismatch_retry(bd);
      }
 }
@@ -791,7 +794,7 @@ e_backlight_level_set(E_Zone *zone, double val, double tim)
    if (fabs(tim) < DBL_EPSILON)
      {
         _backlight_devices_device_set(bd, val);
-        _backlight_devices_device_update(bd);
+//        _backlight_devices_device_update(bd);
         ecore_event_add(E_EVENT_BACKLIGHT_CHANGE, NULL, NULL, NULL);
         return;
      }
