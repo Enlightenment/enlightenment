@@ -28,6 +28,7 @@
 #include "e_place.h"
 #include "e_resist.h"
 #include "e_startup.h"
+#include "e_state.h"
 #include "e_signals.h"
 #include "e_xinerama.h"
 #include "e_layout.h"

@@ -698,6 +698,11 @@ main(int argc, char **argv)
    TS("E_Ipc Init Done");
    _e_main_shutdown_push(e_ipc_shutdown);
 
+   TS("E_State Init");
+   e_state_init();
+   TS("E_State Init Done");
+   _e_main_shutdown_push(e_state_shutdown);
+
    TS("E_Font Init");
    if (!e_font_init())
      {
