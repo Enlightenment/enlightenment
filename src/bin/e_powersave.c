@@ -365,8 +365,10 @@ _e_powersave_event_update_free(void *data EINA_UNUSED, void *event)
    else mode = powersave_mode;
    free(event);
 
+   printf("PWSAVE: update free...\n");
    if (mode > E_POWERSAVE_MODE_LOW)
      {
+        printf("PWSAVE: low pwr hib=%i sus=%i\n", powersave_deferred_hibernate, powersave_deferred_suspend);
         if (powersave_deferred_hibernate)
           e_sys_action_do(E_SYS_HIBERNATE, NULL);
         else if (powersave_deferred_suspend)
