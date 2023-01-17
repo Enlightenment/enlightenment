@@ -785,6 +785,7 @@ _screens_differ(E_Randr2 *r1, E_Randr2 *r2)
    return changed;
 }
 
+/*
 static Eina_Bool
 _cb_deferred_suspend_screen_change(void *data EINA_UNUSED)
 {
@@ -813,6 +814,7 @@ _cb_deferred_suspend_screen_change(void *data EINA_UNUSED)
      }
    return EINA_FALSE;
 }
+*/
 
 static Eina_Bool
 _cb_screen_change_delay(void *data EINA_UNUSED)
@@ -931,8 +933,9 @@ _cb_screen_change_delay(void *data EINA_UNUSED)
                   if ((e_config->screensaver_suspend_on_ac) ||
                       (e_powersave_mode_get() > E_POWERSAVE_MODE_LOW))
                     {
-                       printf("RRR: we should try and suspend now because on ac or suspend on ac is on\n");
-                       ecore_timer_add(1.0, _cb_deferred_suspend_screen_change, NULL);
+// disable for now.. moving to state system
+//                       printf("RRR: we should try and suspend now because on ac or suspend on ac is on\n");
+//                       ecore_timer_add(1.0, _cb_deferred_suspend_screen_change, NULL);
                     }
                }
           }
