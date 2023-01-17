@@ -542,7 +542,7 @@ _e_comp_xrandr_cmd(void)
                          top_priority = s->config.priority;
                        for (i = 0; i < crtcs_num; i++)
                          {
-                            if (!outconf[i])
+                            if (!screenconf[i])
                               {
                                  printf("RRR:     crtc slot empty: %i\n", i);
                                  info = ecore_x_randr_crtc_info_get(root,
@@ -564,12 +564,24 @@ _e_comp_xrandr_cmd(void)
                               }
                          }
                     }
+                  else
+                    {
+                      for (i = 0; i < crtcs_num; i++)
+                         {
+                            if (!screenconf[i])
+                              {
+                                 outconf[i] = 0;
+                                 screenconf[i] = s;
+                                 break;
+                              }
+                         }
+                    }
                }
           }
         numout = 0;
         for (i = 0; i < crtcs_num; i++)
           {
-             if (outconf[i]) numout++;
+             if (screenconf[i]) numout++;
           }
         if (numout)
           {
