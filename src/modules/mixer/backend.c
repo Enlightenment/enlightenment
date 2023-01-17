@@ -174,14 +174,33 @@ _volume_adjust(int step)
 }
 
 static void
-_volume_increase_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
+_volume_increase_cb(E_Object *obj EINA_UNUSED, const char *params)
 {
+   if ((params) && (strlen(params) > 0))
+     {
+        int val = atoi(params);
+        if (val > 0)
+          {
+             _volume_adjust(val);
+             return;
+          }
+     }
    _volume_adjust(VOLUME_STEP);
 }
 
 static void
-_volume_decrease_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
+_volume_decrease_cb(E_Object *obj EINA_UNUSED, const char *params)
 {
+   if ((params) && (strlen(params) > 0))
+     {
+        int val = atoi(params);
+        if (val > 0)
+          {
+             _volume_adjust(-val);
+             return;
+          }
+        return;
+     }
    _volume_adjust(-VOLUME_STEP);
 }
 
@@ -227,14 +246,32 @@ _volume_source_adjust(int step)
 }
 
 static void
-_volume_increase_source_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
+_volume_increase_source_cb(E_Object *obj EINA_UNUSED, const char *params)
 {
+   if ((params) && (strlen(params) > 0))
+     {
+        int val = atoi(params);
+        if (val > 0)
+          {
+             _volume_source_adjust(val);
+             return;
+          }
+     }
    _volume_source_adjust(VOLUME_STEP);
 }
 
 static void
-_volume_decrease_source_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
+_volume_decrease_source_cb(E_Object *obj EINA_UNUSED, const char *params)
 {
+   if ((params) && (strlen(params) > 0))
+     {
+        int val = atoi(params);
+        if (val > 0)
+          {
+             _volume_source_adjust(-val);
+             return;
+          }
+     }
    _volume_source_adjust(-VOLUME_STEP);
 }
 
@@ -246,25 +283,42 @@ _volume_mute_source_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED
 }
 
 static void
-_volume_increase_app_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
+_volume_increase_app_cb(E_Object *obj EINA_UNUSED, const char *params)
 {
    E_Client *ec;
 
    ec = e_client_focused_get();
    if (ec && ec->volume_control_enabled)
      {
-        e_client_volume_set(ec, ec->volume + VOLUME_STEP);
+        if ((params) && (strlen(params) > 0))
+          {
+             int val = atoi(params);
+             if (val > 0)
+               {
+                  e_client_volume_set(ec, ec->volume + val);
+                  return;
+               }
+          }
      }
 }
 
 static void
-_volume_decrease_app_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
+_volume_decrease_app_cb(E_Object *obj EINA_UNUSED, const char *params)
 {
    E_Client *ec;
 
    ec = e_client_focused_get();
    if (ec && ec->volume_control_enabled)
      {
+        if ((params) && (strlen(params) > 0))
+          {
+             int val = atoi(params);
+             if (val > 0)
+               {
+                  e_client_volume_set(ec, ec->volume - val);
+                  return;
+               }
+          }
         e_client_volume_set(ec, ec->volume - VOLUME_STEP);
      }
 }
