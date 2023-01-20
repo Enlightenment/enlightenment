@@ -246,7 +246,7 @@ _light_device_include(const char *dev)
 #endif
 
 static void
-_light_refresh_devices()
+_light_refresh_devices(void)
 {
    Light *lig;
 
