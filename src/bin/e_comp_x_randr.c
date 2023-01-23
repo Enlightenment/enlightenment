@@ -521,10 +521,10 @@ _e_comp_xrandr_cmd(void)
    printf("RRR: crtcs=%p outputs=%p\n", crtcs, outputs);
    if ((crtcs) && (outputs))
      {
-        outconf = alloca(crtcs_num * sizeof(Ecore_X_Randr_Output));
-        screenconf = alloca(crtcs_num * sizeof(E_Randr2_Screen *));
-        memset(outconf, 0, crtcs_num * sizeof(Ecore_X_Randr_Output));
-        memset(screenconf, 0, crtcs_num * sizeof(E_Randr2_Screen *));
+        outconf = alloca(outputs_num * sizeof(Ecore_X_Randr_Output));
+        screenconf = alloca(outputs_num * sizeof(E_Randr2_Screen *));
+        memset(outconf, 0, outputs_num * sizeof(Ecore_X_Randr_Output));
+        memset(screenconf, 0, outputs_num * sizeof(E_Randr2_Screen *));
 
         // decide which outputs get which crtcs
         EINA_LIST_FOREACH(e_randr2->screens, l, s)
@@ -540,13 +540,18 @@ _e_comp_xrandr_cmd(void)
                     {
                        if (s->config.priority > top_priority)
                          top_priority = s->config.priority;
-                       for (i = 0; i < crtcs_num; i++)
+                       for (i = 0; i < outputs_num; i++)
                          {
                             if (!screenconf[i])
                               {
+                                 Ecore_X_Randr_Crtc crtc =
+                                   ecore_x_randr_output_crtc_get(root,
+                                                                 outputs[i]);
+                                 info = NULL;
                                  printf("RRR:     crtc slot empty: %i\n", i);
-                                 info = ecore_x_randr_crtc_info_get(root,
-                                                                    crtcs[i]);
+                                 if (crtc)
+                                   info = ecore_x_randr_crtc_info_get(root,
+                                                                      crtc);
                                  if (info)
                                    {
                                       if (_output_exists(out, info) &&
@@ -556,20 +561,26 @@ _e_comp_xrandr_cmd(void)
                                            printf("RRR:       assign slot out: %x\n", out);
                                            outconf[i] = out;
                                            screenconf[i] = s;
-                                           ecore_x_randr_crtc_info_free(info);
-                                           break;
                                         }
                                       ecore_x_randr_crtc_info_free(info);
                                    }
+                                 if (!screenconf[i])
+                                   {
+                                      printf("RRR:       assign slot off\n");
+                                      outconf[i] = 0;
+                                      screenconf[i] = s;
+                                   }
+                                 break;
                               }
                          }
                     }
                   else
                     {
-                      for (i = 0; i < crtcs_num; i++)
+                      for (i = 0; i < outputs_num; i++)
                          {
                             if (!screenconf[i])
                               {
+                                 printf("RRR:       assign slot off 2\n");
                                  outconf[i] = 0;
                                  screenconf[i] = s;
                                  break;
@@ -579,7 +590,7 @@ _e_comp_xrandr_cmd(void)
                }
           }
         numout = 0;
-        for (i = 0; i < crtcs_num; i++)
+        for (i = 0; i < outputs_num; i++)
           {
              if (screenconf[i]) numout++;
           }
@@ -591,7 +602,7 @@ _e_comp_xrandr_cmd(void)
              sb = eina_strbuf_new();
              eina_strbuf_append(sb, "xrandr ");
              // set up a crtc to drive each output (or not)
-             for (i = 0; i < crtcs_num; i++)
+             for (i = 0; i < numout; i++)
                {
                   sc = screenconf[i];
                   if (!sc) continue;
@@ -697,10 +708,10 @@ _e_comp_xrandr_ecore_x(void)
    printf("RRR: crtcs=%p outputs=%p\n", crtcs, outputs);
    if ((crtcs) && (outputs))
      {
-        outconf = alloca(crtcs_num * sizeof(Ecore_X_Randr_Output));
-        screenconf = alloca(crtcs_num * sizeof(E_Randr2_Screen *));
-        memset(outconf, 0, crtcs_num * sizeof(Ecore_X_Randr_Output));
-        memset(screenconf, 0, crtcs_num * sizeof(E_Randr2_Screen *));
+        outconf = alloca(outputs_num * sizeof(Ecore_X_Randr_Output));
+        screenconf = alloca(outputs_num * sizeof(E_Randr2_Screen *));
+        memset(outconf, 0, outputs_num * sizeof(Ecore_X_Randr_Output));
+        memset(screenconf, 0, outputs_num * sizeof(E_Randr2_Screen *));
 
         // decide which outputs get which crtcs
         EINA_LIST_FOREACH(e_randr2->screens, l, s)
@@ -716,7 +727,7 @@ _e_comp_xrandr_ecore_x(void)
                     {
                        if (s->config.priority > top_priority)
                          top_priority = s->config.priority;
-                       for (i = 0; i < crtcs_num; i++)
+                       for (i = 0; i < outputs_num; i++)
                          {
                             if (!outconf[i])
                               {
@@ -743,18 +754,18 @@ _e_comp_xrandr_ecore_x(void)
                }
           }
         numout = 0;
-        for (i = 0; i < crtcs_num; i++)
+        for (i = 0; i < outputs_num; i++)
           {
              if (outconf[i]) numout++;
           }
         if (numout)
           {
-             Ecore_X_Rectangle *scrs = alloca(crtcs_num * sizeof(Ecore_X_Rectangle));
+             Ecore_X_Rectangle *scrs = alloca(numout * sizeof(Ecore_X_Rectangle));
              int scrs_num;
 
              scrs_num = 0;
              // set up a crtc to drive each output (or not)
-             for (i = 0; i < crtcs_num; i++)
+             for (i = 0; i < numout; i++)
                {
                   // XXX: find clones and set them as outputs in an array
                   if (outconf[i])
