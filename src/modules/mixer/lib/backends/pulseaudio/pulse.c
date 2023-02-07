@@ -1534,7 +1534,7 @@ _pulse_connect(void *data)
    return ret;
 }
 
-static Eina_Bool pulse_started;
+static Eina_Bool pulse_started = EINA_FALSE;
 
 static void
 _shutdown(void)
@@ -1580,7 +1580,7 @@ _init(Emix_Event_Cb cb, const void *data)
      {
         if (!pulse_started)
           ecore_exe_run("pulseaudio --start", NULL);
-        pulse_started = 1;
+        pulse_started = EINA_TRUE;
      }
 
    ctx->cb = cb;
