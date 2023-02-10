@@ -2881,7 +2881,7 @@ disp_err:
 }
 
 static Eina_Bool
-_e_comp_wl_desklock_show(void)
+_e_comp_wl_desklock_show(Eina_Bool immediate EINA_UNUSED)
 {
    return e_comp_grab_input(1, 1);
 }

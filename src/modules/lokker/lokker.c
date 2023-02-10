@@ -343,7 +343,7 @@ _lokker_cb_show_done(void *data, Evas_Object *obj EINA_UNUSED, const char *sig E
 }
 
 static void
-_lokker_popup_add(E_Zone *zone)
+_lokker_popup_add(E_Zone *zone, Eina_Bool immediate)
 {
    E_Zone *current_zone;
    Evas_Object *o = NULL;
@@ -353,6 +353,7 @@ _lokker_popup_add(E_Zone *zone)
    Eina_Stringshare *bg;
    Evas *evas;
    int nocreate = 0;
+   Eina_Bool is_edje = EINA_FALSE;
 
    lp = E_NEW(Lokker_Popup, 1);
    cbg = eina_list_nth(e_config->desklock_backgrounds, zone->num);
@@ -366,6 +367,7 @@ _lokker_popup_add(E_Zone *zone)
      {
         o = edje_object_add(evas);
         evas_object_data_set(o, "is_edje", o);
+        is_edje = EINA_TRUE;
         e_theme_edje_object_set(o, "base/theme/desklock",
                                 "e/desklock/background");
      }
@@ -373,6 +375,7 @@ _lokker_popup_add(E_Zone *zone)
      {
         o = edje_object_add(evas);
         evas_object_data_set(o, "is_edje", o);
+        is_edje = EINA_TRUE;
         e_theme_edje_object_set(o, "base/theme/backgrounds",
                                 "e/desktop/background");
      }
@@ -389,6 +392,7 @@ _lokker_popup_add(E_Zone *zone)
           {
              o = edje_object_add(evas);
              evas_object_data_set(o, "is_edje", o);
+             is_edje = EINA_TRUE;
              if (e_util_edje_collection_exists(f, "e/desklock/background"))
                {
                   edje_object_file_set(o, f, "e/desklock/background");
@@ -426,15 +430,25 @@ _lokker_popup_add(E_Zone *zone)
    evas_object_move(lp->bg_object, zone->x, zone->y);
    evas_object_resize(lp->bg_object, zone->w, zone->h);
    evas_object_show(lp->bg_object);
+   if (is_edje)
      {
         const char *s = edje_object_data_get(lp->bg_object, "show_signal");
-        lp->show_anim = s && (atoi(s) == 1);
-        e_desklock_zone_block_set(zone, !lp->show_anim);
-        if ((lp->show_anim) &&
-            (evas_object_data_get(lp->bg_object, "is_edje")))
-          edje_object_signal_callback_add(lp->bg_object,
-                                          "e,action,show,done", "e",
-                                          _lokker_cb_show_done, lp);
+
+        if (immediate)
+          {
+             edje_object_signal_emit(lp->bg_object,
+                                     "e,action,show,immediate", "e");
+          }
+        else
+          {
+             s = edje_object_data_get(lp->bg_object, "show_signal");
+             lp->show_anim = s && (atoi(s) == 1);
+             e_desklock_zone_block_set(zone, !lp->show_anim);
+             if (lp->show_anim)
+               edje_object_signal_callback_add(lp->bg_object,
+                                               "e,action,show,done", "e",
+                                               _lokker_cb_show_done, lp);
+          }
         s = edje_object_data_get(lp->bg_object, "hide_signal");
         lp->hide_anim = s && (atoi(s) == 1);
      }
@@ -492,6 +506,18 @@ _lokker_popup_add(E_Zone *zone)
    evas_event_thaw(evas);
 
    edd->elock_wnd_list = eina_list_append(edd->elock_wnd_list, lp);
+}
+
+static void
+_lokker_popup_add_normal(E_Zone *zone)
+{
+   _lokker_popup_add(zone, EINA_FALSE);
+}
+
+static void
+_lokker_popup_add_immediate(E_Zone *zone)
+{
+   _lokker_popup_add(zone, EINA_TRUE);
 }
 
 static void
@@ -627,7 +653,7 @@ _lokker_cb_zone_add(void *data EINA_UNUSED,
    if (!edd) return ECORE_CALLBACK_PASS_ON;
    if ((!edd->move_handler) && (e_config->desklock_login_box_zone == -2))
      edd->move_handler = ecore_event_handler_add(ECORE_EVENT_MOUSE_MOVE, _lokker_cb_mouse_move, NULL);
-   if (!_lokker_popup_find(ev->zone)) _lokker_popup_add(ev->zone);
+   if (!_lokker_popup_find(ev->zone)) _lokker_popup_add_immediate(ev->zone);
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -900,7 +926,7 @@ lokker_key_down(Ecore_Event_Key *ev)
 }
 
 EINTERN Eina_Bool
-lokker_lock(void)
+lokker_lock(Eina_Bool immediate)
 {
    int total_zone_num = 0;
 
@@ -921,7 +947,14 @@ lokker_lock(void)
 #endif
 
    e_pointer_type_push(e_comp->pointer, edd, "default");
-   E_LIST_FOREACH(e_comp->zones, _lokker_popup_add);
+   if (immediate)
+     {
+        E_LIST_FOREACH(e_comp->zones, _lokker_popup_add_immediate);
+     }
+   else
+     {
+        E_LIST_FOREACH(e_comp->zones, _lokker_popup_add_normal);
+     }
    total_zone_num = eina_list_count(e_comp->zones);
 
    /* handlers */

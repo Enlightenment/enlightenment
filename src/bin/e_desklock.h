@@ -1,7 +1,7 @@
 #ifdef E_TYPEDEFS
 
 typedef struct _E_Event_Desklock E_Event_Desklock;
-typedef Eina_Bool (*E_Desklock_Show_Cb)(void);
+typedef Eina_Bool (*E_Desklock_Show_Cb)(Eina_Bool immediate);
 typedef void (*E_Desklock_Hide_Cb)(void);
 
 typedef enum _E_Desklock_Background_Method {

@@ -124,7 +124,7 @@ e_desklock_interface_append(E_Desklock_Interface *iface)
      desklock_ifaces = eina_list_append(desklock_ifaces, (void*)iface);
    if (_e_desklock_state && (!current_iface))
      {
-        if (iface->show())
+        if (iface->show(EINA_TRUE))
           {
              iface->active = EINA_TRUE;
              current_iface = iface;
@@ -155,7 +155,7 @@ e_desklock_interface_remove(E_Desklock_Interface *iface)
    /* then try to find a replacement locker */
    EINA_LIST_REVERSE_FOREACH(desklock_ifaces, l, diface)
      {
-        if (!diface->show()) continue;
+        if (!diface->show(EINA_TRUE)) continue;
         diface->active = EINA_TRUE;
         current_iface = diface;
         break;
@@ -209,7 +209,7 @@ e_desklock_demo(void)
 
    EINA_LIST_REVERSE_FOREACH(desklock_ifaces, l, iface)
      {
-        if (iface->show())
+        if (iface->show(EINA_FALSE))
           {
              demo = iface->active = EINA_TRUE;
              current_iface = iface;
@@ -254,7 +254,7 @@ _desklock_show_internal(Eina_Bool suspend)
    e_menu_hide_all();
    EINA_LIST_FOREACH(show_hooks, l, show_cb)
      {
-        if (!show_cb()) goto fail;
+        if (!show_cb(suspend)) goto fail;
      }
 
    EINA_LIST_FOREACH(e_comp->zones, l, zone)
@@ -295,7 +295,7 @@ _desklock_show_internal(Eina_Bool suspend)
 
       EINA_LIST_REVERSE_FOREACH(desklock_ifaces, l, iface)
         {
-           success = iface->show();
+           success = iface->show(suspend);
            if (success)
              {
                 iface->active = EINA_TRUE;
