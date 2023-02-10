@@ -51,6 +51,9 @@ struct _E_Event_State
 EINTERN int         e_state_init(void);
 EINTERN int         e_state_shutdown(void);
 
+E_API void          e_state_item_change_callback_add(const char *glob, void (*cb) (void *data, E_State_Item item, Eina_Bool del), const void *data);
+E_API void          e_state_item_change_callback_del(const char *glob, void (*cb) (void *data, E_State_Item item, Eina_Bool del), const void *data);
+
 E_API E_State_Item  e_state_item_get(const char *name);
 E_API void          e_state_item_set(E_State_Item it);
 

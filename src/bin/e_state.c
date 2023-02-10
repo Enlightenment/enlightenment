@@ -3,7 +3,20 @@
 /* public variables */
 E_API int E_EVENT_STATE_CHANGE = 0;
 
+/* private stuff */
+
+typedef struct _E_State_Item_Change_Callback
+{
+   const char  *glob;
+   void       (*cb) (void *data, E_State_Item item, Eina_Bool del);
+   void        *data;
+   Eina_Bool    delete_me : 1;
+} E_State_Item_Change_Callback;
+
 static Eina_Hash *_e_state_items = NULL;
+static int _e_state_change_callbacks_walking = 0;
+static Eina_Bool _e_state_change_callbacks_need_del= EINA_FALSE;
+static Eina_List *_e_state_change_callbacks = NULL;
 
 static void
 _state_item_free(void *data)
@@ -19,7 +32,35 @@ static void
 _state_event_free(void *data EINA_UNUSED, void *ev)
 {
    E_Event_State *e = ev;
+   Eina_List *l, *ll;
+   E_State_Item_Change_Callback *cbit;
 
+   _e_state_change_callbacks_walking++;
+   EINA_LIST_FOREACH(_e_state_change_callbacks, l, cbit)
+     {
+        if (eina_fnmatch(cbit->glob, e->item.name, 0))
+          {
+             cbit->cb(cbit->data, e->item,
+                      (e->event == E_STATE_DEL) ?
+                      EINA_TRUE : EINA_FALSE);
+          }
+     }
+   _e_state_change_callbacks_walking--;
+   if ((_e_state_change_callbacks_walking == 0) &&
+       (_e_state_change_callbacks_need_del))
+     {
+        EINA_LIST_FOREACH_SAFE(_e_state_change_callbacks, l, ll, cbit)
+          {
+             if (cbit->delete_me)
+               {
+                  _e_state_change_callbacks =
+                    eina_list_remove_list(_e_state_change_callbacks, l);
+                  eina_stringshare_del(cbit->glob);
+                  free(cbit);
+               }
+          }
+        _e_state_change_callbacks_need_del = EINA_FALSE;
+     }
    if (e->item.name) eina_stringshare_del(e->item.name);
    if (e->item.type == E_STATE_STRING) eina_stringshare_del(e->item.val.s);
    free(e);
@@ -39,8 +80,58 @@ e_state_init(void)
 EINTERN int
 e_state_shutdown(void)
 {
+   E_State_Item_Change_Callback *cbit;
+
    E_FREE_FUNC(_e_state_items, eina_hash_free);
+   EINA_LIST_FREE(_e_state_change_callbacks, cbit)
+     {
+        eina_stringshare_del(cbit->glob);
+        free(cbit);
+     }
    return 1;
+}
+
+E_API void
+e_state_item_change_callback_add(const char *glob, void (*cb) (void *data, E_State_Item item, Eina_Bool del), const void *data)
+{
+   E_State_Item_Change_Callback *cbit = calloc(1, sizeof(E_State_Item_Change_Callback));
+
+   if (!cbit) return;
+   cbit->glob = eina_stringshare_add(glob);
+   if (!cbit->glob)
+     {
+        free(cbit);
+        return;
+     }
+   cbit->cb = cb;
+   cbit->data = (void *)data;
+   _e_state_change_callbacks = eina_list_append(_e_state_change_callbacks, cbit);
+}
+
+E_API void
+e_state_item_change_callback_del(const char *glob, void (*cb) (void *data, E_State_Item item, Eina_Bool del), const void *data)
+{
+   Eina_List *l;
+   E_State_Item_Change_Callback *cbit;
+
+   EINA_LIST_FOREACH(_e_state_change_callbacks, l, cbit)
+     {
+        if ((!strcmp(cbit->glob, glob)) &&
+            (cbit->cb == cb) && (cbit->data == data))
+          {
+             if (_e_state_change_callbacks_walking > 0)
+               {
+                  cbit->delete_me = EINA_TRUE;
+                  _e_state_change_callbacks_need_del = EINA_TRUE;
+                  break;
+               }
+             _e_state_change_callbacks =
+               eina_list_remove_list(_e_state_change_callbacks, l);
+             eina_stringshare_del(cbit->glob);
+             free(cbit);
+             return;
+          }
+     }
 }
 
 E_API E_State_Item
