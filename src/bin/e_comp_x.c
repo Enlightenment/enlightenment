@@ -5825,7 +5825,7 @@ _e_comp_x_desklock_hide(void)
 }
 
 static Eina_Bool
-_e_comp_x_desklock_show(void)
+_e_comp_x_desklock_show(Eina_Bool immedate EINA_UNUSED)
 {
    if (!e_comp_grab_input(1, 1))
      {
