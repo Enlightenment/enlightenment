@@ -229,6 +229,7 @@ _e_msgbus_screensaver_owner_change_cb(void *data EINA_UNUSED, const char *bus EI
           {
              // stop inhibiting SS
              e_screensaver_update();
+             e_dpms_force_update();
           }
      }
 }
@@ -274,6 +275,7 @@ _e_msgbus_screensaver_inhibit_cb(const Eldbus_Service_Interface *iface EINA_UNUS
         // start inhibiting SS
         e_screensaver_deactivate();
         e_screensaver_update();
+        e_dpms_force_update();
      }
 err:
    return reply;
@@ -327,6 +329,7 @@ e_msgbus_screensaver_inhibit_remove(unsigned int cookie)
      {
         // stop inhibiting SS
         e_screensaver_update();
+        e_dpms_force_update();
      }
 }
 

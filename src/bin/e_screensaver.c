@@ -118,7 +118,7 @@ e_screensaver_force_update(void)
              unsigned int x_standby = 0, x_suspend = 0, x_off = 0;
              unsigned int standby = 0, suspend = 0, off = 0;
 
-             if (e_config->screensaver_enable != x_dpms)
+             if (e_dpms_actual != x_dpms)
                {
                   printf("SCRSV: someone else messed with screen dpms!\n");
                   ecore_x_dpms_enabled_set(e_config->screensaver_enable);
@@ -145,6 +145,12 @@ e_screensaver_force_update(void)
           }
      }
 #endif
+}
+
+E_API int
+e_screensaver_current_timeout_get(void)
+{
+   return _e_screensaver_timeout_get();
 }
 
 E_API void

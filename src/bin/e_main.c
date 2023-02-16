@@ -904,6 +904,7 @@ main(int argc, char **argv)
      {
         e_desklock_show_manual(EINA_TRUE);
         e_screensaver_update();
+        e_dpms_force_update();
      }
 
    TS("Efreet Paths");

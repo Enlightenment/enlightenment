@@ -12,6 +12,7 @@ E_API void e_screensaver_unignore(void);
 E_API Eina_Bool e_screensaver_ignore_get(void);
 
 E_API void e_screensaver_force_update(void);
+E_API int  e_screensaver_current_timeout_get(void);
 E_API void e_screensaver_update(void);
 
 E_API int e_screensaver_timeout_get(Eina_Bool use_idle);

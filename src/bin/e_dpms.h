@@ -13,5 +13,7 @@ EINTERN int e_dpms_shutdown(void);
 E_API void e_dpms_update(void);
 E_API void e_dpms_force_update(void);
 
+E_API extern Eina_Bool e_dpms_actual;
+
 #endif
 #endif

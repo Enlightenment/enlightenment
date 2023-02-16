@@ -13,6 +13,7 @@ static unsigned int _e_dpms_timeout_standby = 0;
 static unsigned int _e_dpms_timeout_suspend = 0;
 static unsigned int _e_dpms_timeout_off = 0;
 static int _e_dpms_enabled = EINA_FALSE;
+E_API Eina_Bool e_dpms_actual = EINA_FALSE;
 
 #ifdef HAVE_WAYLAND
 static Eina_List *handlers;
@@ -31,6 +32,7 @@ e_dpms_update(void)
    enabled = ((e_config->screensaver_enable) &&
               (!((e_util_fullscreen_any()) &&
                  (e_config->no_dpms_on_fullscreen))));
+   if (e_screensaver_current_timeout_get() == 0) enabled = EINA_FALSE;
    if (_e_dpms_enabled != enabled)
      {
         _e_dpms_enabled = enabled;
@@ -38,9 +40,15 @@ e_dpms_update(void)
         if (e_comp->comp_type == E_PIXMAP_TYPE_X)
           {
              if (!e_config->screensaver_dpms_off)
-               ecore_x_dpms_enabled_set(enabled);
+               {
+                  ecore_x_dpms_enabled_set(enabled);
+                  e_dpms_actual = enabled;
+               }
              else
-               ecore_x_dpms_enabled_set(0);
+               {
+                  ecore_x_dpms_enabled_set(0);
+                  e_dpms_actual = EINA_FALSE;
+               }
           }
 #endif
      }
@@ -83,13 +91,20 @@ e_dpms_force_update(void)
    int enabled;
 
    enabled = (e_config->screensaver_enable);
+   if (e_screensaver_current_timeout_get() == 0) enabled = EINA_FALSE;
 #ifndef HAVE_WAYLAND_ONLY
    if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      {
         if (!e_config->screensaver_dpms_off)
-          ecore_x_dpms_enabled_set(enabled);
+          {
+             ecore_x_dpms_enabled_set(enabled);
+             e_dpms_actual = enabled;
+          }
         else
-          ecore_x_dpms_enabled_set(0);
+          {
+             ecore_x_dpms_enabled_set(0);
+             e_dpms_actual = EINA_FALSE;
+          }
      }
 #endif
    if (!enabled) return;
