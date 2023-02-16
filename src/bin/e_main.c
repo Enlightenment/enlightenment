@@ -629,6 +629,7 @@ main(int argc, char **argv)
 
    efreet_desktop_environment_set(e_config->desktop_environment);
    e_util_env_set("E_ICON_THEME", e_config->icon_theme);
+   if (e_config->icon_theme) elm_config_icon_theme_set(e_config->icon_theme);
    ecore_exe_run_priority_set(e_config->priority);
    locked |= e_config->desklock_start_locked;
 

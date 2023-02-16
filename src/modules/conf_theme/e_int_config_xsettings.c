@@ -175,6 +175,7 @@ _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
         elm_config_save();
      }
    e_util_env_set("E_ICON_THEME", e_config->icon_theme);
+   if (e_config->icon_theme) elm_config_icon_theme_set(e_config->icon_theme);
 
    ev = E_NEW(E_Event_Config_Icon_Theme, 1);
    if (ev)
