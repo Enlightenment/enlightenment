@@ -548,12 +548,15 @@ _e_comp_xrandr_cmd(void)
                                    ecore_x_randr_output_crtc_get(root,
                                                                  outputs[i]);
                                  info = NULL;
-                                 printf("RRR:     crtc slot empty: %i\n", i);
+                                 printf("RRR:     crtc slot empty: %i, crtc=%i, output=%i\n", i, crtc, outputs[i]);
                                  if (crtc)
                                    info = ecore_x_randr_crtc_info_get(root,
                                                                       crtc);
+                                 printf("RRR:     crtc info = %p\n", info);
                                  if (info)
                                    {
+                                      printf("RRR:     output exists=%i rot exists=%i\n",
+                                             _output_exists(out, info), _rotation_exists(s->config.rotation, info));
                                       if (_output_exists(out, info) &&
                                           _rotation_exists(s->config.rotation,
                                                            info))
