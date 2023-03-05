@@ -60,7 +60,7 @@ _evry_utf8_next(const char *buf, int *iindex)
 int
 evry_fuzzy_match(const char *str, const char *match)
 {
-   const char *p, *m, *next;
+   const char *p, *pp, *m, *pm, *next;
    int sum = 0;
 
    unsigned int last = 0;
@@ -104,9 +104,14 @@ evry_fuzzy_match(const char *str, const char *match)
    next = str;
    m = match;
 
+   pm = NULL;
    while ((m_cnt < m_num) && (*next != 0))
      {
         int ii;
+
+        /* check for a broken encoded string - not advancing */
+        if (pm == m) goto broken_string;
+        pm = m;
 
         /* reset match */
         if (m_cnt == 0) m = match;
@@ -120,9 +125,13 @@ evry_fuzzy_match(const char *str, const char *match)
         first = 0;
         /* m_len = 0; */
 
+        pp = NULL;
         /* match current word of string against current match */
         for (p = next; *next != 0; p++)
           {
+             /* check for a broken encoded string - not advancing */
+             if (pp == p) goto broken_string;
+             pp = p;
              /* new word of string begins */
              if ((*p == 0) || isspace(*p) || (ip && ispunct(*p)))
                {
@@ -241,6 +250,7 @@ evry_fuzzy_match(const char *str, const char *match)
                }
           }
      }
+   broken_string:
 
    for (m_cnt = 0; m_cnt < m_num; m_cnt++)
      {
