@@ -625,6 +625,9 @@ e_comp_canvas_resize(int w, int h)
    e_comp->w = w;
    e_comp->h = h;
    ecore_evas_resize(e_comp->ee, w, h);
+   if (e_comp->shape_update_on_resize) {
+      e_comp_shape_queue();
+   }
 }
 
 E_API void

@@ -960,6 +960,13 @@ _e_comp_shapes_update_job(void *d EINA_UNUSED)
      win = e_comp->win;
    else
      win = e_comp->cm_selection;
+
+   if (e_comp->h <= 0 || e_comp->w <= 0)
+     {
+        e_comp->shape_update_on_resize = EINA_TRUE;
+        return;
+     }
+
    E_FREE_LIST(e_comp->debug_rects, evas_object_del);
    tb = eina_tiler_new(e_comp->w, e_comp->h);
    eina_tiler_tile_size_set(tb, 1, 1);

@@ -192,6 +192,7 @@ struct _E_Comp
    Eina_Bool       updating E_BITFIELD; // running client updates
 
    Eina_Bool       frozen E_BITFIELD; // frozen - when power save freeze mode is on
+   Eina_Bool       shape_update_on_resize E_BITFIELD; //a shape update was scheduled but e_comp size was 0 in one dimension
 };
 
 
