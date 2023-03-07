@@ -779,7 +779,10 @@ _source_output_cb(pa_context *c EINA_UNUSED, const pa_source_output_info *info,
    if (eol > 0)
       return;
 
-   if ((info->name) && (!strcmp(info->name, "__e_mon"))) return;
+   if ((info->name) &&
+       ((!strcmp(info->name, "__e_mon")) ||
+        (!strcmp(info->name, "Peak detect"))))
+     return;
 
    output = calloc(1, sizeof(Source_Output));
    EINA_SAFETY_ON_NULL_RETURN(output);
