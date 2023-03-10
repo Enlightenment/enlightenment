@@ -855,8 +855,10 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, mouse_hand, INT);
 
    E_CONFIG_VAL(D, T, mouse_accel, DOUBLE);
+   E_CONFIG_VAL(D, T, mouse_flat_accel, UCHAR);
    E_CONFIG_VAL(D, T, mouse_accel_threshold, INT);
    E_CONFIG_VAL(D, T, mouse_natural_scroll, UCHAR);
+   E_CONFIG_VAL(D, T, mouse_hires_scroll, UCHAR);
    E_CONFIG_VAL(D, T, mouse_emulate_middle_button, UCHAR);
 
    E_CONFIG_VAL(D, T, touch_accel, DOUBLE);
@@ -864,6 +866,7 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, touch_emulate_middle_button, UCHAR);
    E_CONFIG_VAL(D, T, touch_tap_to_click, UCHAR);
    E_CONFIG_VAL(D, T, touch_clickpad, UCHAR);
+   E_CONFIG_VAL(D, T, touch_flat_accel, UCHAR);
    E_CONFIG_VAL(D, T, touch_scrolling_2finger, UCHAR);
    E_CONFIG_VAL(D, T, touch_scrolling_edge, UCHAR);
    E_CONFIG_VAL(D, T, touch_scrolling_circular, UCHAR);

@@ -144,11 +144,44 @@ _handle_dev_prop(int dev_slot, const char *dev, const char *prop, Device_Flags d
           }
         free(val);
      }
-// not for now - default
-//   else if (!strcmp(prop, "libinput Accel Profile Enabled"))
-//     {
-//        // 1 bool, 0 = adaptive, 1 = flat
-//     }
+   else if (!strcmp(prop, "libinput Accel Profile Enabled"))
+     {
+        // 1 bool, 0 = adaptive, 1 = flat
+        unsigned char cfval = 0;
+        unsigned char *val = ecore_x_input_device_property_get
+          (dev_slot, prop, &num, &fmt, &size);
+        if (dev_flags == DEVICE_FLAG_TOUCHPAD)
+          cfval = e_config->touch_flat_accel;
+        else
+          cfval = e_config->mouse_flat_accel;
+        
+        if ((val) && (size == 8) && (num == 2) && ((cfval == 1 && val[0] == 1) ||
+                                                   (cfval == 0 && val[0] == 0)))
+          {
+             // Does a little flip-flop for each variable
+             val[0] = !cfval;
+             val[1] =  cfval;
+             printf("DEV: change [%s] [%s] -> %i, %i\n", dev, prop, val[0], val[1]);
+             ecore_x_input_device_property_set
+               (dev_slot, prop, val, num, fmt, size);
+          }
+        free(val);
+     }
+   else if (!strcmp(prop, "libinput High Resolution Wheel Scroll Enabled"))
+     {
+        unsigned char cfval = e_config->mouse_hires_scroll;
+        unsigned char *val = ecore_x_input_device_property_get
+          (dev_slot, prop, &num, &fmt, &size);
+        
+        if ((val) && (size == 8) && (num == 1) && ((cfval != val[0]))
+          {
+             val[0] = cfval;
+             printf("DEV: change [%s] [%s] -> %i\n", dev, prop, val[0]);
+             ecore_x_input_device_property_set
+               (dev_slot, prop, val, num, fmt, size);
+          }
+        free(val);
+     }   
 // do via button mapping for now - not sure about this evdev can't do this
 //   else if (!strcmp(prop, "libinput Left Handed Enabled"))
 //     {
