@@ -155,8 +155,8 @@ _handle_dev_prop(int dev_slot, const char *dev, const char *prop, Device_Flags d
         else
           cfval = e_config->mouse_flat_accel;
         
-        if ((val) && (size == 8) && (num == 2) && ((cfval == 1 && val[0] == 1) ||
-                                                   (cfval == 0 && val[0] == 0)))
+        if ((val) && (size == 8) && (num == 2) && (((cfval == 1) && (val[0] == 1)) ||
+                                                   ((cfval == 0) && (val[0] == 0))))
           {
              // Does a little flip-flop for each variable
              val[0] = !cfval;
