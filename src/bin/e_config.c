@@ -1804,6 +1804,14 @@ e_config_load(void)
                e_config->backlight.ddc = 1;
                e_config_save_queue();
             }
+          CONFIG_VERSION_CHECK(36)
+            {
+               CONFIG_VERSION_UPDATE_INFO(36);
+               e_config->mouse_flat_accel = 0;
+               e_config->mouse_hires_scroll = 1;
+               e_config->touch_flat_accel = 0;
+               e_config_save_queue();
+            }
      }
    elm_config_profile_set(_e_config_profile);
    if (!e_config->remember_internal_fm_windows)

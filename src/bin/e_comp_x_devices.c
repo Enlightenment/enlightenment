@@ -173,7 +173,7 @@ _handle_dev_prop(int dev_slot, const char *dev, const char *prop, Device_Flags d
         unsigned char *val = ecore_x_input_device_property_get
           (dev_slot, prop, &num, &fmt, &size);
         
-        if ((val) && (size == 8) && (num == 1) && ((cfval != val[0]))
+        if ((val) && (size == 8) && (num == 1) && (cfval != val[0]))
           {
              val[0] = cfval;
              printf("DEV: change [%s] [%s] -> %i\n", dev, prop, val[0]);
