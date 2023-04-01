@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-29 19:35+0100\n"
-"PO-Revision-Date: 2022-06-18 00:02+0200\n"
+"POT-Creation-Date: 2023-04-01 08:41+0200\n"
+"PO-Revision-Date: 2023-04-01 10:55+0200\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: General\n"
 "Language: it\n"
@@ -6464,9 +6464,8 @@ msgstr "Accelerazione"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:270
 #: src/modules/conf_interaction/e_int_config_mouse.c:308
-#, fuzzy
 msgid "Flat acceleration"
-msgstr "Accelerazione"
+msgstr "Accelerazione uniforme"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:272
 #: src/modules/conf_interaction/e_int_config_mouse.c:310
@@ -6502,9 +6501,8 @@ msgid "Natural scrolling"
 msgstr "Scrolling naturale"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:295
-#, fuzzy
 msgid "Hi-Res scrolling"
-msgstr "Scrolling sul bordo"
+msgstr "Scrolling ad alta risoluzione"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:299
 #: src/modules/conf_interaction/e_mod_main.c:24
