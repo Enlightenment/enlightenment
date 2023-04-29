@@ -1,14 +1,14 @@
 # Portuguese translation for Enlightenment.
 # This file is put in the public domain.
 # Sérgio Marques <smarquespt@gmail.com>, 2010-2013.
-# Hugo Carvalho <hugokarvalho@hotmail.com>, 2021, 2022.
+# Hugo Carvalho <hugokarvalho@hotmail.com>, 2021, 2022, 2023.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-29 19:35+0100\n"
-"PO-Revision-Date: 2022-10-19 19:07+0100\n"
+"PO-Revision-Date: 2023-04-27 22:25+0100\n"
 "Last-Translator: Hugo Carvalho <hugokarvalho@hotmail.com>\n"
 "Language-Team: Portuguese\n"
 "Language: pt\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.1.1\n"
+"X-Generator: Poedit 3.2.2\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
 #: src/bin/e_about.c:17
@@ -111,7 +111,7 @@ msgstr "Sair"
 
 #: src/bin/e_actions.c:2268
 msgid "Are you sure you want to exit Enlightenment?"
-msgstr "Tem a certeza que quer sair do Enlightenment?"
+msgstr "Sair do Enlightenment?"
 
 #: src/bin/e_actions.c:2270 src/bin/e_actions.c:2345 src/bin/e_actions.c:2405
 #: src/bin/e_actions.c:2462 src/bin/e_actions.c:2524 src/bin/e_actions.c:2626
@@ -127,7 +127,7 @@ msgstr "Terminar sessão"
 
 #: src/bin/e_actions.c:2343
 msgid "Are you sure you want to logout?"
-msgstr "Tem a certeza que quer sair da sessão?"
+msgstr "Sair da sessão?"
 
 #: src/bin/e_actions.c:2401
 msgid "Power off"
@@ -135,7 +135,7 @@ msgstr "Desligar"
 
 #: src/bin/e_actions.c:2403
 msgid "Are you sure you want to power off your computer?"
-msgstr "Tem a certeza que quer desligar o computador?"
+msgstr "Desligar o computador?"
 
 #: src/bin/e_actions.c:2459 src/bin/e_actions.c:4011
 msgid "Reboot"
@@ -143,7 +143,7 @@ msgstr "Reiniciar"
 
 #: src/bin/e_actions.c:2460
 msgid "Are you sure you want to reboot your computer?"
-msgstr "Tem a certeza que quer reiniciar o computador?"
+msgstr "Reiniciar o computador?"
 
 #: src/bin/e_actions.c:2521 src/bin/e_actions.c:4019
 msgid "Suspend"
@@ -151,7 +151,7 @@ msgstr "Suspender"
 
 #: src/bin/e_actions.c:2522
 msgid "Are you sure you want to suspend your computer?"
-msgstr "Tem a certeza que quer suspender o computador?"
+msgstr "Suspender o computador?"
 
 #: src/bin/e_actions.c:2623 src/bin/e_actions.c:4027
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:379
@@ -160,7 +160,7 @@ msgstr "Hibernar"
 
 #: src/bin/e_actions.c:2624
 msgid "Are you sure you want to hibernate your computer?"
-msgstr "Tem a certeza que quer hibernar o computador?"
+msgstr "Hibernar o computador?"
 
 #: src/bin/e_actions.c:3269
 msgid "Error: window_focus action"
@@ -2060,7 +2060,7 @@ msgstr "Erro de gadget"
 #: src/bin/e_gadcon.c:1458
 #, c-format
 msgid "%s does not support disabling autoscrolling"
-msgstr "%s não suporta a desativação de deslocação automática"
+msgstr "%s não suporta a desativação de rolagem automática"
 
 #: src/bin/e_gadcon.c:1734 src/bin/e_int_client_menu.c:145
 msgid "Move to"
@@ -6354,7 +6354,7 @@ msgstr "Limite para aplicar o impulso do arrastamento"
 #: src/modules/conf_interaction/e_int_config_interaction.c:113
 #, c-format
 msgid "%1.0f pixels/s"
-msgstr "%1.0f pixeis/seg."
+msgstr "%1.0f pixéis/seg."
 
 #: src/modules/conf_interaction/e_int_config_interaction.c:119
 msgid "Friction slowdown"
@@ -6393,13 +6393,12 @@ msgstr "Mão utilizada"
 #: src/modules/conf_interaction/e_int_config_mouse.c:269
 #: src/modules/conf_interaction/e_int_config_mouse.c:306
 msgid "Acceleration"
-msgstr "Velocidade"
+msgstr "Aceleração"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:270
 #: src/modules/conf_interaction/e_int_config_mouse.c:308
-#, fuzzy
 msgid "Flat acceleration"
-msgstr "Velocidade"
+msgstr "Aceleração plana"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:272
 #: src/modules/conf_interaction/e_int_config_mouse.c:310
@@ -6432,12 +6431,11 @@ msgstr "Rolagem"
 #: src/modules/conf_interaction/e_int_config_mouse.c:293
 #: src/modules/conf_interaction/e_int_config_mouse.c:334
 msgid "Natural scrolling"
-msgstr "Deslocamento natural"
+msgstr "Rolagem natural"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:295
-#, fuzzy
 msgid "Hi-Res scrolling"
-msgstr "Deslocamento de margem"
+msgstr "Rolagem de alta resolução"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:299
 #: src/modules/conf_interaction/e_mod_main.c:24
@@ -6458,19 +6456,19 @@ msgstr "Deteção de palma"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:337
 msgid "Horizontal scrolling"
-msgstr "Deslocamento horizontal"
+msgstr "Rolagem horizontal"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:340
 msgid "Edge scrolling"
-msgstr "Deslocamento de margem"
+msgstr "Rolagem de margem"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:343
 msgid "2 finger scrolling"
-msgstr "Deslocamento com 2 dedos"
+msgstr "Rolagem com 2 dedos"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:346
 msgid "Circular scrolling"
-msgstr "Deslocamento circular"
+msgstr "Rolagem circular"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:350
 msgid "Touchpad"
@@ -6680,7 +6678,7 @@ msgstr "Velocidade da deslocação do menu"
 #: src/modules/conf_menus/e_int_config_menus.c:304
 #, c-format
 msgid "%5.0f pixels/s"
-msgstr "%5.0f pixeis/seg."
+msgstr "%5.0f pixéis/seg."
 
 #: src/modules/conf_menus/e_int_config_menus.c:307
 msgid "Fast Mouse Move Threshold"
@@ -6690,7 +6688,7 @@ msgstr "Limite para a deslocação rápida do rato"
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:207
 #, c-format
 msgid "%4.0f pixels/s"
-msgstr "%4.0f pixeis/seg."
+msgstr "%4.0f pixéis/seg."
 
 #: src/modules/conf_menus/e_int_config_menus.c:312
 msgid "Click Drag Timeout"
@@ -8273,7 +8271,7 @@ msgstr "Detalhada"
 
 #: src/modules/everything/evry_config.c:465
 msgid "Animate scrolling"
-msgstr "Deslocação animada"
+msgstr "Rolagem animada"
 
 #: src/modules/everything/evry_config.c:472
 msgid "Up/Down select next item in icon view"
