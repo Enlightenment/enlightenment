@@ -135,6 +135,7 @@ struct _E_Config
    double      winlist_list_size; // GUI
    double      winlist_large_size; // GUI
    Eina_Bool   winlist_list_no_miniatures; // GUI
+   Eina_Bool   no_state_hidden_desktop; // GUI
    int         maximize_policy; // GUI
    int         allow_manip; // GUI
    int         border_fix_on_shelf_toggle; // GUI

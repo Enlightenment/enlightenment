@@ -41,7 +41,8 @@ struct _E_Config_Dialog_Data
    int maximize_direction;
    int maximized_allow_manip;
    int border_fix_on_shelf_toggle;
-   int    allow_above_fullscreen;
+   int allow_above_fullscreen;
+   int state_hidden_desktop;
 };
 
 E_Config_Dialog *
@@ -90,6 +91,7 @@ _create_data(E_Config_Dialog *cfd EINA_UNUSED)
    cfdata->transient.iconify = e_config->transient.iconify;
    cfdata->maximize_policy = (e_config->maximize_policy & E_MAXIMIZE_TYPE);
    cfdata->allow_above_fullscreen = e_config->allow_above_fullscreen;
+   cfdata->state_hidden_desktop = ! e_config->no_state_hidden_desktop;
    if (cfdata->maximize_policy == E_MAXIMIZE_NONE)
      cfdata->maximize_policy = E_MAXIMIZE_FULLSCREEN;
    cfdata->maximize_direction =
@@ -133,6 +135,7 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
    e_config->allow_manip = cfdata->maximized_allow_manip;
    e_config->border_fix_on_shelf_toggle = cfdata->border_fix_on_shelf_toggle;
    e_config->allow_above_fullscreen = cfdata->allow_above_fullscreen;
+   e_config->no_state_hidden_desktop = !cfdata->state_hidden_desktop;
    e_config_save_queue();
    return 1; /* Apply was OK */
 }
@@ -141,16 +144,16 @@ static int
 _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    return ((e_config->use_resist != cfdata->use_resist) ||
-	   (e_config->desk_resist != cfdata->desk_resist) ||
-	   (e_config->window_resist != cfdata->window_resist) ||
-	   (e_config->gadget_resist != cfdata->gadget_resist) ||
-	   (e_config->geometry_auto_resize_limit != cfdata->geometry_auto_resize_limit) ||
+           (e_config->desk_resist != cfdata->desk_resist) ||
+           (e_config->window_resist != cfdata->window_resist) ||
+           (e_config->gadget_resist != cfdata->gadget_resist) ||
+           (e_config->geometry_auto_resize_limit != cfdata->geometry_auto_resize_limit) ||
            (e_config->geometry_auto_move != cfdata->geometry_auto_move) ||
-	   (!EINA_DBL_EQ(e_config->border_keyboard.timeout, cfdata->border_keyboard.timeout)) ||
-	   (e_config->border_keyboard.move.dx != cfdata->border_keyboard.move.dx) ||
-	   (e_config->border_keyboard.move.dy != cfdata->border_keyboard.move.dx) ||
-	   (e_config->border_keyboard.resize.dx != cfdata->border_keyboard.resize.dx) ||
-	   (e_config->border_keyboard.resize.dy != cfdata->border_keyboard.resize.dx) ||
+           (!EINA_DBL_EQ(e_config->border_keyboard.timeout, cfdata->border_keyboard.timeout)) ||
+           (e_config->border_keyboard.move.dx != cfdata->border_keyboard.move.dx) ||
+           (e_config->border_keyboard.move.dy != cfdata->border_keyboard.move.dx) ||
+           (e_config->border_keyboard.resize.dx != cfdata->border_keyboard.resize.dx) ||
+           (e_config->border_keyboard.resize.dy != cfdata->border_keyboard.resize.dx) ||
            (e_config->transient.move != cfdata->transient.move) ||
            (e_config->transient.resize != cfdata->transient.resize) ||
            (e_config->transient.raise != cfdata->transient.raise) ||
@@ -161,7 +164,9 @@ _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
            (e_config->maximize_policy != (cfdata->maximize_policy | cfdata->maximize_direction)) ||
            (e_config->allow_manip != cfdata->maximized_allow_manip) ||
            (e_config->border_fix_on_shelf_toggle != cfdata->border_fix_on_shelf_toggle) ||
-           (e_config->allow_above_fullscreen != cfdata->allow_above_fullscreen));
+           (e_config->allow_above_fullscreen != cfdata->allow_above_fullscreen) ||
+           (e_config->no_state_hidden_desktop == cfdata->state_hidden_desktop)
+          );
 }
 
 static Evas_Object *
@@ -266,6 +271,9 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
    ow = e_widget_check_add(evas, _("Adjust windows on shelf hide"),
                            &(cfdata->border_fix_on_shelf_toggle));
+   e_widget_list_object_append(ol, ow, 1, 0, 0.5);
+   ow = e_widget_check_add(evas, _("Set hidden state when not on current desktop"),
+                           &(cfdata->state_hidden_desktop));
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Automatic"), ol,
                                  1, 1, 1, 0, 0.0, 0.0);

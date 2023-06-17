@@ -750,6 +750,7 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, winlist_list_size, DOUBLE); /**/
    E_CONFIG_VAL(D, T, winlist_large_size, DOUBLE); /**/
    E_CONFIG_VAL(D, T, winlist_list_no_miniatures, UCHAR); /**/
+   E_CONFIG_VAL(D, T, no_state_hidden_desktop, UCHAR); /**/
    E_CONFIG_VAL(D, T, maximize_policy, INT); /**/
    E_CONFIG_VAL(D, T, allow_manip, INT); /**/
    E_CONFIG_VAL(D, T, border_fix_on_shelf_toggle, INT); /**/

@@ -58,7 +58,8 @@ group "E_Config" struct {
   value "winlist_mode" int: 1;
   value "winlist_large_size" double: 0.6666;
   value "winlist_list_size" double: 0.3333;
-  value "winlist_list_no_miniatures" int: 0;
+  value "winlist_list_no_miniatures" uchar: 0;
+  value "no_state_hidden_desktop" uchar: 0;
   value "maximize_policy" int: 49;
   value "allow_manip" int: 0;
   value "border_fix_on_shelf_toggle" int: 0;
