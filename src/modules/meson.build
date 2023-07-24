@@ -5,7 +5,7 @@ module_includes2 = [ '../..'   , '../bin'   , '../bin/efx'  ]
 module_deps      = [ deps_e, dep_dl ]
 
 mods = [
-# standard run of the mill modules with cion and desktop
+# standard run of the mill modules with icon and desktop
   'ibar',
   'pager',
   'temperature',
@@ -29,6 +29,7 @@ mods = [
   'conf_performance',
   'conf_paths',
   'conf_interaction',
+  'convertible',
   'gadman',
   'geolocation',
   'connman',

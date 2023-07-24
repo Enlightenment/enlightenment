@@ -132,6 +132,10 @@ option('connman',
 	type: 'boolean',
 	value: true,
 	description: 'enable connman module: (default=true)')
+option('convertible',
+	type: 'boolean',
+	value: true,
+	description: 'enable convertible module: (default=true)')
 option('cpufreq',
 	type: 'boolean',
 	value: true,
