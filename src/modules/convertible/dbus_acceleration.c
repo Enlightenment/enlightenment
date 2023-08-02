@@ -20,6 +20,7 @@ sensor_proxy_init()
       return accelerometer_dbus;
    }
    accelerometer_dbus  = calloc(1, sizeof(DbusAccelerometer));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(accelerometer_dbus, NULL);
 
    // The next line is probably redundant
    accelerometer_dbus->orientation = undefined;
@@ -147,6 +148,7 @@ access_string_property(const Eldbus_Message *msg, Eldbus_Message_Iter **variant,
       *result = EINA_FALSE;
    }
    const char **string_property_value = calloc(PATH_MAX, sizeof(char));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(string_property_value, EINA_FALSE);
    if (!eldbus_message_iter_arguments_get((*variant), "s", string_property_value))
    {
       WARN("error in eldbus_message_iter_arguments_get()");
@@ -241,6 +243,7 @@ on_accelerometer_orientation(void *data, const Eldbus_Message *msg, Eldbus_Pendi
    enum screen_rotation orientation;
    Eldbus_Message_Iter *variant = NULL;
    Eina_Bool* result = calloc(1, sizeof(Eina_Bool));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(result, NULL);
 
    if (eldbus_message_error_get(msg, &errname, &errmsg))
    {
@@ -401,6 +404,7 @@ _fetch_and_rotate_screen(const char* randr_id, enum screen_rotation orientation)
       Ecore_X_Atom format_ret;
       char *result = NULL;
       TransformationMatrix *matrix = calloc(1, sizeof(TransformationMatrix));
+      EINA_SAFETY_ON_NULL_RETURN_VAL(matrix, NULL);
       result = ecore_x_input_device_property_get(x_dev_num, CTM_name, &num_ret, &format_ret, &unit_size_ret);
       if (result != NULL)
       {
