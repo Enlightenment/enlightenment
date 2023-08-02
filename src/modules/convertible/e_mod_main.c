@@ -305,12 +305,8 @@ e_modapi_init(E_Module *m)
       // Arbitrarily chosen a condition to check that rotation is enabled
       if (screen->info.can_rot_90 == EINA_TRUE)
          {
-         int max_screen_length = 300;
-         char *randr2_id =  malloc(sizeof(char) * max_screen_length);
-         int copied_chars = eina_strlcpy(randr2_id, zone->randr2_id, max_screen_length);
-         if (copied_chars > max_screen_length)
-            ERR("Screen name %s has been truncated. Cannot handle screens.", randr2_id);
-         if (copied_chars < 0)
+         char *randr2_id = strdup(zone->randr2_id);
+         if (randr2_id == NULL)
             ERR("Can't copy the screen name");
 
          inst->randr2_ids = eina_list_append(inst->randr2_ids, randr2_id);
