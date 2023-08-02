@@ -10,7 +10,9 @@
 
 DbusAccelerometer* accelerometer_dbus;
 
-DbusAccelerometer* sensor_proxy_init() {
+DbusAccelerometer*
+sensor_proxy_init()
+{
    // Initialise DBUS component
    if (accelerometer_dbus != NULL)
    {
@@ -58,7 +60,8 @@ DbusAccelerometer* sensor_proxy_init() {
    return accelerometer_dbus;
 }
 
-void sensor_proxy_shutdown()
+void
+sensor_proxy_shutdown(void)
 {
    INF("Removing signal handler dbus_property_changed_sh");
    eldbus_signal_handler_del(accelerometer_dbus->dbus_property_changed_sh);
@@ -77,11 +80,14 @@ void sensor_proxy_shutdown()
    eldbus_shutdown();
 }
 
-int _convertible_rotation_get(const enum screen_rotation orientation);
+int
+_convertible_rotation_get(const enum screen_rotation orientation);
 
-int _is_device_a_touch_pointer(int dev_counter, int num_properties, char **iterator);
+int
+_is_device_a_touch_pointer(int dev_counter, int num_properties, char **iterator);
 
-Eldbus_Proxy *get_dbus_interface(const char *IFACE)
+Eldbus_Proxy *
+get_dbus_interface(const char *IFACE)
 {
    DBG("Working on interface: %s", IFACE);
    Eldbus_Connection *conn;
@@ -110,7 +116,8 @@ Eldbus_Proxy *get_dbus_interface(const char *IFACE)
    return sensor_proxy;
 }
 
-enum screen_rotation access_string_property(const Eldbus_Message *msg, Eldbus_Message_Iter **variant, Eina_Bool* result)
+enum screen_rotation
+access_string_property(const Eldbus_Message *msg, Eldbus_Message_Iter **variant, Eina_Bool* result)
 {
    const char *type = NULL;
    *result = EINA_TRUE;
@@ -267,7 +274,8 @@ on_accelerometer_orientation(void *data, const Eldbus_Message *msg, Eldbus_Pendi
    }
 }
 
-int _convertible_rotation_get(const enum screen_rotation orientation)
+int
+_convertible_rotation_get(const enum screen_rotation orientation)
 {
    switch (orientation)
    {
@@ -280,7 +288,8 @@ int _convertible_rotation_get(const enum screen_rotation orientation)
    }
 }
 
-const float * _get_matrix_rotation_transformation(int rotation)
+const float *
+_get_matrix_rotation_transformation(int rotation)
 {
    const float *transformation;
    switch (rotation) {
@@ -299,7 +308,8 @@ const float * _get_matrix_rotation_transformation(int rotation)
    return transformation;
 }
 
-int _fetch_X_device_input_number()
+int
+_fetch_X_device_input_number(void)
 {
    // I should get the touchscreen associated with the screen probably by looking at the classes of the input devices
    // I need to submit my patch to add getters for other XIDeviceInfo fields, like raster mentioned in his commit.
@@ -335,7 +345,8 @@ int _fetch_X_device_input_number()
    return dev_number;
 }
 
-int _is_device_a_touch_pointer(int dev_counter, int num_properties, char **iterator)
+int
+_is_device_a_touch_pointer(int dev_counter, int num_properties, char **iterator)
 {
    // Looking for a device with either a libinput property for calibration or the old evdev Axlis labels property.
    int is_correct_device = EINA_FALSE;
@@ -360,7 +371,9 @@ int _is_device_a_touch_pointer(int dev_counter, int num_properties, char **itera
    return is_correct_device;
 }
 
-void _fetch_and_rotate_screen(const char* randr_id, enum screen_rotation orientation) {
+void
+_fetch_and_rotate_screen(const char* randr_id, enum screen_rotation orientation)
+{
    DBG("Working on screen %s", randr_id);
    E_Randr2_Screen *rotatable_screen = e_randr2_screen_id_find(randr_id);
    E_Config_Randr2_Screen *screen_randr_cfg = e_randr2_config_screen_find(rotatable_screen, e_randr2_cfg);

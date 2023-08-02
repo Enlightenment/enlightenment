@@ -139,7 +139,7 @@ e_int_config_convertible_module(Evas_Object *comp, const char *p EINA_UNUSED)
 }
 
 void
-econvertible_config_init()
+econvertible_config_init(void)
 {
    _econvertible_config_dd_new();
    _config = e_config_domain_load("module.econvertible", edd);
@@ -153,7 +153,7 @@ econvertible_config_init()
    DBG("Config loaded");
 }
 
-void econvertible_config_shutdown()
+void econvertible_config_shutdown(void)
 {
    E_CONFIG_DD_FREE(edd);
    E_FREE(convertible_config);

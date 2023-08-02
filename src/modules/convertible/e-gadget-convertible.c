@@ -8,7 +8,8 @@
 /* LIST OF INSTANCES */
 static Eina_List *instances = NULL;
 
-void _update_instances(const Instance *current_instance)
+void
+_update_instances(const Instance *current_instance)
 {
     Eina_List *l;
     Instance *instance = NULL;
@@ -25,7 +26,8 @@ void _update_instances(const Instance *current_instance)
     }
 }
 
-void _rotation_signal_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *sig EINA_UNUSED,
+void
+_rotation_signal_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *sig EINA_UNUSED,
                          const char *src EINA_UNUSED)
 {
    DBG("Rotation: Signal %s received from %s", sig, src);
@@ -37,7 +39,8 @@ void _rotation_signal_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, c
    _update_instances(inst);
 }
 
-void _keyboard_signal_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *sig EINA_UNUSED,
+void
+_keyboard_signal_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *sig EINA_UNUSED,
                          const char *src EINA_UNUSED)
 {
    DBG("Keyboard: Signal %s received from %s", sig, src);
@@ -56,6 +59,7 @@ _gadget_created(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_
 }
 
 
-void update_instances(Eina_List *new_instances) {
+void
+update_instances(Eina_List *new_instances) {
    instances = new_instances;
 }

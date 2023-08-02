@@ -29,12 +29,14 @@ struct _DbusAccelerometer
 DbusAccelerometer* sensor_proxy_init();
 
 
-void sensor_proxy_shutdown();
+void
+sensor_proxy_shutdown(void);
 
 /**
  * Helper to get the interface
  * */
-Eldbus_Proxy *get_dbus_interface(const char *IFACE);
+Eldbus_Proxy *
+get_dbus_interface(const char *IFACE);
 
 /**
  * Helper function to extract ta string property from the message
@@ -100,5 +102,6 @@ on_accelerometer_released(void *data EINA_UNUSED, const Eldbus_Message *msg, Eld
  * @param randr_id The randr2 id
  * @param rotation The expected rotation
  */
-void _fetch_and_rotate_screen(const char* randr_id, enum screen_rotation orientation);
+void
+_fetch_and_rotate_screen(const char* randr_id, enum screen_rotation orientation);
 #endif
