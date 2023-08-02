@@ -24,14 +24,7 @@ sensor_proxy_init()
 
    // The next line is probably redundant
    accelerometer_dbus->orientation = undefined;
-
-   DBG("Before eldbus initialization");
-   int initialization = eldbus_init();
-   if (initialization == EXIT_FAILURE)
-   {
-      ERR("Unable to initialise ELDBUS");
-   }
-
+   
    INF("Getting dbus interfaces");
    accelerometer_dbus->sensor_proxy = get_dbus_interface(EFL_DBUS_ACC_IFACE);
    accelerometer_dbus->sensor_proxy_properties = get_dbus_interface(ELDBUS_FDO_INTERFACE_PROPERTIES);
