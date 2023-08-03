@@ -264,7 +264,7 @@ e_modapi_init(E_Module *m)
    snprintf(theme_overlay_path, sizeof(theme_overlay_path), "%s/e-module-convertible.edj", convertible_module->dir);
    elm_theme_extension_add(NULL, theme_overlay_path);
 
-   econvertible_config_init(NULL);
+   econvertible_config_init();
 
    // Config DBus
    DbusAccelerometer *accelerometer = sensor_proxy_init();
@@ -290,7 +290,7 @@ e_modapi_init(E_Module *m)
       ERR("Error: could not add the signal handler for PropertiesChanged");
 
    // Screen related part
-   E_Zone *zone = NULL;
+   E_Zone *zone;
 
    // Initialise screen part
    DBG("Looking for the main screen");

@@ -14,7 +14,7 @@ DbusAccelerometer*
 sensor_proxy_init()
 {
    // Initialise DBUS component
-   if (accelerometer_dbus != NULL)
+   if (accelerometer_dbus)
    {
       INF("We already have a struct filled");
       return accelerometer_dbus;
@@ -24,7 +24,7 @@ sensor_proxy_init()
 
    // The next line is probably redundant
    accelerometer_dbus->orientation = undefined;
-   
+
    INF("Getting dbus interfaces");
    accelerometer_dbus->sensor_proxy = get_dbus_interface(EFL_DBUS_ACC_IFACE);
    accelerometer_dbus->sensor_proxy_properties = get_dbus_interface(ELDBUS_FDO_INTERFACE_PROPERTIES);
@@ -348,15 +348,14 @@ _is_device_a_touch_pointer(int dev_counter, int num_properties, char **iterator)
    int is_correct_device = EINA_FALSE;
    for (int i=0; i<num_properties; i++)
    {
-      if (strstr(*iterator, "libinput Calibration Matrix") != NULL)
+      if (strstr(*iterator, "libinput Calibration Matrix"))
          is_correct_device = EINA_TRUE;
-      if (strstr(*iterator, "Axis Labels") != NULL)
+      if (strstr(*iterator, "Axis Labels"))
       {
          int num_ret, unit_size_ret;
          Ecore_X_Atom format_ret;
-         char *result = NULL;
-         result = ecore_x_input_device_property_get(dev_counter, *iterator, &num_ret, &format_ret, &unit_size_ret);
-         if (result != NULL) {
+         char *result = ecore_x_input_device_property_get(dev_counter, *iterator, &num_ret, &format_ret, &unit_size_ret);
+         if (result) {
             // TODO Shall check for the value "Abs MT Position"
          }
          DBG("Looks like I found a device with calibration capabilities");
@@ -399,7 +398,7 @@ _fetch_and_rotate_screen(const char* randr_id, enum screen_rotation orientation)
       TransformationMatrix *matrix = calloc(1, sizeof(TransformationMatrix));
       EINA_SAFETY_ON_NULL_RETURN_VAL(matrix, NULL);
       result = ecore_x_input_device_property_get(x_dev_num, CTM_name, &num_ret, &format_ret, &unit_size_ret);
-      if (result != NULL)
+      if (result)
       {
 
          DBG("Device with coordinates transformation matrix");
