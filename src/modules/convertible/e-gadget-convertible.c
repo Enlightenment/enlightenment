@@ -8,7 +8,7 @@
 /* LIST OF INSTANCES */
 static Eina_List *instances = NULL;
 
-void
+static void
 _update_instances(const Instance *current_instance)
 {
     Eina_List *l;

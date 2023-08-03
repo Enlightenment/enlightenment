@@ -23,7 +23,7 @@ sensor_proxy_init(void)
    EINA_SAFETY_ON_NULL_RETURN_VAL(accelerometer_dbus, NULL);
 
    // The next line is probably redundant
-   accelerometer_dbus->orientation = undefined;
+   accelerometer_dbus->orientation = UNDEFINED;
 
    INF("Getting dbus interfaces");
    accelerometer_dbus->sensor_proxy = get_dbus_interface(EFL_DBUS_ACC_IFACE);

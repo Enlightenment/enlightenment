@@ -9,7 +9,7 @@
 #define EFL_DBUS_ACC_PATH "/net/hadess/SensorProxy"
 #define EFL_DBUS_ACC_IFACE "net.hadess.SensorProxy"
 
-// This enum represents the 4 states of screen rotation plus undefined
+// This enum represents the 4 states of screen rotation plus UNDEFINED
 enum screen_rotation {UNDEFINED, NORMAL, RIGHT_UP, FLIPPED, LEFT_UP};
 
 typedef struct _DbusAccelerometer DbusAccelerometer;
