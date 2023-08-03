@@ -39,26 +39,6 @@ Eldbus_Proxy *
 get_dbus_interface(const char *IFACE);
 
 /**
- * Helper function to extract ta string property from the message
- * @param msg The message coming from the get property invocation
- * @param variant
- * @param result 1 if result is ok, 0 if it failed
- * @return Enum specifying the orientation
- */
-enum screen_rotation
-access_string_property(const Eldbus_Message *msg, Eldbus_Message_Iter **variant, Eina_Bool* result);
-
-/**
- * Helper function to extract ta boolean property from the message
- * @param msg The message coming from the get property invocation
- * @param variant
- * @param boolean_property_value The boolean property pointer where the value should be stored, if read
- * @return
- */
-Eina_Bool
-access_bool_property(const Eldbus_Message *msg, Eldbus_Message_Iter **variant, Eina_Bool *boolean_property_value);
-
-/**
  * Callback definition to handle the request of the hasAccelerometer property of DBUS interface net.hadess.SensorProxy
  * @param data DbusAccelerometer
  * @param msg The message
@@ -95,13 +75,4 @@ on_accelerometer_claimed(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldb
  */
 void
 on_accelerometer_released(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED);
-
-
-/**
- * Fetch a screen from its ID and rotate it according to the rotation parameter
- * @param randr_id The randr2 id
- * @param rotation The expected rotation
- */
-void
-_fetch_and_rotate_screen(const char* randr_id, enum screen_rotation orientation);
 #endif

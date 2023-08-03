@@ -110,45 +110,45 @@ get_dbus_interface(const char *IFACE)
    return sensor_proxy;
 }
 
+/**
+ * Helper function to extract ta string property from the message
+ * @param msg The message coming from the get property invocation
+ * @param variant
+ * @return Enum specifying the orientation. UNDEFINED by default
+ */
 enum screen_rotation
-access_string_property(const Eldbus_Message *msg, Eldbus_Message_Iter **variant, Eina_Bool* result)
+_access_string_property(const Eldbus_Message *msg, Eldbus_Message_Iter **variant)
 {
+   enum screen_rotation rotation = UNDEFINED;
    char *type = NULL;
-   *result = EINA_TRUE;
 
    if (!eldbus_message_arguments_get(msg, "v", variant))
    {
       WARN("Error getting arguments.");
-      *result = EINA_FALSE;
    }
    type = eldbus_message_iter_signature_get((*variant));
    if (type == NULL)
    {
       WARN("Unable to get the type.");
-      *result = EINA_FALSE;
-      return UNDEFINED;
+      return rotation;
    }
 
    type = eldbus_message_iter_signature_get((*variant));
    if (type[1])
    {
       WARN("It is a complex type, not handle yet.");
-      *result = EINA_FALSE;
    }
    if (type[0] != 's')
    {
       WARN("Expected type is string(s).");
-      *result = EINA_FALSE;
    }
    const char **string_property_value = calloc(PATH_MAX, sizeof(char));
    EINA_SAFETY_ON_NULL_RETURN_VAL(string_property_value, EINA_FALSE);
    if (!eldbus_message_iter_arguments_get((*variant), "s", string_property_value))
    {
       WARN("error in eldbus_message_iter_arguments_get()");
-      *result = EINA_FALSE;
    }
 
-   enum screen_rotation rotation = UNDEFINED;
    if (!strcmp(ACCELEROMETER_ORIENTATION_RIGHT, *string_property_value))
       rotation = RIGHT_UP;
    if (!strcmp(ACCELEROMETER_ORIENTATION_LEFT, *string_property_value))
@@ -163,8 +163,15 @@ access_string_property(const Eldbus_Message *msg, Eldbus_Message_Iter **variant,
    return rotation;
 }
 
+/**
+ * Helper function to extract ta boolean property from the message
+ * @param msg The message coming from the get property invocation
+ * @param variant
+ * @param boolean_property_value The boolean property pointer where the value should be stored, if read
+ * @return
+ */
 Eina_Bool
-access_bool_property(const Eldbus_Message *msg, Eldbus_Message_Iter **variant, Eina_Bool *boolean_property_value)
+_access_bool_property(const Eldbus_Message *msg, Eldbus_Message_Iter **variant, Eina_Bool *boolean_property_value)
 {
    char *type;
    Eina_Bool res = EINA_TRUE;
@@ -213,7 +220,7 @@ on_has_accelerometer(void *data, const Eldbus_Message *msg, Eldbus_Pending *pend
       ERR("Error: %s %s", errname, errmsg);
    }
 
-   access_bool_property(msg, &variant, &has_accelerometer);
+   _access_bool_property(msg, &variant, &has_accelerometer);
    DbusAccelerometer *accelerometer = data;
    accelerometer->has_accelerometer = has_accelerometer;
    DBG("Has Accelerometer: %d", accelerometer->has_accelerometer);
@@ -235,8 +242,6 @@ on_accelerometer_orientation(void *data, const Eldbus_Message *msg, Eldbus_Pendi
    const char *errname, *errmsg;
    enum screen_rotation orientation;
    Eldbus_Message_Iter *variant = NULL;
-   Eina_Bool* result = calloc(1, sizeof(Eina_Bool));
-   EINA_SAFETY_ON_NULL_RETURN_VAL(result, NULL);
 
    if (eldbus_message_error_get(msg, &errname, &errmsg))
    {
@@ -244,14 +249,12 @@ on_accelerometer_orientation(void *data, const Eldbus_Message *msg, Eldbus_Pendi
       return;
    }
 
-   orientation = access_string_property(msg, &variant, result);
-   if (*result == EINA_FALSE)
+   orientation = _access_string_property(msg, &variant);
+   if (*orientation == UNDEFINED)
    {
       INF("Failed to retrieve the orientation from dbus message");
-      free(result);
       return;
    }
-   free(result);
 
    inst->accelerometer->orientation = orientation;
    DBG("Current Orientation: %d", inst->accelerometer->orientation);
@@ -366,6 +369,11 @@ _is_device_a_touch_pointer(int dev_counter, int num_properties, char **iterator)
    return is_correct_device;
 }
 
+/**
+ * Fetch a screen from its ID and rotate it according to the rotation parameter
+ * @param randr_id The randr2 id
+ * @param rotation The expected rotation
+ */
 void
 _fetch_and_rotate_screen(const char* randr_id, enum screen_rotation orientation)
 {
