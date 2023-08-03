@@ -113,7 +113,7 @@ get_dbus_interface(const char *IFACE)
 enum screen_rotation
 access_string_property(const Eldbus_Message *msg, Eldbus_Message_Iter **variant, Eina_Bool* result)
 {
-   const char *type = NULL;
+   char *type = NULL;
    *result = EINA_TRUE;
 
    if (!eldbus_message_arguments_get(msg, "v", variant))
@@ -158,7 +158,7 @@ access_string_property(const Eldbus_Message *msg, Eldbus_Message_Iter **variant,
    if (strcmp(ACCELEROMETER_ORIENTATION_NORMAL, *string_property_value) == 0)
       rotation = normal;
 
-   free((void *) type);
+   free(type);
    free(string_property_value);
    return rotation;
 }
@@ -166,7 +166,7 @@ access_string_property(const Eldbus_Message *msg, Eldbus_Message_Iter **variant,
 Eina_Bool
 access_bool_property(const Eldbus_Message *msg, Eldbus_Message_Iter **variant, Eina_Bool *boolean_property_value)
 {
-   const char *type;
+   char *type;
    Eina_Bool res = EINA_TRUE;
 
    if (!eldbus_message_arguments_get(msg, "v", variant))
@@ -197,7 +197,7 @@ access_bool_property(const Eldbus_Message *msg, Eldbus_Message_Iter **variant, E
       WARN("error in eldbus_message_iter_arguments_get()");
       res = EINA_FALSE;
    }
-   free((void *) type);
+   free(type);
    return res;
 }
 
@@ -214,7 +214,7 @@ on_has_accelerometer(void *data, const Eldbus_Message *msg, Eldbus_Pending *pend
    }
 
    access_bool_property(msg, &variant, &has_accelerometer);
-   DbusAccelerometer *accelerometer = (DbusAccelerometer *) data;
+   DbusAccelerometer *accelerometer = data;
    accelerometer->has_accelerometer = has_accelerometer;
    DBG("Has Accelerometer: %d", accelerometer->has_accelerometer);
 }
@@ -266,7 +266,7 @@ on_accelerometer_orientation(void *data, const Eldbus_Message *msg, Eldbus_Pendi
       {
          _fetch_and_rotate_screen(randr_id, orientation);
       }
-      free((void *)randr_id);
+      free(randr_id);
    }
 }
 
@@ -309,8 +309,8 @@ _fetch_X_device_input_number(void)
 {
    // I should get the touchscreen associated with the screen probably by looking at the classes of the input devices
    // I need to submit my patch to add getters for other XIDeviceInfo fields, like raster mentioned in his commit.
-   const char *dev_name = NULL;
-   char **property_name = NULL;
+   const char *dev_name;
+   char **property_name;
    int dev_num = ecore_x_input_device_num_get();
    int dev_number = -1;
 
