@@ -250,7 +250,7 @@ on_accelerometer_orientation(void *data, const Eldbus_Message *msg, Eldbus_Pendi
    }
 
    orientation = _access_string_property(msg, &variant);
-   if (*orientation == UNDEFINED)
+   if (orientation == UNDEFINED)
    {
       INF("Failed to retrieve the orientation from dbus message");
       return;
