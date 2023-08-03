@@ -5,7 +5,7 @@
 #ifndef E_GADGET_CONVERTIBLE_IIO_SENSOR_ACCELEROMETER_H
 #define E_GADGET_CONVERTIBLE_IIO_SENSOR_ACCELEROMETER_H
 
-// Those costants are the possible states for the orientation of the acceleromenter.
+// Those costants are the possible states for the orientation of the accelerometer.
 
 #define ACCELEROMETER_ORIENTATION_UNDEFINED "undefined"
 #define ACCELEROMETER_ORIENTATION_NORMAL "normal"

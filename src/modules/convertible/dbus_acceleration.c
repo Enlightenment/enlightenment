@@ -126,7 +126,7 @@ access_string_property(const Eldbus_Message *msg, Eldbus_Message_Iter **variant,
    {
       WARN("Unable to get the type.");
       *result = EINA_FALSE;
-      return undefined;
+      return UNDEFINED;
    }
 
    type = eldbus_message_iter_signature_get((*variant));
@@ -148,15 +148,15 @@ access_string_property(const Eldbus_Message *msg, Eldbus_Message_Iter **variant,
       *result = EINA_FALSE;
    }
 
-   enum screen_rotation rotation = undefined;
+   enum screen_rotation rotation = UNDEFINED;
    if (strcmp(ACCELEROMETER_ORIENTATION_RIGHT, *string_property_value) == 0)
-      rotation = right_up;
+      rotation = RIGHT_UP;
    if (strcmp(ACCELEROMETER_ORIENTATION_LEFT, *string_property_value) == 0)
-      rotation = left_up;
+      rotation = LEFT_UP;
    if (strcmp(ACCELEROMETER_ORIENTATION_BOTTOM, *string_property_value) == 0)
-      rotation = flipped;
+      rotation = FLIPPED;
    if (strcmp(ACCELEROMETER_ORIENTATION_NORMAL, *string_property_value) == 0)
-      rotation = normal;
+      rotation = NORMAL;
 
    free(type);
    free(string_property_value);
