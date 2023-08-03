@@ -26,7 +26,7 @@ struct _DbusAccelerometer
 /**
  * Fetch the DBUS interfaces and fill the DbusAccelerometer struct
  * */
-DbusAccelerometer* sensor_proxy_init();
+DbusAccelerometer* sensor_proxy_init(void);
 
 
 void

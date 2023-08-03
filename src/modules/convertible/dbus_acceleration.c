@@ -11,7 +11,7 @@
 DbusAccelerometer* accelerometer_dbus;
 
 DbusAccelerometer*
-sensor_proxy_init()
+sensor_proxy_init(void)
 {
    // Initialise DBUS component
    if (accelerometer_dbus)
