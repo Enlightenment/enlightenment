@@ -264,12 +264,11 @@ on_accelerometer_orientation(void *data, const Eldbus_Message *msg, Eldbus_Pendi
    else
    {
       Eina_List *l;
-      const char *randr_id = NULL;
+      char *randr_id = NULL;
       EINA_LIST_FOREACH(inst->randr2_ids, l, randr_id)
       {
          _fetch_and_rotate_screen(randr_id, orientation);
       }
-      free(randr_id);
    }
 }
 
@@ -278,10 +277,10 @@ _convertible_rotation_get(const enum screen_rotation orientation)
 {
    switch (orientation)
    {
-      case normal: return 0;
-      case left_up: return 90;
-      case flipped: return 180;
-      case right_up: return 270;
+      case NORMAL: return 0;
+      case LEFT_UP: return 90;
+      case FLIPPED: return 180;
+      case RIGHT_UP: return 270;
 
       default: return 0;
    }
