@@ -314,7 +314,7 @@ _fetch_X_device_input_number(void)
    int dev_num = ecore_x_input_device_num_get();
    int dev_number = -1;
 
-   for (int dev_counter=0; dev_counter<dev_num; dev_counter++)
+   for (int dev_counter = 0; dev_counter < dev_num; dev_counter++)
    {
       dev_name = ecore_x_input_device_name_get(dev_counter);
       // Less horrible hack that relies on the presence of a property containing the work Calibration
@@ -327,7 +327,7 @@ _fetch_X_device_input_number(void)
        if (is_correct_device == EINA_FALSE)
           continue;
        iterator = property_name;
-       for (int i=0; i<num_properties; i++)
+       for (int i = 0; i < num_properties; i++)
        {
           if (!strcmp(*iterator, CTM_name))
           {
@@ -346,7 +346,7 @@ _is_device_a_touch_pointer(int dev_counter, int num_properties, char **iterator)
 {
    // Looking for a device with either a libinput property for calibration or the old evdev Axlis labels property.
    int is_correct_device = EINA_FALSE;
-   for (int i=0; i<num_properties; i++)
+   for (int i = 0; i < num_properties; i++)
    {
       if (strstr(*iterator, "libinput Calibration Matrix"))
          is_correct_device = EINA_TRUE;
