@@ -149,13 +149,13 @@ access_string_property(const Eldbus_Message *msg, Eldbus_Message_Iter **variant,
    }
 
    enum screen_rotation rotation = UNDEFINED;
-   if (strcmp(ACCELEROMETER_ORIENTATION_RIGHT, *string_property_value) == 0)
+   if (!strcmp(ACCELEROMETER_ORIENTATION_RIGHT, *string_property_value))
       rotation = RIGHT_UP;
-   if (strcmp(ACCELEROMETER_ORIENTATION_LEFT, *string_property_value) == 0)
+   if (!strcmp(ACCELEROMETER_ORIENTATION_LEFT, *string_property_value))
       rotation = LEFT_UP;
-   if (strcmp(ACCELEROMETER_ORIENTATION_BOTTOM, *string_property_value) == 0)
+   if (!strcmp(ACCELEROMETER_ORIENTATION_BOTTOM, *string_property_value))
       rotation = FLIPPED;
-   if (strcmp(ACCELEROMETER_ORIENTATION_NORMAL, *string_property_value) == 0)
+   if (!strcmp(ACCELEROMETER_ORIENTATION_NORMAL, *string_property_value))
       rotation = NORMAL;
 
    free(type);
@@ -329,7 +329,7 @@ _fetch_X_device_input_number(void)
        iterator = property_name;
        for (int i=0; i<num_properties; i++)
        {
-          if (strcmp(*iterator, CTM_name) == 0)
+          if (!strcmp(*iterator, CTM_name))
           {
 	     dev_number = dev_counter;
              DBG("Setting device: %d", dev_number);
