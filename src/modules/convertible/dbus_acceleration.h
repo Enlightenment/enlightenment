@@ -33,21 +33,6 @@ void
 sensor_proxy_shutdown(void);
 
 /**
- * Helper to get the interface
- * */
-Eldbus_Proxy *
-get_dbus_interface(const char *IFACE);
-
-/**
- * Callback definition to handle the request of the hasAccelerometer property of DBUS interface net.hadess.SensorProxy
- * @param data DbusAccelerometer
- * @param msg The message
- * @param pending
- */
-void
-on_has_accelerometer(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED);
-
-/**
  * Callback definition to handle the request of the accelerometer property of DBUS interface net.hadess.SensorProxy
  * @param data DbusAccelerometer
  * @param msg The message
@@ -55,24 +40,4 @@ on_has_accelerometer(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_P
  */
 void
 on_accelerometer_orientation(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED);
-
-/**
- * Callback definition to handle the execution of the ClaimAccelerometer() method of DBUS
- * interface net.hadess.SensorProxy
- * @param data not used
- * @param msg The message
- * @param pending
- */
-void
-on_accelerometer_claimed(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED);
-
-/**
- * Callback definition to handle the execution of the ReleaseAccelerometer() method of DBUS
- * interface net.hadess.SensorProxy
- * @param data not used
- * @param msg The message
- * @param pending
- */
-void
-on_accelerometer_released(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED);
 #endif

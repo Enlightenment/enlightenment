@@ -8,7 +8,7 @@
 #include "e_mod_main.h"
 #include "input_rotation.h"
 
-DbusAccelerometer* accelerometer_dbus;
+static DbusAccelerometer* accelerometer_dbus;
 
 DbusAccelerometer*
 sensor_proxy_init(void)
@@ -80,7 +80,10 @@ _convertible_rotation_get(const enum screen_rotation orientation);
 int
 _is_device_a_touch_pointer(int dev_counter, int num_properties, char **iterator);
 
-Eldbus_Proxy *
+/**
+ * Helper to get the interface
+ * */
+statis Eldbus_Proxy *
 get_dbus_interface(const char *IFACE)
 {
    DBG("Working on interface: %s", IFACE);
@@ -208,7 +211,13 @@ _access_bool_property(const Eldbus_Message *msg, Eldbus_Message_Iter **variant, 
    return res;
 }
 
-void
+/**
+ * Callback definition to handle the request of the hasAccelerometer property of DBUS interface net.hadess.SensorProxy
+ * @param data DbusAccelerometer
+ * @param msg The message
+ * @param pending
+ */
+static void
 on_has_accelerometer(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
 {
    const char *errname, *errmsg;
@@ -425,7 +434,14 @@ _fetch_and_rotate_screen(const char* randr_id, enum screen_rotation orientation)
    }
 }
 
-void
+/**
+ * Callback definition to handle the execution of the ClaimAccelerometer() method of DBUS
+ * interface net.hadess.SensorProxy
+ * @param data not used
+ * @param msg The message
+ * @param pending
+ */
+ static void
 on_accelerometer_claimed(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
 {
    const char *errname, *errmsg;
@@ -439,7 +455,15 @@ on_accelerometer_claimed(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldb
    INF("Accelerometer claimed");
 }
 
-void
+
+/**
+ * Callback definition to handle the execution of the ReleaseAccelerometer() method of DBUS
+ * interface net.hadess.SensorProxy
+ * @param data not used
+ * @param msg The message
+ * @param pending
+ */
+static void
 on_accelerometer_released(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
 {
    const char *errname, *errmsg;
