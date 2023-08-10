@@ -10,6 +10,32 @@
 
 static DbusAccelerometer* accelerometer_dbus;
 
+
+/**
+ * Callback definition to handle the request of the hasAccelerometer property of DBUS interface net.hadess.SensorProxy
+ * @param data DbusAccelerometer
+ * @param msg The message
+ * @param pending
+ */
+static void
+on_has_accelerometer(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
+{
+    const char *errname, *errmsg;
+    Eina_Bool has_accelerometer = EINA_FALSE;
+    Eldbus_Message_Iter *variant = NULL;
+
+    if (eldbus_message_error_get(msg, &errname, &errmsg))
+    {
+        ERR("Error: %s %s", errname, errmsg);
+    }
+
+    _access_bool_property(msg, &variant, &has_accelerometer);
+    DbusAccelerometer *accelerometer = data;
+    accelerometer->has_accelerometer = has_accelerometer;
+    DBG("Has Accelerometer: %d", accelerometer->has_accelerometer);
+}
+
+
 DbusAccelerometer*
 sensor_proxy_init(void)
 {
@@ -209,30 +235,6 @@ _access_bool_property(const Eldbus_Message *msg, Eldbus_Message_Iter **variant, 
    }
    free(type);
    return res;
-}
-
-/**
- * Callback definition to handle the request of the hasAccelerometer property of DBUS interface net.hadess.SensorProxy
- * @param data DbusAccelerometer
- * @param msg The message
- * @param pending
- */
-static void
-on_has_accelerometer(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
-{
-   const char *errname, *errmsg;
-   Eina_Bool has_accelerometer = EINA_FALSE;
-   Eldbus_Message_Iter *variant = NULL;
-
-   if (eldbus_message_error_get(msg, &errname, &errmsg))
-   {
-      ERR("Error: %s %s", errname, errmsg);
-   }
-
-   _access_bool_property(msg, &variant, &has_accelerometer);
-   DbusAccelerometer *accelerometer = data;
-   accelerometer->has_accelerometer = has_accelerometer;
-   DBG("Has Accelerometer: %d", accelerometer->has_accelerometer);
 }
 
 void
