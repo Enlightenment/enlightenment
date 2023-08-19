@@ -18,7 +18,7 @@ static DbusAccelerometer* accelerometer_dbus;
  * @param pending
  */
 static void
-on_has_accelerometer(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
+_on_has_accelerometer(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
 {
     const char *errname, *errmsg;
     Eina_Bool has_accelerometer = EINA_FALSE;
@@ -61,7 +61,7 @@ sensor_proxy_init(void)
    }
 
    accelerometer_dbus->pending_has_orientation = eldbus_proxy_property_get(accelerometer_dbus->sensor_proxy,
-                                                                            "HasAccelerometer", on_has_accelerometer,
+                                                                            "HasAccelerometer", _on_has_accelerometer,
                                                                             accelerometer_dbus);
    if (!accelerometer_dbus->pending_has_orientation)
    {
@@ -70,7 +70,7 @@ sensor_proxy_init(void)
 
    // Claim the accelerometer_dbus
    accelerometer_dbus->pending_acc_claim = eldbus_proxy_call(accelerometer_dbus->sensor_proxy, "ClaimAccelerometer",
-                                                              on_accelerometer_claimed, accelerometer_dbus, -1, "");
+                                                              _on_accelerometer_claimed, accelerometer_dbus, -1, "");
 
    if (!accelerometer_dbus->pending_acc_claim)
    {
@@ -444,7 +444,7 @@ _fetch_and_rotate_screen(const char* randr_id, enum screen_rotation orientation)
  * @param pending
  */
  static void
-on_accelerometer_claimed(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
+_on_accelerometer_claimed(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
 {
    const char *errname, *errmsg;
 
