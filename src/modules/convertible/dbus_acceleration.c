@@ -12,6 +12,51 @@ static DbusAccelerometer* accelerometer_dbus;
 
 
 /**
+ * Helper function to extract ta boolean property from the message
+ * @param msg The message coming from the get property invocation
+ * @param variant
+ * @param boolean_property_value The boolean property pointer where the value should be stored, if read
+ * @return
+ */
+static Eina_Bool
+_access_bool_property(const Eldbus_Message *msg, Eldbus_Message_Iter **variant, Eina_Bool *boolean_property_value)
+{
+    char *type;
+    Eina_Bool res = EINA_TRUE;
+
+    if (!eldbus_message_arguments_get(msg, "v", variant))
+    {
+        WARN("Error getting arguments.");
+        res = EINA_FALSE;
+    }
+    type = eldbus_message_iter_signature_get((*variant));
+    if (type == NULL)
+    {
+        WARN("Unable to get the type.");
+        res = EINA_FALSE;
+        return res;
+    }
+
+    if (type[1])
+    {
+        WARN("It is a complex type, not handle yet.");
+        res = EINA_FALSE;
+    }
+    if (type[0] != 'b')
+    {
+        WARN("Expected type is int.");
+        res = EINA_FALSE;
+    }
+    if (!eldbus_message_iter_arguments_get((*variant), "b", boolean_property_value))
+    {
+        WARN("error in eldbus_message_iter_arguments_get()");
+        res = EINA_FALSE;
+    }
+    free(type);
+    return res;
+}
+
+/**
  * Callback definition to handle the execution of the ReleaseAccelerometer() method of DBUS
  * interface net.hadess.SensorProxy
  * @param data not used
@@ -152,7 +197,7 @@ _is_device_a_touch_pointer(int dev_counter, int num_properties, char **iterator)
 /**
  * Helper to get the interface
  * */
-statis Eldbus_Proxy *
+static Eldbus_Proxy *
 get_dbus_interface(const char *IFACE)
 {
    DBG("Working on interface: %s", IFACE);
@@ -233,51 +278,6 @@ _access_string_property(const Eldbus_Message *msg, Eldbus_Message_Iter **variant
    free(type);
    free(string_property_value);
    return rotation;
-}
-
-/**
- * Helper function to extract ta boolean property from the message
- * @param msg The message coming from the get property invocation
- * @param variant
- * @param boolean_property_value The boolean property pointer where the value should be stored, if read
- * @return
- */
-Eina_Bool
-_access_bool_property(const Eldbus_Message *msg, Eldbus_Message_Iter **variant, Eina_Bool *boolean_property_value)
-{
-   char *type;
-   Eina_Bool res = EINA_TRUE;
-
-   if (!eldbus_message_arguments_get(msg, "v", variant))
-   {
-      WARN("Error getting arguments.");
-      res = EINA_FALSE;
-   }
-   type = eldbus_message_iter_signature_get((*variant));
-   if (type == NULL)
-   {
-      WARN("Unable to get the type.");
-      res = EINA_FALSE;
-      return res;
-   }
-
-   if (type[1])
-   {
-      WARN("It is a complex type, not handle yet.");
-      res = EINA_FALSE;
-   }
-   if (type[0] != 'b')
-   {
-      WARN("Expected type is int.");
-      res = EINA_FALSE;
-   }
-   if (!eldbus_message_iter_arguments_get((*variant), "b", boolean_property_value))
-   {
-      WARN("error in eldbus_message_iter_arguments_get()");
-      res = EINA_FALSE;
-   }
-   free(type);
-   return res;
 }
 
 void
