@@ -12,6 +12,39 @@ static DbusAccelerometer* accelerometer_dbus;
 
 
 /**
+ * Helper to get the interface
+ * */
+static Eldbus_Proxy *
+get_dbus_interface(const char *IFACE)
+{
+    DBG("Working on interface: %s", IFACE);
+    Eldbus_Connection *conn;
+    Eldbus_Object *obj;
+    Eldbus_Proxy *sensor_proxy;
+
+    conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+    if (!conn)
+    {
+        ERR("Error: could not get system bus");
+        return NULL;
+    }
+    obj = eldbus_object_get(conn, EFL_DBUS_ACC_BUS, EFL_DBUS_ACC_PATH);
+    if (!obj)
+    {
+        ERR("Error: could not get object");
+        return NULL;
+    }
+    sensor_proxy = eldbus_proxy_get(obj, IFACE);
+    if (!sensor_proxy)
+    {
+        ERR("Error: could not get proxy for interface %s", IFACE);
+        return NULL;
+    }
+
+    return sensor_proxy;
+}
+
+/**
  * Helper function to extract ta boolean property from the message
  * @param msg The message coming from the get property invocation
  * @param variant
@@ -193,39 +226,6 @@ _convertible_rotation_get(const enum screen_rotation orientation);
 
 int
 _is_device_a_touch_pointer(int dev_counter, int num_properties, char **iterator);
-
-/**
- * Helper to get the interface
- * */
-static Eldbus_Proxy *
-get_dbus_interface(const char *IFACE)
-{
-   DBG("Working on interface: %s", IFACE);
-   Eldbus_Connection *conn;
-   Eldbus_Object *obj;
-   Eldbus_Proxy *sensor_proxy;
-
-   conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
-   if (!conn)
-   {
-      ERR("Error: could not get system bus");
-      return NULL;
-   }
-   obj = eldbus_object_get(conn, EFL_DBUS_ACC_BUS, EFL_DBUS_ACC_PATH);
-   if (!obj)
-   {
-      ERR("Error: could not get object");
-      return NULL;
-   }
-   sensor_proxy = eldbus_proxy_get(obj, IFACE);
-   if (!sensor_proxy)
-   {
-      ERR("Error: could not get proxy for interface %s", IFACE);
-      return NULL;
-   }
-
-   return sensor_proxy;
-}
 
 /**
  * Helper function to extract ta string property from the message
