@@ -119,12 +119,11 @@ _gc_shutdown(E_Gadcon_Client *gcc)
 static void
 _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient)
 {
-   Instance *inst;
    Evas_Coord mw, mh;
    char buf[4096];
    const char *s = "float";
 
-   inst = gcc->data;
+   Instance *instance = gcc->data;
    switch (orient)
    {
       case E_GADCON_ORIENT_FLOAT:
@@ -191,13 +190,13 @@ _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient)
          break;
    }
    snprintf(buf, sizeof(buf), "e,state,orientation,%s", s);
-   edje_object_signal_emit(inst->o_button, buf, "e");
-   edje_object_message_signal_process(inst->o_button);
+   edje_object_signal_emit(instance->o_button, buf, "e");
+   edje_object_message_signal_process(instance->o_button);
 
    mw = 0, mh = 0;
-   edje_object_size_min_get(inst->o_button, &mw, &mh);
+   edje_object_size_min_get(instance->o_button, &mw, &mh);
    if ((mw < 1) || (mh < 1))
-      edje_object_size_min_calc(inst->o_button, &mw, &mh);
+      edje_object_size_min_calc(instance->o_button, &mw, &mh);
    if (mw < 4) mw = 4;
    if (mh < 4) mh = 4;
    e_gadcon_client_aspect_set(gcc, mw, mh);
@@ -239,16 +238,16 @@ _gc_id_new(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
 static void
 _cb_properties_changed(void *data, const Eldbus_Message *msg)
 {
-   Instance *inst = (Instance *) data;
+   Instance *instance = (Instance *) data;
    Eldbus_Message_Iter *array, *invalidate;
    char *iface;
 
    if (!eldbus_message_arguments_get(msg, "sa{sv}as", &iface, &array, &invalidate))
       ERR("Error getting data from properties changed signal.");
    // Given that the property changed, let's get the new value
-   Eldbus_Pending *pending_operation = eldbus_proxy_property_get(inst->accelerometer->sensor_proxy,
+   Eldbus_Pending *pending_operation = eldbus_proxy_property_get(instance->accelerometer->sensor_proxy,
                                                                  "AccelerometerOrientation",
-                                                                 on_accelerometer_orientation, inst);
+                                                                 on_accelerometer_orientation, instance);
    if (!pending_operation)
       ERR("Error: could not get property AccelerometerOrientation");
 }

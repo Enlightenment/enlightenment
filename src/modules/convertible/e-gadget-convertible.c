@@ -46,19 +46,6 @@ _keyboard_signal_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const 
    DBG("Keyboard: Signal %s received from %s", sig, src);
 }
 
-
-/**
- * Callback for gadget creation
- * */
-static void
-_gadget_created(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
-{
-   DBG("Inside gadget created");
-   //    do_orient(inst, e_gadget_site_orient_get(obj), e_gadget_site_anchor_get(obj));
-   evas_object_smart_callback_del_full(obj, "gadget_created", _gadget_created, NULL);
-}
-
-
 void
 update_instances(Eina_List *new_instances) {
    instances = new_instances;
