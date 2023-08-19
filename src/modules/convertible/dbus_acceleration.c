@@ -12,6 +12,49 @@ static DbusAccelerometer* accelerometer_dbus;
 
 
 /**
+ * Callback definition to handle the execution of the ReleaseAccelerometer() method of DBUS
+ * interface net.hadess.SensorProxy
+ * @param data not used
+ * @param msg The message
+ * @param pending
+ */
+static void
+_on_accelerometer_released(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
+{
+    const char *errname, *errmsg;
+
+    INF("Going to release the accelerometer_dbus");
+    if (eldbus_message_error_get(msg, &errname, &errmsg))
+    {
+        ERR("Error: %s %s", errname, errmsg);
+        return;
+    }
+    INF("Accelerometer released");
+}
+
+
+/**
+ * Callback definition to handle the execution of the ClaimAccelerometer() method of DBUS
+ * interface net.hadess.SensorProxy
+ * @param data not used
+ * @param msg The message
+ * @param pending
+ */
+static void
+_on_accelerometer_claimed(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
+{
+    const char *errname, *errmsg;
+
+    INF("Going to claim the accelerometer_dbus");
+    if (eldbus_message_error_get(msg, &errname, &errmsg))
+    {
+        ERR("Error: %s %s", errname, errmsg);
+        return;
+    }
+    INF("Accelerometer claimed");
+}
+
+/**
  * Callback definition to handle the request of the hasAccelerometer property of DBUS interface net.hadess.SensorProxy
  * @param data DbusAccelerometer
  * @param msg The message
@@ -88,7 +131,7 @@ sensor_proxy_shutdown(void)
 
    // TODO Should to this and wait for the release before continuing
    INF("Freeing convertible resources");
-   accelerometer_dbus->pending_acc_crelease = eldbus_proxy_call(accelerometer_dbus->sensor_proxy, "ReleaseAccelerometer", on_accelerometer_released, accelerometer_dbus, -1, "");
+   accelerometer_dbus->pending_acc_crelease = eldbus_proxy_call(accelerometer_dbus->sensor_proxy, "ReleaseAccelerometer", _on_accelerometer_released, accelerometer_dbus, -1, "");
    if (accelerometer_dbus)
    {
       e_object_del(E_OBJECT(accelerometer_dbus));
@@ -434,47 +477,4 @@ _fetch_and_rotate_screen(const char* randr_id, enum screen_rotation orientation)
       }
       free(matrix);
    }
-}
-
-/**
- * Callback definition to handle the execution of the ClaimAccelerometer() method of DBUS
- * interface net.hadess.SensorProxy
- * @param data not used
- * @param msg The message
- * @param pending
- */
- static void
-_on_accelerometer_claimed(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
-{
-   const char *errname, *errmsg;
-
-   INF("Going to claim the accelerometer_dbus");
-   if (eldbus_message_error_get(msg, &errname, &errmsg))
-   {
-      ERR("Error: %s %s", errname, errmsg);
-      return;
-   }
-   INF("Accelerometer claimed");
-}
-
-
-/**
- * Callback definition to handle the execution of the ReleaseAccelerometer() method of DBUS
- * interface net.hadess.SensorProxy
- * @param data not used
- * @param msg The message
- * @param pending
- */
-static void
-on_accelerometer_released(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
-{
-   const char *errname, *errmsg;
-
-   INF("Going to release the accelerometer_dbus");
-   if (eldbus_message_error_get(msg, &errname, &errmsg))
-   {
-      ERR("Error: %s %s", errname, errmsg);
-      return;
-   }
-   INF("Accelerometer released");
 }
