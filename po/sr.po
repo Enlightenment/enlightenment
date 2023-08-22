@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-29 19:35+0100\n"
-"PO-Revision-Date: 2021-03-20 19:37+0100\n"
+"PO-Revision-Date: 2023-08-21 20:39+0200\n"
 "Last-Translator: Саша Петровић <salepetronije@gmail.com>\n"
 "Language-Team: српски <xfce4@xfce4.org>\n"
 "Language: sr\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Launchpad-Export-Date: 2017-09-28 05:14+0000\n"
-"X-Generator: Poedit 2.2.1\n"
+"X-Generator: Poedit 3.2.2\n"
 
 #: src/bin/e_about.c:17
 msgid "About Enlightenment"
@@ -45,7 +45,6 @@ msgid "Enlightenment"
 msgstr "Просвећење"
 
 #: src/bin/e_about.c:26
-#, fuzzy
 msgid ""
 "<title>Copyright &copy; 2000-2022, by the Enlightenment Development Team</"
 "><ps/><ps/>We hope you enjoy using this software as much as we enjoyed "
@@ -183,9 +182,8 @@ msgid "Mouse to key"
 msgstr "Миш у дугме"
 
 #: src/bin/e_actions.c:3472
-#, fuzzy
 msgid "Profile: Switch"
-msgstr "Изабирач профила"
+msgstr "Налог: Прелаз"
 
 #: src/bin/e_actions.c:3491 src/bin/e_actions.c:3502 src/bin/e_actions.c:3521
 #: src/bin/e_actions.c:3526 src/bin/e_actions.c:3531 src/bin/e_actions.c:3536
@@ -404,7 +402,7 @@ msgstr "Пребаци радни простор на..."
 
 #: src/bin/e_actions.c:3669
 msgid "Switch Desktop To... On Screen..."
-msgstr "Пређи радну површ на... На приказ..."
+msgstr "Пређи радну површ на... На заслон..."
 
 #: src/bin/e_actions.c:3675
 msgid "Flip Desktop Linearly..."
@@ -587,7 +585,7 @@ msgstr "Пошаљи миша на заслон 1"
 
 #: src/bin/e_actions.c:3785
 msgid "Send Mouse To Screen..."
-msgstr "Покажи миша на заслон..."
+msgstr "Пошаљи миша на заслон..."
 
 #: src/bin/e_actions.c:3791
 msgid "Send Mouse Forward 1 Screen"
@@ -638,19 +636,16 @@ msgid "Backlight Down"
 msgstr "Смањи позадинско осветљење"
 
 #: src/bin/e_actions.c:3824
-#, fuzzy
 msgid "Blanking Off"
 msgstr "Затамњивање"
 
 #: src/bin/e_actions.c:3826
-#, fuzzy
 msgid "Blanking On"
-msgstr "Затамњивање"
+msgstr "Осветљавање"
 
 #: src/bin/e_actions.c:3828
-#, fuzzy
 msgid "Blanking Toggle"
-msgstr "Затамњивање"
+msgstr "Прекидач затамњивања"
 
 #: src/bin/e_actions.c:3833
 msgid "Update and re-apply screen setup"
@@ -693,9 +688,8 @@ msgid "Push in Direction..."
 msgstr "Помери у правцу..."
 
 #: src/bin/e_actions.c:3886
-#, fuzzy
 msgid "Grow in Direction..."
-msgstr "Помери у правцу..."
+msgstr "Расти у правцу..."
 
 #: src/bin/e_actions.c:3892
 msgid "Drag Icon..."
@@ -1068,9 +1062,8 @@ msgid "Enlightenment cannot initialize the XSettings system.\n"
 msgstr "Просвећење није успело да покрене систем поставки Икса.\n"
 
 #: src/bin/e_comp_x_randr.c:453
-#, fuzzy
 msgid "Screen setup Error"
-msgstr "Десила се грешка при сликању екрана"
+msgstr "Десила се грешка при сликању заслона"
 
 #: src/bin/e_comp_x_randr.c:454
 msgid ""
@@ -1078,6 +1071,10 @@ msgid ""
 "have. This should<br>be fixed by going to:<br><br><b>Settings -> Screen -> "
 "Screen Setup</><br><br>And configure at least one screen to be on."
 msgstr ""
+"Изгледа као да немате ни један заслон подешен на<br>датом излазу којег "
+"имате. То би требало<br>да буде исправљено преко<br><br><br>Поставке -> "
+"Заслон -> Поставке заслона</><br><br>И подесите најмање један заслон да буде "
+"укључен."
 
 #: src/bin/e_comp_x_randr.c:462 src/bin/e_config_dialog.c:274
 #: src/bin/e_desktop_editor.c:907 src/bin/e_desktop_editor.c:971
@@ -1271,7 +1268,7 @@ msgstr "Изглед"
 #: src/modules/conf_display/e_mod_main.c:40
 #: src/modules/conf_theme/e_mod_main.c:85
 msgid "Internal"
-msgstr "унутрашњи"
+msgstr "Унутрашње"
 
 #: src/bin/e_configure.c:36
 msgid "Composite Style Settings"
@@ -1284,9 +1281,9 @@ msgstr "Поставке"
 #: src/bin/e_desk.c:123 src/bin/e_desk.c:185 src/bin/e_desk.c:242
 #: src/modules/conf_display/e_int_config_desk.c:78
 #: src/modules/conf_display/e_int_config_desk.c:117
-#, fuzzy, c-format
+#, c-format
 msgid "Desktop %d,%d"
-msgstr "Радна површ"
+msgstr "Радна површ %d,%d"
 
 #: src/bin/e_desklock.c:235
 msgid "Error - no PAM support"
@@ -1980,9 +1977,8 @@ msgid "Occupied blocks on disk:"
 msgstr "Заузети блокови на диску:"
 
 #: src/bin/e_fm_prop.c:541
-#, fuzzy
 msgid "Taken on:"
-msgstr "Направи снимак"
+msgstr "Преузето у:"
 
 #: src/bin/e_fm_prop.c:551
 msgid "Last Accessed:"
@@ -2079,7 +2075,7 @@ msgstr "Самостално клизај садржај"
 
 #: src/bin/e_gadcon.c:1815 src/modules/gadman/e_mod_gadman.c:1076
 msgid "Plain"
-msgstr "једноставан"
+msgstr "Једноставно"
 
 #: src/bin/e_gadcon.c:1827 src/modules/gadman/e_mod_gadman.c:1084
 msgid "Inset"
@@ -2100,7 +2096,6 @@ msgid "Stop moving"
 msgstr "Прекини померање"
 
 #: src/bin/e_gadcon.c:3229
-#, fuzzy
 msgid "Insufficient gadcon support"
 msgstr "Недовољна подршка програма gadcon"
 
@@ -2467,12 +2462,12 @@ msgstr "Десно"
 
 #: src/bin/e_int_client_menu.c:1240 src/bin/e_shelf.c:71
 msgid "Bottom"
-msgstr "дно"
+msgstr "Дно"
 
 #: src/bin/e_int_client_menu.c:1274
 #, c-format
 msgid "Screen %d"
-msgstr "Екран %d"
+msgstr "Заслон %d"
 
 #: src/bin/e_int_client_menu.c:1381 src/bin/e_int_client_prop.c:160
 #: src/bin/e_int_client_prop.c:182 src/bin/e_int_config_comp_match.c:97
@@ -2482,7 +2477,7 @@ msgstr "Екран %d"
 #: src/modules/notification/e_mod_config.c:104
 #, c-format
 msgid "Normal"
-msgstr "обична"
+msgstr "Обична"
 
 #: src/bin/e_int_client_menu.c:1392
 msgid "Always Below"
@@ -2557,7 +2552,7 @@ msgstr "%1.3f–%1.3f"
 #: src/bin/e_int_client_prop.c:156 src/bin/e_int_client_prop.c:178
 #, c-format
 msgid "Withdrawn"
-msgstr "Повучен"
+msgstr "Повучено"
 
 #: src/bin/e_int_client_prop.c:164 src/bin/e_int_client_prop.c:186
 #, c-format
@@ -2567,7 +2562,7 @@ msgstr "Умањено"
 #: src/bin/e_int_client_prop.c:221
 #, c-format
 msgid "Forget/Unmap"
-msgstr "Заборави/одмапирај"
+msgstr "Заборави/одспоји"
 
 #: src/bin/e_int_client_prop.c:225
 #, c-format
@@ -2629,7 +2624,7 @@ msgstr "Статично"
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:130
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:144
 msgid "None"
-msgstr "без"
+msgstr "Ништа"
 
 #: src/bin/e_int_client_prop.c:308
 #: src/modules/conf_randr/e_int_config_randr2.c:477
@@ -3037,9 +3032,8 @@ msgid "Triple buffered swaps"
 msgstr "Троструко међуспремљена заменска меморија"
 
 #: src/bin/e_int_config_comp.c:292 src/bin/e_int_config_comp.c:517
-#, fuzzy
 msgid "Dithering"
-msgstr "Остале поставке"
+msgstr "Дрхтање"
 
 #: src/bin/e_int_config_comp.c:298 src/bin/e_int_config_comp.c:544
 msgid "Rendering"
@@ -3427,9 +3421,8 @@ msgid "Applications"
 msgstr "Програми"
 
 #: src/bin/e_int_menus.c:204
-#, fuzzy
 msgid "Blanking Block"
-msgstr "Затамњивање"
+msgstr "Заслон затамњивања"
 
 #: src/bin/e_int_menus.c:212 src/bin/e_int_menus.c:1596
 #: src/modules/conf_window_manipulation/e_mod_main.c:17
@@ -3457,7 +3450,7 @@ msgstr "Извести о грешци"
 
 #: src/bin/e_int_menus.c:352
 msgid "Virtual"
-msgstr "нестварна"
+msgstr "Нестварна"
 
 #: src/bin/e_int_menus.c:359 src/modules/conf_shelves/e_mod_main.c:23
 #: src/modules/conf_shelves/e_mod_main.c:27
@@ -3483,7 +3476,7 @@ msgstr "Постави нестварне радне површи"
 
 #: src/bin/e_int_menus.c:1602 src/bin/e_int_menus.c:1792
 msgid "No windows"
-msgstr "без прозора"
+msgstr "Без прозора"
 
 #: src/bin/e_int_menus.c:1711 src/bin/e_int_menus.c:1805
 msgid "Untitled window"
@@ -3772,7 +3765,6 @@ msgid "Enlightenment cannot set up its actions system.\n"
 msgstr "Просвећење не може подесити свој систем радњи.\n"
 
 #: src/bin/e_main.c:794
-#, fuzzy
 msgid "Enlightenment cannot initialize the Privilege System access system.\n"
 msgstr "Просвећење није успело да покрене систем уздигнутих овлашћења.\n"
 
@@ -3892,7 +3884,7 @@ msgid "Version: %s\n"
 msgstr "Издање: %s\n"
 
 #: src/bin/e_main.c:1272
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Options:\n"
 "  -display DISPLAY\n"
@@ -4122,35 +4114,35 @@ msgstr "Усправно"
 
 #: src/bin/e_shelf.c:72
 msgid "Top-left Corner"
-msgstr "горњи леви угао"
+msgstr "Горњи леви угао"
 
 #: src/bin/e_shelf.c:73
 msgid "Top-right Corner"
-msgstr "горњи десни угао"
+msgstr "Горњи десни угао"
 
 #: src/bin/e_shelf.c:74
 msgid "Bottom-left Corner"
-msgstr "доњи леви угао"
+msgstr "Доњи леви угао"
 
 #: src/bin/e_shelf.c:75
 msgid "Bottom-right Corner"
-msgstr "доњи десни угао"
+msgstr "Доњи десни угао"
 
 #: src/bin/e_shelf.c:76
 msgid "Left-top Corner"
-msgstr "леви горњи угао"
+msgstr "Леви горњи угао"
 
 #: src/bin/e_shelf.c:77
 msgid "Right-top Corner"
-msgstr "десни горњи угао"
+msgstr "Десни горњи угао"
 
 #: src/bin/e_shelf.c:78
 msgid "Left-bottom Corner"
-msgstr "леви доњи угао"
+msgstr "Леви доњи угао"
 
 #: src/bin/e_shelf.c:79
 msgid "Right-bottom Corner"
-msgstr "десни доњи угао"
+msgstr "Десни доњи угао"
 
 #: src/bin/e_shelf.c:352 src/bin/e_shelf.c:1131
 #, c-format
@@ -4313,149 +4305,134 @@ msgid "Error in Enlightenment System Service"
 msgstr "Грешка у служби система Просвећења"
 
 #: src/bin/e_system.c:36
-#, fuzzy
 msgid ""
 "Enlightenment cannot successfully start<br>the enlightenment_system "
 "service<br>because ecore_exe_run() failed."
 msgstr ""
-"Просвећење није успело успешно да покрене<br>службу \n"
-"enlightenment_system."
+"Просвећење није успело успешно да покрене<br>службу "
+"enlightenment_system<br>јер није успео ecore_exe_run()."
 
 #: src/bin/e_system.c:41
-#, fuzzy
 msgid ""
 "Enlightenment cannot successfully start<br>the enlightenment_system "
 "service<br>because your user has no passwd file entry."
 msgstr ""
-"Просвећење није успело успешно да покрене<br>службу \n"
-"enlightenment_system."
+"Просвећење није успело успешно да покрене<br>enlightenment_system "
+"service<br>јер Ваш корисник нема ставку датотеке лозинке."
 
 #: src/bin/e_system.c:46
-#, fuzzy
 msgid ""
 "Enlightenment cannot successfully start<br>the enlightenment_system "
 "service<br>because your username is blank in the passwd file."
 msgstr ""
-"Просвећење није успело успешно да покрене<br>службу \n"
-"enlightenment_system."
+"Просвећење није успело успешно да покрене<br>the enlightenment_system "
+"service<br>јер Вам је корисничко име празно у датотеци лозинке."
 
 #: src/bin/e_system.c:51
-#, fuzzy
 msgid ""
 "Enlightenment cannot successfully start<br>the enlightenment_system "
 "service<br>because it could not allocate memory."
 msgstr ""
-"Просвећење није успело успешно да покрене<br>службу \n"
-"enlightenment_system."
+"Просвећење није успело успешно да покрене<br>enlightenment_system "
+"service<br>јер није успело да премести памет."
 
 #: src/bin/e_system.c:56
-#, fuzzy
 msgid ""
 "Enlightenment cannot successfully start<br>the enlightenment_system "
 "service<br>because it can't find your user group entry."
 msgstr ""
-"Просвећење није успело успешно да покрене<br>службу \n"
-"enlightenment_system."
+"Просвећење није успело успешно да покрене<br>enlightenment_system "
+"service<br>јер није пронашло ставку корисничке групе."
 
 #: src/bin/e_system.c:61
-#, fuzzy
 msgid ""
 "Enlightenment cannot successfully start<br>the enlightenment_system "
 "service<br>because your user group entry is blank."
 msgstr ""
-"Просвећење није успело успешно да покрене<br>службу \n"
-"enlightenment_system."
+"Просвећење није успело успешно да покрене<br>enlightenment_system "
+"service<br>јер Вам је ставка корисничке групе празна."
 
 #: src/bin/e_system.c:66
-#, fuzzy
 msgid ""
 "Enlightenment cannot successfully start<br>the enlightenment_system "
 "service<br>since it can't become root. Missing setuid bit?"
 msgstr ""
-"Просвећење није успело успешно да покрене<br>службу \n"
-"enlightenment_system."
+"Просвећење није успело успешно да покрене<br>enlightenment_system "
+"service<br>јер је постало корен. Недостаје бит setuid?"
 
 #: src/bin/e_system.c:71
-#, fuzzy
 msgid ""
 "Enlightenment cannot successfully start<br>the enlightenment_system "
 "service<br>since it can't become group root. Missing setuid bit?"
 msgstr ""
-"Просвећење није успело успешно да покрене<br>службу \n"
-"enlightenment_system."
+"Просвећење није успело успешно да покрене<br>enlightenment_system "
+"service<br>пошто је постало корена група. Недостаје бит setuid?"
 
 #: src/bin/e_system.c:76
-#, fuzzy
 msgid ""
 "Enlightenment cannot successfully start<br>the enlightenment_system "
 "service<br>because the passwd file entry for root isn't found."
 msgstr ""
-"Просвећење није успело успешно да покрене<br>службу \n"
-"enlightenment_system."
+"Просвећење није успело успешно да покрене<br>enlightenment_system "
+"service<br>јер није пронашло ставку датотеке лозинке за корен."
 
 #: src/bin/e_system.c:81
-#, fuzzy
 msgid ""
 "Enlightenment cannot successfully start<br>the enlightenment_system "
 "service<br>because the root home directory is blank."
 msgstr ""
-"Просвећење није успело успешно да покрене<br>службу \n"
-"enlightenment_system."
+"Просвећење није успело успешно да покрене<br>enlightenment_system "
+"service<br>јер је корена матична фасцикла празна."
 
 #: src/bin/e_system.c:86
-#, fuzzy
 msgid ""
 "Enlightenment cannot successfully start<br>the enlightenment_system "
 "service<br>because the root home directory is not a full path."
 msgstr ""
-"Просвећење није успело успешно да покрене<br>службу \n"
-"enlightenment_system."
+"Просвећење није успело успешно да покрене<br>enlightenment_system "
+"service<br>јер корена матична фасцикла није у пуној путањи."
 
 #: src/bin/e_system.c:91
-#, fuzzy
 msgid ""
 "Enlightenment cannot successfully start<br>the enlightenment_system "
 "service<br>because the root home directory can't be found."
 msgstr ""
-"Просвећење није успело успешно да покрене<br>службу \n"
-"enlightenment_system."
+"Просвећење није успело успешно да покрене<br>enlightenment_system "
+"service<br>јер није успело да пронађе корену матичну фасциклу."
 
 #: src/bin/e_system.c:96
-#, fuzzy
 msgid ""
 "Enlightenment cannot successfully start<br>the enlightenment_system "
 "service<br>because it can't change the HOME environment."
 msgstr ""
-"Просвећење није успело успешно да покрене<br>службу \n"
-"enlightenment_system."
+"Просвећење није успело успешно да покрене<br>enlightenment_system "
+"service<br>јер није успело да промени окружење HOME."
 
 #: src/bin/e_system.c:101
-#, fuzzy
 msgid ""
 "Enlightenment cannot successfully start<br>the enlightenment_system "
 "service<br>because it cannot change working directory to root's home."
 msgstr ""
-"Просвећење није успело успешно да покрене<br>службу \n"
-"enlightenment_system."
+"Просвећење није успело успешно да покрене<br>enlightenment_system "
+"service<br>јер није успело да промени радну фасциклу на корену матицу."
 
 #: src/bin/e_system.c:106
-#, fuzzy
 msgid ""
 "Enlightenment cannot successfully start<br>the enlightenment_system "
 "service<br>because your user is denied access to all services.<br>Please "
 "see /etc/enlightenment/system.conf."
 msgstr ""
-"Просвећење није успело успешно да покрене<br>службу \n"
-"enlightenment_system."
+"Просвећење није успело успешно да покрене<br>enlightenment_system "
+"service<br>јер је корисник забранио приступ свим службама.<br>Молим, "
+"погледајте /etc/enlightenment/system.conf."
 
 #: src/bin/e_system.c:112
-#, fuzzy
 msgid ""
 "Enlightenment cannot successfully start<br>the enlightenment_system service "
 "for<br>some unknown reason."
 msgstr ""
-"Просвећење није успело успешно да покрене<br>службу \n"
-"enlightenment_system."
+"Просвећење није успело успешно да покрене<br>enlightenment_system "
+"service<br>из непознатог разлога."
 
 #: src/bin/e_theme_about.c:23
 msgid "Select Theme"
@@ -4908,28 +4885,26 @@ msgid "Battery"
 msgstr "Батерија"
 
 #: src/modules/battery/e_mod_main.c:236
-#, fuzzy
 msgid "Charging"
-msgstr "Ивице"
+msgstr "Пуњење"
 
 #: src/modules/battery/e_mod_main.c:240
 msgid "Discharging"
-msgstr ""
+msgstr "Пражњење"
 
 #: src/modules/battery/e_mod_main.c:245
-#, fuzzy
 msgid "Charged"
-msgstr "велика"
+msgstr "Напуњено"
 
 #: src/modules/battery/e_mod_main.c:434
-#, fuzzy, c-format
+#, c-format
 msgid "Battery: %s (%s)"
-msgstr "Батерија"
+msgstr "Батерија: %s (%s)"
 
 #: src/modules/battery/e_mod_main.c:436 src/modules/battery/e_mod_main.c:438
-#, fuzzy, c-format
+#, c-format
 msgid "Battery: %s"
-msgstr "Батерија"
+msgstr "Батерија: %s"
 
 #: src/modules/battery/e_mod_main.c:481
 msgid "Power Management Timing"
@@ -5514,19 +5489,19 @@ msgstr "Таблица"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:421
 msgid "Next Media"
-msgstr ""
+msgstr "Следећи садржај"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:423
 msgid "Prev Media"
-msgstr ""
+msgstr "Претходни садржај"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:425
 msgid "Stop Media"
-msgstr ""
+msgstr "Заустави садржај"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:427
 msgid "Play Media"
-msgstr ""
+msgstr "Изведи садржај"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:498
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:4
@@ -5868,46 +5843,41 @@ msgid "Signal Bindings Settings"
 msgstr "Поставке пречице знака"
 
 #: src/modules/conf_bindings/e_int_config_swipebindings.c:675
-#, fuzzy
 msgid "Add Swipe Binding"
-msgstr "Додај знак пречице"
+msgstr "Додај додирну пречицу"
 
 #: src/modules/conf_bindings/e_int_config_swipebindings.c:686
-#, fuzzy
 msgid "Direction:"
-msgstr "Правац"
+msgstr "Правац:"
 
 #: src/modules/conf_bindings/e_int_config_swipebindings.c:696
-#, fuzzy
 msgid "Error:"
-msgstr "Грешка"
+msgstr "Грешка:"
 
 #: src/modules/conf_bindings/e_int_config_swipebindings.c:716
 msgid "Fingers:"
-msgstr ""
+msgstr "Прсти:"
 
 #: src/modules/conf_bindings/e_int_config_swipebindings.c:764
 #, c-format
 msgid ""
 "Using %d Fingers<br> <b>Direction</b> %f <b>Length</b> %f <b>Error</b> %f"
 msgstr ""
+"Коришћење %d прста<br> <b>Правац</b> %f <b>Дужина</b> %f <b>Грешка</b> %f"
 
 #: src/modules/conf_bindings/e_int_config_swipebindings.c:780
-#, fuzzy
 msgid "Swipe recognition"
-msgstr "Правац"
+msgstr "Препознавање додира"
 
 #: src/modules/conf_bindings/e_int_config_swipebindings.c:781
-#, fuzzy
 msgid "Do your swipe gesture.<br><br>Press <hilight>Escape</hilight> to abort"
 msgstr ""
-"Молим, притисните ниску дугмади,<br><br>или <hilight>Излаз</hilight> за "
-"одустанак."
+"Исцртајте додирни знак.<br><br>Притисните <hilight>Излаз</hilight> за "
+"одустанак"
 
 #: src/modules/conf_bindings/e_int_config_swipebindings.c:917
-#, fuzzy
 msgid "Swipe Bindings Help"
-msgstr "Подесите пречице"
+msgstr "Помоћ пречица додирних знакова"
 
 #: src/modules/conf_bindings/e_int_config_swipebindings.c:918
 msgid ""
@@ -5918,16 +5888,21 @@ msgid ""
 "results. <br>3. If your session is running inside Xorg, ensure that your "
 "user is part of the libinput group.<br>"
 msgstr ""
+"Просвећење користи либинпут за препознавање додирних знакова. У случају "
+"потешкоћа:<br> 1. Пробајте знакове приликом извршавања „libinput debug-"
+"events“ у терминалу. Излаз конзоле ће показати тачност Ваших тврдотворина."
+"<br>2. Пратите има ли грешака у конзоли, исти уређаји либинпута дају "
+"погрешне налазе. <br>3. Уколико Вам је седница покренута унутар Иксорга, "
+"проверите да ли Ваш корисник јесте део групе libinput.<br>"
 
 #: src/modules/conf_bindings/e_int_config_swipebindings.c:932
 #: src/modules/conf_bindings/e_mod_main.c:38
-#, fuzzy
 msgid "Swipe Bindings"
-msgstr "Подесите пречице"
+msgstr "Пречице исцртавања додиром"
 
 #: src/modules/conf_bindings/e_int_config_swipebindings.c:941
 msgid "Add by props"
-msgstr ""
+msgstr "Додај по својствима"
 
 #: src/modules/conf_bindings/e_int_config_swipebindings.c:955
 #: src/modules/tiling/e_mod_config.c:219
@@ -5935,14 +5910,12 @@ msgid "Help"
 msgstr "Помоћ"
 
 #: src/modules/conf_bindings/e_int_config_swipebindings.c:977
-#, fuzzy
 msgid "Open input devices"
-msgstr "Нисам успео да откачим уређај"
+msgstr "Отвори уређаје за унос"
 
 #: src/modules/conf_bindings/e_int_config_swipebindings.c:1045
-#, fuzzy
 msgid "Swipe Bindings Settings"
-msgstr "Поставке пречице тастера"
+msgstr "Поставке додирних пречица"
 
 #: src/modules/conf_bindings/e_mod_main.c:17
 #: src/modules/conf_interaction/e_mod_main.c:17
@@ -5992,7 +5965,7 @@ msgstr "Подразумевани начин прозорчића потврд�
 
 #: src/modules/conf_dialogs/e_int_config_profiles.c:53
 msgid "Profile Selector"
-msgstr "Изабирач профила"
+msgstr "Изабирач налога"
 
 #: src/modules/conf_dialogs/e_int_config_profiles.c:107
 msgid "Available Profiles"
@@ -6018,7 +5991,7 @@ msgstr "Одабрани профил: %s"
 
 #: src/modules/conf_dialogs/e_int_config_profiles.c:317
 msgid "Add New Profile"
-msgstr "Додај нови профил"
+msgstr "Додај нови налог"
 
 #: src/modules/conf_dialogs/e_int_config_profiles.c:338
 #, c-format
@@ -6127,7 +6100,7 @@ msgstr "Кућица за пријаву"
 
 #: src/modules/conf_display/e_int_config_desklock.c:322
 msgid "Lock after blanking"
-msgstr ""
+msgstr "Закључај након затамњивања"
 
 #: src/modules/conf_display/e_int_config_desklock.c:327
 #: src/modules/conf_display/e_int_config_screensaver.c:205
@@ -6180,9 +6153,8 @@ msgid "Number of Desktops"
 msgstr "Број нестварних радних површи"
 
 #: src/modules/conf_display/e_int_config_desks.c:174
-#, fuzzy
 msgid "Click to change wallpaper and name"
-msgstr "Кликните за промену позадине"
+msgstr "Кликните за промену позадине и имена"
 
 #: src/modules/conf_display/e_int_config_desks.c:191
 msgid "Desktops"
@@ -6226,7 +6198,7 @@ msgstr "Пригушено позадинско осветљење"
 
 #: src/modules/conf_display/e_int_config_dpms.c:159
 msgid "Desktop Monitor Support (DDC)"
-msgstr ""
+msgstr "Подршка за приказ радне површи (ДДЦ)"
 
 #: src/modules/conf_display/e_int_config_dpms.c:162
 msgid "Idle Fade Time"
@@ -6421,9 +6393,8 @@ msgstr "Убрзање"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:270
 #: src/modules/conf_interaction/e_int_config_mouse.c:308
-#, fuzzy
 msgid "Flat acceleration"
-msgstr "Убрзање"
+msgstr "Равномерно убрзање"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:272
 #: src/modules/conf_interaction/e_int_config_mouse.c:310
@@ -6445,26 +6416,22 @@ msgstr "Дугмад"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:286
 #: src/modules/conf_interaction/e_int_config_mouse.c:321
-#, fuzzy
 msgid "Middle mouse button emulation"
-msgstr "Средње дугме"
+msgstr "Опонашање средњег дугмета миша"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:291
 #: src/modules/conf_interaction/e_int_config_mouse.c:332
-#, fuzzy
 msgid "Scrolling"
-msgstr "Извлачење"
+msgstr "Клизање"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:293
 #: src/modules/conf_interaction/e_int_config_mouse.c:334
-#, fuzzy
 msgid "Natural scrolling"
-msgstr "Оживи клизање"
+msgstr "Природно клизање"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:295
-#, fuzzy
 msgid "Hi-Res scrolling"
-msgstr "Оживи клизање"
+msgstr "Клизање високом размером"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:299
 #: src/modules/conf_interaction/e_mod_main.c:24
@@ -6476,38 +6443,32 @@ msgid "Tap to click"
 msgstr "Тапните за клик"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:324
-#, fuzzy
 msgid "Clickpad"
-msgstr "кликом"
+msgstr "Плочица за кликање"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:327
 msgid "Palm detect"
-msgstr ""
+msgstr "Препознавање длана"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:337
-#, fuzzy
 msgid "Horizontal scrolling"
-msgstr "Водоравно поравнање"
+msgstr "Водоравно клизање"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:340
-#, fuzzy
 msgid "Edge scrolling"
-msgstr "Оживи клизање"
+msgstr "Клизање ивицом"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:343
-#, fuzzy
 msgid "2 finger scrolling"
-msgstr "Оживи клизање"
+msgstr "Клизање двома прстима"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:346
-#, fuzzy
 msgid "Circular scrolling"
-msgstr "Оживи клизање"
+msgstr "Кружно клизање"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:350
-#, fuzzy
 msgid "Touchpad"
-msgstr "Тачка"
+msgstr "Додирна плочица"
 
 #: src/modules/conf_interaction/e_mod_main.c:20
 msgid "Touch"
@@ -6846,11 +6807,11 @@ msgstr "%1.1f s"
 #: src/modules/conf_performance/e_int_config_powermanagement.c:239
 #: src/modules/notification/e_mod_config.c:102
 msgid "Low"
-msgstr "низак"
+msgstr "Низак"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:278
 msgid "Medium"
-msgstr "осредњи"
+msgstr "Осредњи"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:286
 #: src/modules/conf_performance/e_int_config_powermanagement.c:325
@@ -6861,11 +6822,11 @@ msgstr "%.0f s"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:317
 msgid "High"
-msgstr "висок"
+msgstr "Висок"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:356
 msgid "Extreme"
-msgstr "сулуд"
+msgstr "Сулуд"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:375
 msgid "Connected standby instead of suspend"
@@ -6940,9 +6901,8 @@ msgid "Laptop lid"
 msgstr "Поклопац лаптопа"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:1045
-#, fuzzy
 msgid "Ignore Disconnect"
-msgstr "Занемари наговеештаје"
+msgstr "Занемари одспој"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:1054
 msgid "Priority"
@@ -6958,7 +6918,7 @@ msgstr "На"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:1120
 msgid "Use Profile"
-msgstr "Користи пресек"
+msgstr "Користи налог"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:1136
 msgid "Custom Scale"
@@ -6970,7 +6930,7 @@ msgstr "Лествица"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:1170
 msgid "Response"
-msgstr ""
+msgstr "Одзив"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:1182
 msgid "Restore setup on start"
@@ -7150,24 +7110,24 @@ msgstr "Сличица површи"
 #: src/modules/conf_theme/e_int_config_fonts.c:99
 #: src/modules/conf_theme/e_int_config_fonts.c:258
 msgid "Small"
-msgstr "мalа"
+msgstr "Мalа"
 
 #: src/modules/conf_theme/e_int_config_fonts.c:101
 #: src/modules/winlist/e_int_config_winlist.c:180
 msgid "Large"
-msgstr "велика"
+msgstr "Велика"
 
 #: src/modules/conf_theme/e_int_config_fonts.c:102
 msgid "Small Styled"
-msgstr "мала налицкана"
+msgstr "Мала налицкана"
 
 #: src/modules/conf_theme/e_int_config_fonts.c:103
 msgid "Normal Styled"
-msgstr "обична налицкана"
+msgstr "Обична налицкана"
 
 #: src/modules/conf_theme/e_int_config_fonts.c:104
 msgid "Large Styled"
-msgstr "велика налицкана"
+msgstr "Велика налицкана"
 
 #: src/modules/conf_theme/e_int_config_fonts.c:167
 msgid "Font Settings"
@@ -7175,19 +7135,19 @@ msgstr "Поставке словног лика"
 
 #: src/modules/conf_theme/e_int_config_fonts.c:252
 msgid "Tiny"
-msgstr "мајушни"
+msgstr "Мајушни"
 
 #: src/modules/conf_theme/e_int_config_fonts.c:270
 msgid "Big"
-msgstr "велики"
+msgstr "Велики"
 
 #: src/modules/conf_theme/e_int_config_fonts.c:276
 msgid "Really Big"
-msgstr "врло велики"
+msgstr "Врло велики"
 
 #: src/modules/conf_theme/e_int_config_fonts.c:282
 msgid "Huge"
-msgstr "огроман"
+msgstr "Огроман"
 
 #: src/modules/conf_theme/e_int_config_fonts.c:291
 #, c-format
@@ -7289,14 +7249,12 @@ msgid "%1.2f x"
 msgstr "%1.2f x"
 
 #: src/modules/conf_theme/e_int_config_scale.c:333
-#, fuzzy
 msgid "Set Application DPI"
-msgstr "Означени програм"
+msgstr "Постави број тачака по инчу програма"
 
 #: src/modules/conf_theme/e_int_config_scale.c:337
-#, fuzzy
 msgid "Application Base DPI"
-msgstr "Програми"
+msgstr "Број тачака по инчу основа програма"
 
 #: src/modules/conf_theme/e_int_config_scale.c:343
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:206
@@ -7305,7 +7263,7 @@ msgstr "Смернице"
 
 #: src/modules/conf_theme/e_int_config_scale.c:348
 msgid "Minimum"
-msgstr "најмање"
+msgstr "Најмање"
 
 #: src/modules/conf_theme/e_int_config_scale.c:351
 #: src/modules/conf_theme/e_int_config_scale.c:358
@@ -7315,7 +7273,7 @@ msgstr "%1.2f пута"
 
 #: src/modules/conf_theme/e_int_config_scale.c:355
 msgid "Maximum"
-msgstr "највеће"
+msgstr "Највеће"
 
 #: src/modules/conf_theme/e_int_config_scale.c:362
 msgid "Constraints"
@@ -7407,7 +7365,7 @@ msgstr "Прелази"
 
 #: src/modules/conf_theme/e_int_config_transitions.c:232
 msgid "Animation Period Multiplier"
-msgstr ""
+msgstr "Множилац времена оживљавања"
 
 #: src/modules/conf_theme/e_int_config_wallpaper.c:104
 msgid "Wallpaper Settings"
@@ -7439,15 +7397,15 @@ msgstr "Где сместити слику позадине"
 
 #: src/modules/conf_theme/e_int_config_wallpaper.c:742
 msgid "All Desktops"
-msgstr "све површи"
+msgstr "Све површи"
 
 #: src/modules/conf_theme/e_int_config_wallpaper.c:744
 msgid "This Desktop"
-msgstr "ова површ"
+msgstr "Ова површ"
 
 #: src/modules/conf_theme/e_int_config_wallpaper.c:746
 msgid "This Screen"
-msgstr "овај заслон"
+msgstr "Овај заслон"
 
 #: src/modules/conf_theme/e_int_config_xsettings.c:61
 msgid "Application Theme Settings"
@@ -7483,7 +7441,7 @@ msgstr "Тема"
 #: src/modules/conf_theme/e_mod_main.c:103
 #: src/modules/conf_theme/e_mod_main.c:126
 msgid "Palette"
-msgstr ""
+msgstr "Образац боја"
 
 #: src/modules/conf_theme/e_mod_main.c:100
 msgid "Application Theme"
@@ -7515,15 +7473,15 @@ msgstr "Раздвоји врсте по"
 
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:132
 msgid "Using separator bars"
-msgstr "користећи раздвојне траке"
+msgstr "Користећи раздвојне траке"
 
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:135
 msgid "Using menus"
-msgstr "користећи изборник"
+msgstr "Користећи изборник"
 
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:139
 msgid "Grouping"
-msgstr "разврставање"
+msgstr "Разврставање"
 
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:146
 msgid "Alphabetical"
@@ -7601,7 +7559,7 @@ msgstr "Смернице жиже"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:262
 msgid "Click"
-msgstr "кликом"
+msgstr "Кликом"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:264
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:352
@@ -7618,7 +7576,7 @@ msgstr "Жижа на нови прозор"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:272
 msgid "No window"
-msgstr "без прозора"
+msgstr "Без прозора"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:274
 msgid "All windows"
@@ -7959,7 +7917,7 @@ msgstr "Тастатура"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:261
 msgid "Limit resize to useful geometry"
-msgstr "ограничи промену величине на корисну сразмеру"
+msgstr "Ограничи промену величине на корисну сразмеру"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:264
 msgid "Ensure initial placement of windows inside useful geometry"
@@ -8077,9 +8035,8 @@ msgid "Ok"
 msgstr "У реду"
 
 #: src/modules/connman/agent.c:311
-#, fuzzy
 msgid "Connman Error"
-msgstr "Грешка везе"
+msgstr "Грешка Конмана"
 
 #: src/modules/connman/e_connman.c:905
 msgid "Connman Service Missing"
@@ -8305,7 +8262,7 @@ msgstr "Преглед прикључака"
 #: src/modules/everything/evry_config.c:432
 #: src/modules/everything/evry_config.c:460
 msgid "Detailed"
-msgstr "приказ појединости"
+msgstr "Приказ појединости"
 
 #: src/modules/everything/evry_config.c:465
 msgid "Animate scrolling"
@@ -8337,7 +8294,7 @@ msgstr "Ви начин (МЕЊА + х,ј,к,л,н.п,м,и)"
 
 #: src/modules/everything/evry_config.c:503
 msgid "No Sorting"
-msgstr "без разврставања"
+msgstr "Без разврставања"
 
 #: src/modules/everything/evry_config.c:506
 msgid "By usage"
@@ -8792,7 +8749,7 @@ msgstr "Користи едје датотеку"
 
 #: src/modules/fileman/e_int_config_mime_edit.c:154
 msgid "Use Image"
-msgstr "користи слику"
+msgstr "Користи слику"
 
 #: src/modules/fileman/e_int_config_mime_edit.c:157
 msgid "Use Default"
@@ -8832,7 +8789,7 @@ msgstr "Бочна површ"
 
 #: src/modules/fileman/e_mod_config.c:362
 msgid "Show Detailed Time and Date"
-msgstr ""
+msgstr "Приказуј подробно време и датум"
 
 #: src/modules/fileman/e_mod_config.c:403
 msgid "Open Dirs In Place"
@@ -8942,9 +8899,8 @@ msgid "GTK Bookmarks"
 msgstr "ГТК обележивачи"
 
 #: src/modules/fileman/e_mod_menu.c:521
-#, fuzzy
 msgid "Recent"
-msgstr "Скорашње датотеке"
+msgstr "Скорашње"
 
 #: src/modules/fileman/e_mod_menu.c:600
 msgid "Current Directory"
@@ -9135,18 +9091,16 @@ msgid "Lock icon move"
 msgstr "Закључај померање сличица"
 
 #: src/modules/ibar/e_mod_config.c:151
-#, fuzzy
 msgid "Don't show active windows"
-msgstr "Не гомилај над прозорима"
+msgstr "Не приказуј покренуте прозоре"
 
 #: src/modules/ibar/e_mod_config.c:153
 msgid "Track launch"
 msgstr "Покретање траке"
 
 #: src/modules/ibar/e_mod_config.c:155
-#, fuzzy
 msgid "Miniview on mouse over"
-msgstr "Изборник на надношење миша"
+msgstr "Мали приказ при надношењу мишем"
 
 #: src/modules/ibar/e_mod_config.c:189
 msgid "Create new IBar source"
@@ -9321,28 +9275,24 @@ msgid "Mute Volume of Focused Application"
 msgstr "Умукни гласноћу програма у жижи"
 
 #: src/modules/mixer/backend.c:390 src/modules/mixer/backend.c:456
-#, fuzzy
 msgid "Increase Mic Volume"
-msgstr "Појачај гласноћу"
+msgstr "Појачај гласноћу микрофона"
 
 #: src/modules/mixer/backend.c:397 src/modules/mixer/backend.c:462
-#, fuzzy
 msgid "Decrease Mic Volume"
-msgstr "Смањи гласноћу"
+msgstr "Смањи гласноћу микрофона"
 
 #: src/modules/mixer/backend.c:404
-#, fuzzy
 msgid "Mute Mic volume"
-msgstr "Утишај гласноћу"
+msgstr "Умукни гласноћу микрофона"
 
 #: src/modules/mixer/backend.c:429
 msgid "Mute Volume"
-msgstr "Утишај гласноћу"
+msgstr "Умукни гласноћу"
 
 #: src/modules/mixer/backend.c:468
-#, fuzzy
 msgid "Mute Mic Volume"
-msgstr "Утишај гласноћу"
+msgstr "Умукни гласноћу микрофона"
 
 #: src/modules/mixer/emixer.c:1952
 msgid "Playback"
@@ -9406,7 +9356,7 @@ msgstr "Степено важности за приказ:"
 
 #: src/modules/notification/e_mod_config.c:106
 msgid "Critical"
-msgstr "опасна"
+msgstr "Опасна"
 
 #: src/modules/notification/e_mod_config.c:110
 msgid "Default Timeout"
@@ -9542,9 +9492,9 @@ msgid "Security update"
 msgstr "Безбедносна надградња"
 
 #: src/modules/packagekit/e_mod_packagekit.c:171
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown PackageKit"
-msgstr "Непознато издање скупа пакета"
+msgstr "Непознати скуп пакета"
 
 #: src/modules/packagekit/e_mod_packagekit.c:239
 msgid "No information available"
@@ -9577,22 +9527,20 @@ msgid "Nothing to do"
 msgstr "Ништа за радитити"
 
 #: src/modules/packagekit/e_mod_packagekit.c:294
-#, fuzzy
 msgid "Install updates"
-msgstr "Угради све доступне надградње"
+msgstr "Угради надградње"
 
 #: src/modules/packagekit/e_mod_packagekit.c:299
-#, fuzzy, c-format
+#, c-format
 msgid "Install update"
 msgid_plural "Install %d updates"
-msgstr[0] "Угради %d означену надградњу"
-msgstr[1] "Угради %d означене надградње"
-msgstr[2] "Угради %d означене надградње"
+msgstr[0] "Угради %d надградњу"
+msgstr[1] "Угради %d надградње"
+msgstr[2] "Угради %d надградњи"
 
 #: src/modules/packagekit/e_mod_packagekit.c:578
-#, fuzzy
 msgid "Manage packages"
-msgstr "Управник пакета"
+msgstr "Управљајте пакетима"
 
 #: src/modules/pager/e_mod_config.c:74
 msgid "Pager Settings"
@@ -9737,48 +9685,44 @@ msgstr "Молим, унесите лозинку"
 #: src/modules/polkit/auth_ui.c:148
 #, c-format
 msgid "Enter password for <b>%s</b>"
-msgstr ""
+msgstr "Унесите лозинку за <b>%s</b>"
 
 #: src/modules/polkit/auth_ui.c:150
 #, c-format
 msgid "Enter password for UID %u"
-msgstr ""
+msgstr "Унесите лозинку за корисника %u"
 
 #: src/modules/procstats/e_mod_main.c:370
-#, fuzzy
 msgid "B"
-msgstr "КБ"
+msgstr "B"
 
 #: src/modules/procstats/e_mod_main.c:370
-#, fuzzy
 msgid "KiB"
-msgstr "КБ"
+msgstr "KiB"
 
 #: src/modules/procstats/e_mod_main.c:370
-#, fuzzy
 msgid "MiB"
-msgstr "МБ"
+msgstr "MiB"
 
 #: src/modules/procstats/e_mod_main.c:370
-#, fuzzy
 msgid "GiB"
-msgstr "ГБ"
+msgstr "GiB"
 
 #: src/modules/procstats/e_mod_main.c:371
 msgid "TiB"
-msgstr ""
+msgstr "TiB"
 
 #: src/modules/procstats/e_mod_main.c:371
 msgid "PiB"
-msgstr ""
+msgstr "PiB"
 
 #: src/modules/procstats/e_mod_main.c:371
 msgid "EiB"
-msgstr ""
+msgstr "EiB"
 
 #: src/modules/procstats/e_mod_main.c:371
 msgid "ZiB"
-msgstr ""
+msgstr "ZiB"
 
 #: src/modules/quickaccess/e_mod_config.c:231
 msgid "Enter a unique name for this entry"
@@ -10243,6 +10187,8 @@ msgid ""
 "This image will be uploaded without any encryption<ps/>to enlightenment.org. "
 "All screenshots uploaded are<ps/>available to everyone with no restrictions."
 msgstr ""
+"Ова слика ће бити отпремљена без шифровања<ps/>на enlightenment.org. Све "
+"отпремљене слике радне површи<ps/>доступне су свима без ограничења."
 
 #: src/modules/shot/e_mod_share.c:254
 msgid "Confirm"
@@ -10320,9 +10266,8 @@ msgid "Show"
 msgstr "Приказуј"
 
 #: src/modules/tasks/e_mod_config.c:124
-#, fuzzy
 msgid "Preview Size"
-msgstr "Величина прегледа:"
+msgstr "Величина прегледа"
 
 # Процеси?
 #: src/modules/tasks/e_mod_main.c:309 src/modules/tasks/e_mod_main.c:945
@@ -10484,19 +10429,16 @@ msgid "Window Switcher Settings"
 msgstr "Поставке измењивача прозора"
 
 #: src/modules/winlist/e_int_config_winlist.c:183
-#, fuzzy
 msgid "Large Mode Size"
-msgstr "Величина ивица искакања"
+msgstr "Врста великих"
 
 #: src/modules/winlist/e_int_config_winlist.c:188
-#, fuzzy
 msgid "List Mode Size"
-msgstr "Последња измена:"
+msgstr "Прикажи списак врста величина"
 
 #: src/modules/winlist/e_int_config_winlist.c:193
-#, fuzzy
 msgid "List Window Miniatures"
-msgstr "Изгубљени прозори"
+msgstr "Прикажи списак умањених"
 
 #: src/modules/winlist/e_int_config_winlist.c:196
 msgid "Windows from other desks"
@@ -10634,7 +10576,7 @@ msgstr "Изаберите једну"
 
 #: src/modules/wizard/page_020.c:113
 msgid "Profile"
-msgstr "Пресек"
+msgstr "Налог"
 
 #: src/modules/wizard/page_040.c:37
 msgid "Adding missing App files"
@@ -10775,7 +10717,7 @@ msgstr "Поставке тастатуре"
 #: src/modules/xkbswitch/e_mod_config.c:1505
 #: src/modules/xkbswitch/e_mod_config.c:1631
 msgid "No Name"
-msgstr "без имена"
+msgstr "Без имена"
 
 #: src/modules/xkbswitch/e_mod_config.c:630
 msgid "Do not apply any keyboard settings ever"
@@ -10887,7 +10829,7 @@ msgstr "Додај нову поставку"
 
 #: src/modules/xkbswitch/e_mod_config.c:1410
 msgid "Model"
-msgstr "Модел"
+msgstr "Врста"
 
 #: src/modules/xkbswitch/e_mod_config.c:1412
 msgid "Variant"
@@ -10896,7 +10838,7 @@ msgstr "Подврста"
 #: src/modules/xkbswitch/e_mod_config.c:1532
 #: src/modules/xkbswitch/e_mod_config.c:1617
 msgid "No Description"
-msgstr "без описа"
+msgstr "Без описа"
 
 #: src/modules/xkbswitch/e_mod_main.c:193
 msgid "NONE"
