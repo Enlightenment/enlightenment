@@ -322,10 +322,12 @@ e_modapi_init(E_Module *m)
    e_gadcon_provider_register(&_gadcon_class);
 
    INF("Creating menu entries for settings");
-   e_configure_registry_category_add("extensions", 90, "Extensions", NULL,
-                                     "preferences-extensions");
-   e_configure_registry_item_add("extensions/convertible", 30, "convertible", NULL,
-                                 "preferences-desktop-convertible", e_int_config_convertible_module);
+   /* create Screen configuration category
+    *
+    * NB: If the category already exists, this function just returns */
+   e_configure_registry_category_add("screen", 30, _("Screen"), NULL, "preferences-desktop-display");
+   e_configure_registry_item_add("screen/convertible", 30, "convertible", NULL,
+                                 "object-rotate-right", e_int_config_convertible_module);
 
    instances = eina_list_append(instances, inst);
 
