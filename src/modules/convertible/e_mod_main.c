@@ -326,8 +326,8 @@ e_modapi_init(E_Module *m)
     *
     * NB: If the category already exists, this function just returns */
    e_configure_registry_category_add("screen", 30, _("Screen"), NULL, "preferences-desktop-display");
-   e_configure_registry_item_add("screen/convertible", 30, "convertible", NULL,
-                                 "object-rotate-right", e_int_config_convertible_module);
+   e_configure_registry_item_add("screen/convertible", 30, "convertible", theme_overlay_path,
+                                 "main", e_int_config_convertible_module);
 
    instances = eina_list_append(instances, inst);
 
