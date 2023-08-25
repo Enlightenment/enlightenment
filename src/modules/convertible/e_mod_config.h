@@ -7,22 +7,12 @@
 #ifndef E_GADGET_CONVERTIBLE_E_MOD_CONFIG_H
 #define E_GADGET_CONVERTIBLE_E_MOD_CONFIG_H
 
-// Definition for a zone configuration
-typedef struct _Convertible_Zone_Config Convertible_Zone_Config;
-
-struct _Convertible_Zone_Config
-{
-   char *name;
-   int follow_rotation;
-};
-
 // Definition of the data structure to hold the gadget configuration
 typedef struct _Convertible_Config Convertible_Config;
-
 struct _Convertible_Config
 {
+   E_Module *module;
    int disable_keyboard_on_rotation;
-//   Eina_List *rotatable_screen_configuration;
 };
 
 // As far as I understand, this structure should hold data useful for the configuration and a pointer to

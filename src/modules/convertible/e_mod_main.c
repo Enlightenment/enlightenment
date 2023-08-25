@@ -17,8 +17,9 @@ E_Module *convertible_module;
 Instance *inst;
 
 // Configuration
-extern Convertible_Config *convertible_config;
-extern E_Config_DD *edd;
+extern Convertible_Config *convertible_config = NULL;
+static E_Config_DD *conf_edd = NULL;
+Convertible_Config *conf = NULL;
 
 // Logger
 int _convertible_log_dom;
@@ -34,6 +35,9 @@ E_API E_Module_Api e_modapi =
 /* LIST OF INSTANCES */
 static Eina_List *instances = NULL;
 
+/* Other functions for configuration */
+static void             _conf_new(void);
+static void             _conf_free(void);
 
 /* gadcon requirements */
 static E_Gadcon_Client *_gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style);
@@ -217,7 +221,7 @@ _gc_icon(const E_Gadcon_Client_Class *client_class EINA_UNUSED, Evas *evas)
 
    o = edje_object_add(evas);
    snprintf(buf, sizeof(buf), "%s/e-module-convertible.edj", convertible_module->dir);
-   edje_object_file_set(o, buf, "main");
+   edje_object_file_set(o, buf, "icon");
    return o;
 }
 
@@ -257,8 +261,8 @@ e_modapi_init(E_Module *m)
 {
    // Initialise the logger
    _convertible_log_dom = eina_log_domain_register("convertible", EINA_COLOR_LIGHTBLUE);
-
    convertible_module = m;
+
    char theme_overlay_path[PATH_MAX];
    snprintf(theme_overlay_path, sizeof(theme_overlay_path), "%s/e-module-convertible.edj", convertible_module->dir);
    elm_theme_extension_add(NULL, theme_overlay_path);
@@ -326,8 +330,8 @@ e_modapi_init(E_Module *m)
     *
     * NB: If the category already exists, this function just returns */
    e_configure_registry_category_add("screen", 30, _("Screen"), NULL, "preferences-desktop-display");
-   e_configure_registry_item_add("screen/convertible", 30, "convertible", theme_overlay_path,
-                                 "main", e_int_config_convertible_module);
+   e_configure_registry_item_add("screen/convertible", 30, "convertible", NULL,
+                                 theme_overlay_path, e_int_config_convertible_module);
 
    instances = eina_list_append(instances, inst);
 
@@ -369,7 +373,15 @@ e_modapi_save(E_Module *m EINA_UNUSED)
 {
    if (convertible_config)
    {
-      e_config_domain_save("module.convertible", edd, convertible_config);
+      e_config_domain_save("module.convertible", conf_edd, convertible_config);
    }
    return 1;
+}
+
+static void
+_conf_new(void)
+{
+    conf = E_NEW(Convertible_Config, 1);
+    conf->disable_keyboard_on_rotation = 1;
+    e_config_save_queue();
 }

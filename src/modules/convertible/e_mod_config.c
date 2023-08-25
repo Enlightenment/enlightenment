@@ -6,8 +6,8 @@
 #include "e_mod_config.h"
 
 static Convertible_Config *_config = NULL;
-E_Config_DD *edd = NULL;
-EINTERN Convertible_Config *convertible_config;
+E_Config_DD *config_edd = NULL;
+extern Convertible_Config *convertible_config;
 
 /**
  * Create the config structure
@@ -20,10 +20,10 @@ _econvertible_config_dd_new(void)
 //   E_CONFIG_VAL(c_zone, Convertible_Zone_Config, follow_rotation, INT);
 
    // TODO Not sure what his line does. Apparently, it is needed to specify the type of the configuration data structure
-   edd = E_CONFIG_DD_NEW("Convertible_Config", Convertible_Config);
+   config_edd = E_CONFIG_DD_NEW("Convertible_Config", Convertible_Config);
 
-   E_CONFIG_VAL(edd, Convertible_Config, disable_keyboard_on_rotation, INT);
-//   E_CONFIG_LIST(edd, Convertible_Config, rotatable_screen_configuration, c_zone);
+   E_CONFIG_VAL(config_edd, Convertible_Config, disable_keyboard_on_rotation, INT);
+//   E_CONFIG_LIST(config_edd, Convertible_Config, rotatable_screen_configuration, c_zone);
 }
 
 /**
@@ -35,7 +35,7 @@ _config_set(Convertible_Config *config)
 {
    DBG("config_set disable_keyboard_on_rotation %d", config->disable_keyboard_on_rotation);
    _config->disable_keyboard_on_rotation = config->disable_keyboard_on_rotation;
-   e_config_domain_save("module.convertible", edd, config);
+   e_config_domain_save("module.convertible", config_edd, config);
 }
 
 /**
@@ -142,7 +142,7 @@ void
 econvertible_config_init(void)
 {
    _econvertible_config_dd_new();
-   _config = e_config_domain_load("module.econvertible", edd);
+   _config = e_config_domain_load("module.econvertible", config_edd);
    if (!_config)
    {
       _config = E_NEW(Convertible_Config, 1);
@@ -155,6 +155,6 @@ econvertible_config_init(void)
 
 void econvertible_config_shutdown(void)
 {
-   E_CONFIG_DD_FREE(edd);
+   E_CONFIG_DD_FREE(config_edd);
    E_FREE(convertible_config);
 }
