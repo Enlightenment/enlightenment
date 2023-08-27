@@ -67,6 +67,8 @@ msgid ""
 "not seem to be running or<br>contactable. Perhaps enable the <hilight>acpid</"
 "hilight><br>service on your system?"
 msgstr ""
+"ACPI ベースのシステムをお持ちのようですが、<br><hilight>acpid</hilight> は実行されて"
+"おらず、連絡も取れません。システムの <hilight>acpid</hilight> サービスを有効にしてください。"
 
 #: src/bin/e_actions.c:352
 #, fuzzy, c-format
@@ -100,7 +102,7 @@ msgstr "いいえ"
 #: src/bin/e_actions.c:2152
 #, fuzzy
 msgid "Action Params Syntax Error"
-msgstr "アクションパラメータ"
+msgstr "アクションパラメータのシンタックスエラー"
 
 #: src/bin/e_actions.c:2267 src/bin/e_actions.c:3977 src/bin/e_int_menus.c:280
 msgid "Exit"
@@ -158,12 +160,12 @@ msgstr "本当にログアウトしますか"
 #: src/bin/e_actions.c:2623 src/bin/e_actions.c:4027
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:379
 msgid "Hibernate"
-msgstr "ハイバネート"
+msgstr "休止状態"
 
 #: src/bin/e_actions.c:2624
 #, fuzzy
 msgid "Are you sure you want to hibernate your computer?"
-msgstr "本当にハイバネートしますか"
+msgstr "本当にシステムを休止しますか？"
 
 #: src/bin/e_actions.c:3269
 #, fuzzy
@@ -173,7 +175,7 @@ msgstr "エラー情報"
 #: src/bin/e_actions.c:3270
 #, c-format
 msgid "Invalid parameter: %s"
-msgstr ""
+msgstr "無効なパラメータ: %s"
 
 #: src/bin/e_actions.c:3408
 #, fuzzy
@@ -183,7 +185,7 @@ msgstr "マウスの設定"
 #: src/bin/e_actions.c:3409
 #, fuzzy
 msgid "Mouse to key"
-msgstr "マウスの設定"
+msgstr "マウスキーの設定"
 
 #: src/bin/e_actions.c:3472
 #, fuzzy
@@ -258,7 +260,7 @@ msgstr "アイコンモード反転"
 #: src/bin/e_actions.c:3554
 #, fuzzy
 msgid "Iconic Mode Enable"
-msgstr "アイコンモード反転"
+msgstr "アイコンモードの有効化"
 
 #: src/bin/e_actions.c:3559
 msgid "Fullscreen Mode Toggle"
@@ -267,7 +269,7 @@ msgstr "全画面モード反転"
 #: src/bin/e_actions.c:3563
 #, fuzzy
 msgid "Fullscreen Mode Enable"
-msgstr "全画面モード反転"
+msgstr "全画面モードの有効化"
 
 #: src/bin/e_actions.c:3568 src/bin/e_int_client_menu.c:441
 #: src/bin/e_int_client_menu.c:749
@@ -277,31 +279,31 @@ msgstr "最大化"
 #
 #: src/bin/e_actions.c:3570 src/bin/e_int_client_menu.c:452
 msgid "Maximize Vertically"
-msgstr "垂直に最大化"
+msgstr "垂直方向に最大化"
 
 #
 #: src/bin/e_actions.c:3573 src/bin/e_int_client_menu.c:463
 msgid "Maximize Horizontally"
-msgstr "水平に最大化"
+msgstr "水平方向に最大化"
 
 #: src/bin/e_actions.c:3576 src/bin/e_int_client_menu.c:474
 #, fuzzy
 msgid "Maximize Left"
-msgstr "最大化"
+msgstr "左側に最大化"
 
 #: src/bin/e_actions.c:3579 src/bin/e_int_client_menu.c:485
 #, fuzzy
 msgid "Maximize Right"
-msgstr "最大化"
+msgstr "右側に最大化"
 
 #: src/bin/e_actions.c:3582
 msgid "Maximize Fullscreen"
-msgstr "全面表示"
+msgstr "全画面表示"
 
 #
 #: src/bin/e_actions.c:3584
 msgid "Maximize Mode \"Smart\""
-msgstr "最大化モード \"賢く\""
+msgstr "最大化モード \"スマート\""
 
 #: src/bin/e_actions.c:3586
 msgid "Maximize Mode \"Expand\""
@@ -354,7 +356,7 @@ msgstr "ボーダー"
 #: src/bin/e_actions.c:3623
 #, fuzzy
 msgid "Cycle between Borders"
-msgstr "国境の間にサイクル"
+msgstr "ボーダーの間でサイクル"
 
 #: src/bin/e_actions.c:3629
 msgid "Toggle Pinned State"
@@ -387,36 +389,36 @@ msgstr "デスクトップ"
 
 #: src/bin/e_actions.c:3634
 msgid "Flip Desktop Left"
-msgstr "左のデスクトップへ移動する"
+msgstr "デスクトップを左に反転する"
 
 #: src/bin/e_actions.c:3636
 msgid "Flip Desktop Right"
-msgstr "右のデスクトップへ移動する"
+msgstr "デスクトップを右に反転する"
 
 #: src/bin/e_actions.c:3638
 msgid "Flip Desktop Up"
-msgstr "上のデスクトップへ移動する"
+msgstr "デスクトップを上方に反転する"
 
 #: src/bin/e_actions.c:3640
 msgid "Flip Desktop Down"
-msgstr "下のデスクトップへ移動する"
+msgstr "デスクトップを下方へ反転する"
 
 #: src/bin/e_actions.c:3642
 msgid "Flip Desktop By..."
-msgstr "デスクトップを指定分移動する"
+msgstr "デスクトップの反転を指定する"
 
 #: src/bin/e_actions.c:3648
 #, fuzzy
 msgid "Flip To Previous Desktop"
-msgstr "前のデスクトップへ"
+msgstr "前のデスクトップへ戻る"
 
 #: src/bin/e_actions.c:3653
 msgid "Show The Desktop"
-msgstr "デスクトップ背景を出す"
+msgstr "デスクトップを表示する"
 
 #: src/bin/e_actions.c:3659
 msgid "Show The Shelf"
-msgstr "シェルフを出す"
+msgstr "シェルフを表示する"
 
 #: src/bin/e_actions.c:3664
 msgid "Flip Desktop To..."
@@ -627,12 +629,12 @@ msgstr "マウスを指定のスクリーン分だけ前後に移す..."
 #: src/bin/e_actions.c:3800
 #, fuzzy
 msgid "Dim"
-msgstr "薄暗い"
+msgstr "暗くする"
 
 #: src/bin/e_actions.c:3803
 #, fuzzy
 msgid "Undim"
-msgstr "Undim"
+msgstr "明るくする"
 
 #: src/bin/e_actions.c:3806
 #, fuzzy
@@ -642,51 +644,51 @@ msgstr "バックライトのセット"
 #: src/bin/e_actions.c:3808
 #, fuzzy
 msgid "Backlight Min"
-msgstr "バックライト最小"
+msgstr "バックライトを最小"
 
 #: src/bin/e_actions.c:3810
 #, fuzzy
 msgid "Backlight Mid"
-msgstr "バックライトミッド"
+msgstr "バックライトは中間"
 
 #: src/bin/e_actions.c:3812
 #, fuzzy
 msgid "Backlight Max"
-msgstr "バックライト最大"
+msgstr "バックライトを最大"
 
 #: src/bin/e_actions.c:3815
 #, fuzzy
 msgid "Backlight Adjust"
-msgstr "バックライトが調整"
+msgstr "バックライトの調整"
 
 #: src/bin/e_actions.c:3817
 #, fuzzy
 msgid "Backlight Up"
-msgstr "ライトアップ"
+msgstr "明るくする"
 
 #: src/bin/e_actions.c:3819
 #, fuzzy
 msgid "Backlight Down"
-msgstr "シャットダウン"
+msgstr "暗くする"
 
 #: src/bin/e_actions.c:3824
 #, fuzzy
 msgid "Blanking Off"
-msgstr "ブランキング"
+msgstr "ブランクオフ"
 
 #: src/bin/e_actions.c:3826
 #, fuzzy
 msgid "Blanking On"
-msgstr "ブランキング"
+msgstr "ブランクオン"
 
 #: src/bin/e_actions.c:3828
 #, fuzzy
 msgid "Blanking Toggle"
-msgstr "ブランキング"
+msgstr "ブランクの切替え"
 
 #: src/bin/e_actions.c:3833
 msgid "Update and re-apply screen setup"
-msgstr ""
+msgstr "スクリーンの更新と再設定"
 
 #: src/bin/e_actions.c:3838
 #, fuzzy
@@ -695,19 +697,19 @@ msgstr "中央に移動"
 
 #: src/bin/e_actions.c:3843
 msgid "Move/resize to upper-left quadrant"
-msgstr ""
+msgstr "左上に移動／リサイズ"
 
 #: src/bin/e_actions.c:3848
 msgid "Move/resize to upper-right quadrant"
-msgstr ""
+msgstr "右上に移動／リサイズ"
 
 #: src/bin/e_actions.c:3853
 msgid "Move/resize to lower-left quadrant"
-msgstr ""
+msgstr "左下に移動／リサイズ"
 
 #: src/bin/e_actions.c:3858
 msgid "Move/resize to lower-right quadrant"
-msgstr ""
+msgstr "右下に移動／リサイズ"
 
 #: src/bin/e_actions.c:3863
 #, fuzzy
@@ -721,7 +723,7 @@ msgstr ""
 #: src/bin/e_actions.c:3874
 #, fuzzy
 msgid "Resize By..."
-msgstr "変更サイズ"
+msgstr "サイズ変更"
 
 #: src/bin/e_actions.c:3880
 #, fuzzy
@@ -854,7 +856,7 @@ msgstr "再起動"
 
 #: src/bin/e_actions.c:3981
 msgid "Exit Now"
-msgstr "ただちに終了"
+msgstr "今すぐ終了"
 
 #: src/bin/e_actions.c:3986 src/bin/e_actions.c:3990 src/bin/e_actions.c:3994
 #, fuzzy
@@ -868,7 +870,7 @@ msgstr "Enlightenment Randr モジュール"
 
 #: src/bin/e_actions.c:3991
 msgid "Disable the named module"
-msgstr ""
+msgstr "指定したモジュールを無効化"
 
 #: src/bin/e_actions.c:3995
 #, fuzzy
@@ -898,7 +900,7 @@ msgstr "ログアウト"
 
 #: src/bin/e_actions.c:4003
 msgid "Power Off Now"
-msgstr "ただちに電源を切る"
+msgstr "今すぐ電源を切る"
 
 #: src/bin/e_actions.c:4007
 msgid "Power Off"
@@ -917,12 +919,12 @@ msgstr "サスペンド時間"
 #: src/bin/e_actions.c:4031
 #, fuzzy
 msgid "Hibernate Now"
-msgstr "ハイバネート"
+msgstr "休止状態"
 
 #: src/bin/e_actions.c:4035
 #, fuzzy
 msgid "Hibernate Intelligently"
-msgstr "ハイバネートに失敗しました"
+msgstr "休止状態に失敗しました"
 
 #: src/bin/e_actions.c:4043
 msgid "Lock"
@@ -957,7 +959,7 @@ msgstr "キーボードショートカットを作成します。"
 
 #: src/bin/e_actions.c:4070
 msgid "Previous keyboard layout"
-msgstr ""
+msgstr "直前のキーボードレイアウト"
 
 #: src/bin/e_bg.c:22
 msgid "Set As Background"
@@ -1017,11 +1019,11 @@ msgstr "位置"
 
 #: src/bin/e_comp.c:1304
 msgid "Change current window opacity"
-msgstr ""
+msgstr "現在のウィンドウの透明度を変更する"
 
 #: src/bin/e_comp.c:1310
 msgid "Set current window opacity"
-msgstr ""
+msgstr "現在のウィンドウの不透明度を設定する"
 
 #: src/bin/e_comp.c:1316
 msgid "Toggle focused client's redirect state"
@@ -1034,16 +1036,16 @@ msgstr "表示する"
 #: src/bin/e_comp.c:1486
 #, fuzzy
 msgid "Focus-Out"
-msgstr "フォーカス"
+msgstr "フォーカスアウト"
 
 #: src/bin/e_comp.c:1491
 #, fuzzy
 msgid "Focus-In"
-msgstr "フォーカス"
+msgstr "フォーカスイン"
 
 #: src/bin/e_comp.c:1496 src/bin/e_int_client_prop.c:516
 msgid "Hidden"
-msgstr "隠蔽"
+msgstr "隠す"
 
 #: src/bin/e_comp.c:1603 src/bin/e_int_client_prop.c:450
 #: src/bin/e_int_client_remember.c:707 src/bin/e_int_config_comp_match.c:369
@@ -1055,17 +1057,17 @@ msgstr "タイトル"
 #: src/bin/e_comp_wl.c:2992
 #, fuzzy, c-format
 msgid "Enlightenment cannot initialize Wayland client connection.\n"
-msgstr "Enlightenment でファイルマネージャが初期化できません.\n"
+msgstr "Enlightenment は Wayland クライアント接続を初期化できません.\n"
 
 #: src/bin/e_comp_wl.c:3007
 #, fuzzy, c-format
 msgid "Enlightenment cannot create a Wayland Compositor.\n"
-msgstr "Enlightenment で記憶機能の設定が準備できません."
+msgstr "Enlightenment は Wayland コンポジタの作成ができません."
 
 #: src/bin/e_comp_x.c:652
 #, fuzzy
 msgid "Compositor Warning"
-msgstr "位置"
+msgstr "コンポジタによる警告"
 
 #: src/bin/e_comp_x.c:653
 msgid ""
