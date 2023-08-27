@@ -46,16 +46,20 @@ msgid ""
 "writing it.<ps/><ps/>To contact us please visit:<ps/><hilight>http://www."
 "enlightenment.org</><ps/><ps/>"
 msgstr ""
+"<title>Copyright &copy; 2000-2023, Enable 開発チーム</"
+"><ps><ps/>私たちがこのソフトの執筆を楽しんでいるのと同じように、あなたがこのソフトを"
+"使って楽しんでくださることを願っています。<ps/><ps/>私たちと連絡を取りたい場合は、"
+<ps/><ps/><hilight>http://www.""enlightenment.org を訪れてください。</><ps/><ps/>"
 
 #: src/bin/e_about.c:69
 msgid "<title>The Team</><ps/><ps/>"
-msgstr ""
+msgstr "<title>チーム</><ps/><ps/>"
 
 #
 #: src/bin/e_acpi.c:138
 #, fuzzy
 msgid "ACPI Error"
-msgstr "エラー"
+msgstr "ACPI エラー"
 
 #: src/bin/e_acpi.c:139
 msgid ""
