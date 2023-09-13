@@ -299,6 +299,9 @@ _alsa_cards_refresh(void)
         //save the addr to see if there are missing devices in the cache list
 
         mixer = _alsa_card_create(buf);
+        if (!mixer)
+          continue;
+
         ctx->cards = eina_list_append(ctx->cards, mixer);
         //get elements of the device
         elem = snd_mixer_first_elem(mixer);
