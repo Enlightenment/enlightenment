@@ -102,6 +102,7 @@ struct _E_Config_Randr2
    unsigned char  restore;
    unsigned char  ignore_hotplug_events;
    unsigned char  ignore_acpi_events;
+   unsigned char  use_cmd;
    E_Randr2_Policy default_policy;
    double         hotplug_response;
 };

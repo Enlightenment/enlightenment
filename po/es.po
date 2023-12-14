@@ -7185,20 +7185,20 @@ msgstr ""
 # Hay que encontrar algo más corto.
 # Preguntar a Massimo sobre cadenas largas en italiano.
 #: src/modules/conf_randr/e_int_config_randr2.c:1182
-msgid "Restore setup on start"
+msgid "Restore on start"
 msgstr "Restaurar configuración al iniciar"
 
 # Controlar en vez de "pantalla", eso de hotplug de una pantalla externa:
 #    o = elm_check_add(win);
 #    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
 #    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-#    elm_object_text_set(o, _("Monitor hotplug"));
+#    elm_object_text_set(o, _("Hotplug"));
 #    elm_check_state_set(o, cfdata->hotplug);
 #    elm_box_pack_end(bx2, o);
 #    evas_object_show(o);
 #    evas_object_smart_callback_add(o, "changed", _cb_hotplug_changed, cfdata);
 #: src/modules/conf_randr/e_int_config_randr2.c:1191
-msgid "Monitor hotplug"
+msgid "Hotplug"
 msgstr "Controlar hotplug"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:1200

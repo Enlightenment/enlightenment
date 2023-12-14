@@ -6919,11 +6919,11 @@ msgid "Response"
 msgstr "Reactie"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:1182
-msgid "Restore setup on start"
+msgid "Restore on start"
 msgstr "Instellingen terugzetten bij starten"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:1191
-msgid "Monitor hotplug"
+msgid "Hotplug"
 msgstr "Inprikken van beeldscherm"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:1200

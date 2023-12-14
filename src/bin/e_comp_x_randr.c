@@ -875,13 +875,17 @@ _e_comp_xrandr_ecore_x(void)
 E_API void
 e_comp_x_randr_config_apply(void)
 {
-   if (use_xrandr == -1)
-     {
-        if (ecore_file_app_installed("xrandr")) use_xrandr = 1;
-        else use_xrandr = 0;
-     }
-   if (use_xrandr == 1) _e_comp_xrandr_cmd();
-   else _e_comp_xrandr_ecore_x();
+  if (e_randr2_cfg->use_cmd)
+    {
+      if (use_xrandr == -1)
+        {
+          if (ecore_file_app_installed("xrandr")) use_xrandr = 1;
+          else use_xrandr = 0;
+        }
+    }
+  else use_xrandr = 0;
+  if (use_xrandr == 1) _e_comp_xrandr_cmd();
+  else _e_comp_xrandr_ecore_x();
 }
 
 E_API Eina_Bool

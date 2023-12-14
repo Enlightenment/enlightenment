@@ -90,6 +90,7 @@ e_randr2_init(void)
    E_CONFIG_LIST(D, T, screens, _e_randr2_cfg_screen_edd);
    E_CONFIG_VAL(D, T, hotplug_response, DOUBLE);
    E_CONFIG_VAL(D, T, restore, UCHAR);
+   E_CONFIG_VAL(D, T, use_cmd, UCHAR);
    E_CONFIG_VAL(D, T, ignore_hotplug_events, UCHAR);
    E_CONFIG_VAL(D, T, ignore_acpi_events, UCHAR);
    E_CONFIG_VAL(D, T, default_policy, UINT);
@@ -393,6 +394,7 @@ _config_load(void)
    cfg->version = E_RANDR_CONFIG_VERSION;
    cfg->screens = NULL;
    cfg->restore = 1;
+   cfg->use_cmd = 0;
    cfg->ignore_hotplug_events = 0;
    cfg->ignore_acpi_events = 0;
    cfg->default_policy = E_RANDR2_POLICY_EXTEND;

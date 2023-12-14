@@ -6989,11 +6989,11 @@ msgid "Response"
 msgstr "Réponse"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:1182
-msgid "Restore setup on start"
+msgid "Restore on start"
 msgstr "Restaurer la configuration au démarrage"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:1191
-msgid "Monitor hotplug"
+msgid "Hotplug"
 msgstr "Branchement à chaud"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:1200

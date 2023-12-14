@@ -6978,11 +6978,11 @@ msgid "Response"
 msgstr ""
 
 #: src/modules/conf_randr/e_int_config_randr2.c:1182
-msgid "Restore setup on start"
+msgid "Restore on start"
 msgstr "Khôi phục thiết lập lúc khởi động"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:1191
-msgid "Monitor hotplug"
+msgid "Hotplug"
 msgstr "Màn hình hotplug"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:1200

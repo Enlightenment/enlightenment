@@ -6935,11 +6935,11 @@ msgid "Response"
 msgstr ""
 
 #: src/modules/conf_randr/e_int_config_randr2.c:1182
-msgid "Restore setup on start"
+msgid "Restore on start"
 msgstr "Gendan opsætning ved start"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:1191
-msgid "Monitor hotplug"
+msgid "Hotplug"
 msgstr "Hotplug af skærm"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:1200

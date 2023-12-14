@@ -6938,12 +6938,12 @@ msgid "Response"
 msgstr "Resposta"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:1182
-msgid "Restore setup on start"
+msgid "Restore on start"
 msgstr "Restaurar configuração ao iniciar"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:1191
-msgid "Monitor hotplug"
-msgstr "Monitor hotplug"
+msgid "Hotplug"
+msgstr "Hotplug"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:1200
 msgid "Lid Events"

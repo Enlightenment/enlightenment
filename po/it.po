@@ -7006,11 +7006,11 @@ msgid "Response"
 msgstr "Responso"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:1182
-msgid "Restore setup on start"
+msgid "Restore on start"
 msgstr "Ripristina impostazioni all'avvio"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:1191
-msgid "Monitor hotplug"
+msgid "Hotplug"
 msgstr "Gestisci connessione monitor"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:1200
