@@ -439,7 +439,7 @@ _change_hash_apply_cb(const Eina_Hash *hash EINA_UNUSED, const void *key, void *
 
    imc = data;
 
-   if (ecore_file_exists(key))
+   if (ecore_file_exists(key) && ecore_file_can_write(key))
      {
         ef = eet_open(key, EET_FILE_MODE_WRITE);
         if (ef)
