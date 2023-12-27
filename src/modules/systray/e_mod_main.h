@@ -33,6 +33,7 @@ struct _Instance
    Evas                   *evas;
    Instance_Notifier_Host *notifier;
    Eina_List              *icons;
+   Ecore_Timer            *fill_timer;
    struct {
       Evas_Object         *gadget;
    } ui;
@@ -60,6 +61,7 @@ void systray_edje_box_remove(Instance *inst, Evas_Object *child);
 void systray_edje_box_prepend(Instance *inst, Evas_Object *child);
 
 Instance_Notifier_Host *systray_notifier_host_new(Instance *inst, E_Gadcon *gadcon);
+void systray_notifier_host_fill(Instance_Notifier_Host *host_inst);
 void systray_notifier_host_free(Instance_Notifier_Host *notifier);
 void systray_notifier_host_init(void);
 void systray_notifier_host_shutdown(void);

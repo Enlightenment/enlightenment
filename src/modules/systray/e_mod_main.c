@@ -128,8 +128,10 @@ _redo_sizing(Instance *inst)
    evas_object_geometry_get(inst->ui.gadget, NULL, NULL, &w, &h);
    EINA_LIST_FOREACH(inst->icons, l, o)
      {
+        edje_object_part_box_remove(inst->ui.gadget, "box", o);
         if (_is_horiz(inst)) evas_object_size_hint_min_set(o, h, 0);
         else evas_object_size_hint_min_set(o, 0, w);
+        edje_object_part_box_append(inst->ui.gadget, "box", o);
      }
 }
 
@@ -203,6 +205,15 @@ _systray_theme(Evas_Object *o, const char *shelf_style, const char *gc_style)
    e_theme_edje_object_set(o, NULL, _group_gadget);
 }
 
+static Eina_Bool
+_systray_delay_fill_timer_cb(void *data)
+{
+  Instance *inst = data;
+  systray_notifier_host_fill(inst->notifier);
+  inst->fill_timer = NULL;
+  return EINA_FALSE;
+}
+
 static E_Gadcon_Client *
 _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
 {
@@ -245,6 +256,8 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
 
    inst->notifier = systray_notifier_host_new(inst, inst->gcc->gadcon);
 
+   inst->fill_timer = ecore_timer_add(0.0, _systray_delay_fill_timer_cb, inst);
+
    return inst->gcc;
 }
 
@@ -265,6 +278,8 @@ _gc_shutdown(E_Gadcon_Client *gcc)
 
    if (inst->job.size_apply)
      ecore_job_del(inst->job.size_apply);
+   if (inst->fill_timer)
+     ecore_timer_del(inst->fill_timer);
 
    inst->icons = eina_list_free(inst->icons);
    E_FREE(inst);

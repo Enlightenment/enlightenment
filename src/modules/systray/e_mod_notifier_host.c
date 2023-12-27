@@ -420,20 +420,30 @@ systray_notifier_item_update(Notifier_Item *item)
      _systray_notifier_inst_item_update(inst, item, EINA_TRUE);
 }
 
+void
+systray_notifier_host_fill(Instance_Notifier_Host *host_inst)
+{
+  Notifier_Item *item;
+
+  EINA_INLIST_FOREACH(ctx->item_list, item)
+    {
+      _systray_notifier_inst_item_update(host_inst, item, EINA_FALSE);
+    }
+}
+
 Instance_Notifier_Host *
 systray_notifier_host_new(Instance *inst, E_Gadcon *gadcon)
 {
-   Instance_Notifier_Host *host_inst = NULL;
-   Notifier_Item *item;
-   host_inst = calloc(1, sizeof(Instance_Notifier_Host));
+   Instance_Notifier_Host *host_inst = calloc(1, sizeof(Instance_Notifier_Host));
+
    EINA_SAFETY_ON_NULL_RETURN_VAL(host_inst, NULL);
+
    host_inst->inst = inst;
    host_inst->edje = systray_edje_get(inst);
    host_inst->gadcon = gadcon;
    ctx->instances = eina_inlist_append(ctx->instances, EINA_INLIST_GET(host_inst));
 
-   EINA_INLIST_FOREACH(ctx->item_list, item)
-     _systray_notifier_inst_item_update(host_inst, item, EINA_FALSE);
+//   systray_notifier_host_fill(host_inst);
 
    return host_inst;
 }
