@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-20 12:58+0200\n"
-"PO-Revision-Date: 2023-06-20 12:59+0200\n"
+"POT-Creation-Date: 2023-12-28 15:02+0100\n"
+"PO-Revision-Date: 2023-12-28 15:12+0100\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: General\n"
 "Language: it\n"
@@ -2337,7 +2337,7 @@ msgid "Window"
 msgstr "Finestra"
 
 #: src/bin/e_int_client_menu.c:156
-#: src/modules/conf_randr/e_int_config_randr2.c:1100
+#: src/modules/conf_randr/e_int_config_randr2.c:1110
 msgid "Align"
 msgstr "Allinea"
 
@@ -2617,9 +2617,9 @@ msgstr "Statico"
 #: src/modules/clock/e_mod_config.c:143
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:356
 #: src/modules/conf_performance/e_int_config_powermanagement.c:200
-#: src/modules/conf_randr/e_int_config_randr2.c:469
-#: src/modules/conf_randr/e_int_config_randr2.c:688
-#: src/modules/conf_randr/e_int_config_randr2.c:1067
+#: src/modules/conf_randr/e_int_config_randr2.c:479
+#: src/modules/conf_randr/e_int_config_randr2.c:698
+#: src/modules/conf_randr/e_int_config_randr2.c:1077
 #: src/modules/conf_theme/e_int_config_fonts.c:742
 #: src/modules/conf_theme/e_int_config_transitions.c:212
 #: src/modules/conf_theme/e_int_config_transitions.c:271
@@ -2631,16 +2631,16 @@ msgid "None"
 msgstr "Nessuno"
 
 #: src/bin/e_int_client_prop.c:308
-#: src/modules/conf_randr/e_int_config_randr2.c:477
-#: src/modules/conf_randr/e_int_config_randr2.c:732
-#: src/modules/conf_randr/e_int_config_randr2.c:1071
+#: src/modules/conf_randr/e_int_config_randr2.c:487
+#: src/modules/conf_randr/e_int_config_randr2.c:742
+#: src/modules/conf_randr/e_int_config_randr2.c:1081
 msgid "Above"
 msgstr "Al di sopra"
 
 #: src/bin/e_int_client_prop.c:312
-#: src/modules/conf_randr/e_int_config_randr2.c:479
-#: src/modules/conf_randr/e_int_config_randr2.c:743
-#: src/modules/conf_randr/e_int_config_randr2.c:1072
+#: src/modules/conf_randr/e_int_config_randr2.c:489
+#: src/modules/conf_randr/e_int_config_randr2.c:753
+#: src/modules/conf_randr/e_int_config_randr2.c:1082
 msgid "Below"
 msgstr "Al di sotto"
 
@@ -3232,7 +3232,7 @@ msgid "Types"
 msgstr "Tipi"
 
 #: src/bin/e_int_config_comp_match.c:466
-#: src/modules/conf_randr/e_int_config_randr2.c:1036
+#: src/modules/conf_randr/e_int_config_randr2.c:1046
 msgid "On"
 msgstr "Attivato"
 
@@ -4839,7 +4839,7 @@ msgstr "Menù applicazioni"
 
 #: src/modules/backlight/e_mod_main.c:354
 #: src/modules/conf_display/e_mod_main.c:36
-#: src/modules/conf_randr/e_int_config_randr2.c:997
+#: src/modules/conf_randr/e_int_config_randr2.c:1007
 msgid "Backlight"
 msgstr "Backlight"
 
@@ -6913,107 +6913,111 @@ msgstr "Prestazioni"
 msgid "Power Management"
 msgstr "Gestione alimentazione"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:78
+#: src/modules/conf_randr/e_int_config_randr2.c:79
 #: src/modules/conf_randr/e_mod_main.c:44
 #: src/modules/conf_randr/e_mod_main.c:60
 #: src/modules/conf_randr/e_mod_main.c:66
 msgid "Screen Setup"
 msgstr "Impostazioni schermo"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:471
-#: src/modules/conf_randr/e_int_config_randr2.c:699
-#: src/modules/conf_randr/e_int_config_randr2.c:799
-#: src/modules/conf_randr/e_int_config_randr2.c:1068
-#: src/modules/conf_randr/e_int_config_randr2.c:1210
+#: src/modules/conf_randr/e_int_config_randr2.c:481
+#: src/modules/conf_randr/e_int_config_randr2.c:709
+#: src/modules/conf_randr/e_int_config_randr2.c:809
+#: src/modules/conf_randr/e_int_config_randr2.c:1078
+#: src/modules/conf_randr/e_int_config_randr2.c:1229
 msgid "Clone"
 msgstr "Clona"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:473
-#: src/modules/conf_randr/e_int_config_randr2.c:710
-#: src/modules/conf_randr/e_int_config_randr2.c:1069
+#: src/modules/conf_randr/e_int_config_randr2.c:483
+#: src/modules/conf_randr/e_int_config_randr2.c:720
+#: src/modules/conf_randr/e_int_config_randr2.c:1079
 msgid "Left of"
 msgstr "A sinistra"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:475
-#: src/modules/conf_randr/e_int_config_randr2.c:721
-#: src/modules/conf_randr/e_int_config_randr2.c:1070
+#: src/modules/conf_randr/e_int_config_randr2.c:485
+#: src/modules/conf_randr/e_int_config_randr2.c:731
+#: src/modules/conf_randr/e_int_config_randr2.c:1080
 msgid "Right of"
 msgstr "A destra"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:481
+#: src/modules/conf_randr/e_int_config_randr2.c:491
 msgid "Unconfigured"
 msgstr "Non configurato"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:797
-#: src/modules/conf_randr/e_int_config_randr2.c:1213
+#: src/modules/conf_randr/e_int_config_randr2.c:807
+#: src/modules/conf_randr/e_int_config_randr2.c:1232
 msgid "Ignore"
 msgstr "Ignora"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:798
-#: src/modules/conf_randr/e_int_config_randr2.c:1211
+#: src/modules/conf_randr/e_int_config_randr2.c:808
+#: src/modules/conf_randr/e_int_config_randr2.c:1230
 msgid "Extend"
 msgstr "Estendi"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:800
-#: src/modules/conf_randr/e_int_config_randr2.c:1212
+#: src/modules/conf_randr/e_int_config_randr2.c:810
+#: src/modules/conf_randr/e_int_config_randr2.c:1231
 msgid "Ask"
 msgstr "Chiedi"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:803
+#: src/modules/conf_randr/e_int_config_randr2.c:813
 #, c-format
 msgid "Hotplug Policy (%s)"
 msgstr "Regole per hotplug (%s)"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:881
+#: src/modules/conf_randr/e_int_config_randr2.c:891
 #: src/modules/mixer/emixer.c:1954
 msgid "Outputs"
 msgstr "Uscite"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:989
+#: src/modules/conf_randr/e_int_config_randr2.c:999
 msgid "Laptop lid"
 msgstr "Coperchio del portatile"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1045
+#: src/modules/conf_randr/e_int_config_randr2.c:1055
 msgid "Ignore Disconnect"
 msgstr "Ignora disconnessione"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1054
+#: src/modules/conf_randr/e_int_config_randr2.c:1064
 msgid "Priority"
 msgstr "Priorità"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1066
+#: src/modules/conf_randr/e_int_config_randr2.c:1076
 msgid "Relative"
 msgstr "Relativo"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1080
+#: src/modules/conf_randr/e_int_config_randr2.c:1090
 msgid "To"
 msgstr "A"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1120
+#: src/modules/conf_randr/e_int_config_randr2.c:1130
 msgid "Use Profile"
 msgstr "Usa profilo"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1136
+#: src/modules/conf_randr/e_int_config_randr2.c:1146
 msgid "Custom Scale"
 msgstr "Scalatura personalizzata"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1145
+#: src/modules/conf_randr/e_int_config_randr2.c:1155
 msgid "Scale"
 msgstr "Scalatura"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1170
+#: src/modules/conf_randr/e_int_config_randr2.c:1180
 msgid "Response"
 msgstr "Responso"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1182
+#: src/modules/conf_randr/e_int_config_randr2.c:1192
 msgid "Restore on start"
 msgstr "Ripristina impostazioni all'avvio"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1191
+#: src/modules/conf_randr/e_int_config_randr2.c:1201
+msgid "Use command"
+msgstr "Usa comando"
+
+#: src/modules/conf_randr/e_int_config_randr2.c:1210
 msgid "Hotplug"
 msgstr "Gestisci connessione monitor"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1200
+#: src/modules/conf_randr/e_int_config_randr2.c:1219
 msgid "Lid Events"
 msgstr "Gestisci chiusura coperchio"
 
@@ -10308,7 +10312,7 @@ msgstr "Mostra menù"
 msgid "Systray Settings"
 msgstr "Impostazioni di Systray"
 
-#: src/modules/systray/e_mod_main.c:358
+#: src/modules/systray/e_mod_main.c:373
 msgid "Systray"
 msgstr "Systray"
 
