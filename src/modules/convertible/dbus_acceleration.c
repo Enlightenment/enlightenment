@@ -348,8 +348,8 @@ sensor_proxy_init(void)
    accelerometer_dbus->orientation = UNDEFINED;
 
    INF("Getting dbus interfaces");
-   accelerometer_dbus->sensor_proxy = get_dbus_interface(EFL_DBUS_ACC_IFACE);
-   accelerometer_dbus->sensor_proxy_properties = get_dbus_interface(ELDBUS_FDO_INTERFACE_PROPERTIES);
+   accelerometer_dbus->sensor_proxy = _get_dbus_interface(EFL_DBUS_ACC_IFACE);
+   accelerometer_dbus->sensor_proxy_properties = _get_dbus_interface(ELDBUS_FDO_INTERFACE_PROPERTIES);
    if (accelerometer_dbus->sensor_proxy == NULL)
    {
       ERR("Unable to get the proxy for interface %s", EFL_DBUS_ACC_IFACE);
@@ -430,7 +430,7 @@ _access_string_property(const Eldbus_Message *msg, Eldbus_Message_Iter **variant
    }
 
    const char *string_property_value;
-   if (!eldbus_message_iter_arguments_get(variant, "s", &string_property_value))
+   if (!eldbus_message_iter_arguments_get(*variant, "s", &string_property_value))
    {
       WARN("error in eldbus_message_iter_arguments_get()");
    }

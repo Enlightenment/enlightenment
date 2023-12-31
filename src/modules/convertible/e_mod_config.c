@@ -7,7 +7,7 @@
 
 static Convertible_Config *_config = NULL;
 E_Config_DD *config_edd = NULL;
-extern Convertible_Config *convertible_config;
+EINTERN Convertible_Config *convertible_config;
 
 /**
  * Create the config structure

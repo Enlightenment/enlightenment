@@ -18,7 +18,7 @@ Instance *inst;
 
 // Configuration
 extern Convertible_Config *convertible_config;
-extern E_Config_DD *edd;
+static E_Config_DD *config_edd;
 
 // Logger
 int _convertible_log_dom;
@@ -323,10 +323,10 @@ e_modapi_init(E_Module *m)
    e_gadcon_provider_register(&_gadcon_class);
 
    INF("Creating menu entries for settings");
-   e_configure_registry_category_add("extensions", 90, "Extensions", NULL,
+   e_configure_registry_category_add("extensions", 90, _("Extensions"), NULL,
                                      "preferences-extensions");
-   e_configure_registry_item_add("extensions/convertible", 30, "convertible", NULL,
-                                 "preferences-desktop-convertible", e_int_config_convertible_module);
+   e_configure_registry_item_add("extensions/convertible", 30, _("Convertible"), NULL,
+                                 "preferences-desktop-edge-bindings", e_int_config_convertible_module);
 
    instances = eina_list_append(instances, inst);
 
@@ -368,7 +368,7 @@ e_modapi_save(E_Module *m EINA_UNUSED)
 {
    if (convertible_config)
    {
-      e_config_domain_save("module.convertible", edd, convertible_config);
+      e_config_domain_save("module.convertible", config_edd, convertible_config);
    }
    return 1;
 }
