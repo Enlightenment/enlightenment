@@ -65,6 +65,7 @@ _is_device_a_touch_pointer(int dev_counter, int num_properties, char **iterator)
             }
             DBG("Looks like I found a device with calibration capabilities");
             is_correct_device = EINA_TRUE;
+            free(result);
         }
         iterator++;
     }
@@ -101,6 +102,7 @@ _fetch_X_device_input_number(void)
             {
                 dev_number = dev_counter;
                 DBG("Setting device: %d", dev_number);
+                break;
             }
             iterator++;
         }
@@ -120,7 +122,18 @@ _fetch_and_rotate_screen(const char* randr_id, enum screen_rotation orientation)
 {
     DBG("Working on screen %s", randr_id);
     E_Randr2_Screen *rotatable_screen = e_randr2_screen_id_find(randr_id);
+    if (rotatable_screen == NULL)
+    {
+        DBG("Failed to load screen for id %s", randr_id);
+        return;
+    }
+
     E_Config_Randr2_Screen *screen_randr_cfg = e_randr2_config_screen_find(rotatable_screen, e_randr2_cfg);
+    if (screen_randr_cfg == NULL)
+    {
+        DBG("Failed to load screen configuration for id %s", randr_id);
+        return;
+    }
     int rotation = _convertible_rotation_get(orientation);
     DBG("Screen %s is going to be rotated to %d", randr_id, rotation);
 
@@ -165,6 +178,7 @@ _fetch_and_rotate_screen(const char* randr_id, enum screen_rotation orientation)
         } else {
             ERR("Unable to fetch coordinates transformation matrix for device %d", x_dev_num);
         }
+        free(result);
         free(matrix);
     }
 }
@@ -173,7 +187,7 @@ _fetch_and_rotate_screen(const char* randr_id, enum screen_rotation orientation)
  * Helper to get the interface
  * */
 static Eldbus_Proxy *
-get_dbus_interface(const char *IFACE)
+_get_dbus_interface(const char *IFACE)
 {
     DBG("Working on interface: %s", IFACE);
     Eldbus_Connection *conn;
@@ -228,16 +242,19 @@ _access_bool_property(const Eldbus_Message *msg, Eldbus_Message_Iter **variant, 
         return res;
     }
 
+    if (type[0] != 'b')
+    {
+        WARN("Expected type is int.");
+        res = EINA_FALSE;
+        free(type);
+        return res;
+    }
     if (type[1])
     {
         WARN("It is a complex type, not handle yet.");
         res = EINA_FALSE;
     }
-    if (type[0] != 'b')
-    {
-        WARN("Expected type is int.");
-        res = EINA_FALSE;
-    }
+
     if (!eldbus_message_iter_arguments_get((*variant), "b", boolean_property_value))
     {
         WARN("error in eldbus_message_iter_arguments_get()");
@@ -379,16 +396,13 @@ sensor_proxy_shutdown(void)
    eldbus_shutdown();
 }
 
-int
-_convertible_rotation_get(const enum screen_rotation orientation);
-
 /**
  * Helper function to extract ta string property from the message
  * @param msg The message coming from the get property invocation
  * @param variant
  * @return Enum specifying the orientation. UNDEFINED by default
  */
-enum screen_rotation
+static enum screen_rotation
 _access_string_property(const Eldbus_Message *msg, Eldbus_Message_Iter **variant)
 {
    enum screen_rotation rotation = UNDEFINED;
@@ -404,34 +418,33 @@ _access_string_property(const Eldbus_Message *msg, Eldbus_Message_Iter **variant
       WARN("Unable to get the type.");
       return rotation;
    }
-
-   type = eldbus_message_iter_signature_get((*variant));
+   if (type[0] != 's')
+   {
+      WARN("Expected type is string(s).");
+      free(type);
+      return rotation;
+   }
    if (type[1])
    {
       WARN("It is a complex type, not handle yet.");
    }
-   if (type[0] != 's')
-   {
-      WARN("Expected type is string(s).");
-   }
-   const char **string_property_value = calloc(PATH_MAX, sizeof(char));
-   EINA_SAFETY_ON_NULL_RETURN_VAL(string_property_value, EINA_FALSE);
-   if (!eldbus_message_iter_arguments_get((*variant), "s", string_property_value))
+
+   const char *string_property_value;
+   if (!eldbus_message_iter_arguments_get(variant, "s", &string_property_value))
    {
       WARN("error in eldbus_message_iter_arguments_get()");
    }
 
-   if (!strcmp(ACCELEROMETER_ORIENTATION_RIGHT, *string_property_value))
+   if (strcmp(ACCELEROMETER_ORIENTATION_RIGHT, string_property_value) == 0)
       rotation = RIGHT_UP;
-   if (!strcmp(ACCELEROMETER_ORIENTATION_LEFT, *string_property_value))
+   if (strcmp(ACCELEROMETER_ORIENTATION_LEFT, string_property_value) == 0)
       rotation = LEFT_UP;
-   if (!strcmp(ACCELEROMETER_ORIENTATION_BOTTOM, *string_property_value))
+   if (strcmp(ACCELEROMETER_ORIENTATION_BOTTOM, string_property_value) == 0)
       rotation = FLIPPED;
-   if (!strcmp(ACCELEROMETER_ORIENTATION_NORMAL, *string_property_value))
+   if (strcmp(ACCELEROMETER_ORIENTATION_NORMAL, string_property_value) == 0)
       rotation = NORMAL;
 
    free(type);
-   free(string_property_value);
    return rotation;
 }
 
@@ -439,14 +452,13 @@ void
 on_accelerometer_orientation(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
 {
    INF("New orientation received");
-   Instance *inst = (Instance *) data;
+   Instance *inst = data;
 
    if (inst->locked_position == EINA_TRUE)
    {
       WARN("Locked position. Ignoring rotation");
       return;
    }
-
 
    const char *errname, *errmsg;
    enum screen_rotation orientation;

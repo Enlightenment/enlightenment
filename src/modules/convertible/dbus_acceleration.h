@@ -26,11 +26,13 @@ struct _DbusAccelerometer
 /**
  * Fetch the DBUS interfaces and fill the DbusAccelerometer struct
  * */
-DbusAccelerometer* sensor_proxy_init(void);
+DbusAccelerometer* sensor_proxy_init();
 
+
+void sensor_proxy_shutdown();
 
 void
-sensor_proxy_shutdown(void);
+on_has_accelerometer(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED);
 
 /**
  * Callback definition to handle the request of the accelerometer property of DBUS interface net.hadess.SensorProxy

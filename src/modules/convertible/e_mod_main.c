@@ -17,9 +17,8 @@ E_Module *convertible_module;
 Instance *inst;
 
 // Configuration
-extern Convertible_Config *convertible_config = NULL;
-static E_Config_DD *conf_edd = NULL;
-Convertible_Config *conf = NULL;
+extern Convertible_Config *convertible_config;
+extern E_Config_DD *edd;
 
 // Logger
 int _convertible_log_dom;
@@ -35,9 +34,6 @@ E_API E_Module_Api e_modapi =
 /* LIST OF INSTANCES */
 static Eina_List *instances = NULL;
 
-/* Other functions for configuration */
-static void             _conf_new(void);
-static void             _conf_free(void);
 
 /* gadcon requirements */
 static E_Gadcon_Client *_gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style);
@@ -124,10 +120,10 @@ static void
 _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient)
 {
    Evas_Coord mw, mh;
-   char buf[4096];
+   char buf[PATH_MAX];
    const char *s = "float";
 
-   Instance *instance = gcc->data;
+   Instance *current_instance = gcc->data;
    switch (orient)
    {
       case E_GADCON_ORIENT_FLOAT:
@@ -194,13 +190,13 @@ _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient)
          break;
    }
    snprintf(buf, sizeof(buf), "e,state,orientation,%s", s);
-   edje_object_signal_emit(instance->o_button, buf, "e");
-   edje_object_message_signal_process(instance->o_button);
+   edje_object_signal_emit(current_instance->o_button, buf, "e");
+   edje_object_message_signal_process(current_instance->o_button);
 
    mw = 0, mh = 0;
-   edje_object_size_min_get(instance->o_button, &mw, &mh);
+   edje_object_size_min_get(current_instance->o_button, &mw, &mh);
    if ((mw < 1) || (mh < 1))
-      edje_object_size_min_calc(instance->o_button, &mw, &mh);
+      edje_object_size_min_calc(current_instance->o_button, &mw, &mh);
    if (mw < 4) mw = 4;
    if (mh < 4) mh = 4;
    e_gadcon_client_aspect_set(gcc, mw, mh);
@@ -228,7 +224,7 @@ _gc_icon(const E_Gadcon_Client_Class *client_class EINA_UNUSED, Evas *evas)
 static const char *
 _gc_id_new(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
 {
-   static char buf[4096];
+   static char buf[PATH_MAX];
 
    snprintf(buf, sizeof(buf), "%s.%d", client_class->name,
              eina_list_count(instances) + 1);
@@ -242,16 +238,16 @@ _gc_id_new(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
 static void
 _cb_properties_changed(void *data, const Eldbus_Message *msg)
 {
-   Instance *instance = (Instance *) data;
+   Instance *current_instance = data;
    Eldbus_Message_Iter *array, *invalidate;
    char *iface;
 
    if (!eldbus_message_arguments_get(msg, "sa{sv}as", &iface, &array, &invalidate))
       ERR("Error getting data from properties changed signal.");
    // Given that the property changed, let's get the new value
-   Eldbus_Pending *pending_operation = eldbus_proxy_property_get(instance->accelerometer->sensor_proxy,
+   Eldbus_Pending *pending_operation = eldbus_proxy_property_get(current_instance->accelerometer->sensor_proxy,
                                                                  "AccelerometerOrientation",
-                                                                 on_accelerometer_orientation, instance);
+                                                                 on_accelerometer_orientation, current_instance);
    if (!pending_operation)
       ERR("Error: could not get property AccelerometerOrientation");
 }
@@ -305,14 +301,15 @@ e_modapi_init(E_Module *m)
       E_Randr2_Screen *screen = e_randr2_screen_id_find(zone->randr2_id);
       DBG("name randr2 id %s", zone->randr2_id);
       DBG("rot_90 %i", screen->info.can_rot_90);
+
       // Arbitrarily chosen a condition to check that rotation is enabled
       if (screen->info.can_rot_90 == EINA_TRUE)
          {
          char *randr2_id = strdup(zone->randr2_id);
          if (randr2_id == NULL)
             ERR("Can't copy the screen name");
-
-         inst->randr2_ids = eina_list_append(inst->randr2_ids, randr2_id);
+         else
+            inst->randr2_ids = eina_list_append(inst->randr2_ids, randr2_id);
          if (eina_error_get())
             ERR("Memory is low. List allocation failed.");
          }
@@ -326,12 +323,10 @@ e_modapi_init(E_Module *m)
    e_gadcon_provider_register(&_gadcon_class);
 
    INF("Creating menu entries for settings");
-   /* create Screen configuration category
-    *
-    * NB: If the category already exists, this function just returns */
-   e_configure_registry_category_add("screen", 30, _("Screen"), NULL, "preferences-desktop-display");
-   e_configure_registry_item_add("screen/convertible", 30, "convertible", NULL,
-                                 theme_overlay_path, e_int_config_convertible_module);
+   e_configure_registry_category_add("extensions", 90, "Extensions", NULL,
+                                     "preferences-extensions");
+   e_configure_registry_item_add("extensions/convertible", 30, "convertible", NULL,
+                                 "preferences-desktop-convertible", e_int_config_convertible_module);
 
    instances = eina_list_append(instances, inst);
 
@@ -373,15 +368,7 @@ e_modapi_save(E_Module *m EINA_UNUSED)
 {
    if (convertible_config)
    {
-      e_config_domain_save("module.convertible", conf_edd, convertible_config);
+      e_config_domain_save("module.convertible", edd, convertible_config);
    }
    return 1;
-}
-
-static void
-_conf_new(void)
-{
-    conf = E_NEW(Convertible_Config, 1);
-    conf->disable_keyboard_on_rotation = 1;
-    e_config_save_queue();
 }

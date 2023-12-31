@@ -12,7 +12,7 @@ static void
 _update_instances(const Instance *current_instance)
 {
     Eina_List *l;
-    Instance *instance = NULL;
+    Instance *instance;
     EINA_LIST_FOREACH(instances, l, instance)
     {
         if (current_instance != instance)
