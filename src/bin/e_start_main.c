@@ -524,6 +524,7 @@ main(int argc, char **argv)
    struct sigaction action;
    pid_t child = -1;
    Eina_Bool restart = EINA_TRUE;
+   unsigned int provided_eina_version, required_eina_version;
 
    unsetenv("NOTIFY_SOCKET");
 
@@ -546,6 +547,58 @@ main(int argc, char **argv)
    sigaction(SIGHUP, &action, NULL);
 
    eina_init();
+
+   /* check eina version ... this should be the whole efl version */
+   /* check for sanity here in case someone has done something very silly */
+   provided_eina_version =
+     (eina_version->major * 1000 * 1000) +
+     (eina_version->minor * 1000       ) +
+     (eina_version->micro);
+   required_eina_version =
+     (MIN_EFL_VERSION_MAJ * 1000 * 1000) +
+     (MIN_EFL_VERSION_MIN * 1000) +
+     (MIN_EFL_VERSION_MIC);
+   printf("Enlightenment: EFL Version Check: %u >= %u\n",
+          provided_eina_version, required_eina_version);
+   if (provided_eina_version < required_eina_version)
+     {
+        char *logf = NULL, *logf_old = NULL;
+        FILE *fps[2];
+        FILE *outf;
+
+        home = getenv("HOME");
+        // rename old olg file
+        if (!home)
+          {
+             myasprintf(&logf, ".e-log.log");
+             myasprintf(&logf_old, ".e-log.log.old");
+          }
+        else
+          {
+             myasprintf(&logf, "%s/.e-log.log", home);
+             myasprintf(&logf_old, "%s/.e-log.log.old", home);
+          }
+        rename(logf, logf_old);
+        outf = fopen(logf, "w");
+        fps[0] = stderr;
+        fps[1] = outf;
+        for (i = 0; i < 2; i++)
+          {
+             if (fps[i])
+               fprintf(fps[i],
+                       "ERROR: EFL version provided is %i.%i.%i\n"
+                       "Enlightenment requires a minimum of %i.%i.%i\n"
+                       "Abort\n",
+                       eina_version->major,
+                       eina_version->minor,
+                       eina_version->micro,
+                       MIN_EFL_VERSION_MAJ,
+                       MIN_EFL_VERSION_MIN,
+                       MIN_EFL_VERSION_MIC);
+          }
+        if (outf) fclose(outf);
+        exit(42); // exit 42 for this as life the universe and everything...
+     }
 
    /* reexcute myself with dbus-launch if dbus-launch is not running yet */
    if ((!getenv("DBUS_SESSION_BUS_ADDRESS")) &&

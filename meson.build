@@ -83,6 +83,11 @@ config_h.set('_POSIX_PTHREAD_SEMANTICS', '1')
 config_h.set('_TANDEM_SOURCE'          , '1')
 config_h.set('__EXTENSIONS__'          , '1')
 
+str_ver_split = efl_version.replace('>= ', '').split('.')
+config_h.set('MIN_EFL_VERSION_MAJ', str_ver_split[0])
+config_h.set('MIN_EFL_VERSION_MIN', str_ver_split[1])
+config_h.set('MIN_EFL_VERSION_MIC', str_ver_split[2])
+
 subdir('po')
 
 darwin = host_machine.system().startswith('darwin')
