@@ -12,7 +12,7 @@ static DbusAccelerometer* accelerometer_dbus;
 
 
 static int
-_convertible_rotation_get(const enum screen_rotation orientation)
+_convertible_rotation_get(const screen_rotation orientation)
 {
     switch (orientation)
     {
@@ -118,7 +118,7 @@ _fetch_X_device_input_number(void)
  * @param rotation The expected rotation
  */
 static void
-_fetch_and_rotate_screen(const char* randr_id, enum screen_rotation orientation)
+_fetch_and_rotate_screen(const char* randr_id, screen_rotation orientation)
 {
     DBG("Working on screen %s", randr_id);
     E_Randr2_Screen *rotatable_screen = e_randr2_screen_id_find(randr_id);
@@ -402,10 +402,10 @@ sensor_proxy_shutdown(void)
  * @param variant
  * @return Enum specifying the orientation. UNDEFINED by default
  */
-static enum screen_rotation
+static screen_rotation
 _access_string_property(const Eldbus_Message *msg, Eldbus_Message_Iter **variant)
 {
-   enum screen_rotation rotation = UNDEFINED;
+   screen_rotation rotation = UNDEFINED;
    char *type = NULL;
 
    if (!eldbus_message_arguments_get(msg, "v", variant))
@@ -461,7 +461,7 @@ on_accelerometer_orientation(void *data, const Eldbus_Message *msg, Eldbus_Pendi
    }
 
    const char *errname, *errmsg;
-   enum screen_rotation orientation;
+   screen_rotation orientation;
    Eldbus_Message_Iter *variant = NULL;
 
    if (eldbus_message_error_get(msg, &errname, &errmsg))

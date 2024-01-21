@@ -10,14 +10,14 @@
 #define EFL_DBUS_ACC_IFACE "net.hadess.SensorProxy"
 
 // This enum represents the 4 states of screen rotation plus UNDEFINED
-enum screen_rotation {UNDEFINED, NORMAL, RIGHT_UP, FLIPPED, LEFT_UP};
+typedef enum {UNDEFINED, NORMAL, RIGHT_UP, FLIPPED, LEFT_UP} screen_rotation;
 
 typedef struct _DbusAccelerometer DbusAccelerometer;
 
 struct _DbusAccelerometer
 {
    Eina_Bool has_accelerometer;
-   enum screen_rotation orientation;
+   screen_rotation orientation;
    Eldbus_Proxy *sensor_proxy, *sensor_proxy_properties;
    Eldbus_Pending *pending_has_orientation, *pending_orientation, *pending_acc_claim, *pending_acc_crelease;
    Eldbus_Signal_Handler *dbus_property_changed_sh;
@@ -26,10 +26,10 @@ struct _DbusAccelerometer
 /**
  * Fetch the DBUS interfaces and fill the DbusAccelerometer struct
  * */
-DbusAccelerometer* sensor_proxy_init();
+DbusAccelerometer* sensor_proxy_init(void);
 
 
-void sensor_proxy_shutdown();
+void sensor_proxy_shutdown(void);
 
 void
 on_has_accelerometer(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED);
