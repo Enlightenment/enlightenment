@@ -5,9 +5,6 @@
 #include "e-gadget-convertible.h"
 #include "e_mod_main.h"
 
-/* LIST OF INSTANCES */
-static Eina_List *instances = NULL;
-
 static void
 _update_instances(const Instance *current_instance)
 {
@@ -44,9 +41,4 @@ _keyboard_signal_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const 
                          const char *src EINA_UNUSED)
 {
    DBG("Keyboard: Signal %s received from %s", sig, src);
-}
-
-void
-update_instances(Eina_List *new_instances) {
-   instances = new_instances;
 }

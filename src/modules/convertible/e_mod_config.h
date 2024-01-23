@@ -18,7 +18,6 @@ typedef struct _Convertible_Config Convertible_Config;
 struct _Convertible_Config
 {
    int version;
-   E_Module *module;
    int disable_keyboard_on_rotation;
 };
 

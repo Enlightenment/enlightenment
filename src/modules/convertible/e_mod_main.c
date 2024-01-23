@@ -74,7 +74,6 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    instance->o_button = evas_object;
 
    instances = eina_list_append(instances, instance);
-   update_instances(instances);
 
    gcc = e_gadcon_client_new(gc, name, id, style, evas_object);
    gcc->data = instance;

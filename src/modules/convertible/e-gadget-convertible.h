@@ -8,6 +8,9 @@
 #ifndef E_GADGET_CONVERTIBLE_E_GADGET_CONVERTIBLE_H
 #define E_GADGET_CONVERTIBLE_E_GADGET_CONVERTIBLE_H
 
+/* LIST OF INSTANCES */
+Eina_List *instances = NULL;
+
 /* gadcon callback for actions */
 void
 _rotation_signal_cb(void *data EINA_UNUSED, Evas_Object *obj, const char *sig EINA_UNUSED, const char *src EINA_UNUSED);
@@ -15,8 +18,6 @@ _rotation_signal_cb(void *data EINA_UNUSED, Evas_Object *obj, const char *sig EI
 void
 _keyboard_signal_cb(void *data EINA_UNUSED, Evas_Object *obj, const char *sig EINA_UNUSED, const char *src EINA_UNUSED);
 
-void
-update_instances(Eina_List *instances);
 /* end gadcon callback for actions */
 
 
