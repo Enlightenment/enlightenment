@@ -5,7 +5,7 @@
 #include "e.h"
 #include "e_mod_config.h"
 
-static Convertible_Config *_config = NULL;
+static Convertible_Config *conv_config = NULL;
 E_Config_DD *config_edd = NULL;
 EINTERN Convertible_Config *convertible_config;
 
@@ -22,19 +22,20 @@ _econvertible_config_dd_new(void)
    // TODO Not sure what his line does. Apparently, it is needed to specify the type of the configuration data structure
    config_edd = E_CONFIG_DD_NEW("Convertible_Config", Convertible_Config);
 
+   E_CONFIG_VAL(config_edd, Convertible_Config, version, INT);
    E_CONFIG_VAL(config_edd, Convertible_Config, disable_keyboard_on_rotation, INT);
 //   E_CONFIG_LIST(config_edd, Convertible_Config, rotatable_screen_configuration, c_zone);
 }
 
 /**
- * Update the *_config data structure based on the settings coming from the dialog panel
+ * Update the *conv_config data structure based on the settings coming from the dialog panel
  * @param config The config coming from the Dialog Panel (E_Config_Dialog_data)
  */
 static void
 _config_set(Convertible_Config *config)
 {
    DBG("config_set disable_keyboard_on_rotation %d", config->disable_keyboard_on_rotation);
-   _config->disable_keyboard_on_rotation = config->disable_keyboard_on_rotation;
+   conv_config->disable_keyboard_on_rotation = config->disable_keyboard_on_rotation;
    e_config_domain_save("module.convertible", config_edd, config);
 }
 
@@ -51,8 +52,8 @@ _create_data(E_Config_Dialog *cfg EINA_UNUSED)
 
    dialog_data = E_NEW(E_Config_Dialog_Data, 1);
    dialog_data->config = malloc(sizeof(Convertible_Config));
-   dialog_data->config->disable_keyboard_on_rotation = _config->disable_keyboard_on_rotation;
-//   dialog_data->config->rotatable_screen_configuration = _config->rotatable_screen_configuration;
+   dialog_data->config->disable_keyboard_on_rotation = conv_config->disable_keyboard_on_rotation;
+//   dialog_data->config->rotatable_screen_configuration = conv_config->rotatable_screen_configuration;
 
    DBG("disable_keyboard_on_rotation %d", dialog_data->config->disable_keyboard_on_rotation);
    return dialog_data;
@@ -72,7 +73,7 @@ _free_data(E_Config_Dialog *c EINA_UNUSED, E_Config_Dialog_Data *dialog_data)
 }
 
 /**
- * This function should store the modified settings into the data structure referred by the pointer _config
+ * This function should store the modified settings into the data structure referred by the pointer conv_config
  * @param cfd
  * @param cfdata
  * @return
@@ -142,14 +143,26 @@ void
 econvertible_config_init(void)
 {
    _econvertible_config_dd_new();
-   _config = e_config_domain_load("module.econvertible", config_edd);
-   if (!_config)
+   conv_config = e_config_domain_load("module.econvertible", config_edd);
+
+   //   Check version
+   if (conv_config && !e_util_module_config_check(_("Convertible Module"),
+                                                conv_config->version,
+                                                MOD_CONFIG_FILE_VERSION))
    {
-      _config = E_NEW(Convertible_Config, 1);
-      _config->disable_keyboard_on_rotation = 1;
-//      _config->rotatable_screen_configuration = NULL;
+      free(conv_config);
+      return;
    }
 
+
+   if (!conv_config)
+   {
+      conv_config = E_NEW(Convertible_Config, 1);
+      conv_config->disable_keyboard_on_rotation = 1;
+//      conv_config->rotatable_screen_configuration = NULL;
+   }
+
+   conv_config->version = MOD_CONFIG_FILE_VERSION;
    DBG("Config loaded");
 }
 
