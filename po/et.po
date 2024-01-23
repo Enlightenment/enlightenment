@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-29 19:35+0100\n"
+"POT-Creation-Date: 2024-01-23 21:51+0100\n"
 "PO-Revision-Date: 2010-01-07 07:56+0000\n"
 "Last-Translator: René Pärts <Unknown>\n"
 "Language-Team: Estonian <et@li.org>\n"
@@ -43,7 +43,7 @@ msgstr "Enlightenment"
 
 #: src/bin/e_about.c:26
 msgid ""
-"<title>Copyright &copy; 2000-2022, by the Enlightenment Development Team</"
+"<title>Copyright &copy; 2000-2024, by the Enlightenment Development Team</"
 "><ps/><ps/>We hope you enjoy using this software as much as we enjoyed "
 "writing it.<ps/><ps/>To contact us please visit:<ps/><hilight>http://www."
 "enlightenment.org</><ps/><ps/>"
@@ -1225,7 +1225,7 @@ msgstr ""
 
 #: src/bin/e_comp_x_randr.c:462 src/bin/e_config_dialog.c:274
 #: src/bin/e_desktop_editor.c:907 src/bin/e_desktop_editor.c:971
-#: src/bin/e_entry_dialog.c:126 src/bin/e_exec.c:898 src/bin/e_fm.c:10212
+#: src/bin/e_entry_dialog.c:126 src/bin/e_exec.c:899 src/bin/e_fm.c:10212
 #: src/bin/e_fm.c:10979 src/bin/e_fm_prop.c:769
 #: src/bin/e_import_config_dialog.c:360 src/bin/e_int_client_remember.c:358
 #: src/bin/e_int_client_remember.c:553 src/bin/e_int_config_comp_match.c:583
@@ -1344,7 +1344,7 @@ msgstr "Dekodeerimiseks ebaõnnestus."
 msgid "The error is unknown to Enlightenment."
 msgstr ""
 
-#: src/bin/e_config.c:1279
+#: src/bin/e_config.c:1280
 #, fuzzy
 msgid ""
 "Settings data needed upgrading. Your old settings have<ps/>been wiped and a "
@@ -1363,7 +1363,7 @@ msgstr ""
 "lisades selle sisse saab uuesti seadistada asju nüüd oma<br>maitse järgi. "
 "Vabandame ebamugavuste pärast.<br>"
 
-#: src/bin/e_config.c:1296
+#: src/bin/e_config.c:1297
 #, fuzzy
 msgid ""
 "Your settings are NEWER than Enlightenment. This is very<ps/>strange. This "
@@ -1378,14 +1378,14 @@ msgstr ""
 "ja<br>ettevaatusabinõuna konfiguratsioonifailis on nüüd "
 "taastatud<br>vaikeseaded. Vabandame ebamugavuste pärast.<br>"
 
-#: src/bin/e_config.c:1412
+#: src/bin/e_config.c:1413
 msgid ""
 "Your bindings settings version does not match the current settings version."
 "<ps/>As a result, all bindings have been reloaded from defaults.<ps/>Sorry "
 "for the inconvenience.<ps/>"
 msgstr ""
 
-#: src/bin/e_config.c:2719
+#: src/bin/e_config.c:2720
 #, fuzzy
 msgid "Settings Upgraded"
 msgstr "seaded Täiendatud"
@@ -1586,152 +1586,152 @@ msgstr "ValiIcon"
 msgid "Select an Executable"
 msgstr "ValiTeostatavad"
 
-#: src/bin/e_exec.c:621 src/bin/e_exec.c:629 src/bin/e_exec.c:640
-#: src/bin/e_exec.c:699 src/bin/e_remember.c:51
+#: src/bin/e_exec.c:622 src/bin/e_exec.c:630 src/bin/e_exec.c:641
+#: src/bin/e_exec.c:700 src/bin/e_remember.c:51
 #: src/modules/conf_intl/e_int_config_imc.c:274
 #: src/modules/conf_intl/e_int_config_imc.c:561
 #, fuzzy
 msgid "Run Error"
 msgstr "Run viga"
 
-#: src/bin/e_exec.c:622
+#: src/bin/e_exec.c:623
 msgid "Enlightenment was unable to get current directory"
 msgstr ""
 
-#: src/bin/e_exec.c:630
+#: src/bin/e_exec.c:631
 #, c-format
 msgid "Enlightenment was unable to change to directory:<ps/><ps/>%s"
 msgstr ""
 
-#: src/bin/e_exec.c:641
+#: src/bin/e_exec.c:642
 #, c-format
 msgid "Enlightenment was unable to restore to directory:<ps/><ps/>%s"
 msgstr ""
 
-#: src/bin/e_exec.c:700
+#: src/bin/e_exec.c:701
 #, c-format
 msgid "Enlightenment was unable to fork a child process:<ps/><ps/>%s"
 msgstr ""
 
-#: src/bin/e_exec.c:889
+#: src/bin/e_exec.c:890
 #, fuzzy
 msgid "Application run error"
 msgstr "Taotlus run viga"
 
-#: src/bin/e_exec.c:891
+#: src/bin/e_exec.c:892
 #, c-format
 msgid ""
 "Enlightenment was unable to run the application:<ps/><ps/>%s<ps/><ps/>The "
 "application failed to start."
 msgstr ""
 
-#: src/bin/e_exec.c:1037
+#: src/bin/e_exec.c:1038
 #, fuzzy
 msgid "Application Execution Error"
 msgstr "Taotluse täitmine Viga"
 
-#: src/bin/e_exec.c:1050 src/bin/e_exec.c:1052
+#: src/bin/e_exec.c:1051 src/bin/e_exec.c:1053
 #, c-format
 msgid "%s stopped running unexpectedly."
 msgstr ""
 
-#: src/bin/e_exec.c:1058
+#: src/bin/e_exec.c:1059
 #, c-format
 msgid "An exit code of %i was returned from %s."
 msgstr ""
 
-#: src/bin/e_exec.c:1066
+#: src/bin/e_exec.c:1067
 #, c-format
 msgid "%s was interrupted by an Interrupt Signal."
 msgstr ""
 
-#: src/bin/e_exec.c:1069
+#: src/bin/e_exec.c:1070
 #, c-format
 msgid "%s was interrupted by a Quit Signal."
 msgstr ""
 
-#: src/bin/e_exec.c:1073
+#: src/bin/e_exec.c:1074
 #, c-format
 msgid "%s was interrupted by an Abort Signal."
 msgstr ""
 
-#: src/bin/e_exec.c:1076
+#: src/bin/e_exec.c:1077
 #, c-format
 msgid "%s was interrupted by a Floating Point Error."
 msgstr ""
 
-#: src/bin/e_exec.c:1080
+#: src/bin/e_exec.c:1081
 #, c-format
 msgid "%s was interrupted by an Uninterruptable Kill Signal."
 msgstr ""
 
-#: src/bin/e_exec.c:1084
+#: src/bin/e_exec.c:1085
 #, c-format
 msgid "%s was interrupted by a Segmentation Fault."
 msgstr ""
 
-#: src/bin/e_exec.c:1088
+#: src/bin/e_exec.c:1089
 #, c-format
 msgid "%s was interrupted by a Broken Pipe."
 msgstr ""
 
-#: src/bin/e_exec.c:1091
+#: src/bin/e_exec.c:1092
 #, c-format
 msgid "%s was interrupted by a Termination Signal."
 msgstr ""
 
-#: src/bin/e_exec.c:1095
+#: src/bin/e_exec.c:1096
 #, c-format
 msgid "%s was interrupted by a Bus Error."
 msgstr ""
 
-#: src/bin/e_exec.c:1098
+#: src/bin/e_exec.c:1099
 #, c-format
 msgid "%s was interrupted by the signal number %i."
 msgstr ""
 
-#: src/bin/e_exec.c:1154
+#: src/bin/e_exec.c:1155
 msgid ""
 "***The remaining output has been truncated. Save the output to view.***\n"
 msgstr ""
 
-#: src/bin/e_exec.c:1213 src/bin/e_exec.c:1291 src/bin/e_exec.c:1298
+#: src/bin/e_exec.c:1214 src/bin/e_exec.c:1292 src/bin/e_exec.c:1299
 #, fuzzy
 msgid "Error Logs"
 msgstr "viga Logid"
 
-#: src/bin/e_exec.c:1219 src/bin/e_exec.c:1299
+#: src/bin/e_exec.c:1220 src/bin/e_exec.c:1300
 #, fuzzy
 msgid "There was no error message."
 msgstr "Puudus veateate."
 
-#: src/bin/e_exec.c:1223 src/bin/e_exec.c:1306
+#: src/bin/e_exec.c:1224 src/bin/e_exec.c:1307
 #, fuzzy
 msgid "Save This Message"
 msgstr "Salvesta see sõnum"
 
-#: src/bin/e_exec.c:1228 src/bin/e_exec.c:1231 src/bin/e_exec.c:1311
-#: src/bin/e_exec.c:1314
+#: src/bin/e_exec.c:1229 src/bin/e_exec.c:1232 src/bin/e_exec.c:1312
+#: src/bin/e_exec.c:1315
 #, c-format
 msgid "This error log will be saved as %s/%s.log"
 msgstr ""
 
-#: src/bin/e_exec.c:1257
+#: src/bin/e_exec.c:1258
 #, fuzzy
 msgid "Error Information"
 msgstr "Error Information"
 
-#: src/bin/e_exec.c:1265
+#: src/bin/e_exec.c:1266
 #, fuzzy
 msgid "Error Signal Information"
 msgstr "Viga Signal Information"
 
-#: src/bin/e_exec.c:1275 src/bin/e_exec.c:1282
+#: src/bin/e_exec.c:1276 src/bin/e_exec.c:1283
 #, fuzzy
 msgid "Output Data"
 msgstr "väljundandmed"
 
-#: src/bin/e_exec.c:1283
+#: src/bin/e_exec.c:1284
 #, fuzzy
 msgid "There was no output."
 msgstr "Ei olnud toodangut."
@@ -2639,7 +2639,7 @@ msgid "Window"
 msgstr "aken"
 
 #: src/bin/e_int_client_menu.c:156
-#: src/modules/conf_randr/e_int_config_randr2.c:1100
+#: src/modules/conf_randr/e_int_config_randr2.c:1110
 #, fuzzy
 msgid "Align"
 msgstr "Enlightenment"
@@ -2675,7 +2675,7 @@ msgstr ""
 
 #: src/bin/e_int_client_menu.c:428 src/bin/e_int_client_prop.c:517
 #: src/bin/e_int_config_comp_match.c:523
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:208
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:213
 #, fuzzy
 msgid "Fullscreen"
 msgstr "Fullscreen"
@@ -2954,9 +2954,9 @@ msgstr "riik"
 #: src/modules/clock/e_mod_config.c:143
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:356
 #: src/modules/conf_performance/e_int_config_powermanagement.c:200
-#: src/modules/conf_randr/e_int_config_randr2.c:469
-#: src/modules/conf_randr/e_int_config_randr2.c:688
-#: src/modules/conf_randr/e_int_config_randr2.c:1067
+#: src/modules/conf_randr/e_int_config_randr2.c:479
+#: src/modules/conf_randr/e_int_config_randr2.c:698
+#: src/modules/conf_randr/e_int_config_randr2.c:1077
 #: src/modules/conf_theme/e_int_config_fonts.c:742
 #: src/modules/conf_theme/e_int_config_transitions.c:212
 #: src/modules/conf_theme/e_int_config_transitions.c:271
@@ -2969,16 +2969,16 @@ msgid "None"
 msgstr "mitte ükski"
 
 #: src/bin/e_int_client_prop.c:308
-#: src/modules/conf_randr/e_int_config_randr2.c:477
-#: src/modules/conf_randr/e_int_config_randr2.c:732
-#: src/modules/conf_randr/e_int_config_randr2.c:1071
+#: src/modules/conf_randr/e_int_config_randr2.c:487
+#: src/modules/conf_randr/e_int_config_randr2.c:742
+#: src/modules/conf_randr/e_int_config_randr2.c:1081
 msgid "Above"
 msgstr ""
 
 #: src/bin/e_int_client_prop.c:312
-#: src/modules/conf_randr/e_int_config_randr2.c:479
-#: src/modules/conf_randr/e_int_config_randr2.c:743
-#: src/modules/conf_randr/e_int_config_randr2.c:1072
+#: src/modules/conf_randr/e_int_config_randr2.c:489
+#: src/modules/conf_randr/e_int_config_randr2.c:753
+#: src/modules/conf_randr/e_int_config_randr2.c:1082
 msgid "Below"
 msgstr ""
 
@@ -3647,7 +3647,7 @@ msgid "Types"
 msgstr "tüüp;"
 
 #: src/bin/e_int_config_comp_match.c:466
-#: src/modules/conf_randr/e_int_config_randr2.c:1036
+#: src/modules/conf_randr/e_int_config_randr2.c:1046
 #, fuzzy
 msgid "On"
 msgstr "avatud"
@@ -4502,7 +4502,7 @@ msgid "Float"
 msgstr ""
 
 #: src/bin/e_shelf.c:66
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:220
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:225
 #: src/modules/everything/evry_config.c:566
 #: src/modules/gadman/e_mod_gadman.c:1105
 #, fuzzy
@@ -4510,7 +4510,7 @@ msgid "Horizontal"
 msgstr "horisontaalne"
 
 #: src/bin/e_shelf.c:67
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:222
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:227
 #: src/modules/everything/evry_config.c:559
 #: src/modules/gadman/e_mod_gadman.c:1114
 #, fuzzy
@@ -5162,7 +5162,7 @@ msgstr "taotlus"
 
 #: src/modules/backlight/e_mod_main.c:354
 #: src/modules/conf_display/e_mod_main.c:36
-#: src/modules/conf_randr/e_int_config_randr2.c:997
+#: src/modules/conf_randr/e_int_config_randr2.c:1007
 #, fuzzy
 msgid "Backlight"
 msgstr "Backlight"
@@ -7271,11 +7271,11 @@ msgstr "varu"
 
 #: src/modules/conf_menus/e_int_config_menus.c:289
 #: src/modules/conf_menus/e_int_config_menus.c:294
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:183
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:190
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:197
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:247
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:188
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:195
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:202
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:252
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:257
 #, c-format
 msgid "%2.0f pixels"
 msgstr ""
@@ -7449,7 +7449,7 @@ msgstr ""
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:208
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:295
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:242
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:247
 #: src/modules/syscon/e_int_config_syscon.c:176
 #, c-format
 msgid "%1.1f s"
@@ -7496,7 +7496,7 @@ msgstr "Performance"
 msgid "Power Management"
 msgstr "Power Management"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:78
+#: src/modules/conf_randr/e_int_config_randr2.c:79
 #: src/modules/conf_randr/e_mod_main.c:44
 #: src/modules/conf_randr/e_mod_main.c:60
 #: src/modules/conf_randr/e_mod_main.c:66
@@ -7504,113 +7504,118 @@ msgstr "Power Management"
 msgid "Screen Setup"
 msgstr "Screen Saver"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:471
-#: src/modules/conf_randr/e_int_config_randr2.c:699
-#: src/modules/conf_randr/e_int_config_randr2.c:799
-#: src/modules/conf_randr/e_int_config_randr2.c:1068
-#: src/modules/conf_randr/e_int_config_randr2.c:1210
+#: src/modules/conf_randr/e_int_config_randr2.c:481
+#: src/modules/conf_randr/e_int_config_randr2.c:709
+#: src/modules/conf_randr/e_int_config_randr2.c:809
+#: src/modules/conf_randr/e_int_config_randr2.c:1078
+#: src/modules/conf_randr/e_int_config_randr2.c:1229
 msgid "Clone"
 msgstr ""
 
-#: src/modules/conf_randr/e_int_config_randr2.c:473
-#: src/modules/conf_randr/e_int_config_randr2.c:710
-#: src/modules/conf_randr/e_int_config_randr2.c:1069
+#: src/modules/conf_randr/e_int_config_randr2.c:483
+#: src/modules/conf_randr/e_int_config_randr2.c:720
+#: src/modules/conf_randr/e_int_config_randr2.c:1079
 #, fuzzy
 msgid "Left of"
 msgstr "jäänud:"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:475
-#: src/modules/conf_randr/e_int_config_randr2.c:721
-#: src/modules/conf_randr/e_int_config_randr2.c:1070
+#: src/modules/conf_randr/e_int_config_randr2.c:485
+#: src/modules/conf_randr/e_int_config_randr2.c:731
+#: src/modules/conf_randr/e_int_config_randr2.c:1080
 #, fuzzy
 msgid "Right of"
 msgstr "õigus:"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:481
+#: src/modules/conf_randr/e_int_config_randr2.c:491
 #, fuzzy
 msgid "Unconfigured"
 msgstr "Seadista"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:797
-#: src/modules/conf_randr/e_int_config_randr2.c:1213
+#: src/modules/conf_randr/e_int_config_randr2.c:807
+#: src/modules/conf_randr/e_int_config_randr2.c:1232
 #, fuzzy
 msgid "Ignore"
 msgstr "eirata kõiki"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:798
-#: src/modules/conf_randr/e_int_config_randr2.c:1211
+#: src/modules/conf_randr/e_int_config_randr2.c:808
+#: src/modules/conf_randr/e_int_config_randr2.c:1230
 #, fuzzy
 msgid "Extend"
 msgstr "Extensions"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:800
-#: src/modules/conf_randr/e_int_config_randr2.c:1212
+#: src/modules/conf_randr/e_int_config_randr2.c:810
+#: src/modules/conf_randr/e_int_config_randr2.c:1231
 msgid "Ask"
 msgstr ""
 
-#: src/modules/conf_randr/e_int_config_randr2.c:803
+#: src/modules/conf_randr/e_int_config_randr2.c:813
 #, c-format
 msgid "Hotplug Policy (%s)"
 msgstr ""
 
-#: src/modules/conf_randr/e_int_config_randr2.c:881
+#: src/modules/conf_randr/e_int_config_randr2.c:891
 #: src/modules/mixer/emixer.c:1954
 #, fuzzy
 msgid "Outputs"
 msgstr "väljundandmed"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:989
+#: src/modules/conf_randr/e_int_config_randr2.c:999
 msgid "Laptop lid"
 msgstr ""
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1045
+#: src/modules/conf_randr/e_int_config_randr2.c:1055
 #, fuzzy
 msgid "Ignore Disconnect"
 msgstr "lahti"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1054
+#: src/modules/conf_randr/e_int_config_randr2.c:1064
 msgid "Priority"
 msgstr ""
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1066
+#: src/modules/conf_randr/e_int_config_randr2.c:1076
 #, fuzzy
 msgid "Relative"
 msgstr "suhteline"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1080
+#: src/modules/conf_randr/e_int_config_randr2.c:1090
 #, fuzzy
 msgid "To"
 msgstr "Näita tööriistariba"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1120
+#: src/modules/conf_randr/e_int_config_randr2.c:1130
 #, fuzzy
 msgid "Use Profile"
 msgstr "profiil"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1136
+#: src/modules/conf_randr/e_int_config_randr2.c:1146
 #, fuzzy
 msgid "Custom Scale"
 msgstr "Custom Image"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1145
+#: src/modules/conf_randr/e_int_config_randr2.c:1155
 #, fuzzy
 msgid "Scale"
 msgstr "locale"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1170
+#: src/modules/conf_randr/e_int_config_randr2.c:1180
 msgid "Response"
 msgstr ""
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1182
+#: src/modules/conf_randr/e_int_config_randr2.c:1192
 #, fuzzy
 msgid "Restore on start"
 msgstr "Lukk Startup"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1191
+#: src/modules/conf_randr/e_int_config_randr2.c:1201
+#, fuzzy
+msgid "Use command"
+msgstr "käsk"
+
+#: src/modules/conf_randr/e_int_config_randr2.c:1210
 msgid "Hotplug"
 msgstr ""
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1200
+#: src/modules/conf_randr/e_int_config_randr2.c:1219
 #, fuzzy
 msgid "Lid Events"
 msgstr "Sündmused"
@@ -7911,7 +7916,7 @@ msgid "Bytecode"
 msgstr "bytecode"
 
 #: src/modules/conf_theme/e_int_config_fonts.c:738
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:270
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:278
 #: src/modules/cpufreq/e_mod_main.c:253 src/modules/cpufreq/e_mod_main.c:291
 #, fuzzy
 msgid "Automatic"
@@ -7992,7 +7997,7 @@ msgid "Application Base DPI"
 msgstr "rakendused"
 
 #: src/modules/conf_theme/e_int_config_scale.c:343
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:206
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:211
 #, fuzzy
 msgid "Policy"
 msgstr "poliitika"
@@ -8689,149 +8694,153 @@ msgstr "Luba akende kohal fullscreen aknas"
 msgid "Screen Limits"
 msgstr "Screen Lock"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:64
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:65
 #: src/modules/conf_window_manipulation/e_mod_main.c:20
 #, fuzzy
 msgid "Window Geometry"
 msgstr "Window Geometry"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:178
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:183
 #, fuzzy
 msgid "Resist obstacles"
 msgstr "Seiske takistusi"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:180
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:185
 #, fuzzy
 msgid "Other windows"
 msgstr "muud aknad"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:187
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:192
 #, fuzzy
 msgid "Edge of the screen"
 msgstr "Ekraani serval"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:194
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:199
 #, fuzzy
 msgid "Desktop gadgets"
 msgstr "Desktop vidinad"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:201
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:206
 #, fuzzy
 msgid "Resistance"
 msgstr "vastupanu"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:211
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:216
 #, fuzzy
 msgid "Smart expansion"
 msgstr "Smart laiendamine"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:215
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:220
 #, fuzzy
 msgid "Fill available space"
 msgstr "Täitke ruumi"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:218
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:223
 #, fuzzy
 msgid "Direction"
 msgstr "suund"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:224
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:229
 #, fuzzy
 msgid "Both"
 msgstr "mõlemad"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:227
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:232
 #, fuzzy
 msgid "Manipulation"
 msgstr "maksimeerida"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:228
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:233
 #, fuzzy
 msgid "Allow manipulation of maximized windows"
 msgstr "Laske manipuleerimine maksimeeritud aknad"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:231
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:236
 #, fuzzy
 msgid "Allow windows above fullscreen window"
 msgstr "Luba akende kohal fullscreen aknas"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:235
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:240
 #, fuzzy
 msgid "Maximization"
 msgstr "maksimeerida"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:240
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:245
 #, fuzzy
 msgid "Automatically accept changes after:"
 msgstr "Automaatselt aktsepteerida muutusi pärast:"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:245
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:250
 #, fuzzy
 msgid "Move by"
 msgstr "liikuma"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:250
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:255
 #, fuzzy
 msgid "Resize by"
 msgstr "resize"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:255
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:260
 #: src/modules/wizard/page_011.c:187 src/modules/xkbswitch/e_mod_main.c:78
 #: src/modules/xkbswitch/e_mod_main.c:253
 #, fuzzy
 msgid "Keyboard"
 msgstr "klaviatuur"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:261
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:266
 #, fuzzy
 msgid "Limit resize to useful geometry"
 msgstr "Piirata suurust , et kasulik geomeetria"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:264
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:269
 msgid "Ensure initial placement of windows inside useful geometry"
 msgstr ""
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:267
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:272
 #, fuzzy
 msgid "Adjust windows on shelf hide"
 msgstr "Reguleerige aknad riiul hide"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:275
+msgid "Set hidden state when not on current desktop"
+msgstr ""
+
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:283
 #, fuzzy
 msgid "Follow Move"
 msgstr "Jälgi Liiguta"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:278
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:286
 #, fuzzy
 msgid "Follow Resize"
 msgstr "Jälgi Resize"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:281
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:289
 #, fuzzy
 msgid "Follow Raise"
 msgstr "Jälgi Tõstke"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:284
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:292
 #, fuzzy
 msgid "Follow Lower"
 msgstr "Jälgi Lower"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:287
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:295
 #, fuzzy
 msgid "Follow Layer"
 msgstr "Jälgi Layer"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:290
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:298
 #, fuzzy
 msgid "Follow Desktop"
 msgstr "Jälgi Desktop"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:293
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:301
 #, fuzzy
 msgid "Follow Iconify"
 msgstr "Jälgi Iconify"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:297
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:305
 #: src/modules/quickaccess/e_mod_config.c:313
 #, fuzzy
 msgid "Transients"
@@ -11357,7 +11366,7 @@ msgstr "Näita Menüü ..."
 msgid "Systray Settings"
 msgstr "fondiseadistused"
 
-#: src/modules/systray/e_mod_main.c:358
+#: src/modules/systray/e_mod_main.c:373
 #, fuzzy
 msgid "Systray"
 msgstr "salve"

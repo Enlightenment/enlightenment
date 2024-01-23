@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment DR17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-29 19:35+0100\n"
+"POT-Creation-Date: 2024-01-23 21:51+0100\n"
 "PO-Revision-Date: 2012-12-28 20:57+0900\n"
 "Last-Translator: Daniel Juyung Seo <seojuyung2@gmali.com>\n"
 "Language-Team: Korean <KO@li.org>\n"
@@ -47,7 +47,7 @@ msgstr "인라이튼먼트"
 #: src/bin/e_about.c:26
 #, fuzzy
 msgid ""
-"<title>Copyright &copy; 2000-2022, by the Enlightenment Development Team</"
+"<title>Copyright &copy; 2000-2024, by the Enlightenment Development Team</"
 "><ps/><ps/>We hope you enjoy using this software as much as we enjoyed "
 "writing it.<ps/><ps/>To contact us please visit:<ps/><hilight>http://www."
 "enlightenment.org</><ps/><ps/>"
@@ -1098,7 +1098,7 @@ msgstr ""
 
 #: src/bin/e_comp_x_randr.c:462 src/bin/e_config_dialog.c:274
 #: src/bin/e_desktop_editor.c:907 src/bin/e_desktop_editor.c:971
-#: src/bin/e_entry_dialog.c:126 src/bin/e_exec.c:898 src/bin/e_fm.c:10212
+#: src/bin/e_entry_dialog.c:126 src/bin/e_exec.c:899 src/bin/e_fm.c:10212
 #: src/bin/e_fm.c:10979 src/bin/e_fm_prop.c:769
 #: src/bin/e_import_config_dialog.c:360 src/bin/e_int_client_remember.c:358
 #: src/bin/e_int_client_remember.c:553 src/bin/e_int_config_comp_match.c:583
@@ -1202,7 +1202,7 @@ msgstr "복호화에 실패했습니다."
 msgid "The error is unknown to Enlightenment."
 msgstr "인라이튼먼트에서 알려지지 않은 오류입니다."
 
-#: src/bin/e_config.c:1279
+#: src/bin/e_config.c:1280
 #, fuzzy
 msgid ""
 "Settings data needed upgrading. Your old settings have<ps/>been wiped and a "
@@ -1220,7 +1220,7 @@ msgstr ""
 "가하여 문제를 해결합니다.<br>이제 여러분의 취향대로 다시 설정할 수 있습니다."
 "<br>여러분의 설정에 문제를 일으켜 죄송합니다.<br>"
 
-#: src/bin/e_config.c:1296
+#: src/bin/e_config.c:1297
 #, fuzzy
 msgid ""
 "Your settings are NEWER than Enlightenment. This is very<ps/>strange. This "
@@ -1235,14 +1235,14 @@ msgstr ""
 "<br>이는 잘못된 현상이며 설정을 기본으로 되돌려 놓았습니다.<br> 불편을 드려 "
 "죄송합니다. <br>"
 
-#: src/bin/e_config.c:1412
+#: src/bin/e_config.c:1413
 msgid ""
 "Your bindings settings version does not match the current settings version."
 "<ps/>As a result, all bindings have been reloaded from defaults.<ps/>Sorry "
 "for the inconvenience.<ps/>"
 msgstr ""
 
-#: src/bin/e_config.c:2719
+#: src/bin/e_config.c:2720
 msgid "Settings Upgraded"
 msgstr "설정이 갱신되었습니다."
 
@@ -1418,37 +1418,37 @@ msgstr "'%s'에 대한 아이콘 선택"
 msgid "Select an Executable"
 msgstr "실행 파일 선택"
 
-#: src/bin/e_exec.c:621 src/bin/e_exec.c:629 src/bin/e_exec.c:640
-#: src/bin/e_exec.c:699 src/bin/e_remember.c:51
+#: src/bin/e_exec.c:622 src/bin/e_exec.c:630 src/bin/e_exec.c:641
+#: src/bin/e_exec.c:700 src/bin/e_remember.c:51
 #: src/modules/conf_intl/e_int_config_imc.c:274
 #: src/modules/conf_intl/e_int_config_imc.c:561
 msgid "Run Error"
 msgstr "실행 오류"
 
-#: src/bin/e_exec.c:622
+#: src/bin/e_exec.c:623
 msgid "Enlightenment was unable to get current directory"
 msgstr "인라이튼먼트가 현재 디렉터리를 가져올 수 없습니다"
 
-#: src/bin/e_exec.c:630
+#: src/bin/e_exec.c:631
 #, fuzzy, c-format
 msgid "Enlightenment was unable to change to directory:<ps/><ps/>%s"
 msgstr "인라이튼먼트가 디렉터리 위치를 바꿀 수 없습니다:<br><br>%s"
 
-#: src/bin/e_exec.c:641
+#: src/bin/e_exec.c:642
 #, fuzzy, c-format
 msgid "Enlightenment was unable to restore to directory:<ps/><ps/>%s"
 msgstr "인라이튼먼트가 디렉터리로 돌아갈 수 없습니다:<br><br>%s"
 
-#: src/bin/e_exec.c:700
+#: src/bin/e_exec.c:701
 #, fuzzy, c-format
 msgid "Enlightenment was unable to fork a child process:<ps/><ps/>%s"
 msgstr "인라이튼먼트가 자식 프로세스를 분할(fork)할 수 없습니다:<br><br>%s"
 
-#: src/bin/e_exec.c:889
+#: src/bin/e_exec.c:890
 msgid "Application run error"
 msgstr "프로그램 실행 오류"
 
-#: src/bin/e_exec.c:891
+#: src/bin/e_exec.c:892
 #, fuzzy, c-format
 msgid ""
 "Enlightenment was unable to run the application:<ps/><ps/>%s<ps/><ps/>The "
@@ -1457,107 +1457,107 @@ msgstr ""
 "인라이튼먼트가 프로그램을 실행할 수 없습니다:<br><br>%s<br><br>프로그램 시작"
 "에 실패했습니다."
 
-#: src/bin/e_exec.c:1037
+#: src/bin/e_exec.c:1038
 msgid "Application Execution Error"
 msgstr "프로그램 실행 오류"
 
-#: src/bin/e_exec.c:1050 src/bin/e_exec.c:1052
+#: src/bin/e_exec.c:1051 src/bin/e_exec.c:1053
 #, c-format
 msgid "%s stopped running unexpectedly."
 msgstr "%s 프로그램이 갑작스럽게 동작을 멈추었습니다."
 
-#: src/bin/e_exec.c:1058
+#: src/bin/e_exec.c:1059
 #, c-format
 msgid "An exit code of %i was returned from %s."
 msgstr "%2$s 프로그램이 %1$i 종료 코드를 남겼습니다."
 
-#: src/bin/e_exec.c:1066
+#: src/bin/e_exec.c:1067
 #, c-format
 msgid "%s was interrupted by an Interrupt Signal."
 msgstr "인터럽트 시그널이 %s 프로그램을 중단했습니다."
 
-#: src/bin/e_exec.c:1069
+#: src/bin/e_exec.c:1070
 #, c-format
 msgid "%s was interrupted by a Quit Signal."
 msgstr "종료 시그널이 %s 프로그램을 중단했습니다."
 
-#: src/bin/e_exec.c:1073
+#: src/bin/e_exec.c:1074
 #, c-format
 msgid "%s was interrupted by an Abort Signal."
 msgstr "중지 시그널이 %s 프로그램을 중단했습니다."
 
-#: src/bin/e_exec.c:1076
+#: src/bin/e_exec.c:1077
 #, c-format
 msgid "%s was interrupted by a Floating Point Error."
 msgstr "부동소수점 오류가 %s 프로그램을 중단했습니다."
 
-#: src/bin/e_exec.c:1080
+#: src/bin/e_exec.c:1081
 #, c-format
 msgid "%s was interrupted by an Uninterruptable Kill Signal."
 msgstr "중단할 수 없는 강제 종료 시그널이 %s 프로그램을 중단했습니다."
 
-#: src/bin/e_exec.c:1084
+#: src/bin/e_exec.c:1085
 #, c-format
 msgid "%s was interrupted by a Segmentation Fault."
 msgstr "세그먼테이션 오류가 %s 프로그램을 중단했습니다."
 
-#: src/bin/e_exec.c:1088
+#: src/bin/e_exec.c:1089
 #, c-format
 msgid "%s was interrupted by a Broken Pipe."
 msgstr "깨진 파이프가 %s 프로그램을 중단했습니다."
 
-#: src/bin/e_exec.c:1091
+#: src/bin/e_exec.c:1092
 #, c-format
 msgid "%s was interrupted by a Termination Signal."
 msgstr "중단 시그널이 %s 프로그램을 중단했습니다."
 
-#: src/bin/e_exec.c:1095
+#: src/bin/e_exec.c:1096
 #, c-format
 msgid "%s was interrupted by a Bus Error."
 msgstr "버스 오류가 %s 프로그램을 중단했습니다."
 
-#: src/bin/e_exec.c:1098
+#: src/bin/e_exec.c:1099
 #, c-format
 msgid "%s was interrupted by the signal number %i."
 msgstr "%2$i번 시그널이 %1$s 프로그램을 중단했습니다."
 
-#: src/bin/e_exec.c:1154
+#: src/bin/e_exec.c:1155
 msgid ""
 "***The remaining output has been truncated. Save the output to view.***\n"
 msgstr ""
 "***나머지 출력 내용을 잘랐습니다. 출력 내용을 보시려면 저장하십시오.***\n"
 
-#: src/bin/e_exec.c:1213 src/bin/e_exec.c:1291 src/bin/e_exec.c:1298
+#: src/bin/e_exec.c:1214 src/bin/e_exec.c:1292 src/bin/e_exec.c:1299
 msgid "Error Logs"
 msgstr "오류 기록"
 
-#: src/bin/e_exec.c:1219 src/bin/e_exec.c:1299
+#: src/bin/e_exec.c:1220 src/bin/e_exec.c:1300
 msgid "There was no error message."
 msgstr "오류 메시지가 없음."
 
-#: src/bin/e_exec.c:1223 src/bin/e_exec.c:1306
+#: src/bin/e_exec.c:1224 src/bin/e_exec.c:1307
 msgid "Save This Message"
 msgstr "이 메시지 저장"
 
-#: src/bin/e_exec.c:1228 src/bin/e_exec.c:1231 src/bin/e_exec.c:1311
-#: src/bin/e_exec.c:1314
+#: src/bin/e_exec.c:1229 src/bin/e_exec.c:1232 src/bin/e_exec.c:1312
+#: src/bin/e_exec.c:1315
 #, c-format
 msgid "This error log will be saved as %s/%s.log"
 msgstr "이 오류 기록은 %s/%s.log 파일로 저장합니다."
 
-#: src/bin/e_exec.c:1257
+#: src/bin/e_exec.c:1258
 msgid "Error Information"
 msgstr "오류 메세지"
 
-#: src/bin/e_exec.c:1265
+#: src/bin/e_exec.c:1266
 msgid "Error Signal Information"
 msgstr "시그널 정보 오류"
 
-#: src/bin/e_exec.c:1275 src/bin/e_exec.c:1282
+#: src/bin/e_exec.c:1276 src/bin/e_exec.c:1283
 msgid "Output Data"
 msgstr "출력 데이터"
 
-#: src/bin/e_exec.c:1283
+#: src/bin/e_exec.c:1284
 msgid "There was no output."
 msgstr "출력 내용이 없습니다."
 
@@ -2357,7 +2357,7 @@ msgid "Window"
 msgstr "창"
 
 #: src/bin/e_int_client_menu.c:156
-#: src/modules/conf_randr/e_int_config_randr2.c:1100
+#: src/modules/conf_randr/e_int_config_randr2.c:1110
 #, fuzzy
 msgid "Align"
 msgstr "정렬"
@@ -2388,7 +2388,7 @@ msgstr ""
 
 #: src/bin/e_int_client_menu.c:428 src/bin/e_int_client_prop.c:517
 #: src/bin/e_int_config_comp_match.c:523
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:208
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:213
 msgid "Fullscreen"
 msgstr "전체 화면"
 
@@ -2640,9 +2640,9 @@ msgstr "고정"
 #: src/modules/clock/e_mod_config.c:143
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:356
 #: src/modules/conf_performance/e_int_config_powermanagement.c:200
-#: src/modules/conf_randr/e_int_config_randr2.c:469
-#: src/modules/conf_randr/e_int_config_randr2.c:688
-#: src/modules/conf_randr/e_int_config_randr2.c:1067
+#: src/modules/conf_randr/e_int_config_randr2.c:479
+#: src/modules/conf_randr/e_int_config_randr2.c:698
+#: src/modules/conf_randr/e_int_config_randr2.c:1077
 #: src/modules/conf_theme/e_int_config_fonts.c:742
 #: src/modules/conf_theme/e_int_config_transitions.c:212
 #: src/modules/conf_theme/e_int_config_transitions.c:271
@@ -2654,16 +2654,16 @@ msgid "None"
 msgstr "없음"
 
 #: src/bin/e_int_client_prop.c:308
-#: src/modules/conf_randr/e_int_config_randr2.c:477
-#: src/modules/conf_randr/e_int_config_randr2.c:732
-#: src/modules/conf_randr/e_int_config_randr2.c:1071
+#: src/modules/conf_randr/e_int_config_randr2.c:487
+#: src/modules/conf_randr/e_int_config_randr2.c:742
+#: src/modules/conf_randr/e_int_config_randr2.c:1081
 msgid "Above"
 msgstr "상단"
 
 #: src/bin/e_int_client_prop.c:312
-#: src/modules/conf_randr/e_int_config_randr2.c:479
-#: src/modules/conf_randr/e_int_config_randr2.c:743
-#: src/modules/conf_randr/e_int_config_randr2.c:1072
+#: src/modules/conf_randr/e_int_config_randr2.c:489
+#: src/modules/conf_randr/e_int_config_randr2.c:753
+#: src/modules/conf_randr/e_int_config_randr2.c:1082
 msgid "Below"
 msgstr "하단"
 
@@ -3259,7 +3259,7 @@ msgid "Types"
 msgstr "형식:"
 
 #: src/bin/e_int_config_comp_match.c:466
-#: src/modules/conf_randr/e_int_config_randr2.c:1036
+#: src/modules/conf_randr/e_int_config_randr2.c:1046
 msgid "On"
 msgstr "켬"
 
@@ -4139,14 +4139,14 @@ msgid "Float"
 msgstr "소수"
 
 #: src/bin/e_shelf.c:66
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:220
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:225
 #: src/modules/everything/evry_config.c:566
 #: src/modules/gadman/e_mod_gadman.c:1105
 msgid "Horizontal"
 msgstr "수평"
 
 #: src/bin/e_shelf.c:67
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:222
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:227
 #: src/modules/everything/evry_config.c:559
 #: src/modules/gadman/e_mod_gadman.c:1114
 msgid "Vertical"
@@ -4779,7 +4779,7 @@ msgstr "프로그램"
 
 #: src/modules/backlight/e_mod_main.c:354
 #: src/modules/conf_display/e_mod_main.c:36
-#: src/modules/conf_randr/e_int_config_randr2.c:997
+#: src/modules/conf_randr/e_int_config_randr2.c:1007
 msgid "Backlight"
 msgstr "백라이트"
 
@@ -6703,11 +6703,11 @@ msgstr "여백"
 
 #: src/modules/conf_menus/e_int_config_menus.c:289
 #: src/modules/conf_menus/e_int_config_menus.c:294
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:183
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:190
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:197
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:247
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:188
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:195
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:202
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:252
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:257
 #, c-format
 msgid "%2.0f pixels"
 msgstr "%2.0f픽셀"
@@ -6857,7 +6857,7 @@ msgstr "예: 디스크에 저장"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:208
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:295
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:242
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:247
 #: src/modules/syscon/e_int_config_syscon.c:176
 #, c-format
 msgid "%1.1f s"
@@ -6899,118 +6899,123 @@ msgstr "성능"
 msgid "Power Management"
 msgstr "전원 관리"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:78
+#: src/modules/conf_randr/e_int_config_randr2.c:79
 #: src/modules/conf_randr/e_mod_main.c:44
 #: src/modules/conf_randr/e_mod_main.c:60
 #: src/modules/conf_randr/e_mod_main.c:66
 msgid "Screen Setup"
 msgstr "화면 설정"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:471
-#: src/modules/conf_randr/e_int_config_randr2.c:699
-#: src/modules/conf_randr/e_int_config_randr2.c:799
-#: src/modules/conf_randr/e_int_config_randr2.c:1068
-#: src/modules/conf_randr/e_int_config_randr2.c:1210
+#: src/modules/conf_randr/e_int_config_randr2.c:481
+#: src/modules/conf_randr/e_int_config_randr2.c:709
+#: src/modules/conf_randr/e_int_config_randr2.c:809
+#: src/modules/conf_randr/e_int_config_randr2.c:1078
+#: src/modules/conf_randr/e_int_config_randr2.c:1229
 msgid "Clone"
 msgstr ""
 
-#: src/modules/conf_randr/e_int_config_randr2.c:473
-#: src/modules/conf_randr/e_int_config_randr2.c:710
-#: src/modules/conf_randr/e_int_config_randr2.c:1069
+#: src/modules/conf_randr/e_int_config_randr2.c:483
+#: src/modules/conf_randr/e_int_config_randr2.c:720
+#: src/modules/conf_randr/e_int_config_randr2.c:1079
 #, fuzzy
 msgid "Left of"
 msgstr "왼쪽"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:475
-#: src/modules/conf_randr/e_int_config_randr2.c:721
-#: src/modules/conf_randr/e_int_config_randr2.c:1070
+#: src/modules/conf_randr/e_int_config_randr2.c:485
+#: src/modules/conf_randr/e_int_config_randr2.c:731
+#: src/modules/conf_randr/e_int_config_randr2.c:1080
 #, fuzzy
 msgid "Right of"
 msgstr "오른쪽"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:481
+#: src/modules/conf_randr/e_int_config_randr2.c:491
 #, fuzzy
 msgid "Unconfigured"
 msgstr "설정"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:797
-#: src/modules/conf_randr/e_int_config_randr2.c:1213
+#: src/modules/conf_randr/e_int_config_randr2.c:807
+#: src/modules/conf_randr/e_int_config_randr2.c:1232
 msgid "Ignore"
 msgstr "무시"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:798
-#: src/modules/conf_randr/e_int_config_randr2.c:1211
+#: src/modules/conf_randr/e_int_config_randr2.c:808
+#: src/modules/conf_randr/e_int_config_randr2.c:1230
 #, fuzzy
 msgid "Extend"
 msgstr "확장"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:800
-#: src/modules/conf_randr/e_int_config_randr2.c:1212
+#: src/modules/conf_randr/e_int_config_randr2.c:810
+#: src/modules/conf_randr/e_int_config_randr2.c:1231
 msgid "Ask"
 msgstr ""
 
-#: src/modules/conf_randr/e_int_config_randr2.c:803
+#: src/modules/conf_randr/e_int_config_randr2.c:813
 #, c-format
 msgid "Hotplug Policy (%s)"
 msgstr ""
 
-#: src/modules/conf_randr/e_int_config_randr2.c:881
+#: src/modules/conf_randr/e_int_config_randr2.c:891
 #: src/modules/mixer/emixer.c:1954
 #, fuzzy
 msgid "Outputs"
 msgstr "출력 데이터"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:989
+#: src/modules/conf_randr/e_int_config_randr2.c:999
 msgid "Laptop lid"
 msgstr ""
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1045
+#: src/modules/conf_randr/e_int_config_randr2.c:1055
 #, fuzzy
 msgid "Ignore Disconnect"
 msgstr "끊김"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1054
+#: src/modules/conf_randr/e_int_config_randr2.c:1064
 msgid "Priority"
 msgstr ""
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1066
+#: src/modules/conf_randr/e_int_config_randr2.c:1076
 msgid "Relative"
 msgstr ""
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1080
+#: src/modules/conf_randr/e_int_config_randr2.c:1090
 #, fuzzy
 msgid "To"
 msgstr "상단"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1120
+#: src/modules/conf_randr/e_int_config_randr2.c:1130
 #, fuzzy
 msgid "Use Profile"
 msgstr "프로파일"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1136
+#: src/modules/conf_randr/e_int_config_randr2.c:1146
 #, fuzzy
 msgid "Custom Scale"
 msgstr "사용자 정의 그림"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1145
+#: src/modules/conf_randr/e_int_config_randr2.c:1155
 #, fuzzy
 msgid "Scale"
 msgstr "로캘"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1170
+#: src/modules/conf_randr/e_int_config_randr2.c:1180
 msgid "Response"
 msgstr ""
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1182
+#: src/modules/conf_randr/e_int_config_randr2.c:1192
 #, fuzzy
 msgid "Restore on start"
 msgstr "시작시 잠금"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1191
+#: src/modules/conf_randr/e_int_config_randr2.c:1201
+#, fuzzy
+msgid "Use command"
+msgstr "명령"
+
+#: src/modules/conf_randr/e_int_config_randr2.c:1210
 msgid "Hotplug"
 msgstr ""
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1200
+#: src/modules/conf_randr/e_int_config_randr2.c:1219
 #, fuzzy
 msgid "Lid Events"
 msgstr "이벤트"
@@ -7256,7 +7261,7 @@ msgid "Bytecode"
 msgstr "바이트코드"
 
 #: src/modules/conf_theme/e_int_config_fonts.c:738
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:270
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:278
 #: src/modules/cpufreq/e_mod_main.c:253 src/modules/cpufreq/e_mod_main.c:291
 msgid "Automatic"
 msgstr "자동"
@@ -7328,7 +7333,7 @@ msgid "Application Base DPI"
 msgstr "프로그램"
 
 #: src/modules/conf_theme/e_int_config_scale.c:343
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:206
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:211
 msgid "Policy"
 msgstr "정책"
 
@@ -7925,123 +7930,127 @@ msgstr "보이는 화면 범위 한계에서 창이 완전히 벗어나는 것�
 msgid "Screen Limits"
 msgstr "화면 수 제한"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:64
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:65
 #: src/modules/conf_window_manipulation/e_mod_main.c:20
 msgid "Window Geometry"
 msgstr "창 공간"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:178
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:183
 msgid "Resist obstacles"
 msgstr "장애물 저항"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:180
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:185
 msgid "Other windows"
 msgstr "다른 창"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:187
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:192
 msgid "Edge of the screen"
 msgstr "화면의 가장자리"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:194
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:199
 msgid "Desktop gadgets"
 msgstr "데스크톱 가젯"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:201
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:206
 msgid "Resistance"
 msgstr "저항"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:211
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:216
 msgid "Smart expansion"
 msgstr "똑똑한 확장"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:215
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:220
 msgid "Fill available space"
 msgstr "사용 가능한 영역 채우기"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:218
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:223
 msgid "Direction"
 msgstr "방향"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:224
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:229
 msgid "Both"
 msgstr "둘 다"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:227
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:232
 #, fuzzy
 msgid "Manipulation"
 msgstr "최대화"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:228
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:233
 msgid "Allow manipulation of maximized windows"
 msgstr "최대화한 창 조작 허용"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:231
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:236
 msgid "Allow windows above fullscreen window"
 msgstr "전체 화면 창 위의 창 허용"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:235
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:240
 msgid "Maximization"
 msgstr "최대화"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:240
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:245
 msgid "Automatically accept changes after:"
 msgstr "다음 시간 후 자동으로 바뀐 내용 적용:"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:245
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:250
 msgid "Move by"
 msgstr "이동"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:250
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:255
 msgid "Resize by"
 msgstr "크기 바꾸기"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:255
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:260
 #: src/modules/wizard/page_011.c:187 src/modules/xkbswitch/e_mod_main.c:78
 #: src/modules/xkbswitch/e_mod_main.c:253
 msgid "Keyboard"
 msgstr "키보드"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:261
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:266
 msgid "Limit resize to useful geometry"
 msgstr "공간을 유용화 하려면 크기 조절 제한"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:264
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:269
 msgid "Ensure initial placement of windows inside useful geometry"
 msgstr ""
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:267
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:272
 msgid "Adjust windows on shelf hide"
 msgstr "서랍을 숨길 때 창 조절"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:275
+msgid "Set hidden state when not on current desktop"
+msgstr ""
+
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:283
 msgid "Follow Move"
 msgstr "이동 따르기"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:278
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:286
 msgid "Follow Resize"
 msgstr "크기 바꿈 따르기"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:281
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:289
 msgid "Follow Raise"
 msgstr "맨 위로 따르기"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:284
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:292
 msgid "Follow Lower"
 msgstr "맨 아래로 따르기"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:287
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:295
 msgid "Follow Layer"
 msgstr "레이어 따르기"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:290
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:298
 msgid "Follow Desktop"
 msgstr "데스크톱 따르기"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:293
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:301
 msgid "Follow Iconify"
 msgstr "아이콘 표시 따르기"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:297
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:305
 #: src/modules/quickaccess/e_mod_config.c:313
 msgid "Transients"
 msgstr "일시적"
@@ -10375,7 +10384,7 @@ msgstr "메뉴 표시..."
 msgid "Systray Settings"
 msgstr "시스콘 설정"
 
-#: src/modules/systray/e_mod_main.c:358
+#: src/modules/systray/e_mod_main.c:373
 msgid "Systray"
 msgstr "시스템 표시줄"
 

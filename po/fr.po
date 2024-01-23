@@ -17,8 +17,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
-"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2023-12-26 17:09+0100\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-23 21:51+0100\n"
 "PO-Revision-Date: 2023-12-26 17:27+0100\n"
 "Last-Translator: Philippe Jean Guillaumie <similar@orange.fr>\n"
 "Language-Team: French\n"
@@ -54,8 +54,9 @@ msgid "Enlightenment"
 msgstr "Enlightenment"
 
 #: src/bin/e_about.c:26
+#, fuzzy
 msgid ""
-"<title>Copyright &copy; 2000-2022, by the Enlightenment Development Team</"
+"<title>Copyright &copy; 2000-2024, by the Enlightenment Development Team</"
 "><ps/><ps/>We hope you enjoy using this software as much as we enjoyed "
 "writing it.<ps/><ps/>To contact us please visit:<ps/><hilight>http://www."
 "enlightenment.org</><ps/><ps/>"
@@ -10305,7 +10306,7 @@ msgstr "Afficher le menu"
 msgid "Systray Settings"
 msgstr "Paramètres de la zone de notification"
 
-#: src/modules/systray/e_mod_main.c:358
+#: src/modules/systray/e_mod_main.c:373
 msgid "Systray"
 msgstr "Zone de notification"
 

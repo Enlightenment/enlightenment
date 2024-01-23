@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
-"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2023-12-26 17:09+0100\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-23 21:51+0100\n"
 "PO-Revision-Date: 2023-12-26 23:01+0000\n"
 "Last-Translator: Hugo Carvalho <hugokarvalho@hotmail.com>\n"
 "Language-Team: Portuguese\n"
@@ -44,8 +44,9 @@ msgid "Enlightenment"
 msgstr "Enlightenment"
 
 #: src/bin/e_about.c:26
+#, fuzzy
 msgid ""
-"<title>Copyright &copy; 2000-2022, by the Enlightenment Development Team</"
+"<title>Copyright &copy; 2000-2024, by the Enlightenment Development Team</"
 "><ps/><ps/>We hope you enjoy using this software as much as we enjoyed "
 "writing it.<ps/><ps/>To contact us please visit:<ps/><hilight>http://www."
 "enlightenment.org</><ps/><ps/>"
@@ -10241,7 +10242,7 @@ msgstr "Mostrar menu"
 msgid "Systray Settings"
 msgstr "Definições da bandeja"
 
-#: src/modules/systray/e_mod_main.c:358
+#: src/modules/systray/e_mod_main.c:373
 msgid "Systray"
 msgstr "Bandeja do sistema"
 
@@ -10864,15 +10865,15 @@ msgstr "Não foi possível abrir a ligação do socket X11."
 msgid "Cannot launch XWayland from X11 display."
 msgstr "Não é possível lançar o XWayland a partir do ecrã X11."
 
-msgid ""
-"This image will be uploaded<ps/>to enlightenment.org. It will be publicly "
-"visible."
-msgstr ""
-"Esta imagem será carregada<ps/> no site enlightenment.org. Será visível "
-"publicamente."
+#~ msgid ""
+#~ "This image will be uploaded<ps/>to enlightenment.org. It will be publicly "
+#~ "visible."
+#~ msgstr ""
+#~ "Esta imagem será carregada<ps/> no site enlightenment.org. Será visível "
+#~ "publicamente."
 
-msgid "Force this device to be connected when detected"
-msgstr "Forçar esse dispositivo a ser ligado quando detetado"
+#~ msgid "Force this device to be connected when detected"
+#~ msgstr "Forçar esse dispositivo a ser ligado quando detetado"
 
 #, fuzzy
 #~| msgid "Stop this from being an unlock device"
