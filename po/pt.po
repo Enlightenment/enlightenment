@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-01-23 21:51+0100\n"
-"PO-Revision-Date: 2023-12-26 23:01+0000\n"
+"PO-Revision-Date: 2024-01-24 00:12+0000\n"
 "Last-Translator: Hugo Carvalho <hugokarvalho@hotmail.com>\n"
 "Language-Team: Portuguese\n"
 "Language: pt\n"
@@ -44,16 +44,15 @@ msgid "Enlightenment"
 msgstr "Enlightenment"
 
 #: src/bin/e_about.c:26
-#, fuzzy
 msgid ""
 "<title>Copyright &copy; 2000-2024, by the Enlightenment Development Team</"
 "><ps/><ps/>We hope you enjoy using this software as much as we enjoyed "
 "writing it.<ps/><ps/>To contact us please visit:<ps/><hilight>http://www."
 "enlightenment.org</><ps/><ps/>"
 msgstr ""
-"<title>Direitos de autor &copy; 2000-2022, pela equipa de desenvolvimento do "
+"<title>Direitos de autor &copy; 2000-2024, pela equipa de desenvolvimento do "
 "Enlightenment</><ps/><ps/>Esperamos que goste de utilizar este software, "
-"tanto como nós gostamos de a desenvolver.<ps/><ps/>Para nos contactar, "
+"tanto como nós gostamos de o desenvolver.<ps/><ps/>Para nos contactar, "
 "visite:<ps/><hilight>http://www.enlightenment.org</><ps/><ps/>"
 
 #: src/bin/e_about.c:69
@@ -4855,7 +4854,7 @@ msgstr "Ignorar automaticamente em..."
 #: src/modules/conf_window_manipulation/e_int_config_window_process.c:101
 #, c-format
 msgid "%1.0f s"
-msgstr "%1.0f seg."
+msgstr "%1.0f s"
 
 #: src/modules/battery/e_mod_config.c:274
 msgid "Alert"
@@ -6356,7 +6355,7 @@ msgstr "Limite para aplicar o impulso do arrastamento"
 #: src/modules/conf_interaction/e_int_config_interaction.c:113
 #, c-format
 msgid "%1.0f pixels/s"
-msgstr "%1.0f pixéis/seg."
+msgstr "%1.0f pixéis/s"
 
 #: src/modules/conf_interaction/e_int_config_interaction.c:119
 msgid "Friction slowdown"
@@ -6366,7 +6365,7 @@ msgstr "Atraso da fricção"
 #: src/modules/conf_performance/e_int_config_powermanagement.c:247
 #, c-format
 msgid "%1.2f s"
-msgstr "%1.2f seg."
+msgstr "%1.2f s"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:62
 msgid "Mouse Settings"
@@ -6680,7 +6679,7 @@ msgstr "Velocidade da deslocação do menu"
 #: src/modules/conf_menus/e_int_config_menus.c:304
 #, c-format
 msgid "%5.0f pixels/s"
-msgstr "%5.0f pixéis/seg."
+msgstr "%5.0f pixéis/s"
 
 #: src/modules/conf_menus/e_int_config_menus.c:307
 msgid "Fast Mouse Move Threshold"
@@ -6690,7 +6689,7 @@ msgstr "Limite para a deslocação rápida do rato"
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:207
 #, c-format
 msgid "%4.0f pixels/s"
-msgstr "%4.0f pixéis/seg."
+msgstr "%4.0f pixéis/s"
 
 #: src/modules/conf_menus/e_int_config_menus.c:312
 msgid "Click Drag Timeout"
@@ -6699,7 +6698,7 @@ msgstr "Intervalo para clique e arrastamento"
 #: src/modules/conf_menus/e_int_config_menus.c:314
 #, c-format
 msgid "%2.2f s"
-msgstr "%2.2f seg."
+msgstr "%2.2f s"
 
 #: src/modules/conf_menus/e_int_config_menus.c:317
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:377
@@ -6809,7 +6808,7 @@ msgstr "exemplo: Gravar no disco"
 #: src/modules/syscon/e_int_config_syscon.c:176
 #, c-format
 msgid "%1.1f s"
-msgstr "%1.1f seg."
+msgstr "%1.1f s"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:239
 #: src/modules/notification/e_mod_config.c:102
@@ -6825,7 +6824,7 @@ msgstr "Médio"
 #: src/modules/conf_performance/e_int_config_powermanagement.c:364
 #, c-format
 msgid "%.0f s"
-msgstr "%1.0f seg."
+msgstr "%.0f s"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:317
 msgid "High"
@@ -10240,11 +10239,11 @@ msgstr "Mostrar menu"
 
 #: src/modules/systray/e_mod_main.c:87
 msgid "Systray Settings"
-msgstr "Definições da bandeja"
+msgstr "Definições da área de notificação do sistema"
 
 #: src/modules/systray/e_mod_main.c:373
 msgid "Systray"
-msgstr "Bandeja do sistema"
+msgstr "Área de notificação do sistema"
 
 #: src/modules/tasks/e_mod_config.c:35
 msgid "Tasks Configuration"
@@ -10252,11 +10251,11 @@ msgstr "Definições das tarefas"
 
 #: src/modules/tasks/e_mod_config.c:97
 msgid "Show icon only"
-msgstr "Mostrar só ícones"
+msgstr "Mostrar apenas ícones"
 
 #: src/modules/tasks/e_mod_config.c:101
 msgid "Show text only"
-msgstr "Mostrar só texto"
+msgstr "Mostrar apenas texto"
 
 #: src/modules/tasks/e_mod_config.c:105
 msgid "Item width"
