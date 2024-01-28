@@ -1173,7 +1173,6 @@ _pager_cb_event_desk_show(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev
 
         if (p->popup)
           edje_object_part_text_set(p->popup->o_bg, "e.text.label", ev->desk->name);
-        break;
      }
 
    if ((pager_config->popup) && (!act_popup) &&
