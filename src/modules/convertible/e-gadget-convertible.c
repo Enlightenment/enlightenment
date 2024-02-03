@@ -5,6 +5,7 @@
 #include "e-gadget-convertible.h"
 #include "e_mod_main.h"
 
+
 static void
 _update_instances(const Instance *current_instance)
 {

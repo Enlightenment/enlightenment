@@ -9,7 +9,7 @@
 #define E_GADGET_CONVERTIBLE_E_GADGET_CONVERTIBLE_H
 
 /* LIST OF INSTANCES */
-Eina_List *instances = NULL;
+extern Eina_List *instances;
 
 /* gadcon callback for actions */
 void

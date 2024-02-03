@@ -32,7 +32,7 @@ E_API E_Module_Api e_modapi =
 
 
 /* LIST OF INSTANCES */
-static Eina_List *instances = NULL;
+Eina_List *instances = NULL;
 
 
 /* gadcon requirements */
