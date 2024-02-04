@@ -85,8 +85,8 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
     INF("Adding callback for creation and other events from EDJE");
     edje_object_signal_callback_add(evas_object, "e,lock,rotation", "tablet", _rotation_signal_cb, instance);
     edje_object_signal_callback_add(evas_object, "e,unlock,rotation", "tablet", _rotation_signal_cb, instance);
-    edje_object_signal_callback_add(evas_object, "e,enable,keyboard", "keyboard", _keyboard_signal_cb, instance);
-    edje_object_signal_callback_add(evas_object, "e,disable,keyboard", "keyboard", _keyboard_signal_cb, instance);
+    edje_object_signal_callback_add(evas_object, "e,enable,keyboard", "input", _keyboard_signal_cb, instance);
+    edje_object_signal_callback_add(evas_object, "e,disable,keyboard", "input", _keyboard_signal_cb, instance);
     
     inst->o_button = evas_object;
 

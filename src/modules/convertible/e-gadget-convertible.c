@@ -17,9 +17,15 @@ _update_instances(const Instance *current_instance)
         {
             instance->locked_position = current_instance->locked_position;
             if (instance->locked_position == EINA_TRUE)
-                edje_object_signal_emit(instance->o_button, "lock,rotation,icon", "convertible/tablet");
+                edje_object_signal_emit(instance->o_button, "e,lock,rotation,icon", "convertible/tablet");
             else
-                edje_object_signal_emit(instance->o_button, "unlock,rotation,icon", "convertible/tablet");
+                edje_object_signal_emit(instance->o_button, "e,unlock,rotation,icon", "convertible/tablet");
+
+	        instance->disabled_keyboard = current_instance->disabled_keyboard;
+            if (instance->disabled_keyboard == EINA_TRUE)
+                edje_object_signal_emit(instance->o_button, "e,disable,keyboard,icon", "convertible/input");
+            else
+                edje_object_signal_emit(instance->o_button, "e,enable,keyboard,icon", "convertible/input");
         }
     }
 }
@@ -28,11 +34,10 @@ void
 _rotation_signal_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *sig EINA_UNUSED,
                          const char *src EINA_UNUSED)
 {
-   DBG("Rotation: Signal %s received from %s", sig, src);
    Instance *inst = data;
-   if (eina_str_has_prefix(sig, "unlock"))
+   if (eina_str_has_prefix(sig, "e,unlock"))
       inst->locked_position = EINA_FALSE;
-   if (eina_str_has_prefix(sig, "lock"))
+   if (eina_str_has_prefix(sig, "e,lock"))
       inst->locked_position = EINA_TRUE;
    _update_instances(inst);
 }
@@ -41,5 +46,11 @@ void
 _keyboard_signal_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *sig EINA_UNUSED,
                          const char *src EINA_UNUSED)
 {
-   DBG("Keyboard: Signal %s received from %s", sig, src);
+   Instance *inst = data;
+   if (eina_str_has_prefix(sig, "e,enable,keyboard"))
+      inst->disabled_keyboard = EINA_FALSE;
+   if (eina_str_has_prefix(sig, "e,disable,keyboard"))
+      inst->disabled_keyboard = EINA_TRUE;
+   _update_instances(inst);
+
 }
