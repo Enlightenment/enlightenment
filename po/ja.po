@@ -1188,7 +1188,7 @@ msgstr ""
 #: src/bin/e_config.c:210
 #, fuzzy
 msgid "Memory ran out while preparing the write.<ps/>Please free up memory."
-msgstr "書き出し準備中にメモリ不足になりました。<ps/>メモリ解放してください。"
+msgstr "書き出し準備中にメモリ不足になりました。<ps/>メモリを解放してください。"
 
 #: src/bin/e_config.c:213
 #, fuzzy
@@ -1271,11 +1271,11 @@ msgid ""
 "the hiccup in your settings.<ps/>"
 msgstr ""
 "設定情報の更新が必要です。それまでの古い設定情報は消去され、新しい既定"
-"の<br>設定で初期化されました。これは開発中、定期的に行なわれるものですので、"
-"バグ報告<br>しないでください。つまり, Enlightenment で既定で使用する新しい諸機能に"
-"必要<br>な新規設定が、それまでの古い設定に存在しないからです。この新しい"
-"既定の設定<br>を追加すれば、解消されます。これでお好きなように設定可能になります。"
-"お手数をお掛けしますが、<br>よろしくお願いします。<br>"
+"の<ps/>設定で初期化されました。これは開発中、定期的に行なわれるものですので、"
+"バグ報告<ps/>しないでください。つまり, Enlightenment で既定で使用する新しい諸機能に"
+"必要<ps/>な新規設定が、それまでの古い設定に存在しないからです。この新しい"
+"既定の設定<ps/>を追加すれば、解消されます。これでお好きなように設定可能になります。"
+"お手数をお掛けしますが、<ps/>よろしくお願いします。<ps/>"
 
 #: src/bin/e_config.c:1297
 #, fuzzy
@@ -1286,11 +1286,11 @@ msgid ""
 "running. This is bad and<ps/>as a precaution your settings have been now "
 "restored to<ps/>defaults. Sorry for the inconvenience.<ps/>"
 msgstr ""
-"設定が Enlightenment よりも新しくなっています. これは極めて不自然です."
-"<br>Enlightenment をダウングレードするとか, 新しいバージョンの "
-"Enlightenment<br>が動いていたところから設定をコピーしない限りあり得ません."
-"<br>これではまずいので, 念のためデフォルトの設定に置き換えました.<br>ご不便を"
-"おかけしますが, よろしくお願いします.<br>"
+"システム設定が現在の Enlightenment よりも新しくなっています。これはとても奇妙です。"
+"<ps/>Enlightenment をダウングレードするとか、新しいバージョンの "
+"Enlightenment<ps/>が動いていたところから設定をコピーしない限りあり得ません。"
+"<ps/>この状況では不都合なため、すでに既定の設定へ復元しました.<ps/>ご不便を"
+"おかけして申しわけありません。<ps/>"
 
 #: src/bin/e_config.c:1413
 msgid ""
@@ -1298,10 +1298,13 @@ msgid ""
 "<ps/>As a result, all bindings have been reloaded from defaults.<ps/>Sorry "
 "for the inconvenience.<ps/>"
 msgstr ""
+"バインディングの設定バージョンが現在の設定バージョンと一致しません。<ps/>"
+"その結果、すべてのバインディングを既定から再読み込みしました。<ps/>"
+"ご迷惑をおかけして申し訳ありません<ps/>。"
 
 #: src/bin/e_config.c:2720
 msgid "Settings Upgraded"
-msgstr "設定が更新されました"
+msgstr "設定を更新しました"
 
 #: src/bin/e_config_dialog.c:222 src/modules/battery/e_mod_main.c:1100
 #: src/modules/conf_bindings/e_mod_main.c:43 src/modules/conf/e_mod_main.c:278
@@ -1349,12 +1352,12 @@ msgstr "内部"
 #: src/bin/e_configure.c:36
 #, fuzzy
 msgid "Composite Style Settings"
-msgstr "位置"
+msgstr "コンポジット・スタイルの設定"
 
 #: src/bin/e_configure.c:408
 #, fuzzy
 msgid "Preferences"
-msgstr "アイコン・プリファレンス"
+msgstr "設定"
 
 #
 #: src/bin/e_desk.c:123 src/bin/e_desk.c:185 src/bin/e_desk.c:242
@@ -1362,22 +1365,22 @@ msgstr "アイコン・プリファレンス"
 #: src/modules/conf_display/e_int_config_desk.c:117
 #, fuzzy, c-format
 msgid "Desktop %d,%d"
-msgstr "デスクトップ %i,%i"
+msgstr "デスクトップ %d,%d%"
 
 #: src/bin/e_desklock.c:235
 msgid "Error - no PAM support"
-msgstr "エラー - PAMがサポートされていません"
+msgstr "エラー - PAM 非対応"
 
 #: src/bin/e_desklock.c:236
 #, fuzzy
 msgid ""
 "No PAM support was built into Enlightenment, so<ps/>desk locking is disabled."
 msgstr ""
-"EnlightenmentにPAMサポートが組み込まれていないため, デスクロックは無効です."
+"Enlightenment では PAM に対応していないので、デスクロックは無効です。"
 
 #: src/bin/e_desktop_editor.c:212
 msgid "Incomplete Window Properties"
-msgstr "ウィンドウプロパティが不完全です"
+msgstr "ウィンドウ・プロパティが不完全です"
 
 #: src/bin/e_desktop_editor.c:213
 #, fuzzy
@@ -1387,15 +1390,14 @@ msgid ""
 "title instead. This will only<ps/>work if the window title is the same at<ps/"
 ">the time the window starts up, and does not<ps/>change."
 msgstr ""
-"アイコンを作ろうとしているウィンドウにはウィンドウ名とウィンドウクラスの<br>"
-"プロパティがないので, そのウィンドウで使われるアイコンに必要なプロパティ<br>"
-"が分かりません.<br>代わりにウィンドウタイトルを使う必要があります.<br>ただし"
-"これがうまくいくのは, ウィンドウのタイトルが起動時と同じで,<br>変わっていない"
-"場合だけです."
+"あなたがアイコンを作成しているウィンドウには、<ps/>ウィンドウ名とウィンドウクラスの"
+"プロパティがありません。<ps/>そのため、代わりにウィンドウ・タイトルを使う必要があります。"
+"<ps/>しかし、これが働くのはウィンドウ・タイトルが<ps/>そのウィンドウの起動時と同じで、"
+"変更のない<ps/>場合だけです."
 
 #: src/bin/e_desktop_editor.c:265
 msgid "Desktop Entry Editor"
-msgstr "デスクトップエントリエディタ"
+msgstr "デスクトップエントリ・エディタ"
 
 #: src/bin/e_desktop_editor.c:717 src/bin/e_int_client_prop.c:451
 #: src/bin/e_int_client_prop.c:505 src/bin/e_int_config_comp_match.c:380
@@ -1408,7 +1410,7 @@ msgstr "名前"
 
 #: src/bin/e_desktop_editor.c:728 src/modules/ibar/e_mod_config.c:138
 msgid "Comment"
-msgstr "注釈"
+msgstr "コメント"
 
 #: src/bin/e_desktop_editor.c:750
 #, fuzzy
@@ -1424,7 +1426,7 @@ msgstr "アイコン"
 
 #: src/bin/e_desktop_editor.c:791
 msgid "Generic Name"
-msgstr "一般名称"
+msgstr "一般名"
 
 #: src/bin/e_desktop_editor.c:797
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:121
@@ -1442,7 +1444,7 @@ msgstr "MIME タイプ"
 #
 #: src/bin/e_desktop_editor.c:817
 msgid "Desktop file"
-msgstr "desktop ファイル"
+msgstr "デスクトップ・ファイル"
 
 #: src/bin/e_desktop_editor.c:827 src/bin/e_fm_prop.c:501
 #: src/bin/e_int_client_prop.c:456 src/bin/e_int_client_prop.c:508
@@ -1461,7 +1463,7 @@ msgstr "起動通知"
 
 #: src/bin/e_desktop_editor.c:832 src/modules/everything/evry_plug_apps.c:1191
 msgid "Run in Terminal"
-msgstr "端末内で実行"
+msgstr "端末で実行"
 
 #: src/bin/e_desktop_editor.c:834
 msgid "Show in Menus"
@@ -1475,11 +1477,11 @@ msgstr "オプション"
 #: src/bin/e_desktop_editor.c:869
 #, fuzzy, c-format
 msgid "Select an Icon for '%s'"
-msgstr "アイコンを選択する"
+msgstr "'%s' のアイコンを選択する"
 
 #: src/bin/e_desktop_editor.c:935
 msgid "Select an Executable"
-msgstr "プログラムの選択"
+msgstr "実行プログラムの選択"
 
 #: src/bin/e_exec.c:622 src/bin/e_exec.c:630 src/bin/e_exec.c:641
 #: src/bin/e_exec.c:700 src/bin/e_remember.c:51
@@ -1491,13 +1493,12 @@ msgstr "実行エラー"
 #: src/bin/e_exec.c:623
 #, fuzzy
 msgid "Enlightenment was unable to get current directory"
-msgstr "画像の変換でエラーが発生したため画像が取り込めませんでした."
+msgstr "Enlightenment はカレントディレクトリを取得できません"
 
 #: src/bin/e_exec.c:631
 #, fuzzy, c-format
 msgid "Enlightenment was unable to change to directory:<ps/><ps/>%s"
-msgstr ""
-"Enlightenment で以下のコマンドラインが処理できませんでした.<br><br>%s %s<br>"
+msgstr "Enlightenment は次のディレクトリへ変更できません:<ps/><ps/>%s"
 
 #: src/bin/e_exec.c:642
 #, fuzzy, c-format
