@@ -49,7 +49,7 @@ msgstr ""
 "<title>Copyright &copy; 2000-2023, Enlightenment 開発チーム</"
 "><ps><ps/>私たちがこのソフトウウェアを楽しんで作っているのと同じように、みなさんもこのソフトウェアを"
 "使って楽しんでくださることを願っています。<ps/><ps/>私たちと連絡を取りたい場合は、"
-<ps/><ps/><hilight>http://www.""enlightenment.org を訪れてください。</><ps/><ps/>"
+"<ps/><hilight>http://www.enlightenment.org を訪れてください。</><ps/><ps/>"
 
 #: src/bin/e_about.c:69
 msgid "<title>The Team</><ps/><ps/>"
@@ -77,7 +77,7 @@ msgid ""
 "this window<ps/>which has not yet been saved will be lost!<ps/><ps/>Are you "
 "sure you want to kill this window?"
 msgstr ""
-"%s を強制終了しようとしています.<br><br>\n"
+"%s を強制終了しようとしています。<br><br>\n"
 "警告. このウィンドウにある未保存のデータはすべて消失します!<ps><ps>\n"
 "このウィンドウを強制終了しますか？"
 
@@ -583,11 +583,11 @@ msgstr "ウィンドウ: ウィンドウリスト"
 #: src/bin/e_actions.c:3772
 #, fuzzy
 msgid "Jump to window..."
-msgstr "選択されたウィンドウがあるデスクトップへ移動する"
+msgstr "ウィンドウへ移動..."
 
 #: src/bin/e_actions.c:3776
-msgid "ウィンドへ移動... またはスタート..."
-msgstr ""
+msgid "Jump to window... or start..."
+msgstr "ウィンドへ移動... またはスタート..."
 
 #: src/bin/e_actions.c:3781 src/bin/e_actions.c:3783 src/bin/e_actions.c:3785
 #: src/bin/e_actions.c:3791 src/bin/e_actions.c:3793 src/bin/e_actions.c:3795
@@ -1057,12 +1057,12 @@ msgstr "タイトル"
 #: src/bin/e_comp_wl.c:2992
 #, fuzzy, c-format
 msgid "Enlightenment cannot initialize Wayland client connection.\n"
-msgstr "Enlightenment は Wayland クライアント接続を初期化できません.\n"
+msgstr "Enlightenment は Wayland クライアント接続を初期化できません。\n"
 
 #: src/bin/e_comp_wl.c:3007
 #, fuzzy, c-format
 msgid "Enlightenment cannot create a Wayland Compositor.\n"
-msgstr "Enlightenment は Wayland コンポジタの作成ができません."
+msgstr "Enlightenment は Wayland コンポジタを作成できません。"
 
 #: src/bin/e_comp_x.c:652
 #, fuzzy
@@ -1076,6 +1076,9 @@ msgid ""
 "to software engine.<ps/><ps/>You will need an OpenGL 2.0 (or OpenGL ES 2.0) "
 "capable<ps/>GPU to use OpenGL with compositing."
 msgstr ""
+"ディスプレイドライバが OpenGL、GLSL シェーダをサポートしていないか、Evas または"
+" Ecore-Evas 用の OpenGL エンジンがコンパイルまたはインストールされていません。"
+" ソフトウェア エンジンにフォールバックします。"
 
 #: src/bin/e_comp_x.c:5865
 msgid "Lock Failed"
@@ -1087,24 +1090,26 @@ msgid ""
 "Locking the desktop failed because some application<ps/>has grabbed either "
 "the keyboard or the mouse or both<ps/>and their grab is unable to be broken."
 msgstr ""
-"キーボードかマウス, またはその両方を掴んで離さないアプリケーションがあるため,"
-"<br>デスクトップをロックできませんでした."
+"キーボードかマウス、またはその両方を掴んで離さないアプリケーションがあり、"
+"<ps/>それを解除できないので、デスクトップのロックに失敗しました。"
 
 #: src/bin/e_comp_x.c:5884
 msgid "Another compositor is already running on your display server."
-msgstr ""
+msgstr "別のコンポジタがすでにディスプレイサーバーで実行されています。"
 
 #: src/bin/e_comp_x.c:5909
 msgid ""
 "Your display server does not support the compositor overlay window.\n"
 "This is needed for Enlightenment to function."
 msgstr ""
+"ディスプレイサーバがコンポジタオーバレイ・ウィンドウをサポートしていません。\n"
+"これは Enlightenment が機能するのに必要です。"
 
 #
 #: src/bin/e_comp_x.c:6050
 #, fuzzy, c-format
 msgid "Enlightenment cannot initialize X Connection...\n"
-msgstr "Enlightenment でファイルマネージャが初期化できません.\n"
+msgstr "Enlightenment でファイルマネージャを初期化できません...\n"
 
 #: src/bin/e_comp_x.c:6065
 msgid ""
@@ -1112,23 +1117,28 @@ msgid ""
 "without XComposite support. Note that for composite support you will also "
 "need XRender and XFixes support in X11 and Ecore."
 msgstr ""
+"お使いのディスプレイサーバが XComposite をサポートしていないか、Ecore-X が XComposite の"
+"サポートなしでビルドされています。コンポジットをサポートするには、X11 と Ecore で "
+"XRender と XFixes のサポートも必要です。"
 
 #: src/bin/e_comp_x.c:6074
 msgid ""
 "Your display server does not support XDamage or Ecore was built without "
 "XDamage support."
 msgstr ""
+"ディスプレイサーバが XDamage をサポートしていないか、Ecore が XDamage の"
+"サポートなしでビルドされています。"
 
 #
 #: src/bin/e_comp_x.c:6180
 #, fuzzy
 msgid "Enlightenment cannot initialize the XSettings system.\n"
-msgstr "Enlightenment でサムネイル処理システムが初期化できません.\n"
+msgstr "Enlightenment は XSettings システムを初期化できません。\n"
 
 #: src/bin/e_comp_x_randr.c:453
 #, fuzzy
 msgid "Screen setup Error"
-msgstr "マウントエラー"
+msgstr "画面の設定エラー"
 
 #: src/bin/e_comp_x_randr.c:454
 msgid ""
@@ -1136,6 +1146,9 @@ msgid ""
 "have. This should<br>be fixed by going to:<br><br><b>Settings -> Screen -> "
 "Screen Setup</><br><br>And configure at least one screen to be on."
 msgstr ""
+"あなたからの出力より判断すると、オンに設定されている画面がないようです。"
+"これは 設定 -> スクリーン -> スクリーン設定 で、少なくとも1つのスクリーンを"
+"オンに設定してください。"
 
 #: src/bin/e_comp_x_randr.c:462 src/bin/e_config_dialog.c:274
 #: src/bin/e_desktop_editor.c:907 src/bin/e_desktop_editor.c:971
@@ -1158,11 +1171,11 @@ msgstr "了解"
 
 #: src/bin/e_config.c:201
 msgid "The EET file handle is bad."
-msgstr "EETファイルハンドルがおかしいです"
+msgstr "EET ファイルハンドルがおかしいです。"
 
 #: src/bin/e_config.c:204
 msgid "The file data is empty."
-msgstr "ファイルデータが空です"
+msgstr "ファイルデータが空です。"
 
 #: src/bin/e_config.c:207
 #, fuzzy
@@ -1170,13 +1183,12 @@ msgid ""
 "The file is not writable. Perhaps the disk is read-only<ps/>or you lost "
 "permissions to your files."
 msgstr ""
-"このファイルには書き込めません.<br>ディスクが読み出し専用になっているか書き込"
-"み権限がありません"
+"このファイルには書き込めません。<ps/>ディスクが読み出し専用になっているか書き込み権限がありません。"
 
 #: src/bin/e_config.c:210
 #, fuzzy
 msgid "Memory ran out while preparing the write.<ps/>Please free up memory."
-msgstr "書き出し準備中のメモリ不足になりました. メモリ解放してください."
+msgstr "書き出し準備中にメモリ不足になりました。<ps/>メモリ解放してください。"
 
 #: src/bin/e_config.c:213
 #, fuzzy
@@ -1189,63 +1201,63 @@ msgid ""
 "The settings file is too large.<ps/>It should be very small (a few hundred "
 "KB at most)."
 msgstr ""
-"設定ファイルが大きすぎます.<br>ずっと小さいはずです (せいぜい数百KB程度)"
+"設定ファイルが大きすぎます。<ps/>もっと小さいはずです (最大で数百KB程度です)。"
 
 #: src/bin/e_config.c:219
 #, fuzzy
 msgid "You have I/O errors on the disk.<ps/>Maybe it needs replacing?"
-msgstr "ディスクの入出力エラーです. 交換した方がいいかも."
+msgstr "ディスクの入出力エラーです。交換した方が良いかもしれません。"
 
 #: src/bin/e_config.c:222
 #, fuzzy
 msgid "You ran out of space while writing the file."
-msgstr "ファイル書き出し中にスペースが不足しました"
+msgstr "ファイルの書き出し中に空き容量が不足しました。"
 
 #: src/bin/e_config.c:225
 #, fuzzy
 msgid "The file was closed while writing."
-msgstr "書き出し中にファイルがクローズされました"
+msgstr "書き出し中にファイルが閉じられました。"
 
 #: src/bin/e_config.c:228
 msgid "Memory-mapping (mmap) of the file failed."
-msgstr "ファイルのメモリマップ (mmap) が失敗しました"
+msgstr "ファイルのメモリマップ (mmap) に失敗しました。"
 
 #: src/bin/e_config.c:231
 msgid "X509 Encoding failed."
-msgstr "X509エンコーディングが失敗しました"
+msgstr "X509 エンコーディングに失敗しました。"
 
 #: src/bin/e_config.c:234
 msgid "Signature failed."
-msgstr "署名に失敗しました"
+msgstr "署名に失敗しました。"
 
 #: src/bin/e_config.c:237
 msgid "The signature was invalid."
-msgstr "署名が不正です"
+msgstr "署名が無効です。"
 
 #: src/bin/e_config.c:240
 msgid "Not signed."
-msgstr "署名がありません"
+msgstr "署名がありません。"
 
 #: src/bin/e_config.c:243
 msgid "Feature not implemented."
-msgstr "機能が未実装です"
+msgstr "機能が未実装です。"
 
 #: src/bin/e_config.c:246
 msgid "PRNG was not seeded."
-msgstr "PRNGの種がありません"
+msgstr "PRNG がシードされていません。"
 
 #: src/bin/e_config.c:249
 msgid "Encryption failed."
-msgstr "暗号化が失敗しました"
+msgstr "暗号化に失敗しました。"
 
 #: src/bin/e_config.c:252
 #, fuzzy
 msgid "Decryption failed."
-msgstr "復号化が失敗しました"
+msgstr "復号化に失敗しました。"
 
 #: src/bin/e_config.c:255
 msgid "The error is unknown to Enlightenment."
-msgstr "未知のエラーです"
+msgstr "Enlightenment にとって未知のエラーです。"
 
 #: src/bin/e_config.c:1280
 #, fuzzy
@@ -1258,12 +1270,12 @@ msgid ""
 "adding it in. You can re-configure things now to your<ps/>liking. Sorry for "
 "the hiccup in your settings.<ps/>"
 msgstr ""
-"設定情報の更新が必要です. それまでの古い設定情報は消去され, 新しいデフォルト"
-"の<br>設定で初期化されました. これは開発中は定期的に行なわれるものですから, "
-"バグ報告<br>は不要です. つまり, Enlightenment で使われる新しい諸機能にデフォ"
-"ルトで必要<br>になる新しい設定が, それまでの古い設定に無いだけです. この新し"
-"いデフォルト設定<br>を追加すれば更新されます. これで好きなように設定できます."
-"ちょっと面倒ですが, <br>よろしくお願いします.<br>"
+"設定情報の更新が必要です。それまでの古い設定情報は消去され、新しい既定"
+"の<br>設定で初期化されました。これは開発中、定期的に行なわれるものですので、"
+"バグ報告<br>しないでください。つまり, Enlightenment で既定で使用する新しい諸機能に"
+"必要<br>な新規設定が、それまでの古い設定に存在しないからです。この新しい"
+"既定の設定<br>を追加すれば、解消されます。これでお好きなように設定可能になります。"
+"お手数をお掛けしますが、<br>よろしくお願いします。<br>"
 
 #: src/bin/e_config.c:1297
 #, fuzzy
