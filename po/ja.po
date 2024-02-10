@@ -1504,17 +1504,17 @@ msgstr "Enlightenment は次のディレクトリへ変更できません:<ps/><
 #, fuzzy, c-format
 msgid "Enlightenment was unable to restore to directory:<ps/><ps/>%s"
 msgstr ""
-"Enlightenment で以下の子プロセスが fork できませんでした.<br><br>%s<br>"
+"Enlightenment は次のディレクトリに復元できませんでした:<ps/><ps/>%s"
 
 #: src/bin/e_exec.c:701
 #, fuzzy, c-format
 msgid "Enlightenment was unable to fork a child process:<ps/><ps/>%s"
 msgstr ""
-"Enlightenment で以下の子プロセスが fork できませんでした.<br><br>%s<br>"
+"Enlightenment は次の子プロセスをフォークできませんでした:<ps/><ps/>%s"
 
 #: src/bin/e_exec.c:890
 msgid "Application run error"
-msgstr "アプリケーション実行エラー"
+msgstr "アプリケーションの実行エラー"
 
 #: src/bin/e_exec.c:892
 #, fuzzy, c-format
@@ -1522,37 +1522,37 @@ msgid ""
 "Enlightenment was unable to run the application:<ps/><ps/>%s<ps/><ps/>The "
 "application failed to start."
 msgstr ""
-"Enlightenment で以下のアプリケーションが実行できませんでした."
-"<br><br>%s<br><br>このアプリケーションの起動に失敗しました."
+"Enlightenment で以下のアプリケーションを実行できませんでした:<ps/><ps/>%s<ps/><ps/>"
+"このアプリケーションの起動に失敗しました。"
 
 #: src/bin/e_exec.c:1038
 msgid "Application Execution Error"
-msgstr "アプリケーション実行エラー"
+msgstr "アプリケーションの実行エラー"
 
 #: src/bin/e_exec.c:1051 src/bin/e_exec.c:1053
 #, c-format
 msgid "%s stopped running unexpectedly."
-msgstr "%s が突然停止しました"
+msgstr "%s が突然停止しました。"
 
 #: src/bin/e_exec.c:1059
 #, c-format
 msgid "An exit code of %i was returned from %s."
-msgstr "%2$s から終了コード %1$i が返りました"
+msgstr "終了コード %1$i が %s より返りました。"
 
 #: src/bin/e_exec.c:1067
 #, c-format
 msgid "%s was interrupted by an Interrupt Signal."
-msgstr "%s に割り込みシグナルによる割り込みが入りました"
+msgstr "%s は割り込みシグナルによって中断しました。"
 
 #: src/bin/e_exec.c:1070
 #, c-format
 msgid "%s was interrupted by a Quit Signal."
-msgstr "%s に Quit シグナルによる割り込みが入りました"
+msgstr "%s は中止 (Quit) シグナルによって中断しました。"
 
 #: src/bin/e_exec.c:1074
 #, c-format
 msgid "%s was interrupted by an Abort Signal."
-msgstr "%s に Abort シグナルによる割り込みが入りました"
+msgstr "%s は Abort シグナルによって中断しました。"
 
 #: src/bin/e_exec.c:1077
 #, c-format
@@ -1567,7 +1567,7 @@ msgstr "%s に割り込み不能 kill シグナルによる割り込みが入り
 #: src/bin/e_exec.c:1085
 #, c-format
 msgid "%s was interrupted by a Segmentation Fault."
-msgstr "%s にセグメンテーションフォールトによる割り込みが入りました"
+msgstr "%s はセグメンテーション障害によって中断しました。"
 
 #: src/bin/e_exec.c:1089
 #, c-format
@@ -1601,7 +1601,7 @@ msgstr "エラーログ"
 
 #: src/bin/e_exec.c:1220 src/bin/e_exec.c:1300
 msgid "There was no error message."
-msgstr "エラーメッセージはありませんでした"
+msgstr "エラーメッセージはありません。"
 
 #: src/bin/e_exec.c:1224 src/bin/e_exec.c:1307
 msgid "Save This Message"
@@ -1611,7 +1611,7 @@ msgstr "このメッセージを保存する"
 #: src/bin/e_exec.c:1315
 #, c-format
 msgid "This error log will be saved as %s/%s.log"
-msgstr "このエラーログは %s/%s.log に保存されます"
+msgstr "このエラーログを %s/%s.log に保存します"
 
 #: src/bin/e_exec.c:1258
 msgid "Error Information"
@@ -1627,7 +1627,7 @@ msgstr "出力データ"
 
 #: src/bin/e_exec.c:1284
 msgid "There was no output."
-msgstr "出力はありませんでした"
+msgstr "出力はありません。"
 
 #: src/bin/e_fm.c:1098
 msgid "Nonexistent path"
@@ -1636,7 +1636,7 @@ msgstr "存在しないパス"
 #: src/bin/e_fm.c:1101
 #, c-format
 msgid "%s doesn't exist."
-msgstr "%s が存在しません"
+msgstr "%s が存在しません。"
 
 #: src/bin/e_fm.c:2934 src/bin/e_fm.c:3927
 #, fuzzy, c-format
@@ -1668,7 +1668,7 @@ msgstr "イジェクトエラー"
 
 #: src/bin/e_fm.c:3208
 msgid "Can't eject device"
-msgstr "デバイスをイジェクトできません"
+msgstr "デバイスを取り出せません"
 
 #
 #: src/bin/e_fm.c:6714 src/bin/e_fm.c:6749 src/bin/e_fm.c:6852
@@ -1685,11 +1685,11 @@ msgstr "エラー"
 #: src/bin/e_fm.c:6714 src/bin/e_fm.c:6749
 #, c-format
 msgid "The recent DND operation requested for '%s' has failed."
-msgstr ""
+msgstr "'%s' に要求した最近の DND 操作は失敗しました。"
 
 #: src/bin/e_fm.c:6852
 msgid "A link to the requested URL already exists!"
-msgstr ""
+msgstr "要求のあった URL へのリンクはすでに存在します!"
 
 #: src/bin/e_fm.c:8918 src/modules/fileman/e_mod_config.c:375
 msgid "Case Sensitive"
@@ -1698,16 +1698,16 @@ msgstr "大文字と小文字を区別する"
 #: src/bin/e_fm.c:8924 src/modules/fileman/e_mod_config.c:378
 #, fuzzy
 msgid "Sort By Extension"
-msgstr "拡張子を表示する"
+msgstr "拡張子で並べ替え"
 
 #: src/bin/e_fm.c:8930 src/modules/fileman/e_mod_config.c:381
 msgid "Sort By Modification Time"
-msgstr ""
+msgstr "修正時刻で並べ替え"
 
 #: src/bin/e_fm.c:8936 src/modules/fileman/e_mod_config.c:384
 #, fuzzy
 msgid "Sort By Size"
-msgstr "日付で整列"
+msgstr "日付で並べ替え"
 
 #: src/bin/e_fm.c:8945 src/modules/fileman/e_mod_config.c:392
 #, fuzzy
@@ -1728,7 +1728,7 @@ msgstr "表示モード"
 #: src/modules/everything/evry_config.c:501
 #: src/modules/fileman/e_mod_config.c:400
 msgid "Sorting"
-msgstr "整列"
+msgstr "並べ替え"
 
 #: src/bin/e_fm.c:9009 src/bin/e_fm.c:9158
 msgid "Refresh View"
@@ -1736,12 +1736,12 @@ msgstr "内容を更新する"
 
 #: src/bin/e_fm.c:9020 src/bin/e_fm.c:9170
 msgid "New..."
-msgstr ""
+msgstr "新しい..."
 
 #: src/bin/e_fm.c:9040 src/bin/e_fm.c:9192 src/bin/e_fm.c:9228
 #, fuzzy
 msgid "Actions..."
-msgstr "アクション"
+msgstr "アクション..."
 
 #: src/bin/e_fm.c:9059 src/bin/e_fm.c:9276
 msgid "Paste"
@@ -1753,7 +1753,7 @@ msgstr "リンク"
 
 #: src/bin/e_fm.c:9249
 msgid "Cut"
-msgstr "カット"
+msgstr "切り取り"
 
 #: src/bin/e_fm.c:9263 src/bin/e_fm.c:11832
 #: src/modules/shot/e_mod_preview.c:111
@@ -1798,7 +1798,7 @@ msgstr "マウント"
 
 #: src/bin/e_fm.c:9375
 msgid "Eject"
-msgstr "イジェクト"
+msgstr "取り出し"
 
 #: src/bin/e_fm.c:9389 src/bin/e_int_client_remember.c:807
 #: src/modules/ibar/e_mod_main.c:1643
@@ -1807,15 +1807,15 @@ msgstr "プロパティ"
 
 #: src/bin/e_fm.c:9397
 msgid "Application Properties"
-msgstr "アプリケーションプロパティ"
+msgstr "アプリケーション・プロパティ"
 
 #: src/bin/e_fm.c:9405 src/bin/e_fm_prop.c:119
 msgid "File Properties"
-msgstr "ファイルプロパティ"
+msgstr "ファイル・プロパティ"
 
 #: src/bin/e_fm.c:9609
 msgid "Use default"
-msgstr "デフォルトを使う"
+msgstr "既定を使用する"
 
 #: src/bin/e_fm.c:9638 src/modules/fileman/e_mod_config.c:322
 msgid "Grid Icons"
@@ -1833,7 +1833,7 @@ msgstr "リスト"
 
 #: src/bin/e_fm.c:9662 src/modules/everything/evry_config.c:456
 msgid "Default View"
-msgstr "デフォルトの表示形式"
+msgstr "既定の表示"
 
 #: src/bin/e_fm.c:9683
 #, c-format
@@ -1843,12 +1843,12 @@ msgstr "アイコンサイズ (%d)"
 #: src/bin/e_fm.c:9710
 #, fuzzy
 msgid "Could not create a directory!"
-msgstr "モジュールのロードエラー"
+msgstr "ディレクトリを作成できません!"
 
 #: src/bin/e_fm.c:9725
 #, fuzzy
 msgid "Could not create a file!"
-msgstr "モジュールのロードエラー"
+msgstr "ファイルを作成できません！"
 
 #: src/bin/e_fm.c:9741 src/bin/e_fm.c:9779
 #: src/modules/conf_paths/e_int_config_paths.c:204
@@ -1858,16 +1858,16 @@ msgstr "新しいディレクトリ"
 #: src/bin/e_fm.c:9741 src/bin/e_fm.c:9779
 #, fuzzy
 msgid "New File"
-msgstr "ファイル:"
+msgstr "新規ファイル"
 
 #: src/bin/e_fm.c:9860 src/bin/e_fm.c:9881
 msgid "Already creating a new file for this directory!"
-msgstr ""
+msgstr "すでにこのディレクトリに新規ファイルを作成中です！"
 
 #: src/bin/e_fm.c:9865 src/bin/e_fm.c:9886
 #, c-format
 msgid "%s can't be written to!"
-msgstr ""
+msgstr "%s は書き込めません!"
 
 #: src/bin/e_fm.c:9905
 #, fuzzy
@@ -1877,7 +1877,7 @@ msgstr "ディレクトリ"
 #: src/bin/e_fm.c:9910 src/modules/conf_applications/e_int_config_defapps.c:312
 #, fuzzy
 msgid "File"
-msgstr "ファイル:"
+msgstr "ファイル"
 
 #: src/bin/e_fm.c:9941
 msgid "Inherit parent settings"
@@ -1889,11 +1889,11 @@ msgstr "隠しファイルを表示する"
 
 #: src/bin/e_fm.c:9962
 msgid "Remember Ordering"
-msgstr "順序をを記憶する"
+msgstr "順序を記憶する"
 
 #: src/bin/e_fm.c:9971
 msgid "Sort Now"
-msgstr "ただちにソートする"
+msgstr "今すぐ並べ替える"
 
 #: src/bin/e_fm.c:9979
 #, fuzzy
@@ -1903,7 +1903,7 @@ msgstr "シングルクリックで開く"
 #: src/bin/e_fm.c:9990 src/modules/fileman/e_mod_config.c:412
 #, fuzzy
 msgid "Secure Deletion"
-msgstr "画面の解像度"
+msgstr "安全な削除"
 
 #: src/bin/e_fm.c:10003 src/modules/fileman/e_mod_config.c:124
 #, fuzzy
@@ -1913,20 +1913,20 @@ msgstr "ファイルマネージャの設定"
 #: src/bin/e_fm.c:10008
 #, fuzzy
 msgid "File Icon Settings"
-msgstr "ファイルマネージャの設定"
+msgstr "ファイルアイコンの設定"
 
 #: src/bin/e_fm.c:10089 src/bin/e_fm.c:10310
 msgid "Set background..."
-msgstr "背景を設定する"
+msgstr "背景を設定する..."
 
 #: src/bin/e_fm.c:10097
 #, fuzzy
 msgid "Clear background"
-msgstr "背景を設定する"
+msgstr "背景をクリアする"
 
 #: src/bin/e_fm.c:10104 src/bin/e_fm.c:10338
 msgid "Set overlay..."
-msgstr "オーバーレイを設定する"
+msgstr "オーバーレイを設定する..."
 
 #: src/bin/e_fm.c:10110
 #, fuzzy
@@ -1936,7 +1936,7 @@ msgstr "オーバーレイを設定する"
 #: src/bin/e_fm.c:10432 src/bin/e_fm.c:10805
 #, c-format
 msgid "Rename %s to:"
-msgstr "名前を %s から変更:"
+msgstr "名前を %s 次へ変更する:"
 
 #: src/bin/e_fm.c:10435 src/bin/e_fm.c:10806
 msgid "Rename File"
@@ -1945,17 +1945,17 @@ msgstr "ファイル名を変更する"
 #: src/bin/e_fm.c:10546 src/bin/e_fm.c:10582
 #, c-format
 msgid "%s already exists!"
-msgstr ""
+msgstr "%s はすでに存在します!"
 
 #: src/bin/e_fm.c:10550 src/bin/e_fm.c:10587
 #, c-format
 msgid "%s could not be renamed because it is protected"
-msgstr ""
+msgstr "s は保護されているので、名前を変更できません。"
 
 #: src/bin/e_fm.c:10554 src/bin/e_fm.c:10591
 #, fuzzy
 msgid "Internal filemanager error :("
-msgstr "マウント時にファイルマネージャを開く"
+msgstr "ファイルマネージャの内部エラー :("
 
 #: src/bin/e_fm.c:10646 src/bin/e_fm.c:10872
 msgid "Retry"
@@ -1980,12 +1980,12 @@ msgstr "警告"
 #: src/bin/e_fm.c:10716
 #, fuzzy, c-format
 msgid "File already exists, overwrite?<ps/><hilight>%s</hilight>"
-msgstr "ファイルが存在します. 上書きしますか？<br><hilight>%s</hilight>"
+msgstr "ファイルが存在しますが、上書きしますか？<ps/><hilight>%s</hilight>"
 
 #: src/bin/e_fm.c:10875
 #, fuzzy
 msgid "Move Source"
-msgstr "移動先"
+msgstr ""
 
 #: src/bin/e_fm.c:10876
 msgid "Ignore this"
@@ -1998,17 +1998,17 @@ msgstr "すべて無視"
 #: src/bin/e_fm.c:10882
 #, fuzzy, c-format
 msgid "An error occurred while performing an operation.<ps/>%s"
-msgstr "操作中にエラーが起きました.<br>%s"
+msgstr "操作中にエラーが発生しました。<ps/>%s"
 
 #
 #: src/bin/e_fm.c:11061
 msgid "Confirm Delete"
-msgstr "削除確認"
+msgstr "削除の確認"
 
 #: src/bin/e_fm.c:11071
 #, fuzzy, c-format
 msgid "Are you sure you want to delete<ps/><hilight>%s</hilight>?"
-msgstr "以下を本当に削除しますか.<br><hilight>%s</hilight> ?"
+msgstr "本当に<ps/><hilight>%s</hilight>を削除しますか?"
 
 #: src/bin/e_fm.c:11076
 #, fuzzy, c-format
@@ -2016,8 +2016,8 @@ msgid ""
 "Are you sure you want to delete<ps/><hilight>all</hilight> the %d files "
 "in<ps/><hilight>%s</hilight>?"
 msgstr ""
-"以下にある %d 個のファイルが選択されました.<br><hilight>%s</hilight><br>これ"
-"らを本当に削除しますか？"
+"本当に<hilight>%s</hilight>の中にある<ps/><hilight>すべて</hilight>"
+"の %d ファイル<ps/>を削除しますか?"
 
 #: src/bin/e_fm.c:11086
 #, fuzzy, c-format
@@ -2028,40 +2028,40 @@ msgid_plural ""
 "Are you sure you want to delete<ps/>the %d selected files in<ps/"
 "><hilight>%s</hilight>?"
 msgstr[0] ""
-"以下にある %d 個のファイルが選択されました.<br><hilight>%s</hilight><br>これ"
-"らを本当に削除しますか？"
+"本当に<hilight>%s</hilight>の中にある<ps/><hilight>選択</hilight>"
+"の %d ファイル<ps/>を削除しますか?"
 msgstr[1] ""
-"以下にある %d 個のファイルが選択されました.<br><hilight>%s</hilight><br>これ"
-"らを本当に削除しますか？"
+"本当に<hilight>%s</hilight>の中にある<ps/><hilight>選択</hilight>"
+"の %d ファイル<ps/>を削除しますか?"
 
 #: src/bin/e_fm_device.c:59
 #, c-format
 msgid "%s %s—%s"
-msgstr ""
+msgstr "%s %s—%s"
 
 #: src/bin/e_fm_device.c:66 src/bin/e_fm_device.c:73
 #, c-format
 msgid "%s—%s"
-msgstr ""
+msgstr "%s—%s"
 
 #: src/bin/e_fm_device.c:78
 #, c-format
 msgid "Flash Card—%s"
-msgstr ""
+msgstr "フラッシュカード—%s"
 
 #: src/bin/e_fm_device.c:80
 #, c-format
 msgid "Unknown Volume"
-msgstr "未知のボリュームです"
+msgstr "不明なボリューム"
 
 #: src/bin/e_fm_device.c:345
 msgid "Removable Device"
-msgstr "着脱可能媒体"
+msgstr "リムーバブル・デバイス"
 
 #: src/bin/e_fm_prop.c:364
 #, c-format
 msgid "Cannot change permissions: %s"
-msgstr ""
+msgstr "次のパーミッションを変更できません: %s"
 
 #: src/bin/e_fm_prop.c:503 src/bin/e_int_config_comp_match.c:134
 #: src/bin/e_shelf.c:1135 src/bin/e_shelf.c:2289
@@ -2073,7 +2073,7 @@ msgstr "名前:"
 #: src/bin/e_fm_prop.c:512
 #, fuzzy
 msgid "Location:"
-msgstr "回転"
+msgstr "回転:"
 
 #: src/bin/e_fm_prop.c:521 src/bin/e_widget_filepreview.c:414
 #: src/bin/e_widget_filepreview.c:479 src/bin/e_widget_filepreview.c:533
@@ -2082,26 +2082,26 @@ msgstr "サイズ:"
 
 #: src/bin/e_fm_prop.c:530
 msgid "Occupied blocks on disk:"
-msgstr ""
+msgstr "ディスク上の占有ブロック:"
 
 #: src/bin/e_fm_prop.c:541
 #, fuzzy
 msgid "Taken on:"
-msgstr "スクリーンを準備中"
+msgstr "作成日時:"
 
 #: src/bin/e_fm_prop.c:551
 #, fuzzy
 msgid "Last Accessed:"
-msgstr "最終アクセス日"
+msgstr "アクセス日時"
 
 #: src/bin/e_fm_prop.c:560
 msgid "Last Modified:"
-msgstr "最終更新日:"
+msgstr "更新日時:"
 
 #: src/bin/e_fm_prop.c:569
 #, fuzzy
 msgid "Last Modified Permissions:"
-msgstr "最終更新日:"
+msgstr "前回の変更:"
 
 #: src/bin/e_fm_prop.c:578
 msgid "File Type:"
@@ -2109,30 +2109,30 @@ msgstr "ファイルタイプ:"
 
 #: src/bin/e_fm_prop.c:591
 msgid "Permissions"
-msgstr "許可情報"
+msgstr "アクセス権"
 
 #: src/bin/e_fm_prop.c:596 src/bin/e_fm_prop.c:605 src/bin/e_fm_prop.c:614
 #, fuzzy
 msgid "read"
-msgstr "準備"
+msgstr "読み込み"
 
 #: src/bin/e_fm_prop.c:598 src/bin/e_fm_prop.c:607 src/bin/e_fm_prop.c:616
 msgid "write"
-msgstr ""
+msgstr "書き込み"
 
 #: src/bin/e_fm_prop.c:600 src/bin/e_fm_prop.c:609 src/bin/e_fm_prop.c:618
 msgid "execute"
-msgstr ""
+msgstr "実行"
 
 #: src/bin/e_fm_prop.c:603
 #, fuzzy
 msgid "Group:"
-msgstr "グループ化"
+msgstr "グループ:"
 
 #: src/bin/e_fm_prop.c:612
 #, fuzzy
 msgid "Others:"
-msgstr "その他"
+msgstr "その他:"
 
 #: src/bin/e_fm_prop.c:625 src/bin/e_import_config_dialog.c:299
 #: src/bin/e_widget_fsel.c:348
@@ -2144,7 +2144,7 @@ msgstr "プレビュー"
 
 #: src/bin/e_fm_prop.c:672 src/modules/everything/evry_config.c:424
 msgid "Default"
-msgstr "デフォルト"
+msgstr "既定"
 
 #: src/bin/e_fm_prop.c:675
 msgid "Thumbnail"
@@ -2152,11 +2152,11 @@ msgstr "サムネイル"
 
 #: src/bin/e_fm_prop.c:678 src/modules/conf_display/e_int_config_desklock.c:353
 msgid "Custom"
-msgstr "ユーザー指定"
+msgstr "カスタム"
 
 #: src/bin/e_fm_prop.c:688
 msgid "Use this icon for all files of this type"
-msgstr "この型のファイルはすべてこのアイコンを使う"
+msgstr "このタイプのファイルにはすべてこのアイコンを使用"
 
 #: src/bin/e_fm_prop.c:696
 msgid "Link Information"
@@ -2164,16 +2164,16 @@ msgstr "リンク情報"
 
 #: src/bin/e_fm_prop.c:703
 msgid "This link is broken."
-msgstr ""
+msgstr "このリンクは壊れています。"
 
 #: src/bin/e_fm_prop.c:758
 msgid "Select an Image"
-msgstr "画像を選択する"
+msgstr "画像を選択"
 
 #: src/bin/e_gadcon.c:1458
 #, fuzzy
 msgid "Gadget error"
-msgstr "ガジェットマネージャ"
+msgstr "ガジェット・エラー"
 
 #: src/bin/e_gadcon.c:1458
 #, c-format
