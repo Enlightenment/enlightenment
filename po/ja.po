@@ -47,7 +47,7 @@ msgid ""
 "enlightenment.org</><ps/><ps/>"
 msgstr ""
 "<title>Copyright &copy; 2000-2023, Enlightenment 開発チーム</"
-"><ps><ps/>私たちがこのソフトの執筆を楽しんでいるのと同じように、あなたがこのソフトを"
+"><ps><ps/>私たちがこのソフトウウェアを楽しんで作っているのと同じように、みなさんもこのソフトウェアを"
 "使って楽しんでくださることを願っています。<ps/><ps/>私たちと連絡を取りたい場合は、"
 <ps/><ps/><hilight>http://www.""enlightenment.org を訪れてください。</><ps/><ps/>"
 
@@ -78,12 +78,12 @@ msgid ""
 "sure you want to kill this window?"
 msgstr ""
 "%s を強制終了しようとしています.<br><br>\n"
-"このウィンドウにある未保存のデータはすべて消失します.<br><br>\n"
+"警告. このウィンドウにある未保存のデータはすべて消失します!<ps><ps>\n"
 "このウィンドウを強制終了しますか？"
 
 #: src/bin/e_actions.c:364
 msgid "Are you sure you want to kill this window?"
-msgstr "本当にこのウィンドウを強制終了しますか"
+msgstr "本当にこのウィンドウを強制終了しますか?"
 
 #: src/bin/e_actions.c:367 src/bin/e_actions.c:3536
 #: src/bin/e_int_client_menu.c:854
@@ -111,7 +111,7 @@ msgstr "終了"
 #: src/bin/e_actions.c:2268
 #, fuzzy
 msgid "Are you sure you want to exit Enlightenment?"
-msgstr "本当に終了しますか"
+msgstr "本当に Enlightenment を終了しますか？"
 
 #: src/bin/e_actions.c:2270 src/bin/e_actions.c:2345 src/bin/e_actions.c:2405
 #: src/bin/e_actions.c:2462 src/bin/e_actions.c:2524 src/bin/e_actions.c:2626
@@ -128,7 +128,7 @@ msgstr "ログアウト"
 #: src/bin/e_actions.c:2343
 #, fuzzy
 msgid "Are you sure you want to logout?"
-msgstr "本当にログアウトしますか"
+msgstr "本当にログアウトしますか？"
 
 #: src/bin/e_actions.c:2401
 msgid "Power off"
@@ -137,7 +137,7 @@ msgstr "電源断"
 #: src/bin/e_actions.c:2403
 #, fuzzy
 msgid "Are you sure you want to power off your computer?"
-msgstr "本当にログアウトしますか"
+msgstr "本当にログアウトしますか？"
 
 #: src/bin/e_actions.c:2459 src/bin/e_actions.c:4011
 msgid "Reboot"
@@ -146,7 +146,7 @@ msgstr "再起動"
 #: src/bin/e_actions.c:2460
 #, fuzzy
 msgid "Are you sure you want to reboot your computer?"
-msgstr "本当に再起動しますか"
+msgstr "本当に再起動しますか？"
 
 #: src/bin/e_actions.c:2521 src/bin/e_actions.c:4019
 msgid "Suspend"
@@ -155,12 +155,12 @@ msgstr "サスペンド"
 #: src/bin/e_actions.c:2522
 #, fuzzy
 msgid "Are you sure you want to suspend your computer?"
-msgstr "本当にログアウトしますか"
+msgstr "本当にログアウトしますか？"
 
 #: src/bin/e_actions.c:2623 src/bin/e_actions.c:4027
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:379
 msgid "Hibernate"
-msgstr "休止状態"
+msgstr "ハイバネート"
 
 #: src/bin/e_actions.c:2624
 #, fuzzy
@@ -180,7 +180,7 @@ msgstr "無効なパラメータ: %s"
 #: src/bin/e_actions.c:3408
 #, fuzzy
 msgid "Mouse Remapping"
-msgstr "マウスの設定"
+msgstr "マウスの再設定"
 
 #: src/bin/e_actions.c:3409
 #, fuzzy
@@ -246,16 +246,16 @@ msgstr "ウィンドウ: 状態"
 
 #: src/bin/e_actions.c:3541
 msgid "Sticky Mode Toggle"
-msgstr "常時表示モード反転"
+msgstr "スティッキーモードの切り替え"
 
 #: src/bin/e_actions.c:3545
 #, fuzzy
 msgid "Sticky Mode Enable"
-msgstr "常時表示モード反転"
+msgstr "スティッキーモードを有効化"
 
 #: src/bin/e_actions.c:3550
 msgid "Iconic Mode Toggle"
-msgstr "アイコンモード反転"
+msgstr "アイコンモードの切り替え"
 
 #: src/bin/e_actions.c:3554
 #, fuzzy
@@ -264,7 +264,7 @@ msgstr "アイコンモードの有効化"
 
 #: src/bin/e_actions.c:3559
 msgid "Fullscreen Mode Toggle"
-msgstr "全画面モード反転"
+msgstr "全画面モードの切り替え"
 
 #: src/bin/e_actions.c:3563
 #, fuzzy
@@ -316,29 +316,29 @@ msgstr "最大化モード \"空きまで"
 
 #: src/bin/e_actions.c:3595
 msgid "Shade Up Mode Toggle"
-msgstr "上方シェード反転"
+msgstr "上方シェードモードの切り替え"
 
 #: src/bin/e_actions.c:3597
 msgid "Shade Down Mode Toggle"
-msgstr "下方シェード反転"
+msgstr "下方シェードモードの切り替え"
 
 #: src/bin/e_actions.c:3599
 msgid "Shade Left Mode Toggle"
-msgstr "左方シェード反転"
+msgstr "左方シェードモードの切り替え"
 
 #: src/bin/e_actions.c:3601
 msgid "Shade Right Mode Toggle"
-msgstr "右方シェード反転"
+msgstr "右方シェードモードの切り替え"
 
 #: src/bin/e_actions.c:3603
 msgid "Shade Mode Toggle"
-msgstr "シェード状態反転"
+msgstr "シェードモードの切り替え"
 
 #
 #: src/bin/e_actions.c:3607
 #, fuzzy
 msgid "Set Shaded State"
-msgstr "シェード状態"
+msgstr "シェード状態の設定"
 
 #: src/bin/e_actions.c:3608
 msgid "syntax: \"(0|1) (up|down|left|right)\""
@@ -346,21 +346,21 @@ msgstr ""
 
 #: src/bin/e_actions.c:3612
 msgid "Toggle Borderless State"
-msgstr "ボーダー無し状態反転"
+msgstr "ボーダ無し状態の切り替え"
 
 #: src/bin/e_actions.c:3617
 #, fuzzy
 msgid "Set Border"
-msgstr "ボーダー"
+msgstr "ボーダ"
 
 #: src/bin/e_actions.c:3623
 #, fuzzy
 msgid "Cycle between Borders"
-msgstr "ボーダーの間でサイクル"
+msgstr "ボーダ間の繰り返し"
 
 #: src/bin/e_actions.c:3629
 msgid "Toggle Pinned State"
-msgstr "位置固定状態反転"
+msgstr "ピン止め定状態の切り替え"
 
 #
 #: src/bin/e_actions.c:3634 src/bin/e_actions.c:3636 src/bin/e_actions.c:3638
@@ -410,7 +410,7 @@ msgstr "デスクトップの反転を指定する"
 #: src/bin/e_actions.c:3648
 #, fuzzy
 msgid "Flip To Previous Desktop"
-msgstr "前のデスクトップへ戻る"
+msgstr "以前のデスクトップへ戻る"
 
 #: src/bin/e_actions.c:3653
 msgid "Show The Desktop"
@@ -427,7 +427,7 @@ msgstr "指定のデスクトップへ移動する..."
 #: src/bin/e_actions.c:3669
 #, fuzzy
 msgid "Switch Desktop To... On Screen..."
-msgstr "指定のデスクトップに切り替える(全スクリーン)"
+msgstr "指定のデスクトップに切り替える (オンスクリーン)"
 
 #: src/bin/e_actions.c:3675
 msgid "Flip Desktop Linearly..."
@@ -516,7 +516,7 @@ msgstr "デスクトップを順に移動する...(全スクリーン)"
 #: src/bin/e_actions.c:3737
 #, fuzzy
 msgid "Flip Desktop In Direction..."
-msgstr "方向でデスクトップを反転させる..."
+msgstr "ある方向へデスクトップを反転させる..."
 
 #: src/bin/e_actions.c:3742
 msgid "Switch To Desktop 0 (All Screens)"
@@ -586,7 +586,7 @@ msgid "Jump to window..."
 msgstr "選択されたウィンドウがあるデスクトップへ移動する"
 
 #: src/bin/e_actions.c:3776
-msgid "Jump to window... or start..."
+msgid "ウィンドへ移動... またはスタート..."
 msgstr ""
 
 #: src/bin/e_actions.c:3781 src/bin/e_actions.c:3783 src/bin/e_actions.c:3785
@@ -639,7 +639,7 @@ msgstr "明るくする"
 #: src/bin/e_actions.c:3806
 #, fuzzy
 msgid "Backlight Set"
-msgstr "バックライトのセット"
+msgstr "バックライトの設定"
 
 #: src/bin/e_actions.c:3808
 #, fuzzy
@@ -714,11 +714,11 @@ msgstr "右下に移動／リサイズ"
 #: src/bin/e_actions.c:3863
 #, fuzzy
 msgid "Move To Coordinates..."
-msgstr "中央に移動"
+msgstr "座標へ移動..."
 
 #: src/bin/e_actions.c:3868
 msgid "Move By Coordinate Offset..."
-msgstr ""
+msgstr "座標オフセットによる移動..."
 
 #: src/bin/e_actions.c:3874
 #, fuzzy
@@ -728,7 +728,7 @@ msgstr "サイズ変更"
 #: src/bin/e_actions.c:3880
 #, fuzzy
 msgid "Push in Direction..."
-msgstr "方向に押し..."
+msgstr "ある方向へ押す..."
 
 #: src/bin/e_actions.c:3886
 #, fuzzy
@@ -818,7 +818,7 @@ msgstr "お気に入りメニューを表示する"
 
 #: src/bin/e_actions.c:3945
 msgid "Show All Applications Menu"
-msgstr "全アプリケーションメニューを表示する"
+msgstr "全アプリケーションのメニューを表示する"
 
 #: src/bin/e_actions.c:3947
 msgid "Show Clients Menu"
@@ -848,7 +848,7 @@ msgstr "アプリケーション"
 
 #: src/bin/e_actions.c:3969
 msgid "New Instance of Focused App"
-msgstr ""
+msgstr "フォーカスしたアプリの新しいインスタンス"
 
 #: src/bin/e_actions.c:3973 src/bin/e_int_menus.c:275
 msgid "Restart"
@@ -875,7 +875,7 @@ msgstr "指定したモジュールを無効化"
 #: src/bin/e_actions.c:3995
 #, fuzzy
 msgid "Toggle the named module"
-msgstr "編集モード反転"
+msgstr "編集モードの切り替え"
 
 #: src/bin/e_actions.c:3999 src/bin/e_actions.c:4003 src/bin/e_actions.c:4007
 #: src/bin/e_actions.c:4011 src/bin/e_actions.c:4015 src/bin/e_actions.c:4019
@@ -914,17 +914,17 @@ msgstr "サスペンド"
 #: src/bin/e_actions.c:4023
 #, fuzzy
 msgid "Suspend Intelligently"
-msgstr "サスペンド時間"
+msgstr "サスペンド"
 
 #: src/bin/e_actions.c:4031
 #, fuzzy
 msgid "Hibernate Now"
-msgstr "休止状態"
+msgstr "ハイバネート"
 
 #: src/bin/e_actions.c:4035
 #, fuzzy
 msgid "Hibernate Intelligently"
-msgstr "休止状態に失敗しました"
+msgstr "ハイバネート"
 
 #: src/bin/e_actions.c:4043
 msgid "Lock"
@@ -932,11 +932,11 @@ msgstr "ロック"
 
 #: src/bin/e_actions.c:4048 src/bin/e_int_menus.c:1638
 msgid "Cleanup Windows"
-msgstr "ウィンドウ整頓"
+msgstr "ウィンドウのクリーンアップ"
 
 #: src/bin/e_actions.c:4053
 msgid "Generic : Actions"
-msgstr "一般: 動作"
+msgstr "全般: 動作"
 
 #: src/bin/e_actions.c:4053
 msgid "Delayed Action"
@@ -945,17 +945,17 @@ msgstr "遅延動作"
 #: src/bin/e_actions.c:4061 src/bin/e_actions.c:4065 src/bin/e_actions.c:4069
 #, fuzzy
 msgid "Keyboard Layouts"
-msgstr "キーボード"
+msgstr "キーボードレイアウト"
 
 #: src/bin/e_actions.c:4062
 #, fuzzy
 msgid "Use keyboard layout"
-msgstr "キーボードショートカットを作成します。"
+msgstr "キーボードレイアウトを使用する"
 
 #: src/bin/e_actions.c:4066
 #, fuzzy
 msgid "Next keyboard layout"
-msgstr "キーボードショートカットを作成します。"
+msgstr "次のキーボードレイアウト"
 
 #: src/bin/e_actions.c:4070
 msgid "Previous keyboard layout"
@@ -972,7 +972,7 @@ msgstr "Enlightenment: エラー!"
 
 #: src/bin/e_client.c:4954
 msgid "Something has attempted to set a border when it shouldn't! Report this!"
-msgstr ""
+msgstr "ボーダが設定されるべきでないのに、何かが設定しようとしました！これを報告します！"
 
 #: src/bin/e_color_dialog.c:25
 msgid "Color Selector"
@@ -1008,14 +1008,14 @@ msgstr "選択"
 #: src/modules/xkbswitch/e_mod_config.c:1024
 #: src/modules/xkbswitch/e_mod_config.c:1449
 msgid "Cancel"
-msgstr "取消"
+msgstr "キャンセル"
 
 #: src/bin/e_comp.c:1303 src/bin/e_comp.c:1309 src/bin/e_comp.c:1315
 #: src/bin/e_configure.c:33
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:348
 #, fuzzy
 msgid "Compositor"
-msgstr "位置"
+msgstr "コンポジタ"
 
 #: src/bin/e_comp.c:1304
 msgid "Change current window opacity"
@@ -1023,11 +1023,11 @@ msgstr "現在のウィンドウの透明度を変更する"
 
 #: src/bin/e_comp.c:1310
 msgid "Set current window opacity"
-msgstr "現在のウィンドウの不透明度を設定する"
+msgstr "現在のウィンドウの透明度を設定する"
 
 #: src/bin/e_comp.c:1316
 msgid "Toggle focused client's redirect state"
-msgstr ""
+msgstr "フォーカスしたクライアントのリダイレクト状態を切り替える"
 
 #: src/bin/e_comp.c:1481 src/modules/bluez5/e_mod_popup.c:459
 msgid "Visible"
