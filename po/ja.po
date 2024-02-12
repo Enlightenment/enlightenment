@@ -1642,8 +1642,8 @@ msgstr "%s が存在しません。"
 #, fuzzy, c-format
 msgid "%u file"
 msgid_plural "%u files"
-msgstr[0] "%u 個"
-msgstr[1] "%u 個"
+msgstr[0] "%u ファイル"
+msgstr[1] "%u ファイル"
 
 #: src/bin/e_fm.c:3177
 msgid "Mount Error"
@@ -1712,12 +1712,12 @@ msgstr "日付で並べ替え"
 #: src/bin/e_fm.c:8945 src/modules/fileman/e_mod_config.c:392
 #, fuzzy
 msgid "Directories First"
-msgstr "検索パス"
+msgstr "ディレクトリを最初に"
 
 #: src/bin/e_fm.c:8951 src/modules/fileman/e_mod_config.c:396
 #, fuzzy
 msgid "Directories Last"
-msgstr "検索パス"
+msgstr "ディレクトリを最後に"
 
 #: src/bin/e_fm.c:8982 src/bin/e_fm.c:9131
 #: src/modules/fileman/e_mod_config.c:317
@@ -1732,7 +1732,7 @@ msgstr "並べ替え"
 
 #: src/bin/e_fm.c:9009 src/bin/e_fm.c:9158
 msgid "Refresh View"
-msgstr "内容を更新する"
+msgstr "表示を更新する"
 
 #: src/bin/e_fm.c:9020 src/bin/e_fm.c:9170
 msgid "New..."
@@ -2484,7 +2484,7 @@ msgstr "ウィンドウ"
 #: src/modules/conf_randr/e_int_config_randr2.c:1110
 #, fuzzy
 msgid "Align"
-msgstr "配置"
+msgstr "整列"
 
 #: src/bin/e_int_client_menu.c:163 src/bin/e_int_client_menu.c:1370
 #, fuzzy
@@ -2587,7 +2587,7 @@ msgstr "ICCCM/NetWM"
 
 #: src/bin/e_int_client_menu.c:1031 src/bin/e_int_client_menu.c:1190
 msgid "Alignment"
-msgstr "配置"
+msgstr "アライメント（整列）"
 
 #: src/bin/e_int_client_menu.c:1032
 msgid "Click an object to align with."
@@ -2636,7 +2636,7 @@ msgstr "画面 %d"
 #: src/modules/notification/e_mod_config.c:104
 #, c-format
 msgid "Normal"
-msgstr "通常"
+msgstr "標準"
 
 #: src/bin/e_int_client_menu.c:1392
 msgid "Always Below"
@@ -2852,7 +2852,7 @@ msgstr "基本サイズ"
 
 #: src/bin/e_int_client_prop.c:462
 msgid "Resize Steps"
-msgstr "サイズ増分"
+msgstr ""
 
 #: src/bin/e_int_client_prop.c:463 src/modules/vkbd/e_kbd_cfg.c:162
 #: src/modules/wizard/page_050.c:129
@@ -2883,7 +2883,7 @@ msgstr "ウィンドウグループ"
 #: src/bin/e_int_client_prop.c:471
 #, fuzzy
 msgid "Transient For"
-msgstr "過渡"
+msgstr ""
 
 #: src/bin/e_int_client_prop.c:472
 msgid "Client Leader"
@@ -4055,104 +4055,104 @@ msgstr "Enlightenment で初期画面を設定できません。"
 #: src/bin/e_main.c:880
 #, fuzzy
 msgid "Enlightenment cannot configure the backlight.\n"
-msgstr "Enlightenment で DPMS が設定できません."
+msgstr "Enlightenment でバックライトを設定できません。"
 
 #: src/bin/e_main.c:888
 #, fuzzy
 msgid "Enlightenment cannot configure the DPMS settings.\n"
-msgstr "Enlightenment で DPMS が設定できません."
+msgstr "Enlightenment で DPMS の設定を行えません。"
 
 #: src/bin/e_main.c:897
 #, fuzzy
 msgid "Enlightenment cannot set up its desk locking system.\n"
-msgstr "Enlightenment で デスクロックシステムが準備できません."
+msgstr "Enlightenment で デスクロックシステムを設定できません。"
 
 #
 #: src/bin/e_main.c:917
 msgid "Enlightenment cannot initialize the System Command system.\n"
-msgstr "Enlightenment でシステムコマンドの処理システムが初期化できません.\n"
+msgstr "Enlightenment でシステムコマンド・システムを初期化できません。\n"
 
 #: src/bin/e_main.c:926
 #, fuzzy
 msgid "Enlightenment cannot set up its exec system.\n"
-msgstr "Enlightenment で exec システムが準備できません."
+msgstr "Enlightenment でその実行システムを設定できません。"
 
 #
 #: src/bin/e_main.c:938
 msgid "Enlightenment cannot initialize the File manager.\n"
-msgstr "Enlightenment でファイルマネージャが初期化できません.\n"
+msgstr "Enlightenment でファイルマネージャを初期化できません。\n"
 
 #: src/bin/e_main.c:947
 #, fuzzy
 msgid "Enlightenment cannot set up its msg system.\n"
-msgstr "Enlightenment で メッセージシステムが準備できません."
+msgstr "Enlightenment で メッセージシステムを設定できません。"
 
 #: src/bin/e_main.c:956
 #, fuzzy
 msgid "Enlightenment cannot set up its grab input handling system.\n"
-msgstr "Enlightenment で入力グラブ処理システムが準備できません."
+msgstr "Enlightenment でg rab 入力処理システムを設定できません。"
 
 #: src/bin/e_main.c:965 src/bin/e_main.c:1107
 #, fuzzy
 msgid "Enlightenment cannot set up its module system.\n"
-msgstr "Enlightenment でモジュールシステムが準備できません."
+msgstr "Enlightenment でモジュールシステムを設定できません。"
 
 #: src/bin/e_main.c:974
 #, fuzzy
 msgid "Enlightenment cannot setup remember settings.\n"
-msgstr "Enlightenment で記憶機能の設定が準備できません."
+msgstr "Enlightenment で記憶の設定ができません。"
 
 #: src/bin/e_main.c:983
 #, fuzzy
 msgid "Enlightenment cannot set up its gadget control system.\n"
-msgstr "Enlightenment でガジェット管理システムが準備できません."
+msgstr "Enlightenment でガジェット制御システムを設定できません。"
 
 #: src/bin/e_main.c:992
 #, fuzzy
 msgid "Enlightenment cannot set up its toolbars.\n"
-msgstr "Enlightenment で国際化システムが準備できません."
+msgstr "Enlightenment でツールバーの設定ができません。"
 
 #: src/bin/e_main.c:1001
 #, fuzzy
 msgid "Enlightenment cannot set up its desktop background system.\n"
-msgstr "Enlightenment でデスクトップ背景システムが準備できません."
+msgstr "Enlightenment でデスクトップ背景のシステムを設定できません。"
 
 #: src/bin/e_main.c:1010
 #, fuzzy
 msgid "Enlightenment cannot configure the mouse settings.\n"
-msgstr "Enlightenment でマウスが設定できません."
+msgstr "Enlightenment でマウスの設定できません。"
 
 #: src/bin/e_main.c:1018
 #, fuzzy
 msgid "Enlightenment cannot set up its bindings system.\n"
-msgstr "Enlightenment でバインディングシステムが準備できません."
+msgstr "Enlightenment でバインディングシステムを設定できません。"
 
 #
 #: src/bin/e_main.c:1027
 msgid "Enlightenment cannot initialize the Thumbnailing system.\n"
-msgstr "Enlightenment でサムネイル処理システムが初期化できません.\n"
+msgstr "Enlightenment でサムネイル・システムを初期化できません。\n"
 
 #
 #: src/bin/e_main.c:1036
 #, fuzzy
 msgid "Enlightenment cannot initialize the Icon Cache system.\n"
-msgstr "Enlightenment でシステムコマンドの処理システムが初期化できません.\n"
+msgstr "Enlightenment でアイコンのキャッシュシステムを初期化できません。\n"
 
 #
 #: src/bin/e_main.c:1045
 #, fuzzy
 msgid "Enlightenment cannot initialize the Update system.\n"
-msgstr "Enlightenment でシステムコマンドの処理システムが初期化できません.\n"
+msgstr "Enlightenment でアップデートのシステムを初期化できません。\n"
 
 #: src/bin/e_main.c:1054
 #, fuzzy
 msgid "Enlightenment cannot initialize its desktop environment.\n"
-msgstr "Enlightenment でテーマシステムが準備できません."
+msgstr "Enlightenment でデスクトップ環境を初期化できません。"
 
 #: src/bin/e_main.c:1063
 #, fuzzy
 msgid "Enlightenment cannot set up its order file system.\n"
-msgstr "Enlightenment で order ファイルシステムが準備できません."
+msgstr "Enlightenment でオーダー・ファイルシステムを設定できません。"
 
 #: src/bin/e_main.c:1115 src/modules/wizard/e_wizard.c:262
 msgid "Welcome to Enlightenment"
@@ -4193,24 +4193,29 @@ msgid ""
 "  -version\n"
 msgstr ""
 "オプション:\n"
-"\t-display DISPLAY\n"
-"\t\tDISPLAY に指定されたディスプレイに接続する.\n"
-"\t\t例: -display :1.0\n"
-"\t-fake-xinerama-screen WxH+X+Y\n"
-"\t\t指定のジオメトリに(本物ではなく)疑似 xinerama スクリーンを追加し,\n"
-"\t\t本物の xinerama スクリーンを置き換える. 個数に制限は無い. \n"
-"\t\tこれを使えば xinerama がシミュレートできる.\n"
-"\t\t例: -fake-xinerama-screen 800x600+0+0 -fake-xinerama-screen "
+"    Connect to display named DISPLAY.\n"
+"    EG: -display :1.0\n"
+"  -fake-xinerama-screen WxH+X+Y\n"
+"    Add a FAKE xinerama screen (instead of the real ones)\n"
+"    given the geometry. Add as many as you like. They all\n"
+"    replace the real xinerama screens, if any. This can\n"
+"    be used to simulate xinerama.\n"
+"    EG: -fake-xinerama-screen 800x600+0+0 -fake-xinerama-screen "
 "800x600+800+0\n"
-"\t-profile CONF_PROFILE\n"
-"\t\tユーザーが決めたデフォルトの設定プロファイルの代わりに CONF_PROFILE を使"
-"う.さもなければ \"default\" が使われる.\n"
-"\t-good\n"
-"\t\t良くしてて\n"
-"\t-evil\n"
-"\t\t悪くしてて\n"
-"\t-psychotic\n"
-"\t\t精神病様にしてて\n"
+"  -profile CONF_PROFILE\n"
+"    Use the configuration profile CONF_PROFILE instead of the user selected "
+"default or just \"default\".\n"
+"  -good\n"
+"    Be good.\n"
+"  -evil\n"
+"    Be evil.\n"
+"  -psychotic\n"
+"    Be psychotic.\n"
+"  -locked\n"
+"    Start with desklock on, so password will be asked.\n"
+"  -i-really-know-what-i-am-doing-and-accept-full-responsibility-for-it\n"
+"    If you need this help, you don't need this option.\n"
+"  -version\n"
 
 #: src/bin/e_main.c:1326
 msgid ""
@@ -4221,16 +4226,21 @@ msgid ""
 "and launching any other required services etc.\n"
 "before enlightenment itself begins running.\n"
 msgstr ""
+"あなたは今 Enlightenment を直接実行しています。これは\n"
+"良くありません。どうか、 \"enlightenment\" を実行しないでください。\n"
+"\"enlightenment_start\" ランチャを使用してください。\n"
+"これは、環境変数やパスの設定、その他必要なサービスの起動などを \n"
+"Enlightenment 自体が起動開始する前に処理します。\n"
 
 #: src/bin/e_main.c:1589
 #, fuzzy
 msgid "Enlightenment cannot create a compositor.\n"
-msgstr "Enlightenment で記憶機能の設定が準備できません."
+msgstr "Enlightenment でコンポジタの生成ができません。"
 
 #: src/bin/e_main.c:1602
 #, fuzzy
 msgid "Enlightenment cannot set up its dnd system.\n"
-msgstr "Enlightenment で dnd システムが準備できません."
+msgstr "Enlightenment で dnd システムを設定できません。"
 
 #: src/bin/e_main.c:1763
 #, c-format
@@ -4239,10 +4249,13 @@ msgid ""
 "an error loading the<ps/>module named: %s. This module has been disabled<ps/"
 ">and will not be loaded."
 msgstr ""
+"起動してすぐに Enlightenment がクラッシュし、再起動しています。<ps/>%s という名前の"
+"モジュールのロードでエラーが発生しました。<ps/>このモジュールを無効にしたので、"
+"ロードされません。"
 
 #: src/bin/e_main.c:1768 src/bin/e_main.c:1784
 msgid "Enlightenment crashed early on start and has been restarted"
-msgstr ""
+msgstr "Enlightenment が開始早々にクラッシュし、再起動しています"
 
 #: src/bin/e_main.c:1769
 #, c-format
@@ -4251,6 +4264,9 @@ msgid ""
 "an error loading the module named: %s<ps/><ps/>This module has been disabled "
 "and will not be loaded."
 msgstr ""
+"起動してすぐに Enlightenment がクラッシュし、再起動しています。<ps/>%s という名前の"
+"モジュールのロードでエラーが発生しました。<ps/><ps/>このモジュールを無効にしたので、"
+"ロードされません。"
 
 #: src/bin/e_main.c:1777
 msgid ""
@@ -4259,6 +4275,9 @@ msgid ""
 ">modules from your configuration. The module<ps/>configuration dialog should "
 "let you select your<ps/>modules again.\n"
 msgstr ""
+"起動してすぐに Enlightenment がクラッシュし、再起動しています。<ps/>すべてのモジュールを"
+"無効にしました。<ps/>設定で問題が発生したモジュールを取り除かないと、<ps/>今後はロードできません。"
+"モジュール設定ダイアログで<ps/>再度モジュールの選択を行ってください。\n"
 
 #: src/bin/e_main.c:1785
 msgid ""
@@ -4267,6 +4286,9 @@ msgid ""
 "modules from your configuration.<ps/><ps/>The module configuration dialog "
 "should let you select your<ps/>modules again."
 msgstr ""
+"起動してすぐに Enlightenment がクラッシュし、再起動しています。<ps/>すべてのモジュールを"
+"無効にしました。<ps/>設定で問題が発生したモジュールを取り除かないと、今後はロードできません。"
+"<ps/><ps/>モジュール設定ダイアログで、再度モジュールの選択を行ってください。"
 
 #: src/bin/e_module.c:159
 #, c-format
@@ -4279,12 +4301,12 @@ msgid ""
 "There was an error loading the module named: %s<ps/>No module named %s could "
 "be found in the<ps/>module search directories.<ps/>"
 msgstr ""
-"モジュール %s のロード中にエラーが発生しました.<br>モジュール %s はモジュール"
-"の検索パスにありません.<br>"
+"モジュール名 %s のロード中にエラーが発生しました.<ps/>モジュール %s はモジュール"
+"の検索パスに存在しません。<ps/>"
 
 #: src/bin/e_module.c:206 src/bin/e_module.c:219 src/bin/e_module.c:238
 msgid "Error loading Module"
-msgstr "モジュールのロードエラー"
+msgstr "モジュールの読み込みエラー"
 
 #: src/bin/e_module.c:214 src/bin/e_module.c:232
 #, fuzzy, c-format
@@ -4292,12 +4314,12 @@ msgid ""
 "There was an error loading the module named: %s<ps/>The full path to this "
 "module is:<ps/>%s<ps/>The error reported was:<ps/>%s<ps/>"
 msgstr ""
-"モジュール %s のロード中にエラーが発生しました.<br>このモジュールのフルパスは"
-"以下のとおりです.<br>%s<br>エラーの内容は以下のとおりです.<br>%s<br>"
+"モジュール名 %s のロード中にエラーが発生しました.<ps/>このモジュールのフルパスは"
+" <br>%s<br> です。エラーの内容は次のとおりです。<ps/>%s<ps/>"
 
 #: src/bin/e_module.c:237
 msgid "Module does not contain all needed functions"
-msgstr "モジュールに不足している機能があります."
+msgstr "モジュールには必要な機能が不足しています."
 
 #: src/bin/e_module.c:252
 #, fuzzy, c-format
@@ -4306,9 +4328,9 @@ msgid ""
 "API version of: %i.<ps/>The module API advertized by Enlightenment is: %i."
 "<ps/>"
 msgstr ""
-"モジュール API エラー<br>モジュールの初期化エラー: %s<br>バージョン %i 以降の"
-"モジュール API が必要です.<br>Enlightenment で提供されているモジュール API の"
-"バージョンは %i です.<br>"
+"モジュール API エラー<br>モジュールの初期化エラー: %s<ps/>バージョン %i の"
+"モジュール API が必要です。<ps/>Enlightenment で提供されているモジュール API の"
+"バージョンは %i です.<ps/>"
 
 #: src/bin/e_module.c:257
 #, c-format
@@ -4318,14 +4340,14 @@ msgstr "Enlightenment %s モジュール"
 #: src/bin/e_module.c:587
 #, fuzzy
 msgid "What action should be taken with this module?<ps/>"
-msgstr "このモジュールをアンロードしますか？<br>"
+msgstr "このモジュールに対して、どんなアクションを取りますか？<ps/>"
 
 #: src/bin/e_module.c:593 src/bin/e_shelf.c:1777
 #: src/modules/conf_dialogs/e_int_config_profiles.c:341
 #: src/modules/conf_shelves/e_int_config_shelf.c:397
 #: src/modules/ibar/e_mod_config.c:209
 msgid "Keep"
-msgstr ""
+msgstr "保持"
 
 #: src/bin/e_module.c:692
 msgid ""
@@ -4333,23 +4355,26 @@ msgid ""
 "cause bugs and crashes.<ps/>Please remove them before reporting any bugs.<ps/"
 "><ps/>The module list is as follows:<ps/><ps/>"
 msgstr ""
+"以下のモジュールはEnlightenment用の標準ではないため、<ps/>バグやクラッシュを"
+"引き起こす可能性があります。<ps/>バグを報告する前にこれを削除してください。<ps/><ps/>"
+"モジュール一覧は以下の通りです：<ps/><ps/>"
 
 #: src/bin/e_module.c:704
 #, fuzzy
 msgid "Unstable module tainting"
-msgstr "バイトコードをヒンティングする"
+msgstr "不安定なモジュールによる損傷"
 
 #: src/bin/e_module.c:708
 #, fuzzy
 msgid "I know"
-msgstr "不明"
+msgstr "了解"
 
 #: src/bin/e_remember.c:52 src/modules/conf_intl/e_int_config_imc.c:275
 #: src/modules/conf_intl/e_int_config_imc.c:562
 #, fuzzy, c-format
 msgid "Enlightenment was unable to fork a child process:<ps/><ps/>%s<ps/>"
 msgstr ""
-"Enlightenment で以下の子プロセスが fork できませんでした.<br><br>%s<br>"
+"Enlightenment で以下の子プロセスをフォークできませんでした。<br><br>%s<br>"
 
 #: src/bin/e_shelf.c:65 src/modules/vkbd/e_kbd_cfg.c:42
 #: src/modules/vkbd/e_kbd_cfg.c:103 src/modules/vkbd/e_kbd_cfg.c:107
@@ -4415,13 +4440,16 @@ msgstr "シェルフ #%d"
 
 #: src/bin/e_shelf.c:945
 msgid "Shelf Autohide Error"
-msgstr ""
+msgstr "シェルフの自動非表示エラー"
 
 #: src/bin/e_shelf.c:945
 msgid ""
 "Shelf autohiding will not work properly<ps/>with the current configuration; "
 "set your shelf to<ps/>\"Below Everything\" or disable autohiding."
 msgstr ""
+"シェルフの自動非表示が、現在の設定では正しく機能していません。<ps/>"
+"したがって、シェリフを \"Below Everything \" に設定するか、<ps/>"
+"あるいは自動非表示を無効にしてください。"
 
 #: src/bin/e_shelf.c:1133
 #, fuzzy
@@ -4431,11 +4459,11 @@ msgstr "新しいシェルフを追加"
 #: src/bin/e_shelf.c:1155
 #, fuzzy
 msgid "Shelf Error"
-msgstr "シェルフ・エラー"
+msgstr "シェルフのエラー"
 
 #: src/bin/e_shelf.c:1155
 msgid "A shelf with that name already exists!"
-msgstr ""
+msgstr "その名前のシェルフはすでに存在します！"
 
 #: src/bin/e_shelf.c:1642 src/bin/e_shelf.c:2412
 #, fuzzy
@@ -4445,7 +4473,7 @@ msgstr "ガジェットの移動を停止する"
 #: src/bin/e_shelf.c:1644 src/bin/e_shelf.c:2414
 #, fuzzy
 msgid "Begin Moving Gadgets"
-msgstr "ガジェットの位置と大きさの変更を始める"
+msgstr "ガジェットの移動を開始する"
 
 #: src/bin/e_shelf.c:1772
 msgid "Are you sure you want to delete this shelf?"
@@ -4456,7 +4484,7 @@ msgstr "本当にこのシェルフを削除しますか？"
 msgid ""
 "You requested to delete this shelf.<ps/><ps/>Are you sure you want to delete "
 "it?"
-msgstr "このシェルフを削除しようとしています.<br><br>本当に削除しますか."
+msgstr "このシェルフを削除しようとしています。<ps/><ps/>本当にこれを削除しますか？"
 
 #: src/bin/e_shelf.c:2268
 msgid "A shelf with that name and id already exists!"
@@ -12293,7 +12321,7 @@ msgstr ""
 
 #, fuzzy
 #~ msgid "Reject"
-#~ msgstr "イジェクト"
+#~ msgstr "拒否する"
 
 #, fuzzy
 #~ msgid "Display Passkey"
