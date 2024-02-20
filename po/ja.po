@@ -8600,10 +8600,12 @@ msgid ""
 "This module wants to execute an external application EConnMan that does not "
 "exist.<ps/>Please install <b>EConnMan</b> application."
 msgstr ""
+"このモジュールは、存在しない外部アプリケーション EConnMan を実行しようとしています。"
+"<ps/><b>EConnMan</b> アプリケーションをインストールしてください。"
 
 #: src/modules/connman/e_mod_main.c:285
 msgid "Wifi On"
-msgstr ""
+msgstr "WiFi オン"
 
 #
 #: src/modules/connman/e_mod_main.c:295
@@ -8618,7 +8620,7 @@ msgstr "マウスポインタの設定"
 
 #: src/modules/cpufreq/e_mod_config.c:82 src/modules/cpufreq/e_mod_main.c:276
 msgid "Restore CPU Power Policy"
-msgstr "CPU パワーポリシーを復帰する"
+msgstr "CPU 電源ポリシーの復元"
 
 #: src/modules/cpufreq/e_mod_config.c:85 src/modules/cpufreq/e_mod_main.c:316
 msgid "Automatic powersaving"
@@ -8652,16 +8654,16 @@ msgstr "超低速(256 ticks ごと)"
 #: src/modules/cpufreq/e_mod_config.c:104
 #, fuzzy
 msgid "Minimum Power State"
-msgstr "マウスの設定"
+msgstr "最小電力状態"
 
 #: src/modules/cpufreq/e_mod_config.c:110
 #, fuzzy
 msgid "Maximum Power State"
-msgstr "マウスの設定"
+msgstr "最大電力状態"
 
 #: src/modules/cpufreq/e_mod_main.c:150
 msgid "Cpufreq"
-msgstr "Cpufreq"
+msgstr "CPU 周波数"
 
 #: src/modules/cpufreq/e_mod_main.c:251
 msgid "Manual"
@@ -8670,12 +8672,12 @@ msgstr "手動"
 #: src/modules/cpufreq/e_mod_main.c:255 src/modules/cpufreq/e_mod_main.c:293
 #, fuzzy
 msgid "Lower Power Automatic"
-msgstr "低消費電力自動"
+msgstr "自動低消費電力"
 
 #: src/modules/cpufreq/e_mod_main.c:257 src/modules/cpufreq/e_mod_main.c:295
 #, fuzzy
 msgid "Automatic Interactive"
-msgstr "自動的にヒンティングする"
+msgstr "自動インタラクティブ"
 
 #: src/modules/cpufreq/e_mod_main.c:259 src/modules/cpufreq/e_mod_main.c:297
 msgid "Minimum Speed"
@@ -8701,7 +8703,7 @@ msgstr "更新間隔"
 
 #: src/modules/cpufreq/e_mod_main.c:412
 msgid "Set CPU Power Policy"
-msgstr "CPU パワーポリシーを設定する"
+msgstr "CPU 電源ポリシーを設定する"
 
 #: src/modules/cpufreq/e_mod_main.c:419
 msgid "Set CPU Speed"
@@ -8714,19 +8716,18 @@ msgstr "省電力時の動作"
 #: src/modules/cpufreq/e_mod_main.c:431
 #, fuzzy
 msgid "Power State Min"
-msgstr "マウスの設定"
+msgstr "最小電力状態"
 
 #: src/modules/cpufreq/e_mod_main.c:437
 msgid "Power State Max"
-msgstr ""
+msgstr "最大電力状態"
 
 #: src/modules/cpufreq/e_mod_main.c:549
 #, fuzzy
 msgid ""
 "There was an error trying to modify CPU<br>frequency control parameters."
 msgstr ""
-"エラーが起きました.<br>このモジュールの setfreq ユーティリティで CPU 周波数ガ"
-"バナーを設定しようとしています."
+"CPUの周波数制御パラメータを変更しようとしたところ、<br>エラーが発生しました。"
 
 #: src/modules/cpufreq/e_mod_main.c:615
 #, fuzzy
@@ -8735,40 +8736,40 @@ msgid ""
 "be missing<ps/>Kernel modules or features, or your CPU<ps/>simply does not "
 "support this feature."
 msgstr ""
-"このカーネルでは CPU 周波数がまったく設定できません.<br>カーネルのモジュール"
-"や機能で必要なものが欠けているかもしれません.<br>または, その機能がサポートさ"
-"れていない CPU を使っているだけかもしれません."
+"お使いのカーネルでは CPU 周波数がまったく設定できません。<ps/>カーネルのモジュール"
+"や機能で必要なものが欠けているかもしれません。<ps/>あるいは、その機能をサポートしていない"
+" CPU を使っているのかもしれません。"
 
 #: src/modules/cpufreq/e_mod_main.c:1565
 #, fuzzy
 msgid "CPU Frequency"
-msgstr "緊急"
+msgstr "CPU 周波数"
 
 #: src/modules/everything/e_mod_main.c:47
 #: src/modules/everything/evry_plugin.c:179
 msgid "Everything Launcher"
-msgstr "Everythingランチャー"
+msgstr "Everything ランチャ"
 
 #: src/modules/everything/e_mod_main.c:48
 #, fuzzy
 msgid "Show Everything Launcher"
-msgstr "すべてランチャーを表示する"
+msgstr "Everything ランチャを表示する"
 
 #: src/modules/everything/e_mod_main.c:59
 msgid "Everything Configuration"
-msgstr "Everythingの設定"
+msgstr "Everything の設定"
 
 #: src/modules/everything/e_mod_main.c:397
 msgid "Everything Module"
-msgstr "Everythingモジュール"
+msgstr "Everything モジュール"
 
 #: src/modules/everything/e_mod_main.c:576
 msgid "Run Everything"
-msgstr "Everything起動"
+msgstr "Everything の起動"
 
 #: src/modules/everything/evry_config.c:78
 msgid "Everything Settings"
-msgstr "Everythingの設定"
+msgstr "Everything の設定"
 
 #: src/modules/everything/evry_config.c:362
 msgid "Available Plugins"
@@ -8788,7 +8789,7 @@ msgstr "有効"
 
 #: src/modules/everything/evry_config.c:389
 msgid "Show in \"All\""
-msgstr "\"ALL\"に表示する"
+msgstr "\"ALL\" に表示する"
 
 #: src/modules/everything/evry_config.c:395
 msgid "Show in top-level"
@@ -8796,15 +8797,15 @@ msgstr "トップレベルに表示する"
 
 #: src/modules/everything/evry_config.c:401
 msgid "Minimum characters for search"
-msgstr "検索最小文字数"
+msgstr "検索可能な最小文字数"
 
 #: src/modules/everything/evry_config.c:410
 msgid "Plugin Trigger"
-msgstr "プラグイントリガー"
+msgstr "プラグイン・トリガ"
 
 #: src/modules/everything/evry_config.c:415
 msgid "Search only when triggered"
-msgstr "トリガーがかかったときのみ検索"
+msgstr "トリガがかかったときのみ検索"
 
 #: src/modules/everything/evry_config.c:422
 msgid "Plugin View"
@@ -8825,7 +8826,7 @@ msgstr ""
 
 #: src/modules/everything/evry_config.c:481
 msgid "Hide input when inactive"
-msgstr "アクティブ以外は入力を隠す"
+msgstr "非アクティブ時に入力を隠す"
 
 #: src/modules/everything/evry_config.c:486
 msgid "Hide list"
@@ -8833,20 +8834,20 @@ msgstr "リストを隠す"
 
 #: src/modules/everything/evry_config.c:491
 msgid "Quick Navigation"
-msgstr "クイックナビ"
+msgstr "クイック・ナビゲーション"
 
 #: src/modules/everything/evry_config.c:495
 msgid "Emacs style (ALT + n,p,f,b,m,i)"
-msgstr "Emacsスタイル"
+msgstr "Emacs スタイル (ALT + n,p,f,b,m,i)"
 
 #: src/modules/everything/evry_config.c:497
 msgid "Vi style (ALT + h,j,k,l,n,p,m,i)"
-msgstr "Viスタイル"
+msgstr "Viスタイル (ALT + h,j,k,l,n,p,m,i)"
 
 #: src/modules/everything/evry_config.c:503
 #, fuzzy
 msgid "No Sorting"
-msgstr "整列"
+msgstr "並び替えない"
 
 #: src/modules/everything/evry_config.c:506
 msgid "By usage"
@@ -8858,7 +8859,7 @@ msgstr "使用頻度"
 
 #: src/modules/everything/evry_config.c:512
 msgid "Last used"
-msgstr "最終使用"
+msgstr "最終利用"
 
 #: src/modules/everything/evry_config.c:524
 msgid "Subject Plugins"
@@ -8906,17 +8907,17 @@ msgstr "ジオメトリ"
 
 #: src/modules/everything/evry_config.c:629
 msgid "Everything Collection"
-msgstr "Everythingコレクション"
+msgstr "Everything コレクション"
 
 #: src/modules/everything/evry_gadget.c:169
 #, fuzzy
 msgid "Everything Starter"
-msgstr "Everythingの設定"
+msgstr "Everything の設定"
 
 #: src/modules/everything/evry_gadget.c:575
 #, fuzzy
 msgid "Everything Gadgets"
-msgstr "Everything ファイル"
+msgstr "Everything ガジェット"
 
 #: src/modules/everything/evry_gadget.c:673
 #, fuzzy
@@ -8932,8 +8933,8 @@ msgstr "アクション"
 #, c-format
 msgid "%d item"
 msgid_plural "%d items"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d アイテム"
+msgstr[1] "%d アイテム"
 
 #: src/modules/everything/evry_plug_aggregator.c:302
 msgid "No plugins loaded"
@@ -8956,31 +8957,31 @@ msgstr "ファイルを開く..."
 
 #: src/modules/everything/evry_plug_apps.c:1198
 msgid "Edit Application Entry"
-msgstr "アプリケーションの編集"
+msgstr "アプリケーションのエントリ編集"
 
 #: src/modules/everything/evry_plug_apps.c:1205
 msgid "New Application Entry"
-msgstr "新しいアプリケーションエントリ"
+msgstr "新しいアプリケーションのエントリ"
 
 #: src/modules/everything/evry_plug_apps.c:1212
 msgid "Run with Sudo"
-msgstr "sudoで実行する"
+msgstr "sudo で実行する"
 
 #: src/modules/everything/evry_plug_apps.c:1225
 #: src/modules/fileman/e_fwin.c:397
 #, fuzzy
 msgid "Open Terminal here"
-msgstr "端末を開く"
+msgstr "ここで端末を開く"
 
 #: src/modules/everything/evry_plug_apps.c:1231
 #, fuzzy
 msgid "Run Executable"
-msgstr "実行ファイル名"
+msgstr "実行可能ファイル"
 
 #: src/modules/everything/evry_plug_apps.c:1309
 #: src/modules/everything/evry_plug_apps.c:1436
 msgid "Everything Applications"
-msgstr "Everythingアプリケーション"
+msgstr "Everything アプリケーション"
 
 #: src/modules/everything/evry_plug_apps.c:1340
 msgid "Commands"
@@ -8988,19 +8989,19 @@ msgstr "コマンド"
 
 #: src/modules/everything/evry_plug_apps.c:1341
 msgid "Terminal Command"
-msgstr "端末起動コマンド"
+msgstr "端末コマンド"
 
 #: src/modules/everything/evry_plug_apps.c:1346
 #, fuzzy
 msgid "Sudo GUI"
-msgstr "須藤GUI"
+msgstr ""
 
 #: src/modules/everything/evry_plug_apps.c:1417
 #: src/modules/everything/evry_plug_collection.c:146
 #: src/modules/everything/evry_plug_files.c:1563
 #, fuzzy
 msgid "Everything Plugin"
-msgstr "すべて"
+msgstr "Everything プラグイン"
 
 #: src/modules/everything/evry_plug_calc.c:265
 msgid "Calculator"
@@ -9012,11 +9013,11 @@ msgstr "クリップボードへコピーする"
 
 #: src/modules/everything/evry_plug_files.c:1302
 msgid "Copy To ..."
-msgstr "コピー..."
+msgstr "コピー先..."
 
 #: src/modules/everything/evry_plug_files.c:1307
 msgid "Move To ..."
-msgstr "移動..."
+msgstr "移動先..."
 
 #: src/modules/everything/evry_plug_files.c:1312
 msgid "Move to Trash"
@@ -9025,7 +9026,7 @@ msgstr "ゴミ箱へ移動"
 #: src/modules/everything/evry_plug_files.c:1316
 #, fuzzy
 msgid "Open Directory"
-msgstr "新しいディレクトリ"
+msgstr "ディレクトリを開く"
 
 #: src/modules/everything/evry_plug_files.c:1320
 #, fuzzy
@@ -9039,7 +9040,7 @@ msgstr "名前で整列"
 #: src/modules/everything/evry_plug_files.c:1358
 #: src/modules/everything/evry_plug_files.c:1370
 msgid "Recent Files"
-msgstr "最近のファイル"
+msgstr "最近開いたファイル"
 
 #: src/modules/everything/evry_plug_files.c:1442
 #: src/modules/everything/evry_plug_files.c:1585
@@ -9048,48 +9049,48 @@ msgstr "Everything ファイル"
 
 #: src/modules/everything/evry_plug_files.c:1469
 msgid "Show recent files"
-msgstr "最近のファイルを表示する"
+msgstr "最近開いたファイルを表示"
 
 #: src/modules/everything/evry_plug_files.c:1473
 msgid "Search recent files"
-msgstr "最近のファイルを検索する"
+msgstr "最近開いたファイルを検索"
 
 #: src/modules/everything/evry_plug_files.c:1477
 msgid "Search cached files"
-msgstr "キャッシュされているファイルを検索する"
+msgstr "キャッシュされているファイルを検索"
 
 #: src/modules/everything/evry_plug_files.c:1481
 msgid "Cache visited directories"
-msgstr "使用したディレクトリをキャッシュする"
+msgstr "訪問したディレクトリをキャッシュする"
 
 #: src/modules/everything/evry_plug_files.c:1485
 msgid "Clear cache"
-msgstr "キャッシュをクリアする"
+msgstr "キャッシュのクリア"
 
 #: src/modules/everything/evry_plugin.c:177
 #: src/modules/everything/evry_plugin.c:208
 #, fuzzy, c-format
 msgid "Show %s Plugin"
-msgstr "マウスが乗ったら出す"
+msgstr "%s プラグインを表示"
 
 #: src/modules/everything/evry_plugin.c:187
 #, c-format
 msgid "Browse %s"
-msgstr ""
+msgstr "%s をブラウズする"
 
 #: src/modules/everything/evry_plug_settings.c:187
 msgid "Show Dialog"
-msgstr "ダイアログを表示する"
+msgstr "ダイアログの表示"
 
 #: src/modules/everything/evry_plug_text.c:63
 #: src/modules/everything/evry_plug_text.c:66
 #, fuzzy
 msgid "Text"
-msgstr "移動時"
+msgstr ""
 
 #: src/modules/everything/evry_plug_windows.c:348
 msgid "Switch to Window"
-msgstr "ウィンドウに切換える"
+msgstr "ウィンドウへ切換える"
 
 #: src/modules/everything/evry_plug_windows.c:363
 msgid "Toggle Fullscreen"
@@ -9097,7 +9098,7 @@ msgstr "全面表示を切換える"
 
 #: src/modules/everything/evry_plug_windows.c:377
 msgid "Send to Desktop"
-msgstr "他のデスクトップへ移す"
+msgstr "他のデスクトップへ送る"
 
 #: src/modules/everything/evry_view_help.c:67
 #, fuzzy
@@ -9157,17 +9158,17 @@ msgstr "上のディレクトリへ移動"
 #: src/modules/fileman/e_fwin.c:2385
 #, fuzzy
 msgid "Clone Window"
-msgstr "ウィンドウ整頓"
+msgstr ""
 
 #: src/modules/fileman/e_fwin.c:2391
 #, fuzzy
 msgid "Copy Path"
-msgstr "E のパス"
+msgstr "コピーのパス"
 
 #: src/modules/fileman/e_fwin.c:2407
 #, fuzzy
 msgid "Run"
-msgstr "ロシア語"
+msgstr "起動"
 
 #: src/modules/fileman/e_fwin.c:2414 src/modules/fileman/e_fwin.c:2793
 msgid "Open"
@@ -9187,11 +9188,11 @@ msgstr "既知のアプリケーション"
 #: src/modules/fileman/e_fwin.c:2875
 #, fuzzy
 msgid "Suggested Applications"
-msgstr "選択されたアプリケーション"
+msgstr "お推めのアプリケーション"
 
 #: src/modules/fileman/e_fwin.c:2910
 msgid "All Applications"
-msgstr "全アプリケーション"
+msgstr "すべてのアプリケーション"
 
 #: src/modules/fileman/e_fwin.c:2933
 msgid "Custom Command"
@@ -9201,61 +9202,61 @@ msgstr "カスタムコマンド"
 #: src/modules/fileman_opinfo/e_mod_main.c:105
 #, c-format
 msgid "Copying is aborted"
-msgstr "コピーが異常終了しました"
+msgstr "コピーを中止しました"
 
 #: src/modules/fileman/e_fwin.c:3229
 #: src/modules/fileman_opinfo/e_mod_main.c:109
 #, c-format
 msgid "Moving is aborted"
-msgstr "移動が異常終了しました"
+msgstr "移動を中止しました"
 
 #: src/modules/fileman/e_fwin.c:3233
 #: src/modules/fileman_opinfo/e_mod_main.c:113
 #, c-format
 msgid "Deleting is aborted"
-msgstr "削除が異常終了しました"
+msgstr "削除を中止しました"
 
 #: src/modules/fileman/e_fwin.c:3237
 #: src/modules/fileman_opinfo/e_mod_main.c:117
 #, fuzzy, c-format
 msgid "Secure deletion is aborted"
-msgstr "削除が異常終了しました"
+msgstr "安全な削除を中止しました"
 
 #: src/modules/fileman/e_fwin.c:3241
 #: src/modules/fileman_opinfo/e_mod_main.c:121
 #, c-format
 msgid "Unknown operation from slave is aborted"
-msgstr "スレーブからの未知の操作が異常終了しました"
+msgstr "スレーブからの不明な操作を中止しました"
 
 #: src/modules/fileman/e_fwin.c:3251
 #: src/modules/fileman_opinfo/e_mod_main.c:131
 #, c-format
 msgid "Copy of %s done"
-msgstr "%s のコピー終了"
+msgstr "%s のコピー完了"
 
 #: src/modules/fileman/e_fwin.c:3253
 #: src/modules/fileman_opinfo/e_mod_main.c:133
 #, fuzzy, c-format
 msgid "Copying %s (eta: %s)"
-msgstr "%s コピー中 (ETA: %d 秒)"
+msgstr "%s コピー中 (所要時間: %d 秒)"
 
 #: src/modules/fileman/e_fwin.c:3258
 #: src/modules/fileman_opinfo/e_mod_main.c:139
 #, c-format
 msgid "Move of %s done"
-msgstr "%s の移動終了"
+msgstr "%s の移動完了"
 
 #: src/modules/fileman/e_fwin.c:3260
 #: src/modules/fileman_opinfo/e_mod_main.c:141
 #, fuzzy, c-format
 msgid "Moving %s (eta: %s)"
-msgstr "%s 移動中 (ETA: %d 秒)"
+msgstr "%s 移動中 (所要時間: %d 秒)"
 
 #: src/modules/fileman/e_fwin.c:3265
 #: src/modules/fileman_opinfo/e_mod_main.c:147
 #, c-format
 msgid "Delete done"
-msgstr "削除終了"
+msgstr "削除完了"
 
 #
 #: src/modules/fileman/e_fwin.c:3267
@@ -9268,25 +9269,25 @@ msgstr "ファイルを削除中..."
 #: src/modules/fileman_opinfo/e_mod_main.c:154
 #, fuzzy, c-format
 msgid "Secure delete done"
-msgstr "画面の解像度"
+msgstr "安全な削除が完了"
 
 #
 #: src/modules/fileman/e_fwin.c:3274
 #: src/modules/fileman_opinfo/e_mod_main.c:156
 #, fuzzy, c-format
 msgid "Securely deleting files..."
-msgstr "ファイルを削除中..."
+msgstr "ファイルを安全に削除中..."
 
 #: src/modules/fileman/e_fwin.c:3278
 #: src/modules/fileman_opinfo/e_mod_main.c:160
 #, fuzzy, c-format
 msgid "Unknown operation from slave %d"
-msgstr "スレーブ %d からの未知の操作です"
+msgstr "スレーブ %d からの不明な操作です"
 
 #: src/modules/fileman/e_fwin_nav.c:470
 #, fuzzy
 msgid "EFM Navigation"
-msgstr "クイックナビ"
+msgstr "EFM ナビゲーション"
 
 #: src/modules/fileman/e_int_config_mime.c:60
 #: src/modules/fileman/e_mod_main.c:47
@@ -9308,7 +9309,7 @@ msgstr "基本情報"
 #: src/modules/fileman/e_int_config_mime_edit.c:135
 #, fuzzy
 msgid "Mime:"
-msgstr "パントマイム。:"
+msgstr "MIME:"
 
 #: src/modules/fileman/e_int_config_mime_edit.c:145
 msgid "Use Generated Thumbnail"
@@ -9316,7 +9317,7 @@ msgstr "生成されたサムネイルを使う"
 
 #: src/modules/fileman/e_int_config_mime_edit.c:148
 msgid "Use Theme Icon"
-msgstr "アイコンテーマを使う"
+msgstr "テーマアイコンを使う"
 
 #: src/modules/fileman/e_int_config_mime_edit.c:151
 msgid "Use Edje File"
@@ -9349,25 +9350,25 @@ msgstr "閲覧"
 #: src/modules/fileman/e_mod_config.c:347
 #, fuzzy
 msgid "File Extensions"
-msgstr "拡張機能"
+msgstr "ファイルの拡張機能"
 
 #: src/modules/fileman/e_mod_config.c:350
 #, fuzzy
 msgid "Full Path In Title"
-msgstr "スプラッシュのタイトル"
+msgstr "タイトルのフルパス"
 
 #: src/modules/fileman/e_mod_config.c:353
 #, fuzzy
 msgid "Icons On Desktop"
-msgstr "デスクトップにアイコンを表示しない"
+msgstr "デスクトップのアイコン"
 
 #: src/modules/fileman/e_mod_config.c:359
 msgid "Sidebar"
-msgstr ""
+msgstr "サイドバー"
 
 #: src/modules/fileman/e_mod_config.c:362
 msgid "Show Detailed Time and Date"
-msgstr ""
+msgstr "詳細な時刻と日付を表示する"
 
 #: src/modules/fileman/e_mod_config.c:403
 msgid "Open Dirs In Place"
@@ -9384,16 +9385,16 @@ msgstr ""
 #: src/modules/fileman/e_mod_config.c:415
 #, fuzzy
 msgid "Use Alternate Selection Modifiers"
-msgstr "代替選択修飾子を使用して、"
+msgstr "代替の選択修飾子を使用する"
 
 #: src/modules/fileman/e_mod_config.c:418
 #, fuzzy
 msgid "Allow Navigation On Desktop"
-msgstr "デスクトップ上のデバイスアイコンを表示する"
+msgstr "デスクトップにデバイスアイコンを表示する"
 
 #: src/modules/fileman/e_mod_config.c:422
 msgid "Max File Size For Thumbnailing"
-msgstr ""
+msgstr "サムネイルの最大ファイルサイズ"
 
 #: src/modules/fileman/e_mod_config.c:424
 #, fuzzy, c-format
@@ -9403,7 +9404,7 @@ msgstr "%1.0f MiB"
 #: src/modules/fileman/e_mod_config.c:428
 #, fuzzy
 msgid "Spring Delay"
-msgstr "サスペンド時間"
+msgstr ""
 
 #: src/modules/fileman/e_mod_config.c:442
 #: src/modules/fileman/e_mod_config.c:445
@@ -9416,11 +9417,11 @@ msgstr "モード"
 #: src/modules/fileman/e_mod_config.c:460
 #, fuzzy
 msgid "Show device icons on desktop"
-msgstr "デスクトップ上のデバイスアイコンを表示する"
+msgstr "デスクトップにデバイスアイコンを表示する"
 
 #: src/modules/fileman/e_mod_config.c:463
 msgid "Mount volumes on insert"
-msgstr "インサート時にボリュームをマウントする"
+msgstr "挿入時にボリュームをマウントする"
 
 #: src/modules/fileman/e_mod_config.c:466
 msgid "Open filemanager on mount"
@@ -9429,12 +9430,12 @@ msgstr "マウント時にファイルマネージャを開く"
 #: src/modules/fileman/e_mod_config.c:470
 #, fuzzy
 msgid "Device"
-msgstr "プレビュー"
+msgstr "デバイス"
 
 #: src/modules/fileman/e_mod_config.c:474
 #, fuzzy
 msgid "Show tooltip"
-msgstr "ツールバーを表示する"
+msgstr "ツールチップを表示する"
 
 #: src/modules/fileman/e_mod_config.c:478
 msgid "Clamp video size"
@@ -9442,11 +9443,11 @@ msgstr ""
 
 #: src/modules/fileman/e_mod_config.c:481
 msgid "Tooltip delay"
-msgstr ""
+msgstr "ツールチップの遅延"
 
 #: src/modules/fileman/e_mod_config.c:487
 msgid "Tooltip size (Screen percentage)"
-msgstr ""
+msgstr "ツールチップの大きさ（画面の割合）"
 
 #: src/modules/fileman/e_mod_config.c:489
 #, c-format
@@ -9465,7 +9466,7 @@ msgstr "ファイルマネージャ"
 #: src/modules/fileman/e_mod_main.c:68
 #, fuzzy
 msgid "Show Dir"
-msgstr "ダイアログを表示する"
+msgstr "ディレクトリを表示する"
 
 #: src/modules/fileman/e_mod_main.c:71
 msgid "Navigate"
@@ -9510,12 +9511,12 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Processing %d operation"
 msgid_plural "Processing %d operations"
-msgstr[0] "%d 操作を処理"
-msgstr[1] "%d 操作を処理"
+msgstr[0] "%d 操作を処理中"
+msgstr[1] "%d 操作を処理中"
 
 #: src/modules/fileman_opinfo/e_mod_main.c:345
 msgid "Filemanager is idle"
-msgstr "ファイルマネージャは空いています"
+msgstr "ファイルマネージャはアイドル状態です"
 
 #: src/modules/fileman_opinfo/e_mod_main.c:435
 msgid "EFM Operation Info"
@@ -9534,22 +9535,22 @@ msgstr ""
 #: src/modules/gadman/e_mod_main.c:162
 #, fuzzy
 msgid "Desktop Gadgets"
-msgstr "デスクトップガジェット"
+msgstr "デスクトップ・ガジェット"
 
 #: src/modules/gadman/e_mod_config.c:179
 #, fuzzy
 msgid "Available Layers"
-msgstr "使えるガジェット"
+msgstr "利用可能なガジェット"
 
 #
 #: src/modules/gadman/e_mod_config.c:189
 #, fuzzy
 msgid "Configure Layer"
-msgstr "設定"
+msgstr "レイヤの設定"
 
 #: src/modules/gadman/e_mod_config.c:203
 msgid "Layers"
-msgstr ""
+msgstr "レイヤ"
 
 #: src/modules/gadman/e_mod_config.c:213 src/modules/gadman/e_mod_config.c:245
 msgid "Custom Image"
@@ -9561,7 +9562,7 @@ msgstr "カスタム色"
 
 #: src/modules/gadman/e_mod_config.c:221
 msgid "Transparent"
-msgstr "透明"
+msgstr "透過"
 
 #: src/modules/gadman/e_mod_config.c:228
 #: src/modules/winlist/e_int_config_winlist.c:254
@@ -9576,7 +9577,7 @@ msgstr "背景オプション"
 #: src/modules/gadman/e_mod_gadman.c:126
 #, fuzzy
 msgid "Desktop Overlay"
-msgstr "desktop ファイル"
+msgstr "オーバーレイ表示"
 
 #: src/modules/gadman/e_mod_gadman.c:1064
 msgid "Begin move/resize"
@@ -9596,12 +9597,12 @@ msgstr "他のガジェットを追加する"
 
 #: src/modules/gadman/e_mod_main.c:82
 msgid "Show/hide gadgets"
-msgstr "ガジェットを表示/隠蔽する"
+msgstr "ガジェットを表示/隠す"
 
 #: src/modules/gadman/e_mod_main.c:198
 #, fuzzy
 msgid "Change Gadgets"
-msgstr "ガジェットを追加する"
+msgstr "ガジェットを変更する"
 
 #: src/modules/geolocation/e_mod_main.c:77
 #: src/modules/geolocation/e_mod_main.c:141
@@ -9751,7 +9752,7 @@ msgstr "アイコン %s"
 #: src/modules/ibar/e_mod_main.c:2933
 #, fuzzy
 msgid "Focus IBar"
-msgstr "フォーカス"
+msgstr "IBar にフォーカス"
 
 #
 #: src/modules/ibox/e_mod_config.c:50
@@ -9790,7 +9791,7 @@ msgstr "ボーダキャプションを表示する"
 
 #: src/modules/ibox/e_mod_config.c:147 src/modules/tasks/e_mod_config.c:94
 msgid "Show windows from all screens"
-msgstr "すべてのスクリーンにあるウィンドウも表示する"
+msgstr "すべてのスクリーンにあるウィンドウを表示する"
 
 #: src/modules/ibox/e_mod_config.c:152
 msgid "Show windows from current screen"
@@ -9812,20 +9813,20 @@ msgstr "IBOX"
 #: src/modules/lokker/lokker.c:60
 #, fuzzy
 msgid "Authenticating..."
-msgstr "その他のアプリケーション..."
+msgstr "認証中..."
 
 #: src/modules/lokker/lokker.c:65
 msgid "The password you entered is invalid. Try again."
-msgstr ""
+msgstr "入力したパスワードが無効です。もう一度入力してください。"
 
 #: src/modules/lokker/lokker.c:223
 #, fuzzy
 msgid "Please enter your PIN"
-msgstr "ロック解除パスワードを入力して下さい"
+msgstr "暗証番号 (PIN) を入力してください"
 
 #: src/modules/lokker/lokker.c:314
 msgid "Please enter your unlock password"
-msgstr "ロック解除パスワードを入力して下さい"
+msgstr "ロック解除用パスワードを入力してください"
 
 #: src/modules/lokker/lokker.c:317 src/modules/lokker/lokker.c:835
 #: src/modules/lokker/lokker.c:853
@@ -9861,66 +9862,66 @@ msgstr "ミキサ"
 #: src/modules/mixer/backend.c:136
 #, fuzzy
 msgid "Volume changed"
-msgstr "解像度の変更"
+msgstr "音量を変更しました"
 
 #: src/modules/mixer/backend.c:345 src/modules/mixer/backend.c:417
 #, fuzzy
 msgid "Increase Volume"
-msgstr "新しいボリューム"
+msgstr "音量を上げる"
 
 #: src/modules/mixer/backend.c:352 src/modules/mixer/backend.c:423
 #, fuzzy
 msgid "Decrease Volume"
-msgstr "新しいボリューム"
+msgstr "音量を下げる"
 
 #: src/modules/mixer/backend.c:359
 #, fuzzy
 msgid "Mute volume"
-msgstr "新しいボリューム"
+msgstr "ミュートにする"
 
 #: src/modules/mixer/backend.c:367 src/modules/mixer/backend.c:436
 #, fuzzy
 msgid "Increase Volume of Focused Application"
-msgstr "選択されたアプリケーション"
+msgstr "フォーカスしたアプリケーションの音量を上げる"
 
 #: src/modules/mixer/backend.c:375 src/modules/mixer/backend.c:443
 #, fuzzy
 msgid "Decrease Volume of Focused Application"
-msgstr "選択されたアプリケーション"
+msgstr "フォーカスしたアプリケーションの音量を下げる"
 
 #: src/modules/mixer/backend.c:383 src/modules/mixer/backend.c:450
 #, fuzzy
 msgid "Mute Volume of Focused Application"
-msgstr "選択されたアプリケーション"
+msgstr "フォーカスしたアプリケーションの音量をミュートする"
 
 #: src/modules/mixer/backend.c:390 src/modules/mixer/backend.c:456
 #, fuzzy
 msgid "Increase Mic Volume"
-msgstr "新しいボリューム"
+msgstr "マイクの音量を上げる"
 
 #: src/modules/mixer/backend.c:397 src/modules/mixer/backend.c:462
 #, fuzzy
 msgid "Decrease Mic Volume"
-msgstr "新しいボリューム"
+msgstr "マイクの音量を下げる"
 
 #: src/modules/mixer/backend.c:404
 #, fuzzy
 msgid "Mute Mic volume"
-msgstr "新しいボリューム"
+msgstr "マイクの音量をミュートする"
 
 #: src/modules/mixer/backend.c:429
 #, fuzzy
 msgid "Mute Volume"
-msgstr "新しいボリューム"
+msgstr "音量をミュートする"
 
 #: src/modules/mixer/backend.c:468
 #, fuzzy
 msgid "Mute Mic Volume"
-msgstr "新しいボリューム"
+msgstr "マイクの音量をミュートする"
 
 #: src/modules/mixer/emixer.c:1952
 msgid "Playback"
-msgstr "プレイバック"
+msgstr "再生"
 
 #: src/modules/mixer/emixer.c:1956
 #, fuzzy
@@ -9934,17 +9935,17 @@ msgstr "カード"
 #: src/modules/mixer/e_mod_config.c:440
 #, fuzzy
 msgid "Notify on volume change"
-msgstr "解像度の変更"
+msgstr "音量の変更を通知する"
 
 #: src/modules/mixer/e_mod_config.c:443
 #, fuzzy
 msgid "Mute on lock"
-msgstr "新しいボリューム"
+msgstr "ロック時ミュート"
 
 #: src/modules/mixer/e_mod_config.c:449
 #, fuzzy
 msgid "Backend to use:"
-msgstr "背景オプション"
+msgstr "利用するバックエンド:"
 
 #: src/modules/mixer/e_mod_config.c:501
 #, fuzzy
@@ -9958,7 +9959,7 @@ msgstr "マウスポインタの設定"
 
 #: src/modules/music-control/ui.c:217
 msgid "Music Player"
-msgstr ""
+msgstr "音楽コントローラ"
 
 #: src/modules/music-control/ui.c:227
 msgid "* Your player must be configured to export the DBus interface MPRIS2."
@@ -9966,18 +9967,18 @@ msgstr ""
 
 #: src/modules/music-control/ui.c:230
 msgid "Pause music when screen is locked"
-msgstr ""
+msgstr "画面ロック時に音楽を一時停止する"
 
 #: src/modules/music-control/ui.c:302
 #, fuzzy
 msgid "Music control Settings"
-msgstr "マウスポインタの設定"
+msgstr "音楽コントロールの設定"
 
 #
 #: src/modules/notification/e_mod_config.c:51
 #, fuzzy
 msgid "Notification Settings"
-msgstr "ウィンドウリストの表示位置"
+msgstr "通知設定"
 
 #: src/modules/notification/e_mod_config.c:99
 msgid "Urgency"
@@ -9985,34 +9986,31 @@ msgstr "緊急"
 
 #: src/modules/notification/e_mod_config.c:100
 msgid "Levels of urgency to display:"
-msgstr ""
+msgstr "表示する緊急度のレベル:"
 
 #: src/modules/notification/e_mod_config.c:106
 #, fuzzy
 msgid "Critical"
-msgstr "縦に広げる"
+msgstr "クリティカル"
 
 #: src/modules/notification/e_mod_config.c:110
 #, fuzzy
 msgid "Default Timeout"
-msgstr ""
-"#-#-#-#-#  ja.po (Enlightenment DR17)  #-#-#-#-#\n"
-"デフォルトの表示形式\n"
-"#-#-#-#-#  ja.po (Enlightenment DR17)  #-#-#-#-#\n"
+msgstr "既定のタイムアウト"
 
 #: src/modules/notification/e_mod_config.c:111
 msgid "Force timeout for all notifications"
-msgstr ""
+msgstr "すべての通知でタイムアウトを強制する"
 
 #: src/modules/notification/e_mod_config.c:130
 #, fuzzy
 msgid "Screen Policy"
-msgstr "スクリーンロック"
+msgstr ""
 
 #: src/modules/notification/e_mod_config.c:132
 #, fuzzy
 msgid "Primary screen"
-msgstr "スクリーンを暗くする"
+msgstr "プライマリスクリーン"
 
 #: src/modules/notification/e_mod_config.c:134
 #, fuzzy
@@ -10022,7 +10020,7 @@ msgstr "現在のスクリーン"
 #: src/modules/notification/e_mod_config.c:136
 #, fuzzy
 msgid "All screens"
-msgstr "全面表示"
+msgstr "すべての画面"
 
 #: src/modules/notification/e_mod_config.c:138
 msgid "Xinerama"
@@ -10031,7 +10029,7 @@ msgstr ""
 #: src/modules/notification/e_mod_config.c:142
 #, fuzzy
 msgid "Popup Corner"
-msgstr "ポップアップサイズ"
+msgstr ""
 
 #: src/modules/notification/e_mod_config.c:144
 #, fuzzy
