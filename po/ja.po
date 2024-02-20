@@ -10062,7 +10062,7 @@ msgstr "プレゼンテーションモード"
 
 #: src/modules/notification/e_mod_main.c:111
 msgid "Error during notification server initialization"
-msgstr ""
+msgstr "通知サーバ初期化中にエラーが発生しました"
 
 #: src/modules/notification/e_mod_main.c:112
 #, fuzzy
@@ -10070,8 +10070,8 @@ msgid ""
 "Ensure there's no other module acting as a server and that D-Bus is "
 "correctly installed and running"
 msgstr ""
-"DBusの初期化に失敗しました！\r\n"
-"dbusが正しくインストールされて動作しているか確認してください。"
+"サーバとして動作する他のモジュールがなく、また、D-Bus が"
+"正しくインストールされ動作しているかを確認してください。"
 
 #: src/modules/packagekit/e_mod_config.c:72
 #, fuzzy
@@ -10083,50 +10083,50 @@ msgstr "内容を更新する"
 #: src/modules/packagekit/e_mod_config.c:87
 #, fuzzy
 msgid "Hourly"
-msgstr "1 時間"
+msgstr "1 時間毎"
 
 #: src/modules/packagekit/e_mod_config.c:80
 #: src/modules/packagekit/e_mod_config.c:88
 msgid "Daily"
-msgstr ""
+msgstr "毎日"
 
 #: src/modules/packagekit/e_mod_config.c:82
 #: src/modules/packagekit/e_mod_config.c:89
 msgid "Weekly"
-msgstr ""
+msgstr "毎週"
 
 #: src/modules/packagekit/e_mod_config.c:99
 msgid "Package list"
-msgstr ""
+msgstr "パッケージリスト"
 
 #: src/modules/packagekit/e_mod_config.c:103
 #: src/modules/packagekit/e_mod_config.c:109
 #, fuzzy
 msgid "Compact (package name)"
-msgstr "ツールバーを表示する"
+msgstr "コンパクト（パッケージ名）"
 
 #: src/modules/packagekit/e_mod_config.c:105
 #: src/modules/packagekit/e_mod_config.c:110
 msgid "Extended (name and description)"
-msgstr ""
+msgstr "拡張表示（名前と説明）"
 
 #: src/modules/packagekit/e_mod_config.c:120
 #, fuzzy
 msgid "Package Manager"
-msgstr "ファイルマネージャ"
+msgstr "パッケージマネージャ"
 
 #: src/modules/packagekit/e_mod_main.c:122
 #, fuzzy
 msgid "System Updates"
-msgstr "システムの壁紙"
+msgstr "システム更新"
 
 #: src/modules/packagekit/e_mod_packagekit.c:81
 msgid "Low priority update"
-msgstr ""
+msgstr "優先度の低い更新"
 
 #: src/modules/packagekit/e_mod_packagekit.c:83
 msgid "Enhancement update"
-msgstr ""
+msgstr "機能強化の更新"
 
 #: src/modules/packagekit/e_mod_packagekit.c:85
 #, fuzzy
@@ -10135,68 +10135,68 @@ msgstr "普通(体裁よい)"
 
 #: src/modules/packagekit/e_mod_packagekit.c:87
 msgid "Bugfix update"
-msgstr ""
+msgstr "不具合修正"
 
 #: src/modules/packagekit/e_mod_packagekit.c:89
 msgid "High priority update"
-msgstr ""
+msgstr "優先度の高い更新"
 
 #: src/modules/packagekit/e_mod_packagekit.c:91
 msgid "Security update"
-msgstr ""
+msgstr "セキュリティ更新"
 
 #: src/modules/packagekit/e_mod_packagekit.c:171
 #, fuzzy, c-format
 msgid "Unknown PackageKit"
-msgstr "ツールバーを表示する"
+msgstr "不明な PackageKit"
 
 #: src/modules/packagekit/e_mod_packagekit.c:239
 #, fuzzy
 msgid "No information available"
-msgstr "情報無し"
+msgstr "利用可能な情報無し"
 
 #: src/modules/packagekit/e_mod_packagekit.c:271
 #, fuzzy, c-format
 msgid "Operation in progress"
-msgstr "ログアウト中"
+msgstr "稼働中"
 
 #: src/modules/packagekit/e_mod_packagekit.c:273
 #, fuzzy, c-format
 msgid "One update available"
 msgid_plural "%d updates available"
-msgstr[0] "利用可能"
-msgstr[1] "利用可能"
+msgstr[0] "1 個の更新が利用可能"
+msgstr[1] "%d 個の更新が利用可能"
 
 #: src/modules/packagekit/e_mod_packagekit.c:275
 #, c-format
 msgid "Your system is updated"
-msgstr ""
+msgstr "システムは最新状態です"
 
 #: src/modules/packagekit/e_mod_packagekit.c:283
 msgid "Please wait"
-msgstr ""
+msgstr "しばらくお待ちください"
 
 #: src/modules/packagekit/e_mod_packagekit.c:288
 #, fuzzy
 msgid "Nothing to do"
-msgstr "無し"
+msgstr "更新はありません"
 
 #: src/modules/packagekit/e_mod_packagekit.c:294
 #, fuzzy
 msgid "Install updates"
-msgstr "空きスペースまで広げる"
+msgstr "更新をインストールする"
 
 #: src/modules/packagekit/e_mod_packagekit.c:299
 #, fuzzy, c-format
 msgid "Install update"
 msgid_plural "Install %d updates"
-msgstr[0] "普通(体裁よい)"
-msgstr[1] "普通(体裁よい)"
+msgstr[0] "更新をインストール"
+msgstr[1] "%d 更新をインストール"
 
 #: src/modules/packagekit/e_mod_packagekit.c:578
 #, fuzzy
 msgid "Manage packages"
-msgstr "ファイルマネージャ"
+msgstr "パッケージを管理する"
 
 #: src/modules/pager/e_mod_config.c:74
 msgid "Pager Settings"
@@ -10209,7 +10209,7 @@ msgstr "マウスホイールでデスクトップを切替える"
 #: src/modules/pager/e_mod_config.c:130 src/modules/pager/e_mod_config.c:185
 #, fuzzy
 msgid "Always show desktop names"
-msgstr "デスクトップ名を表示する"
+msgstr "常にデスクトップ名を表示する"
 
 #: src/modules/pager/e_mod_config.c:136 src/modules/pager/e_mod_config.c:216
 msgid "Show popup on desktop change"
@@ -10221,7 +10221,7 @@ msgstr "緊急ウィンドウにはポップアップを表示"
 
 #: src/modules/pager/e_mod_config.c:190
 msgid "Select and Slide button"
-msgstr "選択 / スライド"
+msgstr "選択 / スライドボタン"
 
 #: src/modules/pager/e_mod_config.c:192 src/modules/pager/e_mod_config.c:200
 #: src/modules/pager/e_mod_config.c:206 src/modules/pager/e_mod_config.c:350
@@ -10231,7 +10231,7 @@ msgstr "クリックで設定"
 
 #: src/modules/pager/e_mod_config.c:198
 msgid "Drag and Drop button"
-msgstr "ドラッグ＆ドロップ"
+msgstr "ドラッグ＆ドロップ・ボタン"
 
 #: src/modules/pager/e_mod_config.c:204
 msgid "Drag whole desktop"
@@ -10249,7 +10249,7 @@ msgstr "%1.0f px"
 #: src/modules/pager/e_mod_config.c:230
 #, fuzzy
 msgid "Popup duration"
-msgstr "隠蔽に要する時間"
+msgstr "ポップアップの表示時間"
 
 #: src/modules/pager/e_mod_config.c:234 src/modules/pager/e_mod_config.c:271
 #, c-format
@@ -10271,12 +10271,12 @@ msgstr "緊急ポップアップを常時表示にする"
 
 #: src/modules/pager/e_mod_config.c:261
 msgid "Show popup for focused windows"
-msgstr "フォーカスのあるウィンドウに対するポップアップを表示"
+msgstr "フォーカスのあるウィンドウでポップアップを表示"
 
 #: src/modules/pager/e_mod_config.c:267
 #, fuzzy
 msgid "Urgent popup duration"
-msgstr "緊急ポップアップの速度"
+msgstr "緊急ポップアップの表示時間"
 
 #: src/modules/pager/e_mod_config.c:278
 msgid "Urgent Windows"
@@ -10293,22 +10293,22 @@ msgid ""
 "already taken by internal<ps/>code for context menus.<ps/>This button only "
 "works in the popup."
 msgstr ""
-"シェルフではマウスの右ボタンは使用できません.<br>すでに内部コードでコンテキス"
-"トメニュー用に確保されています.<br>このボタンはポップアップでしか使えません."
+"シェルフではマウスの右ボタンは使用できません。<ps/>すでに内部コードでコンテキス"
+"トメニュー用に確保されています。<ps/>このボタンはポップアップでしか働きません。"
 
 #: src/modules/pager/e_mod_main.c:1038
 #, fuzzy
 msgid "All desktop settings"
-msgstr "仮想デスクトップの設定"
+msgstr "すべてのデスクトップ設定"
 
 #: src/modules/pager/e_mod_main.c:1049
 #, fuzzy
 msgid "This desktop name and wallpaper settings"
-msgstr "デスクトップの壁紙"
+msgstr "このデスクトップの名前と壁紙の設定"
 
 #: src/modules/pager/e_mod_main.c:2109
 msgid "Pager module cannot be loaded at the same time as Pager Plain!"
-msgstr ""
+msgstr "ページャモジュールは、ページャプレーンと同時にロードすることはできません！"
 
 #: src/modules/pager/e_mod_main.c:2130
 msgid "Show Pager Popup"
@@ -10341,17 +10341,17 @@ msgstr "ページャのポップアップで前のデスクトップに移る"
 #: src/modules/polkit/auth_ui.c:95
 #, fuzzy
 msgid "Please enter password"
-msgstr "ロック解除パスワードを入力して下さい"
+msgstr "パスワードを入力してください"
 
 #: src/modules/polkit/auth_ui.c:148
 #, c-format
 msgid "Enter password for <b>%s</b>"
-msgstr ""
+msgstr "<b>%s</b> のパスワードを入力してください"
 
 #: src/modules/polkit/auth_ui.c:150
 #, c-format
 msgid "Enter password for UID %u"
-msgstr ""
+msgstr "UID %u のパスワードを入力してください"
 
 #: src/modules/procstats/e_mod_main.c:370
 #, fuzzy
@@ -10392,7 +10392,7 @@ msgstr ""
 #: src/modules/quickaccess/e_mod_config.c:231
 #, fuzzy
 msgid "Enter a unique name for this entry"
-msgstr "新しい IBar の名前を入力して下さい."
+msgstr "このエントリに一意の名前を入力してください"
 
 #: src/modules/quickaccess/e_mod_config.c:252
 #, fuzzy
@@ -10401,7 +10401,7 @@ msgstr "確認ダイアログを出さない"
 
 #: src/modules/quickaccess/e_mod_config.c:254
 msgid "Disable Startup Tutorial"
-msgstr ""
+msgstr "スタートアップのチュートリアルを無効にする"
 
 #: src/modules/quickaccess/e_mod_config.c:286
 #, fuzzy
@@ -10419,25 +10419,25 @@ msgstr ""
 #: src/modules/quickaccess/e_mod_config.c:569
 #, fuzzy
 msgid "Quickaccess Settings"
-msgstr "スケーリングの設定"
+msgstr "クイックアクセスの設定"
 
 #: src/modules/quickaccess/e_mod_main.c:50
 #: src/modules/quickaccess/e_mod_main.c:60
 #: src/modules/quickaccess/e_mod_quickaccess.c:7
 msgid "Quickaccess"
-msgstr ""
+msgstr "クイックアクセス"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:8
 msgid "Toggle Visibility"
-msgstr ""
+msgstr "視認性の切り替え"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:9
 msgid "Add Quickaccess For Current Window"
-msgstr ""
+msgstr "現在のウィンドウにクイックアクセスを追加する"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:10
 msgid "Remove Quickaccess From Current Window"
-msgstr ""
+msgstr "現在のウィンドウからクイックアクセスを削除する"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:278
 #: src/modules/quickaccess/e_mod_quickaccess.c:358
@@ -10446,7 +10446,7 @@ msgstr ""
 #: src/modules/quickaccess/e_mod_quickaccess.c:407
 #: src/modules/quickaccess/e_mod_quickaccess.c:502
 msgid "Quickaccess Error"
-msgstr ""
+msgstr "クイックアクセスのエラー"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:278
 #: src/modules/quickaccess/e_mod_quickaccess.c:407
@@ -10478,7 +10478,7 @@ msgstr ""
 #: src/modules/quickaccess/e_mod_quickaccess.c:1288
 #: src/modules/quickaccess/e_mod_quickaccess.c:1305
 msgid "Quickaccess Help"
-msgstr ""
+msgstr "クイックアクセスのヘルプ"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:358
 msgid "Cannot set relaunch for window without name and class!"
@@ -10504,15 +10504,15 @@ msgstr ""
 #: src/modules/quickaccess/e_mod_quickaccess.c:1294
 #, fuzzy
 msgid "Continue"
-msgstr "コンテナ"
+msgstr "続ける"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:395
 msgid "More Help"
-msgstr ""
+msgstr "さらなるヘルプ"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:502
 msgid "The requested Quickaccess entry does not exist!"
-msgstr ""
+msgstr "要求のあったクイックアクセスのエントリは存在しません！"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:695
 #, fuzzy
@@ -10521,7 +10521,7 @@ msgstr "キーバインドのエラー"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:695
 msgid "The keybinding you have entered is already in use!"
-msgstr ""
+msgstr "入力したキーバインドはすでに使用されています！"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:839
 msgid "Hide Instead Of Raise"
@@ -10539,19 +10539,19 @@ msgstr ""
 #: src/modules/quickaccess/e_mod_quickaccess.c:862
 #, fuzzy
 msgid "Transient"
-msgstr "トランジェンス"
+msgstr ""
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:869
 msgid "Remove Quickaccess"
-msgstr ""
+msgstr "クイックアクセスの削除"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:897
 msgid "Quickaccess..."
-msgstr ""
+msgstr "クイックアクセス..."
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:903
 msgid "Add Quickaccess"
-msgstr ""
+msgstr "クイックアクセスの追加"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:977
 msgid ""
@@ -10638,7 +10638,7 @@ msgstr ""
 
 #: src/modules/shot/e_mod_delay.c:59 src/modules/shot/e_mod_preview.c:115
 msgid "Delay"
-msgstr ""
+msgstr "遅延時間"
 
 #: src/modules/shot/e_mod_delay.c:61
 #, fuzzy, c-format
@@ -10648,22 +10648,22 @@ msgstr "%1.1f 秒"
 #: src/modules/shot/e_mod_edit.c:1962
 #, fuzzy
 msgid "Tools"
-msgstr "ツールバーを表示する"
+msgstr "ツール"
 
 #: src/modules/shot/e_mod_edit.c:1974
 #, fuzzy
 msgid "Select crop area"
-msgstr "一つ選んでください"
+msgstr "範囲の選択"
 
 #: src/modules/shot/e_mod_edit.c:1975
 #, fuzzy
 msgid "Modify objects"
-msgstr "キー修正"
+msgstr "オブジェクトの修正"
 
 #: src/modules/shot/e_mod_edit.c:1976
 #, fuzzy
 msgid "Delete objects"
-msgstr "削除終了"
+msgstr "オブジェクトの削除"
 
 #: src/modules/shot/e_mod_edit.c:1985
 msgid "Single arrow line"
@@ -10685,7 +10685,7 @@ msgstr ""
 #: src/modules/shot/e_mod_edit.c:1990
 #, fuzzy
 msgid "Malloc"
-msgstr "ワロン語"
+msgstr ""
 
 #: src/modules/shot/e_mod_edit.c:1991
 msgid "Malloc (evil)"
@@ -10694,12 +10694,12 @@ msgstr ""
 #: src/modules/shot/e_mod_edit.c:1992
 #, fuzzy
 msgid "Pointing finger"
-msgstr "ポインタ"
+msgstr ""
 
 #: src/modules/shot/e_mod_edit.c:1993
 #, fuzzy
 msgid "Enlightenment logo"
-msgstr "Enlightenment"
+msgstr "Enlightenment ロゴ"
 
 #: src/modules/shot/e_mod_edit.c:1995
 msgid "Foot"
@@ -10772,18 +10772,18 @@ msgstr "スクリーンショット"
 #: src/modules/shot/e_mod_main.c:340
 #, fuzzy
 msgid "Shot Error"
-msgstr "マウントエラー"
+msgstr "撮影エラー"
 
 #
 #: src/modules/shot/e_mod_main.c:341
 #, fuzzy
 msgid "Cannot initialize network"
-msgstr "Enlightenment でファイルマネージャが初期化できません.\n"
+msgstr "ネットワークを初期化できません"
 
 #: src/modules/shot/e_mod_main.c:358
 #, fuzzy
 msgid "Take Screenshot with Delay"
-msgstr "遅延撮影"
+msgstr "遅延して撮影する"
 
 #: src/modules/shot/e_mod_preview.c:91
 msgid "Quality"
@@ -10801,7 +10801,7 @@ msgstr "くっきりとした影"
 #: src/modules/shot/e_mod_save.c:203
 #, fuzzy
 msgid "Error - No Filemanager"
-msgstr "ファイルマネージャ"
+msgstr "エラー - ファイルマネージャなし"
 
 #: src/modules/shot/e_mod_save.c:204
 msgid ""
@@ -10840,13 +10840,13 @@ msgstr ""
 #: src/modules/vkbd/e_mod_main.c:114
 #, fuzzy
 msgid "Hide"
-msgstr "自動隠蔽"
+msgstr "自動的に隠す"
 
 #
 #: src/modules/shot/e_mod_share.c:250
 #, fuzzy
 msgid "Confirm Share"
-msgstr "削除確認"
+msgstr "削除の確認"
 
 #: src/modules/shot/e_mod_share.c:251
 msgid ""
@@ -10858,12 +10858,12 @@ msgstr ""
 #: src/modules/shot/e_mod_share.c:254
 #, fuzzy
 msgid "Confirm"
-msgstr "設定"
+msgstr "確認"
 
 #: src/modules/syscon/e_int_config_syscon.c:43
 #, fuzzy
 msgid "System Controls Settings"
-msgstr "システムコントロール"
+msgstr "システムコントロール設定"
 
 #: src/modules/syscon/e_int_config_syscon.c:158
 #, fuzzy
@@ -10882,12 +10882,12 @@ msgstr "アイコンサイズ"
 #: src/modules/syscon/e_int_config_syscon.c:172
 #, fuzzy
 msgid "Do default action after timeout"
-msgstr "いいえ. しかしタイムアウトは増やす"
+msgstr "タイムアウト後に既定の動作を実行する"
 
 #: src/modules/syscon/e_int_config_syscon.c:179
 #, fuzzy
 msgid "Default Action"
-msgstr "アプリケーションを選択する"
+msgstr "既定の動作"
 
 #: src/modules/syscon/e_mod_main.c:31 src/modules/syscon/e_mod_main.c:37
 msgid "System Controls"
@@ -10896,37 +10896,37 @@ msgstr "システムコントロール"
 #: src/modules/syscon/e_syscon_gadget.c:72
 #, fuzzy
 msgid "Show Menu"
-msgstr "指定のメニューを表示する..."
+msgstr "メニューを表示する"
 
 #: src/modules/systray/e_mod_main.c:87
 #, fuzzy
 msgid "Systray Settings"
-msgstr "スクロールの設定"
+msgstr "システムトレイの設定"
 
 #: src/modules/systray/e_mod_main.c:373
 #, fuzzy
 msgid "Systray"
-msgstr "トレイ"
+msgstr "システムトレイ"
 
 #: src/modules/tasks/e_mod_config.c:35
 #, fuzzy
 msgid "Tasks Configuration"
-msgstr "ITray の設定"
+msgstr "タスクの設定"
 
 #: src/modules/tasks/e_mod_config.c:97
 #, fuzzy
 msgid "Show icon only"
-msgstr "アイコンのラベルを表示する"
+msgstr "アイコンのみを表示する"
 
 #: src/modules/tasks/e_mod_config.c:101
 #, fuzzy
 msgid "Show text only"
-msgstr "デスクトップにアイコンを表示する"
+msgstr "テキストのみを表示する"
 
 #: src/modules/tasks/e_mod_config.c:105
 #, fuzzy
 msgid "Item width"
-msgstr "最小幅"
+msgstr "アイテムの幅"
 
 #: src/modules/tasks/e_mod_config.c:107 src/modules/tasks/e_mod_config.c:112
 #: src/modules/tasks/e_mod_config.c:126
@@ -10937,23 +10937,23 @@ msgstr "%1.0f px"
 #: src/modules/tasks/e_mod_config.c:110
 #, fuzzy
 msgid "Item height"
-msgstr "最小高"
+msgstr "アイテムの高さ"
 
 #: src/modules/tasks/e_mod_config.c:121 src/modules/vkbd/e_mod_main.c:70
 #: src/modules/vkbd/e_mod_main.c:109 src/modules/winlist/e_mod_main.c:43
 #, fuzzy
 msgid "Show"
-msgstr "指定のメニューを表示する..."
+msgstr ""
 
 #: src/modules/tasks/e_mod_config.c:124
 #, fuzzy
 msgid "Preview Size"
-msgstr "プレビュー"
+msgstr "プレビューの大きさ"
 
 #: src/modules/tasks/e_mod_main.c:309 src/modules/tasks/e_mod_main.c:945
 #, fuzzy
 msgid "Tasks"
-msgstr "タスクバー"
+msgstr "タスク"
 
 #: src/modules/temperature/e_mod_config.c:50
 msgid "Temperature Settings"
@@ -11015,12 +11015,12 @@ msgstr "温度計"
 #: src/modules/tiling/e_mod_config.c:171
 #, fuzzy
 msgid "Show window titles"
-msgstr "隠しファイルを表示する"
+msgstr "ウィンドタイトルを表示する"
 
 #: src/modules/tiling/e_mod_config.c:173
 #, fuzzy
 msgid "Tile dialog windows"
-msgstr "全ウィンドウ"
+msgstr "タイルダイアログのウィンドウ"
 
 #: src/modules/tiling/e_mod_config.c:175
 msgid "Enable floating split-mode"
@@ -11034,17 +11034,17 @@ msgstr ""
 #: src/modules/tiling/e_mod_config.c:213
 #, fuzzy
 msgid "Padding between windows"
-msgstr "ウィンドウを閉じる"
+msgstr "ウィンドウ間のパディング"
 
 #: src/modules/tiling/e_mod_config.c:321
 #, fuzzy
 msgid "Tiling Configuration"
-msgstr "ツールバーの設定"
+msgstr "タイルの設定"
 
 #: src/modules/tiling/e_mod_tiling.c:881
 #, fuzzy, c-format
 msgid "Window %s cannot be tiled\n"
-msgstr "ウィンドウプロパティ"
+msgstr ""
 
 #: src/modules/tiling/e_mod_tiling.c:885 src/modules/tiling/e_mod_tiling.c:1888
 #: src/modules/tiling/e_mod_tiling.c:1921
@@ -11052,17 +11052,17 @@ msgstr "ウィンドウプロパティ"
 #: src/modules/tiling/e_mod_tiling.c:2267
 #, fuzzy
 msgid "Tiling"
-msgstr "ポーリング"
+msgstr "タイル表示"
 
 #: src/modules/tiling/e_mod_tiling.c:887
 #, fuzzy
 msgid "Window cannot be tiled"
-msgstr "ウィンドウプロパティ"
+msgstr "ウィンドウはタイル表示できません"
 
 #: src/modules/tiling/e_mod_tiling.c:1604
 #, fuzzy
 msgid "Floating"
-msgstr "整列"
+msgstr "フロート"
 
 #: src/modules/tiling/e_mod_tiling.c:1895
 #, fuzzy
@@ -11107,7 +11107,7 @@ msgstr ""
 #: src/modules/vkbd/e_kbd_cfg.c:69
 #, fuzzy
 msgid "Virtual Keyboard Settings"
-msgstr "IBarの設定"
+msgstr "仮想キーボード設定"
 
 #: src/modules/vkbd/e_kbd_cfg.c:91
 #, fuzzy
@@ -11121,12 +11121,12 @@ msgstr "方向"
 
 #: src/modules/vkbd/e_mod_main.c:84 src/modules/vkbd/e_mod_main.c:119
 msgid "Toggle"
-msgstr ""
+msgstr "切り替え"
 
 #: src/modules/winlist/e_int_config_winlist.c:52
 #, fuzzy
 msgid "Window Switcher Settings"
-msgstr "ウィンドウリストの設定"
+msgstr "ウィンドウスイチャの設定"
 
 #: src/modules/winlist/e_int_config_winlist.c:183
 #, fuzzy
@@ -11141,7 +11141,7 @@ msgstr "最終更新日:"
 #: src/modules/winlist/e_int_config_winlist.c:193
 #, fuzzy
 msgid "List Window Miniatures"
-msgstr "迷子なウィンドウ"
+msgstr ""
 
 #: src/modules/winlist/e_int_config_winlist.c:196
 msgid "Windows from other desks"
@@ -11202,7 +11202,7 @@ msgstr "スクロール速度"
 #: src/modules/winlist/e_mod_main.c:29
 #, fuzzy
 msgid "Window Switcher"
-msgstr "ウィンドウタイトル"
+msgstr "ウィンドウ切り替え"
 
 #: src/modules/winlist/e_mod_main.c:45
 msgid "Next Window"
@@ -11274,12 +11274,12 @@ msgstr "次へ"
 
 #: src/modules/wizard/e_wizard.c:249
 msgid "Please Wait..."
-msgstr ""
+msgstr "お待ちください..."
 
 #: src/modules/wizard/page_010.c:216 src/modules/wizard/page_011.c:189
 #: src/modules/wizard/page_020.c:115
 msgid "Select one"
-msgstr "一つ選んでください"
+msgstr "１つ選んでください"
 
 #: src/modules/wizard/page_020.c:113
 msgid "Profile"
@@ -11292,7 +11292,7 @@ msgstr ""
 #: src/modules/wizard/page_050.c:131
 #, fuzzy
 msgid "Select preferred size"
-msgstr "推奨サイズを選択します。"
+msgstr "推奨サイズを選択する"
 
 #: src/modules/wizard/page_060.c:29
 #, fuzzy
@@ -11312,69 +11312,69 @@ msgstr "以上のロックを記憶して, 次回このウィンドウが現れ�
 #: src/modules/wizard/page_110.c:10
 #, fuzzy
 msgid "Network Management"
-msgstr "電源管理"
+msgstr "ネットワーク管理"
 
 #: src/modules/wizard/page_110.c:16
 #, fuzzy
 msgid "Connman network service not found"
-msgstr "ネットワークサービスに接続"
+msgstr "Connman ネットワークサービスが見つかりません"
 
 #: src/modules/wizard/page_110.c:19
 msgid "Install/Enable Connman service for network management support"
-msgstr ""
+msgstr "ネットワーク管理のサポートで Connman をインストール/有効化する"
 
 #: src/modules/wizard/page_110.c:21
 msgid "Connman and Wireless modules disabled"
-msgstr ""
+msgstr "Connman とワイヤレスモジュールが無効です"
 
 #: src/modules/wizard/page_110.c:22
 msgid "Install one of these modules for network management support"
-msgstr ""
+msgstr "ネットワーク管理をサポートするには、以下のいずれかのモジュールをインストールしてください"
 
 #: src/modules/wizard/page_110.c:154
 msgid "Checking to see if Connman exists"
-msgstr ""
+msgstr "コンマンが存在するかどうかを確認する"
 
 #: src/modules/wizard/page_115.c:10
 #, fuzzy
 msgid "Bluetooth Management"
-msgstr "電源管理"
+msgstr "Bluetooth の管理"
 
 #: src/modules/wizard/page_115.c:16
 #, fuzzy
 msgid "BlueZ Bluetooth service not found"
-msgstr "ネットワークサービスに接続"
+msgstr "BlueZ Bluetooth サービスが見つかりません"
 
 #: src/modules/wizard/page_115.c:19
 msgid ""
 "Install/Enable BlueZ 5 / bluetoothd service for network management support"
-msgstr ""
+msgstr "ネットワーク管理には、BlueZ 5 / bluetoothd サービスをインストール/有効化してください"
 
 #: src/modules/wizard/page_115.c:21
 msgid "Bluez5 module disabled"
-msgstr ""
+msgstr "Bluez5 モジュールが無効です"
 
 #: src/modules/wizard/page_115.c:22
 msgid "Install it for Bluetooth management support"
-msgstr ""
+msgstr "Bluetooth をサポートするにはそれをインストールしてください"
 
 #: src/modules/wizard/page_115.c:154
 msgid "Checking to see if BlueZ exists"
-msgstr ""
+msgstr "BlueZ が存在するかどうかをチェックしています"
 
 #: src/modules/wizard/page_150.c:28
 #, fuzzy
 msgid "Compositing"
-msgstr "位置"
+msgstr "コンポジット"
 
 #: src/modules/wizard/page_150.c:89
 msgid "Hardware Accelerated (OpenGL)"
-msgstr ""
+msgstr "ハードウェアアクセラレーション (OpenGL)"
 
 #: src/modules/wizard/page_150.c:90
 #, fuzzy
 msgid "Tear-free Rendering"
-msgstr "順序をを記憶する"
+msgstr ""
 
 #: src/modules/wizard/page_170.c:24
 #, fuzzy
@@ -11383,7 +11383,7 @@ msgstr "更新する"
 
 #: src/modules/wizard/page_170.c:27
 msgid "Check for available updates"
-msgstr ""
+msgstr "利用可能な更新をチェックする"
 
 #: src/modules/wizard/page_170.c:38
 msgid ""
@@ -11400,7 +11400,7 @@ msgstr ""
 
 #: src/modules/wizard/page_170.c:60
 msgid "Enable update checking"
-msgstr ""
+msgstr "更新のチェックを有功にする"
 
 #: src/modules/wizard/page_180.c:27
 #, fuzzy
@@ -11416,12 +11416,12 @@ msgstr ""
 #: src/modules/wizard/page_180.c:49
 #, fuzzy
 msgid "Enable Taskbar"
-msgstr "タスクバー"
+msgstr "タスクバーを有効にする"
 
 #: src/modules/xkbswitch/e_mod_config.c:140
 #, fuzzy
 msgid "Keyboard Settings"
-msgstr "IBarの設定"
+msgstr "キーボード設定"
 
 #: src/modules/xkbswitch/e_mod_config.c:540
 #: src/modules/xkbswitch/e_mod_config.c:1505
@@ -11432,18 +11432,18 @@ msgstr "名前無し"
 
 #: src/modules/xkbswitch/e_mod_config.c:630
 msgid "Do not apply any keyboard settings ever"
-msgstr ""
+msgstr "キーボードの設定を一切適用しない"
 
 #: src/modules/xkbswitch/e_mod_config.c:639
 #, fuzzy
 msgid "Label only in gadgets"
-msgstr "ラベル"
+msgstr "ラベルはガジェットのみ"
 
 #: src/modules/xkbswitch/e_mod_config.c:656
 #: src/modules/xkbswitch/e_mod_config.c:857
 #, fuzzy
 msgid "Default keyboard layout"
-msgstr "キーボードショートカットを作成します。"
+msgstr "既定のキーボード・ショートカット"
 
 #: src/modules/xkbswitch/e_mod_config.c:762
 #: src/modules/xkbswitch/e_mod_config.c:1051
@@ -11458,7 +11458,7 @@ msgstr ""
 
 #: src/modules/xkbswitch/e_mod_config.c:764
 msgid "Switch layout"
-msgstr ""
+msgstr "レイアウトの切り替え"
 
 #: src/modules/xkbswitch/e_mod_config.c:798
 #: src/modules/xkbswitch/e_mod_config.c:1084
@@ -11474,7 +11474,7 @@ msgstr "コントロール"
 #: src/modules/xkbswitch/e_mod_config.c:800
 #: src/modules/xkbswitch/e_mod_config.c:1107
 msgid "Keypad"
-msgstr ""
+msgstr "キーパッド"
 
 #: src/modules/xkbswitch/e_mod_config.c:801
 #: src/modules/xkbswitch/e_mod_config.c:1119
@@ -11485,18 +11485,18 @@ msgstr ""
 #: src/modules/xkbswitch/e_mod_config.c:1130
 #, fuzzy
 msgid "Capslock"
-msgstr "時計"
+msgstr ""
 
 #: src/modules/xkbswitch/e_mod_config.c:803
 #, fuzzy
 msgid "Alt win"
-msgstr "全ウィンドウ"
+msgstr ""
 
 #: src/modules/xkbswitch/e_mod_config.c:804
 #: src/modules/xkbswitch/e_mod_config.c:1152
 #, fuzzy
 msgid "Currency"
-msgstr "緊急"
+msgstr ""
 
 #: src/modules/xkbswitch/e_mod_config.c:805
 #: src/modules/xkbswitch/e_mod_config.c:1163
@@ -11532,27 +11532,27 @@ msgstr ""
 #: src/modules/xkbswitch/e_mod_config.c:1229
 #, fuzzy
 msgid "Terminate X"
-msgstr "端末内で実行"
+msgstr "X を終了する"
 
 #: src/modules/xkbswitch/e_mod_config.c:1073
 #, fuzzy
 msgid "Switch Layout"
-msgstr "配置"
+msgstr "レイアウトの切り替え"
 
 #: src/modules/xkbswitch/e_mod_config.c:1141
 #, fuzzy
 msgid "Alternate win key"
-msgstr "変化後のタイムアウト"
+msgstr "代替の Win キー"
 
 #: src/modules/xkbswitch/e_mod_config.c:1383
 #, fuzzy
 msgid "Add New Configuration"
-msgstr "シェルフの設定"
+msgstr "新しい設定を追加する"
 
 #: src/modules/xkbswitch/e_mod_config.c:1410
 #, fuzzy
 msgid "Model"
-msgstr "モード"
+msgstr "モデル名"
 
 #: src/modules/xkbswitch/e_mod_config.c:1412
 #, fuzzy
@@ -11563,7 +11563,7 @@ msgstr "ブルガリア語"
 #: src/modules/xkbswitch/e_mod_config.c:1617
 #, fuzzy
 msgid "No Description"
-msgstr "選択"
+msgstr "説明なし"
 
 #: src/modules/xkbswitch/e_mod_main.c:193
 msgid "NONE"
@@ -11575,9 +11575,5 @@ msgstr ""
 
 #: src/modules/xwayland/e_mod_main.c:347
 msgid "Cannot launch XWayland from X11 display."
-msgstr ""
-
-#, fuzzy
-#~ msgid "Show startup splash"
-#~ msgstr "スタートアップアプリケーション"
+msgstr "X11 ディスプレイから XWayland を起動できません。"
 
