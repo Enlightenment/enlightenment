@@ -278,6 +278,28 @@ _desklock_show_internal(Eina_Bool suspend)
    if (e_config->desklock_language)
      e_intl_language_set(e_config->desklock_language);
 
+   if ((e_config->xkb.lock_layout) && (e_config->xkb.desklock_layout))
+     {
+        if ((!e_config->xkb.lock_layout->name) ||
+            (!!strcmp(e_config->xkb.lock_layout->name, e_config->xkb.desklock_layout)))
+          {
+             e_config_xkb_layout_free(e_config->xkb.lock_layout);
+             e_config->xkb.lock_layout = NULL;
+          }
+     }
+   if ((e_config->xkb.desklock_layout) && (!e_config->xkb.lock_layout))
+     {
+        E_Config_XKB_Layout *cl;
+
+        EINA_LIST_FOREACH(e_config->xkb.used_layouts, l, cl)
+          {
+            if ((cl->name) && (!strcmp(cl->name, e_config->xkb.desklock_layout)))
+              {
+                 e_config->xkb.lock_layout = e_config_xkb_layout_dup(cl);
+                 break;
+              }
+          }
+     }
    if (e_config->xkb.lock_layout)
      e_xkb_layout_set(e_config->xkb.lock_layout);
 
