@@ -7415,7 +7415,7 @@ msgstr "構成済みシェルフ： 表示 %d"
 #: src/modules/conf_shelves/e_int_config_shelf.c:393
 #, fuzzy, c-format
 msgid "Are you sure you want to delete \"%s\"?"
-msgstr "本当に \"%s\ を削除しますか？"
+msgstr "本当に \"%s\"を削除しますか？"
 
 #
 #: src/modules/conf_shelves/e_int_config_shelf.c:396
