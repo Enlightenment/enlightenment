@@ -1019,11 +1019,49 @@ e_modapi_init(E_Module *m)
      {
         Evas_Object *o;
         char buf[PATH_MAX];
+        int iw = 0, ih = 0;
+#define ARGB(a, r, g, b) ((a << 24) | (r << 16) | (g << 8) | b)
+#define B ARGB(  0,   0,   0,   0),
+#define W ARGB(255, 255, 255, 255),
+#define O ARGB(255, 255, 188,   0),
+        unsigned int *idata;
+        static const unsigned int wllogo[16 * 16] =
+          {
+             B B B B B B B B B B B B B B B B
+             B B B B B B O O O O B B B B B B
+             B B B W O O O O O O O O B B B B
+             B B B W W O O O O O O O W B B B
+             B B O W W O O O O O O O W W B B
+             B B O W W O O W W O O O W W B B
+             B O O W W W O W W O O W W O O B
+             B O O W W W W W W W O W W O O B
+             B O O W W W W W W W O W W O O B
+             B O O W W W W O W W W W W O O B
+             B B O W W W W O O W W W W O B B
+             B B O W W W W O O W W W O O B B
+             B B B O W W W O O W W W O B B B
+             B B B B O W O O O W W O B B B B
+             B B B B B B O O O O B B B B B B
+             B B B B B B B B B B B B B B B B
+          };
 
         o = evas_object_image_filled_add(ecore_evas_get(e_comp->ee));
         evas_object_name_set(o, "__e_wl_watermark");
         e_prefix_data_concat_static(buf, "data/images/wayland.png");
         evas_object_image_file_set(o, buf, NULL);
+        evas_object_image_size_get(o, &iw, &ih);
+        if ((iw <= 1) && (ih <= 1))
+          { // someonme removed the watermark - use low res hardcoded logo
+             evas_object_image_alpha_set(o, EINA_TRUE);
+             evas_object_image_size_set(o, 16, 16);
+             idata = evas_object_image_data_get(o, EINA_TRUE);
+             if (idata)
+               {
+                  memcpy(idata, wllogo, 16 * 16 * sizeof(unsigned int));
+                  evas_object_image_data_set(o, idata);
+                  evas_object_image_data_update_add(o, 0, 0, 16, 16);
+              }
+          }
         evas_object_move(o, w - 40 - 16, 16);
         evas_object_resize(o, 40, 40);
         evas_object_pass_events_set(o, EINA_TRUE);
