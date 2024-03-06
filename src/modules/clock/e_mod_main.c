@@ -947,6 +947,7 @@ e_modapi_init(E_Module *m)
 E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
+   E_FREE_LIST(handlers, ecore_event_handler_del);
    if (act)
      {
         e_action_predef_name_del("Clock", "Toggle calendar");
