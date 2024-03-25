@@ -304,9 +304,14 @@ err:
 static Eina_Bool
 _ddc_init(void)
 {
-   // .so.3 is ABI compatible twith .so.2 for out uses - see
-   // https://www.ddcutil.com/c_api_99/ for changes between them
-   ddc_lib = dlopen("libddcutil.so.4", RTLD_NOW | RTLD_LOCAL);
+   // .so.[345] are ABI compatible with .so.2 for our uses - see
+   // the changes listed at:
+   // - https://www.ddcutil.com/c_api_99/
+   // - https://www.ddcutil.com/c_api_120/
+   // - https://www.ddcutil.com/c_api_200/
+   ddc_lib = dlopen("libddcutil.so.5", RTLD_NOW | RTLD_LOCAL);
+   if (!ddc_lib)
+     ddc_lib = dlopen("libddcutil.so.4", RTLD_NOW | RTLD_LOCAL);
    if (!ddc_lib)
      ddc_lib = dlopen("libddcutil.so.3", RTLD_NOW | RTLD_LOCAL);
    if (!ddc_lib)
