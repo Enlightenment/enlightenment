@@ -342,6 +342,7 @@ main(int argc,
                   rm = EINA_FALSE;
                   eina_stringshare_del(s);
                }
+             eina_iterator_free(it);
              if (rm)
                {
                   if (rmdir(path))
