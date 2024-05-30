@@ -91,6 +91,7 @@ e_randr2_init(void)
    E_CONFIG_VAL(D, T, hotplug_response, DOUBLE);
    E_CONFIG_VAL(D, T, restore, UCHAR);
    E_CONFIG_VAL(D, T, use_cmd, UCHAR);
+   E_CONFIG_VAL(D, T, ignore_output, UCHAR);
    E_CONFIG_VAL(D, T, ignore_hotplug_events, UCHAR);
    E_CONFIG_VAL(D, T, ignore_acpi_events, UCHAR);
    E_CONFIG_VAL(D, T, default_policy, UINT);
@@ -395,6 +396,7 @@ _config_load(void)
    cfg->screens = NULL;
    cfg->restore = 1;
    cfg->use_cmd = 0;
+   cfg->ignore_output = 0;
    cfg->ignore_hotplug_events = 0;
    cfg->ignore_acpi_events = 0;
    cfg->default_policy = E_RANDR2_POLICY_EXTEND;
@@ -644,9 +646,20 @@ _config_screen_match_count(E_Randr2 *r, E_Config_Randr2 *cfg)
         if (!cs->id) continue;
         EINA_LIST_FOREACH(r->screens, ll, s)
           {
+             const char *s1, *s2;
+
              if ((!s->id) || (!s->info.connected) ||
                  (_screen_closed(s))) continue;
-             if (!strcmp(cs->id, s->id)) count++;
+             s1 = cs->id;
+             s2 = s->id;
+             if ((e_randr2_cfg) && (e_randr2_cfg->ignore_output))
+               {
+                  s1 = strchr(cs->id, '/');
+                  if (!s1) s1 = cs->id;
+                  s2 = strchr(s->id, '/');
+                  if (!s2) s2 = s->id;
+               }
+             if (!strcmp(s1, s2)) count++;
           }
      }
    return count;
@@ -667,10 +680,18 @@ _screens_fingerprint(E_Randr2 *r)
         if (!s->id) eina_strbuf_append(buf, ":NULL:");
         else
           {
+             const char *s1;
+
              eina_strbuf_append(buf, ":");
-             eina_strbuf_append(buf, s->id);
+             s1 = s->id;
+             if ((e_randr2_cfg) && (e_randr2_cfg->ignore_output))
+               {
+                  s1 = strchr(s->id, '/');
+                  if (!s1) s1 = s->id;
+               }
+             eina_strbuf_append(buf, s1);
              eina_strbuf_append(buf, ":");
-// Don't do this asbecause this forces a screen replug when you open and
+// Don't do this because this forces a screen replug when you open and
 // close your laptop lid and if that is the only thing you open or close...
 //             if (s->info.lid_closed) eina_strbuf_append(buf, ":LC:");
 //             else eina_strbuf_append(buf, ":LO:");
@@ -733,7 +754,23 @@ _screens_differ(E_Randr2 *r1, E_Randr2 *r2)
                printf("RRR: look at r1 screen ID %s\n", ss->id);
              else
                printf("RRR: look at r1 screen ID NIL\n");
-             if ((ss->id) && (!strcmp(s->id, ss->id))) break;
+
+             if (ss->id)
+               {
+                  const char *ss1, *ss2;
+
+                  ss1 = s->id;
+                  ss2 = ss->id;
+                  if ((e_randr2_cfg) && (e_randr2_cfg->ignore_output))
+                    {
+                       ss1 = strchr(s->id, '/');
+                       if (!ss1) ss1 = s->id;
+                       ss2 = strchr(ss->id, '/');
+                       if (!ss2) ss2 = ss->id;
+                    }
+
+                  if (!strcmp(ss1, ss2)) break;
+               }
              ss = NULL;
           }
         if (!ss)
@@ -973,7 +1010,19 @@ _screen_id_find(const char *id)
    Eina_List *l;
    EINA_LIST_FOREACH(e_randr2->screens, l, s)
      {
-        if (!strcmp(s->id, id)) return s;
+        const char *s1, *s2;
+
+        s1 = s->id;
+        s2 = id;
+        if ((e_randr2_cfg) && (e_randr2_cfg->ignore_output))
+          {
+             s1 = strchr(s->id, '/');
+             if (!s1) s1 = s->id;
+             s2 = strchr(id, '/');
+             if (!s2) s2 = id;
+          }
+
+        if (!strcmp(s1, s2)) return s;
      }
    return NULL;
 }
@@ -1001,8 +1050,21 @@ _config_screen_string_find(E_Config_Randr2 *cfg, const char *id)
    if ((!id) || (!cfg)) return NULL;
    EINA_LIST_FOREACH(cfg->screens, l, cs)
      {
+        const char *s1, *s2;
+
         if (!cs->id) continue;
-        if (!strcmp(cs->id, id)) return cs;
+
+        s1 = cs->id;
+        s2 = id;
+        if ((e_randr2_cfg) && (e_randr2_cfg->ignore_output))
+          {
+             s1 = strchr(cs->id, '/');
+             if (!s1) s1 = cs->id;
+             s2 = strchr(id, '/');
+             if (!s2) s2 = id;
+          }
+
+        if (!strcmp(s1, s2)) return cs;
      }
    return NULL;
 }
@@ -1482,8 +1544,19 @@ e_randr2_config_screen_find(E_Randr2_Screen *s, E_Config_Randr2 *cfg)
    if (!s->id) return NULL;
    EINA_LIST_FOREACH(cfg->screens, l, cs)
      {
+        const char *s1, *s2;
+
         if (!cs->id) continue;
-        if (!strcmp(cs->id, s->id)) return cs;
+        s1 = cs->id;
+        s2 = s->id;
+        if ((e_randr2_cfg) && (e_randr2_cfg->ignore_output))
+          {
+             s1 = strchr(cs->id, '/');
+             if (!s1) s1 = cs->id;
+             s2 = strchr(s->id, '/');
+             if (!s2) s2 = s->id;
+          }
+        if (!strcmp(s1, s2)) return cs;
      }
    return NULL;
 }
@@ -1615,7 +1688,18 @@ e_randr2_screen_id_find(const char *id)
    if (!id) return NULL;
    EINA_LIST_FOREACH(e_randr2->screens, l, s)
      {
-        if (!strcmp(id, s->id)) return s;
+        const char *s1, *s2;
+
+        s1 = id;
+        s2 = s->id;
+        if ((e_randr2_cfg) && (e_randr2_cfg->ignore_output))
+          {
+             s1 = strchr(id, '/');
+             if (!s1) s1 = id;
+             s2 = strchr(s->id, '/');
+             if (!s2) s2 = s->id;
+          }
+        if (!strcmp(s1, s2)) return s;
      }
    return NULL;
 }
