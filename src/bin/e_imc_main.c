@@ -145,7 +145,7 @@ main(int argc, char **argv)
    /* else create new imc */
    if (write_ops != 0)
      {
-        write_imc = calloc(sizeof(E_Input_Method_Config), 1);
+        write_imc = calloc(1, sizeof(E_Input_Method_Config));
         write_imc->version = E_INTL_INPUT_METHOD_CONFIG_VERSION;
         if (read_imc)
           {
