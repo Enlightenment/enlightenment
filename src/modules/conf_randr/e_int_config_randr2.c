@@ -783,6 +783,22 @@ _cb_enabled_changed(void *data, Evas_Object *obj, void *event EINA_UNUSED)
    cs->enabled = elm_check_state_get(obj);
    printf("RR: enabled = %i\n", cs->enabled);
    e_config_dialog_changed_set(cfdata->cfd, EINA_TRUE);
+
+   // for every rel_to that points to the disabled screen, set its rel_mode to point to "none"
+   if (!cs->enabled)
+   {
+      Eina_List *l;
+      E_Config_Randr2_Screen *other_cs;
+      EINA_LIST_FOREACH(cfdata->screens, l, other_cs)
+      {
+         if (!other_cs) continue;
+         if (other_cs->rel_to && strcmp(other_cs->rel_to, cs->id) == 0)
+         {
+            other_cs->rel_mode = E_RANDR2_RELATIVE_NONE;
+            e_config_dialog_changed_set(cfdata->cfd, EINA_TRUE);
+         }
+      }
+   }
 }
 
 static void
