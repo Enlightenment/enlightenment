@@ -99,6 +99,7 @@ _text_passwd_update(void)
 static void
 _lokker_null(void)
 {
+   if (!edd) return;
    e_util_memclear(edd->passwd, PASSWD_LEN);
 
    _text_passwd_update();
@@ -110,6 +111,7 @@ _lokker_select(void)
 {
    Lokker_Popup *lp;
    Eina_List *l;
+   if (!edd) return;
    EINA_LIST_FOREACH(edd->elock_wnd_list, l, lp)
      if (lp->login_box)
        edje_object_signal_emit(lp->login_box, "e,state,selected", "e");
@@ -121,6 +123,7 @@ _lokker_unselect(void)
 {
    Lokker_Popup *lp;
    Eina_List *l;
+   if (!edd) return;
    EINA_LIST_FOREACH(edd->elock_wnd_list, l, lp)
      if (lp->login_box)
        edje_object_signal_emit(lp->login_box, "e,state,unselected", "e");
@@ -178,6 +181,7 @@ _pin_click(void *data EINA_UNUSED, Evas_Object *obj, const char *sig EINA_UNUSED
    const char *name;
    int num;
 
+   if (!edd) return;
    name = edje_object_part_text_get(obj, "e.text.label");
    if (!name) //wtf
      return;
@@ -570,6 +574,7 @@ _lokker_popup_find(E_Zone *zone)
    Eina_List *l;
    Lokker_Popup *lp;
 
+   if (!edd) return NULL;
    EINA_LIST_FOREACH(edd->elock_wnd_list, l, lp)
      if (lp->zone == zone) return l;
    return NULL;
@@ -587,6 +592,7 @@ _lokker_cb_mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *event 
    if (current_zone == last_active_zone)
      return ECORE_CALLBACK_PASS_ON;
 
+   if (!edd) return ECORE_CALLBACK_PASS_ON;
    EINA_LIST_FOREACH(edd->elock_wnd_list, l, lp)
      {
         if (!lp) continue;
@@ -609,39 +615,39 @@ _lokker_cb_mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *event 
 static Eina_Bool
 _lokker_cb_exit(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
-   Ecore_Exe_Event_Del *ev = event;
+  Ecore_Exe_Event_Del *ev = event;
 
-   if (ev->pid != _auth_child_pid) return ECORE_CALLBACK_PASS_ON;
+  if (ev->pid != _auth_child_pid) return ECORE_CALLBACK_PASS_ON;
 
-   _auth_child_pid = -1;
-   /* ok */
-   if (ev->exited && (ev->exit_code == 0))
-     {
-        /* security - null out passwd string once we are done with it */
-        _lokker_null();
-        e_desklock_hide();
-     }
-   /* error */
-   else if ((!ev->exited) || (ev->exit_code < 128))
-     {
-        /* security - null out passwd string once we are done with it */
-        _lokker_null();
-        e_desklock_hide();
-        e_util_dialog_show(_("Authentication System Error"),
-                           _("Authentication via PAM had errors setting up the<ps/>"
-                             "authentication session. The error code was <hilight>%i</hilight>.<ps/>"
-                             "This is bad and should not be happening. Please report this bug.")
-                           , ev->exited ? ev->exit_code : ev->exit_signal);
-     }
-   /* failed auth */
-   else
-     {
-        _lokker_state_set(LOKKER_STATE_INVALID);
-        /* security - null out passwd string once we are done with it */
-        _lokker_null();
-     }
-   E_FREE_FUNC(_auth_child_exit_handler, ecore_event_handler_del);
-   return ECORE_CALLBACK_RENEW;
+  _auth_child_pid = -1;
+  /* ok */
+  if (ev->exited && (ev->exit_code == 0))
+    {
+      /* security - null out passwd string once we are done with it */
+      _lokker_null();
+      e_desklock_hide();
+    }
+  /* error */
+  else if ((!ev->exited) || (ev->exit_code < 128))
+    {
+      /* security - null out passwd string once we are done with it */
+      _lokker_null();
+      e_desklock_hide();
+      e_util_dialog_show(_("Authentication System Error"),
+                         _("Authentication via PAM had errors setting up the<ps/>"
+                           "authentication session. The error code was <hilight>%i</hilight>.<ps/>"
+                           "This is bad and should not be happening. Please report this bug.")
+                         , ev->exited ? ev->exit_code : ev->exit_signal);
+    }
+  /* failed auth */
+  else
+    {
+      _lokker_state_set(LOKKER_STATE_INVALID);
+      /* security - null out passwd string once we are done with it */
+      _lokker_null();
+    }
+  E_FREE_FUNC(_auth_child_exit_handler, ecore_event_handler_del);
+  return ECORE_CALLBACK_RENEW;
 }
 
 static Eina_Bool
@@ -716,6 +722,7 @@ _lokker_caps_hint_update(const char *msg)
 {
    Eina_List *l;
    Lokker_Popup *lp;
+   if (!edd) return;
    EINA_LIST_FOREACH(edd->elock_wnd_list, l, lp)
      {
         edje_object_part_text_set(lp->login_box, "e.text.hint", msg);
@@ -843,6 +850,7 @@ lokker_key_up(Ecore_Event_Key *ev)
 EINTERN Eina_Bool
 lokker_key_down(Ecore_Event_Key *ev)
 {
+   if (!edd) return ECORE_CALLBACK_DONE;
    if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      {
         if (!strcmp(ev->key, "Caps_Lock"))
@@ -977,6 +985,7 @@ lokker_lock(Eina_Bool immediate)
 EINTERN void
 lokker_unlock(void)
 {
+   if (!edd) return;
    e_auth_fprint_end();
    E_FREE_LIST(edd->elock_wnd_list, _lokker_popup_free);
    e_pointer_type_pop(e_comp->pointer, edd, "default");
