@@ -208,6 +208,7 @@ _btn_cb_del(void *data, void *data2 EINA_UNUSED)
         if (!file) break;
         ecore_file_unlink(file);
         e_widget_ilist_remove_num(cfdata->obj.list, x);
+        break;
      }
    e_int_menus_cache_clear();
 }
