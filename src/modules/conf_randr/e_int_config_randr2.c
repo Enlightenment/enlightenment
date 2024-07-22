@@ -412,15 +412,18 @@ _basic_screen_info_fill(E_Config_Dialog_Data *cfdata, E_Config_Randr2_Screen *cs
           {
              mode_cbdata->cfdata = cfdata;
              mode_cbdata->mode = *m;
-             if (m->flags & ECORE_X_RANDR_MODE_DOUBLE_SCAN)
+#ifdef E_COMP_X
+             if ((e_comp->comp_type == E_PIXMAP_TYPE_X) &&
+                 (m->flags & ECORE_X_RANDR_MODE_DOUBLE_SCAN))
                snprintf(buf, sizeof(buf), "%ix%i @ %1.2fHz (Doublescan)", m->w, m->h, m->refresh / 2);
-             else if (m->flags & ECORE_X_RANDR_MODE_INTERLACE)
+             else if ((e_comp->comp_type == E_PIXMAP_TYPE_X) &&
+                      (m->flags & ECORE_X_RANDR_MODE_INTERLACE))
                snprintf(buf, sizeof(buf), "%ix%i @ %1.2fHz (Interlaced)", m->w, m->h, m->refresh);
              else
+#endif
                snprintf(buf, sizeof(buf), "%ix%i @ %1.2fHz", m->w, m->h, m->refresh);
              it = elm_list_item_append(cfdata->modes_obj, buf, NULL, NULL, _cb_mode_set, mode_cbdata);
              cfdata->freelist = eina_list_append(cfdata->freelist, mode_cbdata);
-             /* printf("mode add %p %p %p\n", mode_cbdata, cfdata->modes_obj, it); */
              if ((cs->mode_w == m->w) && (cs->mode_h == m->h) &&
                  (fabs(cs->mode_refresh - m->refresh) < 0.01 ))
                it_sel = it;
