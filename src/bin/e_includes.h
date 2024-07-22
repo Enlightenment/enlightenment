@@ -137,7 +137,9 @@
 #include "e_env.h"
 #include "e_backlight.h"
 #include "e_deskenv.h"
-#include "e_xsettings.h"
+#ifndef HAVE_WAYLAND_ONLY
+# include "e_xsettings.h"
+#endif
 #include "e_update.h"
 #include "e_xkb.h"
 #include "e_log.h"
@@ -152,8 +154,10 @@
 #include "e_comp_canvas.h"
 #include "e_utils.h"
 #include "e_hints.h"
-#include "e_comp_x_devices.h"
-#include "e_comp_x_randr.h"
+#ifndef HAVE_WAYLAND_ONLY
+# include "e_comp_x_devices.h"
+# include "e_comp_x_randr.h"
+#endif
 #include "e_watchdog.h"
 #include "e_gesture.h"
 #include "e_sound.h"
