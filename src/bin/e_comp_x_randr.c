@@ -903,6 +903,12 @@ e_comp_x_randr_create(void)
    E_Zone *zone;
    int crtcs_num = 0, outputs_num = 0, i, j, k;
    Ecore_X_Window root = ecore_x_window_root_first_get();
+   Ecore_X_Atom atom;
+   static Ecore_X_Atom atom_panel = 0;
+   // panel atoms...
+   // unknown VGA DVI DVI‐I DVI‐A DVI‐D HDMI Panel
+   // TV TV-Composite TV-SVideo TV-Component
+   // TV-SCART TV-C4 DisplayPort
    E_Randr2 *r = calloc(1, sizeof(E_Randr2));
    if (!r) return NULL;
 
@@ -915,6 +921,8 @@ e_comp_x_randr_create(void)
 
    crtcs = ecore_x_randr_crtcs_get(root, &crtcs_num);
    outputs = ecore_x_randr_outputs_get(root, &outputs_num);
+
+   if (atom_panel == 0) atom_panel = ecore_x_atom_get("Panel");
 
    for (i = 0; i < outputs_num; i++)
      {
@@ -964,6 +972,8 @@ e_comp_x_randr_create(void)
           s->info.connector = E_RANDR2_CONNECTOR_DISPLAY_PORT;
         s->info.is_lid = _is_lid_name(s->info.name);
         s->info.lid_closed = s->info.is_lid && e_acpi_lid_is_closed();
+        atom = ecore_x_randr_output_connector_type_get(root, outputs[i]);
+        if (atom == atom_panel) s->info.is_lid = EINA_TRUE;
         printf("RRR: ...... lid_closed = %i (%i && %i)\n", s->info.lid_closed, s->info.is_lid, e_acpi_lid_is_closed());
         if (ecore_x_randr_output_connection_status_get(root, outputs[i]) ==
             ECORE_X_RANDR_CONNECTION_STATUS_CONNECTED)
