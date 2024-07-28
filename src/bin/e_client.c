@@ -1769,6 +1769,14 @@ _e_client_maximize_run(E_Client *ec, int x, int y, int w, int h)
 }
 
 ////////////////////////////////////////////////
+static Eina_Bool
+_cb_e_client_dummy_wake_eval(void *data)
+{
+  Ecore_Timer **timer = data;
+
+  *timer = NULL;
+  return EINA_FALSE;
+}
 
 static void
 _e_client_eval(E_Client *ec)
@@ -2198,96 +2206,102 @@ _e_client_eval(E_Client *ec)
 
    if (ec->changes.icon)
      {
-        if (!ec->new_client)
-          E_FREE_FUNC(ec->desktop, efreet_desktop_free);
-        if (ec->remember && ec->remember->prop.desktop_file)
-          {
-             Efreet_Desktop *d;
-             const char *desktop = ec->remember->prop.desktop_file;
+       double t_dif = ecore_loop_time_get() - ec->desktop_last_change;
 
-             d = efreet_desktop_get(desktop);
-             if (!d)
-               d = efreet_util_desktop_name_find(desktop);
-             if (d)
-               {
-                  efreet_desktop_free(ec->desktop);
-                  ec->desktop = d;
-               }
-          }
-        if (!ec->desktop)
-          {
-             if (ec->steam.steam_game_id)
-               {
-                  Efreet_Desktop *d;
-                  Eina_List *desks = efreet_util_desktop_name_glob_list("*");
-                  EINA_LIST_FREE(desks, d)
-                    {
+       if (t_dif > 0.2) // rate liomit to 5 times per sec
+         { // why rate limit? this is costly to look up all the time. i found
+           // that some apps (ahem.. steam... games... proton....) keep
+           // needelessly updating their props so we k3eep having to look up
+           // icons all the time. this is crazy - but it literally makes e
+           // use 3x as much cpu usage while a game renders. so rate limit
+           // this.
+           if (!ec->new_client)
+             E_FREE_FUNC(ec->desktop, efreet_desktop_free);
+           if (ec->remember && ec->remember->prop.desktop_file)
+             {
+               Efreet_Desktop *d;
+               const char *desktop = ec->remember->prop.desktop_file;
+
+               d = efreet_desktop_get(desktop);
+               if (!d) d = efreet_util_desktop_name_find(desktop);
+               if (d)
+                 {
+                   efreet_desktop_free(ec->desktop);
+                   ec->desktop = d;
+                 }
+             }
+           if (!ec->desktop)
+             {
+               if (ec->steam.steam_game_id)
+                 {
+                   Efreet_Desktop *d;
+                   Eina_List *desks = efreet_util_desktop_name_glob_list("*");
+                   EINA_LIST_FREE(desks, d)
+                     {
                        if (!d->exec) continue;
                        if (!strncmp(d->exec, "steam ", 6))
                          {
-                            const char *st = strstr(d->exec, "steam://rungameid/");
-                            if (st)
-                              {
-                                 st += strlen("steam://rungameid/");
-                                 unsigned int id = atoi(st);
-                                 if (id == ec->steam.steam_game_id)
-                                   ec->desktop = d;
-                              }
+                           const char *st = strstr(d->exec, "steam://rungameid/");
+                           if (st)
+                             {
+                               st += strlen("steam://rungameid/");
+                               unsigned int id = atoi(st);
+                               if (id == ec->steam.steam_game_id)
+                                 ec->desktop = d;
+                             }
                          }
-                    }
-               }
-          }
-        if (!ec->desktop)
-          {
-             E_Exec_Instance *inst;
+                     }
+                 }
+             }
+           if (!ec->desktop)
+             {
+               E_Exec_Instance *inst;
 
-             inst = e_exec_startup_id_pid_instance_find(ec->netwm.startup_id,
-                                                        ec->netwm.pid);
-             if (inst && inst->clients)
-               {
-                  E_Client *ec2 = eina_list_data_get(inst->clients);
+               inst = e_exec_startup_id_pid_instance_find(ec->netwm.startup_id,
+                                                          ec->netwm.pid);
+               if (inst && inst->clients)
+                 {
+                   E_Client *ec2 = eina_list_data_get(inst->clients);
 
-                  if (ec2->netwm.pid == ec->netwm.pid)
-                    ec->desktop = inst->desktop;
-               }
-             else if (inst)
-               ec->desktop = inst->desktop;
-             if (ec->desktop) efreet_desktop_ref(ec->desktop);
-          }
-        if (!ec->desktop)
-          {
-             if (ec->internal && (ec->icccm.class && (!strncmp(ec->icccm.class, "e_fwin::", 8))))
-               ec->desktop = efreet_util_desktop_exec_find("enlightenment_filemanager");
-          }
-        if (!ec->desktop)
-          {
-             if ((ec->icccm.name) || (ec->icccm.class))
-               ec->desktop = efreet_util_desktop_wm_class_find(ec->icccm.name,
-                                                               ec->icccm.class);
-          }
-        if (!ec->desktop && ec->icccm.command.argv && (ec->icccm.command.argc > 0))
-          {
-             ec->desktop = efreet_util_desktop_exec_find(ec->icccm.command.argv[0]);
-          }
-        if (!ec->desktop)
-          {
-             // special case hacks for specific apps that just don't do things
-             // right so we have to work around them
-             if (ec->icccm.class && ec->icccm.name &&
-                 (!strcmp(ec->icccm.class, "Steam")) &&
-                 (!strcmp(ec->icccm.name, "Steam")))
-               {
-                  ec->desktop = efreet_util_desktop_file_id_find("steam.desktop");
-               }
-             /* libreoffice and maybe others match window class
+                   if (ec2->netwm.pid == ec->netwm.pid)
+                     ec->desktop = inst->desktop;
+                 }
+               else if (inst)
+                 ec->desktop = inst->desktop;
+               if (ec->desktop) efreet_desktop_ref(ec->desktop);
+             }
+           if (!ec->desktop)
+             {
+               if (ec->internal && (ec->icccm.class && (!strncmp(ec->icccm.class, "e_fwin::", 8))))
+                 ec->desktop = efreet_util_desktop_exec_find("enlightenment_filemanager");
+             }
+           if (!ec->desktop)
+             {
+               if ((ec->icccm.name) || (ec->icccm.class))
+                 ec->desktop = efreet_util_desktop_wm_class_find(ec->icccm.name,
+                                                                 ec->icccm.class);
+             }
+           if (!ec->desktop && ec->icccm.command.argv && (ec->icccm.command.argc > 0))
+             {
+               ec->desktop = efreet_util_desktop_exec_find(ec->icccm.command.argv[0]);
+             }
+           if (!ec->desktop)
+             {
+               // special case hacks for specific apps that just don't do things
+               // right so we have to work around them
+               if (ec->icccm.class && ec->icccm.name &&
+                   (!strcmp(ec->icccm.class, "Steam")) &&
+                   (!strcmp(ec->icccm.name, "Steam")))
+                 ec->desktop = efreet_util_desktop_file_id_find("steam.desktop");
+               /* libreoffice and maybe others match window class
                 with .desktop file name */
-             else if (ec->icccm.class)
-               {
-                  char buf[4096] = {0};
-                  snprintf(buf, sizeof(buf), "%s.desktop", ec->icccm.class);
-                  ec->desktop = efreet_util_desktop_file_id_find(buf);
-                  if (!ec->desktop)
-                    {
+               else if (ec->icccm.class)
+                 {
+                   char buf[4096] = {0};
+                   snprintf(buf, sizeof(buf), "%s.desktop", ec->icccm.class);
+                   ec->desktop = efreet_util_desktop_file_id_find(buf);
+                   if (!ec->desktop)
+                     {
                        char *s;
 
                        strncpy(buf, ec->icccm.class, sizeof(buf) - 1);
@@ -2295,60 +2309,74 @@ _e_client_eval(E_Client *ec)
                        eina_str_tolower(&s);
                        if (strcmp(s, ec->icccm.class))
                          ec->desktop = efreet_util_desktop_exec_find(s);
-                    }
-               }
-          }
-        if (!ec->desktop && ec->icccm.class)
-          {
-             const char *p = strchr(ec->icccm.class, ' ');
+                     }
+                 }
+             }
+           if (!ec->desktop && ec->icccm.class)
+             {
+               const char *p = strchr(ec->icccm.class, ' ');
 
-             if (p)
-               {
-                  char *sp, *dup = strdup(ec->icccm.class);
+               if (p)
+                 {
+                   char *sp, *dup = strdup(ec->icccm.class);
 
-                  if (dup)
-                    {
+                   if (dup)
+                     {
                        for (sp = dup; *dup; sp++)
                          {
-                            if (*sp == ' ')
-                              {
-                                 *sp = 0;
-                                 break;
-                              }
+                           if (*sp == ' ')
+                             {
+                               *sp = 0;
+                               break;
+                             }
                          }
                        ec->desktop = efreet_util_desktop_exec_find(dup);
                        free(dup);
-                    }
-               }
-          }
-        if (!ec->desktop && ec->icccm.name)
-          {
-             /* this works for most cases as fallback. useful when app is
+                     }
+                 }
+             }
+           if (!ec->desktop && ec->icccm.name)
+             {
+               /* this works for most cases as fallback. useful when app is
                 run from a shell  */
-             ec->desktop = efreet_util_desktop_exec_find(ec->icccm.name);
-          }
-        if (!ec->desktop && ec->parent)
-          {
-             E_Client *ec2 = ec->parent;
-             if (ec2->desktop)
-               {
-                  efreet_desktop_ref(ec2->desktop);
-                  ec->desktop = ec2->desktop;
-               }
-          }
+               ec->desktop = efreet_util_desktop_exec_find(ec->icccm.name);
+             }
+           if (!ec->desktop && ec->parent)
+             {
+               E_Client *ec2 = ec->parent;
+               if (ec2->desktop)
+                 {
+                   efreet_desktop_ref(ec2->desktop);
+                   ec->desktop = ec2->desktop;
+                 }
+             }
 
-        if (ec->desktop)
-          {
-             if (!ec->exe_inst)
-               e_exec_phony(ec);
-             if (!ec->exe_inst->desktop)
-               {
-                  efreet_desktop_ref(ec->desktop);
-                  ec->exe_inst->desktop = ec->desktop;
-               }
-          }
-        ec->changes.icon = !e_comp_object_frame_icon_update(ec->frame);
-        prop |= E_CLIENT_PROPERTY_ICON;
+           if (ec->desktop)
+             {
+               if (!ec->exe_inst) e_exec_phony(ec);
+               if (!ec->exe_inst->desktop)
+                 {
+                   efreet_desktop_ref(ec->desktop);
+                   ec->exe_inst->desktop = ec->desktop;
+                 }
+             }
+           ec->changes.icon = !e_comp_object_frame_icon_update(ec->frame);
+           prop |= E_CLIENT_PROPERTY_ICON;
+           ec->desktop_last_change = ecore_loop_time_get();
+         }
+       else
+         {
+           static Ecore_Timer *wakeup_timer = NULL;
+
+           // queue a wakeup in 0.2 sec if we ignored this change so a loop
+           // cycle will catch this on eval and time delta  will be > 0.2 
+           if (wakeup_timer)
+             ecore_timer_reset(wakeup_timer);
+           else
+             wakeup_timer = ecore_timer_add(0.2,
+                                            _cb_e_client_dummy_wake_eval,
+                                            &wakeup_timer);
+         }
      }
 
    if (ec->new_client)

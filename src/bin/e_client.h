@@ -574,7 +574,7 @@ struct E_Client
    } vkbd;
 
    struct {
-      unsigned int steam_game_id;
+      unsigned int  steam_game_id;
    } steam;
 
    struct
@@ -703,6 +703,7 @@ struct E_Client
 
    Efreet_Desktop            *desktop;
    E_Exec_Instance           *exe_inst;
+   double                     desktop_last_change; // used to rate limit desktop lookups/changes
 
    unsigned char              comp_hidden   E_BITFIELD;
 
