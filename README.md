@@ -61,7 +61,7 @@ Highly suggested:
 * acpid (Unless your system doesn't have ACPI at all)
 * packagekit (For packagekit module updates status)
 * udisks2
-* gdb (If you want automatic bactraces in ~/.e-crashdump.txt)
+* gdb (If you want automatic backtraces in ~/.e-crashdump.txt)
 
 -----
 
