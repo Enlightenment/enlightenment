@@ -7,9 +7,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-23 21:51+0100\n"
-"PO-Revision-Date: 2024-01-24 00:12+0000\n"
+"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2024-07-23 08:00+0200\n"
+"PO-Revision-Date: 2024-08-06 17:48+0100\n"
 "Last-Translator: Hugo Carvalho <hugokarvalho@hotmail.com>\n"
 "Language-Team: Portuguese\n"
 "Language: pt\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.4.4\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
 #: src/bin/e_about.c:17
@@ -1587,7 +1587,7 @@ msgstr "Não foi possível ejetar o dispositivo"
 #: src/bin/e_fm.c:10546 src/bin/e_fm.c:10550 src/bin/e_fm.c:10554
 #: src/bin/e_fm.c:10582 src/bin/e_fm.c:10587 src/bin/e_fm.c:10591
 #: src/bin/e_fm.c:10650 src/bin/e_fm.c:10880 src/bin/e_fm_prop.c:363
-#: src/bin/e_shelf.c:2268 src/modules/pager/e_mod_main.c:2109
+#: src/bin/e_shelf.c:2268 src/modules/pager/e_mod_main.c:2108
 #: src/modules/xwayland/e_mod_main.c:272 src/modules/xwayland/e_mod_main.c:347
 msgid "Error"
 msgstr "Erro"
@@ -2335,7 +2335,7 @@ msgid "Window"
 msgstr "Janela"
 
 #: src/bin/e_int_client_menu.c:156
-#: src/modules/conf_randr/e_int_config_randr2.c:1110
+#: src/modules/conf_randr/e_int_config_randr2.c:1143
 msgid "Align"
 msgstr "Alinhar"
 
@@ -2518,10 +2518,10 @@ msgid "Window List"
 msgstr "Lista de janelas"
 
 #: src/bin/e_int_client_menu.c:1643 src/modules/pager/e_mod_main.c:350
-#: src/modules/pager/e_mod_main.c:2123 src/modules/pager/e_mod_main.c:2130
-#: src/modules/pager/e_mod_main.c:2137 src/modules/pager/e_mod_main.c:2139
-#: src/modules/pager/e_mod_main.c:2141 src/modules/pager/e_mod_main.c:2143
-#: src/modules/pager/e_mod_main.c:2145 src/modules/pager/e_mod_main.c:2147
+#: src/modules/pager/e_mod_main.c:2122 src/modules/pager/e_mod_main.c:2129
+#: src/modules/pager/e_mod_main.c:2136 src/modules/pager/e_mod_main.c:2138
+#: src/modules/pager/e_mod_main.c:2140 src/modules/pager/e_mod_main.c:2142
+#: src/modules/pager/e_mod_main.c:2144 src/modules/pager/e_mod_main.c:2146
 msgid "Pager"
 msgstr "Paginador"
 
@@ -2615,9 +2615,9 @@ msgstr "Estático"
 #: src/modules/clock/e_mod_config.c:143
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:356
 #: src/modules/conf_performance/e_int_config_powermanagement.c:200
-#: src/modules/conf_randr/e_int_config_randr2.c:479
-#: src/modules/conf_randr/e_int_config_randr2.c:698
-#: src/modules/conf_randr/e_int_config_randr2.c:1077
+#: src/modules/conf_randr/e_int_config_randr2.c:494
+#: src/modules/conf_randr/e_int_config_randr2.c:713
+#: src/modules/conf_randr/e_int_config_randr2.c:1110
 #: src/modules/conf_theme/e_int_config_fonts.c:742
 #: src/modules/conf_theme/e_int_config_transitions.c:212
 #: src/modules/conf_theme/e_int_config_transitions.c:271
@@ -2629,16 +2629,16 @@ msgid "None"
 msgstr "Nenhuma"
 
 #: src/bin/e_int_client_prop.c:308
-#: src/modules/conf_randr/e_int_config_randr2.c:487
-#: src/modules/conf_randr/e_int_config_randr2.c:742
-#: src/modules/conf_randr/e_int_config_randr2.c:1081
+#: src/modules/conf_randr/e_int_config_randr2.c:502
+#: src/modules/conf_randr/e_int_config_randr2.c:757
+#: src/modules/conf_randr/e_int_config_randr2.c:1114
 msgid "Above"
 msgstr "Por cima"
 
 #: src/bin/e_int_client_prop.c:312
-#: src/modules/conf_randr/e_int_config_randr2.c:489
-#: src/modules/conf_randr/e_int_config_randr2.c:753
-#: src/modules/conf_randr/e_int_config_randr2.c:1082
+#: src/modules/conf_randr/e_int_config_randr2.c:504
+#: src/modules/conf_randr/e_int_config_randr2.c:768
+#: src/modules/conf_randr/e_int_config_randr2.c:1115
 msgid "Below"
 msgstr "Por baixo"
 
@@ -3230,7 +3230,7 @@ msgid "Types"
 msgstr "Tipos"
 
 #: src/bin/e_int_config_comp_match.c:466
-#: src/modules/conf_randr/e_int_config_randr2.c:1046
+#: src/modules/conf_randr/e_int_config_randr2.c:1079
 msgid "On"
 msgstr "Ligado"
 
@@ -4780,7 +4780,7 @@ msgstr "Menu de aplicações"
 
 #: src/modules/backlight/e_mod_main.c:354
 #: src/modules/conf_display/e_mod_main.c:36
-#: src/modules/conf_randr/e_int_config_randr2.c:1007
+#: src/modules/conf_randr/e_int_config_randr2.c:1040
 msgid "Backlight"
 msgstr "Iluminação"
 
@@ -6846,111 +6846,115 @@ msgstr "Desempenho"
 msgid "Power Management"
 msgstr "Gestão de energia"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:79
+#: src/modules/conf_randr/e_int_config_randr2.c:80
 #: src/modules/conf_randr/e_mod_main.c:44
 #: src/modules/conf_randr/e_mod_main.c:60
 #: src/modules/conf_randr/e_mod_main.c:66
 msgid "Screen Setup"
 msgstr "Configuração do ecrã"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:481
-#: src/modules/conf_randr/e_int_config_randr2.c:709
-#: src/modules/conf_randr/e_int_config_randr2.c:809
-#: src/modules/conf_randr/e_int_config_randr2.c:1078
-#: src/modules/conf_randr/e_int_config_randr2.c:1229
+#: src/modules/conf_randr/e_int_config_randr2.c:496
+#: src/modules/conf_randr/e_int_config_randr2.c:724
+#: src/modules/conf_randr/e_int_config_randr2.c:842
+#: src/modules/conf_randr/e_int_config_randr2.c:1111
+#: src/modules/conf_randr/e_int_config_randr2.c:1271
 msgid "Clone"
 msgstr "Clonar"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:483
-#: src/modules/conf_randr/e_int_config_randr2.c:720
-#: src/modules/conf_randr/e_int_config_randr2.c:1079
+#: src/modules/conf_randr/e_int_config_randr2.c:498
+#: src/modules/conf_randr/e_int_config_randr2.c:735
+#: src/modules/conf_randr/e_int_config_randr2.c:1112
 msgid "Left of"
 msgstr "À esquerda de"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:485
-#: src/modules/conf_randr/e_int_config_randr2.c:731
-#: src/modules/conf_randr/e_int_config_randr2.c:1080
+#: src/modules/conf_randr/e_int_config_randr2.c:500
+#: src/modules/conf_randr/e_int_config_randr2.c:746
+#: src/modules/conf_randr/e_int_config_randr2.c:1113
 msgid "Right of"
 msgstr "À direita de"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:491
+#: src/modules/conf_randr/e_int_config_randr2.c:506
 msgid "Unconfigured"
 msgstr "Não configurado"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:807
-#: src/modules/conf_randr/e_int_config_randr2.c:1232
+#: src/modules/conf_randr/e_int_config_randr2.c:840
+#: src/modules/conf_randr/e_int_config_randr2.c:1274
 msgid "Ignore"
 msgstr "Ignorar"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:808
-#: src/modules/conf_randr/e_int_config_randr2.c:1230
+#: src/modules/conf_randr/e_int_config_randr2.c:841
+#: src/modules/conf_randr/e_int_config_randr2.c:1272
 msgid "Extend"
 msgstr "Estender"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:810
-#: src/modules/conf_randr/e_int_config_randr2.c:1231
+#: src/modules/conf_randr/e_int_config_randr2.c:843
+#: src/modules/conf_randr/e_int_config_randr2.c:1273
 msgid "Ask"
 msgstr "Perguntar"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:813
+#: src/modules/conf_randr/e_int_config_randr2.c:846
 #, c-format
 msgid "Hotplug Policy (%s)"
 msgstr "Política de hotplug (%s)"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:891
+#: src/modules/conf_randr/e_int_config_randr2.c:924
 #: src/modules/mixer/emixer.c:1954
 msgid "Outputs"
 msgstr "Saídas"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:999
+#: src/modules/conf_randr/e_int_config_randr2.c:1032
 msgid "Laptop lid"
 msgstr "Tampa de portátil"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1055
+#: src/modules/conf_randr/e_int_config_randr2.c:1088
 msgid "Ignore Disconnect"
 msgstr "Ignorara a desconexão"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1064
+#: src/modules/conf_randr/e_int_config_randr2.c:1097
 msgid "Priority"
 msgstr "Prioridade"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1076
+#: src/modules/conf_randr/e_int_config_randr2.c:1109
 msgid "Relative"
 msgstr "Relativo"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1090
+#: src/modules/conf_randr/e_int_config_randr2.c:1123
 msgid "To"
 msgstr "Para"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1130
+#: src/modules/conf_randr/e_int_config_randr2.c:1163
 msgid "Use Profile"
 msgstr "Usar perfil"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1146
+#: src/modules/conf_randr/e_int_config_randr2.c:1179
 msgid "Custom Scale"
 msgstr "Escala personalizada"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1155
+#: src/modules/conf_randr/e_int_config_randr2.c:1188
 msgid "Scale"
 msgstr "Dimensionar"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1180
+#: src/modules/conf_randr/e_int_config_randr2.c:1213
 msgid "Response"
 msgstr "Resposta"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1192
+#: src/modules/conf_randr/e_int_config_randr2.c:1225
 msgid "Restore on start"
 msgstr "Restaurar ao iniciar"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1201
+#: src/modules/conf_randr/e_int_config_randr2.c:1234
 msgid "Use command"
 msgstr "Usar o comando"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1210
+#: src/modules/conf_randr/e_int_config_randr2.c:1243
+msgid "Use output"
+msgstr "Usar saída"
+
+#: src/modules/conf_randr/e_int_config_randr2.c:1252
 msgid "Hotplug"
 msgstr "Hotplug"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1219
+#: src/modules/conf_randr/e_int_config_randr2.c:1261
 msgid "Lid Events"
 msgstr "Eventos do tampo"
 
@@ -9219,24 +9223,24 @@ msgstr "Autenticação..."
 msgid "The password you entered is invalid. Try again."
 msgstr "A senha indicada é inválida. Tente novamente."
 
-#: src/modules/lokker/lokker.c:223
+#: src/modules/lokker/lokker.c:227
 msgid "Please enter your PIN"
 msgstr "Por favor introduza o PIN"
 
-#: src/modules/lokker/lokker.c:314
+#: src/modules/lokker/lokker.c:318
 msgid "Please enter your unlock password"
 msgstr "Introduza a palavra-passe de desbloqueio"
 
-#: src/modules/lokker/lokker.c:317 src/modules/lokker/lokker.c:835
-#: src/modules/lokker/lokker.c:853
+#: src/modules/lokker/lokker.c:321 src/modules/lokker/lokker.c:842
+#: src/modules/lokker/lokker.c:861
 msgid "Caps Lock is On"
 msgstr "O Caps Lock está ligado"
 
-#: src/modules/lokker/lokker.c:630
+#: src/modules/lokker/lokker.c:636
 msgid "Authentication System Error"
 msgstr "Erro de autenticação"
 
-#: src/modules/lokker/lokker.c:631
+#: src/modules/lokker/lokker.c:637
 #, c-format
 msgid ""
 "Authentication via PAM had errors setting up the<ps/>authentication session. "
@@ -9652,37 +9656,37 @@ msgstr "Definições de todas as áreas de trabalho"
 msgid "This desktop name and wallpaper settings"
 msgstr "Estas definições de nome de área de trabalho e papel de parede"
 
-#: src/modules/pager/e_mod_main.c:2109
+#: src/modules/pager/e_mod_main.c:2108
 msgid "Pager module cannot be loaded at the same time as Pager Plain!"
 msgstr ""
 "O módulo Paginador não pode ser carregado ao mesmo tempo do que o Paginador "
 "simples!"
 
-#: src/modules/pager/e_mod_main.c:2130
+#: src/modules/pager/e_mod_main.c:2129
 msgid "Show Pager Popup"
 msgstr "Mostrar alerta do paginador"
 
-#: src/modules/pager/e_mod_main.c:2137
+#: src/modules/pager/e_mod_main.c:2136
 msgid "Popup Desk Right"
 msgstr "Na área de trabalho à direita"
 
-#: src/modules/pager/e_mod_main.c:2139
+#: src/modules/pager/e_mod_main.c:2138
 msgid "Popup Desk Left"
 msgstr "Na área de trabalho à esquerda"
 
-#: src/modules/pager/e_mod_main.c:2141
+#: src/modules/pager/e_mod_main.c:2140
 msgid "Popup Desk Up"
 msgstr "Na área de trabalho acima"
 
-#: src/modules/pager/e_mod_main.c:2143
+#: src/modules/pager/e_mod_main.c:2142
 msgid "Popup Desk Down"
 msgstr "Na área de trabalho em baixo"
 
-#: src/modules/pager/e_mod_main.c:2145
+#: src/modules/pager/e_mod_main.c:2144
 msgid "Popup Desk Next"
 msgstr "Na área de trabalho seguinte"
 
-#: src/modules/pager/e_mod_main.c:2147
+#: src/modules/pager/e_mod_main.c:2146
 msgid "Popup Desk Previous"
 msgstr "Na área de trabalho anterior"
 
@@ -10871,10 +10875,10 @@ msgstr "Não é possível lançar o XWayland a partir do ecrã X11."
 #~ "Esta imagem será carregada<ps/> no site enlightenment.org. Será visível "
 #~ "publicamente."
 
-#~ msgid "Force this device to be connected when detected"
-#~ msgstr "Forçar esse dispositivo a ser ligado quando detetado"
-
 #, fuzzy
 #~| msgid "Stop this from being an unlock device"
 #~ msgid "Stop this device from being forcefully connected"
 #~ msgstr "Impedir que isto seja um dispositivo desbloqueado"
+
+#~ msgid "Force this device to be connected when detected"
+#~ msgstr "Forçar esse dispositivo a ser ligado quando detetado"
