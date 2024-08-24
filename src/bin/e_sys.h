@@ -13,7 +13,10 @@ typedef enum _E_Sys_Action
    E_SYS_HALT_NOW,
    E_SYS_REBOOT,
    E_SYS_SUSPEND,
-   E_SYS_HIBERNATE
+   E_SYS_HIBERNATE,
+   E_SYS_HYBRID_SUSPEND,
+   E_SYS_SUSPEND_THEN_HIBERNATE,
+   E_SYS_SUSPEND_MODE
 } E_Sys_Action;
 
 struct _E_Sys_Con_Action
@@ -31,7 +34,6 @@ struct _E_Sys_Con_Action
 #define E_SYS_H
 
 E_API extern int E_EVENT_SYS_SUSPEND;
-E_API extern int E_EVENT_SYS_HIBERNATE;
 E_API extern int E_EVENT_SYS_RESUME;
 
 EINTERN int e_sys_init(void);

@@ -472,7 +472,7 @@ static void          _e_fm2_volume_icon_update(E_Volume *v);
 static int           _e_fm2_desktop_open(E_Fm2_Smart_Data *sd);
 static void          _e_fm2_operation_abort_internal(E_Fm2_Op_Registry_Entry *ere);
 
-static Eina_Bool     _e_fm2_sys_suspend_hibernate(void *, int, void *);
+static Eina_Bool     _e_fm2_sys_suspend(void *, int, void *);
 
 static void          _e_fm2_favorites_thread_cb(void *d, Ecore_Thread *et);
 static void          _e_fm2_thread_cleanup_cb(void *d, Ecore_Thread *et);
@@ -855,8 +855,8 @@ e_fm2_init(void)
    E_LIST_HANDLER_APPEND(_e_fm_handlers, E_EVENT_FM_OP_REGISTRY_DEL, _e_fm2_op_registry_entry_del_cb, NULL);
    E_LIST_HANDLER_APPEND(_e_fm_handlers, E_EVENT_FM_OP_REGISTRY_CHANGED, _e_fm2_op_registry_entry_changed_cb, NULL);
    /// DBG
-   E_LIST_HANDLER_APPEND(_e_fm_handlers, E_EVENT_SYS_HIBERNATE, _e_fm2_sys_suspend_hibernate, NULL);
-   E_LIST_HANDLER_APPEND(_e_fm_handlers, E_EVENT_SYS_RESUME, _e_fm2_sys_suspend_hibernate, NULL);
+   E_LIST_HANDLER_APPEND(_e_fm_handlers, E_EVENT_SYS_SUSPEND, _e_fm2_sys_suspend, NULL);
+   E_LIST_HANDLER_APPEND(_e_fm_handlers, E_EVENT_SYS_RESUME, _e_fm2_sys_suspend, NULL);
 
    return 1;
 }
@@ -11186,7 +11186,7 @@ _e_fm2_file_delete_no_cb(void *data, E_Dialog *dialog)
 }
 
 static Eina_Bool
-_e_fm2_sys_suspend_hibernate(void *d EINA_UNUSED, int type EINA_UNUSED, void *ev EINA_UNUSED)
+_e_fm2_sys_suspend(void *d EINA_UNUSED, int type EINA_UNUSED, void *ev EINA_UNUSED)
 {
    Eina_List *l, *ll, *lll;
    E_Volume *v;

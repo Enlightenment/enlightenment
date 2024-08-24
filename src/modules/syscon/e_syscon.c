@@ -169,7 +169,7 @@ e_syscon_show(E_Zone *zone, const char *defact)
                  (!e_sys_action_possible_get(E_SYS_REBOOT)))
           disabled = 1;
         else if ((!strcmp(sca->action, "suspend")) &&
-                 (!e_sys_action_possible_get(E_SYS_SUSPEND)))
+                 (!e_sys_action_possible_get(E_SYS_SUSPEND_MODE)))
           disabled = 1;
         else if ((!strcmp(sca->action, "hibernate")) &&
                  (!e_sys_action_possible_get(E_SYS_HIBERNATE)))

@@ -2479,7 +2479,7 @@ _e_actions_cb_suspend_dialog_ok(void *data EINA_UNUSED, E_Dialog *dia)
         e_object_del(E_OBJECT(suspend_dialog));
         suspend_dialog = NULL;
      }
-   e_sys_action_do(E_SYS_SUSPEND, NULL);
+   e_sys_action_do(E_SYS_SUSPEND_MODE, NULL);
 }
 
 static void
@@ -2497,14 +2497,14 @@ _e_actions_cb_suspend_dialog_delete(void *data, Evas *e EINA_UNUSED, Evas_Object
 
 ACT_FN_GO(suspend_now, EINA_UNUSED)
 {
-   e_sys_action_do(E_SYS_SUSPEND, NULL);
+   e_sys_action_do(E_SYS_SUSPEND_MODE, NULL);
 }
 
 ACT_FN_GO(suspend, )
 {
    if ((params) && (!strcmp(params, "now")))
      {
-        e_sys_action_do(E_SYS_SUSPEND, NULL);
+        e_sys_action_do(E_SYS_SUSPEND_MODE, NULL);
         return;
      }
    if (suspend_dialog) e_object_del(E_OBJECT(suspend_dialog));
@@ -2564,7 +2564,7 @@ ACT_FN_GO(suspend_smart, EINA_UNUSED)
    if (!_have_lid_and_external_screens_on())
      {
         if (_should_suspend_if_plugged_in())
-          e_sys_action_do(E_SYS_SUSPEND, NULL);
+          e_sys_action_do(E_SYS_SUSPEND_MODE, NULL);
         else
           e_powersave_defer_suspend();
      }

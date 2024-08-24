@@ -219,6 +219,7 @@ struct _E_Config
    int                       screensaver_wake_on_urgent; // GUI
 
    unsigned char             suspend_connected_standby; // GUI
+   unsigned char             suspend_mode; // GUI
 
    unsigned char             screensaver_suspend; // GUI
    unsigned char             screensaver_hibernate; // GUI

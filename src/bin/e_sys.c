@@ -16,6 +16,8 @@ static int _e_sys_can_halt = 0;
 static int _e_sys_can_reboot = 0;
 static int _e_sys_can_suspend = 0;
 static int _e_sys_can_hibernate = 0;
+static int _e_sys_can_hybrid_suspend = 0;
+static int _e_sys_can_suspend_then_hibernate = 0;
 
 static E_Sys_Action _e_sys_action_current = E_SYS_NONE;
 static E_Sys_Action _e_sys_action_after = E_SYS_NONE;
@@ -37,6 +39,8 @@ static void _e_sys_systemd_poweroff(void);
 static void _e_sys_systemd_reboot(void);
 static void _e_sys_systemd_suspend(void);
 static void _e_sys_systemd_hibernate(void);
+static void _e_sys_systemd_hybrid_suspend(void);
+static void _e_sys_systemd_suspend_then_hibernate(void);
 static void _e_sys_systemd_exists_cb(void *data, const Eldbus_Message *m, Eldbus_Pending *p);
 
 static Eina_Bool systemd_works = EINA_FALSE;
@@ -58,12 +62,13 @@ static double resume_backlight;
 
 static Ecore_Timer *_e_sys_suspend_delay_timer = NULL;
 static Ecore_Timer *_e_sys_hibernate_delay_timer = NULL;
+static Ecore_Timer *_e_sys_hybrid_suspend_delay_timer = NULL;
+static Ecore_Timer *_e_sys_suspend_then_hibernate_delay_timer = NULL;
 static Ecore_Timer *_e_sys_halt_reboot_timer = NULL;
 
 static Eina_Bool on_the_way_out = EINA_FALSE;
 
 E_API int E_EVENT_SYS_SUSPEND = -1;
-E_API int E_EVENT_SYS_HIBERNATE = -1;
 E_API int E_EVENT_SYS_RESUME = -1;
 
 static Eina_Bool
@@ -139,10 +144,10 @@ _e_sys_comp_action_timeout(void *data)
         sig = "e,state,sys,reboot,done";
         break;
       case E_SYS_SUSPEND:
-        sig = "e,state,sys,suspend,done";
-        break;
       case E_SYS_HIBERNATE:
-        sig = "e,state,sys,hibernate,done";
+      case E_SYS_HYBRID_SUSPEND:
+      case E_SYS_SUSPEND_THEN_HIBERNATE:
+        sig = "e,state,sys,suspend,done";
         break;
       default:
         break;
@@ -214,8 +219,19 @@ _e_sys_comp_suspend(void)
 static void
 _e_sys_comp_hibernate(void)
 {
-   resume_backlight = e_config->backlight.normal;
-   _e_sys_comp_emit_cb_wait(E_SYS_HIBERNATE, "e,state,sys,hibernate", "e,state,sys,hibernate,done", EINA_TRUE);
+  _e_sys_comp_suspend();
+}
+
+static void
+_e_sys_comp_hybrid_suspend(void)
+{
+  _e_sys_comp_suspend();
+}
+
+static void
+_e_sys_comp_suspend_then_hibernate(void)
+{
+  _e_sys_comp_suspend();
 }
 
 static void
@@ -494,7 +510,6 @@ e_sys_init(void)
      }
 
    E_EVENT_SYS_SUSPEND = ecore_event_type_new();
-   E_EVENT_SYS_HIBERNATE = ecore_event_type_new();
    E_EVENT_SYS_RESUME = ecore_event_type_new();
    return 1;
 }
@@ -508,6 +523,10 @@ e_sys_shutdown(void)
      ecore_timer_del(_e_sys_suspend_delay_timer);
    if (_e_sys_hibernate_delay_timer)
      ecore_timer_del(_e_sys_hibernate_delay_timer);
+   if (_e_sys_hybrid_suspend_delay_timer)
+     ecore_timer_del(_e_sys_hybrid_suspend_delay_timer);
+   if (_e_sys_suspend_then_hibernate_delay_timer)
+     ecore_timer_del(_e_sys_suspend_then_hibernate_delay_timer);
    if (_e_sys_resume_delay_timer)
      ecore_timer_del(_e_sys_resume_delay_timer);
    if (_e_sys_screensaver_unignore_timer)
@@ -517,6 +536,8 @@ e_sys_shutdown(void)
    _e_sys_halt_reboot_timer = NULL;
    _e_sys_suspend_delay_timer = NULL;
    _e_sys_hibernate_delay_timer = NULL;
+   _e_sys_hybrid_suspend_delay_timer = NULL;
+   _e_sys_suspend_then_hibernate_delay_timer = NULL;
    _e_sys_resume_delay_timer = NULL;
    _e_sys_screensaver_unignore_timer = NULL;
    _e_sys_acpi_handler = NULL;
@@ -572,6 +593,15 @@ e_sys_action_possible_get(E_Sys_Action a)
       case E_SYS_HIBERNATE:
         return _e_sys_can_hibernate;
 
+      case E_SYS_HYBRID_SUSPEND:
+        return _e_sys_can_hybrid_suspend;
+
+      case E_SYS_SUSPEND_THEN_HIBERNATE:
+        return _e_sys_can_suspend_then_hibernate;
+
+      case E_SYS_SUSPEND_MODE:
+        return _e_sys_can_suspend | _e_sys_can_hybrid_suspend | _e_sys_can_suspend_then_hibernate;
+
       default:
         return 0;
      }
@@ -601,6 +631,23 @@ e_sys_action_do(E_Sys_Action a, char *param)
 
       case E_SYS_SUSPEND:
       case E_SYS_HIBERNATE:
+      case E_SYS_HYBRID_SUSPEND:
+      case E_SYS_SUSPEND_THEN_HIBERNATE:
+        ret = _e_sys_action_do(a, param, EINA_FALSE);
+        break;
+
+      case E_SYS_SUSPEND_MODE:
+        a = E_SYS_SUSPEND;
+        if      ((e_config->suspend_mode == 1) &&
+                 (_e_sys_can_hybrid_suspend))
+          a = E_SYS_HYBRID_SUSPEND;
+        else if (e_config->suspend_mode == 2)
+          {
+             if (_e_sys_can_suspend_then_hibernate)
+               a = E_SYS_SUSPEND_THEN_HIBERNATE;
+             else if (_e_sys_can_hybrid_suspend)
+               a = E_SYS_HYBRID_SUSPEND;
+          }
         ret = _e_sys_action_do(a, param, EINA_FALSE);
         break;
 
@@ -709,6 +756,7 @@ _e_sys_systemd_handle_inhibit(void)
    eldbus_message_arguments_append
      (m, "ssss",
          "handle-power-key:"
+         "handle-reboot-key:"
          "handle-suspend-key:"
          "handle-hibernate-key:"
          "handle-lid-switch", // what
@@ -745,6 +793,12 @@ _e_sys_systemd_check(void)
    if (!eldbus_proxy_call(login1_manger_proxy, "CanHibernate",
                           _e_sys_systemd_check_cb, &_e_sys_can_hibernate, -1, ""))
      return;
+   if (!eldbus_proxy_call(login1_manger_proxy, "CanHybridSleep",
+                          _e_sys_systemd_check_cb, &_e_sys_can_hybrid_suspend, -1, ""))
+     return;
+   if (!eldbus_proxy_call(login1_manger_proxy, "CanSuspendThenHibernate",
+                          _e_sys_systemd_check_cb, &_e_sys_can_suspend_then_hibernate, -1, ""))
+     return;
 }
 
 static void
@@ -765,6 +819,8 @@ fail:
    _e_sys_can_reboot = 1;
    _e_sys_can_suspend = 1;
    _e_sys_can_hibernate = 1;
+   _e_sys_can_hybrid_suspend = 1;
+   _e_sys_can_suspend_then_hibernate = 1;
 }
 
 static void
@@ -789,6 +845,18 @@ static void
 _e_sys_systemd_hibernate(void)
 {
    eldbus_proxy_call(login1_manger_proxy, "Hibernate", NULL, NULL, -1, "b", 0);
+}
+
+static void
+_e_sys_systemd_hybrid_suspend(void)
+{
+   eldbus_proxy_call(login1_manger_proxy, "HybridSleep", NULL, NULL, -1, "b", 0);
+}
+
+static void
+_e_sys_systemd_suspend_then_hibernate(void)
+{
+   eldbus_proxy_call(login1_manger_proxy, "SuspendThenHibernate", NULL, NULL, -1, "b", 0);
 }
 
 static Eina_Bool
@@ -1072,6 +1140,18 @@ _e_sys_current_action(void)
                                  "until hibernation is complete."));
         break;
 
+      case E_SYS_HYBRID_SUSPEND:
+        e_dialog_text_set(dia, _("Hiybrid Susspending.<ps/>"
+                                 "You cannot perform any other system actions<ps/>"
+                                 "until hybrid susspend is complete."));
+        break;
+
+      case E_SYS_SUSPEND_THEN_HIBERNATE:
+        e_dialog_text_set(dia, _("Suspending then hibernating.<ps/>"
+                                 "You cannot perform any other system actions<ps/>"
+                                 "until suspend then hibernate is complete."));
+        break;
+
       default:
         e_dialog_text_set(dia, _("EEK! This should not happen"));
         break;
@@ -1147,6 +1227,34 @@ _e_sys_hibernate_delay(void *data EINA_UNUSED)
      {
         _e_sys_susp_hib_check();
         e_system_send("power-hibernate", NULL);
+     }
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_e_sys_hybrid_suspend_delay(void *data EINA_UNUSED)
+{
+   _e_sys_hybrid_suspend_delay_timer = NULL;
+   _e_sys_begin_time = ecore_time_get();
+   if (systemd_works) _e_sys_systemd_hybrid_suspend();
+   else
+     {
+        _e_sys_susp_hib_check();
+        e_system_send("power-hybrid-suspend", NULL);
+     }
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_e_sys_suspend_then_hibernate_delay(void *data EINA_UNUSED)
+{
+   _e_sys_suspend_then_hibernate_delay_timer = NULL;
+   _e_sys_begin_time = ecore_time_get();
+   if (systemd_works) _e_sys_systemd_suspend_then_hibernate();
+   else
+     {
+        _e_sys_susp_hib_check();
+        e_system_send("power-suspend-then-hib", NULL);
      }
    return EINA_FALSE;
 }
@@ -1340,11 +1448,69 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
                }
              else
                {
-                  ecore_event_add(E_EVENT_SYS_HIBERNATE, NULL, NULL, NULL);
+                  ecore_event_add(E_EVENT_SYS_SUSPEND, NULL, NULL, NULL);
                   _e_sys_comp_hibernate();
                   return 0;
                }
              /* FIXME: display hibernate status */
+          }
+        break;
+
+      case E_SYS_HYBRID_SUSPEND:
+        /* /etc/acpi/hibernate.sh force */
+        if (!_e_sys_comp_waiting)
+          {
+             if (_e_sys_phantom_wake_check_timer)
+               ecore_timer_del(_e_sys_phantom_wake_check_timer);
+             _e_sys_phantom_wake_check_timer = NULL;
+             if (raw)
+               {
+                  _e_sys_suspended = EINA_TRUE;
+                  if (e_config->desklock_on_suspend)
+                  // XXX: this desklock - ensure its instant
+                    e_desklock_show(EINA_TRUE);
+                  if (_e_sys_hybrid_suspend_delay_timer)
+                    ecore_timer_del(_e_sys_hybrid_suspend_delay_timer);
+                  ret = 1;
+                  // XXX: make timer shorter if desklock is instant
+                  _e_sys_hybrid_suspend_delay_timer =
+                    ecore_timer_add(0.5, _e_sys_hybrid_suspend_delay, NULL);
+               }
+             else
+               {
+                  ecore_event_add(E_EVENT_SYS_SUSPEND, NULL, NULL, NULL);
+                  _e_sys_comp_hybrid_suspend();
+                  return 0;
+               }
+          }
+        break;
+
+      case E_SYS_SUSPEND_THEN_HIBERNATE:
+        /* /etc/acpi/hibernate.sh force */
+        if (!_e_sys_comp_waiting)
+          {
+             if (_e_sys_phantom_wake_check_timer)
+               ecore_timer_del(_e_sys_phantom_wake_check_timer);
+             _e_sys_phantom_wake_check_timer = NULL;
+             if (raw)
+               {
+                  _e_sys_suspended = EINA_TRUE;
+                  if (e_config->desklock_on_suspend)
+                  // XXX: this desklock - ensure its instant
+                    e_desklock_show(EINA_TRUE);
+                  if (_e_sys_suspend_then_hibernate_delay_timer)
+                    ecore_timer_del(_e_sys_suspend_then_hibernate_delay_timer);
+                  ret = 1;
+                  // XXX: make timer shorter if desklock is instant
+                  _e_sys_suspend_then_hibernate_delay_timer =
+                    ecore_timer_add(0.5, _e_sys_suspend_then_hibernate_delay, NULL);
+               }
+             else
+               {
+                  ecore_event_add(E_EVENT_SYS_SUSPEND, NULL, NULL, NULL);
+                  _e_sys_comp_suspend_then_hibernate();
+                  return 0;
+               }
           }
         break;
 

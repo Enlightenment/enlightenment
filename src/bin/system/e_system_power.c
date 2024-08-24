@@ -4,6 +4,8 @@ char *_cmd_halt = NULL;
 char *_cmd_reboot = NULL;
 char *_cmd_suspend = NULL;
 char *_cmd_hibernate = NULL;
+char *_cmd_hybrid_suspend = NULL;
+char *_cmd_suspend_then_hibernate = NULL;
 
 static void
 _cb_power_halt(void *data EINA_UNUSED, const char *params EINA_UNUSED)
@@ -27,6 +29,18 @@ static void
 _cb_power_hibernate(void *data EINA_UNUSED, const char *params EINA_UNUSED)
 {
    if (_cmd_hibernate) e_system_run(_cmd_hibernate);
+}
+
+static void
+_cb_power_hybrid_suspend(void *data EINA_UNUSED, const char *params EINA_UNUSED)
+{
+   if (_cmd_hybrid_suspend) e_system_run(_cmd_hybrid_suspend);
+}
+
+static void
+_cb_power_suspend_then_hibernate(void *data EINA_UNUSED, const char *params EINA_UNUSED)
+{
+   if (_cmd_suspend_then_hibernate) e_system_run(_cmd_suspend_then_hibernate);
 }
 
 static void
@@ -118,6 +132,38 @@ _power_hibernate_init(void)
    //    /etc/acpi/pm-hibernate
 }
 
+static void
+_power_hybrid_suspend_init(void)
+{
+#if defined (__FreeBSD__)
+#elif defined (__OpenBSD__)
+#else
+   if (ecore_file_app_installed("systemctl"))
+     _cmd_hybrid_suspend = strdup("systemctl hybrid-sleep");
+#endif
+   // linux systemd: PATH/systemctl hybrid-sleep
+   // FreeBSD: ?
+   // OpenBSD: ?
+   // if exist:
+   //    ?
+}
+
+static void
+_power_suspend_then_hibernate_init(void)
+{
+#if defined (__FreeBSD__)
+#elif defined (__OpenBSD__)
+#else
+   if (ecore_file_app_installed("systemctl"))
+     _cmd_suspend_then_hibernate = strdup("systemctl suspend-then-hibernate");
+#endif
+   // linux systemd: PATH/systemctl suspennd-then-hibernate
+   // FreeBSD: ?
+   // OpenBSD: ?
+   // if exist:
+   //    ?
+}
+
 void
 e_system_power_init(void)
 {
@@ -125,10 +171,14 @@ e_system_power_init(void)
    _power_reboot_init();
    _power_suspend_init();
    _power_hibernate_init();
-   e_system_inout_command_register("power-halt",       _cb_power_halt, NULL);
-   e_system_inout_command_register("power-reboot",     _cb_power_reboot, NULL);
-   e_system_inout_command_register("power-suspend",    _cb_power_suspend, NULL);
-   e_system_inout_command_register("power-hibernate",  _cb_power_hibernate, NULL);
+   _power_hybrid_suspend_init();
+   _power_suspend_then_hibernate_init();
+   e_system_inout_command_register("power-halt",             _cb_power_halt, NULL);
+   e_system_inout_command_register("power-reboot",           _cb_power_reboot, NULL);
+   e_system_inout_command_register("power-suspend",          _cb_power_suspend, NULL);
+   e_system_inout_command_register("power-hibernate",        _cb_power_hibernate, NULL);
+   e_system_inout_command_register("power-hybrid-suspend",   _cb_power_hybrid_suspend, NULL);
+   e_system_inout_command_register("power-suspend-then-hib", _cb_power_suspend_then_hibernate, NULL);
 }
 
 void

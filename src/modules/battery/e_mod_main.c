@@ -938,7 +938,7 @@ _battery_update(int full, int time_left, int time_full, Eina_Bool have_battery, 
           {
              printf("battery %i suspend below %i\n", full, battery_config->suspend_below);
              if (battery_config->suspend_method == SUSPEND)
-               e_sys_action_do(E_SYS_SUSPEND, NULL);
+               e_sys_action_do(E_SYS_SUSPEND_MODE, NULL);
              else if (battery_config->suspend_method == HIBERNATE)
                e_sys_action_do(E_SYS_HIBERNATE, NULL);
              else if (battery_config->suspend_method == SHUTDOWN)

@@ -341,7 +341,7 @@ e_syscon_menu_fill(E_Menu *m)
         if (sca->icon)
           e_util_menu_item_theme_icon_set(it, sca->icon);
         e_menu_item_callback_set(it, _cb_menu_sel, sca);
-        if (!e_sys_action_possible_get(E_SYS_SUSPEND))
+        if (!e_sys_action_possible_get(E_SYS_SUSPEND_MODE))
           e_menu_item_disabled_set(it, EINA_TRUE);
      }
 

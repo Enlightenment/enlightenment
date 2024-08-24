@@ -848,7 +848,7 @@ _cb_deferred_suspend_screen_change(void *data EINA_UNUSED)
             (e_powersave_mode_get() > E_POWERSAVE_MODE_LOW))
           {
              printf("RRR: =========================== powermd low / suspend on ac");
-             e_sys_action_do(E_SYS_SUSPEND, NULL);
+             e_sys_action_do(E_SYS_SUSPEND_MODE, NULL);
           }
      }
    return EINA_FALSE;
