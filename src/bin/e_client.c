@@ -5593,7 +5593,9 @@ e_client_resize_limit(const E_Client *ec, int *w, int *h)
                }
           }
         a = (double)*w / *h;
-        if (a < ec->icccm.min_aspect) abort();
+        // this should be a rare bizarro situation that doesn't make sense
+        // so marching on and not abort()ing is preferable
+        if (a < ec->icccm.min_aspect) a = ec->icccm.min_aspect;
         if (a > ec->icccm.max_aspect)
           {
              if (dw)
