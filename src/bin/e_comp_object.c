@@ -3349,7 +3349,7 @@ e_comp_object_frame_geometry_set(Evas_Object *obj, int l, int r, int t, int b)
    if ((cw->client_inset.l == l) && (cw->client_inset.r == r) &&
        (cw->client_inset.t == t) && (cw->client_inset.b == b)) return;
    calc = cw->client_inset.calc;
-   cw->client_inset.calc = l || r || t || b;
+   cw->client_inset.calc = 1;
    eina_stringshare_replace(&cw->frame_theme, "borderless");
    if (cw->client_inset.calc)
      {
