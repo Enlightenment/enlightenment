@@ -1301,6 +1301,7 @@ _e_comp_x_resize_request(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_E
         if (!e_comp_find_by_window(ev->win)) ecore_x_window_resize(ev->win, ev->w, ev->h);
         return ECORE_CALLBACK_PASS_ON;
      }
+//  printf("RESIZE REQ: 0x%08x %4ix%4i\n", ev->win, ev->w, ev->h);
    w = ev->w, h = ev->h;
    if (ec->zone && (e_config->geometry_auto_resize_limit == 1))
      {
@@ -1710,7 +1711,7 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
    int ox, oy, ow, oh;
    int x, y, w, h;
 
-//   printf("configure request {0x%08x}  %4i,%4i %4ix%4i b=%i [%c%c%c%c]\n",
+//   printf("CONFIG REQ 0x%08x  %4i,%4i %4ix%4i b=%i [%c%c%c%c]\n",
 //          ev->win, ev->x, ev->y, ev->w, ev->h, ev->border,
 //          ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_X ? 'x' : ' ',
 //          ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_Y ? 'y' : ' ',
@@ -4855,8 +4856,8 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
               */
              if (count >= 4)
                {
-//                  printf("GTK-FRM: get %i %i %i %i\n",
-//                         extents[0], extents[1], extents[2], extents[3]);
+//                  printf("GTK-FRM: get 0x%08x %i %i %i %i\n",
+//                         win, extents[0], extents[1], extents[2], extents[3]);
                   _e_comp_x_frame_extents_adjust
                     (ec, extents[0], extents[1], extents[2], extents[3]);
                }
