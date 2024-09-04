@@ -1614,7 +1614,7 @@ _pri_adj(int pid, int pri_set, int pri_adj, int pri_only_filter,
         if (do_adj) newpri += pri_adj;
         else        newpri = pri_set;
         if (newpri > 19) newpri = 19;
-        printf("PRI: %i -> %i (adj=%i, adj_ch=%i ch=%i)\n", pid, newpri, do_adj, do_adj_children, do_children);
+//        printf("PRI: %i -> %i (adj=%i, adj_ch=%i ch=%i)\n", pid, newpri, do_adj, do_adj_children, do_children);
         ret = setpriority(PRIO_PROCESS, pid, newpri);
 //        if (ret < 0) printf("PRI: ret = %i | %s\n", ret, strerror(errno));
      }
@@ -1718,7 +1718,7 @@ again:
      {
         // if we can't lower pri to at least 20 (nice 0 ...) then assume
         // we can only raise nice level never lower it
-        printf("PRI: getrlimit(RLIMIT_NUICE) === cur=%i max=%i\n", (int)rlim.rlim_cur, (int)rlim.rlim_max);
+//        printf("PRI: getrlimit(RLIMIT_NUICE) === cur=%i max=%i\n", (int)rlim.rlim_cur, (int)rlim.rlim_max);
         if (rlim.rlim_cur < 20) checked = 0;
      }
    goto again; // set checked now - try again
