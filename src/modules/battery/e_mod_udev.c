@@ -96,7 +96,9 @@ static void
 _battery_udev_battery_add(const char *syspath)
 {
    Battery *bat;
-   const char *type;
+   const char *type, *test;
+   double full_design = 0.0;
+   double full = 0.0;
 
    if ((bat = _battery_battery_find(syspath)))
      {
@@ -120,6 +122,31 @@ _battery_udev_battery_add(const char *syspath)
           }
         eina_stringshare_del(type);
      }
+   // filter out dummy batteries with no design and no full charge level
+   test = eeze_udev_syspath_get_property(syspath, "POWER_SUPPLY_ENERGY_FULL_DESIGN");
+   if (!test)
+     test = eeze_udev_syspath_get_property(syspath, "POWER_SUPPLY_CHARGE_FULL_DESIGN");
+   if (test)
+    {
+      full_design = strtod(test, NULL);
+      eina_stringshare_del(test);
+    }
+
+   test = eeze_udev_syspath_get_property(syspath, "POWER_SUPPLY_ENERGY_FULL");
+   if (!test)
+     test = eeze_udev_syspath_get_property(syspath, "POWER_SUPPLY_CHARGE_FULL");
+   if (test)
+    {
+      full = strtod(test, NULL);
+      eina_stringshare_del(test);
+    }
+
+   if ((eina_dbl_exact(full_design, 0)) &&
+       (eina_dbl_exact(full, 0)))
+    { // ignore this battery - no full and no full design
+      return;
+    }
+
    if (!(bat = E_NEW(Battery, 1)))
      {
         eina_stringshare_del(syspath);
