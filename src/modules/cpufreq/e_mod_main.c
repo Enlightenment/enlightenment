@@ -820,7 +820,7 @@ _cpufreq_status_check_available(Cpu_Status *s)
             }
           fclose(f);
           if (!((!strcmp(buf, "intel_pstate\n") ||
-                 (!strcmp(buf, "intel_cpufreq\n"))))) break;
+                 (!strcmp(buf, "intel_cpufreq\n"))))) goto minmax_add;
 
           if (s->frequencies)
             {
@@ -836,6 +836,8 @@ _cpufreq_status_check_available(Cpu_Status *s)
                                                    (void *)(long)(atoi(buf))); \
                fclose(f); \
             }
+
+minmax_add:
           CPUFREQ_ADDF("/cpuinfo_min_freq");
           CPUFREQ_ADDF("/cpuinfo_max_freq");
        }
@@ -1418,6 +1420,10 @@ _cpufreq_status_eval(Cpu_Status *status)
         return;
      }
    active = cpufreq_config->status->active;
+   if (cpufreq_config->status->cur_max_frequency > status->cur_max_frequency)
+      status->cur_max_frequency = cpufreq_config->status->cur_max_frequency;
+   if (cpufreq_config->status->cur_min_frequency < status->cur_min_frequency)
+      status->cur_min_frequency = cpufreq_config->status->cur_min_frequency;
    if ((cpufreq_config->status) &&
        (
 #ifdef __OpenBSD__
@@ -1435,6 +1441,7 @@ _cpufreq_status_eval(Cpu_Status *status)
         for (l = cpufreq_config->instances; l; l = l->next)
           {
              inst = l->data;
+             _cpufreq_face_update_available(inst);
              _cpufreq_face_update_current(inst);
           }
      }

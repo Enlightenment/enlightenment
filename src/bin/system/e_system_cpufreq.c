@@ -90,10 +90,8 @@ _cb_cpufreq_freq(void *data EINA_UNUSED, const char *params)
              return;
           }
 #else
-        fprintf(stderr, "CPUFREQ: scaling_setspeed [%s]\n", params);
         if (sys_cpu_setall("scaling_setspeed", params) > 0)
           {
-             fprintf(stderr, "CPUFREQ: scaling_setspeed OK\n");
              e_system_inout_command_send("cpufreq-freq", "ok");
              return;
           }
@@ -111,15 +109,12 @@ _cb_cpufreq_governor(void *data EINA_UNUSED, const char *params EINA_UNUSED)
 #elif defined __FreeBSD__
    e_system_inout_command_send("cpufreq-governor", "err");
 #else
-   fprintf(stderr, "CPUFREQ: scaling_governor [%s]\n", params);
    if (sys_cpu_setall("scaling_governor", params) <= 0)
      {
         ERR("Unable to open governor interface for writing\n");
         e_system_inout_command_send("cpufreq-governor", "err");
         return;
      }
-   else
-     fprintf(stderr, "CPUFREQ: scaling_governor OK\n");
    if (!strcmp(params, "ondemand"))
      sys_cpufreq_set("ondemand/ignore_nice_load", "0");
    else if (!strcmp(params, "conservative"))
@@ -151,7 +146,6 @@ _cb_cpufreq_pstate(void *data EINA_UNUSED, const char *params EINA_UNUSED)
         else if (max > 100) max = 100;
         if (turbo < 0) turbo = 0;
         else if (turbo > 1) turbo = 1;
-        fprintf(stderr, "CPUFREQ: pstate [min=%i max=%i turbo=%i]\n", min, max, turbo);
         if (sys_cpu_pstate(min, max, turbo) > 0)
           {
              e_system_inout_command_send("cpufreq-pstate", "ok");
@@ -173,6 +167,19 @@ e_system_cpufreq_init(void)
    e_system_inout_command_register("cpufreq-governor", _cb_cpufreq_governor, NULL);
    e_system_inout_command_register("cpufreq-pstate",   _cb_cpufreq_pstate, NULL);
 #endif
+//
+// "portable" cpufreq info and control api
+//
+// 01234567890123456789012 <- max 24 char bug (incl 0)
+//
+// -- GET INFO/STATS - PERCENNT1K (PERCENT / 0.1) IN 0-1000
+// cpufreq-core-get-num <> -> cpufreq-core-get-num <NUM>
+// cpufreq-core-get-stat <N> -> cpufreq-core-get-stat <N VER MIN_MHZ MAX_MHZ CUR_MHZ CAN_TURBO USE_USER USE_NICE USE_SYSTEM USE_IOWAIT USE_IRQ USE_SOFTIRQ USE_STEAL USE_GUEST USER_GUEST_NICE>
+//
+// -- GENERIC PERF SET API 0->1000 PERCENT1K (PERCENT / 0.1)
+// cpufreq-get-perf <> -> cpufreq-get-perf <PERF>
+// cpufreq-set-perf <PERF> -> cpufreq-set-perf <PERF | err>
+//
 }
 
 void
