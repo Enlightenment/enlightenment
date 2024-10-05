@@ -127,13 +127,13 @@ _e_fm_main_udisks2_storage_block_add(E_Storage *s, U2_Block *u2)
 {
    s->media_size = u2->Size;
    eina_stringshare_replace(&s->icon.drive, u2->HintIconName);
-   s->system_internal = u2->HintIgnore;
+   s->system_internal = u2->HintSystem;
 }
 
 static void
 _e_fm_main_udisks2_volume_block_add(E_Volume *v, U2_Block *u2)
 {
-   v->validated = u2->volume && u2->Device && u2->parent && (!u2->HintSystem);
+   v->validated = u2->volume && u2->Device && u2->parent && (!u2->HintSystem) && (!u2->HintIgnore);
    if (!v->validated) return;
    v->size = u2->Size;
    eina_stringshare_replace(&v->udi, u2->Device);
