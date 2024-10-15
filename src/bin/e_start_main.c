@@ -427,6 +427,11 @@ _e_call_gdb(int child, const char *home, char **backtrace_str)
 {
    int r = 0;
    char *buf = NULL;
+
+   myasprintf(&buf, "%s/.e-crashdump.txt", home);
+   *backtrace_str = strdup(buf);
+   /* delete old crashdump */
+   unlink(buf);
    /* call e_sys gdb */
    myasprintf(&buf,
               "gdb "
@@ -441,8 +446,6 @@ _e_call_gdb(int child, const char *home, char **backtrace_str)
    r = system(buf);
 
    fprintf(stderr, "called gdb with '%s' = %i\n", buf, WEXITSTATUS(r));
-   myasprintf(&buf, "%s/.e-crashdump.txt", home);
-   *backtrace_str = strdup(buf);
    return WEXITSTATUS(r);
 }
 
