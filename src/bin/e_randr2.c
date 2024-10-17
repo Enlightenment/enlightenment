@@ -787,17 +787,20 @@ _screens_differ(E_Randr2 *r1, E_Randr2 *r2)
                  (s->config.enabled != ss->config.enabled) ||
                  (s->config.rotation != ss->config.rotation))
           {
-             printf("RRR: do change because geom/mode/rotation don't match\n");
-             printf("RRR: geom=%i,%i-%ix%i mode=%ix%i enable=%i rot=%i  !=  geom=%i,%i-%ix%i mode=%ix%i enable=%i rot=%i\n",
-                    s->config.geom.x, s->config.geom.y,
-                    s->config.geom.w, s->config.geom.h,
-                    s->config.mode.w, s->config.mode.h,
-                    s->config.enabled, s->config.rotation,
-                    ss->config.geom.x, ss->config.geom.y,
-                    ss->config.geom.w, ss->config.geom.h,
-                    ss->config.mode.w, ss->config.mode.h,
-                    ss->config.enabled, ss->config.rotation);
-             changed = EINA_TRUE;
+            if (s->config.enabled || ss->config.enabled)
+              {
+                printf("RRR: do change because geom/mode/rotation don't match\n");
+                printf("RRR: geom=%i,%i-%ix%i mode=%ix%i enable=%i rot=%i  !=  geom=%i,%i-%ix%i mode=%ix%i enable=%i rot=%i\n",
+                       s->config.geom.x, s->config.geom.y,
+                       s->config.geom.w, s->config.geom.h,
+                       s->config.mode.w, s->config.mode.h,
+                       s->config.enabled, s->config.rotation,
+                       ss->config.geom.x, ss->config.geom.y,
+                       ss->config.geom.w, ss->config.geom.h,
+                       ss->config.mode.w, ss->config.mode.h,
+                       ss->config.enabled, ss->config.rotation);
+                changed = EINA_TRUE;
+              }
           }
         else
           {
@@ -1207,7 +1210,7 @@ _screen_clones_common_sync(Eina_List *clones)
      }
    // ensure it's configured
    printf("RRR: clone common sync... %p %p\n", sbase, s);
-   _screen_config_do(sbase);
+   if (s != sbase) _screen_config_do(sbase);
 again:
    // we took all modes in the "master"
    EINA_LIST_FOREACH(modes, l, m)
