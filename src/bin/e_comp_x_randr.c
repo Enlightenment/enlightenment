@@ -503,6 +503,23 @@ e_comp_x_randr_shutdown(void)
 }
 
 static void
+_remove_unused_crtcs(Ecore_X_Randr_Crtc crtc, Ecore_X_Randr_Crtc *unused_crtcs, int *unused_crtcs_num)
+{ // remove from array of unused crtcs if in it
+  int i;
+
+  for (i = 0; i < (*unused_crtcs_num); i++)
+    { // walk unused crtcs
+      if (unused_crtcs[i] == crtc)
+        { // if found shuffle down all above this slot + unused--
+          for (;i < ((*unused_crtcs_num) - 1); i++)
+            unused_crtcs[i] = unused_crtcs[i + 1];
+          (*unused_crtcs_num)--;
+          return;
+        }
+    }
+}
+
+static void
 _e_comp_xrandr_cmd(void)
 {
    Eina_List *l;
@@ -510,10 +527,11 @@ _e_comp_xrandr_cmd(void)
    Ecore_X_Window root = ecore_x_window_root_first_get();
    int top_priority = 0;
    Ecore_X_Randr_Crtc *crtcs = NULL;
+   Ecore_X_Randr_Crtc *unused_crtcs = NULL;
    Ecore_X_Randr_Output *outputs = NULL, out, *outconf;
    E_Randr2_Screen **screenconf;
    Ecore_X_Randr_Crtc_Info *info;
-   int crtcs_num = 0, outputs_num = 0, i, numout;
+   int crtcs_num = 0, outputs_num = 0, i, j, numout, unused_crtcs_num = 0;
 
    crtcs = ecore_x_randr_crtcs_get(root, &crtcs_num);
    outputs = ecore_x_randr_outputs_get(root, &outputs_num);
@@ -526,6 +544,20 @@ _e_comp_xrandr_cmd(void)
         memset(outconf, 0, outputs_num * sizeof(Ecore_X_Randr_Output));
         memset(screenconf, 0, outputs_num * sizeof(E_Randr2_Screen *));
 
+        printf("RRR: crtcs: ");
+        for (i = 0; i < crtcs_num; i++)
+          printf(" %i", crtcs[i]);
+        printf("\n");
+        unused_crtcs = alloca(crtcs_num * sizeof(Ecore_X_Randr_Crtc));
+        for (i = 0; i < crtcs_num; i++) unused_crtcs[i] = crtcs[i];
+        unused_crtcs_num = crtcs_num;
+        for (i = 0; i < outputs_num; i++)
+         {
+           Ecore_X_Randr_Crtc crtc = ecore_x_randr_output_crtc_get(root,
+                                                                   outputs[i]);
+           if (crtc)
+             _remove_unused_crtcs(crtc, unused_crtcs, &unused_crtcs_num);
+         }
         // decide which outputs get which crtcs
         EINA_LIST_FOREACH(e_randr2->screens, l, s)
           {
@@ -552,6 +584,32 @@ _e_comp_xrandr_cmd(void)
                                  if (crtc)
                                    info = ecore_x_randr_crtc_info_get(root,
                                                                       crtc);
+                                else
+                                  {
+                                    int poss_crtcs_num = 0;
+                                    Ecore_X_Randr_Crtc *poss_crtcs = ecore_x_randr_output_possible_crtcs_get(root, outputs[i], &crtcs_num);
+                                    if (!poss_crtcs) printf("RRR:     no possible crtcs!!!\n");
+                                    else
+                                      {
+                                        printf("RRR:     possible crtc: ");
+                                        for (j = 0; j < poss_crtcs_num; j++)
+                                          printf(" %i", poss_crtcs[j]);
+                                        printf("\n");
+                                        free(poss_crtcs);
+                                      }
+                                    if (unused_crtcs_num > 0)
+                                      {
+                                        Ecore_X_Randr_Crtc new_crtc = unused_crtcs[0];
+                                        _remove_unused_crtcs(new_crtc, unused_crtcs, &unused_crtcs_num);
+                                        printf("RRR:     assign crtc %i to output\n", new_crtc);
+                                        ecore_x_randr_output_crtc_set(root, outputs[i], new_crtc);
+                                        info = ecore_x_randr_crtc_info_get(root, new_crtc);
+                                      }
+                                    else
+                                      {
+                                        printf("RRR:     no available crtcs for the output\n");
+                                      }
+                                  }
                                  printf("RRR:     crtc info = %p\n", info);
                                  if (info)
                                    {
