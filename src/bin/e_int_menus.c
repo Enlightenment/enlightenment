@@ -431,6 +431,17 @@ e_int_menus_lost_clients_new(void)
 }
 
 static void
+_e_int_menus_inhibitors_remove_all(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
+{
+   while (e_msgbus_data->screensaver_inhibits)
+      {
+         E_Msgbus_Data_Screensaver_Inhibit *inhib =
+           e_msgbus_data->screensaver_inhibits->data;
+         e_msgbus_screensaver_inhibit_remove(inhib->cookie);
+      }
+}
+
+static void
 _e_int_menus_inhibit_cb(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    uintptr_t cookie = (uintptr_t)data;
@@ -448,8 +459,17 @@ e_int_menus_inhibitors_new(void)
    char buf[1024];
 
    m = e_menu_new();
+
+  mi = e_menu_item_new(m);
+  e_menu_item_label_set(mi, _("Remove All"));
+  e_menu_item_callback_set(mi, _e_int_menus_inhibitors_remove_all, NULL);
+
    if (!((e_msgbus_data) && (e_msgbus_data->screensaver_inhibits)))
      return NULL;
+
+   mi = e_menu_item_new(m);
+   e_menu_item_separator_set(mi, 1);
+
    EINA_LIST_FOREACH(e_msgbus_data->screensaver_inhibits, l, inhibit)
      {
         mi = e_menu_item_new(m);
