@@ -237,9 +237,9 @@ _battery_sysctl_battery_update(Battery *bat)
          bat->charge_rate = ((charge - bat->current_charge) / (_time - bat->last_update));
        bat->last_update = _time;
        bat->current_charge = charge;
-       bat->percent = 100 * (bat->current_charge / bat->last_full_charge);
+       bat->percent = (10000 * bat->current_charge) / bat->last_full_charge;
        if (bat->current_charge >= bat->last_full_charge)
-         bat->percent = 100;
+         bat->percent = 10000;
 
        if (bat->got_prop)
          {
@@ -289,7 +289,7 @@ _battery_sysctl_battery_update(Battery *bat)
          }
        bat->got_prop = 1;
 
-       bat->percent = battio.battinfo.cap;
+       bat->percent = battio.battinfo.cap * 100;
        _time = ecore_time_get();
        bat->last_update = _time;
 

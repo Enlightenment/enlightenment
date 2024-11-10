@@ -98,6 +98,7 @@ _battery_udev_battery_add(const char *syspath)
    Battery *bat;
    const char *type, *test;
    double full_design = 0.0;
+   double voltage_min_design = 0.0;
    double full = 0.0;
 
    if ((bat = _battery_battery_find(syspath)))
@@ -134,7 +135,12 @@ _battery_udev_battery_add(const char *syspath)
 
    test = eeze_udev_syspath_get_property(syspath, "POWER_SUPPLY_ENERGY_FULL");
    if (!test)
-     test = eeze_udev_syspath_get_property(syspath, "POWER_SUPPLY_CHARGE_FULL");
+    {
+      test = eeze_udev_syspath_get_property(syspath, "POWER_SUPPLY_VOLTAGE_MIN_DESIGN");
+      if (test)
+        voltage_min_design = strtod(test, NULL);
+      test = eeze_udev_syspath_get_property(syspath, "POWER_SUPPLY_CHARGE_FULL");
+    }
    if (test)
     {
       full = strtod(test, NULL);
@@ -152,6 +158,7 @@ _battery_udev_battery_add(const char *syspath)
         eina_stringshare_del(syspath);
         return;
      }
+   bat->design_voltage = voltage_min_design;
    bat->last_update = ecore_time_get();
    bat->udi = eina_stringshare_add(syspath);
    bat->poll = ecore_poller_add(ECORE_POLLER_CORE,
@@ -268,11 +275,44 @@ _battery_udev_battery_update(const char *syspath, Battery *bat)
         GET_STR(bat, vendor, POWER_SUPPLY_MANUFACTURER);
         GET_NUM(bat, design_charge, POWER_SUPPLY_ENERGY_FULL_DESIGN);
         if (eina_dbl_exact(bat->design_charge, 0))
-          GET_NUM(bat, design_charge, POWER_SUPPLY_CHARGE_FULL_DESIGN);
+         {
+           GET_NUM(bat, design_charge, POWER_SUPPLY_CHARGE_FULL_DESIGN);
+           if (bat->design_voltage > 0.0)
+             {
+               bat->design_charge = bat->design_charge * bat->design_voltage / 1000000.0;
+               bat->is_micro_watts = EINA_TRUE;
+             }
+         }
+     }
+   bat->power_now = 0;
+   GET_NUM(bat, power_now, POWER_SUPPLY_POWER_NOW);
+   if (eina_dbl_exact(bat->power_now, 0))
+     {
+       test = eeze_udev_syspath_get_property(bat->udi, "POWER_SUPPLY_CURRENT_NOW");
+       if (test)
+         {
+           double current_now = strtod(test, NULL);
+
+           test = eeze_udev_syspath_get_property(bat->udi, "POWER_SUPPLY_VOLTAGE_NOW");
+           if (test)
+             {
+               double voltage_now = strtod(test, NULL);
+               bat->power_now = current_now * voltage_now / 1000000.0;
+             }
+         }
      }
    GET_NUM(bat, last_full_charge, POWER_SUPPLY_ENERGY_FULL);
    if (eina_dbl_exact(bat->last_full_charge, 0))
-     GET_NUM(bat, last_full_charge, POWER_SUPPLY_CHARGE_FULL);
+     {
+       GET_NUM(bat, last_full_charge, POWER_SUPPLY_CHARGE_FULL);
+       if (bat->design_voltage > 0.0)
+         {
+           bat->last_full_charge = bat->last_full_charge * bat->design_voltage / 1000000.0;
+           bat->is_micro_watts = EINA_TRUE;
+         }
+     }
+   else
+     bat->is_micro_watts = EINA_TRUE;
    test = eeze_udev_syspath_get_property(bat->udi, "POWER_SUPPLY_ENERGY_NOW");
    if (!test)
      test = eeze_udev_syspath_get_property(bat->udi, "POWER_SUPPLY_CHARGE_NOW");
@@ -280,8 +320,8 @@ _battery_udev_battery_update(const char *syspath, Battery *bat)
      {
         if (eina_dbl_exact(bat->last_full_charge, 0))
           {
-             bat->last_full_charge = 100;
-             bat->design_charge = 100;
+             bat->last_full_charge = 10000;
+             bat->design_charge = 10000;
           }
         test = eeze_udev_syspath_get_property(bat->udi, "POWER_SUPPLY_CAPACITY");
      }
@@ -290,6 +330,8 @@ _battery_udev_battery_update(const char *syspath, Battery *bat)
         double charge_rate = 0;
 
         charge = strtod(test, NULL);
+        if (bat->design_voltage > 0.0)
+           charge = charge * bat->design_voltage / 1000000.0;
         eina_stringshare_del(test);
         t = ecore_time_get();
         if ((bat->got_prop) &&
@@ -305,7 +347,7 @@ _battery_udev_battery_update(const char *syspath, Battery *bat)
              bat->current_charge = charge;
              bat->charge_rate = charge_rate;
           }
-        bat->percent = (100 * bat->current_charge) / bat->last_full_charge;
+        bat->percent = (10000 * bat->current_charge) / bat->last_full_charge;
         if (bat->got_prop)
           {
              if (bat->charge_rate > 0)

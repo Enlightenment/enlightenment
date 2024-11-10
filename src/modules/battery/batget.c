@@ -209,7 +209,7 @@ darwin_check(void)
    values = CFDictionaryGetValue(device_dict, CFSTR(kIOPSMaxCapacityKey));
    CFNumberGetValue(values, kCFNumberSInt32Type, &maxval);
    /* Calculate the percentage charged. */
-   battery_full = (currentval * 100) / maxval;
+   battery_full = (currentval * 10000) / maxval;
 
    /* Retrieve the remaining battery power or time until charged in minutes. */
    if (!have_power)
@@ -638,7 +638,7 @@ linux_sys_class_power_supply_check(void)
                   else
                     {
                        if (pwr_now < 0)
-                         pwr_now = (((long long)capacity * ((long long)pwr_full - (long long)pwr_empty)) / 100) + pwr_empty;
+                         pwr_now = (((long long)capacity * ((long long)pwr_full - (long long)pwr_empty)) / 10000) + pwr_empty;
                     }
 
                   if (sysev->present) have_battery = 1;
@@ -686,13 +686,13 @@ linux_sys_class_power_supply_check(void)
                {
                   if (sysev->present) have_battery = 1;
                   if (charging) have_power = 1;
-                  total_pwr_max = 100;
+                  total_pwr_max = 10000;
                   total_pwr_now = capacity;
-                  if (total_pwr_now < 100) nofull = 1;
+                  if (total_pwr_now < 10000) nofull = 1;
                }
           }
         if (total_pwr_max > 0)
-          battery_full = ((long long)total_pwr_now * 100) / total_pwr_max;
+          battery_full = ((long long)total_pwr_now * 10000) / total_pwr_max;
         if (nofull == 0)
           time_left = -1;
      }
@@ -972,9 +972,9 @@ fclose_and_continue:
           }
 
         if (acpi_max_full > 0)
-          battery_full = 100 * (long long)capacity / acpi_max_full;
+          battery_full = 10000 * (long long)capacity / acpi_max_full;
         else if (acpi_max_design > 0)
-          battery_full = 100 * (long long)capacity / acpi_max_design;
+          battery_full = 10000 * (long long)capacity / acpi_max_design;
         else
           battery_full = -1;
         if (rate <= 0) time_left = -1;
@@ -1037,7 +1037,7 @@ linux_apm_check(void)
      {
         have_battery = 0;
         have_power = 0;
-        battery_full = 100;
+        battery_full = 10000;
         time_left = 0;
         return;
      }
@@ -1046,8 +1046,8 @@ linux_apm_check(void)
      {
         have_battery = 1;
         have_power = ac_stat;
-        battery_full = bat_val;
-        if (battery_full > 100) battery_full = 100;
+        battery_full = bat_val * 100;
+        if (battery_full > 10000) battery_full = 10000;
         if (ac_stat == 1) time_left = -1;
         else time_left = time_val;
      }
@@ -1058,28 +1058,28 @@ linux_apm_check(void)
            case 0: /* high */
              have_battery = 1;
              have_power = ac_stat;
-             battery_full = 100;
+             battery_full = 10000;
              time_left = -1;
              break;
 
            case 1: /* medium */
              have_battery = 1;
              have_power = ac_stat;
-             battery_full = 50;
+             battery_full = 5000;
              time_left = -1;
              break;
 
            case 2: /* low */
              have_battery = 1;
              have_power = ac_stat;
-             battery_full = 25;
+             battery_full = 2500;
              time_left = -1;
              break;
 
            case 3: /* charging */
              have_battery = 1;
              have_power = ac_stat;
-             battery_full = 100;
+             battery_full = 10000;
              time_left = -1;
              break;
           }
@@ -1195,7 +1195,7 @@ fclose_and_continue:
 
              free(name);
           }
-        if (max_charge > 0) battery_full = ((long long)charge * 100) / max_charge;
+        if (max_charge > 0) battery_full = ((long long)charge * 10000) / max_charge;
         else battery_full = 0;
         time_left = seconds;
      }

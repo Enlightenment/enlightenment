@@ -149,12 +149,13 @@ _bat_get_all_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending E
         else if (!strcmp(key, "Percentage"))
           {
              eldbus_message_iter_arguments_get(variant, "d", &val.d);
-             bat->percent = (int) val.d;
+             bat->percent = (int) (val.d * 100.0); // 0->10000
           }
         else if (!strcmp(key, "Energy"))
           {
              eldbus_message_iter_arguments_get(variant, "d", &val.d);
              bat->current_charge = (int) val.d;
+             bat->is_micro_watts = EINA_TRUE;
           }
         else if (!strcmp(key, "EnergyFullDesign"))
           {
@@ -165,6 +166,11 @@ _bat_get_all_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending E
           {
              eldbus_message_iter_arguments_get(variant, "d", &val.d);
              bat->last_full_charge = (int) val.d;
+          }
+        else if (!strcmp(key, "EnergyRate"))
+          {
+             eldbus_message_iter_arguments_get(variant, "d", &val.d);
+             bat->power_now = (int) val.d;
           }
         else if (!strcmp(key, "TimeToFull"))
           {

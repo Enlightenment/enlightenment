@@ -61,6 +61,18 @@ struct _Config
 
 typedef struct _Battery Battery;
 typedef struct _Ac_Adapter Ac_Adapter;
+typedef struct _Battery_Hist Battery_Hist;
+typedef struct _Battery_Hist_Other Battery_Hist_Other;
+
+#define BATTERY_HIST_MAX 1000
+struct _Battery_Hist
+{
+  unsigned long long timepoint  : 34; // time_t - but only 34 bits -> 1970 + 544 = ~2500
+  unsigned long long full       : 14; // 0-10000 = 0->100%
+  unsigned long long power_now  : 14; // 0-16383 = 1unit = 0.1w 
+  unsigned long long ac         : 1;
+  unsigned long long charging   : 1;
+};
 
 struct _Battery
 {
@@ -69,11 +81,14 @@ struct _Battery
    Ecore_Poller *poll;
    Eina_Bool     present E_BITFIELD;
    Eina_Bool     charging E_BITFIELD;
+   Eina_Bool     is_micro_watts E_BITFIELD;
    double        last_update;
    double        percent;
+   double        power_now;
    double        current_charge;
    double        design_charge;
    double        last_full_charge;
+   double        design_voltage;
    double        charge_rate;
    double        time_full;
    double        time_left;
@@ -91,6 +106,9 @@ struct _Battery
    const char   *technology;
    const char   *model;
    const char   *vendor;
+   Battery_Hist  history[BATTERY_HIST_MAX];
+   int           history_pos;
+   int           history_power_now_max;
    Eina_Bool     got_prop E_BITFIELD;
    Eldbus_Proxy *proxy;
 #if defined __FreeBSD__ || defined __DragonFly__

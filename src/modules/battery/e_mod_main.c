@@ -36,6 +36,14 @@ typedef struct __Popup_Widgets
    Evas_Object *remaining;
    Evas_Object *health;
    Evas_Object *technology;
+
+   Evas_Object *drain;
+   Evas_Object *full;
+   Evas_Object *power;
+
+   Evas_Object *gr_bat;
+   Evas_Object *gr_pow;
+//   Evas_Object *gr_crg;
 } _Popup_Widgets;
 
 typedef struct __Popup_Data
@@ -186,6 +194,60 @@ _gc_id_new(const E_Gadcon_Client_Class *client_class)
    return buf;
 }
 
+static inline const Battery_Hist *
+_battery_history_get(const Battery *bat, int age)
+{
+// should not have to check
+//  if (age >= BATTERY_HIST_MAX) return NULL;
+  int pos = (bat->history_pos + age) % BATTERY_HIST_MAX;
+  return &(bat->history[pos]);
+}
+
+static void
+_battery_history_store(Battery *bat, unsigned long long tim, int full, int mwatts, Eina_Bool ac, Eina_Bool charging)
+{
+  // last timepoint
+  unsigned long long tprev = bat->history[bat->history_pos].timepoint;
+
+  // 30 sec resoolution
+  if ((tim - tprev) < 10) return;
+  // bump pos with wrap-around
+  bat->history_pos = (bat->history_pos + BATTERY_HIST_MAX - 1) % BATTERY_HIST_MAX;
+  // store time and values
+  bat->history[bat->history_pos].timepoint = tim;
+  bat->history[bat->history_pos].full = full;
+  mwatts /= 100000;
+  if (mwatts > 16383) mwatts = 16383;
+  bat->history[bat->history_pos].power_now = mwatts;
+  bat->history[bat->history_pos].ac = ac;
+  bat->history[bat->history_pos].charging = charging;
+  if (bat->history[bat->history_pos].power_now > bat->history_power_now_max)
+    bat->history_power_now_max = bat->history[bat->history_pos].power_now;
+}
+
+static double
+_battery_wattage_get(Battery *bat, unsigned long long timeperiod)
+{
+  int i = 0;
+  const Battery_Hist *h0, *h1;
+  int diff;
+
+  h0 = _battery_history_get(bat, i);
+  if ((!h0) || (h0->timepoint == 0)) return -1.0;
+  for (;;)
+    {
+      i++;
+      h1 = _battery_history_get(bat, i);
+      if ((!h1) || (h1->timepoint == 0)) return -1.0;
+      if ((h0->timepoint - h1->timepoint) >= timeperiod) break;
+    }
+  diff = h0->full - h1->full;
+  if (diff < 0) diff = -diff;
+  return
+    (double)(bat->last_full_charge * diff * 3600) /
+    (10000.0 * 1000000.0 * (double)timeperiod);
+}
+
 static void
 _battery_popup_usage_destroy(Instance *inst)
 {
@@ -228,14 +290,14 @@ _battery_popup_usage_content_update_cb(void *data)
      {
         _Popup_Widgets *w = &pd->widgets[i++];
 
-        elm_progressbar_value_set(w->pb_usage, (double) bat->percent / 100.0);
+        elm_progressbar_value_set(w->pb_usage, (double) bat->percent / 10000.0);
 
         t = bat->time_left;
-        if ((battery_config->have_power) && (battery_config->full < 100))
+        if ((battery_config->have_power) && (battery_config->full < 10000))
           {
              elm_object_text_set(w->state, _("Charging"));
           }
-        else if ((!battery_config->have_power) && (battery_config->full < 100))
+        else if ((!battery_config->have_power) && (battery_config->full < 10000))
           {
              elm_object_text_set(w->state, _("Discharging"));
           }
@@ -263,6 +325,87 @@ _battery_popup_usage_content_update_cb(void *data)
           elm_object_text_set(w->technology, bat->technology);
         else
           elm_object_text_set(w->technology, _("Unknown"));
+
+        if (bat->is_micro_watts)
+          {
+            // over the past 5 mins
+            double watts = _battery_wattage_get(bat, 60);
+
+            if (watts >= 0.0)
+              {
+                snprintf(buf, sizeof(buf), "%1.2fW", watts);
+                elm_object_text_set(w->drain, buf);
+              }
+            else
+              elm_object_text_set(w->drain, _("Unknown"));
+          }
+        else
+          elm_object_text_set(w->drain, _("Unknown"));
+
+        if (bat->is_micro_watts)
+          {
+            double wh = (double)bat->last_full_charge / 1000000.0;
+            snprintf(buf, sizeof(buf), "%1.2fWh", wh);
+            elm_object_text_set(w->full, buf);
+          }
+        else
+          elm_object_text_set(w->full, _("Unknown"));
+
+        if (bat->is_micro_watts)
+          {
+            double watt = (double)bat->power_now / 1000000.0;
+            snprintf(buf, sizeof(buf), "%1.2fW", watt);
+            elm_object_text_set(w->power, buf);
+          }
+        else
+          elm_object_text_set(w->power, _("Unknown"));
+
+         {
+           int *v_full, *v_pow, age;
+           unsigned int vals_num;
+           const Battery_Hist *bh;
+           unsigned long long time_now = time(NULL), td, tp;
+           int full_tot, pow_tot, tot;
+
+           e_graph_colorspec_set(w->gr_pow, "cc::selected-alt");
+           e_graph_colorspec_set(w->gr_bat, "cc::selected");
+           vals_num = 50;
+           v_full = calloc(vals_num, sizeof(int));
+           v_pow = calloc(vals_num, sizeof(int));
+           if ((v_full) && (v_pow))
+             {
+               age = 0;
+               tp = 120;
+               for (i = 0; i < vals_num; i++)
+                 {
+                   full_tot = pow_tot = tot = 0;
+                   for (;;)
+                     {
+                       bh = _battery_history_get(bat, age);
+                       if (!bh) break;
+                       td = time_now - bh->timepoint;
+                       if (td < tp)
+                         {
+                           full_tot += bh->full;
+                           pow_tot += bh->power_now;
+                           tot++;
+                           age++;
+                         }
+                       else break;
+                     }
+                   if (tot > 0)
+                     {
+                       v_pow[vals_num - i - 1] = pow_tot / tot;
+                       v_full[vals_num - i - 1] = full_tot / tot;
+                     }
+                   tp += 120; // 1 val == 120 sec
+                 }
+               e_graph_values_set(w->gr_pow, vals_num, v_pow, 0, bat->history_power_now_max);
+               e_graph_values_set(w->gr_bat, vals_num, v_full, 0, 10000);
+             }
+           free(v_full);
+           free(v_pow);
+        }
         if (i == (pd->n_units - 1)) break;
      }
    return ECORE_CALLBACK_RENEW;
@@ -308,7 +451,7 @@ _content_get(void *data, Evas_Object *obj, const char *part)
    o = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    evas_object_size_hint_weight_set(o, 1.0, 0);
-   evas_object_size_hint_min_set(o, ELM_SCALE_SIZE(220), ELM_SCALE_SIZE(20));
+   evas_object_size_hint_min_set(o, ELM_SCALE_SIZE(280), ELM_SCALE_SIZE(20));
    elm_table_pack(tb, o, 0, 0, 8, 1);
 
    w->pb_usage = o = elm_progressbar_add(obj);
@@ -370,6 +513,63 @@ _content_get(void *data, Evas_Object *obj, const char *part)
    elm_table_pack(tb, o, 7, 1, 1, 1);
    evas_object_show(o);
 
+   o = elm_icon_add(obj);
+   elm_icon_standard_set(o, "battery-good-charging");
+   evas_object_size_hint_min_set(o, ELM_SCALE_SIZE(20), ELM_SCALE_SIZE(20));
+   elm_table_pack(tb, o, 0, 2, 1, 1);
+   evas_object_show(o);
+
+   w->drain = o = elm_label_add(obj);
+   evas_object_size_hint_align_set(o, 0.0, 0.5);
+   evas_object_size_hint_weight_set(o, 1.0, 0);
+   elm_table_pack(tb, o, 1, 2, 1, 1);
+   evas_object_show(o);
+
+   o = elm_icon_add(obj);
+   elm_icon_standard_set(o, "battery-full");
+   evas_object_size_hint_min_set(o, ELM_SCALE_SIZE(20), ELM_SCALE_SIZE(20));
+   elm_table_pack(tb, o, 2, 2, 1, 1);
+   evas_object_show(o);
+
+   w->full = o = elm_label_add(obj);
+   evas_object_size_hint_align_set(o, 0.0, 0.5);
+   evas_object_size_hint_weight_set(o, 1.0, 0);
+   elm_table_pack(tb, o, 3, 2, 1, 1);
+   evas_object_show(o);
+
+   o = elm_icon_add(obj);
+   elm_icon_standard_set(o, "battery-empty-charging");
+   evas_object_size_hint_min_set(o, ELM_SCALE_SIZE(20), ELM_SCALE_SIZE(20));
+   elm_table_pack(tb, o, 4, 2, 1, 1);
+   evas_object_show(o);
+
+   w->power = o = elm_label_add(obj);
+   evas_object_size_hint_align_set(o, 0.0, 0.5);
+   evas_object_size_hint_weight_set(o, 1.0, 0);
+   elm_table_pack(tb, o, 5, 2, 1, 1);
+   evas_object_show(o);
+
+   w->gr_bat = o = e_graph_add(obj);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(o, 1.0, 0.0);
+   evas_object_size_hint_min_set(o, ELM_SCALE_SIZE(80), ELM_SCALE_SIZE(40));
+   elm_table_pack(tb, o, 0, 3, 8, 1);
+   evas_object_show(o);
+
+   w->gr_pow = o = e_graph_add(obj);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_min_set(o, ELM_SCALE_SIZE(80), ELM_SCALE_SIZE(40));
+   elm_table_pack(tb, o, 0, 4, 8, 1);
+   evas_object_show(o);
+
+/*
+   w->gr_crg = o = e_graph_add(obj);
+   evas_object_size_hint_align_set(o, -1.0, -1.0);
+   evas_object_size_hint_weight_set(o, 1.0,  1.0);
+   evas_object_size_hint_min_set(o, ELM_SCALE_SIZE(80), ELM_SCALE_SIZE(80));
+   elm_table_pack(tb, o, 0, 3, 8, 1);
+   evas_object_show(o);
+ */
    return tb;
 }
 
@@ -400,7 +600,7 @@ _battery_popup_usage_new(Instance *inst)
    evas_object_show(tb);
 
    rec = evas_object_rectangle_add(evas_object_evas_get(base));
-   evas_object_size_hint_min_set(rec, ELM_SCALE_SIZE(360), ELM_SCALE_SIZE(160));
+   evas_object_size_hint_min_set(rec, ELM_SCALE_SIZE(320), ELM_SCALE_SIZE(220));
    evas_object_size_hint_max_set(rec, ELM_SCALE_SIZE(560), ELM_SCALE_SIZE(400));
    elm_table_pack(tb, rec, 0, 0, 1, 1);
 
@@ -589,9 +789,9 @@ _battery_device_update(void)
    int have_battery = 0;
    int have_power = 0;
    int charging = 0;
-
    int batnum = 0;
    int acnum = 0;
+   unsigned long long tim = time(NULL);
 
    EINA_LIST_FOREACH(device_ac_adapters, l, ac)
      {
@@ -613,9 +813,9 @@ _battery_device_update(void)
         if (bat->percent >= 0)
           full += bat->percent;
         else if (bat->last_full_charge > 0)
-          full += (bat->current_charge * 100) / bat->last_full_charge;
+          full += (bat->current_charge * 10000) / bat->last_full_charge;
         else if (bat->design_charge > 0)
-          full += (bat->current_charge * 100) / bat->design_charge;
+          full += (bat->current_charge * 10000) / bat->design_charge;
         if (bat->time_left > 0)
           {
              if (time_left < 0) time_left = bat->time_left;
@@ -627,13 +827,16 @@ _battery_device_update(void)
              else time_full += bat->time_full;
           }
         charging += bat->charging;
+        _battery_history_store(bat, tim,
+                               full, bat->power_now,
+                               have_power, bat->charging);
      }
 
    if ((device_batteries) && (batnum == 0))
      return;  /* not ready yet, no properties received for any battery */
 
    if (batnum > 0) full /= batnum;
-   if ((full == 100) && have_power)
+   if ((full == 10000) && have_power)
      {
         time_left = -1;
         time_full = -1;
@@ -845,7 +1048,7 @@ _battery_update(int full, int time_left, int time_full, Eina_Bool have_battery, 
                edje_object_signal_emit(inst->o_battery, "e,state,ac,on", "e");
              else
                edje_object_signal_emit(inst->o_battery, "e,state,ac,off", "e");
-             if (have_power && (full < 100))
+             if (have_power && (full < 10000))
                {
                   edje_object_signal_emit(inst->o_battery, "e,state,charging", "e");
                   if (inst->popup_battery)
@@ -864,8 +1067,8 @@ _battery_update(int full, int time_left, int time_full, Eina_Bool have_battery, 
                {
                   double val;
 
-                  if (full >= 100) val = 1.0;
-                  else val = (double)full / 100.0;
+                  if (full >= 10000) val = 1.0;
+                  else val = (double)full / 10000.0;
                   _battery_face_level_set(inst->o_battery, val);
                   if (inst->popup_battery)
                     _battery_face_level_set(inst->popup_battery, val);
@@ -898,7 +1101,7 @@ _battery_update(int full, int time_left, int time_full, Eina_Bool have_battery, 
           }
         if (have_battery &&
             (!have_power) &&
-            (full < 100) &&
+            (full < 10000) &&
             (
               (
                 (time_left > 0) &&
@@ -917,7 +1120,7 @@ _battery_update(int full, int time_left, int time_full, Eina_Bool have_battery, 
              printf("-------------------------------------- bat warn .. why below\n");
              printf("have_battery = %i\n", (int)have_battery);
              printf("have_power = %i\n", (int)have_power);
-             printf("full = %i\n", (int)full);
+             printf("full = %i\n", (int)full / 100);
              printf("time_left = %i\n", (int)time_left);
              printf("battery_config->alert = %i\n", (int)battery_config->alert);
              printf("battery_config->alert_p = %i\n", (int)battery_config->alert_p);
@@ -926,17 +1129,17 @@ _battery_update(int full, int time_left, int time_full, Eina_Bool have_battery, 
                {
                   printf("t-debounce = %3.3f\n", (t - debounce_time));
                   debounce_time = t;
-                  if (((t - init_time) > 5.0) && (full < 15))
-                    _battery_warning_popup(inst, time_left, (double)full / 100.0);
+                  if (((t - init_time) > 5.0) && (full < 1500))
+                    _battery_warning_popup(inst, time_left, (double)full / 10000.0);
                }
           }
         else if (have_power || ((time_left / 60) > battery_config->alert))
           _battery_warning_popup_destroy(inst);
         if ((have_battery) && (!have_power) && (full >= 0) &&
             (battery_config->suspend_below > 0) &&
-            (full < battery_config->suspend_below))
+            (full < battery_config->suspend_below / 100))
           {
-             printf("battery %i suspend below %i\n", full, battery_config->suspend_below);
+             printf("battery %i suspend below %i\n", full / 100, battery_config->suspend_below);
              if (battery_config->suspend_method == SUSPEND)
                e_sys_action_do(E_SYS_SUSPEND_MODE, NULL);
              else if (battery_config->suspend_method == HIBERNATE)
@@ -951,9 +1154,9 @@ _battery_update(int full, int time_left, int time_full, Eina_Bool have_battery, 
      {
         if (have_power)
           e_powersave_mode_set(E_POWERSAVE_MODE_LOW);
-        else if (full > 95)
+        else if (full > 9500)
           e_powersave_mode_set(E_POWERSAVE_MODE_MEDIUM);
-        else if (full > 30)
+        else if (full > 3000)
           e_powersave_mode_set(E_POWERSAVE_MODE_HIGH);
         else
           e_powersave_mode_set(E_POWERSAVE_MODE_EXTREME);
