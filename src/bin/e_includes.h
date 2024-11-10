@@ -161,6 +161,7 @@
 #include "e_watchdog.h"
 #include "e_gesture.h"
 #include "e_sound.h"
+#include "e_graph.h"
 
 #ifdef HAVE_WAYLAND
 # include "e_comp_wl.h"

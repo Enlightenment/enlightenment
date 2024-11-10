@@ -124,6 +124,7 @@ src = [
   'e_gadcon_popup.c',
   'e_grabinput.c',
   'e_grab_dialog.c',
+  'e_graph.c',
   'e_hints.c',
   'e_icon.c',
   'e_ilist.c',
