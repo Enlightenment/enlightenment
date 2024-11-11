@@ -64,7 +64,7 @@ _smart_add(Evas_Object *obj)
 
   sd->o_smart = obj;
   sd->o_base = o = edje_object_add(e);
-  grp            = "e/fileman/default/graph/base";
+  grp            = "e/graph/default/base";
   theme_edj_file = elm_theme_group_path_find(NULL, grp);
   edje_object_file_set(o, theme_edj_file, grp);
   evas_object_smart_member_add(o, sd->o_smart); // this is a member
@@ -141,7 +141,7 @@ _smart_calculate(Evas_Object *obj)
   e = evas_object_evas_get(obj);
   evas_object_geometry_set(sd->o_base, sd->geom.x, sd->geom.y, sd->geom.w,
                            sd->geom.h);
-  grp            = "e/fileman/default/graph/bar";
+  grp            = "e/graph/default/bar";
   theme_edj_file = elm_theme_group_path_find(NULL, grp);
 
   if ((!sd->o_vals) && (sd->num > 0))
