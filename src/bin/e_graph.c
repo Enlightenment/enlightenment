@@ -11,6 +11,7 @@ struct _Smart_Data
   int               num, min, max;
   int              *vals;
   Eina_Stringshare *colorspec;
+  Eina_Stringshare *colorspecdown;
 
   Evas_Object  *o_smart; // the smart object container itself
   Evas_Object  *o_base;
@@ -99,6 +100,7 @@ _smart_del(Evas_Object *obj)
       sd->o_base = NULL;
     }
   eina_stringshare_replace(&sd->colorspec, NULL);
+  eina_stringshare_replace(&sd->colorspecdown, NULL);
   sd->o_smart = NULL;
 
   _sc_parent.del(obj);
@@ -141,7 +143,9 @@ _smart_calculate(Evas_Object *obj)
   e = evas_object_evas_get(obj);
   evas_object_geometry_set(sd->o_base, sd->geom.x, sd->geom.y, sd->geom.w,
                            sd->geom.h);
-  grp            = "e/graph/default/bar";
+  if (sd->colorspecdown) grp = "e/graph/default/barupdown";
+  else grp = "e/graph/default/bar";
+
   theme_edj_file = elm_theme_group_path_find(NULL, grp);
 
   if ((!sd->o_vals) && (sd->num > 0))
@@ -172,10 +176,22 @@ _smart_calculate(Evas_Object *obj)
               msg.str = (char *)sd->colorspec;
               edje_object_message_send(sd->o_vals[i], EDJE_MESSAGE_STRING, 1,
                                        &msg);
+              if (sd->colorspecdown)
+                {
+                  msg.str = (char *)sd->colorspecdown;
+                  edje_object_message_send(sd->o_vals[i], EDJE_MESSAGE_STRING, 2,
+                                           &msg);
+                }
               edje_object_message_signal_process(sd->o_vals[i]);
             }
           edje_object_part_drag_value_set(sd->o_vals[i], "e.dragable.value",
                                           0.0, v);
+          if (sd->colorspecdown)
+            {
+              v = (double)(sd->max) / range;
+              edje_object_part_drag_value_set(sd->o_vals[i], "e.dragable.zero",
+                                              0.0, v);
+            }
         }
     }
   sd->reset_vals = EINA_FALSE;
@@ -232,6 +248,18 @@ e_graph_colorspec_set(Evas_Object *obj, const char *cc)
   if ((!cc) && (!sd->colorspec)) return;
   if ((cc) && (sd->colorspec) && (!strcmp(cc, sd->colorspec))) return;
   eina_stringshare_replace(&sd->colorspec, cc);
+  _clear(sd);
+  sd->reset_colors = EINA_TRUE;
+}
+
+E_API void
+e_graph_colorspec_down_set(Evas_Object *obj, const char *cc)
+{
+  ENTRY;
+
+  if ((!cc) && (!sd->colorspecdown)) return;
+  if ((cc) && (sd->colorspecdown) && (!strcmp(cc, sd->colorspecdown))) return;
+  eina_stringshare_replace(&sd->colorspecdown, cc);
   _clear(sd);
   sd->reset_colors = EINA_TRUE;
 }

@@ -12,5 +12,6 @@ E_API void         e_graph_values_set(Evas_Object *obj, int num, int *vals, int 
 // #ff8800                - 24bit rgb val
 // #ff880044              - 32bit rgba val
 E_API void         e_graph_colorspec_set(Evas_Object *obj, const char *cc);
+E_API void         e_graph_colorspec_down_set(Evas_Object *obj, const char *cc);
 
 #endif
