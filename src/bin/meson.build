@@ -305,6 +305,7 @@ hdr = [
   'e_gadcon_popup.h',
   'e_grabinput.h',
   'e_grab_dialog.h',
+  'e_graph.h',
   'e.h',
   'e_macros.h',
   'e_hints.h',
