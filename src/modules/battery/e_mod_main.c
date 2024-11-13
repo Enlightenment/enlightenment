@@ -509,7 +509,6 @@ _content_get(void *data, Evas_Object *obj, const char *part)
    elm_table_pack(tb, o, 1, 1, 1, 1);
    evas_object_show(o);
 
-
    o = elm_icon_add(obj);
    elm_icon_standard_set(o, "clock");
    evas_object_size_hint_min_set(o, ELM_SCALE_SIZE(20), ELM_SCALE_SIZE(20));
@@ -521,7 +520,6 @@ _content_get(void *data, Evas_Object *obj, const char *part)
    evas_object_size_hint_weight_set(o, 1.0, 0);
    elm_table_pack(tb, o, 3, 1, 1, 1);
    evas_object_show(o);
-
 
    o = elm_icon_add(obj);
    elm_icon_standard_set(o, "health");
@@ -535,7 +533,6 @@ _content_get(void *data, Evas_Object *obj, const char *part)
    elm_table_pack(tb, o, 5, 1, 1, 1);
    evas_object_show(o);
 
-
    o = elm_icon_add(obj);
    elm_icon_standard_set(o, "tech");
    evas_object_size_hint_min_set(o, ELM_SCALE_SIZE(20), ELM_SCALE_SIZE(20));
@@ -547,6 +544,7 @@ _content_get(void *data, Evas_Object *obj, const char *part)
    evas_object_size_hint_weight_set(o, 1.0, 0);
    elm_table_pack(tb, o, 7, 1, 1, 1);
    evas_object_show(o);
+
 
    o = elm_icon_add(obj);
    elm_icon_standard_set(o, "battery-good-charging");
@@ -584,11 +582,19 @@ _content_get(void *data, Evas_Object *obj, const char *part)
    elm_table_pack(tb, o, 5, 2, 1, 1);
    evas_object_show(o);
 
+
    w->gr_bat = o = e_graph_add(obj);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(o, 1.0, 0.0);
    evas_object_size_hint_min_set(o, ELM_SCALE_SIZE(80), ELM_SCALE_SIZE(40));
    elm_table_pack(tb, o, 0, 3, 8, 1);
+   evas_object_show(o);
+
+   o = elm_label_add(obj);
+   elm_object_text_set(o, _("Level"));
+   evas_object_size_hint_align_set(o, 0.0, 0.0);
+   evas_object_size_hint_weight_set(o, 1.0, 0);
+   elm_table_pack(tb, o, 1, 3, 1, 1);
    evas_object_show(o);
 
    w->gr_pow = o = e_graph_add(obj);
@@ -598,11 +604,25 @@ _content_get(void *data, Evas_Object *obj, const char *part)
    elm_table_pack(tb, o, 0, 4, 8, 1);
    evas_object_show(o);
 
+   o = elm_label_add(obj);
+   elm_object_text_set(o, _("Energy"));
+   evas_object_size_hint_align_set(o, 0.0, 0.0);
+   evas_object_size_hint_weight_set(o, 1.0, 0);
+   elm_table_pack(tb, o, 1, 4, 1, 1);
+   evas_object_show(o);
+
    w->gr_crg = o = e_graph_add(obj);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(o, 1.0,  1.0);
    evas_object_size_hint_min_set(o, ELM_SCALE_SIZE(80), ELM_SCALE_SIZE(40));
    elm_table_pack(tb, o, 0, 5, 8, 1);
+   evas_object_show(o);
+
+   o = elm_label_add(obj);
+   elm_object_text_set(o, _("(Dis)charge"));
+   evas_object_size_hint_align_set(o, 0.0, 0.0);
+   evas_object_size_hint_weight_set(o, 1.0, 0);
+   elm_table_pack(tb, o, 1, 5, 1, 1);
    evas_object_show(o);
 
    return tb;
