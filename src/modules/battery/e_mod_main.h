@@ -62,16 +62,31 @@ struct _Config
 typedef struct _Battery Battery;
 typedef struct _Ac_Adapter Ac_Adapter;
 typedef struct _Battery_Hist Battery_Hist;
-typedef struct _Battery_Hist_Other Battery_Hist_Other;
+typedef struct _Battery_Hist_Entry Battery_Hist_Entry;
 
 #define BATTERY_HIST_MAX 1000
+struct _Battery_Hist_Entry
+{
+  unsigned long long timepoint; // time_t
+  unsigned short     full; // 0-10000 = 0->100%
+  unsigned short     power_now ; // 1unit = 0.1w
+  unsigned short     ac : 1;
+  unsigned short     charging : 1;
+  unsigned short     pad : 14; // 14 bits to pad out rest of short
+  unsigned short     pad2 ; // pad out rest of struct
+}; // 16 bytes
+
 struct _Battery_Hist
 {
-  unsigned long long timepoint  : 34; // time_t - but only 34 bits -> 1970 + 544 = ~2500
-  unsigned long long full       : 14; // 0-10000 = 0->100%
-  unsigned long long power_now  : 14; // 0-16383 = 1unit = 0.1w 
-  unsigned long long ac         : 1;
-  unsigned long long charging   : 1;
+#define BATTERY_HISTORY_MAGIC 0xfeedee77
+  unsigned int       magic; // BATTERY_HISTORY_MAGIC
+#define BATTERY_HISTORY_VERSION 100
+  unsigned short     version; // BATTERY_HISTORY_VERSION
+  unsigned short     history_pos; // if >= BATTERY_HIST_MAX reset to 0
+  int                pad;
+  int                pad2;
+  // no padding needed (16 byte header) as we're aligned
+  Battery_Hist_Entry history[BATTERY_HIST_MAX];
 };
 
 struct _Battery
@@ -103,11 +118,10 @@ struct _Battery
    const char   *type;
    const char   *charge_units;
 #endif
+   Battery_Hist *hist;
    const char   *technology;
    const char   *model;
    const char   *vendor;
-   Battery_Hist  history[BATTERY_HIST_MAX];
-   int           history_pos;
    int           history_power_now_max;
    Eina_Bool     got_prop E_BITFIELD;
    Eldbus_Proxy *proxy;
@@ -135,6 +149,9 @@ struct _Ac_Adapter
 Battery    *_battery_battery_find(const char *udi);
 Ac_Adapter *_battery_ac_adapter_find(const char *udi);
 void        _battery_device_update(void);
+
+void        _battery_history_load(Battery *bat);
+void        _battery_history_close(Battery *bat);
 
 #ifdef HAVE_EEZE
 /* in e_mod_udev.c */

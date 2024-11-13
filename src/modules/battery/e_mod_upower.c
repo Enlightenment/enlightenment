@@ -31,6 +31,7 @@ _battery_free(Battery *bat)
      eina_stringshare_del(bat->model);
    if (bat->vendor)
      eina_stringshare_del(bat->vendor);
+   _battery_history_close(bat);
    free(bat);
 }
 

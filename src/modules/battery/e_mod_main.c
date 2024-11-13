@@ -1,6 +1,9 @@
 #include "e.h"
 #include "e_mod_main.h"
 
+#include <sys/mman.h>
+#include <fcntl.h>
+
 /* gadcon requirements */
 static E_Gadcon_Client *_gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style);
 static void             _gc_shutdown(E_Gadcon_Client *gcc);
@@ -43,7 +46,7 @@ typedef struct __Popup_Widgets
 
    Evas_Object *gr_bat;
    Evas_Object *gr_pow;
-//   Evas_Object *gr_crg;
+   Evas_Object *gr_crg;
 } _Popup_Widgets;
 
 typedef struct __Popup_Data
@@ -194,42 +197,50 @@ _gc_id_new(const E_Gadcon_Client_Class *client_class)
    return buf;
 }
 
-static inline const Battery_Hist *
-_battery_history_get(const Battery *bat, int age)
+static inline const Battery_Hist_Entry *
+_battery_history_get(Battery *bat, int age)
 {
 // should not have to check
 //  if (age >= BATTERY_HIST_MAX) return NULL;
-  int pos = (bat->history_pos + age) % BATTERY_HIST_MAX;
-  return &(bat->history[pos]);
+  _battery_history_load(bat);
+  if (!bat->hist) return NULL;
+  int pos = (bat->hist->history_pos + age) % BATTERY_HIST_MAX;
+  return &(bat->hist->history[pos]);
 }
 
 static void
 _battery_history_store(Battery *bat, unsigned long long tim, int full, int mwatts, Eina_Bool ac, Eina_Bool charging)
 {
   // last timepoint
-  unsigned long long tprev = bat->history[bat->history_pos].timepoint;
+  unsigned long long tprev;
+  unsigned short hpos;
 
-  // 30 sec resoolution
+  _battery_history_load(bat);
+  if (!bat->hist) return;
+  hpos = bat->hist->history_pos;
+  tprev = bat->hist->history[hpos].timepoint;
+  // 10 sec resoolution
   if ((tim - tprev) < 10) return;
   // bump pos with wrap-around
-  bat->history_pos = (bat->history_pos + BATTERY_HIST_MAX - 1) % BATTERY_HIST_MAX;
+  hpos = (hpos + BATTERY_HIST_MAX - 1) % BATTERY_HIST_MAX;
+  bat->hist->history_pos = hpos;
   // store time and values
-  bat->history[bat->history_pos].timepoint = tim;
-  bat->history[bat->history_pos].full = full;
+  bat->hist->history[hpos].timepoint = tim;
+  bat->hist->history[hpos].full = full;
   mwatts /= 100000;
-  if (mwatts > 16383) mwatts = 16383;
-  bat->history[bat->history_pos].power_now = mwatts;
-  bat->history[bat->history_pos].ac = ac;
-  bat->history[bat->history_pos].charging = charging;
-  if (bat->history[bat->history_pos].power_now > bat->history_power_now_max)
-    bat->history_power_now_max = bat->history[bat->history_pos].power_now;
+  if (mwatts > 65000) mwatts = 65000;
+  bat->hist->history[hpos].power_now = mwatts;
+  bat->hist->history[hpos].ac = ac;
+  bat->hist->history[hpos].charging = charging;
+  if (bat->hist->history[hpos].power_now > bat->history_power_now_max)
+    bat->history_power_now_max = bat->hist->history[hpos].power_now;
 }
 
 static double
 _battery_wattage_get(Battery *bat, unsigned long long timeperiod)
 {
   int i = 0;
-  const Battery_Hist *h0, *h1;
+  const Battery_Hist_Entry *h0, *h1;
   int diff;
 
   h0 = _battery_history_get(bat, i);
@@ -361,24 +372,34 @@ _battery_popup_usage_content_update_cb(void *data)
           elm_object_text_set(w->power, _("Unknown"));
 
          {
-           int *v_full, *v_pow, age;
+           int *v_full, *v_pow, *v_crg, age;
            unsigned int vals_num;
-           const Battery_Hist *bh;
+           const Battery_Hist_Entry *bh;
            unsigned long long time_now = time(NULL), td, tp;
-           int full_tot, pow_tot, tot;
+           int full_tot, pow_tot, crg_tot, tot, min_crg, max_crg, full0, full1;
 
            e_graph_colorspec_set(w->gr_pow, "cc::selected-alt");
            e_graph_colorspec_set(w->gr_bat, "cc::selected");
+
+           e_graph_colorspec_set(w->gr_crg, "cc::selected2");
+           e_graph_colorspec_down_set(w->gr_crg, "cc::selected4");
+
+           min_crg = -1;
+           max_crg = 1;
            vals_num = 50;
            v_full = calloc(vals_num, sizeof(int));
            v_pow = calloc(vals_num, sizeof(int));
-           if ((v_full) && (v_pow))
+           v_crg = calloc(vals_num, sizeof(int));
+           if ((v_full) && (v_pow) && (v_crg))
              {
                age = 0;
                tp = 120;
                for (i = 0; i < vals_num; i++)
                  {
-                   full_tot = pow_tot = tot = 0;
+                   full_tot = pow_tot = crg_tot = full0 = full1 = tot = 0;
+                   bh = _battery_history_get(bat, age);
+                   if (bh) full1 = bh->full;
+                   full0 = full1;
                    for (;;)
                      {
                        bh = _battery_history_get(bat, age);
@@ -386,6 +407,7 @@ _battery_popup_usage_content_update_cb(void *data)
                        td = time_now - bh->timepoint;
                        if (td < tp)
                          {
+                           full0 = bh->full;
                            full_tot += bh->full;
                            pow_tot += bh->power_now;
                            tot++;
@@ -393,18 +415,31 @@ _battery_popup_usage_content_update_cb(void *data)
                          }
                        else break;
                      }
+                   if (!bh)
+                     {
+                       bh = _battery_history_get(bat, age - 1);
+                       if (bh) full0 = bh->full;
+                     }
                    if (tot > 0)
                      {
+                       crg_tot = full1 - full0;
                        v_pow[vals_num - i - 1] = pow_tot / tot;
                        v_full[vals_num - i - 1] = full_tot / tot;
+                       v_crg[vals_num - i - 1] = crg_tot / tot;
+                       if (v_crg[vals_num - i - 1] < min_crg)
+                         min_crg = v_crg[vals_num - i - 1];
+                       if (v_crg[vals_num - i - 1] > max_crg)
+                         max_crg = v_crg[vals_num - i - 1];
                      }
                    tp += 120; // 1 val == 120 sec
                  }
                e_graph_values_set(w->gr_pow, vals_num, v_pow, 0, bat->history_power_now_max);
                e_graph_values_set(w->gr_bat, vals_num, v_full, 0, 10000);
+               e_graph_values_set(w->gr_crg, vals_num, v_crg, min_crg, max_crg);
              }
            free(v_full);
            free(v_pow);
+           free(v_crg);
         }
         if (i == (pd->n_units - 1)) break;
      }
@@ -558,18 +593,18 @@ _content_get(void *data, Evas_Object *obj, const char *part)
 
    w->gr_pow = o = e_graph_add(obj);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(o, 1.0,  1.0);
    evas_object_size_hint_min_set(o, ELM_SCALE_SIZE(80), ELM_SCALE_SIZE(40));
    elm_table_pack(tb, o, 0, 4, 8, 1);
    evas_object_show(o);
 
-/*
    w->gr_crg = o = e_graph_add(obj);
-   evas_object_size_hint_align_set(o, -1.0, -1.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(o, 1.0,  1.0);
-   evas_object_size_hint_min_set(o, ELM_SCALE_SIZE(80), ELM_SCALE_SIZE(80));
-   elm_table_pack(tb, o, 0, 3, 8, 1);
+   evas_object_size_hint_min_set(o, ELM_SCALE_SIZE(80), ELM_SCALE_SIZE(40));
+   elm_table_pack(tb, o, 0, 5, 8, 1);
    evas_object_show(o);
- */
+
    return tb;
 }
 
@@ -600,8 +635,8 @@ _battery_popup_usage_new(Instance *inst)
    evas_object_show(tb);
 
    rec = evas_object_rectangle_add(evas_object_evas_get(base));
-   evas_object_size_hint_min_set(rec, ELM_SCALE_SIZE(320), ELM_SCALE_SIZE(220));
-   evas_object_size_hint_max_set(rec, ELM_SCALE_SIZE(560), ELM_SCALE_SIZE(400));
+   evas_object_size_hint_min_set(rec, ELM_SCALE_SIZE(400), ELM_SCALE_SIZE(280));
+   evas_object_size_hint_max_set(rec, ELM_SCALE_SIZE(560), ELM_SCALE_SIZE(450));
    elm_table_pack(tb, rec, 0, 0, 1, 1);
 
    glist = elm_genlist_add(base);
@@ -1233,6 +1268,77 @@ _battery_cb_exe_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    battery_config->batget_exe = NULL;
    return ECORE_CALLBACK_PASS_ON;
 }
+
+static void
+_battery_history_file_reset(int fd)
+{
+  int val;
+
+  ftruncate(fd, 0);
+  ftruncate(fd, sizeof(Battery_Hist));
+  lseek(fd, 0, SEEK_SET);
+  val = BATTERY_HISTORY_MAGIC;
+  write(fd, &val, sizeof(val));
+  val = BATTERY_HISTORY_VERSION;
+  write(fd, &val, sizeof(val));
+  // rest is zero
+}
+
+static void
+_battery_history_file_map(Battery *bat, int fd)
+{
+  bat->hist = mmap(NULL, sizeof(Battery_Hist), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+  if ((bat->hist == MAP_FAILED) || (bat->hist == NULL))
+    { // yes i know - not correct but nothing will sensibly mmap at addr 0/NULL
+      if (bat->hist == NULL) munmap(bat->hist, sizeof(Battery_Hist));
+      bat->hist = NULL;
+    }
+}
+
+void
+_battery_history_load(Battery *bat)
+{
+  char buf[PATH_MAX];
+  int fd, i;
+  off_t off;
+
+  if (bat->hist) return;
+  // XXX: some unique host id needed ?
+  e_user_dir_concat_static(buf, "battery-history.dat");
+  fd = open(buf, O_RDWR | O_EXCL, S_IRUSR | S_IWUSR);
+  if (fd < 0) fd = open(buf, O_RDWR | O_EXCL | O_CREAT, S_IRUSR | S_IWUSR);
+  if (fd < 0) return;
+  off = lseek(fd, 0, SEEK_END);
+  if (off != sizeof(Battery_Hist)) _battery_history_file_reset(fd);
+  _battery_history_file_map(bat, fd);
+  if (!bat->hist) goto end;
+  if ((bat->hist->magic != BATTERY_HISTORY_MAGIC) ||
+      (bat->hist->version != BATTERY_HISTORY_VERSION) ||
+      (bat->hist->history_pos >= BATTERY_HIST_MAX))
+    {
+      munmap(bat->hist, sizeof(Battery_Hist));
+      _battery_history_file_reset(fd);
+      _battery_history_file_map(bat, fd);
+      if (!bat->hist) goto end;
+    }
+  bat->history_power_now_max = 0;
+  for (i = 0; i < BATTERY_HIST_MAX; i++)
+    {
+      if (bat->hist->history[i].power_now > bat->history_power_now_max)
+      bat->history_power_now_max = bat->hist->history[i].power_now;
+    }
+end:
+  close(fd); // we can close fd once we have our mapping
+}
+
+void
+_battery_history_close(Battery *bat)
+{
+  if (!bat->hist) return;
+  munmap(bat->hist, sizeof(Battery_Hist));
+  bat->hist = NULL;
+}
+
 
 /* module setup */
 E_API E_Module_Api e_modapi =

@@ -62,6 +62,7 @@ _battery_udev_stop(void)
         eina_stringshare_del(bat->model);
         eina_stringshare_del(bat->vendor);
         ecore_poller_del(bat->poll);
+        _battery_history_close(bat);
         free(bat);
      }
 }

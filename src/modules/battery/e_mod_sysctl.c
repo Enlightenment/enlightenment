@@ -158,6 +158,7 @@ _battery_sysctl_stop(void)
 #if defined(__OpenBSD__)
         E_FREE(bat->mib);
 #endif
+        _battery_history_close(bat);
         E_FREE(bat);
      }
 }
