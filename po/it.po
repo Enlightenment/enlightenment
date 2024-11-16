@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-07 14:20+0100\n"
-"PO-Revision-Date: 2024-11-07 14:28+0100\n"
+"POT-Creation-Date: 2024-11-16 13:21+0100\n"
+"PO-Revision-Date: 2024-11-16 13:49+0100\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: General\n"
 "Language: it\n"
@@ -1228,7 +1228,7 @@ msgstr ""
 msgid "Settings Upgraded"
 msgstr "Impostazioni aggiornate"
 
-#: src/bin/e_config_dialog.c:222 src/modules/battery/e_mod_main.c:1100
+#: src/bin/e_config_dialog.c:222 src/modules/battery/e_mod_main.c:1429
 #: src/modules/conf_bindings/e_mod_main.c:43 src/modules/conf/e_mod_main.c:278
 #: src/modules/conf_paths/e_mod_main.c:17
 #: src/modules/conf_performance/e_mod_main.c:17
@@ -2756,7 +2756,7 @@ msgstr "Richiede posizione"
 #: src/bin/e_int_client_prop.c:483 src/bin/e_int_client_prop.c:518
 #: src/bin/e_int_config_modules.c:58 src/bin/e_int_menus.c:299
 #: src/bin/e_shelf.c:2367 src/modules/backlight/e_mod_main.c:259
-#: src/modules/battery/e_mod_main.c:475 src/modules/clock/e_mod_main.c:359
+#: src/modules/battery/e_mod_main.c:730 src/modules/clock/e_mod_main.c:359
 #: src/modules/clock/e_mod_main.c:590 src/modules/conf_dialogs/e_mod_main.c:17
 #: src/modules/conf/e_conf.c:115 src/modules/conf/e_conf.c:126
 #: src/modules/conf/e_mod_main.c:101
@@ -3173,7 +3173,9 @@ msgstr "Utilità"
 #: src/bin/e_int_config_comp_match.c:444 src/bin/e_utils.c:641
 #: src/bin/e_widget_filepreview.c:696 src/bin/e_widget_filepreview.c:697
 #: src/bin/e_widget_filepreview.c:698 src/bin/e_widget_filepreview.c:728
-#: src/bin/e_widget_filepreview.c:739 src/modules/battery/e_mod_main.c:265
+#: src/bin/e_widget_filepreview.c:739 src/modules/battery/e_mod_main.c:338
+#: src/modules/battery/e_mod_main.c:351 src/modules/battery/e_mod_main.c:354
+#: src/modules/battery/e_mod_main.c:363 src/modules/battery/e_mod_main.c:372
 #: src/modules/bluez5/e_mod_popup.c:510 src/modules/bluez5/e_mod_popup.c:511
 #: src/modules/bluez5/e_mod_util.c:261
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:429
@@ -4370,13 +4372,17 @@ msgstr ""
 msgid ""
 "Hiybrid Susspending.<ps/>You cannot perform any other system actions<ps/"
 ">until hybrid susspend is complete."
-msgstr "Sospensione ibrida.<ps/>Non è possibile eseguire ulteriori azioni di sistema<ps/>fino al completamento della sospensione ibrida."
+msgstr ""
+"Sospensione ibrida.<ps/>Non è possibile eseguire ulteriori azioni di "
+"sistema<ps/>fino al completamento della sospensione ibrida."
 
 #: src/bin/e_sys.c:1150
 msgid ""
 "Suspending then hibernating.<ps/>You cannot perform any other system "
 "actions<ps/>until suspend then hibernate is complete."
-msgstr "Sospensione e ibernazione.<ps/>Non è possibile eseguire ulteriori azioni di sistema<ps/>fino al completamento di sospensione e ibernazione."
+msgstr ""
+"Sospensione e ibernazione.<ps/>Non è possibile eseguire ulteriori azioni di "
+"sistema<ps/>fino al completamento di sospensione e ibernazione."
 
 #: src/bin/e_sys.c:1156
 msgid "EEK! This should not happen"
@@ -4955,57 +4961,70 @@ msgstr "HAL"
 msgid "Hardware"
 msgstr "Hardware"
 
-#: src/modules/battery/e_mod_main.c:163 src/modules/battery/e_mod_main.c:440
-#: src/modules/battery/e_mod_main.c:755
+#: src/modules/battery/e_mod_main.c:174 src/modules/battery/e_mod_main.c:695
+#: src/modules/battery/e_mod_main.c:1013
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:354
 #, c-format
 msgid "Battery"
 msgstr "Battery"
 
-#: src/modules/battery/e_mod_main.c:236
+#: src/modules/battery/e_mod_main.c:309
 msgid "Charging"
 msgstr "In carica"
 
-#: src/modules/battery/e_mod_main.c:240
+#: src/modules/battery/e_mod_main.c:313
 msgid "Discharging"
 msgstr "In scaricamento"
 
-#: src/modules/battery/e_mod_main.c:245
+#: src/modules/battery/e_mod_main.c:318
 msgid "Charged"
 msgstr "Caricata"
 
-#: src/modules/battery/e_mod_main.c:434
+#: src/modules/battery/e_mod_main.c:594
+#: src/modules/conf_performance/e_int_config_powermanagement.c:166
+msgid "Level"
+msgstr "Livello"
+
+#: src/modules/battery/e_mod_main.c:608
+msgid "Energy"
+msgstr "Energia"
+
+#: src/modules/battery/e_mod_main.c:622
+msgid "(Dis)charge"
+msgstr "(S)carica"
+
+#: src/modules/battery/e_mod_main.c:689
 #, c-format
 msgid "Battery: %s (%s)"
 msgstr "Batteria: %s (%s)"
 
-#: src/modules/battery/e_mod_main.c:436 src/modules/battery/e_mod_main.c:438
+#: src/modules/battery/e_mod_main.c:691 src/modules/battery/e_mod_main.c:693
 #, c-format
 msgid "Battery: %s"
 msgstr "Batteria: %s"
 
-#: src/modules/battery/e_mod_main.c:481
+#: src/modules/battery/e_mod_main.c:736
 msgid "Power Management Timing"
 msgstr "Temporizzazioni gestione alimentazione"
 
-#: src/modules/battery/e_mod_main.c:758 src/modules/battery/e_mod_main.c:790
+#: src/modules/battery/e_mod_main.c:1016 src/modules/battery/e_mod_main.c:1048
 msgid "Your battery is low!"
 msgstr "Basso livello batteria!"
 
-#: src/modules/battery/e_mod_main.c:759 src/modules/battery/e_mod_main.c:792
+#: src/modules/battery/e_mod_main.c:1017 src/modules/battery/e_mod_main.c:1050
 msgid "AC power is recommended."
 msgstr "Consigliata alimentazione AC."
 
-#: src/modules/battery/e_mod_main.c:877 src/modules/battery/e_mod_main.c:881
+#: src/modules/battery/e_mod_main.c:1135 src/modules/battery/e_mod_main.c:1139
 msgid "N/A"
 msgstr "N/D"
 
-#: src/modules/battery/e_mod_main.c:988 src/modules/battery/e_mod_main.c:990
-#: src/modules/battery/e_mod_main.c:997 src/modules/battery/e_mod_main.c:999
+#: src/modules/battery/e_mod_main.c:1246 src/modules/battery/e_mod_main.c:1248
+#: src/modules/battery/e_mod_main.c:1255 src/modules/battery/e_mod_main.c:1257
 msgid "ERROR"
 msgstr "ERRORE"
 
-#: src/modules/battery/e_mod_main.c:1102
+#: src/modules/battery/e_mod_main.c:1431
 msgid "Battery Meter"
 msgstr "Indicatore di carica"
 
@@ -6876,10 +6895,6 @@ msgstr "Min"
 #: src/modules/conf_performance/e_int_config_powermanagement.c:157
 msgid "Max"
 msgstr "Max"
-
-#: src/modules/conf_performance/e_int_config_powermanagement.c:166
-msgid "Level"
-msgstr "Livello"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:175
 msgid "e.g. Saving to disk"
