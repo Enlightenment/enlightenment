@@ -45,9 +45,9 @@ typedef struct
    const char *label;
    int enable;
    int fault;
-   int rpm;
-   int min;
-   int max;
+   long long rpm;
+   long long min;
+   long long max;
    int target;
 } Fan;
 
@@ -178,7 +178,7 @@ err:
 
 #define NOVAL -999999999
 
-static int
+static long long
 _file_int_get(const char *path)
 {
    char *str = _file_str_get(path);
@@ -195,11 +195,11 @@ _file_int_get(const char *path)
       free(_s); \
    } \
 } while (0)
-#define GETVAL_INT(_base, _name, _field) do { int _v; char _b[1024 + 512]; \
+#define GETVAL_INT(_base, _name, _field) do { long long _v; char _b[1024 + 512]; \
    snprintf(_b, sizeof(_b), "%s_%s", _base, _name); \
    if ((_v = _file_int_get(_b)) >= 0) _field = _v; \
 } while (0)
-#define GETVAL_DBL(_base, _name, _field, _div) do { int _v; char _b[1024 + 512]; \
+#define GETVAL_DBL(_base, _name, _field, _div) do { long long _v; char _b[1024 + 512]; \
    snprintf(_b, sizeof(_b), "%s_%s", _base, _name); \
    if ((_v = _file_int_get(_b)) >= 0) _field = (double)_v / (_div); \
 } while (0)
