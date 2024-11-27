@@ -9,4 +9,5 @@
 #
 Session.vim
 /build
+.cache
 *~
