@@ -317,7 +317,7 @@ _button_cb_mouse_down(void *data, Evas *e EINA_UNUSED,
    inst = data;
    ev = event_info;
 
-   if (ev->button == 1)
+   if ((ev->button == 1) && (!inst->popup))
      {
        Evas_Object *o, *o_table;
 
