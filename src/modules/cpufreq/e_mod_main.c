@@ -476,6 +476,7 @@ e_modapi_init(E_Module *m)
    e_configure_registry_item_add("advanced/cpufreq", 120, _("CPU Frequency"),
                                  NULL, "preferences-cpu-speed",
                                  e_int_config_cpufreq_module);
+   cpf_poll_time_set(cpufreq_config->check_interval);
    return m;
 }
 
