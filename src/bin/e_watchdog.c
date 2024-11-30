@@ -50,7 +50,7 @@ _cb_watchdog_thread_pingpong(void *data EINA_UNUSED, Ecore_Thread *thread)
                   else
                     {
                        printf("WD: Exiting E allowing it to be restarted to un-block\n");
-                       _exit(121);XS
+                       _exit(121);
                     }
                }
              // wait another 10 sec before pinging
