@@ -49,8 +49,8 @@ _cb_watchdog_thread_pingpong(void *data EINA_UNUSED, Ecore_Thread *thread)
                   // otherwise just restart so user can march on
                   else
                     {
-                       printf("WD: Exikting E allowing it to be restarted to un-block\n");
-                       _exit(121);
+                       printf("WD: Exiting E allowing it to be restarted to un-block\n");
+                       _exit(121);XS
                     }
                }
              // wait another 10 sec before pinging
