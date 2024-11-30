@@ -1,15 +1,13 @@
+#include "Elementary.h"
 #include "e.h"
 #include "e_mod_main.h"
 
 struct _E_Config_Dialog_Data
 {
-   int poll_interval;
-   int restore_governor;
-   int auto_powersave;
-   char *powersave_governor;
-   char *governor;
-   int pstate_min;
-   int pstate_max;
+  E_Config_Dialog *cfd;
+  double check_interval;
+  int    power_lo;
+  int    power_hi;
 };
 
 /* Protos */
@@ -43,15 +41,9 @@ static void
 _fill_data(E_Config_Dialog_Data *cfdata)
 {
    if (!cpufreq_config) return;
-   cfdata->poll_interval = cpufreq_config->poll_interval;
-   cfdata->restore_governor = cpufreq_config->restore_governor;
-   cfdata->auto_powersave = cpufreq_config->auto_powersave;
-   cfdata->pstate_min = cpufreq_config->pstate_min - 1;
-   cfdata->pstate_max = cpufreq_config->pstate_max - 1;
-   if (cpufreq_config->powersave_governor)
-     cfdata->powersave_governor = strdup(cpufreq_config->powersave_governor);
-   if (cpufreq_config->governor)
-     cfdata->governor = strdup(cpufreq_config->governor);
+   cfdata->check_interval   = cpufreq_config->check_interval;
+   cfdata->power_hi         = cpufreq_config->power_hi;
+   cfdata->power_lo         = cpufreq_config->power_lo;
 }
 
 static void *
@@ -72,81 +64,190 @@ _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
    E_FREE(cfdata);
 }
 
-static Evas_Object *
-_basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
+static char *
+_cb_unit_func(double v)
 {
-   Evas_Object *o, *ob, *of;
-   E_Radio_Group *rg;
+  if (v < (1.0 / 4.0)) return strdup(_("Powersave"));
+  else if (v < (2.0 / 4.0)) return strdup(_("Balanced Low"));
+  else if (v < (3.0 / 4.0)) return strdup(_("Balanced Hi"));
+  else return strdup(_("Performance"));
+}
 
-   o = e_widget_list_add(evas, 0, 0);
-   ob = e_widget_check_add(evas, _("Restore CPU Power Policy"), &cfdata->restore_governor);
-   e_widget_list_object_append(o, ob, 1, 0, 0.5);
+static void
+_handle_slider_step(Evas_Object *o, int *val)
+{
+  double v = elm_slider_value_get(o);
 
-   ob = e_widget_check_add(evas, _("Automatic powersaving"), &cfdata->auto_powersave);
-   e_widget_list_object_append(o, ob, 1, 0, 0.5);
+  if (v < (1.0 / 4.0))
+    {
+      elm_slider_value_set(o, (0.0 / 3.0));
+      *val = 0;
+    }
+  else if (v < (2.0 / 4.0))
+    {
+      elm_slider_value_set(o, (1.0 / 3.0));
+      *val = 33;
+    }
+  else if (v < (3.0 / 4.0))
+    {
+      elm_slider_value_set(o, (2.0 / 3.0));
+      *val = 67;
+    }
+  else
+    {
+      elm_slider_value_set(o, (3.0 / 3.0));
+      *val = 100;
+    }
+}
 
-   of = e_widget_framelist_add(evas, _("Update poll interval"), 0);
-   rg = e_widget_radio_group_new(&cfdata->poll_interval);
-   ob = e_widget_radio_add(evas, _("Fast (4 ticks)"), 4, rg);
-   e_widget_framelist_object_append(of, ob);
-   ob = e_widget_radio_add(evas, _("Medium (8 ticks)"), 8, rg);
-   e_widget_framelist_object_append(of, ob);
-   ob = e_widget_radio_add(evas, _("Normal (32 ticks)"), 32, rg);
-   e_widget_framelist_object_append(of, ob);
-   ob = e_widget_radio_add(evas, _("Slow (64 ticks)"), 64, rg);
-   e_widget_framelist_object_append(of, ob);
-   ob = e_widget_radio_add(evas, _("Very Slow (256 ticks)"), 256, rg);
-   e_widget_framelist_object_append(of, ob);
-   e_widget_list_object_append(o, of, 1, 0, 0.5);
+static void
+_cb_power_lo_slider(void *data, Evas_Object *o, void *info EINA_UNUSED)
+{
+  E_Config_Dialog_Data *cfdata = data;
+  _handle_slider_step(o, &cfdata->power_lo);
+  e_config_dialog_changed_set(cfdata->cfd, EINA_TRUE);
+}
 
-   if ((cpufreq_config->status) && (cpufreq_config->status->pstate))
-     {
-        ob = e_widget_label_add(evas, _("Minimum Power State"));
-        e_widget_list_object_append(o, ob, 1, 0, 0.5);
-        ob = e_widget_slider_add(evas, 1, 0, _("%3.0f"), 0, 100,
-                                 1, 0, NULL, &cfdata->pstate_min, 100);
-        e_widget_list_object_append(o, ob, 1, 0, 0.5);
+static void
+_cb_power_hi_slider(void *data, Evas_Object *o, void *info EINA_UNUSED)
+{
+  E_Config_Dialog_Data *cfdata = data;
+  _handle_slider_step(o, &cfdata->power_hi);
+  e_config_dialog_changed_set(cfdata->cfd, EINA_TRUE);
+}
 
-        ob = e_widget_label_add(evas, _("Maximum Power State"));
-        e_widget_list_object_append(o, ob, 1, 0, 0.5);
-        ob = e_widget_slider_add(evas, 1, 0, _("%3.0f"), 2, 100,
-                                 1, 0, NULL, &cfdata->pstate_max, 100);
-        e_widget_list_object_append(o, ob, 1, 0, 0.5);
-     }
-   else
-     {
-        // XXX: list governors
-     }
-   return o;
+static void
+_cb_interval_slider(void *data, Evas_Object *o, void *info EINA_UNUSED)
+{
+  E_Config_Dialog_Data *cfdata = data;
+  cfdata->check_interval       = elm_slider_value_get(o);
+  e_config_dialog_changed_set(cfdata->cfd, EINA_TRUE);
+}
+
+static Evas_Object *
+_basic_create_widgets(E_Config_Dialog *cfd, Evas *evas EINA_UNUSED,
+                      E_Config_Dialog_Data *cfdata)
+{
+  Evas_Object *win = cfd->dia->win;
+  Evas_Object *o, *o_table;
+  int          lv;
+
+  o_table = o = elm_table_add(e_comp->elm);
+
+  o = elm_icon_add(win);
+  elm_icon_standard_set(o, "power-plug");
+  evas_object_size_hint_min_set(o, ELM_SCALE_SIZE(20), ELM_SCALE_SIZE(20));
+  elm_table_pack(o_table, o, 0, 0, 1, 1);
+  evas_object_show(o);
+
+  o = elm_label_add(win);
+  elm_object_text_set(o, _("High Power Level"));
+  evas_object_size_hint_align_set(o, 0.0, 0.5);
+  evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+  elm_table_pack(o_table, o, 1, 0, 9, 1);
+  evas_object_show(o);
+
+  o = elm_slider_add(win);
+  elm_slider_horizontal_set(o, EINA_TRUE);
+  elm_slider_min_max_set(o, 0, 1);
+  elm_slider_step_set(o, (1.0 / 4.0));
+  elm_slider_indicator_show_set(o, EINA_FALSE);
+  elm_slider_units_format_function_set(o, _cb_unit_func, NULL);
+  evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+  evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+  elm_table_pack(o_table, o, 0, 1, 10, 1);
+  evas_object_show(o);
+
+  lv = cfdata->power_lo;
+  if (lv < 33) elm_slider_value_set(o, (0.0 / 3.0));
+  else if (lv < 67) elm_slider_value_set(o, (1.0 / 3.0));
+  else if (lv < 100) elm_slider_value_set(o, (2.0 / 3.0));
+  else elm_slider_value_set(o, (3.0 / 3.0));
+
+  evas_object_smart_callback_add(o, "changed", _cb_power_lo_slider, cfdata);
+
+  o = elm_icon_add(win);
+  elm_icon_standard_set(o, "battery");
+  evas_object_size_hint_min_set(o, ELM_SCALE_SIZE(20), ELM_SCALE_SIZE(20));
+  elm_table_pack(o_table, o, 0, 2, 1, 1);
+  evas_object_show(o);
+
+  o = elm_label_add(win);
+  elm_object_text_set(o, _("Low Power Level"));
+  evas_object_size_hint_align_set(o, 0.0, 0.5);
+  evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+  elm_table_pack(o_table, o, 1, 2, 9, 1);
+  evas_object_show(o);
+
+  o = elm_slider_add(win);
+  elm_slider_horizontal_set(o, EINA_TRUE);
+  elm_slider_min_max_set(o, 0, 1);
+  elm_slider_step_set(o, (1.0 / 4.0));
+  elm_slider_indicator_show_set(o, EINA_FALSE);
+  elm_slider_units_format_function_set(o, _cb_unit_func, NULL);
+  evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+  evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+  elm_table_pack(o_table, o, 0, 3, 10, 1);
+  evas_object_show(o);
+
+  lv = cfdata->power_hi;
+  if (lv < 33) elm_slider_value_set(o, (0.0 / 3.0));
+  else if (lv < 67) elm_slider_value_set(o, (1.0 / 3.0));
+  else if (lv < 100) elm_slider_value_set(o, (2.0 / 3.0));
+  else elm_slider_value_set(o, (3.0 / 3.0));
+
+  evas_object_smart_callback_add(o, "changed", _cb_power_hi_slider, cfdata);
+
+  o = elm_icon_add(win);
+  elm_icon_standard_set(o, "clock");
+  evas_object_size_hint_min_set(o, ELM_SCALE_SIZE(20), ELM_SCALE_SIZE(20));
+  elm_table_pack(o_table, o, 0, 4, 1, 1);
+  evas_object_show(o);
+
+  o = elm_label_add(win);
+  elm_object_text_set(o, _("Update Interval"));
+  evas_object_size_hint_align_set(o, 0.0, 0.5);
+  evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+  elm_table_pack(o_table, o, 1, 4, 9, 1);
+  evas_object_show(o);
+
+  o = elm_slider_add(win);
+  elm_slider_horizontal_set(o, EINA_TRUE);
+  elm_slider_min_max_set(o, 0.1, 1.0);
+  elm_slider_step_set(o, 0.1);
+  elm_slider_indicator_show_set(o, EINA_FALSE);
+  elm_slider_unit_format_set(o, "%1.1f sec");
+  evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+  evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+  elm_table_pack(o_table, o, 0, 5, 10, 1);
+  evas_object_show(o);
+
+  elm_slider_value_set(o, cfdata->check_interval);
+
+  evas_object_smart_callback_add(o, "changed", _cb_interval_slider, cfdata);
+  cfdata->cfd = cfd;
+
+  return o_table;
 }
 
 static int
 _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
-   if (!cpufreq_config) return 0;
-   cpufreq_config->poll_interval = cfdata->poll_interval;
-   cpufreq_config->restore_governor = cfdata->restore_governor;
-   cpufreq_config->auto_powersave = cfdata->auto_powersave;
-   cpufreq_config->pstate_min = cfdata->pstate_min + 1;
-   cpufreq_config->pstate_max = cfdata->pstate_max + 1;
-   eina_stringshare_replace(&cpufreq_config->powersave_governor, cfdata->powersave_governor);
-   eina_stringshare_replace(&cpufreq_config->governor, cfdata->governor);
-   _cpufreq_poll_interval_update();
-   if (cpufreq_config->governor)
-     _cpufreq_set_governor(cpufreq_config->governor);
-   if (cpufreq_config->pstate_max < cpufreq_config->pstate_min)
-     cpufreq_config->pstate_max = cpufreq_config->pstate_min;
-   if (cpufreq_config->pstate_min > cpufreq_config->pstate_max)
-     cpufreq_config->pstate_min = cpufreq_config->pstate_max;
-   _cpufreq_set_pstate(cpufreq_config->pstate_min - 1,
-                       cpufreq_config->pstate_max - 1);
-   e_config_save_queue();
-   return 1;
+  if (!cpufreq_config) return 0;
+  cpufreq_config->check_interval = cfdata->check_interval;
+  cpufreq_config->power_hi       = cfdata->power_hi;
+  cpufreq_config->power_lo       = cfdata->power_lo;
+  cpf_poll_time_set(cpufreq_config->check_interval);
+  e_config_save_queue();
+  return 1;
 }
 
 static int
 _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata EINA_UNUSED)
 {
-   Eina_Bool ret = EINA_TRUE;
-   return ret;
+  if ((fabs(cfdata->check_interval - cpufreq_config->check_interval) > 0.01)
+      || (cfdata->power_lo != cpufreq_config->power_lo)
+      || (cfdata->power_hi != cpufreq_config->power_hi))
+    return 1;
+  return 0;
 }

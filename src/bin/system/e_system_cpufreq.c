@@ -26,24 +26,6 @@ sys_cpu_setall(const char *control, const char *value)
 }
 
 static int
-sys_cpufreq_set(const char *control, const char *value)
-{
-   char buf[4096];
-   FILE *f;
-
-   snprintf(buf, sizeof(buf), "/sys/devices/system/cpu/cpufreq/%s", control);
-   f = fopen(buf, "w");
-   if (!f)
-     {
-        if (sys_cpu_setall(control, value) > 0) return 1;
-        else return 0;
-     }
-   fprintf(f, "%s", value);
-   fclose(f);
-   return 1;
-}
-
-static int
 sys_cpu_pstate(int min, int max, int turbo)
 {
    FILE *f;
@@ -65,121 +47,262 @@ sys_cpu_pstate(int min, int max, int turbo)
 
    return 1;
 }
+
+static int
+map_strings(const char *file, const char **strs, int *vals)
+{
+  char  buf[1024], *p;
+  FILE *f;
+  int   i;
+
+  f = fopen(file, "r");
+  if (!f) return -1;
+  if (!fgets(buf, sizeof(buf), f)) goto err;
+  p = strchr(buf, '\n');
+  if (p) *p = '\0';
+  for (i = 0; strs[i]; i++)
+    {
+      if (!strcmp(strs[i], buf))
+        {
+          fclose(f);
+          return vals[i];
+        }
+    }
+err:
+  fclose(f);
+  return -1;
+}
+
+static int
+get_int(const char *file)
+{
+  char  buf[1024], *p;
+  FILE *f;
+  int   v = -1;
+
+  f = fopen(file, "r");
+  if (!f) return -1;
+  if (!fgets(buf, sizeof(buf), f)) goto err;
+  p = strchr(buf, '\n');
+  if (p) *p = '\0';
+  v = atoi(buf);
+err:
+  fclose(f);
+  return v;
+}
+
+static char *
+find_preferred(char **instr, const char **prefstr, const char *defstr)
+{
+  int i, j;
+
+  for (j = 0; prefstr[j]; j++)
+    { // check pref list in order
+      for (i = 0; instr[i]; i++)
+        { // if that is there - then return it
+          if (!strcmp(instr[i], prefstr[j])) return (char *)prefstr[j];
+        }
+    }
+  // not found - default string
+  return (char *)defstr;
+}
+
+static int
+sys_cpu_pwr_energy_set(int v)
+{
+  char buf[1024];
+  FILE *f;
+  char **strs, *p;
+  char *wrstr[4] = { NULL };
+  const char *lv0[]
+    = { "power", "balance_power", "balance_performance", "performance", NULL };
+  const char *lv1[]
+    = { "balance_power", "power", "balance_performance", "performance", NULL };
+  const char *lv2[]
+    = { "balance_performance", "balance_power", "performance", "power", NULL };
+  const char *lv3[]
+    = { "performance", "balance_performance", "balance_power", "power", NULL };
+
+  // get avail prefs
+  f = fopen("/sys/devices/system/cpu/cpu0/cpufreq/"
+            "energy_performance_available_preferences",
+            "r");
+  if (!f) return 0;
+  if (!fgets(buf, sizeof(buf), f))
+    {
+      fclose(f);
+      return 0;
+    }
+  fclose(f);
+  p = strchr(buf, '\n');
+  if (p) *p = '\0';
+  strs = eina_str_split(buf, " ", 0);
+  if ((!strs) || (!strs[0]))
+    {
+      free(strs);
+      return 0;
+    }
+
+  wrstr[0] = find_preferred(strs, lv0, "default");
+  wrstr[1] = find_preferred(strs, lv1, "default");
+  wrstr[2] = find_preferred(strs, lv2, "default");
+  wrstr[3] = find_preferred(strs, lv3, "default");
+
+  sys_cpu_setall("energy_performance_preference", wrstr[v]);
+  // if we're at max - allow boost
+  if (v == 3) sys_cpu_setall("boost", "1");
+  else sys_cpu_setall("boost", "0");
+
+  free(strs[0]);
+  free(strs);
+  return 1;
+}
+
+static int
+sys_cpu_pwr_pstate_set(int v)
+{
+  FILE *f;
+
+  f = fopen("/sys/devices/system/cpu/intel_pstate/max_perf_pct", "r");
+  if (!f) return 0;
+  fclose(f);
+  if (v == 0) sys_cpu_pstate(0, 0, 0);
+  else if (v == 1) sys_cpu_pstate(0, 50, 0);
+  else if (v == 2) sys_cpu_pstate(0, 75, 0);
+  else if (v == 3) sys_cpu_pstate(0, 100, 1);
+  return 1;
+}
+
+static int
+sys_cpu_pwr_governor_set(int v)
+{
+  char buf[1024];
+  FILE *f;
+  char **strs, *p;
+  char *wrstr[4] = { NULL };
+  const char *lv0[]    = { "powersave",   "conservative", "ondemand",
+                           "interactive", "performance",  NULL };
+  const char *lv1[]    = { "conservative", "ondemand",    "interactive",
+                           "powersave",    "performance", NULL };
+  const char *lv2[]    = { "interactive",   "ondemand",  "conservative",
+                           "performance", "powersave", NULL };
+  const char *lv3[]    = { "performance",   "interactive",  "ondemand",
+                           "conservative", "powersave", NULL };
+
+  // get avail prefs
+  f = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors",
+            "r");
+  if (!f) return 0;
+  if (!fgets(buf, sizeof(buf), f))
+    {
+      fclose(f);
+      return 0;
+    }
+  fclose(f);
+  p = strchr(buf, '\n');
+  if (p) *p = '\0';
+  strs = eina_str_split(buf, " ", 0);
+  if ((!strs) || (!strs[0]))
+    {
+      free(strs);
+      return 0;
+    }
+  wrstr[0] = find_preferred(strs, lv0, "performance");
+  wrstr[1] = find_preferred(strs, lv1, "performance");
+  wrstr[2] = find_preferred(strs, lv2, "performance");
+  wrstr[3] = find_preferred(strs, lv3, "performance");
+
+  sys_cpu_setall("scaling_governor", wrstr[v]);
+
+  free(strs[0]);
+  free(strs);
+  return 1;
+}
 #endif
 
 static void
-_cb_cpufreq_freq(void *data EINA_UNUSED, const char *params)
+_cb_cpufreq_pwr_set(void *data EINA_UNUSED, const char *params)
 {
-   // FREQ
-   int f = atoi(params);
-   if (f > 0)
-     {
 #if defined __OpenBSD__
-        int mib[] = {CTL_HW, HW_SETPERF};
-        size_t len = sizeof(f);
-
-        if (sysctl(mib, 2, NULL, 0, &f, len) == 0)
-          {
-             e_system_inout_command_send("cpufreq-freq", "ok");
-             return;
-          }
+  e_system_inout_command_send("cpufreq-pwr-set", "err");
 #elif defined __FreeBSD__
-        if (sysctlbyname("dev.cpu.0.freq", NULL, NULL, &f, sizeof(f)) == 0)
-          {
-             e_system_inout_command_send("cpufreq-freq", "ok");
-             return;
-          }
+  e_system_inout_command_send("cpufreq-pwr-set", "err");
 #else
-        if (sys_cpu_setall("scaling_setspeed", params) > 0)
-          {
-             e_system_inout_command_send("cpufreq-freq", "ok");
-             return;
-          }
+  int v = atoi(params); // 0->100
+
+  if (v < 0) v = 0;
+  else if (v > 100) v = 100;
+
+  // translate 0 -> 3
+  if (v < 33) v = 0;
+  else if (v < 67) v = 1;
+  else if (v < 100) v = 2;
+  else v = 3;
+
+  if (!sys_cpu_pwr_energy_set(v))
+    {
+      if (!sys_cpu_pwr_pstate_set(v))
+        {
+          if (!sys_cpu_pwr_governor_set(v)) goto err;
+        }
+    }
+  e_system_inout_command_send("cpufreq-pwr-set", "ok");
+  return;
+err:
+  e_system_inout_command_send("cpufreq-pwr-set", "err");
 #endif
-     }
-   e_system_inout_command_send("cpufreq-freq", "err");
 }
 
 static void
-_cb_cpufreq_governor(void *data EINA_UNUSED, const char *params EINA_UNUSED)
+_cb_cpufreq_pwr_get(void *data EINA_UNUSED, const char *params EINA_UNUSED)
 {
-   // NAME
 #if defined __OpenBSD__
-   e_system_inout_command_send("cpufreq-governor", "err");
+  e_system_inout_command_send("cpufreq-pwr-get", "err");
 #elif defined __FreeBSD__
-   e_system_inout_command_send("cpufreq-governor", "err");
+  e_system_inout_command_send("cpufreq-pwr-get", "err");
 #else
-   if (sys_cpu_setall("scaling_governor", params) <= 0)
-     {
-        ERR("Unable to open governor interface for writing\n");
-        e_system_inout_command_send("cpufreq-governor", "err");
-        return;
-     }
-   if (!strcmp(params, "ondemand"))
-     sys_cpufreq_set("ondemand/ignore_nice_load", "0");
-   else if (!strcmp(params, "conservative"))
-     sys_cpufreq_set("conservative/ignore_nice_load", "0");
-   e_system_inout_command_send("cpufreq-governor", "ok");
-#endif
-}
+  int v;
+  const char *lv0[]
+    = { "default",     "power", "balance_power", "balance_performance",
+        "performance", NULL };
+  int lv0vals[] = { 0, 0, 1, 2, 3 };
+  const char *lv1[]
+    = { "schedutil",     "userspace", "powersave", "conservative",
+        "ondemand", "interactive", "performance", NULL };
+  int lv1vals[] = { 0, 0, 0, 1, 1, 2, 3 };
 
-static void
-_cb_cpufreq_pstate(void *data EINA_UNUSED, const char *params EINA_UNUSED)
-{
-   // MIN_PERC MAX_PERC TURBO
-#if defined __OpenBSD__
-   e_system_inout_command_send("cpufreq-pstate", "err");
-#elif defined __FreeBSD__
-   e_system_inout_command_send("cpufreq-pstate", "err");
-#else
-   int min = 0, max = 100, turbo = 1;
-   FILE *f;
+  v = map_strings(
+    "/sys/devices/system/cpu/cpu0/cpufreq/energy_performance_preference", lv0,
+    lv0vals);
+  if (v < 0)
+    {
+      v = get_int("/sys/devices/system/cpu/intel_pstate/max_perf_pct");
+      if (v < 0)
+        {
+          v = map_strings("/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor",
+                          lv1, lv1vals);
+          if (v < 0)
+            {
+              e_system_inout_command_send("cpufreq-pwr-get", "err");
+              return;
+            }
+        }
+    }
 
-   f = fopen("/sys/devices/system/cpu/intel_pstate/min_perf_pct", "r");
-   if (!f) return;
-   fclose(f);
-   if (sscanf(params, "%i %i %i", &min, &max, &turbo) == 3)
-     {
-        if (min < 0) min = 0;
-        else if (min > 100) min = 100;
-        if (max < 0) max = 0;
-        else if (max > 100) max = 100;
-        if (turbo < 0) turbo = 0;
-        else if (turbo > 1) turbo = 1;
-        if (sys_cpu_pstate(min, max, turbo) > 0)
-          {
-             e_system_inout_command_send("cpufreq-pstate", "ok");
-             return;
-          }
-     }
-   e_system_inout_command_send("cpufreq-pstate", "err");
+  // map 0->3 to 0->100
+  if (v == 0) v = 0;
+  else if (v == 1) v = 33;
+  else if (v == 2) v = 67;
+  else if (v == 3) v = 100;
+  e_system_inout_command_send("cpufreq-pwr-get", "%i", v);
 #endif
 }
 
 void
 e_system_cpufreq_init(void)
 {
-   e_system_inout_command_register("cpufreq-freq",     _cb_cpufreq_freq, NULL);
-#if defined __FreeBSD__ || defined __OpenBSD__
-   (void) _cb_cpufreq_governor;
-   (void) _cb_cpufreq_pstate;
-#else
-   e_system_inout_command_register("cpufreq-governor", _cb_cpufreq_governor, NULL);
-   e_system_inout_command_register("cpufreq-pstate",   _cb_cpufreq_pstate, NULL);
-#endif
-//
-// "portable" cpufreq info and control api
-//
-// 01234567890123456789012 <- max 24 char bug (incl 0)
-//
-// -- GET INFO/STATS - PERCENNT1K (PERCENT / 0.1) IN 0-1000
-// cpufreq-core-get-num <> -> cpufreq-core-get-num <NUM>
-// cpufreq-core-get-stat <N> -> cpufreq-core-get-stat <N VER MIN_MHZ MAX_MHZ CUR_MHZ CAN_TURBO USE_USER USE_NICE USE_SYSTEM USE_IOWAIT USE_IRQ USE_SOFTIRQ USE_STEAL USE_GUEST USER_GUEST_NICE>
-//
-// -- GENERIC PERF SET API 0->1000 PERCENT1K (PERCENT / 0.1)
-// cpufreq-get-perf <> -> cpufreq-get-perf <PERF>
-// cpufreq-set-perf <PERF> -> cpufreq-set-perf <PERF | err>
-//
+  e_system_inout_command_register("cpufreq-pwr-set", _cb_cpufreq_pwr_set, NULL);
+  e_system_inout_command_register("cpufreq-pwr-get", _cb_cpufreq_pwr_get, NULL);
 }
 
 void
