@@ -403,8 +403,8 @@ _cpufreq_event_cb_powersave(void *data EINA_UNUSED, int type EINA_UNUSED, void *
         printf("PWSV: none\n");
         EINA_FALLTHROUGH;
       case E_POWERSAVE_MODE_LOW:
-        printf("PWSV: low=%i\n", cpufreq_config->power_lo);
-        cpf_perf_level_set(cpufreq_config->power_lo);
+        printf("PWSV: low=%i\n", cpufreq_config->power_hi);
+        cpf_perf_level_set(cpufreq_config->power_hi);
         break;
 
       case E_POWERSAVE_MODE_MEDIUM:
@@ -414,8 +414,8 @@ _cpufreq_event_cb_powersave(void *data EINA_UNUSED, int type EINA_UNUSED, void *
         printf("PWSV: hi\n");
         EINA_FALLTHROUGH;
       case E_POWERSAVE_MODE_EXTREME:
-        printf("PWSV: extreme=%i\n", cpufreq_config->power_hi);
-        cpf_perf_level_set(cpufreq_config->power_hi);
+        printf("PWSV: extreme=%i\n", cpufreq_config->power_lo);
+        cpf_perf_level_set(cpufreq_config->power_lo);
         break;
 
       case E_POWERSAVE_MODE_FREEZE:
