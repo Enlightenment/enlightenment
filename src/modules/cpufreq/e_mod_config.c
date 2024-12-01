@@ -148,6 +148,7 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas EINA_UNUSED,
   evas_object_show(o);
 
   o = elm_slider_add(win);
+  elm_slider_span_size_set(o, ELM_SCALE_SIZE(160));
   elm_slider_horizontal_set(o, EINA_TRUE);
   elm_slider_min_max_set(o, 0, 1);
   elm_slider_step_set(o, (1.0 / 4.0));
@@ -180,6 +181,7 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas EINA_UNUSED,
   evas_object_show(o);
 
   o = elm_slider_add(win);
+  elm_slider_span_size_set(o, ELM_SCALE_SIZE(160));
   elm_slider_horizontal_set(o, EINA_TRUE);
   elm_slider_min_max_set(o, 0, 1);
   elm_slider_step_set(o, (1.0 / 4.0));
@@ -212,6 +214,7 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas EINA_UNUSED,
   evas_object_show(o);
 
   o = elm_slider_add(win);
+  elm_slider_span_size_set(o, ELM_SCALE_SIZE(160));
   elm_slider_horizontal_set(o, EINA_TRUE);
   elm_slider_min_max_set(o, 0.1, 1.0);
   elm_slider_step_set(o, 0.1);
