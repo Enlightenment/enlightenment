@@ -180,14 +180,14 @@ sys_cpu_pwr_governor_set(int v)
   FILE *f;
   char **strs, *p;
   char *wrstr[4] = { NULL };
-  const char *lv0[]    = { "powersave",   "conservative", "ondemand",
-                           "interactive", "performance",  NULL };
-  const char *lv1[]    = { "conservative", "ondemand",    "interactive",
-                           "powersave",    "performance", NULL };
-  const char *lv2[]    = { "interactive",   "ondemand",  "conservative",
-                           "performance", "powersave", NULL };
-  const char *lv3[]    = { "performance",   "interactive",  "ondemand",
-                           "conservative", "powersave", NULL };
+  const char *lv0[]    = { "powersave",    "conservative", "ondemand",
+                           "interactive",  "schedutil",    "performance", NULL };
+  const char *lv1[]    = { "conservative", "ondemand",     "interactive",
+                           "schedutil",    "powersave",    "performance", NULL };
+  const char *lv2[]    = { "interactive",  "ondemand",     "conservative",
+                           "schedutil",    "performance",  "powersave", NULL };
+  const char *lv3[]    = { "performance",  "interactive",  "ondemand",
+                           "conservative", "schedutil",    "powersave", NULL };
 
   // get avail prefs
   f = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors",
@@ -263,13 +263,13 @@ _cb_cpufreq_pwr_get(void *data EINA_UNUSED, const char *params EINA_UNUSED)
 #else
   int v;
   const char *lv0[]
-    = { "default",     "power", "balance_power", "balance_performance",
+    = { "default", "power", "balance_power", "balance_performance",
         "performance", NULL };
   int lv0vals[] = { 0, 0, 1, 2, 3 };
   const char *lv1[]
-    = { "schedutil",     "userspace", "powersave", "conservative",
+    = { "userspace", "powersave", "schedutil", "conservative",
         "ondemand", "interactive", "performance", NULL };
-  int lv1vals[] = { 0, 0, 0, 1, 1, 2, 3 };
+  int lv1vals[] = { 0, 0, 1, 1, 1, 2, 3 };
 
   v = map_strings(
     "/sys/devices/system/cpu/cpu0/cpufreq/energy_performance_preference", lv0,
