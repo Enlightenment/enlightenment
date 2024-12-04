@@ -392,12 +392,10 @@ _button_cb_mouse_down(void *data, Evas *e EINA_UNUSED,
      }
 }
 
-static Eina_Bool
-_cpufreq_event_cb_powersave(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+static void
+_handle_powersave_mode(E_Powersave_Mode mode)
 {
-   E_Event_Powersave_Update *ev = event;
-
-   switch (ev->mode)
+   switch (mode)
      {
       case E_POWERSAVE_MODE_NONE:
         printf("PWSV: none\n");
@@ -426,7 +424,14 @@ _cpufreq_event_cb_powersave(void *data EINA_UNUSED, int type EINA_UNUSED, void *
       default:
         break;
      }
+}
 
+static Eina_Bool
+_cpufreq_event_cb_powersave(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   E_Event_Powersave_Update *ev = event;
+
+   _handle_powersave_mode(ev->mode);
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -477,6 +482,8 @@ e_modapi_init(E_Module *m)
                                  NULL, "preferences-cpu-speed",
                                  e_int_config_cpufreq_module);
    cpf_poll_time_set(cpufreq_config->check_interval);
+
+   _handle_powersave_mode(e_powersave_mode_get());
    return m;
 }
 
