@@ -48,8 +48,9 @@ _cb_cpf_render(void *data)
 {
   const Cpf_Stats *stats = cpf_perf_stats_get();
   Instance        *inst  = data;
-  int              i, h, sc;
+  int              i, h, sc, v;
   void            *pix;
+  char             buf[128];
 
   if (!stats) return;
   for (i = 0; i < stats->rend_num; i++)
@@ -106,6 +107,21 @@ _cb_cpf_render(void *data)
                                                 r->real_h);
             }
         }
+    }
+  if (stats->core_num > 0)
+    {
+      v = 0;
+      for (i = 0; i < stats->core_num; i++) v += stats->core_perf[i].usage;
+      v = (v + ((10 * stats->core_num) / 2)) / (stats->core_num * 10); // 0->100 avg
+      snprintf(buf, sizeof(buf), "%i%%", v);
+      edje_object_part_text_set(inst->o_cpu, "e.text.cpu.usage", buf);
+
+      v = 0;
+      for (i = 0; i < stats->core_num; i++) v += stats->core_perf[i].freq;
+      v = (v + (stats->core_num / 2)) / stats->core_num; // mhz avg
+      if (v < 1000) snprintf(buf, sizeof(buf), "%i", v); // mhz
+      else snprintf(buf, sizeof(buf), "%1.1f", (double)v / 1000.0); // ghz
+      edje_object_part_text_set(inst->o_cpu, "e.text.cpu.freq", buf);
     }
 }
 
