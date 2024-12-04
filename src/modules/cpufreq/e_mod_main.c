@@ -1,6 +1,4 @@
 #include "e_mod_main.h"
-#include "Elementary.h"
-#include "Evas.h"
 #include "e.h"
 
 /* gadcon requirements */
@@ -28,6 +26,7 @@ struct _Instance
   E_Gadcon_Client *gcc;
   E_Gadcon_Popup  *popup;
   Evas_Object     *o_cpu;
+  Evas_Object     *o_popup_lay;
   Evas_Object     *o_popup_disp;
   Evas_Object     *o_gadimg;
   Ecore_Timer     *update_timer;
@@ -48,9 +47,10 @@ _cb_cpf_render(void *data)
 {
   const Cpf_Stats *stats = cpf_perf_stats_get();
   Instance        *inst  = data;
-  int              i, h, sc, v;
+  int              i, h, sc, v, min, avg, max;
   void            *pix;
   char             buf[128];
+  Evas_Object     *o;
 
   if (!stats) return;
   for (i = 0; i < stats->rend_num; i++)
@@ -60,9 +60,8 @@ _cb_cpf_render(void *data)
       if (!r) continue;
       if ((r->w == inst->popup_w) && (r->h == 128)) // what we asked for...
         {
-          Evas_Object *o_img = inst->o_popup_disp;
-
-          if (o_img)
+          o = inst->o_popup_disp;
+          if (o)
             {
               sc = ELM_SCALE_SIZE(1);
               if (sc < 1) sc = 1;
@@ -75,35 +74,35 @@ _cb_cpf_render(void *data)
               else if (stats->core_num <= 32) h = r->real_h *  2;
               else h = r->real_h;
               h *= sc;
-              evas_object_image_smooth_scale_set(o_img, EINA_FALSE);
-              evas_object_image_size_set(o_img, r->real_w, r->real_h);
-              pix = evas_object_image_data_get(o_img, EINA_TRUE);
+              evas_object_image_smooth_scale_set(o, EINA_FALSE);
+              evas_object_image_size_set(o, r->real_w, r->real_h);
+              pix = evas_object_image_data_get(o, EINA_TRUE);
               if (pix)
                 {
                   memcpy(pix, r->pixels, r->real_w * r->real_h * sizeof(int));
-                  evas_object_image_data_set(o_img, pix);
+                  evas_object_image_data_set(o, pix);
                 }
-              evas_object_image_data_update_add(o_img, 0, 0, r->real_w,
+              evas_object_image_data_update_add(o, 0, 0, r->real_w,
                                                 r->real_h);
-              evas_object_size_hint_min_set(o_img, r->real_w, h);
+              evas_object_size_hint_min_set(o, r->real_w, h);
             }
         }
       else if ((r->w == inst->gadimg_w)
                && (r->h == inst->gadimg_h)) // what we asked for...
         {
-          Evas_Object *o_img = inst->o_gadimg;
+          o = inst->o_gadimg;
 
-          if (o_img)
+          if (o)
             {
-              evas_object_image_smooth_scale_set(o_img, EINA_TRUE);
-              evas_object_image_size_set(o_img, r->real_w, r->real_h);
-              pix = evas_object_image_data_get(o_img, EINA_TRUE);
+              evas_object_image_smooth_scale_set(o, EINA_TRUE);
+              evas_object_image_size_set(o, r->real_w, r->real_h);
+              pix = evas_object_image_data_get(o, EINA_TRUE);
               if (pix)
                 {
                   memcpy(pix, r->pixels, r->real_w * r->real_h * sizeof(int));
-                  evas_object_image_data_set(o_img, pix);
+                  evas_object_image_data_set(o, pix);
                 }
-              evas_object_image_data_update_add(o_img, 0, 0, r->real_w,
+              evas_object_image_data_update_add(o, 0, 0, r->real_w,
                                                 r->real_h);
             }
         }
@@ -112,7 +111,7 @@ _cb_cpf_render(void *data)
     {
       v = 0;
       for (i = 0; i < stats->core_num; i++) v += stats->core_perf[i].usage;
-      v = (v + ((10 * stats->core_num) / 2)) / (stats->core_num * 10); // 0->100 avg
+      v = (v + (5 * stats->core_num)) / (stats->core_num * 10); // 0->100 avg
       snprintf(buf, sizeof(buf), "%i%%", v);
       edje_object_part_text_set(inst->o_cpu, "e.text.cpu.usage", buf);
 
@@ -122,6 +121,51 @@ _cb_cpf_render(void *data)
       if (v < 1000) snprintf(buf, sizeof(buf), "%i", v); // mhz
       else snprintf(buf, sizeof(buf), "%1.1f", (double)v / 1000.0); // ghz
       edje_object_part_text_set(inst->o_cpu, "e.text.cpu.freq", buf);
+
+      min = -1;
+      max = 0;
+      avg = 0;
+      for (i = 0; i < stats->core_num; i++)
+        {
+          int u = stats->core_perf[i].usage;
+
+          if (u > max) max = u;
+          if (min == -1) min = u;
+          else if (u < min) min = u;
+          avg += u;
+        }
+      min = (min + 5) / 10;
+      avg
+        = (avg + (5 * stats->core_num)) / (stats->core_num * 10); // 0->100 avg
+      max = (max + 5) / 10;
+      o   = elm_layout_edje_get(inst->o_popup_lay);
+      snprintf(buf, sizeof(buf), "%i%%", max);
+      edje_object_part_text_set(o, "e.text.cpu.usage.max", buf);
+      snprintf(buf, sizeof(buf), "%i%%", avg);
+      edje_object_part_text_set(o, "e.text.cpu.usage.avg", buf);
+      snprintf(buf, sizeof(buf), "%i%%", min);
+      edje_object_part_text_set(o, "e.text.cpu.usage.min", buf);
+
+      min = -1;
+      max = 0;
+      avg = 0;
+      for (i = 0; i < stats->core_num; i++)
+        {
+          int u = stats->core_perf[i].freq;
+
+          if (u > max) max = u;
+          if (min == -1) min = u;
+          else if (u < min) min = u;
+          avg += u;
+        }
+      avg = avg / stats->core_num;
+      o   = elm_layout_edje_get(inst->o_popup_lay);
+      snprintf(buf, sizeof(buf), "%i Mhz", max);
+      edje_object_part_text_set(o, "e.text.cpu.freq.max", buf);
+      snprintf(buf, sizeof(buf), "%i Mhz", avg);
+      edje_object_part_text_set(o, "e.text.cpu.freq.avg", buf);
+      snprintf(buf, sizeof(buf), "%i Mhz", min);
+      edje_object_part_text_set(o, "e.text.cpu.freq.min", buf);
     }
 }
 
@@ -157,7 +201,9 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    inst->o_gadimg = o = evas_object_image_filled_add(gc->evas);
    evas_object_image_alpha_set(o, EINA_TRUE);
    evas_object_image_size_set(o, 40, 40);
-   inst->gadimg_w = 40;
+   inst->gadimg_w    = 40;
+   inst->o_popup_lay = o;
+
    inst->gadimg_h = 40;
    cpf_render_req(CPF_RENDER_COLORBAR_CPU_USAGE, 40, 40);
    evas_object_event_callback_add(o, EVAS_CALLBACK_RESIZE, _cb_gad_resize, inst);
@@ -283,6 +329,7 @@ _cb_popup_image_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSE
 {
   Instance *inst = data;
   inst->o_popup_disp = NULL;
+  inst->o_popup_lay  = NULL;
 }
 
 static char *
@@ -323,29 +370,42 @@ _cb_ac_power_slider(void *data EINA_UNUSED, Evas_Object *o,
 }
 
 static void
+_cb_settings(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *info EINA_UNUSED)
+{
+  if (!cpufreq_config) return;
+  if (cpufreq_config->config_dialog) return;
+  e_int_config_cpufreq_module(NULL, NULL);
+}
+
+static void
 _button_cb_mouse_down(void *data, Evas *e EINA_UNUSED,
                       Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-   Instance *inst;
-   Evas_Event_Mouse_Down *ev;
+   Instance *inst = data;
+   Evas_Event_Mouse_Down *ev = event_info;
+   Evas_Object           *o, *o_table, *o_lay;
    int                    lv;
-
-   inst = data;
-   ev = event_info;
+   const char            *f;
 
    if ((ev->button == 1) && (!inst->popup))
      {
-       Evas_Object *o, *o_table;
-
        inst->popup = e_gadcon_popup_new(inst->gcc, 0);
 
        o_table = o = elm_table_add(e_comp->elm);
+
+       o_lay = o = elm_layout_add(e_comp->elm);
+       f = e_theme_edje_file_get("base/theme/modules/cpufreq",
+                                 "e/modules/cpufreq/popup/detail");
+       elm_layout_file_set(o, f, "e/modules/cpufreq/popup/detail");
+       elm_table_pack(o_table, o, 0, 0, 10, 1);
+       evas_object_show(o);
+       inst->o_popup_lay = o;
 
        o = evas_object_image_filled_add(e_comp->evas);
        evas_object_image_alpha_set(o, EINA_TRUE);
        evas_object_image_size_set(o, inst->popup_w, 128);
        evas_object_size_hint_min_set(o, inst->popup_w, 128);
-       elm_table_pack(o_table, o, 0, 0, 10, 1);
+       elm_object_part_content_set(o_lay, "e.swallow.content", o);
        evas_object_show(o);
        inst->o_popup_disp = o;
        evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _cb_popup_image_del,
@@ -370,7 +430,14 @@ _button_cb_mouse_down(void *data, Evas *e EINA_UNUSED,
 
        evas_object_smart_callback_add(o, "changed", _cb_ac_power_slider, inst);
 
-       // XXX: settings button
+       o = elm_button_add(e_comp->elm);
+       elm_object_text_set(o, _("Settings"));
+       evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+       evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+       elm_table_pack(o_table, o, 0, 2, 10, 1);
+       evas_object_show(o);
+
+       evas_object_smart_callback_add(o, "clicked", _cb_settings, inst);
 
        e_gadcon_popup_content_set(inst->popup, o_table);
        e_comp_object_util_autoclose(inst->popup->comp_object,
