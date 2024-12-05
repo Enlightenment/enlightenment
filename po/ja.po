@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: Enlightenment DR17\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-01-23 21:51+0100\n"
-"PO-Revision-Date: 2024-12-04 23:41+0100\n"
+"PO-Revision-Date: 2024-12-04 23:41+0100\n" 
 "Last-Translator: Yasufumi Haga <yasufumi.haga@nifty.com>\n"
 "Language-Team: E17-jp <LL@li.org>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n" 
 
 #: src/bin/e_about.c:17
 msgid "About Enlightenment"
@@ -352,7 +352,7 @@ msgstr "ボーダ無し状態の切り替え"
 #: src/bin/e_actions.c:3617
 #, fuzzy
 msgid "Set Border"
-msgstr "ボーダ"
+msgstr "ボーダの設定"
 
 #: src/bin/e_actions.c:3623
 #, fuzzy
@@ -765,7 +765,7 @@ msgstr "指定のデスクトップへ..."
 #: src/bin/e_actions.c:3913
 #, fuzzy
 msgid "To Next Screen"
-msgstr "スクリーンを準備中"
+msgstr "次の画面へ"
 
 #: src/bin/e_actions.c:3915
 #, fuzzy
@@ -849,7 +849,7 @@ msgstr "アプリケーション"
 
 #: src/bin/e_actions.c:3969
 msgid "New Instance of Focused App"
-msgstr "フォーカスしたアプリの新しいインスタンス"
+msgstr "フォーカスしたアプリの新規インスタンス"
 
 #: src/bin/e_actions.c:3973 src/bin/e_int_menus.c:275
 msgid "Restart"
@@ -1737,7 +1737,7 @@ msgstr "表示を更新する"
 
 #: src/bin/e_fm.c:9020 src/bin/e_fm.c:9170
 msgid "New..."
-msgstr "新しい..."
+msgstr "新規作成..."
 
 #: src/bin/e_fm.c:9040 src/bin/e_fm.c:9192 src/bin/e_fm.c:9228
 #, fuzzy
@@ -1854,7 +1854,7 @@ msgstr "ファイルを作成できません！"
 #: src/bin/e_fm.c:9741 src/bin/e_fm.c:9779
 #: src/modules/conf_paths/e_int_config_paths.c:204
 msgid "New Directory"
-msgstr "新しいディレクトリ"
+msgstr "新規ディレクトリ"
 
 #: src/bin/e_fm.c:9741 src/bin/e_fm.c:9779
 #, fuzzy
@@ -1972,7 +1972,7 @@ msgstr "すべて拒否"
 
 #: src/bin/e_fm.c:10710
 msgid "Yes to all"
-msgstr "すべて了承"
+msgstr "すべて了解"
 
 #: src/bin/e_fm.c:10713
 msgid "Warning"
@@ -2097,12 +2097,12 @@ msgstr "アクセス日時"
 
 #: src/bin/e_fm_prop.c:560
 msgid "Last Modified:"
-msgstr "更新日時:"
+msgstr "最終更新日時:"
 
 #: src/bin/e_fm_prop.c:569
 #, fuzzy
 msgid "Last Modified Permissions:"
-msgstr "前回の変更:"
+msgstr "最終パーミッション更新:"
 
 #: src/bin/e_fm_prop.c:578
 msgid "File Type:"
@@ -2110,7 +2110,7 @@ msgstr "ファイルタイプ:"
 
 #: src/bin/e_fm_prop.c:591
 msgid "Permissions"
-msgstr "アクセス権"
+msgstr "パーミッション"
 
 #: src/bin/e_fm_prop.c:596 src/bin/e_fm_prop.c:605 src/bin/e_fm_prop.c:614
 #, fuzzy
@@ -3666,7 +3666,7 @@ msgstr "このテーマについて"
 
 #: src/bin/e_int_menus.c:261
 msgid "Report Bug"
-msgstr "不具合の報告"
+msgstr "バグを報告する"
 
 #: src/bin/e_int_menus.c:352
 msgid "Virtual"
@@ -4455,7 +4455,7 @@ msgstr ""
 #: src/bin/e_shelf.c:1133
 #, fuzzy
 msgid "Add New Shelf"
-msgstr "新しいシェルフを追加"
+msgstr "新規シェルフの追加"
 
 #: src/bin/e_shelf.c:1155
 #, fuzzy
@@ -4533,7 +4533,7 @@ msgstr "ログアウトに問題があります"
 
 #: src/bin/e_sys.c:956
 msgid "Logout now"
-msgstr "すぐログアウトする"
+msgstr "今すぐログアウト"
 
 #: src/bin/e_sys.c:958
 msgid "Wait longer"
@@ -4740,7 +4740,7 @@ msgstr ""
 #: src/bin/e_update.c:77
 #, fuzzy
 msgid "Update Notice"
-msgstr "更新する"
+msgstr "更新通知"
 
 #: src/bin/e_update.c:81
 #, c-format
@@ -4752,7 +4752,7 @@ msgstr ""
 
 #: src/bin/e_utils.c:134
 msgid "Cannot exit - immortal windows."
-msgstr "終了できない ー 不滅のウィンドウです。"
+msgstr "終了できません ー ウィンドウが開いたままです。"
 
 #: src/bin/e_utils.c:135
 #, fuzzy
@@ -4803,28 +4803,28 @@ msgstr "直前"
 #, fuzzy, c-format
 msgid "Last year"
 msgid_plural "%li Years ago"
-msgstr[0] "1 年前"
+msgstr[0] "昨年"
 msgstr[1] "%li 年前"
 
 #: src/bin/e_utils.c:613
 #, c-format
 msgid "Last month"
 msgid_plural "%li Months ago"
-msgstr[0] "1 月前"
+msgstr[0] "先月"
 msgstr[1] "%li 月前"
 
 #: src/bin/e_utils.c:618
 #, fuzzy, c-format
 msgid "Last week"
 msgid_plural "%li Weeks ago"
-msgstr[0] "1 週間前"
+msgstr[0] "先週"
 msgstr[1] "%li 週間前"
 
 #: src/bin/e_utils.c:623
 #, c-format
 msgid "Yesterday"
 msgid_plural "%li Days ago"
-msgstr[0] "1 日前"
+msgstr[0] "昨日"
 msgstr[1] "%li 日前"
 
 #: src/bin/e_utils.c:628
@@ -4874,11 +4874,11 @@ msgid ""
 "the hiccup in your configuration.<ps/>"
 msgstr ""
 "設定データを更新する必要があります。<ps/>"
-"古い設定情報は消去され、新しい既定の設定で初期化されました。<ps/>"
+"古い設定情報は消去され、新規の既定で初期化されました。<ps/>"
 "これは開発中は定期的に行なわれるものですから、バグ報告は不要です。<ps/>"
-"つまり、モジュールの機能に既定で必要となる新しい設定が、<ps/>"
+"つまり、モジュールの機能に既定で必要となる新規の設定が、<ps/>"
 "それまでの古い設定に無いからです。<ps/>"
-"この新しい既定の設定を追加すると更新されます。<ps/>"
+"この新規の既定一式を追加すると更新されます。<ps/>"
 "これで今後はお好きなように設定できます。<ps/>"
 "ご面倒をおかけして申しわけありません。<ps/>"
 
@@ -5001,7 +5001,7 @@ msgstr "許可情報"
 
 #: src/bin/e_widget_filepreview.c:537
 msgid "Modified:"
-msgstr "最終更新日"
+msgstr "変更日時"
 
 #: src/bin/e_widget_filepreview.c:683 src/bin/e_widget_filepreview.c:872
 #: src/bin/e_widget_filepreview.c:881 src/bin/e_widget_filepreview.c:890
@@ -5376,11 +5376,11 @@ msgstr "リンク情報"
 
 #: src/modules/bluez5/e_mod_popup.c:545
 msgid "Stop this from being an unlock device"
-msgstr ""
+msgstr "デバイスロックを解除しないようにする"
 
 #: src/modules/bluez5/e_mod_popup.c:552
 msgid "Make this auto unlock when detected (and lock when not)"
-msgstr ""
+msgstr "検出された時はロックを自動的に解除（未検出の時はロック）"
 
 #: src/modules/bluez5/e_mod_popup.c:562
 #, fuzzy
@@ -5403,16 +5403,16 @@ msgstr ""
 #: src/modules/bluez5/e_mod_popup.c:598 src/modules/bluez5/e_mod_popup.c:659
 #: src/modules/bluez5/e_mod_popup.c:681
 msgid "Pair with this device"
-msgstr ""
+msgstr "このデバイスとペアリングする"
 
 #: src/modules/bluez5/e_mod_popup.c:608
 msgid "Unpair with this device"
-msgstr ""
+msgstr "このデバイスとのペアリングを解除"
 
 #: src/modules/bluez5/e_mod_popup.c:667 src/modules/bluez5/e_mod_popup.c:688
 #, fuzzy
 msgid "Reject pairing"
-msgstr ""
+msgstr "ペアリングを拒否"
 
 #: src/modules/bluez5/e_mod_popup.c:720
 msgid "Options for device like connect, pair etc."
@@ -5603,12 +5603,12 @@ msgstr "X11 の基本"
 #: src/modules/conf_applications/e_int_config_deskenv.c:149
 #, fuzzy
 msgid "Load X Resources"
-msgstr "モジュールをロード中"
+msgstr "X リソースのロード"
 
 #: src/modules/conf_applications/e_int_config_deskenv.c:152
 #, fuzzy
 msgid "Load X Modifier Map"
-msgstr "最終更新日:"
+msgstr "X 修飾子マップのロード"
 
 #: src/modules/conf_applications/e_int_config_deskenv.c:159
 #, fuzzy
@@ -5792,12 +5792,12 @@ msgstr "明るさ"
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:401
 #, fuzzy
 msgid "Volume Down"
-msgstr "音を下げる"
+msgstr "音量を下げる"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:403
 #, fuzzy
 msgid "Volume Up"
-msgstr "音を上げる"
+msgstr "音量を上げる"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:405
 msgid "Tablet On"
@@ -5814,7 +5814,7 @@ msgstr "ズーム"
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:411
 #, fuzzy
 msgid "Screenlock"
-msgstr "スクリーンロック"
+msgstr "画面ロック"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:413
 #, fuzzy
@@ -6034,7 +6034,7 @@ msgstr "（クリック可能）"
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:1393
 #, fuzzy
 msgid "(drag only)"
-msgstr ""
+msgstr "（ドラッグのみ）"
 
 #: src/modules/conf_bindings/e_int_config_keybindings.c:5
 msgid "Single key"
@@ -6373,7 +6373,7 @@ msgstr "選択したプロファイル: %s"
 
 #: src/modules/conf_dialogs/e_int_config_profiles.c:317
 msgid "Add New Profile"
-msgstr "新しいプロファイルの追加"
+msgstr "新規プロファイルの追加"
 
 #: src/modules/conf_dialogs/e_int_config_profiles.c:338
 #, fuzzy, c-format
@@ -6413,7 +6413,7 @@ msgstr "設定"
 
 #: src/modules/conf_display/e_int_config_desklock.c:74
 msgid "Screen Lock Settings"
-msgstr "スクリーンロックの設定"
+msgstr "画面ロックの設定"
 
 #: src/modules/conf_display/e_int_config_desklock.c:218
 msgid "Lock on Startup"
@@ -6431,7 +6431,7 @@ msgstr "システム認証を使用する"
 #: src/modules/conf_display/e_int_config_desklock.c:229
 #, fuzzy
 msgid "Use Personal Screenlock Password (insecure)"
-msgstr "個人用スクリーンロックパスワードを使用（安全でない）"
+msgstr "個人用の画面ロックパスワードを使用（安全でない）"
 
 #: src/modules/conf_display/e_int_config_desklock.c:232
 msgid "Use PIN (insecure)"
@@ -6440,7 +6440,7 @@ msgstr "PIN を使用（安全でない）"
 #: src/modules/conf_display/e_int_config_desklock.c:236
 #, fuzzy
 msgid "Personal Screenlock Password (insecure)"
-msgstr "個人用スクリーンロックパスワード（安全でない）"
+msgstr "個人用の画面ロックパスワード（安全でない）"
 
 #: src/modules/conf_display/e_int_config_desklock.c:242
 #, fuzzy
@@ -6454,19 +6454,19 @@ msgstr "ロック中"
 #: src/modules/conf_display/e_int_config_desklock.c:291
 #, fuzzy
 msgid "Keyboard Layout"
-msgstr "キーボード・レイアウト"
+msgstr "キーボードレイアウト"
 
 #: src/modules/conf_display/e_int_config_desklock.c:297
 msgid "Show on all screens"
-msgstr "全スクリーンに表示する"
+msgstr "すべての画面に表示する"
 
 #: src/modules/conf_display/e_int_config_desklock.c:302
 msgid "Show on current screen"
-msgstr "現在のスクリーンに表示する"
+msgstr "現在の画面に表示する"
 
 #: src/modules/conf_display/e_int_config_desklock.c:307
 msgid "Show on screen #:"
-msgstr "次のスクリーンに表示する:"
+msgstr "次の画面に表示する:"
 
 #: src/modules/conf_display/e_int_config_desklock.c:313
 #: src/modules/conf_display/e_int_config_desks.c:181
@@ -6541,7 +6541,7 @@ msgstr "仮想デスクトップの設定"
 
 #: src/modules/conf_display/e_int_config_desks.c:171
 msgid "Number of Desktops"
-msgstr "デスクトップ数"
+msgstr "デスクトップの数"
 
 #: src/modules/conf_display/e_int_config_desks.c:174
 #, fuzzy
@@ -6594,7 +6594,7 @@ msgstr "バックライトを暗くする"
 
 #: src/modules/conf_display/e_int_config_dpms.c:159
 msgid "Desktop Monitor Support (DDC)"
-msgstr ""
+msgstr "デスクトップ モニタサポート (DDC)"
 
 #: src/modules/conf_display/e_int_config_dpms.c:162
 #, fuzzy
@@ -7290,7 +7290,7 @@ msgstr "電源管理"
 #: src/modules/conf_randr/e_mod_main.c:66
 #, fuzzy
 msgid "Screen Setup"
-msgstr "スクリーンセーバ"
+msgstr "ディスプレイの設定"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:481
 #: src/modules/conf_randr/e_int_config_randr2.c:709
@@ -7496,7 +7496,7 @@ msgstr "デスクロックのタイトル"
 
 #: src/modules/conf_theme/e_int_config_fonts.c:73
 msgid "Desklock Password"
-msgstr "ロックロックのパスワード"
+msgstr "デスクロックのパスワード"
 
 #: src/modules/conf_theme/e_int_config_fonts.c:74
 msgid "Dialog Error"
@@ -7944,7 +7944,7 @@ msgstr "ボーダ"
 
 #: src/modules/conf_theme/e_mod_main.c:115
 msgid "Scaling"
-msgstr "スケール調整"
+msgstr "拡大縮小"
 
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:38
 #, fuzzy
@@ -8066,7 +8066,7 @@ msgstr "スロッピ"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:270
 msgid "New Window Focus"
-msgstr "新しいウィンドウに対するフォーカス"
+msgstr "新規ウィンドウに対するフォーカス"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:272
 msgid "No window"
@@ -8270,11 +8270,11 @@ msgstr ""
 
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:196
 msgid "Switch to desktop of new window"
-msgstr "新しいウィンドウのデスクトップへ移動する"
+msgstr "新規ウィンドウのデスクトップへ移動する"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:199
 msgid "New Windows"
-msgstr "新しいウィンドウ"
+msgstr "新規ウィンドウ"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:204
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:256
@@ -8458,32 +8458,32 @@ msgstr ""
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:283
 #, fuzzy
 msgid "Follow Move"
-msgstr "追跡ランプ"
+msgstr ""
 
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:286
 #, fuzzy
 msgid "Follow Resize"
-msgstr "追跡速度"
+msgstr ""
 
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:289
 #, fuzzy
 msgid "Follow Raise"
-msgstr "追跡ランプ"
+msgstr ""
 
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:292
 #, fuzzy
 msgid "Follow Lower"
-msgstr "追跡ランプ"
+msgstr ""
 
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:295
 #, fuzzy
 msgid "Follow Layer"
-msgstr "追跡ランプ"
+msgstr ""
 
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:298
 #, fuzzy
 msgid "Follow Desktop"
-msgstr "全デスクトップ"
+msgstr ""
 
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:301
 #, fuzzy
@@ -8504,7 +8504,7 @@ msgstr "ウィンドウ·プロセス·マネジメント"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_process.c:95
 msgid "Kill process if unclosable"
-msgstr ""
+msgstr "閉じるのが不可能なときはプロセスを終了させる"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_process.c:97
 msgid "Kill process instead of client"
@@ -8913,7 +8913,7 @@ msgstr "Everything コレクション"
 #: src/modules/everything/evry_gadget.c:169
 #, fuzzy
 msgid "Everything Starter"
-msgstr "Everything の設定"
+msgstr "Everything スタータ"
 
 #: src/modules/everything/evry_gadget.c:575
 #, fuzzy
@@ -8944,13 +8944,13 @@ msgstr "プラグインがロードされていません"
 #: src/modules/everything/evry_plug_apps.c:1156
 #, fuzzy
 msgid "Exebuf"
-msgstr "Typebuf"
+msgstr ""
 
 #: src/modules/everything/evry_plug_apps.c:1171
 #: src/modules/everything/evry_plug_apps.c:1218
 #: src/modules/fileman/e_fwin.c:2421 src/modules/fileman/e_fwin.c:2792
 msgid "Open with..."
-msgstr "開く..."
+msgstr "...で開く"
 
 #: src/modules/everything/evry_plug_apps.c:1184
 msgid "Open File..."
@@ -8962,7 +8962,7 @@ msgstr "アプリケーションのエントリ編集"
 
 #: src/modules/everything/evry_plug_apps.c:1205
 msgid "New Application Entry"
-msgstr "新しいアプリケーションのエントリ"
+msgstr "新規アプリケーションのエントリ"
 
 #: src/modules/everything/evry_plug_apps.c:1212
 msgid "Run with Sudo"
@@ -9346,7 +9346,7 @@ msgstr "アイコンサイズ"
 
 #: src/modules/fileman/e_mod_config.c:342
 msgid "View"
-msgstr "閲覧"
+msgstr "ビュー"
 
 #: src/modules/fileman/e_mod_config.c:347
 #, fuzzy
@@ -9471,7 +9471,7 @@ msgstr "ディレクトリを表示する"
 
 #: src/modules/fileman/e_mod_main.c:71
 msgid "Navigate"
-msgstr ""
+msgstr "移動"
 
 #: src/modules/fileman/e_mod_main.c:314
 #, fuzzy
@@ -9480,7 +9480,7 @@ msgstr "ファイルマネージャ"
 
 #: src/modules/fileman/e_mod_menu.c:269
 msgid "No listable items"
-msgstr ""
+msgstr "リスト可能な項目なし"
 
 #: src/modules/fileman/e_mod_menu.c:377
 msgid "GTK Bookmarks"
@@ -9494,7 +9494,7 @@ msgstr "最近のファイル"
 #: src/modules/fileman/e_mod_menu.c:600
 #, fuzzy
 msgid "Current Directory"
-msgstr "新しいディレクトリ"
+msgstr "現在のディレクトリ"
 
 #: src/modules/fileman/e_mod_menu.c:606
 msgid "Home"
@@ -9502,11 +9502,11 @@ msgstr "ホーム"
 
 #: src/modules/fileman/e_mod_menu.c:636
 msgid "Root"
-msgstr "ルート"
+msgstr "Root"
 
 #: src/modules/fileman/e_mod_menu.c:684
 msgid "Navigate..."
-msgstr ""
+msgstr "場所を開く..."
 
 #: src/modules/fileman_opinfo/e_mod_main.c:341
 #, fuzzy, c-format
@@ -9690,30 +9690,30 @@ msgstr "アイコンのラベルを表示する"
 #: src/modules/ibar/e_mod_config.c:149
 #, fuzzy
 msgid "Lock icon move"
-msgstr "サスペンド時にロック"
+msgstr "アイコンの移動をロック"
 
 #: src/modules/ibar/e_mod_config.c:151
 #, fuzzy
 msgid "Don't show active windows"
-msgstr "全画面ウィンドウの前に出せるようにする"
+msgstr "アクティブなウィンドウを表示しない"
 
 #: src/modules/ibar/e_mod_config.c:153
 #, fuzzy
 msgid "Track launch"
-msgstr "クイック起動"
+msgstr ""
 
 #: src/modules/ibar/e_mod_config.c:155
 #, fuzzy
 msgid "Miniview on mouse over"
-msgstr "マウスが乗っているウィンドウを自動的に一番上に出す"
+msgstr "マウスオーバー時にミニビューを表示"
 
 #: src/modules/ibar/e_mod_config.c:189
 msgid "Create new IBar source"
-msgstr "新しい IBar ソースの作成"
+msgstr "IBar ソースの新規作成"
 
 #: src/modules/ibar/e_mod_config.c:190
 msgid "Enter a name for this new source:"
-msgstr "新しい IBar ソースの名前を入力してください。"
+msgstr "この新規 IBar ソースの名前を入力してください。"
 
 #: src/modules/ibar/e_mod_config.c:204
 #, fuzzy, c-format
@@ -9733,7 +9733,7 @@ msgstr "IBar"
 
 #: src/modules/ibar/e_mod_main.c:480 src/modules/ibar/e_mod_main.c:1619
 msgid "Create new Icon"
-msgstr "新しいアイコンを作る"
+msgstr "新規アイコンを作る"
 
 #: src/modules/ibar/e_mod_main.c:1650
 #, fuzzy
@@ -9743,7 +9743,7 @@ msgstr "IBar に追加する"
 #: src/modules/ibar/e_mod_main.c:1656
 #, fuzzy
 msgid "Remove from bar"
-msgstr "バーより削除する"
+msgstr "バーから削除する"
 
 #: src/modules/ibar/e_mod_main.c:1662
 #, fuzzy, c-format
@@ -9832,7 +9832,7 @@ msgstr "ロック解除用パスワードを入力してください"
 #: src/modules/lokker/lokker.c:317 src/modules/lokker/lokker.c:835
 #: src/modules/lokker/lokker.c:853
 msgid "Caps Lock is On"
-msgstr ""
+msgstr "Caps Lock がオンになっています"
 
 #: src/modules/lokker/lokker.c:630
 msgid "Authentication System Error"
@@ -9852,7 +9852,7 @@ msgstr ""
 #: src/modules/mixer/backend.c:120
 #, fuzzy
 msgid "New volume"
-msgstr "新しいボリューム"
+msgstr "新規ボリューム"
 
 #: src/modules/mixer/backend.c:133 src/modules/mixer/emixer.c:1936
 #: src/modules/mixer/e_mod_main.c:889 src/modules/mixer/e_mod_main.c:1111
@@ -10006,17 +10006,17 @@ msgstr "すべての通知でタイムアウトを強制する"
 #: src/modules/notification/e_mod_config.c:130
 #, fuzzy
 msgid "Screen Policy"
-msgstr ""
+msgstr "画面のポリシー"
 
 #: src/modules/notification/e_mod_config.c:132
 #, fuzzy
 msgid "Primary screen"
-msgstr "プライマリスクリーン"
+msgstr "プライマリの画面"
 
 #: src/modules/notification/e_mod_config.c:134
 #, fuzzy
 msgid "Current screen"
-msgstr "現在のスクリーン"
+msgstr "現在の画面"
 
 #: src/modules/notification/e_mod_config.c:136
 #, fuzzy
@@ -10415,7 +10415,7 @@ msgstr ""
 
 #: src/modules/quickaccess/e_mod_config.c:340
 msgid "Hide If Focus Lost"
-msgstr ""
+msgstr "フォーカスを失ったら隠す"
 
 #: src/modules/quickaccess/e_mod_config.c:569
 #, fuzzy
@@ -10635,11 +10635,11 @@ msgstr ""
 
 #: src/modules/shot/e_mod_delay.c:47 src/modules/shot/e_mod_preview.c:74
 msgid "Select action to take with screenshot"
-msgstr ""
+msgstr "スクリーンショットで実行する操作を選択してください"
 
 #: src/modules/shot/e_mod_delay.c:59 src/modules/shot/e_mod_preview.c:115
 msgid "Delay"
-msgstr "遅延時間"
+msgstr "遅延"
 
 #: src/modules/shot/e_mod_delay.c:61
 #, fuzzy, c-format
@@ -10762,13 +10762,13 @@ msgstr "色"
 #: src/modules/shot/e_mod_main.c:312 src/modules/shot/e_mod_main.c:366
 #, fuzzy
 msgid "Take Shot"
-msgstr ""
+msgstr "撮影"
 
 #: src/modules/shot/e_mod_main.c:323 src/modules/shot/e_mod_main.c:350
 #: src/modules/shot/e_mod_main.c:371
 #, fuzzy
 msgid "Take Screenshot"
-msgstr "スクリーンショット"
+msgstr "スクリーンショットを撮る"
 
 #: src/modules/shot/e_mod_main.c:340
 #, fuzzy
@@ -10792,12 +10792,12 @@ msgstr "品質"
 
 #: src/modules/shot/e_mod_preview.c:107
 msgid "Save"
-msgstr "保存する"
+msgstr "保存"
 
 #: src/modules/shot/e_mod_preview.c:109
 #, fuzzy
 msgid "Share"
-msgstr "くっきりとした影"
+msgstr "共有"
 
 #: src/modules/shot/e_mod_save.c:203
 #, fuzzy
@@ -10813,29 +10813,29 @@ msgstr ""
 #: src/modules/shot/e_mod_share.c:120
 #, c-format
 msgid "Uploaded %i%%"
-msgstr ""
+msgstr "%i%% のアップロード完了"
 
 #: src/modules/shot/e_mod_share.c:134
 #, fuzzy
 msgid "Error - Upload Failed"
-msgstr "モジュールのロードエラー"
+msgstr "エラー - アップロード失敗"
 
 #: src/modules/shot/e_mod_share.c:135
 #, c-format
 msgid "Upload failed with status code:<ps/>%i"
-msgstr ""
+msgstr "アップロード失敗 - ステータスコード:<ps/>%i"
 
 #: src/modules/shot/e_mod_share.c:205
 msgid "Uploading screenshot"
-msgstr ""
+msgstr "スクリーンショットのアップロード"
 
 #: src/modules/shot/e_mod_share.c:210
 msgid "Uploading ..."
-msgstr ""
+msgstr "アップロード中 ..."
 
 #: src/modules/shot/e_mod_share.c:215
 msgid "Screenshot is available at this location:"
-msgstr ""
+msgstr "スクリーンショットは次の場所から利用できます。"
 
 #: src/modules/shot/e_mod_share.c:224 src/modules/vkbd/e_mod_main.c:77
 #: src/modules/vkbd/e_mod_main.c:114
@@ -10847,13 +10847,15 @@ msgstr "自動的に隠す"
 #: src/modules/shot/e_mod_share.c:250
 #, fuzzy
 msgid "Confirm Share"
-msgstr "削除の確認"
+msgstr "共有の確認"
 
 #: src/modules/shot/e_mod_share.c:251
 msgid ""
 "This image will be uploaded without any encryption<ps/>to enlightenment.org. "
 "All screenshots uploaded are<ps/>available to everyone with no restrictions."
 msgstr ""
+"この画像は一切暗号化せずに enlightenment.org<ps/>へアップロードされます。 "
+"アップロードしたスクリーンショットはすべて<ps/>誰でも制限なしに利用できます。"
 
 #
 #: src/modules/shot/e_mod_share.c:254
@@ -11025,11 +11027,11 @@ msgstr "タイルダイアログのウィンドウ"
 
 #: src/modules/tiling/e_mod_config.c:175
 msgid "Enable floating split-mode"
-msgstr ""
+msgstr "フロート分割モードを有効にする"
 
 #: src/modules/tiling/e_mod_config.c:180
 msgid "Enable/disable tiling per desktop."
-msgstr ""
+msgstr "デスクトップ毎にタイリングの有効/無効を設定します。"
 
 #
 #: src/modules/tiling/e_mod_config.c:213
@@ -11045,7 +11047,7 @@ msgstr "タイルの設定"
 #: src/modules/tiling/e_mod_tiling.c:881
 #, fuzzy, c-format
 msgid "Window %s cannot be tiled\n"
-msgstr ""
+msgstr "ウィンドウ %s はタイル表示できません\n"
 
 #: src/modules/tiling/e_mod_tiling.c:885 src/modules/tiling/e_mod_tiling.c:1888
 #: src/modules/tiling/e_mod_tiling.c:1921
@@ -11288,7 +11290,7 @@ msgstr "プロファイル"
 
 #: src/modules/wizard/page_040.c:37
 msgid "Adding missing App files"
-msgstr ""
+msgstr "不足しているアプリのファイルを追加しています"
 
 #: src/modules/wizard/page_050.c:131
 #, fuzzy
@@ -11303,12 +11305,12 @@ msgstr "フォーカス"
 #: src/modules/wizard/page_060.c:38
 #, fuzzy
 msgid "Whenever a window is clicked"
-msgstr "クリックしたら元のウィンドウにフォーカス"
+msgstr "ウィンドウをクリックした時"
 
 #: src/modules/wizard/page_060.c:47
 #, fuzzy
 msgid "Whenever the mouse enters a window"
-msgstr "以上のロックを記憶して, 次回このウィンドウが現れた時に適用する"
+msgstr "マウスがウィンドウ内に入った時"
 
 #: src/modules/wizard/page_110.c:10
 #, fuzzy
@@ -11322,15 +11324,15 @@ msgstr "Connman ネットワークサービスが見つかりません"
 
 #: src/modules/wizard/page_110.c:19
 msgid "Install/Enable Connman service for network management support"
-msgstr "ネットワーク管理のサポートで Connman をインストール/有効化する"
+msgstr "ネットワークを管理するために Connman をインストール/有効化する"
 
 #: src/modules/wizard/page_110.c:21
 msgid "Connman and Wireless modules disabled"
-msgstr "Connman とワイヤレスモジュールが無効です"
+msgstr "Connman とワイヤレスモジュールが無効になっています"
 
 #: src/modules/wizard/page_110.c:22
 msgid "Install one of these modules for network management support"
-msgstr "ネットワーク管理をサポートするには、以下のいずれかのモジュールをインストールしてください"
+msgstr "ネットワークの管理を行うには、以下のいずれかのモジュールをインストールしてください"
 
 #: src/modules/wizard/page_110.c:154
 msgid "Checking to see if Connman exists"
@@ -11349,11 +11351,11 @@ msgstr "BlueZ Bluetooth サービスが見つかりません"
 #: src/modules/wizard/page_115.c:19
 msgid ""
 "Install/Enable BlueZ 5 / bluetoothd service for network management support"
-msgstr "ネットワーク管理には、BlueZ 5 / bluetoothd サービスをインストール/有効化してください"
+msgstr "ネットワークの管理には、BlueZ 5 / bluetoothd をインストール/有効化してください"
 
 #: src/modules/wizard/page_115.c:21
 msgid "Bluez5 module disabled"
-msgstr "Bluez5 モジュールが無効です"
+msgstr "Bluez5 モジュールが無効になっています"
 
 #: src/modules/wizard/page_115.c:22
 msgid "Install it for Bluetooth management support"
@@ -11380,7 +11382,7 @@ msgstr ""
 #: src/modules/wizard/page_170.c:24
 #, fuzzy
 msgid "Updates"
-msgstr "更新する"
+msgstr "更新"
 
 #: src/modules/wizard/page_170.c:27
 msgid "Check for available updates"
@@ -11401,12 +11403,12 @@ msgstr ""
 
 #: src/modules/wizard/page_170.c:60
 msgid "Enable update checking"
-msgstr "更新のチェックを有功にする"
+msgstr "更新チェックを有功にする"
 
 #: src/modules/wizard/page_180.c:27
 #, fuzzy
 msgid "Information"
-msgstr "リンク情報"
+msgstr "情報"
 
 #: src/modules/wizard/page_180.c:38
 msgid ""
@@ -11548,7 +11550,7 @@ msgstr "代替の Win キー"
 #: src/modules/xkbswitch/e_mod_config.c:1383
 #, fuzzy
 msgid "Add New Configuration"
-msgstr "新しい設定を追加する"
+msgstr "新規設定を追加する"
 
 #: src/modules/xkbswitch/e_mod_config.c:1410
 #, fuzzy
@@ -11558,7 +11560,7 @@ msgstr "モデル名"
 #: src/modules/xkbswitch/e_mod_config.c:1412
 #, fuzzy
 msgid "Variant"
-msgstr "ブルガリア語"
+msgstr "バリアント"
 
 #: src/modules/xkbswitch/e_mod_config.c:1532
 #: src/modules/xkbswitch/e_mod_config.c:1617
