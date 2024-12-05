@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-16 13:21+0100\n"
-"PO-Revision-Date: 2024-11-16 13:49+0100\n"
+"POT-Creation-Date: 2024-12-05 16:13+0100\n"
+"PO-Revision-Date: 2024-12-05 16:18+0100\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: General\n"
 "Language: it\n"
@@ -1084,7 +1084,6 @@ msgstr ""
 #: src/modules/conf_bindings/e_int_config_swipebindings.c:677
 #: src/modules/conf_intl/e_int_config_imc_import.c:119
 #: src/modules/conf_theme/e_int_config_theme_import.c:118
-#: src/modules/cpufreq/e_mod_main.c:551 src/modules/cpufreq/e_mod_main.c:619
 #: src/modules/fileman/e_int_config_mime_edit.c:313
 #: src/modules/polkit/auth_ui.c:184 src/modules/shot/e_mod_delay.c:79
 #: src/modules/xkbswitch/e_mod_config.c:1448
@@ -1232,7 +1231,7 @@ msgstr "Impostazioni aggiornate"
 #: src/modules/conf_bindings/e_mod_main.c:43 src/modules/conf/e_mod_main.c:278
 #: src/modules/conf_paths/e_mod_main.c:17
 #: src/modules/conf_performance/e_mod_main.c:17
-#: src/modules/cpufreq/e_mod_main.c:1570 src/modules/mixer/e_mod_main.c:953
+#: src/modules/cpufreq/e_mod_main.c:562 src/modules/mixer/e_mod_main.c:953
 #: src/modules/syscon/e_mod_main.c:36
 msgid "Advanced"
 msgstr "Avanzate"
@@ -2762,7 +2761,7 @@ msgstr "Richiede posizione"
 #: src/modules/conf/e_mod_main.c:101
 #: src/modules/conf_interaction/e_int_config_mouse.c:213
 #: src/modules/conf_shelves/e_int_config_shelf.c:149
-#: src/modules/cpufreq/e_mod_main.c:464
+#: src/modules/cpufreq/e_mod_main.c:434 src/modules/cpufreq/e_mod_main.c:460
 #: src/modules/everything/evry_gadget.c:511
 #: src/modules/everything/evry_gadget.c:683
 #: src/modules/everything/evry_plug_settings.c:183
@@ -6292,8 +6291,6 @@ msgstr "Retroilluminazione normale"
 
 #: src/modules/conf_display/e_int_config_dpms.c:149
 #: src/modules/conf_display/e_int_config_dpms.c:155
-#: src/modules/cpufreq/e_mod_config.c:106
-#: src/modules/cpufreq/e_mod_config.c:112
 #, c-format
 msgid "%3.0f"
 msgstr "%3.0f"
@@ -6941,6 +6938,7 @@ msgid "Suspend Mode"
 msgstr "Modalità sospensione"
 
 #: src/modules/conf_performance/e_mod_main.c:18
+#: src/modules/cpufreq/e_mod_config.c:72 src/modules/cpufreq/e_mod_main.c:341
 msgid "Performance"
 msgstr "Prestazioni"
 
@@ -7303,7 +7301,6 @@ msgstr "Bytecode"
 
 #: src/modules/conf_theme/e_int_config_fonts.c:738
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:278
-#: src/modules/cpufreq/e_mod_main.c:253 src/modules/cpufreq/e_mod_main.c:291
 msgid "Automatic"
 msgstr "Automatico"
 
@@ -8192,126 +8189,39 @@ msgstr "Wifi attivo"
 msgid "Configure"
 msgstr "Configura"
 
-#: src/modules/cpufreq/e_mod_config.c:35
+#: src/modules/cpufreq/e_mod_config.c:32
 msgid "Cpu Frequency Control Settings"
 msgstr "Impostazioni controllo frequenza CPU"
 
-#: src/modules/cpufreq/e_mod_config.c:82 src/modules/cpufreq/e_mod_main.c:276
-msgid "Restore CPU Power Policy"
-msgstr "Ripristina regole alimentazione CPU"
+#: src/modules/cpufreq/e_mod_config.c:69 src/modules/cpufreq/e_mod_main.c:338
+msgid "Powersave"
+msgstr "Risparmio potenza"
 
-#: src/modules/cpufreq/e_mod_config.c:85 src/modules/cpufreq/e_mod_main.c:316
-msgid "Automatic powersaving"
-msgstr "Risparmio energetico automatico"
+#: src/modules/cpufreq/e_mod_config.c:70 src/modules/cpufreq/e_mod_main.c:339
+msgid "Balanced Low"
+msgstr "Bilanciato basso"
 
-#: src/modules/cpufreq/e_mod_config.c:88
-msgid "Update poll interval"
-msgstr "Intervallo campionamento"
+#: src/modules/cpufreq/e_mod_config.c:71 src/modules/cpufreq/e_mod_main.c:340
+msgid "Balanced Hi"
+msgstr "Bilanciato alto"
 
-#: src/modules/cpufreq/e_mod_config.c:90 src/modules/cpufreq/e_mod_main.c:207
-msgid "Fast (4 ticks)"
-msgstr "Veloce (4 tick)"
+#: src/modules/cpufreq/e_mod_config.c:143
+msgid "High Power Level"
+msgstr "Livello potenza alto"
 
-#: src/modules/cpufreq/e_mod_config.c:92 src/modules/cpufreq/e_mod_main.c:214
-msgid "Medium (8 ticks)"
-msgstr "Medio (8 tick)"
+#: src/modules/cpufreq/e_mod_config.c:176
+msgid "Low Power Level"
+msgstr "Livello potenza basso"
 
-#: src/modules/cpufreq/e_mod_config.c:94 src/modules/cpufreq/e_mod_main.c:221
-msgid "Normal (32 ticks)"
-msgstr "Normale (32 tick)"
+#: src/modules/cpufreq/e_mod_config.c:209
+msgid "Update Interval"
+msgstr "Intervallo aggiornamento"
 
-#: src/modules/cpufreq/e_mod_config.c:96 src/modules/cpufreq/e_mod_main.c:228
-msgid "Slow (64 ticks)"
-msgstr "Lento (64 tick)"
-
-#: src/modules/cpufreq/e_mod_config.c:98 src/modules/cpufreq/e_mod_main.c:235
-msgid "Very Slow (256 ticks)"
-msgstr "Molto lento (256 tick)"
-
-#: src/modules/cpufreq/e_mod_config.c:104
-msgid "Minimum Power State"
-msgstr "Stato energetico minimo"
-
-#: src/modules/cpufreq/e_mod_config.c:110
-msgid "Maximum Power State"
-msgstr "Stato energetico massimo"
-
-#: src/modules/cpufreq/e_mod_main.c:150
+#: src/modules/cpufreq/e_mod_main.c:272
 msgid "Cpufreq"
 msgstr "Cpufreq"
 
-#: src/modules/cpufreq/e_mod_main.c:251
-msgid "Manual"
-msgstr "Manuale"
-
-#: src/modules/cpufreq/e_mod_main.c:255 src/modules/cpufreq/e_mod_main.c:293
-msgid "Lower Power Automatic"
-msgstr "Minimo Consumo Automatico"
-
-#: src/modules/cpufreq/e_mod_main.c:257 src/modules/cpufreq/e_mod_main.c:295
-msgid "Automatic Interactive"
-msgstr "Interattivo automatico"
-
-#: src/modules/cpufreq/e_mod_main.c:259 src/modules/cpufreq/e_mod_main.c:297
-msgid "Minimum Speed"
-msgstr "Minima velocità"
-
-#: src/modules/cpufreq/e_mod_main.c:261 src/modules/cpufreq/e_mod_main.c:299
-msgid "Maximum Speed"
-msgstr "Massima velocità"
-
-#: src/modules/cpufreq/e_mod_main.c:340
-#, c-format
-msgid "%i MHz"
-msgstr "%i MHz"
-
-#: src/modules/cpufreq/e_mod_main.c:342
-#, c-format
-msgid "%'.1f GHz"
-msgstr "%'.1f GHz"
-
-#: src/modules/cpufreq/e_mod_main.c:406
-msgid "Time Between Updates"
-msgstr "Intervallo tra aggiornamenti"
-
-#: src/modules/cpufreq/e_mod_main.c:412
-msgid "Set CPU Power Policy"
-msgstr "Imposta regole energia CPU"
-
-#: src/modules/cpufreq/e_mod_main.c:419
-msgid "Set CPU Speed"
-msgstr "Imposta velocità CPU"
-
-#: src/modules/cpufreq/e_mod_main.c:425
-msgid "Powersaving behavior"
-msgstr "Comportamento risparmio energetico"
-
-#: src/modules/cpufreq/e_mod_main.c:431
-msgid "Power State Min"
-msgstr "Stato energetico minimo"
-
-#: src/modules/cpufreq/e_mod_main.c:437
-msgid "Power State Max"
-msgstr "Stato energetico massimo"
-
-#: src/modules/cpufreq/e_mod_main.c:549
-msgid ""
-"There was an error trying to modify CPU<br>frequency control parameters."
-msgstr ""
-"C'è stato un errore nel tentativo di<br>impostare i parametri di "
-"controllo<br>della frequenza della cpu."
-
-#: src/modules/cpufreq/e_mod_main.c:615
-msgid ""
-"Your kernel does not support setting the<ps/>CPU frequency at all. You may "
-"be missing<ps/>Kernel modules or features, or your CPU<ps/>simply does not "
-"support this feature."
-msgstr ""
-"Il vostro kernel non supporta affatto l'impostazione<ps/>della frequenza "
-"della CPU. Probabilmente mancano<ps/>funzionalità o moduli del kernel, o più "
-"semplicemente<ps/>la vostra CPU non supporta questa funzionalità."
-
-#: src/modules/cpufreq/e_mod_main.c:1572
+#: src/modules/cpufreq/e_mod_main.c:564
 msgid "CPU Frequency"
 msgstr "Frequenza CPU"
 
