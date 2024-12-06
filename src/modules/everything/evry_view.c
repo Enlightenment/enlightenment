@@ -1,3 +1,4 @@
+#include "Elementary.h"
 #include "e_mod_main.h"
 
 typedef struct _View       View;
@@ -400,11 +401,13 @@ _place_items(Smart_Data *sd)
      {
         ww = sd->w;
         hh = SIZE_LIST;
+        hh = ELM_SCALE_SIZE(hh);
      }
    else if (sd->view->mode == VIEW_MODE_DETAIL)
      {
         ww = sd->w;
         hh = SIZE_DETAIL;
+        hh = ELM_SCALE_SIZE(hh);
      }
    else
      {
@@ -441,6 +444,8 @@ _place_items(Smart_Data *sd)
 
              if (hh > ww)
                hh = ww + (sd->h - (divider + 1) * ww) / (divider + 1);
+             ww = ELM_SCALE_SIZE(ww);
+             hh = ELM_SCALE_SIZE(hh);
           }
      }
 
