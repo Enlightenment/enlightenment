@@ -316,14 +316,6 @@ static void _popup_del_cb(void *obj)
 }
 
 static void
-_popup_comp_del_cb(void *data, Evas_Object *obj EINA_UNUSED)
-{
-  Instance *inst = data;
-
-  E_FREE_FUNC(inst->popup, e_object_del);
-}
-
-static void
 _cb_popup_image_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                     void *info EINA_UNUSED)
 {
@@ -440,13 +432,15 @@ _button_cb_mouse_down(void *data, Evas *e EINA_UNUSED,
        evas_object_smart_callback_add(o, "clicked", _cb_settings, inst);
 
        e_gadcon_popup_content_set(inst->popup, o_table);
-       e_comp_object_util_autoclose(inst->popup->comp_object,
-                                    _popup_comp_del_cb, NULL, inst);
        e_gadcon_popup_show(inst->popup);
        e_object_data_set(E_OBJECT(inst->popup), inst);
        E_OBJECT_DEL_SET(inst->popup, _popup_del_cb);
 
        _cb_cpf_render(inst);
+     }
+   else if ((ev->button == 1) && (inst->popup))
+     {
+       E_FREE_FUNC(inst->popup, e_object_del);
      }
    else if (ev->button == 3)
      {
