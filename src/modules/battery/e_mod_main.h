@@ -27,7 +27,6 @@ typedef struct _Config Config;
 struct _Config
 {
    /* saved / loaded config values */
-   int                  poll_interval;
    int                  alert;          /* Alert on minutes remaining */
    int                  alert_p;        /* Alert on percentage remaining */
    int                  alert_timeout;  /* Popup dismissal timeout */
@@ -93,7 +92,7 @@ struct _Battery
 {
    const char   *udi;
 #if defined HAVE_EEZE || defined __OpenBSD__ || defined __DragonFly__ || defined __FreeBSD__ || defined __NetBSD__
-   Ecore_Poller *poll;
+   Ecore_Timer  *timer;
    Eina_Bool     present E_BITFIELD;
    Eina_Bool     charging E_BITFIELD;
    Eina_Bool     is_micro_watts E_BITFIELD;

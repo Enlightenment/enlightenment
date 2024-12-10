@@ -31,8 +31,7 @@
 static void      init(void);
 static Eina_Bool poll_cb(void *data);
 
-static int poll_interval = 512;
-static Ecore_Poller *poller = NULL;
+static Ecore_Timer *timer = NULL;
 
 static int mode = CHECK_NONE;
 
@@ -233,11 +232,6 @@ darwin_check(void)
 /***---***/
 /* new linux power class api to get power info - brand new and this code
  * may have bugs, but it is a good attempt to get it right */
-#if 0
-static Eina_Bool linux_sys_class_power_supply_cb_event_fd_active(void *data,
-                                                                 Ecore_Fd_Handler *fd_handler);
-static void      linux_sys_class_power_supply_check(void);
-#endif
 static void      linux_sys_class_power_supply_init(void);
 
 typedef struct _Sys_Class_Power_Supply_Uevent Sys_Class_Power_Supply_Uevent;
@@ -264,90 +258,6 @@ struct _Sys_Class_Power_Supply_Uevent
 
 static Eina_List *events = NULL;
 
-#if 0
-static Ecore_Timer *sys_class_delay_check = NULL;
-
-static Eina_Bool
-linux_sys_class_power_supply_cb_delay_check(void *data)
-{
-   linux_sys_class_power_supply_init();
-   poll_cb(NULL);
-   sys_class_delay_check = NULL;
-   return ECORE_CALLBACK_CANCEL;
-}
-
-static Ecore_Timer *re_init_timer = NULL;
-
-static Eina_Bool
-linux_sys_class_power_supply_cb_re_init(void *data)
-{
-   Sys_Class_Power_Supply_Uevent *sysev;
-
-   if (events)
-     {
-        EINA_LIST_FREE(events, sysev)
-          {
-//	     if (sysev->fd_handler)
-//	       ecore_main_fd_handler_del(sysev->fd_handler);
-//	     if (sysev->fd >= 0) close(sysev->fd);
-             free(sysev->name);
-             free(sysev);
-          }
-     }
-   linux_sys_class_power_supply_init();
-   re_init_timer = NULL;
-   return ECORE_CALLBACK_CANCEL;
-}
-
-static Eina_Bool
-linux_sys_class_power_supply_cb_event_fd_active(void *data,
-                                                Ecore_Fd_Handler *fd_handler)
-{
-   Sys_Class_Power_Supply_Uevent *sysev;
-
-   sysev = data;
-   if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
-     {
-        int lost = 0;
-        for (;; )
-          {
-             char buf[1024];
-             int num;
-
-             if ((num = read(sysev->fd, buf, sizeof(buf))) < 1)
-               {
-                  lost = ((errno == EIO) ||
-                          (errno == EBADF) ||
-                          (errno == EPIPE) ||
-                          (errno == EINVAL) ||
-                          (errno == ENOSPC) ||
-                          (errno == ENODEV));
-                  if (num <= 0) break;
-               }
-          }
-        if (lost)
-          {
-             events = eina_list_remove(events, sysev);
-
-//	     if (sysev->fd_handler)
-//	       ecore_main_fd_handler_del(sysev->fd_handler);
-//	     if (sysev->fd >= 0) close(sysev->fd);
-             free(sysev->name);
-             free(sysev);
-
-             if (re_init_timer) ecore_timer_del(re_init_timer);
-             re_init_timer = ecore_timer_loop_add(1.0, linux_sys_class_power_supply_cb_re_init, NULL);
-          }
-        else
-          {
-             if (sys_class_delay_check) ecore_timer_del(sys_class_delay_check);
-             sys_class_delay_check = ecore_timer_loop_add(0.2, linux_sys_class_power_supply_cb_delay_check, NULL);
-          }
-     }
-   return ECORE_CALLBACK_CANCEL;
-}
-
-#endif
 static void
 linux_sys_class_power_supply_sysev_init(Sys_Class_Power_Supply_Uevent *sysev)
 {
@@ -477,10 +387,8 @@ linux_sys_class_power_supply_init(void)
      {
         Eina_List *bats;
         char *name;
-//	char buf[4096];
 
         bats = ecore_file_ls("/sys/class/power_supply/");
-//        bats = ecore_file_ls("./TST");
         if (bats)
           {
              events = NULL;
@@ -497,14 +405,6 @@ linux_sys_class_power_supply_init(void)
 
                   sysev = (Sys_Class_Power_Supply_Uevent *)calloc(1, sizeof(Sys_Class_Power_Supply_Uevent));
                   sysev->name = name;
-//		  snprintf(buf, sizeof(buf), "/sys/class/power_supply/%s/uevent", name);
-//		  sysev->fd = open(buf, O_RDONLY);
-//		  if (sysev->fd >= 0)
-//		    sysev->fd_handler = ecore_main_fd_handler_add(sysev->fd,
-//								  ECORE_FD_READ,
-//								  linux_sys_class_power_supply_cb_event_fd_active,
-//								  sysev,
-//								  NULL, NULL);
                   events = eina_list_append(events, sysev);
                   linux_sys_class_power_supply_sysev_init(sysev);
                }
@@ -1315,22 +1215,15 @@ poll_cb(void *data EINA_UNUSED)
 }
 
 int
-main(int argc,
-     char *argv[])
+main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
-   if (argc != 2)
-     {
-        printf("ARGS INCORRECT!\n");
-        return 0;
-     }
-   poll_interval = atoi(argv[1]);
-
+  // argv[1] used to be poll_interval
    ecore_init();
    ecore_file_init();
    ecore_con_init();
 
    init();
-   poller = ecore_poller_add(ECORE_POLLER_CORE, poll_interval, poll_cb, NULL);
+   timer = ecore_timer_add(10.0, poll_cb, NULL);
    poll_cb(NULL);
 
    ecore_main_loop_begin();

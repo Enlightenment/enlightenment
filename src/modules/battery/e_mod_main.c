@@ -943,9 +943,8 @@ _battery_config_updated(void)
    if ((battery_config->force_mode == UNKNOWN) ||
        (battery_config->force_mode == NOSUBSYSTEM))
      {
-        snprintf(buf, sizeof(buf), "%s/%s/batget %i",
-                 e_module_dir_get(battery_config->module), MODULE_ARCH,
-                 battery_config->poll_interval);
+        snprintf(buf, sizeof(buf), "%s/%s/batget",
+                 e_module_dir_get(battery_config->module), MODULE_ARCH);
 
         battery_config->batget_exe =
           ecore_exe_pipe_run(buf, ECORE_EXE_PIPE_READ |
@@ -1374,7 +1373,6 @@ e_modapi_init(E_Module *m)
 #undef D
 #define T Config
 #define D conf_edd
-   E_CONFIG_VAL(D, T, poll_interval, INT);
    E_CONFIG_VAL(D, T, alert, INT);
    E_CONFIG_VAL(D, T, alert_p, INT);
    E_CONFIG_VAL(D, T, alert_timeout, INT);
@@ -1389,7 +1387,6 @@ e_modapi_init(E_Module *m)
    if (!battery_config)
      {
         battery_config = E_NEW(Config, 1);
-        battery_config->poll_interval = 512;
         battery_config->alert = 30;
         battery_config->alert_p = 10;
         battery_config->alert_timeout = 0;
@@ -1400,7 +1397,6 @@ e_modapi_init(E_Module *m)
 #endif
         battery_config->desktop_notifications = 0;
      }
-   E_CONFIG_LIMIT(battery_config->poll_interval, 4, 4096);
    E_CONFIG_LIMIT(battery_config->alert, 0, 60);
    E_CONFIG_LIMIT(battery_config->alert_p, 0, 100);
    E_CONFIG_LIMIT(battery_config->alert_timeout, 0, 300);

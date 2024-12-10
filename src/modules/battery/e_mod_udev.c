@@ -61,7 +61,7 @@ _battery_udev_stop(void)
         eina_stringshare_del(bat->technology);
         eina_stringshare_del(bat->model);
         eina_stringshare_del(bat->vendor);
-        ecore_poller_del(bat->poll);
+        ecore_timer_del(bat->timer);
         _battery_history_close(bat);
         free(bat);
      }
@@ -162,9 +162,7 @@ _battery_udev_battery_add(const char *syspath)
    bat->design_voltage = voltage_min_design;
    bat->last_update = ecore_time_get();
    bat->udi = eina_stringshare_add(syspath);
-   bat->poll = ecore_poller_add(ECORE_POLLER_CORE,
-                                battery_config->poll_interval,
-                                _battery_udev_battery_update_poll, bat);
+   bat->timer = ecore_timer_add(10.0, _battery_udev_battery_update_poll, bat);
    device_batteries = eina_list_append(device_batteries, bat);
    _battery_udev_battery_update(syspath, bat);
 }
@@ -208,7 +206,7 @@ _battery_udev_battery_del(const char *syspath)
    eina_stringshare_del(bat->technology);
    eina_stringshare_del(bat->model);
    eina_stringshare_del(bat->vendor);
-   ecore_poller_del(bat->poll);
+   ecore_timer_del(bat->timer);
    free(bat);
 }
 
@@ -265,9 +263,6 @@ _battery_udev_battery_update(const char *syspath, Battery *bat)
              return;
           }
      }
-   /* update the poller interval */
-   ecore_poller_poller_interval_set(bat->poll, battery_config->poll_interval);
-
    GET_NUM(bat, present, POWER_SUPPLY_PRESENT);
    if (!bat->got_prop) /* only need to get these once */
      {

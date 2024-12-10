@@ -4,7 +4,6 @@
 struct _E_Config_Dialog_Data
 {
    int show_alert;
-   int poll_interval;
 #ifdef HAVE_EEZE
    int fuzzy;
 #endif
@@ -72,7 +71,6 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    if (!battery_config) return;
    cfdata->alert_time = battery_config->alert;
    cfdata->alert_percent = battery_config->alert_p;
-   cfdata->poll_interval = battery_config->poll_interval;
    cfdata->alert_timeout = battery_config->alert_timeout;
    cfdata->suspend_below = battery_config->suspend_below;
    cfdata->suspend_method = battery_config->suspend_method;
@@ -220,27 +218,21 @@ _advanced_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_
    /* Use Sliders for both cfg options */
    o = e_widget_table_add(e_win_evas_win_get(evas), 0);
 
-   ob = e_widget_label_add(evas, _("Check every:"));
-   e_widget_table_object_append(o, ob, 0, 0, 1, 1, 1, 0, 1, 0);
-   ob = e_widget_slider_add(evas, 1, 0, _("%1.0f ticks"), 1, 256, 4, 0,
-                            NULL, &(cfdata->poll_interval), 100);
-   e_widget_table_object_append(o, ob, 0, 1, 1, 1, 1, 0, 1, 0);
-
    rg = e_widget_radio_group_new(&(cfdata->suspend_method));
    ob = e_widget_radio_add(evas, _("Suspend when below:"), 0, rg);
    e_widget_on_change_hook_set(ob, _cb_radio_changed, cfdata);
-   e_widget_table_object_append(o, ob, 0, 2, 1, 1, 1, 0, 1, 0);
+   e_widget_table_object_append(o, ob, 0, 0, 1, 1, 1, 0, 1, 0);
    ob = e_widget_radio_add(evas, _("Hibernate when below:"), 1, rg);
    e_widget_on_change_hook_set(ob, _cb_radio_changed, cfdata);
-   e_widget_table_object_append(o, ob, 0, 3, 1, 1, 1, 0, 1, 0);
+   e_widget_table_object_append(o, ob, 0, 1, 1, 1, 1, 0, 1, 0);
    ob = e_widget_radio_add(evas, _("Shutdown when below:"), 2, rg);
    e_widget_on_change_hook_set(ob, _cb_radio_changed, cfdata);
-   e_widget_table_object_append(o, ob, 0, 4, 1, 1, 1, 0, 1, 0);
+   e_widget_table_object_append(o, ob, 0, 2, 1, 1, 1, 0, 1, 0);
    ob = e_widget_slider_add(evas, 1, 0, _("%1.0f %%"), 0, 50, 1, 0,
                             NULL, &(cfdata->suspend_below), 100);
-   e_widget_table_object_append(o, ob, 0, 5, 1, 1, 1, 0, 1, 0);
+   e_widget_table_object_append(o, ob, 0, 3, 1, 1, 1, 0, 1, 0);
 
-   e_widget_toolbook_page_append(otb, NULL, _("Polling"), o, 1, 0, 1, 0,
+   e_widget_toolbook_page_append(otb, NULL, _("Limits"), o, 1, 0, 1, 0,
                                  0.5, 0.0);
 
    o = e_widget_table_add(e_win_evas_win_get(evas), 0);
@@ -308,7 +300,6 @@ _advanced_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
 {
    if (!battery_config) return 0;
 
-   battery_config->poll_interval = cfdata->poll_interval;
 #ifdef HAVE_EEZE
    battery_config->fuzzy = cfdata->fuzzy;
 #endif
@@ -348,7 +339,6 @@ _advanced_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *
 
    return (cfdata->alert_time != battery_config->alert) ||
           (cfdata->alert_percent != battery_config->alert_p) ||
-          (cfdata->poll_interval != battery_config->poll_interval) ||
           (cfdata->alert_timeout != battery_config->alert_timeout) ||
           (cfdata->suspend_below != battery_config->suspend_below) ||
           (cfdata->suspend_method != battery_config->suspend_method) ||
