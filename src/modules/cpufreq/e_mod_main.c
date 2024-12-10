@@ -91,7 +91,6 @@ _cb_cpf_render(void *data)
                && (r->h == inst->gadimg_h)) // what we asked for...
         {
           o = inst->o_gadimg;
-
           if (o)
             {
               evas_object_image_smooth_scale_set(o, EINA_TRUE);
@@ -138,13 +137,16 @@ _cb_cpf_render(void *data)
       avg
         = (avg + (5 * stats->core_num)) / (stats->core_num * 10); // 0->100 avg
       max = (max + 5) / 10;
-      o   = elm_layout_edje_get(inst->o_popup_lay);
-      snprintf(buf, sizeof(buf), "%i%%", max);
-      edje_object_part_text_set(o, "e.text.cpu.usage.max", buf);
-      snprintf(buf, sizeof(buf), "%i%%", avg);
-      edje_object_part_text_set(o, "e.text.cpu.usage.avg", buf);
-      snprintf(buf, sizeof(buf), "%i%%", min);
-      edje_object_part_text_set(o, "e.text.cpu.usage.min", buf);
+      if (inst->o_popup_lay)
+        {
+          o = elm_layout_edje_get(inst->o_popup_lay);
+          snprintf(buf, sizeof(buf), "%i%%", max);
+          edje_object_part_text_set(o, "e.text.cpu.usage.max", buf);
+          snprintf(buf, sizeof(buf), "%i%%", avg);
+          edje_object_part_text_set(o, "e.text.cpu.usage.avg", buf);
+          snprintf(buf, sizeof(buf), "%i%%", min);
+          edje_object_part_text_set(o, "e.text.cpu.usage.min", buf);
+        }
 
       min = -1;
       max = 0;
@@ -159,13 +161,16 @@ _cb_cpf_render(void *data)
           avg += u;
         }
       avg = avg / stats->core_num;
-      o   = elm_layout_edje_get(inst->o_popup_lay);
-      snprintf(buf, sizeof(buf), "%i Mhz", max);
-      edje_object_part_text_set(o, "e.text.cpu.freq.max", buf);
-      snprintf(buf, sizeof(buf), "%i Mhz", avg);
-      edje_object_part_text_set(o, "e.text.cpu.freq.avg", buf);
-      snprintf(buf, sizeof(buf), "%i Mhz", min);
-      edje_object_part_text_set(o, "e.text.cpu.freq.min", buf);
+      if (inst->o_popup_lay)
+        {
+          o = elm_layout_edje_get(inst->o_popup_lay);
+          snprintf(buf, sizeof(buf), "%i Mhz", max);
+          edje_object_part_text_set(o, "e.text.cpu.freq.max", buf);
+          snprintf(buf, sizeof(buf), "%i Mhz", avg);
+          edje_object_part_text_set(o, "e.text.cpu.freq.avg", buf);
+          snprintf(buf, sizeof(buf), "%i Mhz", min);
+          edje_object_part_text_set(o, "e.text.cpu.freq.min", buf);
+        }
     }
 }
 
@@ -202,7 +207,6 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    evas_object_image_alpha_set(o, EINA_TRUE);
    evas_object_image_size_set(o, 40, 40);
    inst->gadimg_w    = 40;
-   inst->o_popup_lay = o;
 
    inst->gadimg_h = 40;
    cpf_render_req(CPF_RENDER_COLORBAR_CPU_USAGE, 40, 40);
@@ -308,6 +312,7 @@ _popup_del(Instance *inst)
 {
   E_FREE_FUNC(inst->popup, e_object_del);
   inst->o_popup_disp = NULL;
+  inst->o_popup_lay = NULL;
 }
 
 static void _popup_del_cb(void *obj)
