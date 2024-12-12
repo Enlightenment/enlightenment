@@ -158,13 +158,13 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas EINA_UNUSED,
   elm_table_pack(o_table, o, 0, 1, 10, 1);
   evas_object_show(o);
 
-  lv = cfdata->power_lo;
+  lv = cfdata->power_hi;
   if (lv < 33) elm_slider_value_set(o, (0.0 / 3.0));
   else if (lv < 67) elm_slider_value_set(o, (1.0 / 3.0));
   else if (lv < 100) elm_slider_value_set(o, (2.0 / 3.0));
   else elm_slider_value_set(o, (3.0 / 3.0));
 
-  evas_object_smart_callback_add(o, "changed", _cb_power_lo_slider, cfdata);
+  evas_object_smart_callback_add(o, "changed", _cb_power_hi_slider, cfdata);
 
   o = elm_icon_add(win);
   elm_icon_standard_set(o, "battery");
@@ -191,13 +191,13 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas EINA_UNUSED,
   elm_table_pack(o_table, o, 0, 3, 10, 1);
   evas_object_show(o);
 
-  lv = cfdata->power_hi;
+  lv = cfdata->power_lo;
   if (lv < 33) elm_slider_value_set(o, (0.0 / 3.0));
   else if (lv < 67) elm_slider_value_set(o, (1.0 / 3.0));
   else if (lv < 100) elm_slider_value_set(o, (2.0 / 3.0));
   else elm_slider_value_set(o, (3.0 / 3.0));
 
-  evas_object_smart_callback_add(o, "changed", _cb_power_hi_slider, cfdata);
+  evas_object_smart_callback_add(o, "changed", _cb_power_lo_slider, cfdata);
 
   o = elm_icon_add(win);
   elm_icon_standard_set(o, "clock");
