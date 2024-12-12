@@ -546,8 +546,8 @@ e_modapi_init(E_Module *m)
         cpufreq_config = E_NEW(Config, 1);
         cpufreq_config->config_version = CPUFREQ_CONFIG_VERSION;
         cpufreq_config->check_interval = 0.2;
-        cpufreq_config->power_lo       = 0;
-        cpufreq_config->power_hi       = 100;
+        cpufreq_config->power_lo       = 33;
+        cpufreq_config->power_hi       = 67;
      }
    E_CONFIG_LIMIT(cpufreq_config->check_interval, 0.1, 1.0);
    E_CONFIG_LIMIT(cpufreq_config->power_lo, 0, 100);
