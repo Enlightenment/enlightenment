@@ -180,7 +180,7 @@ static const Eldbus_Method desktop_methods[] = {
 static const Eldbus_Method background_methods[] = {
    { "Add", ELDBUS_ARGS({"i", "zone"}, {"i", "desk_x"}, {"i", "desk_y"}, {"s", "path"}), NULL, cb_desktop_bgadd, 0 },
    { "Del", ELDBUS_ARGS({"i", "zone"}, {"i", "desk_x"}, {"i", "desk_y"}), NULL, cb_desktop_bgdel, 0 },
-   { "List", ELDBUS_ARGS({"a(iiis)", "array_of_bg"}), NULL, cb_desktop_bglist, 0 },
+   { "List", NULL, ELDBUS_ARGS({"a(iiis)", "array_of_bg"}), cb_desktop_bglist, 0 },
    { NULL, NULL, NULL, NULL, 0 }
 };
 
