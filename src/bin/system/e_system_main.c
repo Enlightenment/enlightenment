@@ -173,6 +173,7 @@ main(int argc EINA_UNUSED, const char **argv EINA_UNUSED)
    CONF_INIT_CHECK("rfkill",    e_system_rfkill_init,    init_rfkill);
    CONF_INIT_CHECK("l2ping",    e_system_l2ping_init,    init_l2ping);
    CONF_INIT_CHECK("cpufreq",   e_system_cpufreq_init,   init_cpufreq);
+   CONF_INIT_CHECK("acpi",      e_system_acpi_init,      init_acpi);
 
    if (systems == 0)
      {
@@ -184,6 +185,7 @@ main(int argc EINA_UNUSED, const char **argv EINA_UNUSED)
 
    ecore_main_loop_begin();
 
+   CONF_SHUTDOWN(e_system_acpi_shutdown,      init_acpi);
    CONF_SHUTDOWN(e_system_cpufreq_shutdown,   init_cpufreq);
    CONF_SHUTDOWN(e_system_l2ping_shutdown,    init_l2ping);
    CONF_SHUTDOWN(e_system_rfkill_shutdown,    init_rfkill);
