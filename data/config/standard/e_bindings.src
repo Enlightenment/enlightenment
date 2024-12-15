@@ -1,5 +1,41 @@
 group "E_Config_Bindings" struct {
     value "config_version" int: 0;
+    group "swipe_bindings" list {
+        group "E_Config_Binding_Swipe" struct {
+            value "context" int: 0;
+            value "fingers" uint: 3;
+            value "direction" double: 0.0;
+            value "length" double: 100;
+            value "error" double: 0.8;
+            value "action" string: "desk_flip_by";
+            value "params" string: "1 0";
+        }
+        group "E_Config_Binding_Swipe" struct {
+            value "context" int: 0;
+            value "fingers" uint: 3;
+            value "direction" double: 1.57;
+            value "length" double: 100;
+            value "error" double: 0.8;
+            value "action" string: "window_lower";
+        }
+        group "E_Config_Binding_Swipe" struct {
+            value "context" int: 0;
+            value "fingers" uint: 3;
+            value "direction" double: 3.14;
+            value "length" double: 100;
+            value "error" double: 0.8;
+            value "action" string: "desk_flip_by";
+            value "params" string: "-1 0";
+        }
+        group "E_Config_Binding_Swipe" struct {
+            value "context" int: 0;
+            value "fingers" uint: 3;
+            value "direction" double: 4.71;
+            value "length" double: 100;
+            value "error" double: 0.8;
+            value "action" string: "window_raise";
+        }
+    }
     group "acpi_bindings" list {
         group "E_Config_Binding_Acpi" struct {
             value "context" int: 0;

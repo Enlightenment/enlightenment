@@ -168,7 +168,7 @@ group "E_Config" struct {
     value "theme_default_border_style" string: "default";
     value "desk_auto_switch" int: 0;
     value "thumb_nice" int: 0;
-    value "gesture_open_input_devices" int: 0;
+    value "gesture_open_input_devices" int: 1;
     value "screen_limits" int: 0;
     value "menu_favorites_show" int: 1;
     value "menu_apps_show" int: 1;
