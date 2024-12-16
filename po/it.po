@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-05 16:13+0100\n"
-"PO-Revision-Date: 2024-12-05 16:18+0100\n"
+"POT-Creation-Date: 2024-12-16 22:05+0100\n"
+"PO-Revision-Date: 2024-12-16 22:06+0100\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: General\n"
 "Language: it\n"
@@ -43,8 +43,8 @@ msgstr "Enlightenment"
 msgid ""
 "<title>Copyright &copy; 2000-2024, by the Enlightenment Development Team</"
 "><ps/><ps/>We hope you enjoy using this software as much as we enjoyed "
-"writing it.<ps/><ps/>To contact us please visit:<ps/><hilight>http://www."
-"enlightenment.org</><ps/><ps/>"
+"writing it.<ps/><ps/>To contact us please visit:<ps/><hilight>http://"
+"www.enlightenment.org</><ps/><ps/>"
 msgstr ""
 "<title>Copyright &copy; 2000-2024, dell'Enlightenment Development Team.</"
 "><ps/><ps/>Ci auguriamo che vi piacerà usare questo software tanto quanto a "
@@ -54,20 +54,6 @@ msgstr ""
 #: src/bin/e_about.c:69
 msgid "<title>The Team</><ps/><ps/>"
 msgstr "<title>Il Team</><ps/><ps/>"
-
-#: src/bin/e_acpi.c:138
-msgid "ACPI Error"
-msgstr "Errore Acpi"
-
-#: src/bin/e_acpi.c:139
-msgid ""
-"You seem to have an ACPI based system, but<br><hilight>acpid</hilight> does "
-"not seem to be running or<br>contactable. Perhaps enable the <hilight>acpid</"
-"hilight><br>service on your system?"
-msgstr ""
-"Sembra che il sistema sia basato su Acpi, ma<br><hilight>acpid</hilight> non "
-"sembra in esecuzione o contattabile.<br>Forse occorre abilitare il servizio "
-"<hilight>acpid</hilight><br>del sistema?"
 
 #: src/bin/e_actions.c:352
 #, c-format
@@ -1227,11 +1213,11 @@ msgstr ""
 msgid "Settings Upgraded"
 msgstr "Impostazioni aggiornate"
 
-#: src/bin/e_config_dialog.c:222 src/modules/battery/e_mod_main.c:1429
+#: src/bin/e_config_dialog.c:222 src/modules/battery/e_mod_main.c:1425
 #: src/modules/conf_bindings/e_mod_main.c:43 src/modules/conf/e_mod_main.c:278
 #: src/modules/conf_paths/e_mod_main.c:17
 #: src/modules/conf_performance/e_mod_main.c:17
-#: src/modules/cpufreq/e_mod_main.c:562 src/modules/mixer/e_mod_main.c:953
+#: src/modules/cpufreq/e_mod_main.c:561 src/modules/mixer/e_mod_main.c:953
 #: src/modules/syscon/e_mod_main.c:36
 msgid "Advanced"
 msgstr "Avanzate"
@@ -1263,7 +1249,7 @@ msgstr "Moduli"
 msgid "Look"
 msgstr "Aspetto"
 
-#: src/bin/e_configure.c:34 src/modules/battery/e_mod_config.c:283
+#: src/bin/e_configure.c:34 src/modules/battery/e_mod_config.c:275
 #: src/modules/conf_applications/e_mod_main.c:60
 #: src/modules/conf_display/e_mod_main.c:40
 #: src/modules/conf_theme/e_mod_main.c:85
@@ -2761,7 +2747,7 @@ msgstr "Richiede posizione"
 #: src/modules/conf/e_mod_main.c:101
 #: src/modules/conf_interaction/e_int_config_mouse.c:213
 #: src/modules/conf_shelves/e_int_config_shelf.c:149
-#: src/modules/cpufreq/e_mod_main.c:434 src/modules/cpufreq/e_mod_main.c:460
+#: src/modules/cpufreq/e_mod_main.c:431 src/modules/cpufreq/e_mod_main.c:459
 #: src/modules/everything/evry_gadget.c:511
 #: src/modules/everything/evry_gadget.c:683
 #: src/modules/everything/evry_plug_settings.c:183
@@ -2865,7 +2851,7 @@ msgstr "Volume"
 #: src/bin/e_int_client_remember.c:665 src/modules/conf/e_mod_main.c:252
 #: src/modules/everything/evry_gadget.c:632
 #: src/modules/everything/evry_plug_aggregator.c:313
-#: src/modules/everything/evry_view.c:1619
+#: src/modules/everything/evry_view.c:1624
 msgid "All"
 msgstr "Tutto"
 
@@ -4554,13 +4540,14 @@ msgstr "Notifica aggiornamento"
 #, c-format
 msgid ""
 "Your enlightenment version is<ps/>not the current latest release.<ps/>The "
-"latest version is:<ps/><ps/>%s<ps/><ps/>Please visit www.enlightenment."
-"org<ps/>or update your system packages<ps/>to get a new version."
+"latest version is:<ps/><ps/>%s<ps/><ps/>Please visit "
+"www.enlightenment.org<ps/>or update your system packages<ps/>to get a new "
+"version."
 msgstr ""
 "La vostra versione di Enlightenment<ps/>non è quella più recente<ps/"
-">L'ultima versione è:<ps/><ps/>%s<ps/><ps/>Potete visitare www.enlightenment."
-"org<ps/>o aggiornare i vostri pacchetti di<ps/>sistema per ottenere una "
-"nuova<ps/>versione."
+">L'ultima versione è:<ps/><ps/>%s<ps/><ps/>Potete visitare "
+"www.enlightenment.org<ps/>o aggiornare i vostri pacchetti di<ps/>sistema per "
+"ottenere una nuova<ps/>versione."
 
 #: src/bin/e_utils.c:134
 msgid "Cannot exit - immortal windows."
@@ -4868,100 +4855,89 @@ msgstr "Backlight"
 msgid "Backlight Controls"
 msgstr "Controlli di Backlight"
 
-#: src/modules/battery/e_mod_config.c:62
+#: src/modules/battery/e_mod_config.c:61
 msgid "Battery Monitor Settings"
 msgstr "Impostazioni di Battery"
 
-#: src/modules/battery/e_mod_config.c:130
+#: src/modules/battery/e_mod_config.c:128
 msgid "Show alert when battery is low"
 msgstr "Allarme se il livello batteria è basso"
 
-#: src/modules/battery/e_mod_config.c:133
+#: src/modules/battery/e_mod_config.c:131
 msgid "Use desktop notifications for alert"
 msgstr "Usa notifiche sul desktop per gli allarmi"
 
-#: src/modules/battery/e_mod_config.c:223
-msgid "Check every:"
-msgstr "Controlla ogni:"
-
-#: src/modules/battery/e_mod_config.c:225
-#: src/modules/conf_window_manipulation/e_int_config_window_process.c:109
-#: src/modules/temperature/e_mod_config.c:146
-#, c-format
-msgid "%1.0f ticks"
-msgstr "%1.0f tick"
-
-#: src/modules/battery/e_mod_config.c:230
+#: src/modules/battery/e_mod_config.c:222
 msgid "Suspend when below:"
 msgstr "Sospendi quando sotto:"
 
-#: src/modules/battery/e_mod_config.c:233
+#: src/modules/battery/e_mod_config.c:225
 msgid "Hibernate when below:"
 msgstr "Iberna quando sotto:"
 
-#: src/modules/battery/e_mod_config.c:236
+#: src/modules/battery/e_mod_config.c:228
 msgid "Shutdown when below:"
 msgstr "Spegni quando sotto:"
 
-#: src/modules/battery/e_mod_config.c:239
-#: src/modules/battery/e_mod_config.c:258
+#: src/modules/battery/e_mod_config.c:231
+#: src/modules/battery/e_mod_config.c:250
 #, c-format
 msgid "%1.0f %%"
 msgstr "%1.0f %%"
 
-#: src/modules/battery/e_mod_config.c:243
-msgid "Polling"
-msgstr "Campionamento"
+#: src/modules/battery/e_mod_config.c:235
+msgid "Limits"
+msgstr "Limiti"
 
-#: src/modules/battery/e_mod_config.c:247
+#: src/modules/battery/e_mod_config.c:239
 msgid "Show low battery alert"
 msgstr "Mostra allarme carica bassa"
 
-#: src/modules/battery/e_mod_config.c:251
+#: src/modules/battery/e_mod_config.c:243
 msgid "Alert when at:"
 msgstr "Soglia allarme:"
 
-#: src/modules/battery/e_mod_config.c:254
+#: src/modules/battery/e_mod_config.c:246
 #, c-format
 msgid "%1.0f min"
 msgstr "%1.0f min"
 
-#: src/modules/battery/e_mod_config.c:262
+#: src/modules/battery/e_mod_config.c:254
 msgid "Auto dismiss in..."
 msgstr "Distacco automatico in..."
 
-#: src/modules/battery/e_mod_config.c:267
+#: src/modules/battery/e_mod_config.c:259
 #: src/modules/conf_window_manipulation/e_int_config_window_process.c:101
 #, c-format
 msgid "%1.0f s"
 msgstr "%1.0f s"
 
-#: src/modules/battery/e_mod_config.c:274
+#: src/modules/battery/e_mod_config.c:266
 msgid "Alert"
 msgstr "Allarme"
 
-#: src/modules/battery/e_mod_config.c:280
+#: src/modules/battery/e_mod_config.c:272
 msgid "Auto Detect"
 msgstr "Rileva automaticamente"
 
-#: src/modules/battery/e_mod_config.c:287
+#: src/modules/battery/e_mod_config.c:279
 msgid "udev"
 msgstr "udev"
 
-#: src/modules/battery/e_mod_config.c:290
+#: src/modules/battery/e_mod_config.c:282
 msgid "Fuzzy Mode"
 msgstr "Modalità vaga"
 
-#: src/modules/battery/e_mod_config.c:294
+#: src/modules/battery/e_mod_config.c:286
 msgid "HAL"
 msgstr "HAL"
 
-#: src/modules/battery/e_mod_config.c:299
+#: src/modules/battery/e_mod_config.c:291
 msgid "Hardware"
 msgstr "Hardware"
 
 #: src/modules/battery/e_mod_main.c:174 src/modules/battery/e_mod_main.c:695
-#: src/modules/battery/e_mod_main.c:1013
+#: src/modules/battery/e_mod_main.c:1012
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:354
 #, c-format
 msgid "Battery"
@@ -5006,24 +4982,24 @@ msgstr "Batteria: %s"
 msgid "Power Management Timing"
 msgstr "Temporizzazioni gestione alimentazione"
 
-#: src/modules/battery/e_mod_main.c:1016 src/modules/battery/e_mod_main.c:1048
+#: src/modules/battery/e_mod_main.c:1015 src/modules/battery/e_mod_main.c:1047
 msgid "Your battery is low!"
 msgstr "Basso livello batteria!"
 
-#: src/modules/battery/e_mod_main.c:1017 src/modules/battery/e_mod_main.c:1050
+#: src/modules/battery/e_mod_main.c:1016 src/modules/battery/e_mod_main.c:1049
 msgid "AC power is recommended."
 msgstr "Consigliata alimentazione AC."
 
-#: src/modules/battery/e_mod_main.c:1135 src/modules/battery/e_mod_main.c:1139
+#: src/modules/battery/e_mod_main.c:1134 src/modules/battery/e_mod_main.c:1138
 msgid "N/A"
 msgstr "N/D"
 
-#: src/modules/battery/e_mod_main.c:1246 src/modules/battery/e_mod_main.c:1248
-#: src/modules/battery/e_mod_main.c:1255 src/modules/battery/e_mod_main.c:1257
+#: src/modules/battery/e_mod_main.c:1245 src/modules/battery/e_mod_main.c:1247
+#: src/modules/battery/e_mod_main.c:1254 src/modules/battery/e_mod_main.c:1256
 msgid "ERROR"
 msgstr "ERRORE"
 
-#: src/modules/battery/e_mod_main.c:1431
+#: src/modules/battery/e_mod_main.c:1427
 msgid "Battery Meter"
 msgstr "Indicatore di carica"
 
@@ -6938,7 +6914,7 @@ msgid "Suspend Mode"
 msgstr "Modalità sospensione"
 
 #: src/modules/conf_performance/e_mod_main.c:18
-#: src/modules/cpufreq/e_mod_config.c:72 src/modules/cpufreq/e_mod_main.c:341
+#: src/modules/cpufreq/e_mod_config.c:72 src/modules/cpufreq/e_mod_main.c:338
 msgid "Performance"
 msgstr "Prestazioni"
 
@@ -7405,12 +7381,12 @@ msgstr "Applicazione mancante"
 #: src/modules/conf_theme/e_int_config_wallpaper.c:332
 msgid ""
 "This module wants to execute an external application<ps/> that does not "
-"exist.<ps/>Please install <b>extra</b> application.<ps/>https://git."
-"enlightenment.org/apps/extra.git/"
+"exist.<ps/>Please install <b>extra</b> application.<ps/>https://"
+"git.enlightenment.org/apps/extra.git/"
 msgstr ""
 "Questo modulo vuole eseguire un'applicazione esterna che non esiste.<ps/>Si "
-"prega di installare l'applicazione <b>extra</b>.<ps/>https://git."
-"enlightenment.org/apps/extra.git/"
+"prega di installare l'applicazione <b>extra</b>.<ps/>https://"
+"git.enlightenment.org/apps/extra.git/"
 
 #: src/modules/conf_theme/e_int_config_theme.c:609
 msgid "Theme File Error"
@@ -8103,6 +8079,12 @@ msgstr "Pinga i client"
 msgid "Ping interval:"
 msgstr "Intervallo per il ping:"
 
+#: src/modules/conf_window_manipulation/e_int_config_window_process.c:109
+#: src/modules/temperature/e_mod_config.c:146
+#, c-format
+msgid "%1.0f ticks"
+msgstr "%1.0f tick"
+
 #: src/modules/conf_window_manipulation/e_mod_main.c:19
 #: src/modules/wizard/page_060.c:26
 msgid "Window Focus"
@@ -8193,15 +8175,15 @@ msgstr "Configura"
 msgid "Cpu Frequency Control Settings"
 msgstr "Impostazioni controllo frequenza CPU"
 
-#: src/modules/cpufreq/e_mod_config.c:69 src/modules/cpufreq/e_mod_main.c:338
+#: src/modules/cpufreq/e_mod_config.c:69 src/modules/cpufreq/e_mod_main.c:335
 msgid "Powersave"
 msgstr "Risparmio potenza"
 
-#: src/modules/cpufreq/e_mod_config.c:70 src/modules/cpufreq/e_mod_main.c:339
+#: src/modules/cpufreq/e_mod_config.c:70 src/modules/cpufreq/e_mod_main.c:336
 msgid "Balanced Low"
 msgstr "Bilanciato basso"
 
-#: src/modules/cpufreq/e_mod_config.c:71 src/modules/cpufreq/e_mod_main.c:340
+#: src/modules/cpufreq/e_mod_config.c:71 src/modules/cpufreq/e_mod_main.c:337
 msgid "Balanced Hi"
 msgstr "Bilanciato alto"
 
@@ -8217,11 +8199,11 @@ msgstr "Livello potenza basso"
 msgid "Update Interval"
 msgstr "Intervallo aggiornamento"
 
-#: src/modules/cpufreq/e_mod_main.c:272
+#: src/modules/cpufreq/e_mod_main.c:276
 msgid "Cpufreq"
 msgstr "Cpufreq"
 
-#: src/modules/cpufreq/e_mod_main.c:564
+#: src/modules/cpufreq/e_mod_main.c:563
 msgid "CPU Frequency"
 msgstr "Frequenza CPU"
 
@@ -8577,14 +8559,14 @@ msgid ""
 "hilight> close this Dialog<ps/>    <hilight>&lt;?&gt;</hilight> show this "
 "page<ps/>    <hilight>&lt;return&gt;</hilight> run action<ps/>    "
 "<hilight>&lt;ctrl+return&gt;</hilight> run action and continue<ps/>    "
-"<hilight>&lt;tab&gt;</hilight> toggle between selectors<ps/>    <hilight>&lt;"
-"ctrl+tab&gt;</hilight> complete input (depends on plugin)<ps/>    "
-"<hilight>&lt;ctrl+'x'&gt;</hilight> jump to plugin beginning with 'x'<ps/"
-">    <hilight>&lt;ctrl+left/right&gt;</hilight> cycle through plugins<ps/"
-">    <hilight>&lt;ctrl+up/down&gt;</hilight> go to first/last item<ps/>    "
-"<hilight>&lt;ctrl+1&gt;</hilight> toggle view modes (exit this page ;)<ps/"
-">    <hilight>&lt;ctrl+2&gt;</hilight> toggle list view modes<ps/>    "
-"<hilight>&lt;ctrl+3&gt;</hilight> toggle thumb view modes"
+"<hilight>&lt;tab&gt;</hilight> toggle between selectors<ps/>    "
+"<hilight>&lt;ctrl+tab&gt;</hilight> complete input (depends on plugin)<ps/"
+">    <hilight>&lt;ctrl+'x'&gt;</hilight> jump to plugin beginning with "
+"'x'<ps/>    <hilight>&lt;ctrl+left/right&gt;</hilight> cycle through "
+"plugins<ps/>    <hilight>&lt;ctrl+up/down&gt;</hilight> go to first/last "
+"item<ps/>    <hilight>&lt;ctrl+1&gt;</hilight> toggle view modes (exit this "
+"page ;)<ps/>    <hilight>&lt;ctrl+2&gt;</hilight> toggle list view modes<ps/"
+">    <hilight>&lt;ctrl+3&gt;</hilight> toggle thumb view modes"
 msgstr ""
 "  Ok, ecco la spiegazione di <hilight>Everything</hilight>...<ps/>  Digitate "
 "semplicemente alcune lettere di ciò che state<ps/>  cercando. Usate i tasti "
@@ -8592,17 +8574,18 @@ msgstr ""
 "il tasto <hilight>&lt;tab&gt;</hilight> per selezionare<ps/>  un'azione, "
 "quindi <hilight>&lt;invio&gt;</hilight>. Questa pagina non<ps/>  apparirà "
 "alla prossima esecuzione di <hilight>Everything</hilight><ps/>    "
-"<hilight>&lt;?&gt;</hilight> mostra questa pagina<ps/>    <hilight>&lt;"
-"invio&gt;</hilight> esegue l'azione<ps/>    <hilight>&lt;ctrl+invio&gt;</"
-"hilight> esegue l'azione e continua<ps/>    <hilight>&lt;tab&gt;</hilight> "
-"cambia selettore<ps/>    <hilight>&lt;ctrl+tab&gt;</hilight> completa "
-"l'input (dipende dal plugin)<ps/>    <hilight>&lt;ctrl+'x'&gt;</hilight> va "
-"al plugin che inizia con 'x'<ps/>    <hilight>&lt;ctrl+sinistra/destra&gt;</"
-"hilight> cicla tra i plugin<ps/>    <hilight>&lt;ctrl+su/giù&gt;</hilight> "
-"va alla prima/ultima voce<ps/>    <hilight>&lt;ctrl+1&gt;</hilight> cambia "
-"visualizzazione (esce da questa pagina ;)<ps/>    <hilight>&lt;ctrl+2&gt;</"
-"hilight> cambia visualizzazione a elenco<ps/>    <hilight>&lt;ctrl+3&gt;</"
-"hilight> cambia visualizzazione a miniature"
+"<hilight>&lt;?&gt;</hilight> mostra questa pagina<ps/>    "
+"<hilight>&lt;invio&gt;</hilight> esegue l'azione<ps/>    "
+"<hilight>&lt;ctrl+invio&gt;</hilight> esegue l'azione e continua<ps/>    "
+"<hilight>&lt;tab&gt;</hilight> cambia selettore<ps/>    "
+"<hilight>&lt;ctrl+tab&gt;</hilight> completa l'input (dipende dal plugin)<ps/"
+">    <hilight>&lt;ctrl+'x'&gt;</hilight> va al plugin che inizia con 'x'<ps/"
+">    <hilight>&lt;ctrl+sinistra/destra&gt;</hilight> cicla tra i plugin<ps/"
+">    <hilight>&lt;ctrl+su/giù&gt;</hilight> va alla prima/ultima voce<ps/"
+">    <hilight>&lt;ctrl+1&gt;</hilight> cambia visualizzazione (esce da "
+"questa pagina ;)<ps/>    <hilight>&lt;ctrl+2&gt;</hilight> cambia "
+"visualizzazione a elenco<ps/>    <hilight>&lt;ctrl+3&gt;</hilight> cambia "
+"visualizzazione a miniature"
 
 #: src/modules/everything/evry_view_tabs.c:93
 msgid "Back"
@@ -10891,3 +10874,4 @@ msgstr "Impossibile aprire connessione a socket X11"
 #: src/modules/xwayland/e_mod_main.c:347
 msgid "Cannot launch XWayland from X11 display."
 msgstr "Impossibile lanciare XWayland dal display X11"
+
