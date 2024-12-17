@@ -165,10 +165,13 @@ _gc_shutdown(E_Gadcon_Client *gcc)
 {
    E_Music_Control_Instance *inst;
    E_Music_Control_Module_Context *ctxt;
+   Evas_Object *img;
 
    EINA_SAFETY_ON_NULL_RETURN(music_control_mod);
    ctxt = music_control_mod->data;
    inst = gcc->data;
+   img  = edje_object_part_swallow_get(inst->gadget, "e.swallow.cover");
+   if (img) evas_object_del(img);
    evas_object_del(inst->gadget);
    if (inst->popup) music_control_popup_del(inst);
    ctxt->instances = eina_list_remove(ctxt->instances, inst);
