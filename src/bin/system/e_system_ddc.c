@@ -32,6 +32,26 @@ typedef uint8_t DDCA_Vcp_Feature_Code;
 
 typedef enum
 {
+  DDCA_INIT_OPTIONS_NONE,
+  DDCA_INIT_OPTIONS_DISABLE_CONFIG_FILE,
+  DDCA_INIT_OPTIONS_CLIENT_OPENED_SYSLOG,
+  DDCA_INIT_OPTIONS_ENABLE_INIT_MSGS
+} DDCA_Init_Options;
+
+typedef enum
+{
+  DDCA_SYSLOG_NOT_SET = -1,
+  DDCA_SYSLOG_NEVER   =  0,
+  DDCA_SYSLOG_ERROR   =  3,
+  DDCA_SYSLOG_WARNING =  6,
+  DDCA_SYSLOG_NOTICE  =  9,
+  DDCA_SYSLOG_INFO    = 12,
+  DDCA_SYSLOG_VERBOSE = 15,
+  DDCA_SYSLOG_DEBUG   = 18,
+} DDCA_Syslog_Level;
+
+typedef enum
+{
    DDCA_IO_I2C,
    DDCA_IO_ADL,
    DDCA_IO_USB
@@ -184,6 +204,10 @@ typedef struct
 // ddc lib handle and func symbols
 static void *ddc_lib = NULL;
 struct {
+   DDCA_Status (*ddca_init)
+     (const char *libopts, DDCA_Syslog_Level syslog_level, DDCA_Init_Options opts);
+   DDCA_Status (*ddca_init2)
+     (const char *libopts, DDCA_Syslog_Level syslog_level_arg, DDCA_Init_Options opts, char ***infomsg_loc);
    DDCA_Status (*ddca_get_display_info_list2)
      (bool include_invalid_displays, DDCA_Display_Info_List **dlist_loc);
    void (*ddca_free_display_info_list)
@@ -322,6 +346,8 @@ _ddc_init(void)
       ddc_func._x = dlsym(ddc_lib, #_x); \
       if (!ddc_func._x) return EINA_FALSE; \
    } while (0)
+   SYM(ddca_init);
+   SYM(ddca_init2);
    SYM(ddca_get_display_info_list2);
    SYM(ddca_free_display_info_list);
    SYM(ddca_open_display2);
@@ -340,6 +366,12 @@ _ddc_init(void)
    // if this doesn't work or find devices anyway
    if (system("modprobe i2c-dev") == 0)
      usleep(500 * 1000); // and wait for the module to come up... 200ms
+
+   // init lib with init funcs - newest tried first
+   if (ddc_func.ddca_init2)
+     ddc_func.ddca_init2("", DDCA_SYSLOG_WARNING, DDCA_INIT_OPTIONS_NONE, NULL);
+   else if (ddc_func.ddca_init)
+     ddc_func.ddca_init("", DDCA_SYSLOG_WARNING, DDCA_INIT_OPTIONS_NONE);
 
    if (!_ddc_probe()) return EINA_FALSE;
 
