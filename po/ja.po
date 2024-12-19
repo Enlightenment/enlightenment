@@ -3872,7 +3872,7 @@ msgid "Enlightenment cannot set up its module system.\n"
 msgstr "Enlightenment でモジュールシステムを設定できません。\n"
 
 #: src/bin/e_main.c:974
-#,uzzy
+#, fuzzy
 msgid "Enlightenment cannot setup remember settings.\n"
 msgstr "Enlightenment で記憶の設定ができません。\n"
 
