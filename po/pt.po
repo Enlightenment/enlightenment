@@ -1,15 +1,14 @@
 # Portuguese translation for Enlightenment.
 # This file is put in the public domain.
-#
 # Sérgio Marques <smarquespt@gmail.com>, 2010-2013.
 # Hugo Carvalho <hugokarvalho@hotmail.com>, 2021, 2022, 2023, 2024.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-07 14:20+0100\n"
-"PO-Revision-Date: 2024-11-08 19:55+0000\n"
+"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2024-12-16 09:14+0100\n"
+"PO-Revision-Date: 2024-12-21 17:38+0000\n"
 "Last-Translator: Hugo Carvalho <hugokarvalho@hotmail.com>\n"
 "Language-Team: Portuguese\n"
 "Language: pt\n"
@@ -17,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.2.2\n"
+"X-Generator: Poedit 3.5\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
 #: src/bin/e_about.c:17
@@ -58,20 +57,6 @@ msgstr ""
 #: src/bin/e_about.c:69
 msgid "<title>The Team</><ps/><ps/>"
 msgstr "<title>A equipa</><ps/><ps/>"
-
-#: src/bin/e_acpi.c:138
-msgid "ACPI Error"
-msgstr "Erro de ACPI"
-
-#: src/bin/e_acpi.c:139
-msgid ""
-"You seem to have an ACPI based system, but<br><hilight>acpid</hilight> does "
-"not seem to be running or<br>contactable. Perhaps enable the <hilight>acpid</"
-"hilight><br>service on your system?"
-msgstr ""
-"Parece ter um sistema baseado em ACPI, mas o<br><hilight>acpid</hilight> não "
-"parece estar a funcionar ou<br>contactável. Talvez deva ativar o serviço "
-"<hilight>acpid</hilight><br>no sistema?"
 
 #: src/bin/e_actions.c:352
 #, c-format
@@ -1088,7 +1073,6 @@ msgstr ""
 #: src/modules/conf_bindings/e_int_config_swipebindings.c:677
 #: src/modules/conf_intl/e_int_config_imc_import.c:119
 #: src/modules/conf_theme/e_int_config_theme_import.c:118
-#: src/modules/cpufreq/e_mod_main.c:551 src/modules/cpufreq/e_mod_main.c:619
 #: src/modules/fileman/e_int_config_mime_edit.c:313
 #: src/modules/polkit/auth_ui.c:184 src/modules/shot/e_mod_delay.c:79
 #: src/modules/xkbswitch/e_mod_config.c:1448
@@ -1226,11 +1210,11 @@ msgstr ""
 msgid "Settings Upgraded"
 msgstr "Definições atualizadas"
 
-#: src/bin/e_config_dialog.c:222 src/modules/battery/e_mod_main.c:1100
+#: src/bin/e_config_dialog.c:222 src/modules/battery/e_mod_main.c:1425
 #: src/modules/conf_bindings/e_mod_main.c:43 src/modules/conf/e_mod_main.c:278
 #: src/modules/conf_paths/e_mod_main.c:17
 #: src/modules/conf_performance/e_mod_main.c:17
-#: src/modules/cpufreq/e_mod_main.c:1570 src/modules/mixer/e_mod_main.c:953
+#: src/modules/cpufreq/e_mod_main.c:561 src/modules/mixer/e_mod_main.c:953
 #: src/modules/syscon/e_mod_main.c:36
 msgid "Advanced"
 msgstr "Avançado"
@@ -1262,7 +1246,7 @@ msgstr "Módulos"
 msgid "Look"
 msgstr "Aparência"
 
-#: src/bin/e_configure.c:34 src/modules/battery/e_mod_config.c:283
+#: src/bin/e_configure.c:34 src/modules/battery/e_mod_config.c:275
 #: src/modules/conf_applications/e_mod_main.c:60
 #: src/modules/conf_display/e_mod_main.c:40
 #: src/modules/conf_theme/e_mod_main.c:85
@@ -2754,13 +2738,13 @@ msgstr "Solicita posição"
 #: src/bin/e_int_client_prop.c:483 src/bin/e_int_client_prop.c:518
 #: src/bin/e_int_config_modules.c:58 src/bin/e_int_menus.c:299
 #: src/bin/e_shelf.c:2367 src/modules/backlight/e_mod_main.c:259
-#: src/modules/battery/e_mod_main.c:475 src/modules/clock/e_mod_main.c:359
+#: src/modules/battery/e_mod_main.c:730 src/modules/clock/e_mod_main.c:359
 #: src/modules/clock/e_mod_main.c:590 src/modules/conf_dialogs/e_mod_main.c:17
 #: src/modules/conf/e_conf.c:115 src/modules/conf/e_conf.c:126
 #: src/modules/conf/e_mod_main.c:101
 #: src/modules/conf_interaction/e_int_config_mouse.c:213
 #: src/modules/conf_shelves/e_int_config_shelf.c:149
-#: src/modules/cpufreq/e_mod_main.c:464
+#: src/modules/cpufreq/e_mod_main.c:431 src/modules/cpufreq/e_mod_main.c:459
 #: src/modules/everything/evry_gadget.c:511
 #: src/modules/everything/evry_gadget.c:683
 #: src/modules/everything/evry_plug_settings.c:183
@@ -2863,7 +2847,7 @@ msgstr "Volume"
 #: src/bin/e_int_client_remember.c:665 src/modules/conf/e_mod_main.c:252
 #: src/modules/everything/evry_gadget.c:632
 #: src/modules/everything/evry_plug_aggregator.c:313
-#: src/modules/everything/evry_view.c:1619
+#: src/modules/everything/evry_view.c:1624
 msgid "All"
 msgstr "Todas"
 
@@ -3171,7 +3155,9 @@ msgstr "Utilitário"
 #: src/bin/e_int_config_comp_match.c:444 src/bin/e_utils.c:641
 #: src/bin/e_widget_filepreview.c:696 src/bin/e_widget_filepreview.c:697
 #: src/bin/e_widget_filepreview.c:698 src/bin/e_widget_filepreview.c:728
-#: src/bin/e_widget_filepreview.c:739 src/modules/battery/e_mod_main.c:265
+#: src/bin/e_widget_filepreview.c:739 src/modules/battery/e_mod_main.c:338
+#: src/modules/battery/e_mod_main.c:351 src/modules/battery/e_mod_main.c:354
+#: src/modules/battery/e_mod_main.c:363 src/modules/battery/e_mod_main.c:372
 #: src/modules/bluez5/e_mod_popup.c:510 src/modules/bluez5/e_mod_popup.c:511
 #: src/modules/bluez5/e_mod_util.c:261
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:429
@@ -4808,149 +4794,151 @@ msgstr "Iluminação"
 msgid "Backlight Controls"
 msgstr "Controlos de iluminação"
 
-#: src/modules/battery/e_mod_config.c:62
+#: src/modules/battery/e_mod_config.c:61
 msgid "Battery Monitor Settings"
 msgstr "Definições de bateria"
 
-#: src/modules/battery/e_mod_config.c:130
+#: src/modules/battery/e_mod_config.c:128
 msgid "Show alert when battery is low"
 msgstr "Mostrar alerta se a bateria estiver fraca"
 
-#: src/modules/battery/e_mod_config.c:133
+#: src/modules/battery/e_mod_config.c:131
 msgid "Use desktop notifications for alert"
 msgstr "Utilizar notificações da área de trabalho"
 
-#: src/modules/battery/e_mod_config.c:223
-msgid "Check every:"
-msgstr "Verificar a cada:"
-
-#: src/modules/battery/e_mod_config.c:225
-#: src/modules/conf_window_manipulation/e_int_config_window_process.c:109
-#: src/modules/temperature/e_mod_config.c:146
-#, c-format
-msgid "%1.0f ticks"
-msgstr "%1.0f segundos"
-
-#: src/modules/battery/e_mod_config.c:230
+#: src/modules/battery/e_mod_config.c:222
 msgid "Suspend when below:"
 msgstr "Suspender ao atingir:"
 
-#: src/modules/battery/e_mod_config.c:233
+#: src/modules/battery/e_mod_config.c:225
 msgid "Hibernate when below:"
 msgstr "Hibernar ao atingir:"
 
-#: src/modules/battery/e_mod_config.c:236
+#: src/modules/battery/e_mod_config.c:228
 msgid "Shutdown when below:"
 msgstr "Desligar ao atingir:"
 
-#: src/modules/battery/e_mod_config.c:239
-#: src/modules/battery/e_mod_config.c:258
+#: src/modules/battery/e_mod_config.c:231
+#: src/modules/battery/e_mod_config.c:250
 #, c-format
 msgid "%1.0f %%"
 msgstr "%1.0f %%"
 
-#: src/modules/battery/e_mod_config.c:243
-msgid "Polling"
-msgstr "Análise"
+#: src/modules/battery/e_mod_config.c:235
+msgid "Limits"
+msgstr "Limites"
 
-#: src/modules/battery/e_mod_config.c:247
+#: src/modules/battery/e_mod_config.c:239
 msgid "Show low battery alert"
 msgstr "Mostrar alerta de bateria fraca"
 
-#: src/modules/battery/e_mod_config.c:251
+#: src/modules/battery/e_mod_config.c:243
 msgid "Alert when at:"
 msgstr "Alertar com:"
 
-#: src/modules/battery/e_mod_config.c:254
+#: src/modules/battery/e_mod_config.c:246
 #, c-format
 msgid "%1.0f min"
 msgstr "%1.0f min."
 
-#: src/modules/battery/e_mod_config.c:262
+#: src/modules/battery/e_mod_config.c:254
 msgid "Auto dismiss in..."
 msgstr "Ignorar automaticamente em..."
 
-#: src/modules/battery/e_mod_config.c:267
+#: src/modules/battery/e_mod_config.c:259
 #: src/modules/conf_window_manipulation/e_int_config_window_process.c:101
 #, c-format
 msgid "%1.0f s"
 msgstr "%1.0f s"
 
-#: src/modules/battery/e_mod_config.c:274
+#: src/modules/battery/e_mod_config.c:266
 msgid "Alert"
 msgstr "Alerta"
 
-#: src/modules/battery/e_mod_config.c:280
+#: src/modules/battery/e_mod_config.c:272
 msgid "Auto Detect"
 msgstr "Deteção automática"
 
-#: src/modules/battery/e_mod_config.c:287
+#: src/modules/battery/e_mod_config.c:279
 msgid "udev"
 msgstr "udev"
 
-#: src/modules/battery/e_mod_config.c:290
+#: src/modules/battery/e_mod_config.c:282
 msgid "Fuzzy Mode"
 msgstr "Modo difuso"
 
-#: src/modules/battery/e_mod_config.c:294
+#: src/modules/battery/e_mod_config.c:286
 msgid "HAL"
 msgstr "HAL"
 
-#: src/modules/battery/e_mod_config.c:299
+#: src/modules/battery/e_mod_config.c:291
 msgid "Hardware"
 msgstr "Equipamento"
 
-#: src/modules/battery/e_mod_main.c:163 src/modules/battery/e_mod_main.c:440
-#: src/modules/battery/e_mod_main.c:755
+#: src/modules/battery/e_mod_main.c:174 src/modules/battery/e_mod_main.c:695
+#: src/modules/battery/e_mod_main.c:1012
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:354
 #, c-format
 msgid "Battery"
 msgstr "Bateria"
 
-#: src/modules/battery/e_mod_main.c:236
+#: src/modules/battery/e_mod_main.c:309
 msgid "Charging"
 msgstr "A carregar"
 
-#: src/modules/battery/e_mod_main.c:240
+#: src/modules/battery/e_mod_main.c:313
 msgid "Discharging"
 msgstr "A descarregar"
 
-#: src/modules/battery/e_mod_main.c:245
+#: src/modules/battery/e_mod_main.c:318
 msgid "Charged"
 msgstr "Carregada"
 
-#: src/modules/battery/e_mod_main.c:434
+#: src/modules/battery/e_mod_main.c:594
+#: src/modules/conf_performance/e_int_config_powermanagement.c:166
+msgid "Level"
+msgstr "Nível"
+
+#: src/modules/battery/e_mod_main.c:608
+msgid "Energy"
+msgstr "Energia"
+
+#: src/modules/battery/e_mod_main.c:622
+msgid "(Dis)charge"
+msgstr "(Des)carregar"
+
+#: src/modules/battery/e_mod_main.c:689
 #, c-format
 msgid "Battery: %s (%s)"
 msgstr "Bateria: %s (%s)"
 
-#: src/modules/battery/e_mod_main.c:436 src/modules/battery/e_mod_main.c:438
+#: src/modules/battery/e_mod_main.c:691 src/modules/battery/e_mod_main.c:693
 #, c-format
 msgid "Battery: %s"
 msgstr "Bateria: %s"
 
-#: src/modules/battery/e_mod_main.c:481
+#: src/modules/battery/e_mod_main.c:736
 msgid "Power Management Timing"
 msgstr "Temporização da gestão de energia"
 
-#: src/modules/battery/e_mod_main.c:758 src/modules/battery/e_mod_main.c:790
+#: src/modules/battery/e_mod_main.c:1015 src/modules/battery/e_mod_main.c:1047
 msgid "Your battery is low!"
 msgstr "A bateria está fraca!"
 
-#: src/modules/battery/e_mod_main.c:759 src/modules/battery/e_mod_main.c:792
+#: src/modules/battery/e_mod_main.c:1016 src/modules/battery/e_mod_main.c:1049
 msgid "AC power is recommended."
 msgstr "Deve ligar à corrente."
 
-#: src/modules/battery/e_mod_main.c:877 src/modules/battery/e_mod_main.c:881
+#: src/modules/battery/e_mod_main.c:1134 src/modules/battery/e_mod_main.c:1138
 msgid "N/A"
 msgstr "N/D"
 
-#: src/modules/battery/e_mod_main.c:988 src/modules/battery/e_mod_main.c:990
-#: src/modules/battery/e_mod_main.c:997 src/modules/battery/e_mod_main.c:999
+#: src/modules/battery/e_mod_main.c:1245 src/modules/battery/e_mod_main.c:1247
+#: src/modules/battery/e_mod_main.c:1254 src/modules/battery/e_mod_main.c:1256
 msgid "ERROR"
 msgstr "ERRO"
 
-#: src/modules/battery/e_mod_main.c:1102
+#: src/modules/battery/e_mod_main.c:1427
 msgid "Battery Meter"
 msgstr "Monitor de bateria"
 
@@ -6211,8 +6199,6 @@ msgstr "Normal"
 
 #: src/modules/conf_display/e_int_config_dpms.c:149
 #: src/modules/conf_display/e_int_config_dpms.c:155
-#: src/modules/cpufreq/e_mod_config.c:106
-#: src/modules/cpufreq/e_mod_config.c:112
 #, c-format
 msgid "%3.0f"
 msgstr "%3.0f"
@@ -6814,10 +6800,6 @@ msgstr "Mín."
 msgid "Max"
 msgstr "Máx."
 
-#: src/modules/conf_performance/e_int_config_powermanagement.c:166
-msgid "Level"
-msgstr "Nível"
-
 #: src/modules/conf_performance/e_int_config_powermanagement.c:175
 msgid "e.g. Saving to disk"
 msgstr "exemplo: Gravar no disco"
@@ -6863,6 +6845,7 @@ msgid "Suspend Mode"
 msgstr "Modo de suspensão"
 
 #: src/modules/conf_performance/e_mod_main.c:18
+#: src/modules/cpufreq/e_mod_config.c:72 src/modules/cpufreq/e_mod_main.c:338
 msgid "Performance"
 msgstr "Desempenho"
 
@@ -7225,7 +7208,6 @@ msgstr "Bytecode"
 
 #: src/modules/conf_theme/e_int_config_fonts.c:738
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:278
-#: src/modules/cpufreq/e_mod_main.c:253 src/modules/cpufreq/e_mod_main.c:291
 msgid "Automatic"
 msgstr "Automático"
 
@@ -8027,6 +8009,12 @@ msgstr "Analisar programas"
 msgid "Ping interval:"
 msgstr "Intervalo:"
 
+#: src/modules/conf_window_manipulation/e_int_config_window_process.c:109
+#: src/modules/temperature/e_mod_config.c:146
+#, c-format
+msgid "%1.0f ticks"
+msgstr "%1.0f segundos"
+
 #: src/modules/conf_window_manipulation/e_mod_main.c:19
 #: src/modules/wizard/page_060.c:26
 msgid "Window Focus"
@@ -8113,126 +8101,39 @@ msgstr "Rede sem fios ligada"
 msgid "Configure"
 msgstr "Configurar"
 
-#: src/modules/cpufreq/e_mod_config.c:35
+#: src/modules/cpufreq/e_mod_config.c:32
 msgid "Cpu Frequency Control Settings"
 msgstr "Definições da frequência do CPU"
 
-#: src/modules/cpufreq/e_mod_config.c:82 src/modules/cpufreq/e_mod_main.c:276
-msgid "Restore CPU Power Policy"
-msgstr "Restaurar política de energia do CPU"
+#: src/modules/cpufreq/e_mod_config.c:69 src/modules/cpufreq/e_mod_main.c:335
+msgid "Powersave"
+msgstr "Poupança de energia"
 
-#: src/modules/cpufreq/e_mod_config.c:85 src/modules/cpufreq/e_mod_main.c:316
-msgid "Automatic powersaving"
-msgstr "Poupança de energia automática"
+#: src/modules/cpufreq/e_mod_config.c:70 src/modules/cpufreq/e_mod_main.c:336
+msgid "Balanced Low"
+msgstr "Equilibrado baixo"
 
-#: src/modules/cpufreq/e_mod_config.c:88
-msgid "Update poll interval"
-msgstr "Intervalo entre atualizações"
+#: src/modules/cpufreq/e_mod_config.c:71 src/modules/cpufreq/e_mod_main.c:337
+msgid "Balanced Hi"
+msgstr "Equilibrado alto"
 
-#: src/modules/cpufreq/e_mod_config.c:90 src/modules/cpufreq/e_mod_main.c:207
-msgid "Fast (4 ticks)"
-msgstr "Rápida (4 seg.)"
+#: src/modules/cpufreq/e_mod_config.c:143
+msgid "High Power Level"
+msgstr "Nível de energia alto"
 
-#: src/modules/cpufreq/e_mod_config.c:92 src/modules/cpufreq/e_mod_main.c:214
-msgid "Medium (8 ticks)"
-msgstr "Média (8 seg.)"
+#: src/modules/cpufreq/e_mod_config.c:176
+msgid "Low Power Level"
+msgstr "Nível de energia baixo"
 
-#: src/modules/cpufreq/e_mod_config.c:94 src/modules/cpufreq/e_mod_main.c:221
-msgid "Normal (32 ticks)"
-msgstr "Normal (32 seg.)"
+#: src/modules/cpufreq/e_mod_config.c:209
+msgid "Update Interval"
+msgstr "Intervalo de atualização"
 
-#: src/modules/cpufreq/e_mod_config.c:96 src/modules/cpufreq/e_mod_main.c:228
-msgid "Slow (64 ticks)"
-msgstr "Lenta (64 seg.)"
-
-#: src/modules/cpufreq/e_mod_config.c:98 src/modules/cpufreq/e_mod_main.c:235
-msgid "Very Slow (256 ticks)"
-msgstr "Muito lenta (256 seg.)"
-
-#: src/modules/cpufreq/e_mod_config.c:104
-msgid "Minimum Power State"
-msgstr "Estado mínimo de energia"
-
-#: src/modules/cpufreq/e_mod_config.c:110
-msgid "Maximum Power State"
-msgstr "Estado máximo de energia"
-
-#: src/modules/cpufreq/e_mod_main.c:150
+#: src/modules/cpufreq/e_mod_main.c:276
 msgid "Cpufreq"
 msgstr "Frequência do CPU"
 
-#: src/modules/cpufreq/e_mod_main.c:251
-msgid "Manual"
-msgstr "Manual"
-
-#: src/modules/cpufreq/e_mod_main.c:255 src/modules/cpufreq/e_mod_main.c:293
-msgid "Lower Power Automatic"
-msgstr "Reduzir energia automaticamente"
-
-#: src/modules/cpufreq/e_mod_main.c:257 src/modules/cpufreq/e_mod_main.c:295
-msgid "Automatic Interactive"
-msgstr "Interativo (automático)"
-
-#: src/modules/cpufreq/e_mod_main.c:259 src/modules/cpufreq/e_mod_main.c:297
-msgid "Minimum Speed"
-msgstr "Velocidade mínima"
-
-#: src/modules/cpufreq/e_mod_main.c:261 src/modules/cpufreq/e_mod_main.c:299
-msgid "Maximum Speed"
-msgstr "Velocidade máxima"
-
-#: src/modules/cpufreq/e_mod_main.c:340
-#, c-format
-msgid "%i MHz"
-msgstr "%i MHz"
-
-#: src/modules/cpufreq/e_mod_main.c:342
-#, c-format
-msgid "%'.1f GHz"
-msgstr "%'.1f GHz"
-
-#: src/modules/cpufreq/e_mod_main.c:406
-msgid "Time Between Updates"
-msgstr "Intervalo entre atualizações"
-
-#: src/modules/cpufreq/e_mod_main.c:412
-msgid "Set CPU Power Policy"
-msgstr "Definir política de energia do CPU"
-
-#: src/modules/cpufreq/e_mod_main.c:419
-msgid "Set CPU Speed"
-msgstr "Definir velocidade do CPU"
-
-#: src/modules/cpufreq/e_mod_main.c:425
-msgid "Powersaving behavior"
-msgstr "Comportamento da poupança de energia"
-
-#: src/modules/cpufreq/e_mod_main.c:431
-msgid "Power State Min"
-msgstr "Estado mín. de energia"
-
-#: src/modules/cpufreq/e_mod_main.c:437
-msgid "Power State Max"
-msgstr "Estado máx. de energia"
-
-#: src/modules/cpufreq/e_mod_main.c:549
-msgid ""
-"There was an error trying to modify CPU<br>frequency control parameters."
-msgstr ""
-"Ocorreu um erro ao tentar modificar os parâmetros de controlo da "
-"CPU<br>frequência."
-
-#: src/modules/cpufreq/e_mod_main.c:615
-msgid ""
-"Your kernel does not support setting the<ps/>CPU frequency at all. You may "
-"be missing<ps/>Kernel modules or features, or your CPU<ps/>simply does not "
-"support this feature."
-msgstr ""
-"O kernel não permite configurar a<ps/>frequência da CPU. Pode ser que não "
-"possua<ps/>todos os módulos ou funções do Kernel<ps/>ou então a CPU "
-"simplesmente não permite esta opção."
-
-#: src/modules/cpufreq/e_mod_main.c:1572
+#: src/modules/cpufreq/e_mod_main.c:563
 msgid "CPU Frequency"
 msgstr "Frequência do CPU"
 
@@ -10891,3 +10792,119 @@ msgstr "Não foi possível abrir a ligação do socket X11."
 #: src/modules/xwayland/e_mod_main.c:347
 msgid "Cannot launch XWayland from X11 display."
 msgstr "Não é possível lançar o XWayland a partir do ecrã X11."
+
+msgid ""
+"This image will be uploaded<ps/>to enlightenment.org. It will be publicly "
+"visible."
+msgstr ""
+"Cette image va être téléversée sur enlightenment.org.<ps/>Elle sera visible "
+"par tous."
+
+msgid "Force this device to be connected when detected"
+msgstr "Forcer la connexion du périphérique à la détection"
+
+#~ msgid "ACPI Error"
+#~ msgstr "Erro de ACPI"
+
+#~ msgid ""
+#~ "You seem to have an ACPI based system, but<br><hilight>acpid</hilight> "
+#~ "does not seem to be running or<br>contactable. Perhaps enable the "
+#~ "<hilight>acpid</hilight><br>service on your system?"
+#~ msgstr ""
+#~ "Parece ter um sistema baseado em ACPI, mas o<br><hilight>acpid</hilight> "
+#~ "não parece estar a funcionar ou<br>contactável. Talvez deva ativar o "
+#~ "serviço <hilight>acpid</hilight><br>no sistema?"
+
+#~ msgid "Check every:"
+#~ msgstr "Verificar a cada:"
+
+#~ msgid "Polling"
+#~ msgstr "Análise"
+
+#~ msgid "Restore CPU Power Policy"
+#~ msgstr "Restaurar política de energia do CPU"
+
+#~ msgid "Automatic powersaving"
+#~ msgstr "Poupança de energia automática"
+
+#~ msgid "Fast (4 ticks)"
+#~ msgstr "Rápida (4 seg.)"
+
+#~ msgid "Medium (8 ticks)"
+#~ msgstr "Média (8 seg.)"
+
+#~ msgid "Normal (32 ticks)"
+#~ msgstr "Normal (32 seg.)"
+
+#~ msgid "Slow (64 ticks)"
+#~ msgstr "Lenta (64 seg.)"
+
+#~ msgid "Very Slow (256 ticks)"
+#~ msgstr "Muito lenta (256 seg.)"
+
+#~ msgid "Minimum Power State"
+#~ msgstr "Estado mínimo de energia"
+
+#~ msgid "Maximum Power State"
+#~ msgstr "Estado máximo de energia"
+
+#~ msgid "Manual"
+#~ msgstr "Manual"
+
+#~ msgid "Lower Power Automatic"
+#~ msgstr "Reduzir energia automaticamente"
+
+#~ msgid "Automatic Interactive"
+#~ msgstr "Interativo (automático)"
+
+#~ msgid "Minimum Speed"
+#~ msgstr "Velocidade mínima"
+
+#~ msgid "Maximum Speed"
+#~ msgstr "Velocidade máxima"
+
+#, c-format
+#~ msgid "%i MHz"
+#~ msgstr "%i MHz"
+
+#, c-format
+#~ msgid "%'.1f GHz"
+#~ msgstr "%'.1f GHz"
+
+#~ msgid "Time Between Updates"
+#~ msgstr "Intervalo entre atualizações"
+
+#~ msgid "Set CPU Power Policy"
+#~ msgstr "Definir política de energia do CPU"
+
+#~ msgid "Set CPU Speed"
+#~ msgstr "Definir velocidade do CPU"
+
+#~ msgid "Powersaving behavior"
+#~ msgstr "Comportamento da poupança de energia"
+
+#~ msgid "Power State Min"
+#~ msgstr "Estado mín. de energia"
+
+#~ msgid "Power State Max"
+#~ msgstr "Estado máx. de energia"
+
+#~ msgid ""
+#~ "There was an error trying to modify CPU<br>frequency control parameters."
+#~ msgstr ""
+#~ "Ocorreu um erro ao tentar modificar os parâmetros de controlo da "
+#~ "CPU<br>frequência."
+
+#~ msgid ""
+#~ "Your kernel does not support setting the<ps/>CPU frequency at all. You "
+#~ "may be missing<ps/>Kernel modules or features, or your CPU<ps/>simply "
+#~ "does not support this feature."
+#~ msgstr ""
+#~ "O kernel não permite configurar a<ps/>frequência da CPU. Pode ser que não "
+#~ "possua<ps/>todos os módulos ou funções do Kernel<ps/>ou então a CPU "
+#~ "simplesmente não permite esta opção."
+
+#, fuzzy
+#~| msgid "Stop this from being an unlock device"
+#~ msgid "Stop this device from being forcefully connected"
+#~ msgstr "Impedir que isto seja um dispositivo desbloqueado"
