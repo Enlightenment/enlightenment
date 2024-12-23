@@ -1,14 +1,14 @@
 # Portuguese translation for Enlightenment.
 # This file is put in the public domain.
 # Sérgio Marques <smarquespt@gmail.com>, 2010-2013.
-# Hugo Carvalho <hugokarvalho@hotmail.com>, 2021, 2022, 2023, 2024.
+# Hugo Carvalho <hugokarvalho@hotmail.com>, 2021-2024.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2024-12-16 09:14+0100\n"
-"PO-Revision-Date: 2024-12-21 17:38+0000\n"
+"PO-Revision-Date: 2024-12-22 22:51+0000\n"
 "Last-Translator: Hugo Carvalho <hugokarvalho@hotmail.com>\n"
 "Language-Team: Portuguese\n"
 "Language: pt\n"
@@ -17,7 +17,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 3.5\n"
-"X-Poedit-SourceCharset: UTF-8\n"
 
 #: src/bin/e_about.c:17
 msgid "About Enlightenment"
@@ -891,7 +890,7 @@ msgstr "Erro de cliente!"
 #: src/bin/e_client.c:4982
 msgid "Something has attempted to set a border when it shouldn't! Report this!"
 msgstr ""
-"Alguma coisa tentou estabelecer uma fronteira quando não devia! Relate isto!"
+"Alguma coisa tentou estabelecer uma fronteira quando não devia! Reporte isto!"
 
 #: src/bin/e_color_dialog.c:25
 msgid "Color Selector"
@@ -10797,114 +10796,8 @@ msgid ""
 "This image will be uploaded<ps/>to enlightenment.org. It will be publicly "
 "visible."
 msgstr ""
-"Cette image va être téléversée sur enlightenment.org.<ps/>Elle sera visible "
-"par tous."
+"Esta imagem será carregada no enlightenment.org.<ps/>Será visível "
+"publicamente."
 
 msgid "Force this device to be connected when detected"
-msgstr "Forcer la connexion du périphérique à la détection"
-
-#~ msgid "ACPI Error"
-#~ msgstr "Erro de ACPI"
-
-#~ msgid ""
-#~ "You seem to have an ACPI based system, but<br><hilight>acpid</hilight> "
-#~ "does not seem to be running or<br>contactable. Perhaps enable the "
-#~ "<hilight>acpid</hilight><br>service on your system?"
-#~ msgstr ""
-#~ "Parece ter um sistema baseado em ACPI, mas o<br><hilight>acpid</hilight> "
-#~ "não parece estar a funcionar ou<br>contactável. Talvez deva ativar o "
-#~ "serviço <hilight>acpid</hilight><br>no sistema?"
-
-#~ msgid "Check every:"
-#~ msgstr "Verificar a cada:"
-
-#~ msgid "Polling"
-#~ msgstr "Análise"
-
-#~ msgid "Restore CPU Power Policy"
-#~ msgstr "Restaurar política de energia do CPU"
-
-#~ msgid "Automatic powersaving"
-#~ msgstr "Poupança de energia automática"
-
-#~ msgid "Fast (4 ticks)"
-#~ msgstr "Rápida (4 seg.)"
-
-#~ msgid "Medium (8 ticks)"
-#~ msgstr "Média (8 seg.)"
-
-#~ msgid "Normal (32 ticks)"
-#~ msgstr "Normal (32 seg.)"
-
-#~ msgid "Slow (64 ticks)"
-#~ msgstr "Lenta (64 seg.)"
-
-#~ msgid "Very Slow (256 ticks)"
-#~ msgstr "Muito lenta (256 seg.)"
-
-#~ msgid "Minimum Power State"
-#~ msgstr "Estado mínimo de energia"
-
-#~ msgid "Maximum Power State"
-#~ msgstr "Estado máximo de energia"
-
-#~ msgid "Manual"
-#~ msgstr "Manual"
-
-#~ msgid "Lower Power Automatic"
-#~ msgstr "Reduzir energia automaticamente"
-
-#~ msgid "Automatic Interactive"
-#~ msgstr "Interativo (automático)"
-
-#~ msgid "Minimum Speed"
-#~ msgstr "Velocidade mínima"
-
-#~ msgid "Maximum Speed"
-#~ msgstr "Velocidade máxima"
-
-#, c-format
-#~ msgid "%i MHz"
-#~ msgstr "%i MHz"
-
-#, c-format
-#~ msgid "%'.1f GHz"
-#~ msgstr "%'.1f GHz"
-
-#~ msgid "Time Between Updates"
-#~ msgstr "Intervalo entre atualizações"
-
-#~ msgid "Set CPU Power Policy"
-#~ msgstr "Definir política de energia do CPU"
-
-#~ msgid "Set CPU Speed"
-#~ msgstr "Definir velocidade do CPU"
-
-#~ msgid "Powersaving behavior"
-#~ msgstr "Comportamento da poupança de energia"
-
-#~ msgid "Power State Min"
-#~ msgstr "Estado mín. de energia"
-
-#~ msgid "Power State Max"
-#~ msgstr "Estado máx. de energia"
-
-#~ msgid ""
-#~ "There was an error trying to modify CPU<br>frequency control parameters."
-#~ msgstr ""
-#~ "Ocorreu um erro ao tentar modificar os parâmetros de controlo da "
-#~ "CPU<br>frequência."
-
-#~ msgid ""
-#~ "Your kernel does not support setting the<ps/>CPU frequency at all. You "
-#~ "may be missing<ps/>Kernel modules or features, or your CPU<ps/>simply "
-#~ "does not support this feature."
-#~ msgstr ""
-#~ "O kernel não permite configurar a<ps/>frequência da CPU. Pode ser que não "
-#~ "possua<ps/>todos os módulos ou funções do Kernel<ps/>ou então a CPU "
-#~ "simplesmente não permite esta opção."
-
-#, fuzzy
-#~| msgid "Stop this from being an unlock device"
-#~ msgid "Stop this device from being forcefully connected"
-#~ msgstr "Impedir que isto seja um dispositivo desbloqueado"
+msgstr "Forçar este dispositivo a ser ligado quando detetado"
