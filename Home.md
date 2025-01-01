@@ -1,5 +1,8 @@
-<p align="center"><img src="img/enlightenment.svg"></p>
-<p align="center" style="font-size: 30px; font-weight: bold; color: #ffffff"><h1>Enlightenment</h1></p>
+<p align="center"><img src="img/e-logo-top.svg"></p>
 
 -----
 
+# About
+
+Enlightenment is a Windowmanager, Compositor and low resource Desktop
+Environment for X11 and Wayland (experimental).
