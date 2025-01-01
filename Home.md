@@ -1,5 +1,5 @@
-<p align="center"><img src="img/enlightenmebnt.svg"></p>
-<p align="center"><h1 color=#ffffff>Enlightenment</h1></center>
+<p align="center"><img src="img/enlightenment.svg"></p>
+<p align="center"><font color=#ffffff><h1>Enlightenment</h1></font></center>
 
 -----
 
