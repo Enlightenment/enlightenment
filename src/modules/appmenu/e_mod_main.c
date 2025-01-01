@@ -191,10 +191,13 @@ e_modapi_shutdown(E_Module *m)
    E_AppMenu_Window *w;
    Eina_List *l, *l2;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ctxt, 0);
+
    ecore_event_handler_del(ctxt->events[0]);
    ecore_event_handler_del(ctxt->events[1]);
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(ctxt, 0);
+   e_gadcon_provider_unregister(&_gc_class);
+
    EINA_LIST_FOREACH_SAFE(ctxt->windows, l, l2, w)
      appmenu_window_free(w);
 
