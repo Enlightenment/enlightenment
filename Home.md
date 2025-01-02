@@ -11,6 +11,13 @@ Environment for X11 and Wayland (experimental).*
 
 ## Minimal
 
+Comparing to similarly featured desktop environments (with compisotrs,
+file managers, a full range of desktop management toolintg and similar
+features), Enlightenment comes in by far the smallest. It's in the
+same realm as minimal envrionments like LXDE but with significantly
+more features. If you want minimal with all the bells and whistles,
+Enlightenment has it.
+
 | Desktop           | Memory   |                                               |
 |-------------------|----------|-----------------------------------------------|
 | **Enlightenment** | **124M** | <img src="img/white.png" width=124 height=16> |
