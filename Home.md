@@ -11,7 +11,7 @@ Environment for X11 and Wayland (experimental).*
 
 ## Minimal
 
-<img src="img/white.svg" width=124px height=16px>
+<img src="img/white.svg" width="124" height="16">
 
 | Desktop           | Memory   | |
 |-------------------|----------|-|
