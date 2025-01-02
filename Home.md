@@ -13,7 +13,7 @@ Environment for X11 and Wayland (experimental).*
 
 | Desktop           | Memory   | |
 |-------------------|----------|-|
-| **Enlightenment** | **124M** |<div style="background-color: #ffffff; box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;" width=124px> |
+| **Enlightenment** | **124M** |<div style="background-color: #ffffff; box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;" width=124px heignt=1em> </div> |
 |   XFCE            |   225M   | |
 |   GNOME           |   425M   | |
 |   KDE             |   475M   | |
