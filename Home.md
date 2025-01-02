@@ -43,7 +43,7 @@ Enlightenment has it.
 * Per window volume controls in the titlebar
 * Full detailed audio mixer controls
 * Music control of player apps via MPRIS2
-* Bluetooth control (for BLuez5)
+* Bluetooth control (for bluez5)
 * Network (wifi, wired, tethering etc.) via connman
 * Keyboard layout and layout switching
 * Temperature display for one or more sensors
