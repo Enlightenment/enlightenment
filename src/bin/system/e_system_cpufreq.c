@@ -6,6 +6,37 @@
 // no local funcs
 #else
 static int
+sys_cpu_set_all_min_freq(void)
+{
+   int num = 0;
+   char buf[4096];
+   char buf2[256];
+   size_t sz;
+   FILE *f;
+
+   for (;;)
+     {
+        snprintf(buf, sizeof(buf),
+                 "/sys/devices/system/cpu/cpu%i/cpufreq/cpuinfo_min_freq", num);
+        f = fopen(buf, "r");
+        if (!f) return num;
+        sz = fread(buf2, 1, sizeof(buf2), f);
+        fclose(f);
+        if (sz > 0)
+          {
+             snprintf(buf, sizeof(buf),
+                      "/sys/devices/system/cpu/cpu%i/cpufreq/scaling_min_freq", num);
+             f = fopen(buf, "w");
+             if (!f) return num;
+             fwrite(buf2, 1, sz, f);
+             fclose(f);
+          }
+        num++;
+     }
+   return 0;
+}
+
+static int
 sys_cpu_setall(const char *control, const char *value)
 {
    int num = 0;
@@ -22,7 +53,7 @@ sys_cpu_setall(const char *control, const char *value)
         fclose(f);
         num++;
      }
-   return 1;
+   return 0;
 }
 
 static int
@@ -229,6 +260,9 @@ _cb_cpufreq_pwr_set(void *data EINA_UNUSED, const char *params)
   e_system_inout_command_send("cpufreq-pwr-set", "err");
 #else
   int v = atoi(params); // 0->100
+
+  // ensure min freq is as low as possible
+  sys_cpu_set_all_min_freq();
 
   if (v < 0) v = 0;
   else if (v > 100) v = 100;
