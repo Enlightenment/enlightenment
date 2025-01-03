@@ -252,8 +252,9 @@ _battery_udev_battery_update_poll(void *data)
 static void
 _battery_udev_battery_update(const char *syspath, Battery *bat)
 {
+   int pcharging;
    const char *test;
-   double t, charge;
+   double t, charge, voltage_now;
 
    if (!bat)
      {
@@ -281,6 +282,13 @@ _battery_udev_battery_update(const char *syspath, Battery *bat)
          }
      }
    bat->power_now = 0;
+   voltage_now = bat->design_voltage;
+   test = eeze_udev_syspath_get_property(bat->udi, "POWER_SUPPLY_VOLTAGE_NOW");
+   if (test)
+     {
+        voltage_now = (double)strtod(test, NULL);
+        eina_stringshare_del(test);
+     }
    GET_NUM(bat, power_now, POWER_SUPPLY_POWER_NOW);
    if (eina_dbl_exact(bat->power_now, 0))
      {
@@ -289,10 +297,9 @@ _battery_udev_battery_update(const char *syspath, Battery *bat)
          {
            double current_now = strtod(test, NULL);
 
-           test = eeze_udev_syspath_get_property(bat->udi, "POWER_SUPPLY_VOLTAGE_NOW");
-           if (test)
+           eina_stringshare_del(test);
+           if (voltage_now > 0.0)
              {
-               double voltage_now = strtod(test, NULL);
                bat->power_now = current_now * voltage_now / 1000000.0;
              }
          }
@@ -309,6 +316,20 @@ _battery_udev_battery_update(const char *syspath, Battery *bat)
      }
    else
      bat->is_micro_watts = EINA_TRUE;
+   pcharging = bat->charging;
+   test = eeze_udev_syspath_get_property(bat->udi, "POWER_SUPPLY_STATUS");
+   if (test)
+     {
+        if (!strcmp(test, "Charging"))
+          bat->charging = 1;
+        else if ((!strcmp(test, "Unknown")) && (bat->charge_rate > 0))
+          bat->charging = 1;
+        else
+          bat->charging = 0;
+        eina_stringshare_del(test);
+     }
+   else
+     bat->charging = 0;
    test = eeze_udev_syspath_get_property(bat->udi, "POWER_SUPPLY_ENERGY_NOW");
    if (!test)
      test = eeze_udev_syspath_get_property(bat->udi, "POWER_SUPPLY_CHARGE_NOW");
@@ -324,7 +345,9 @@ _battery_udev_battery_update(const char *syspath, Battery *bat)
    if (test)
      {
         double charge_rate = 0;
+        double last_charge_rate;
 
+        last_charge_rate = bat->charge_rate;
         charge = strtod(test, NULL);
         if (bat->design_voltage > 0.0)
            charge = charge * bat->design_voltage / 1000000.0;
@@ -346,22 +369,24 @@ _battery_udev_battery_update(const char *syspath, Battery *bat)
         bat->percent = (10000 * bat->current_charge) / bat->last_full_charge;
         if (bat->got_prop)
           {
+             if (pcharging == bat->charging) charge_rate = (charge_rate + last_charge_rate) / 2.0;
              if (bat->charge_rate > 0)
                {
                   if (battery_config->fuzzy && (++battery_config->fuzzcount <= 10) && (bat->time_full > 0))
-                    bat->time_full = (((bat->last_full_charge - bat->current_charge) / bat->charge_rate) + bat->time_full) / 2;
+                    bat->time_full = (((bat->last_full_charge - bat->current_charge) / charge_rate) + bat->time_full) / 2;
                   else
-                    bat->time_full = (bat->last_full_charge - bat->current_charge) / bat->charge_rate;
+                    bat->time_full = (bat->last_full_charge - bat->current_charge) / charge_rate;
                   bat->time_left = -1;
                }
              else
                {
                   if (battery_config->fuzzy && (battery_config->fuzzcount <= 10) && (bat->time_left > 0))
-                    bat->time_left = (((0 - bat->current_charge) / bat->charge_rate) + bat->time_left) / 2;
+                    bat->time_left = (((0 - bat->current_charge) / charge_rate) + bat->time_left) / 2;
                   else
-                    bat->time_left = (0 - bat->current_charge) / bat->charge_rate;
+                    bat->time_left = (0 - bat->current_charge) / charge_rate;
                   bat->time_full = -1;
                }
+            if (pcharging == bat->charging) bat->charge_rate = charge_rate;
           }
         else
           {
@@ -370,19 +395,6 @@ _battery_udev_battery_update(const char *syspath, Battery *bat)
           }
      }
    if (battery_config->fuzzcount > 10) battery_config->fuzzcount = 0;
-   test = eeze_udev_syspath_get_property(bat->udi, "POWER_SUPPLY_STATUS");
-   if (test)
-     {
-        if (!strcmp(test, "Charging"))
-          bat->charging = 1;
-        else if ((!strcmp(test, "Unknown")) && (bat->charge_rate > 0))
-          bat->charging = 1;
-        else
-          bat->charging = 0;
-        eina_stringshare_del(test);
-     }
-   else
-     bat->charging = 0;
    if (bat->got_prop)
      _battery_device_update();
    bat->got_prop = 1;
