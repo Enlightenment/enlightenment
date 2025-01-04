@@ -792,6 +792,22 @@ group "E_Config" struct {
                     value "resizable" uchar: 0;
                 }
                 group "E_Config_Gadcon_Client" struct {
+                    value "name" string: "music-control";
+                    value "id" string: "music-control.0";
+                    value "geom.pos" int: 330;
+                    value "geom.size" int: 32;
+                    value "geom.res" int: 800;
+                    value "geom.pos_x" double: 0.0;
+                    value "geom.pos_y" double: 0.0;
+                    value "geom.size_w" double: 0.0;
+                    value "geom.size_h" double: 0.0;
+                    value "state_info.seq" int: 12;
+                    value "state_info.flags" int: 0;
+                    value "style" string: "plain";
+                    value "autoscroll" uchar: 0;
+                    value "resizable" uchar: 0;
+                }
+                group "E_Config_Gadcon_Client" struct {
                     value "name" string: "connman";
                     value "id" string: "connman";
                     value "geom.pos" int: 352;
@@ -801,7 +817,7 @@ group "E_Config" struct {
                     value "geom.pos_y" double: 0.0;
                     value "geom.size_w" double: 0.0;
                     value "geom.size_h" double: 0.0;
-                    value "state_info.seq" int: 12;
+                    value "state_info.seq" int: 13;
                     value "state_info.flags" int: 0;
                     value "style" string: "plain";
                     value "autoscroll" uchar: 0;
@@ -817,7 +833,7 @@ group "E_Config" struct {
                     value "geom.pos_y" double: 0.0;
                     value "geom.size_w" double: 0.0;
                     value "geom.size_h" double: 0.0;
-                    value "state_info.seq" int: 13;
+                    value "state_info.seq" int: 14;
                     value "state_info.flags" int: 0;
                     value "style" string: "plain";
                     value "autoscroll" uchar: 0;
@@ -833,7 +849,7 @@ group "E_Config" struct {
                     value "geom.pos_y" double: 0.0;
                     value "geom.size_w" double: 0.0;
                     value "geom.size_h" double: 0.0;
-                    value "state_info.seq" int: 14;
+                    value "state_info.seq" int: 15;
                     value "state_info.flags" int: 0;
                     value "style" string: "inset";
                     value "autoscroll" uchar: 1;
@@ -849,7 +865,7 @@ group "E_Config" struct {
                     value "geom.pos_y" double: 0.0;
                     value "geom.size_w" double: 0.0;
                     value "geom.size_h" double: 0.0;
-                    value "state_info.seq" int: 15;
+                    value "state_info.seq" int: 16;
                     value "state_info.flags" int: 0;
                     value "style" string: "plain";
                     value "autoscroll" uchar: 0;
@@ -865,7 +881,7 @@ group "E_Config" struct {
                     value "geom.pos_y" double: 0.0;
                     value "geom.size_w" double: 0.0;
                     value "geom.size_h" double: 0.0;
-                    value "state_info.seq" int: 16;
+                    value "state_info.seq" int: 17;
                     value "state_info.flags" int: 0;
                     value "style" string: "plain";
                     value "autoscroll" uchar: 0;
@@ -914,6 +930,10 @@ group "E_Config" struct {
         }
         group "E_Config_Module" struct {
             value "name" string: "mixer";
+            value "enabled" uchar: 1;
+        }
+        group "E_Config_Module" struct {
+            value "name" string: "music-control";
             value "enabled" uchar: 1;
         }
         group "E_Config_Module" struct {
