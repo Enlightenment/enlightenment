@@ -99,6 +99,9 @@ _init(Cpu_Perf *cp)
           if (!p) break;
           p++;
         }
+      snprintf(buf, sizeof(buf), "dev.cpu.%i.freq", i);
+      if (sysctlbyname(buf, buf, &len, NULL, 0) < 0) break;
+      cp->cur.freqinfo[i].cur = atoi(buf) * 1000;
 #else // Linux
       snprintf(buf, sizeof(buf), "/sys/devices/system/cpu/cpu%i/cpufreq/cpuinfo_min_freq", i);
       fd = _file_fd_int_read(buf, &(cp->cur.freqinfo[i].min));
@@ -256,6 +259,9 @@ void
 cpu_perf_update(Cpu_Perf *cp)
 { // poll cpu usage + frequency info core by core
   char buf[16384];
+#if defined (__FreeBSD__) || defined(__DragonFly__)
+  long long buf2[8192];
+#endif
   Cpu_Slice slice_tmp;
   long num = 0, i;
   long cpu = 0;
@@ -270,8 +276,8 @@ cpu_perf_update(Cpu_Perf *cp)
   size_t len;
 
   // get all cpu counbters for all cores
-  len = sizeof(buf) - 1;
-  if (sysctlbyname("kern.cp_times", buf, &len, NULL, 0) >= 0)
+  len = sizeof(buf2) - 1;
+  if (sysctlbyname("kern.cp_times", buf2, &len, NULL, 0) >= 0)
     { // "1020 8910 8993 2147 9137 ..."
       // "cpu0user cpu0nice cpu0system cpu0intr cpu0idle cpu1user cpu1nice ..."
       int sys_cores = len / (5 * sizeof(long long));
@@ -284,7 +290,7 @@ cpu_perf_update(Cpu_Perf *cp)
         }
       while (cpu < (cp->cores - 1))
         {
-          long long *times = (long long *)(buf + (cpu * 5 * sizeof(long long)));
+          long long *times = (long long *)(buf2 + (cpu * 5 * sizeof(long long)));
 
           if (((cpu + 1) * 5 * sizeof(long long)) > len) break;
           c = &(cp->cur.counters[cpu + 1]);
@@ -355,6 +361,7 @@ cpu_perf_update(Cpu_Perf *cp)
       if (cpu >= 0)
         {
 #if defined (__FreeBSD__) || defined(__DragonFly__)
+          snprintf(buf, sizeof(buf), "dev.cpu.%li.freq", i);
           if (sysctlbyname(buf, buf, &len, NULL, 0) == 0)
             { // get freq of that core
               buf[len] =  0; // nul terminate the buffer to be safe
