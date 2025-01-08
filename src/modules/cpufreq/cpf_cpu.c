@@ -290,7 +290,7 @@ cpu_perf_update(Cpu_Perf *cp)
         }
       while (cpu < (cp->cores - 1))
         {
-          long long *times = (long long *)(buf2 + (cpu * 5 * sizeof(long long)));
+          long long *times = (long long *)(buf2 + (cpu * 5));
 
           if (((cpu + 1) * 5 * sizeof(long long)) > len) break;
           c = &(cp->cur.counters[cpu + 1]);
