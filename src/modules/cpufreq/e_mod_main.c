@@ -93,7 +93,13 @@ _cb_cpf_render(void *data)
           o = inst->o_gadimg;
           if (o)
             {
-              evas_object_image_smooth_scale_set(o, EINA_TRUE);
+              Evas_Coord gh = 0;
+              Eina_Bool smooth = EINA_TRUE;
+
+              evas_object_geometry_get(o, NULL, NULL, NULL, &gh);
+              if ((r->real_h > 0) && ((gh / r->real_h) >= 2))
+                smooth = EINA_FALSE;
+              evas_object_image_smooth_scale_set(o, smooth);
               evas_object_image_size_set(o, r->real_w, r->real_h);
               pix = evas_object_image_data_get(o, EINA_TRUE);
               if (pix)
