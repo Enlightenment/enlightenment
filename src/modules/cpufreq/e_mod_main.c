@@ -375,8 +375,10 @@ _cb_ac_power_slider(void *data EINA_UNUSED, Evas_Object *o,
 static void
 _cb_settings(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *info EINA_UNUSED)
 {
+  Instance *inst = data;
   if (!cpufreq_config) return;
   if (cpufreq_config->config_dialog) return;
+  if (inst->popup) E_FREE_FUNC(inst->popup, e_object_del);
   e_int_config_cpufreq_module(NULL, NULL);
 }
 
