@@ -752,8 +752,8 @@ e_backlight_shutdown(void)
 E_API Eina_Bool
 e_backlight_exists(void)
 {
-   // XXX: properly check backlight devices
-   return EINA_TRUE;
+   if (_devices) return EINA_TRUE;
+   return EINA_FALSE;
 }
 
 E_API void
