@@ -281,7 +281,7 @@ _clock_month_next_cb(void *data, Evas_Object *obj EINA_UNUSED, const char *emiss
 }
 
 static void
-_clock_settings_cb(void *d1, void *d2 EINA_UNUSED)
+_clock_settings_cb(void *d1, Evas_Object *obj EINA_UNUSED, void *info EINA_UNUSED)
 {
    Instance *inst = d1;
    e_int_config_clock_module(NULL, inst->cfg);
@@ -304,7 +304,7 @@ static void
 _clock_popup_new(Instance *inst)
 {
    Evas *evas;
-   Evas_Object *o, *oi;
+   Evas_Object *o, *oi, *o_button;
    char todaystr[128];
 
    if (inst->popup) return;
@@ -356,9 +356,18 @@ _clock_popup_new(Instance *inst)
    evas_object_size_hint_min_set(o, 80 * e_scale, 80 * e_scale);
    elm_table_pack(inst->o_table, o, 0, 0, 1, 1);
 
-   o = e_widget_button_add(evas, _("Settings"), "preferences-system",
-                           _clock_settings_cb, inst, NULL);
+   o_button = o = elm_button_add(e_comp->elm);
+   elm_object_text_set(o, _("Settings"));
+   evas_object_size_hint_align_set(o, 0.5, 0.5);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    elm_table_pack(inst->o_table, o, 0, 2, 1, 1);
+   evas_object_show(o);
+
+   evas_object_smart_callback_add(o, "clicked", _clock_settings_cb, inst);
+
+   o = elm_icon_add(e_comp->elm);
+   elm_icon_standard_set(o, "preferences-system");
+   elm_object_content_set(o_button, o);
    evas_object_show(o);
 
    oi = elm_layout_add(inst->o_table);

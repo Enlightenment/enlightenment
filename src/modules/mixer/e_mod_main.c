@@ -884,31 +884,37 @@ _popup_new(Instance *inst)
    _popup_recording_fill(inst);
 
    button = elm_button_add(e_comp->elm);
-   evas_object_size_hint_align_set(button, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_align_set(button, 0.5, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(button, EVAS_HINT_EXPAND, 0.0);
    elm_object_text_set(button, _("Mixer"));
    evas_object_smart_callback_add(button, "clicked", _emixer_exec_cb, inst);
    elm_box_pack_end(list, button);
    evas_object_show(button);
 
+   ic = elm_icon_add(e_comp->elm);
+   elm_icon_standard_set(ic, "audio-volume");
+   elm_object_content_set(button, ic);
+   evas_object_show(ic);
+
    EINA_LIST_FOREACH((Eina_List *)emix_sinks_get(), l, s)
-     {
-        Elm_Object_Item *it;
+   {
+     Elm_Object_Item *it;
 
-        if (s->name) icname = _sink_icon_find(s->name);
-        if (!icname) icname = strdup("audio-volume");
-        ic = elm_icon_add(e_comp->elm);
-        evas_object_size_hint_min_set(ic, 20 * e_scale, 20 * e_scale);
-        elm_icon_standard_set(ic, icname);
-        free(icname);
+     if (s->name) icname = _sink_icon_find(s->name);
+     if (!icname) icname = strdup("audio-volume");
+     ic = elm_icon_add(e_comp->elm);
+     evas_object_size_hint_min_set(ic, 20 * e_scale, 20 * e_scale);
+     elm_icon_standard_set(ic, icname);
+     free(icname);
 
-        it = elm_list_item_append(inst->list, s->name, ic, NULL, _sink_selected_cb, s);
-        if (backend_sink_default_get() == s)
-          {
-             default_it = it;
-             _sink_monitor(inst, s);
-          }
-     }
+     it = elm_list_item_append(inst->list, s->name, ic, NULL, _sink_selected_cb,
+                               s);
+     if (backend_sink_default_get() == s)
+       {
+         default_it = it;
+         _sink_monitor(inst, s);
+       }
+   }
    elm_list_go(inst->list);
 
    evas_object_size_hint_min_set(list, 240 * e_scale, 280 * e_scale);

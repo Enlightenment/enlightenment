@@ -388,7 +388,7 @@ _button_cb_mouse_down(void *data, Evas *e EINA_UNUSED,
 {
    Instance *inst = data;
    Evas_Event_Mouse_Down *ev = event_info;
-   Evas_Object           *o, *o_table, *o_lay;
+   Evas_Object           *o, *o_table, *o_lay, *o_button;
    int                    lv;
    const char            *f;
 
@@ -435,14 +435,19 @@ _button_cb_mouse_down(void *data, Evas *e EINA_UNUSED,
 
        evas_object_smart_callback_add(o, "changed", _cb_ac_power_slider, inst);
 
-       o = elm_button_add(e_comp->elm);
+       o_button = o = elm_button_add(e_comp->elm);
        elm_object_text_set(o, _("Settings"));
-       evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+       evas_object_size_hint_align_set(o, 0.5, 0.5);
        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
        elm_table_pack(o_table, o, 0, 2, 10, 1);
        evas_object_show(o);
 
        evas_object_smart_callback_add(o, "clicked", _cb_settings, inst);
+
+       o = elm_icon_add(e_comp->elm);
+       elm_icon_standard_set(o, "preferences-system");
+       elm_object_content_set(o_button, o);
+       evas_object_show(o);
 
        e_gadcon_popup_content_set(inst->popup, o_table);
        e_gadcon_popup_show(inst->popup);
