@@ -66,21 +66,6 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
                }
           }
      }
-   dname = "/proc/acpi/battery/";
-   dir = ecore_file_ls(dname);
-   if (dir)
-     {
-        EINA_LIST_FREE(dir, file)
-          {
-             snprintf(buf, sizeof(buf), "%s/%s/state", dname, file);
-             str = read_file(buf);
-             if (str)
-               {
-                  hav_bat = 1;
-                  free(str);
-               }
-          }
-     }
 #ifdef __FreeBSD__
    do {
         int mib_state[4];
