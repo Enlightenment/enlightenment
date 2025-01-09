@@ -57,7 +57,7 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
 #else
    char *str, *p;
 
-   str = read_file("/sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies");
+   str = read_file("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq");
    if (str)
      {
         for (p = str; *p; p++)
