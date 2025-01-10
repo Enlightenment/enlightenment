@@ -346,6 +346,7 @@ _battery_udev_battery_update(const char *syspath, Battery *bat)
      {
         double charge_rate = 0;
         double last_charge_rate;
+        double td;
 
         last_charge_rate = bat->charge_rate;
         charge = strtod(test, NULL);
@@ -353,11 +354,18 @@ _battery_udev_battery_update(const char *syspath, Battery *bat)
            charge = charge * bat->design_voltage / 1000000.0;
         eina_stringshare_del(test);
         t = ecore_time_get();
-        if ((bat->got_prop) &&
+        td = t - bat->last_update;
+        if (td <= 0.0) td = 0.001;
+        if ((bat->is_micro_watts) && (!eina_dbl_exact(bat->power_now, 0)))
+          {
+            if (!bat->charging) charge_rate = -bat->power_now / 3600.0;
+            else                charge_rate = bat->power_now / 3600.0;
+          }
+        else if ((bat->got_prop) &&
             (!eina_dbl_exact(charge, bat->current_charge)) &&
             (!eina_dbl_exact(bat->current_charge, 0)))
           charge_rate =
-            ((charge - bat->current_charge) / (t - bat->last_update));
+            ((charge - bat->current_charge) / td);
         if ((!eina_dbl_exact(charge_rate, 0)) ||
             eina_dbl_exact(bat->last_update, 0) ||
             eina_dbl_exact(bat->current_charge, 0))
@@ -366,25 +374,26 @@ _battery_udev_battery_update(const char *syspath, Battery *bat)
              bat->current_charge = charge;
              bat->charge_rate = charge_rate;
           }
-        bat->percent = (10000 * bat->current_charge) / bat->last_full_charge;
+        bat->percent = (10000.0 * bat->current_charge) / bat->last_full_charge;
         if (bat->got_prop)
           {
-             if (pcharging == bat->charging) charge_rate = (charge_rate + last_charge_rate) / 2.0;
-             if (bat->charge_rate > 0)
+             if ((!((bat->is_micro_watts) && (!eina_dbl_exact(bat->power_now, 0)))) &&
+                 ((pcharging == bat->charging)))
+               charge_rate = (charge_rate + last_charge_rate) / 2.0;
+             if ((!bat->charging) && (!eina_dbl_exact(charge_rate, 0)))
+               {
+                  if (battery_config->fuzzy && (battery_config->fuzzcount <= 10) && (bat->time_left > 0))                    bat->time_left = (((0 - bat->current_charge) / charge_rate) + bat->time_left) / 2;
+                  else
+                    bat->time_left = (0 - bat->current_charge) / charge_rate;
+                  bat->time_full = -1;
+               }
+             else if (!eina_dbl_exact(charge_rate, 0))
                {
                   if (battery_config->fuzzy && (++battery_config->fuzzcount <= 10) && (bat->time_full > 0))
                     bat->time_full = (((bat->last_full_charge - bat->current_charge) / charge_rate) + bat->time_full) / 2;
                   else
                     bat->time_full = (bat->last_full_charge - bat->current_charge) / charge_rate;
                   bat->time_left = -1;
-               }
-             else
-               {
-                  if (battery_config->fuzzy && (battery_config->fuzzcount <= 10) && (bat->time_left > 0))
-                    bat->time_left = (((0 - bat->current_charge) / charge_rate) + bat->time_left) / 2;
-                  else
-                    bat->time_left = (0 - bat->current_charge) / charge_rate;
-                  bat->time_full = -1;
                }
             if (pcharging == bat->charging) bat->charge_rate = charge_rate;
           }
