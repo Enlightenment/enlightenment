@@ -267,6 +267,12 @@ _fill_data(E_Config_Dialog_Data *cfdata)
 
    size_data = E_NEW(E_Font_Size_Data, 1);
    size_data->cfdata = cfdata;
+   size_data->size_str = eina_stringshare_add(_("Larger"));
+   size_data->size = -120;
+   cfdata->font_scale_list = eina_list_append(cfdata->font_scale_list, size_data);
+
+   size_data = E_NEW(E_Font_Size_Data, 1);
+   size_data->cfdata = cfdata;
    size_data->size_str = eina_stringshare_add(_("Big"));
    size_data->size = -150;
    cfdata->font_scale_list = eina_list_append(cfdata->font_scale_list, size_data);
@@ -274,7 +280,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    size_data = E_NEW(E_Font_Size_Data, 1);
    size_data->cfdata = cfdata;
    size_data->size_str = eina_stringshare_add(_("Really Big"));
-   size_data->size = -190;
+   size_data->size = -200;
    cfdata->font_scale_list = eina_list_append(cfdata->font_scale_list, size_data);
 
    size_data = E_NEW(E_Font_Size_Data, 1);
