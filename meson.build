@@ -1,6 +1,6 @@
 ##### project
 project('enlightenment', 'c',
-        version        : '0.26.99',
+        version        : '0.27.0',
         license        : 'BSD 2 clause',
         default_options: [ 'buildtype=release', 'c_std=gnu99', 'warning_level=2' ],
         meson_version  : '>= 0.47.0')
@@ -30,7 +30,7 @@ else
   config_h.set('E_RELEASE_BUILD'         , '1')
 endif
 
-efl_version = '>= 1.27.0'
+efl_version = '>= 1.28.0'
 
 add_global_arguments('-DHAVE_CONFIG_H=1', language: 'c')
 dir_prefix    = get_option('prefix')
