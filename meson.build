@@ -30,7 +30,7 @@ else
   config_h.set('E_RELEASE_BUILD'         , '1')
 endif
 
-efl_version = '>= 1.28.0'
+efl_version = '>= 1.28.99'
 
 add_global_arguments('-DHAVE_CONFIG_H=1', language: 'c')
 dir_prefix    = get_option('prefix')
