@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Link
+Name=Pants
+Comment=Track the state of your pants.
+Icon=e-module-pants
+X-Enlightenment-ModuleType=utils

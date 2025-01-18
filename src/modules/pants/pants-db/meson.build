@@ -1,0 +1,7 @@
+install_data([
+              '000-pants-on.png.txt',  '000-pants-on.png',
+              '001-pants-off.png.txt', '001-pants-off.png',
+              '010-skirt-on.png.txt',  '010-skirt-on.png',
+              '011-skirt-off.png.txt', '011-skirt-off.png',
+              ],
+              install_dir: join_paths(_dir + '/pants-db'))

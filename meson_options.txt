@@ -318,3 +318,8 @@ option('procstats',
 	type: 'boolean',
 	value: true,
 	description: 'enable procstats module: (default=true)')
+
+option('pants',
+	type: 'boolean',
+	value: true,
+	description: 'enable pants module: (default=true)')
