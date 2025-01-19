@@ -2,5 +2,6 @@
 Type=Link
 Name=Pants
 Comment=Track the state of your pants.
+Comment[fr]=Bas du corps plus ou moins habillé, dans quel état j'erre ?
 Icon=e-module-pants
 X-Enlightenment-ModuleType=utils
