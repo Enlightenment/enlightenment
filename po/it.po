@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-16 22:05+0100\n"
-"PO-Revision-Date: 2024-12-16 22:06+0100\n"
+"POT-Creation-Date: 2025-01-20 23:07+0100\n"
+"PO-Revision-Date: 2025-01-20 23:10+0100\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: General\n"
 "Language: it\n"
@@ -41,15 +41,11 @@ msgstr "Enlightenment"
 
 #: src/bin/e_about.c:26
 msgid ""
-"<title>Copyright &copy; 2000-2024, by the Enlightenment Development Team</"
+"<title>Copyright &copy; 2000-2025, by the Enlightenment Development Team</"
 "><ps/><ps/>We hope you enjoy using this software as much as we enjoyed "
 "writing it.<ps/><ps/>To contact us please visit:<ps/><hilight>http://"
 "www.enlightenment.org</><ps/><ps/>"
-msgstr ""
-"<title>Copyright &copy; 2000-2024, dell'Enlightenment Development Team.</"
-"><ps/><ps/>Ci auguriamo che vi piacerà usare questo software tanto quanto a "
-"noi è piaciuto scriverlo.<ps/><ps/>Per contattarci visitate:<ps/"
-"><hilight>http://www.enlightenment.org</><ps/><ps/>"
+msgstr "<title>Copyright &copy; 2000-2025, dell'Enlightenment Development Team.</><ps/><ps/>Ci auguriamo che vi piacerà usare questo software tanto quanto a noi è piaciuto scriverlo.<ps/><ps/>Per contattarci visitate:<ps/><hilight>http://www.enlightenment.org</><ps/><ps/>"
 
 #: src/bin/e_about.c:69
 msgid "<title>The Team</><ps/><ps/>"
@@ -1213,11 +1209,11 @@ msgstr ""
 msgid "Settings Upgraded"
 msgstr "Impostazioni aggiornate"
 
-#: src/bin/e_config_dialog.c:222 src/modules/battery/e_mod_main.c:1425
+#: src/bin/e_config_dialog.c:222 src/modules/battery/e_mod_main.c:1426
 #: src/modules/conf_bindings/e_mod_main.c:43 src/modules/conf/e_mod_main.c:278
 #: src/modules/conf_paths/e_mod_main.c:17
 #: src/modules/conf_performance/e_mod_main.c:17
-#: src/modules/cpufreq/e_mod_main.c:561 src/modules/mixer/e_mod_main.c:953
+#: src/modules/cpufreq/e_mod_main.c:574 src/modules/mixer/e_mod_main.c:959
 #: src/modules/syscon/e_mod_main.c:36
 msgid "Advanced"
 msgstr "Avanzate"
@@ -1233,7 +1229,7 @@ msgstr "Applica"
 
 #: src/bin/e_configure.c:29 src/modules/conf_shelves/e_mod_main.c:21
 #: src/modules/connman/e_mod_main.c:610 src/modules/gadman/e_mod_main.c:23
-#: src/modules/mixer/e_mod_main.c:1109 src/modules/notification/e_mod_main.c:65
+#: src/modules/mixer/e_mod_main.c:1115 src/modules/notification/e_mod_main.c:65
 msgid "Extensions"
 msgstr "Estensioni"
 
@@ -2249,8 +2245,8 @@ msgstr "Posizione"
 #: src/bin/e_int_client_locks.c:312 src/bin/e_int_client_locks.c:331
 #: src/bin/e_int_client_remember.c:753 src/bin/e_int_shelf_config.c:218
 #: src/modules/conf_interaction/e_int_config_mouse.c:220
-#: src/modules/conf_theme/e_int_config_fonts.c:444
-#: src/modules/conf_theme/e_int_config_fonts.c:713
+#: src/modules/conf_theme/e_int_config_fonts.c:450
+#: src/modules/conf_theme/e_int_config_fonts.c:719
 msgid "Size"
 msgstr "Dimensione"
 
@@ -2605,7 +2601,7 @@ msgstr "Statico"
 #: src/modules/conf_randr/e_int_config_randr2.c:494
 #: src/modules/conf_randr/e_int_config_randr2.c:713
 #: src/modules/conf_randr/e_int_config_randr2.c:1110
-#: src/modules/conf_theme/e_int_config_fonts.c:742
+#: src/modules/conf_theme/e_int_config_fonts.c:748
 #: src/modules/conf_theme/e_int_config_transitions.c:212
 #: src/modules/conf_theme/e_int_config_transitions.c:271
 #: src/modules/conf_theme/e_int_config_transitions.c:303
@@ -2741,20 +2737,20 @@ msgstr "Richiede posizione"
 #: src/bin/e_int_client_prop.c:483 src/bin/e_int_client_prop.c:518
 #: src/bin/e_int_config_modules.c:58 src/bin/e_int_menus.c:299
 #: src/bin/e_shelf.c:2367 src/modules/backlight/e_mod_main.c:259
-#: src/modules/battery/e_mod_main.c:730 src/modules/clock/e_mod_main.c:359
-#: src/modules/clock/e_mod_main.c:590 src/modules/conf_dialogs/e_mod_main.c:17
+#: src/modules/battery/e_mod_main.c:731 src/modules/clock/e_mod_main.c:360
+#: src/modules/clock/e_mod_main.c:599 src/modules/conf_dialogs/e_mod_main.c:17
 #: src/modules/conf/e_conf.c:115 src/modules/conf/e_conf.c:126
 #: src/modules/conf/e_mod_main.c:101
 #: src/modules/conf_interaction/e_int_config_mouse.c:213
 #: src/modules/conf_shelves/e_int_config_shelf.c:149
-#: src/modules/cpufreq/e_mod_main.c:431 src/modules/cpufreq/e_mod_main.c:459
+#: src/modules/cpufreq/e_mod_main.c:439 src/modules/cpufreq/e_mod_main.c:472
 #: src/modules/everything/evry_gadget.c:511
 #: src/modules/everything/evry_gadget.c:683
 #: src/modules/everything/evry_plug_settings.c:183
 #: src/modules/geolocation/e_mod_main.c:235 src/modules/ibar/e_mod_main.c:497
 #: src/modules/ibar/e_mod_main.c:1636 src/modules/ibox/e_mod_main.c:358
-#: src/modules/ibox/e_mod_main.c:791 src/modules/mixer/e_mod_main.c:958
-#: src/modules/music-control/ui.c:333 src/modules/packagekit/e_mod_main.c:47
+#: src/modules/ibox/e_mod_main.c:791 src/modules/mixer/e_mod_main.c:964
+#: src/modules/music-control/ui.c:359 src/modules/packagekit/e_mod_main.c:47
 #: src/modules/pager/e_mod_main.c:1026 src/modules/tasks/e_mod_main.c:938
 #: src/modules/temperature/e_mod_main.c:231
 #: src/modules/tiling/e_mod_tiling.c:2169 src/modules/wizard/page_150.c:31
@@ -3158,9 +3154,9 @@ msgstr "Utilità"
 #: src/bin/e_int_config_comp_match.c:444 src/bin/e_utils.c:641
 #: src/bin/e_widget_filepreview.c:696 src/bin/e_widget_filepreview.c:697
 #: src/bin/e_widget_filepreview.c:698 src/bin/e_widget_filepreview.c:728
-#: src/bin/e_widget_filepreview.c:739 src/modules/battery/e_mod_main.c:338
-#: src/modules/battery/e_mod_main.c:351 src/modules/battery/e_mod_main.c:354
-#: src/modules/battery/e_mod_main.c:363 src/modules/battery/e_mod_main.c:372
+#: src/bin/e_widget_filepreview.c:739 src/modules/battery/e_mod_main.c:339
+#: src/modules/battery/e_mod_main.c:352 src/modules/battery/e_mod_main.c:355
+#: src/modules/battery/e_mod_main.c:364 src/modules/battery/e_mod_main.c:373
 #: src/modules/bluez5/e_mod_popup.c:510 src/modules/bluez5/e_mod_popup.c:511
 #: src/modules/bluez5/e_mod_util.c:261
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:429
@@ -3237,7 +3233,7 @@ msgid "Flags"
 msgstr "Flag"
 
 #: src/bin/e_int_config_comp_match.c:551 src/bin/e_int_shelf_config.c:226
-#: src/modules/conf_theme/e_int_config_fonts.c:704
+#: src/modules/conf_theme/e_int_config_fonts.c:710
 msgid "Style"
 msgstr "Stile"
 
@@ -4936,8 +4932,8 @@ msgstr "HAL"
 msgid "Hardware"
 msgstr "Hardware"
 
-#: src/modules/battery/e_mod_main.c:174 src/modules/battery/e_mod_main.c:695
-#: src/modules/battery/e_mod_main.c:1012
+#: src/modules/battery/e_mod_main.c:174 src/modules/battery/e_mod_main.c:696
+#: src/modules/battery/e_mod_main.c:1013
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:354
 #, c-format
 msgid "Battery"
@@ -4947,59 +4943,59 @@ msgstr "Battery"
 msgid "Charging"
 msgstr "In carica"
 
-#: src/modules/battery/e_mod_main.c:313
+#: src/modules/battery/e_mod_main.c:314
 msgid "Discharging"
 msgstr "In scaricamento"
 
-#: src/modules/battery/e_mod_main.c:318
+#: src/modules/battery/e_mod_main.c:319
 msgid "Charged"
 msgstr "Caricata"
 
-#: src/modules/battery/e_mod_main.c:594
+#: src/modules/battery/e_mod_main.c:595
 #: src/modules/conf_performance/e_int_config_powermanagement.c:166
 msgid "Level"
 msgstr "Livello"
 
-#: src/modules/battery/e_mod_main.c:608
+#: src/modules/battery/e_mod_main.c:609
 msgid "Energy"
 msgstr "Energia"
 
-#: src/modules/battery/e_mod_main.c:622
+#: src/modules/battery/e_mod_main.c:623
 msgid "(Dis)charge"
 msgstr "(S)carica"
 
-#: src/modules/battery/e_mod_main.c:689
+#: src/modules/battery/e_mod_main.c:690
 #, c-format
 msgid "Battery: %s (%s)"
 msgstr "Batteria: %s (%s)"
 
-#: src/modules/battery/e_mod_main.c:691 src/modules/battery/e_mod_main.c:693
+#: src/modules/battery/e_mod_main.c:692 src/modules/battery/e_mod_main.c:694
 #, c-format
 msgid "Battery: %s"
 msgstr "Batteria: %s"
 
-#: src/modules/battery/e_mod_main.c:736
+#: src/modules/battery/e_mod_main.c:737
 msgid "Power Management Timing"
 msgstr "Temporizzazioni gestione alimentazione"
 
-#: src/modules/battery/e_mod_main.c:1015 src/modules/battery/e_mod_main.c:1047
+#: src/modules/battery/e_mod_main.c:1016 src/modules/battery/e_mod_main.c:1048
 msgid "Your battery is low!"
 msgstr "Basso livello batteria!"
 
-#: src/modules/battery/e_mod_main.c:1016 src/modules/battery/e_mod_main.c:1049
+#: src/modules/battery/e_mod_main.c:1017 src/modules/battery/e_mod_main.c:1050
 msgid "AC power is recommended."
 msgstr "Consigliata alimentazione AC."
 
-#: src/modules/battery/e_mod_main.c:1134 src/modules/battery/e_mod_main.c:1138
+#: src/modules/battery/e_mod_main.c:1135 src/modules/battery/e_mod_main.c:1139
 msgid "N/A"
 msgstr "N/D"
 
-#: src/modules/battery/e_mod_main.c:1245 src/modules/battery/e_mod_main.c:1247
-#: src/modules/battery/e_mod_main.c:1254 src/modules/battery/e_mod_main.c:1256
+#: src/modules/battery/e_mod_main.c:1246 src/modules/battery/e_mod_main.c:1248
+#: src/modules/battery/e_mod_main.c:1255 src/modules/battery/e_mod_main.c:1257
 msgid "ERROR"
 msgstr "ERRORE"
 
-#: src/modules/battery/e_mod_main.c:1427
+#: src/modules/battery/e_mod_main.c:1428
 msgid "Battery Meter"
 msgstr "Indicatore di carica"
 
@@ -5198,8 +5194,8 @@ msgstr "Opzioni per il dispositivo come connessione, associazione ecc."
 msgid "Clock Settings"
 msgstr "Impostazioni dell'orologio"
 
-#: src/modules/clock/e_mod_config.c:83 src/modules/clock/e_mod_main.c:695
-#: src/modules/clock/e_mod_main.c:921
+#: src/modules/clock/e_mod_config.c:83 src/modules/clock/e_mod_main.c:704
+#: src/modules/clock/e_mod_main.c:930
 msgid "Clock"
 msgstr "Clock"
 
@@ -5269,7 +5265,7 @@ msgstr "%a, %e %b %Y"
 msgid "%a, %x"
 msgstr "%a, %x"
 
-#: src/modules/clock/e_mod_main.c:921
+#: src/modules/clock/e_mod_main.c:930
 msgid "Toggle calendar"
 msgstr "Commuta calendario"
 
@@ -6007,7 +6003,7 @@ msgid "Dialog Settings"
 msgstr "Impostazioni finestre di dialogo"
 
 #: src/modules/conf_dialogs/e_int_config_dialogs.c:109
-#: src/modules/conf_theme/e_int_config_fonts.c:727
+#: src/modules/conf_theme/e_int_config_fonts.c:733
 #: src/modules/everything/evry_config.c:517 src/modules/ibox/e_mod_config.c:98
 msgid "General Settings"
 msgstr "Impostazioni generali"
@@ -6805,7 +6801,7 @@ msgid "Images"
 msgstr "Immagini"
 
 #: src/modules/conf_paths/e_int_config_paths.c:74
-#: src/modules/conf_theme/e_int_config_fonts.c:436
+#: src/modules/conf_theme/e_int_config_fonts.c:442
 #: src/modules/conf_theme/e_mod_main.c:106
 msgid "Fonts"
 msgstr "Font"
@@ -6914,7 +6910,7 @@ msgid "Suspend Mode"
 msgstr "Modalità sospensione"
 
 #: src/modules/conf_performance/e_mod_main.c:18
-#: src/modules/cpufreq/e_mod_config.c:72 src/modules/cpufreq/e_mod_main.c:338
+#: src/modules/cpufreq/e_mod_config.c:72 src/modules/cpufreq/e_mod_main.c:344
 msgid "Performance"
 msgstr "Prestazioni"
 
@@ -7228,71 +7224,75 @@ msgid "Tiny"
 msgstr "Piccolissima"
 
 #: src/modules/conf_theme/e_int_config_fonts.c:270
+msgid "Larger"
+msgstr "Più grande"
+
+#: src/modules/conf_theme/e_int_config_fonts.c:276
 msgid "Big"
 msgstr "Grande"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:276
+#: src/modules/conf_theme/e_int_config_fonts.c:282
 msgid "Really Big"
 msgstr "Molto grande"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:282
+#: src/modules/conf_theme/e_int_config_fonts.c:288
 msgid "Huge"
 msgstr "Grandissima"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:291
+#: src/modules/conf_theme/e_int_config_fonts.c:297
 #, c-format
 msgid "%d pixel"
 msgid_plural "%d pixels"
 msgstr[0] "%d pixel"
 msgstr[1] "%d pixel"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:430
+#: src/modules/conf_theme/e_int_config_fonts.c:436
 msgid "Enable Custom Font Classes"
 msgstr "Abilita classi font personalizzate"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:452
-#: src/modules/conf_theme/e_int_config_fonts.c:722
+#: src/modules/conf_theme/e_int_config_fonts.c:458
+#: src/modules/conf_theme/e_int_config_fonts.c:728
 msgid "English 012 #!? 日本語 にほんご ソフト 中文 華語 한국"
 msgstr "Occidentale 012 #!? 日本語 にほんご ソフト 中文 華語 한국"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:681
+#: src/modules/conf_theme/e_int_config_fonts.c:687
 msgid "Font Classes"
 msgstr "Configurazione classi font"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:688
+#: src/modules/conf_theme/e_int_config_fonts.c:694
 msgid "Enable Font Class"
 msgstr "Abilita classe font"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:695
+#: src/modules/conf_theme/e_int_config_fonts.c:701
 msgid "Font"
 msgstr "Font"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:731
+#: src/modules/conf_theme/e_int_config_fonts.c:737
 msgid "Hinting"
 msgstr "Hinting (ottimizzazione)"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:734
+#: src/modules/conf_theme/e_int_config_fonts.c:740
 msgid "Bytecode"
 msgstr "Bytecode"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:738
+#: src/modules/conf_theme/e_int_config_fonts.c:744
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:278
 msgid "Automatic"
 msgstr "Automatico"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:747
+#: src/modules/conf_theme/e_int_config_fonts.c:753
 msgid "Font Fallbacks"
 msgstr "Font alternativi"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:748
+#: src/modules/conf_theme/e_int_config_fonts.c:754
 msgid "Fallback Name"
 msgstr "Nome font alternativo"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:756
+#: src/modules/conf_theme/e_int_config_fonts.c:762
 msgid "Enable Fallbacks"
 msgstr "Abilita font alternativi"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:765
+#: src/modules/conf_theme/e_int_config_fonts.c:771
 msgid "Hinting / Fallbacks"
 msgstr "Hinting / alternative"
 
@@ -8175,15 +8175,15 @@ msgstr "Configura"
 msgid "Cpu Frequency Control Settings"
 msgstr "Impostazioni controllo frequenza CPU"
 
-#: src/modules/cpufreq/e_mod_config.c:69 src/modules/cpufreq/e_mod_main.c:335
+#: src/modules/cpufreq/e_mod_config.c:69 src/modules/cpufreq/e_mod_main.c:341
 msgid "Powersave"
 msgstr "Risparmio potenza"
 
-#: src/modules/cpufreq/e_mod_config.c:70 src/modules/cpufreq/e_mod_main.c:336
+#: src/modules/cpufreq/e_mod_config.c:70 src/modules/cpufreq/e_mod_main.c:342
 msgid "Balanced Low"
 msgstr "Bilanciato basso"
 
-#: src/modules/cpufreq/e_mod_config.c:71 src/modules/cpufreq/e_mod_main.c:337
+#: src/modules/cpufreq/e_mod_config.c:71 src/modules/cpufreq/e_mod_main.c:343
 msgid "Balanced Hi"
 msgstr "Bilanciato alto"
 
@@ -8199,11 +8199,11 @@ msgstr "Livello potenza basso"
 msgid "Update Interval"
 msgstr "Intervallo aggiornamento"
 
-#: src/modules/cpufreq/e_mod_main.c:276
+#: src/modules/cpufreq/e_mod_main.c:282
 msgid "Cpufreq"
 msgstr "Cpufreq"
 
-#: src/modules/cpufreq/e_mod_main.c:563
+#: src/modules/cpufreq/e_mod_main.c:576
 msgid "CPU Frequency"
 msgstr "Frequenza CPU"
 
@@ -9252,7 +9252,7 @@ msgid "New volume"
 msgstr "Nuovo volume"
 
 #: src/modules/mixer/backend.c:133 src/modules/mixer/emixer.c:1936
-#: src/modules/mixer/e_mod_main.c:889 src/modules/mixer/e_mod_main.c:1111
+#: src/modules/mixer/e_mod_main.c:889 src/modules/mixer/e_mod_main.c:1117
 msgid "Mixer"
 msgstr "Mixer"
 
@@ -9336,19 +9336,19 @@ msgstr "Configurazione di Emix"
 msgid "Music controller"
 msgstr "Controller musicale"
 
-#: src/modules/music-control/ui.c:217
+#: src/modules/music-control/ui.c:246
 msgid "Music Player"
 msgstr "Riproduttore musicale"
 
-#: src/modules/music-control/ui.c:227
+#: src/modules/music-control/ui.c:255
 msgid "* Your player must be configured to export the DBus interface MPRIS2."
 msgstr "* Il vostro riproduttore deve esportare l'interfaccia DBus MPRIS2."
 
-#: src/modules/music-control/ui.c:230
+#: src/modules/music-control/ui.c:259
 msgid "Pause music when screen is locked"
 msgstr "Poni in pausa al blocco dello schermo"
 
-#: src/modules/music-control/ui.c:302
+#: src/modules/music-control/ui.c:331
 msgid "Music control Settings"
 msgstr "Impostazioni controllo musicale"
 
@@ -10874,4 +10874,3 @@ msgstr "Impossibile aprire connessione a socket X11"
 #: src/modules/xwayland/e_mod_main.c:347
 msgid "Cannot launch XWayland from X11 display."
 msgstr "Impossibile lanciare XWayland dal display X11"
-
