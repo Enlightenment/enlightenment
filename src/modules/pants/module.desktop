@@ -1,7 +1,9 @@
 [Desktop Entry]
 Type=Link
 Name=Pants
+Name[es]=Pantalones
 Comment=Track the state of your pants.
 Comment[fr]=Bas du corps plus ou moins habillé, dans quel état j'erre ?
+Comment[es]=Sigue el estado de tus pantalones.
 Icon=e-module-pants
 X-Enlightenment-ModuleType=utils
