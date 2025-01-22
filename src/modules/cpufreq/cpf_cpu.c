@@ -314,7 +314,7 @@ cpu_perf_update(Cpu_Perf *cp)
   // get all cpu counbters for all cores and more from /proc/stat
   sz = pread(cp->fd_proc_stat, buf, sizeof(buf) - 1, 0);
   if (sz <= 0) return;
-  buf[sz + 1] = 0; // nul terminate the buffer to be safe
+  buf[sz] = 0; // nul terminate the buffer to be safe
   p = buf;
   // read cpu usage counters
   while (_line_read(&p, line, sizeof(line) - 1) >= 0)

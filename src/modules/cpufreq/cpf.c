@@ -18,6 +18,10 @@ static Evas_Object   *_renders_win = NULL;
 static unsigned int  *_renders_data_cpu_usage = NULL;
 static unsigned int  *_renders_data_cpu_freq = NULL;
 
+// number of pending stats in the pipe
+static Eina_Lock      _cpu_stats_lock;
+static int            _cpu_stats_pending = 0;
+
 // current sets.state of stats
 static Cpf_Stats     *_cpu_stats = NULL;
 
@@ -43,6 +47,12 @@ _render_colorbar_all(Cpf_Render *r, Cpf_Stats *c)
 {
   int i, y = 0, u;
 
+  if (c->core_num <= 0) return;
+  if ((r->real_w != r->w) || (r->real_h != (c->core_num * 2)))
+    {
+      free(r->pixels);
+      r->pixels = NULL;
+    }
   if (!r->pixels)
     {
       r->real_w = r->w;
@@ -79,6 +89,12 @@ _render_colorbar_cpu_usage(Cpf_Render *r, Cpf_Stats *c)
 {
   int i, y = 0, u;
 
+  if (c->core_num <= 0) return;
+  if ((r->real_w != r->w) || (r->real_h != (c->core_num)))
+    {
+      free(r->pixels);
+      r->pixels = NULL;
+    }
   if (!r->pixels)
     {
       r->real_w = r->w;
@@ -121,7 +137,7 @@ _thread_main(void *data EINA_UNUSED, Ecore_Thread *eth)
   double tim;
   Cpu_Perf *cp = cpu_perf_add();
   long cpu_perc, cpu_diff;
-  int i, y;
+  int i, y, pending;
   Cpf_Stats *cpf_stat;
   Cpf_Render *r;
 
@@ -130,6 +146,13 @@ _thread_main(void *data EINA_UNUSED, Ecore_Thread *eth)
   for (;;)
     {
       if (!cp) goto skip;
+
+      // check if too many pending stats messages in the pipe
+      eina_lock_take(&_cpu_stats_lock);
+      pending = _cpu_stats_pending;
+      eina_lock_release(&_cpu_stats_lock);
+      if (pending > 2) goto skip;
+
       // update perf from system
       cpu_perf_update(cp);
       cpf_stat = calloc(1, sizeof(Cpf_Stats));
@@ -191,6 +214,7 @@ _thread_main(void *data EINA_UNUSED, Ecore_Thread *eth)
                   // copy from 0 to pos
                   dst = r->pixels;
                   src = _renders[i].pixels;
+                  if ((!dst) || (!src)) break;
                   dst += (y * r->real_w) + r->real_w - r->pos;
                   src += (y * r->real_w);
                   len = r->pos;
@@ -206,6 +230,11 @@ _thread_main(void *data EINA_UNUSED, Ecore_Thread *eth)
             }
         }
       eina_lock_release(&_renders_lock);
+      // inc stats messages
+      eina_lock_take(&_cpu_stats_lock);
+      _cpu_stats_pending++;
+      eina_lock_release(&_cpu_stats_lock);
+
       ecore_thread_feedback(eth, cpf_stat); // send stat to mainloop to handle
 skip:
       if (ecore_thread_check(eth)) break;
@@ -242,6 +271,11 @@ _thread_notify(void *data EINA_UNUSED, Ecore_Thread *eth EINA_UNUSED, void *msgd
   Callback *c;
   Eina_List *l, *ll;
 
+  // reduce pendingh count as it arrived at main loop
+  eina_lock_take(&_cpu_stats_lock);
+  if (msgdata) _cpu_stats_pending--;
+  eina_lock_release(&_cpu_stats_lock);
+  if (_cpu_stats) _cpf_stats_free(_cpu_stats);
   _cpu_stats = msgdata;
   _callbacks_walking++;
   EINA_LIST_FOREACH(_callbacks, l, c)
@@ -260,11 +294,6 @@ _thread_notify(void *data EINA_UNUSED, Ecore_Thread *eth EINA_UNUSED, void *msgd
             }
         }
       _callbacks_del = 0;
-    }
-  if (_cpu_stats)
-    { // free stats - dont need them after cb's
-      _cpf_stats_free(_cpu_stats);
-      _cpu_stats = NULL;
     }
 }
 
@@ -332,6 +361,7 @@ cpf_init(void)
   eina_lock_new(&_poll_lock);
   eina_lock_new(&_poll_thread_lock);
   eina_lock_new(&_renders_lock);
+  eina_lock_new(&_cpu_stats_lock);
   _poll_thread = ecore_thread_feedback_run
     (_thread_main, _thread_notify, _thread_end,
      _cancel, NULL, EINA_TRUE);
@@ -352,7 +382,10 @@ cpf_shutdown(void)
   eina_lock_free(&_poll_thread_lock);
   eina_lock_free(&_poll_lock);
   eina_lock_free(&_renders_lock);
+  eina_lock_free(&_cpu_stats_lock);
   evas_object_del(_renders_win);
+  if (_cpu_stats) _cpf_stats_free(_cpu_stats);
+  _cpu_stats              = NULL;
   _renders_win            = NULL;
   _renders_data_cpu_usage = NULL;
   _renders_data_cpu_freq  = NULL;
