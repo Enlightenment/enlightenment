@@ -780,6 +780,62 @@ _popup_recording_fill(Instance *inst)
      }
 }
 
+static Eina_Bool
+_mixer_key_down_cb(void *data EINA_UNUSED, Ecore_Event_Key *ev)
+{
+  const char *keysym = ev->key;
+
+  if (!strcmp(keysym, "Escape")) return EINA_FALSE;
+  else if ((!strcmp(keysym, "Up")) ||
+           (!strcmp(keysym, "KP_Up")) ||
+           (!strcmp(keysym, "w")) ||
+           (!strcmp(keysym, "Prior")))
+    {
+      backend_volume_increase();
+    }
+  else if ((!strcmp(keysym, "Down")) ||
+           (!strcmp(keysym, "KP_Down")) ||
+           (!strcmp(keysym, "s")) ||
+           (!strcmp(keysym, "Next")))
+    {
+      backend_volume_decrease();
+    }
+  else if ((!strcmp(keysym, "Left")) ||
+           (!strcmp(keysym, "KP_Left")) ||
+           (!strcmp(keysym, "a")) ||
+           (!strcmp(keysym, "bracketleft")))
+    {
+      backend_volume_decrease();
+    }
+  else if ((!strcmp(keysym, "Right")) ||
+           (!strcmp(keysym, "KP_Right")) ||
+           (!strcmp(keysym, "d")) ||
+           (!strcmp(keysym, "bracketright")))
+    {
+      backend_volume_increase();
+    }
+  else if ((!strcmp(keysym, "0")) ||
+           (!strcmp(keysym, "1")) ||
+           (!strcmp(keysym, "2")) ||
+           (!strcmp(keysym, "3")) ||
+           (!strcmp(keysym, "4")) ||
+           (!strcmp(keysym, "5")) ||
+           (!strcmp(keysym, "6")) ||
+           (!strcmp(keysym, "7")) ||
+           (!strcmp(keysym, "8")) ||
+           (!strcmp(keysym, "9")))
+    {
+      int val = (atoi(keysym) * 100) / 9;
+
+      backend_volume_set(val);
+    }
+  else if ((!strcmp(keysym, "m")))
+    {
+      backend_mute_set(!backend_mute_get());
+    }
+  return EINA_TRUE;
+}
+
 static void
 _popup_new(Instance *inst)
 {
@@ -920,8 +976,8 @@ _popup_new(Instance *inst)
    evas_object_size_hint_min_set(list, 240 * e_scale, 280 * e_scale);
 
    e_gadcon_popup_content_set(inst->popup, list);
-   e_comp_object_util_autoclose(inst->popup->comp_object,
-     _popup_comp_del_cb, NULL, inst);
+   e_comp_object_util_autoclose(inst->popup->comp_object, _popup_comp_del_cb,
+                                _mixer_key_down_cb, inst);
    e_gadcon_popup_show(inst->popup);
    e_object_data_set(E_OBJECT(inst->popup), inst);
    E_OBJECT_DEL_SET(inst->popup, _popup_del_cb);
