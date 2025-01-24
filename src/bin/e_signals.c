@@ -82,22 +82,104 @@ _e_crash(void)
 #endif
 }
 
+static void
+_e_siginfo(int sig, siginfo_t *info)
+{
+  // dump more info ont he signal we trapped to stdout
+  printf("SIG: sig=%i\n", sig);
+  printf("SIG: info->signo=");
+#define NAME(_x) case _x: printf(# _x "\n"); break
+#define NUMX(_v) default: printf("0x%lx\n", (unsigned long)_v); break
+#define NUMI(_v) default: printf("%li\n", (long)_v); break
+  switch(info->si_signo) {
+    NAME(SIGSEGV);
+    NAME(SIGILL);
+    NAME(SIGFPE);
+    NAME(SIGBUS);
+    NAME(SIGABRT);
+    NUMX(info->si_signo);
+  }
+  printf("SIG: info->code=");
+  switch(info->si_signo) {
+   case SIGSEGV:
+    switch(info->si_code) {
+      NAME(SEGV_MAPERR);
+      NAME(SEGV_ACCERR);
+#ifdef __linux__
+      NAME(SEGV_BNDERR);
+#endif
+      NAME(SEGV_PKUERR);
+      NUMX(info->si_code);
+    } break;
+   case SIGILL:
+    switch (info->si_code) {
+      NAME(ILL_ILLOPC);
+      NAME(ILL_ILLOPN);
+      NAME(ILL_ILLADR);
+      NAME(ILL_ILLTRP);
+      NAME(ILL_PRVOPC);
+      NAME(ILL_PRVREG);
+      NAME(ILL_COPROC);
+      NAME(ILL_BADSTK);
+      NUMX(info->si_code);
+    } break;
+   case SIGFPE:
+    switch (info->si_code) {
+      NAME(FPE_INTDIV);
+      NAME(FPE_INTOVF);
+      NAME(FPE_FLTDIV);
+      NAME(FPE_FLTOVF);
+      NAME(FPE_FLTUND);
+      NAME(FPE_FLTRES);
+      NAME(FPE_FLTINV);
+      NAME(FPE_FLTSUB);
+      NUMX(info->si_code);
+    } break;
+   case SIGBUS:
+    switch (info->si_code) {
+      NAME(BUS_ADRALN);
+      NAME(BUS_ADRERR);
+      NAME(BUS_OBJERR);
+#ifdef __linux__
+      NAME(BUS_MCEERR_AR);
+      NAME(BUS_MCEERR_AO);
+#endif
+      NUMX(info->si_code);
+    } break;
+  }
+  switch(info->si_signo) {
+   case SIGSEGV:
+   case SIGILL:
+   case SIGFPE:
+   case SIGBUS:
+# ifdef __linux__
+    printf("SIG: info->si_addr=%p\n", info->si_addr);
+# else
+    printf("SIG: info->si_addr=0x%08lx\n", (unsigned long)info->si_addr);
+# endif
+   default:
+    break;
+  }
+}
+
 /* a tricky little devil, requires e and it's libs to be built
  * with the -rdynamic flag to GCC for any sort of decent output.
  */
 E_API void
-e_sigseg_act(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
+e_sigseg_act(int sig, siginfo_t *info, void *data EINA_UNUSED)
 {
+   _e_siginfo(sig, info);
    _e_crash();
 }
 
 E_API void
-e_sigill_act(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
+e_sigill_act(int sig, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
 {
    // In case of a SIGILL in Enlightenment, Enlightenment start will catch the SIGILL and continue,
    // because evas cpu detection use that behaviour. But if we get a SIGILL after that, we end up in
    // this sig handler. So E start remember the SIGILL, and we will commit suicide with a USR1, followed
    // by a SEGV.
+   _e_siginfo(sig, info);
    kill(getpid(), SIGUSR1);
    kill(getpid(), SIGSEGV);
    pause();
@@ -110,19 +192,22 @@ e_sigill_act(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNU
 }
 
 E_API void
-e_sigfpe_act(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
+e_sigfpe_act(int sig, siginfo_t *info, void *data EINA_UNUSED)
 {
+   _e_siginfo(sig, info);
    _e_crash();
 }
 
 E_API void
-e_sigbus_act(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
+e_sigbus_act(int sig, siginfo_t *info, void *data EINA_UNUSED)
 {
+   _e_siginfo(sig, info);
    _e_crash();
 }
 
 E_API void
-e_sigabrt_act(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
+e_sigabrt_act(int sig, siginfo_t *info, void *data EINA_UNUSED)
 {
+   _e_siginfo(sig, info);
    _e_crash();
 }
