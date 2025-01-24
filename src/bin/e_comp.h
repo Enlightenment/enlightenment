@@ -147,6 +147,7 @@ struct _E_Comp
       Ecore_Event_Handler *key_handler;
       E_Comp_Object_Autoclose_Cb del_cb; //cb to call on autoclose delete
       E_Comp_Object_Key_Cb key_cb; //cb to call on key press
+      E_Comp_Object_Wheel_Cb wheel_cb; //cb to call if wheel used outside autoclose obj
       void *data; //user data
    } autoclose;
 

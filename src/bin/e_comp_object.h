@@ -4,6 +4,7 @@ typedef struct E_Event_Comp_Object E_Event_Comp_Object;
 typedef void (*E_Comp_Object_Autoclose_Cb)(void *, Evas_Object *);
 typedef Eina_Bool (*E_Comp_Object_Key_Cb)(void *, Ecore_Event_Key *);
 typedef Eina_Bool (*E_Comp_Object_Mover_Cb) (void *data, Evas_Object *comp_object, const char *signal);
+typedef Eina_Bool (*E_Comp_Object_Wheel_Cb) (void *data, Evas_Event_Mouse_Wheel *ev);
 
 typedef struct E_Comp_Object_Mover E_Comp_Object_Mover;
 
@@ -54,6 +55,7 @@ E_API void e_comp_object_util_del_list_append(Evas_Object *obj, Evas_Object *to_
 E_API void e_comp_object_util_del_list_remove(Evas_Object *obj, Evas_Object *to_del);
 E_API Eina_Bool e_comp_object_util_autoclose_on_escape(void *d EINA_UNUSED, Ecore_Event_Key *ev);
 E_API void e_comp_object_util_autoclose(Evas_Object *obj, E_Comp_Object_Autoclose_Cb del_cb, E_Comp_Object_Key_Cb cb, const void *data);
+E_API void e_comp_object_util_autoclose_wheel_cb_set(E_Comp_Object_Wheel_Cb cb);
 E_API void e_comp_object_util_center(Evas_Object *obj);
 E_API void e_comp_object_util_center_on(Evas_Object *obj, Evas_Object *on);
 E_API void e_comp_object_util_center_on_zone(Evas_Object *obj, E_Zone *zone);
