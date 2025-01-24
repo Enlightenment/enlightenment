@@ -32,14 +32,10 @@ struct _Config
    int                  alert_timeout;  /* Popup dismissal timeout */
    int                  suspend_below;  /* Suspend if battery drops below this level */
    int                  suspend_method; /* Method used to suspend the machine */
-   int                  force_mode;     /* force use of batget or hal */
    /* just config state */
    E_Module            *module;
    E_Config_Dialog     *config_dialog;
    Eina_List           *instances;
-   Ecore_Exe           *batget_exe;
-   Ecore_Event_Handler *batget_data_handler;
-   Ecore_Event_Handler *batget_del_handler;
    Ecore_Timer         *alert_timer;
    int                  full;
    int                  time_left;

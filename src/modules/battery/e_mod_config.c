@@ -13,7 +13,6 @@ struct _E_Config_Dialog_Data
    int alert_timeout;
    int suspend_below;
    int suspend_method;
-   int force_mode; // 0 == auto, 1 == batget, 2 == subsystem
    int desktop_notifications;
    struct
    {
@@ -37,7 +36,6 @@ static int          _basic_check_changed(E_Config_Dialog *cfd, E_Config_Dialog_D
 static Evas_Object *_advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata);
 static int          _advanced_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 static int          _advanced_check_changed(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
-static void         _cb_radio_changed(void *data, Evas_Object *obj EINA_UNUSED);
 
 E_Config_Dialog *
 e_int_config_battery_module(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
@@ -74,7 +72,6 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    cfdata->alert_timeout = battery_config->alert_timeout;
    cfdata->suspend_below = battery_config->suspend_below;
    cfdata->suspend_method = battery_config->suspend_method;
-   cfdata->force_mode = battery_config->force_mode;
 #ifdef HAVE_EEZE
    cfdata->fuzzy = battery_config->fuzzy;
 #endif
@@ -194,19 +191,6 @@ _cb_dismiss_alert_changed(void *data, Evas_Object *obj EINA_UNUSED)
    e_widget_disabled_set(cfdata->ui.alert_timeout, !dismiss_alert);
 }
 
-static void
-_cb_radio_changed(void *data, Evas_Object *obj EINA_UNUSED)
-{
-   E_Config_Dialog_Data *cfdata;
-   Eina_Bool fuzzy;
-
-   if (!(cfdata = data)) return;
-   fuzzy = (cfdata->force_mode == SUBSYSTEM);
-#ifdef HAVE_EEZE
-   e_widget_disabled_set(cfdata->ui.fuzzy, !fuzzy);
-#endif
-}
-
 static Evas_Object *
 _advanced_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
@@ -220,13 +204,10 @@ _advanced_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_
 
    rg = e_widget_radio_group_new(&(cfdata->suspend_method));
    ob = e_widget_radio_add(evas, _("Suspend when below:"), 0, rg);
-   e_widget_on_change_hook_set(ob, _cb_radio_changed, cfdata);
    e_widget_table_object_append(o, ob, 0, 0, 1, 1, 1, 0, 1, 0);
    ob = e_widget_radio_add(evas, _("Hibernate when below:"), 1, rg);
-   e_widget_on_change_hook_set(ob, _cb_radio_changed, cfdata);
    e_widget_table_object_append(o, ob, 0, 1, 1, 1, 1, 0, 1, 0);
    ob = e_widget_radio_add(evas, _("Shutdown when below:"), 2, rg);
-   e_widget_on_change_hook_set(ob, _cb_radio_changed, cfdata);
    e_widget_table_object_append(o, ob, 0, 2, 1, 1, 1, 0, 1, 0);
    ob = e_widget_slider_add(evas, 1, 0, _("%1.0f %%"), 0, 50, 1, 0,
                             NULL, &(cfdata->suspend_below), 100);
@@ -268,28 +249,15 @@ _advanced_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_
 
    o = e_widget_list_add(evas, 0, 0);
 
-   rg = e_widget_radio_group_new(&(cfdata->force_mode));
-   ob = e_widget_radio_add(evas, _("Auto Detect"), UNKNOWN, rg);
-   e_widget_on_change_hook_set(ob, _cb_radio_changed, cfdata);
-   e_widget_list_object_append(o, ob, 1, 0, 0.0);
-   ob = e_widget_radio_add(evas, _("Internal"), NOSUBSYSTEM, rg);
-   e_widget_on_change_hook_set(ob, _cb_radio_changed, cfdata);
-   e_widget_list_object_append(o, ob, 1, 0, 0.0);
 #ifdef HAVE_EEZE
-   ob = e_widget_radio_add(evas, _("udev"), SUBSYSTEM, rg);
-   e_widget_on_change_hook_set(ob, _cb_radio_changed, cfdata);
-   e_widget_list_object_append(o, ob, 1, 0, 0.0);
    ob = e_widget_check_add(evas, _("Fuzzy Mode"),
                            &(cfdata->fuzzy));
    cfdata->ui.fuzzy = ob;
-#else
-   ob = e_widget_radio_add(evas, _("HAL"), 2, rg);
-   e_widget_on_change_hook_set(ob, _cb_radio_changed, cfdata);
-#endif
    e_widget_list_object_append(o, ob, 1, 0, 0.0);
 
    e_widget_toolbook_page_append(otb, NULL, _("Hardware"), o, 1, 0, 1, 0,
                                  0.5, 0.0);
+#endif
 
    e_widget_toolbook_page_show(otb, 0);
    return otb;
@@ -321,7 +289,6 @@ _advanced_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
    else
      battery_config->alert_timeout = 0;
 
-   battery_config->force_mode = cfdata->force_mode;
    battery_config->suspend_below = cfdata->suspend_below;
    battery_config->suspend_method = cfdata->suspend_method;
 
@@ -345,7 +312,6 @@ _advanced_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *
 #ifdef HAVE_EEZE
           (cfdata->fuzzy != battery_config->fuzzy) ||
 #endif
-          (cfdata->force_mode != battery_config->force_mode) ||
           (cfdata->show_alert != old_show_alert) ||
           (cfdata->dismiss_alert != old_dismiss_alert);
 }

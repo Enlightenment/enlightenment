@@ -71,8 +71,6 @@ struct _Instance
 };
 
 static void      _battery_update(int full, int time_left, int time_full, Eina_Bool have_battery, Eina_Bool have_power, Eina_Bool charging);
-static Eina_Bool _battery_cb_exe_data(void *data, int type, void *event);
-static Eina_Bool _battery_cb_exe_del(void *data, int type, void *event);
 static void      _button_cb_mouse_down(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void      _battery_face_level_set(Evas_Object *battery, double level);
 static void      _battery_face_time_set(Evas_Object *battery, int time);
@@ -908,8 +906,6 @@ _battery_config_updated(void)
 {
    Eina_List *l;
    Instance *inst;
-   char buf[4096];
-   int ok = 1;
 
    if (!battery_config) return;
 
@@ -918,41 +914,13 @@ _battery_config_updated(void)
         EINA_LIST_FOREACH(battery_config->instances, l, inst)
           _battery_warning_popup_destroy(inst);
      }
-   if (battery_config->batget_exe)
-     {
-        ecore_exe_terminate(battery_config->batget_exe);
-        ecore_exe_free(battery_config->batget_exe);
-        battery_config->batget_exe = NULL;
-     }
-
-   if ((battery_config->force_mode == UNKNOWN) ||
-       (battery_config->force_mode == SUBSYSTEM))
-     {
 #ifdef HAVE_EEZE
-        if (!eina_list_count(device_batteries))
-          ok = _battery_udev_start();
+  if (!eina_list_count(device_batteries)) _battery_udev_start();
 #elif defined(__OpenBSD__) || defined(__DragonFly__) || defined(__FreeBSD__)
-        if (!eina_list_count(device_batteries))
-          ok = _battery_sysctl_start();
+  if (!eina_list_count(device_batteries)) _battery_sysctl_start();
 #else
-        if (!eina_list_count(device_batteries))
-          ok = _battery_upower_start();
+  if (!eina_list_count(device_batteries)) _battery_upower_start();
 #endif
-     }
-   if (ok) return;
-
-   if ((battery_config->force_mode == UNKNOWN) ||
-       (battery_config->force_mode == NOSUBSYSTEM))
-     {
-        snprintf(buf, sizeof(buf), "%s/%s/batget",
-                 e_module_dir_get(battery_config->module), MODULE_ARCH);
-
-        battery_config->batget_exe =
-          ecore_exe_pipe_run(buf, ECORE_EXE_PIPE_READ |
-                             ECORE_EXE_PIPE_READ_LINE_BUFFERED |
-                             ECORE_EXE_NOT_LEADER |
-                             ECORE_EXE_TERM_WITH_PARENT, NULL);
-     }
 }
 
 static Eina_Bool
@@ -1223,72 +1191,6 @@ _battery_update(int full, int time_left, int time_full, Eina_Bool have_battery, 
    battery_config->charging = charging;
 }
 
-static Eina_Bool
-_battery_cb_exe_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
-{
-   Ecore_Exe_Event_Data *ev;
-   Instance *inst;
-   Eina_List *l;
-   int i;
-
-   ev = event;
-   if (ev->exe != battery_config->batget_exe) return ECORE_CALLBACK_PASS_ON;
-   if ((ev->lines) && (ev->lines[0].line))
-     {
-        for (i = 0; ev->lines[i].line; i++)
-          {
-             if (!strcmp(ev->lines[i].line, "ERROR"))
-               EINA_LIST_FOREACH(battery_config->instances, l, inst)
-                 {
-                    edje_object_signal_emit(inst->o_battery,
-                                            "e,state,unknown", "e");
-                    edje_object_part_text_set(inst->o_battery,
-                                              "e.text.reading", _("ERROR"));
-                    edje_object_part_text_set(inst->o_battery,
-                                              "e.text.time", _("ERROR"));
-
-                    if (inst->popup_battery)
-                      {
-                         edje_object_signal_emit(inst->popup_battery,
-                                                 "e,state,unknown", "e");
-                         edje_object_part_text_set(inst->popup_battery,
-                                                   "e.text.reading", _("ERROR"));
-                         edje_object_part_text_set(inst->popup_battery,
-                                                   "e.text.time", _("ERROR"));
-                      }
-                 }
-             else
-               {
-                  int full = 0;
-                  int time_left = 0;
-                  int time_full = 0;
-                  int have_battery = 0;
-                  int have_power = 0;
-                  int charging = 0;
-
-                  if (sscanf(ev->lines[i].line, "%i %i %i %i %i", &full, &time_left, &time_full,
-                             &have_battery, &have_power) == 5)
-                    _battery_update(full, time_left, time_full,
-                                    have_battery, have_power, charging);
-                  else
-                    e_powersave_mode_set(E_POWERSAVE_MODE_LOW);
-               }
-          }
-     }
-   return ECORE_CALLBACK_DONE;
-}
-
-static Eina_Bool
-_battery_cb_exe_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
-{
-   Ecore_Exe_Event_Del *ev;
-
-   ev = event;
-   if (ev->exe != battery_config->batget_exe) return ECORE_CALLBACK_PASS_ON;
-   battery_config->batget_exe = NULL;
-   return ECORE_CALLBACK_PASS_ON;
-}
-
 static void
 _battery_history_file_reset(int fd)
 {
@@ -1378,7 +1280,6 @@ e_modapi_init(E_Module *m)
    E_CONFIG_VAL(D, T, alert_p, INT);
    E_CONFIG_VAL(D, T, alert_timeout, INT);
    E_CONFIG_VAL(D, T, suspend_below, INT);
-   E_CONFIG_VAL(D, T, force_mode, INT);
 #if defined HAVE_EEZE || defined(__OpenBSD__)
    E_CONFIG_VAL(D, T, fuzzy, INT);
 #endif
@@ -1392,7 +1293,6 @@ e_modapi_init(E_Module *m)
         battery_config->alert_p = 10;
         battery_config->alert_timeout = 0;
         battery_config->suspend_below = 0;
-        battery_config->force_mode = 0;
 #if defined HAVE_EEZE || defined(__OpenBSD__)
         battery_config->fuzzy = 0;
 #endif
@@ -1402,7 +1302,6 @@ e_modapi_init(E_Module *m)
    E_CONFIG_LIMIT(battery_config->alert_p, 0, 100);
    E_CONFIG_LIMIT(battery_config->alert_timeout, 0, 300);
    E_CONFIG_LIMIT(battery_config->suspend_below, 0, 50);
-   E_CONFIG_LIMIT(battery_config->force_mode, 0, 2);
    E_CONFIG_LIMIT(battery_config->desktop_notifications, 0, 1);
 
    battery_config->module = m;
@@ -1412,12 +1311,6 @@ e_modapi_init(E_Module *m)
    battery_config->have_battery = -2;
    battery_config->have_power = -2;
 
-   battery_config->batget_data_handler =
-     ecore_event_handler_add(ECORE_EXE_EVENT_DATA,
-                             _battery_cb_exe_data, NULL);
-   battery_config->batget_del_handler =
-     ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
-                             _battery_cb_exe_del, NULL);
    _handler = ecore_event_handler_add(E_EVENT_POWERSAVE_CONFIG_UPDATE,
                                       _powersave_cb_config_update, NULL);
 
@@ -1440,24 +1333,6 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
 
    if (battery_config->alert_timer)
      ecore_timer_del(battery_config->alert_timer);
-
-   if (battery_config->batget_exe)
-     {
-        ecore_exe_terminate(battery_config->batget_exe);
-        ecore_exe_free(battery_config->batget_exe);
-        battery_config->batget_exe = NULL;
-     }
-
-   if (battery_config->batget_data_handler)
-     {
-        ecore_event_handler_del(battery_config->batget_data_handler);
-        battery_config->batget_data_handler = NULL;
-     }
-   if (battery_config->batget_del_handler)
-     {
-        ecore_event_handler_del(battery_config->batget_del_handler);
-        battery_config->batget_del_handler = NULL;
-     }
 
    if (battery_config->config_dialog)
      e_object_del(E_OBJECT(battery_config->config_dialog));
