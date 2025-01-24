@@ -836,6 +836,28 @@ _mixer_key_down_cb(void *data EINA_UNUSED, Ecore_Event_Key *ev)
   return EINA_TRUE;
 }
 
+static Eina_Bool
+_wheel_cb(void *data EINA_UNUSED, Evas_Event_Mouse_Wheel *ev)
+{
+   if (backend_mute_get())
+     backend_mute_set(EINA_FALSE);
+
+   if (ev->z > 0)
+     backend_volume_decrease();
+   else if (ev->z < 0)
+     backend_volume_increase();
+   return EINA_TRUE;
+}
+
+static void
+_mouse_wheel_cb(void *data EINA_UNUSED, Evas *evas EINA_UNUSED,
+                Evas_Object *obj EINA_UNUSED, void *event)
+{
+   Evas_Event_Mouse_Wheel *ev = event;
+
+   _wheel_cb(data, ev);
+}
+
 static void
 _popup_new(Instance *inst)
 {
@@ -978,6 +1000,7 @@ _popup_new(Instance *inst)
    e_gadcon_popup_content_set(inst->popup, list);
    e_comp_object_util_autoclose(inst->popup->comp_object, _popup_comp_del_cb,
                                 _mixer_key_down_cb, inst);
+   e_comp_object_util_autoclose_wheel_cb_set(_wheel_cb);
    e_gadcon_popup_show(inst->popup);
    e_object_data_set(E_OBJECT(inst->popup), inst);
    E_OBJECT_DEL_SET(inst->popup, _popup_del_cb);
@@ -1050,21 +1073,6 @@ _mouse_down_cb(void *data, Evas *evas EINA_UNUSED,
      {
         _menu_new(inst, ev);
      }
-}
-
-static void
-_mouse_wheel_cb(void *data EINA_UNUSED, Evas *evas EINA_UNUSED,
-                Evas_Object *obj EINA_UNUSED, void *event)
-{
-   Evas_Event_Mouse_Wheel *ev = event;
-
-   if (backend_mute_get())
-     backend_mute_set(EINA_FALSE);
-
-   if (ev->z > 0)
-     backend_volume_decrease();
-   else if (ev->z < 0)
-     backend_volume_increase();
 }
 
 /*
