@@ -59,7 +59,8 @@ _popup_new(Instance *inst)
    inst->popup = e_gadcon_popup_new(inst->gcc, 0);
 
    e_gadcon_popup_content_set(inst->popup, ebluez5_popup_content_add(e_comp->elm, inst));
-   e_comp_object_util_autoclose(inst->popup->comp_object, _popup_comp_del_cb, NULL, inst);
+   e_comp_object_util_autoclose(inst->popup->comp_object, _popup_comp_del_cb,
+                                e_comp_object_util_autoclose_on_escape, inst);
    e_gadcon_popup_show(inst->popup);
    e_object_data_set(E_OBJECT(inst->popup), inst);
    E_OBJECT_DEL_SET(inst->popup, _popup_del_cb);
