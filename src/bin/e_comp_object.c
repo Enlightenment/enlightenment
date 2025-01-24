@@ -4802,6 +4802,7 @@ _e_comp_object_autoclose_cleanup(Eina_Bool already_del)
    e_comp->autoclose.data = NULL;
    e_comp->autoclose.del_cb = NULL;
    e_comp->autoclose.key_cb = NULL;
+   e_comp->autoclose.wheel_cb = NULL;
    E_FREE_FUNC(e_comp->autoclose.key_handler, ecore_event_handler_del);
    e_comp_shape_queue();
 }
@@ -4826,6 +4827,17 @@ _e_comp_object_autoclose_mouse_up_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED
 }
 
 static void
+_e_comp_object_autoclose_wheel_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+  Evas_Event_Mouse_Wheel *ev = event_info;
+  Eina_Bool del = EINA_TRUE;
+
+  if (e_comp->autoclose.wheel_cb)
+    del = !e_comp->autoclose.wheel_cb(e_comp->autoclose.data, ev);
+   if (del) _e_comp_object_autoclose_cleanup(0);
+}
+
+static void
 _e_comp_object_autoclose_setup(Evas_Object *obj)
 {
    if (!e_comp->autoclose.rect)
@@ -4838,6 +4850,7 @@ _e_comp_object_autoclose_setup(Evas_Object *obj)
         evas_object_name_set(e_comp->autoclose.rect, "e_comp->autoclose.rect");
         evas_object_color_set(e_comp->autoclose.rect, 0, 0, 0, 0);
         evas_object_event_callback_add(e_comp->autoclose.rect, EVAS_CALLBACK_MOUSE_UP, _e_comp_object_autoclose_mouse_up_cb, e_comp);
+        evas_object_event_callback_add(e_comp->autoclose.rect, EVAS_CALLBACK_MOUSE_WHEEL, _e_comp_object_autoclose_wheel_cb, e_comp);
         e_comp_grab_input(0, 1);
      }
    evas_object_layer_set(e_comp->autoclose.rect, evas_object_layer_get(obj) - 1);
@@ -4890,6 +4903,12 @@ e_comp_object_util_autoclose(Evas_Object *obj, E_Comp_Object_Autoclose_Cb del_cb
    else
      evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _e_comp_object_autoclose_show, e_comp);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL, _e_comp_object_autoclose_del, e_comp);
+}
+
+E_API void
+e_comp_object_util_autoclose_wheel_cb_set(E_Comp_Object_Wheel_Cb cb)
+{
+  e_comp->autoclose.wheel_cb = cb;
 }
 
 E_API Evas_Object *
