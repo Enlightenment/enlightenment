@@ -3919,6 +3919,9 @@ e_client_focused_set(E_Client *ec)
                }
           }
 
+        if ((ec) && (ec_unfocus))
+           evas_object_stack_above(ec->frame, ec_unfocus->frame);
+
         _e_client_hook_call(E_CLIENT_HOOK_FOCUS_UNSET, ec_unfocus);
         /* only send event here if we're not being deleted */
         if ((!e_object_is_del(E_OBJECT(ec_unfocus))) &&
