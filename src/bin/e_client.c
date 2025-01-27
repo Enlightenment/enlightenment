@@ -3919,7 +3919,7 @@ e_client_focused_set(E_Client *ec)
                }
           }
 
-        if ((ec) && (ec_unfocus))
+        if ((ec) && (ec_unfocus) && (ec_unfocus->unfullscreen_forced))
            evas_object_stack_above(ec->frame, ec_unfocus->frame);
 
         _e_client_hook_call(E_CLIENT_HOOK_FOCUS_UNSET, ec_unfocus);
