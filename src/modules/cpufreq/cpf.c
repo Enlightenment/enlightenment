@@ -47,7 +47,7 @@ _render_colorbar_all(Cpf_Render *r, Cpf_Stats *c)
 {
   int i, y = 0, u;
 
-  if (c->core_num <= 0) return;
+  if ((c->core_num <= 0) || (r->real_w <= 0) || (r->real_h <= 0)) return;
   if ((r->real_w != r->w) || (r->real_h != (c->core_num * 2)))
     {
       free(r->pixels);
@@ -89,7 +89,7 @@ _render_colorbar_cpu_usage(Cpf_Render *r, Cpf_Stats *c)
 {
   int i, y = 0, u;
 
-  if (c->core_num <= 0) return;
+  if ((c->core_num <= 0) || (r->real_w <= 0) || (r->real_h <= 0)) return;
   if ((r->real_w != r->w) || (r->real_h != (c->core_num)))
     {
       free(r->pixels);
@@ -202,6 +202,7 @@ _thread_main(void *data EINA_UNUSED, Ecore_Thread *eth)
               r = cpf_stat->rend[i] = calloc(1, sizeof(Cpf_Render));
               if (!r) continue;
               *r = _renders[i];
+              if ((r->real_w <= 0) || (r->real_h <= 0)) continue;
               r->pixels = malloc(r->real_w * r->real_h * sizeof(int));
               if (!r->pixels) continue;
               for (y = 0; y < r->real_h; y++)
