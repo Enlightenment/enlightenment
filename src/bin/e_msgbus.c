@@ -82,6 +82,9 @@ e_msgbus_shutdown(void)
 {
    E_Msgbus_Data_Screensaver_Inhibit *inhibit;
 
+   EINA_LIST_FREE(e_msgbus_data->screensaver_inhibits, inhibit)
+     _e_msgbus_screensaver_inhibit_free(inhibit);
+
    if (e_msgbus_data->screensaver_iface2)
      eldbus_service_object_unregister(e_msgbus_data->screensaver_iface2);
    if (e_msgbus_data->screensaver_iface)
@@ -93,10 +96,8 @@ e_msgbus_shutdown(void)
         eldbus_name_release(e_msgbus_data->conn, E_BUS, NULL, NULL);
         eldbus_connection_unref(e_msgbus_data->conn);
      }
-   eldbus_shutdown();
 
-   EINA_LIST_FREE(e_msgbus_data->screensaver_inhibits, inhibit)
-     _e_msgbus_screensaver_inhibit_free(inhibit);
+   eldbus_shutdown();
 
    E_FREE(e_msgbus_data);
    return 1;
@@ -195,10 +196,13 @@ _e_msgbus_screensaver_inhibit_free(E_Msgbus_Data_Screensaver_Inhibit *inhibit)
    if (inhibit->reason) eina_stringshare_del(inhibit->reason);
    if (inhibit->sender)
      {
-        eldbus_name_owner_changed_callback_del(e_msgbus_data->conn,
-                                               inhibit->sender,
-                                               _e_msgbus_screensaver_owner_change_cb,
-                                               NULL);
+        if (e_msgbus_data)
+          {
+             eldbus_name_owner_changed_callback_del(e_msgbus_data->conn,
+                                                    inhibit->sender,
+                                                    _e_msgbus_screensaver_owner_change_cb,
+                                                    NULL);
+          }
         eina_stringshare_del(inhibit->sender);
      }
    free(inhibit);
@@ -207,23 +211,28 @@ _e_msgbus_screensaver_inhibit_free(E_Msgbus_Data_Screensaver_Inhibit *inhibit)
 static void
 _e_msgbus_screensaver_owner_change_cb(void *data EINA_UNUSED, const char *bus EINA_UNUSED, const char *old_id, const char *new_id)
 {
-   Eina_List *l, *ll;
+   Eina_List *l, *l_removes = NULL;
    E_Msgbus_Data_Screensaver_Inhibit *inhibit;
    Eina_Bool removed = EINA_FALSE;
 
+   if (!e_msgbus_data) return;
    printf("INH: owner change... [%s] [%s] [%s]\n", bus, old_id, new_id);
    if ((new_id) && (!new_id[0]))
      {
-        EINA_LIST_FOREACH_SAFE(e_msgbus_data->screensaver_inhibits, l, ll, inhibit)
+        EINA_LIST_FOREACH(e_msgbus_data->screensaver_inhibits, l, inhibit)
           {
              if ((inhibit->sender) && (!strcmp(inhibit->sender, old_id)))
                {
-                  _e_msgbus_screensaver_inhibit_free(inhibit);
-                  e_msgbus_data->screensaver_inhibits =
-                    eina_list_remove_list
-                     (e_msgbus_data->screensaver_inhibits, l);
-                  removed = EINA_TRUE;
+                  l_removes = eina_list_append(l_removes, l);
                }
+          }
+        EINA_LIST_FREE(l_removes, l)
+          {
+             inhibit = l->data;
+             _e_msgbus_screensaver_inhibit_free(inhibit);
+             e_msgbus_data->screensaver_inhibits =
+               eina_list_remove_list(e_msgbus_data->screensaver_inhibits, l);
+             removed = EINA_TRUE;
           }
         if ((removed) && (!e_msgbus_data->screensaver_inhibits))
           {
