@@ -2718,6 +2718,11 @@ _ibar_cb_client_del(void *d EINA_UNUSED, int t EINA_UNUSED, E_Event_Client *ev)
         ic = eina_hash_find(b->icon_hash, _desktop_name_get(ev->ec->desktop));
         if (ic)
           {
+             if (b->menu_icon == ic)
+               {
+                  Eina_Bool grabbed = b->menu_icon->menu_grabbed;
+                  _ibar_icon_menu_hide(ic, grabbed);
+               }
              if (ic->not_in_order)
                {
                   EINA_LIST_FOREACH(ic->exes, ll, exe)
