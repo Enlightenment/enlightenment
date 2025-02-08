@@ -464,6 +464,7 @@ e_bindings_mouse_button_find(E_Binding_Context ctxt, E_Binding_Event_Mouse_Butto
           {
              if (!e_bindings_context_match(binding->ctxt, ctxt)) continue;
              if (act && (binding->ctxt == E_BINDING_CONTEXT_ANY)) continue;
+             if (!binding->action) continue;
              act = e_action_find(binding->action);
              if (bind_ret) *bind_ret = binding;
              if (!act) continue;
