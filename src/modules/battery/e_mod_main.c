@@ -326,11 +326,14 @@ _battery_popup_usage_content_update_cb(void *data)
         snprintf(buf, sizeof(buf), "%i:%02i", hrs, mins);
         elm_object_text_set(w->remaining, buf);
 
-        if ((bat->last_full_charge > 0) && (bat->design_charge > 0))
-          snprintf(buf, sizeof(buf), "%1.1f%%",
-                   100.0 * ((double)bat->last_full_charge / bat->design_charge));
-        else
+        if ((bat->last_full_charge <= 0) || (bat->design_charge <= 0))
           snprintf(buf, sizeof(buf), "???%%");
+        else
+          {
+             double health = 100.0 * (double)bat->last_full_charge / bat->design_charge;
+             if (health > 100.0) health = 100.0;
+             snprintf(buf, sizeof(buf), "%1.1f%%", health);
+          }
         elm_object_text_set(w->health, buf);
 
         if (bat->technology)
