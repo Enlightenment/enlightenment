@@ -3404,17 +3404,7 @@ _e_comp_x_hook_client_post_new_client(void *d EINA_UNUSED, E_Client *ec)
      {
         _e_comp_x_client_shape_input_rectangle_set(ec);
         if ((!ec->shaped) && _e_comp_x_client_data_get(ec)->reparented)
-         {
-           Ecore_X_Window pwin = e_client_util_pwin_get(ec);
-
-           printf("SHP: shp merge 0x%x - set 0\n", pwin);
-           ecore_x_window_shape_mask_set(pwin, 0);
-           if ((ec->shaped_input) && (ec->shape_input_rects))
-             {
-               printf("SHP: set00: 0x%x %p %i\n", pwin, (Ecore_X_Rectangle*)ec->shape_input_rects, ec->shape_input_rects_num);
-               ecore_x_window_shape_input_rectangles_set(pwin, (Ecore_X_Rectangle*)ec->shape_input_rects, ec->shape_input_rects_num);
-             }
-         }
+          ecore_x_window_shape_mask_set(e_client_util_pwin_get(ec), 0);
         ec->need_shape_merge = 0;
      }
 
@@ -3550,15 +3540,9 @@ _e_comp_x_hook_client_pre_frame_assign(void *d EINA_UNUSED, E_Client *ec)
    e_pixmap_parent_window_set(ep, pwin);
    ec->border.changed = 1;
    if (!ec->shaped)
-    {
-      printf("SHP: not shaped zero 0x%x\n", pwin);
-      ecore_x_window_shape_mask_set(pwin, 0);
-    }
+     ecore_x_window_shape_mask_set(pwin, 0);
    if (ec->shaped_input)
-    {
-      printf("SHP: set0: 0x%x %p %i\n", pwin, (Ecore_X_Rectangle*)ec->shape_input_rects, ec->shape_input_rects_num);
-      ecore_x_window_shape_input_rectangles_set(pwin, (Ecore_X_Rectangle*)ec->shape_input_rects, ec->shape_input_rects_num);
-    }
+     ecore_x_window_shape_input_rectangles_set(pwin, (Ecore_X_Rectangle*)ec->shape_input_rects, ec->shape_input_rects_num);
    ec->changes.shape = 1;
    ec->changes.shape_input = 1;
    if (ec->internal_elm_win)
@@ -4428,7 +4412,6 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                {
                   if (cd->reparented)
                     {
-                      printf("SHP: rectangles set 0x%x %i\n", pwin, num);
                        ecore_x_window_shape_rectangles_set(pwin, rects, num);
                        if ((!ec->shaped) && (!ec->bordername))
                          {
@@ -4471,10 +4454,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
           {
              _e_comp_x_client_shape_input_rectangle_set(ec);
              if ((!ec->shaped) && cd->reparented)
-              {
-                printf("SHP: mask set 0x%x set 0\n", pwin);
-                ecore_x_window_shape_mask_set(pwin, 0);
-              }
+               ecore_x_window_shape_mask_set(pwin, 0);
           }
         ec->need_shape_merge = 1;
      }
@@ -4520,17 +4500,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                {
                   ec->shaped_input = 1;
                   if (cd->reparented)
-                   {
-                     int ii;
-
-                     printf("SHP: set2: 0x%x %p %i\n", pwin, rects, num);
-                     for (ii = 0; ii < num; ii++) printf("SHP:   %i %i   %ix%i\n",
-                                                         rects[ii].x,
-                                                         rects[ii].y,
-                                                         rects[ii].width,
-                                                         rects[ii].height);
-                     ecore_x_window_shape_input_rectangles_set(pwin, rects, num);
-                   }
+                    ecore_x_window_shape_input_rectangles_set(pwin, rects, num);
                   changed = EINA_TRUE;
                   free(ec->shape_input_rects);
                   ec->shape_input_rects = (Eina_Rectangle*)rects;
@@ -4542,17 +4512,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
           {
              ec->shaped_input = 1;
              if (cd->reparented)
-              {
-                int ii;
-
-                printf("SHP: set3: 0x%x %p %i\n", pwin, rects, num);
-                for (ii = 0; ii < num; ii++) printf("SHP:   %i %i   %ix%i\n",
-                                                    rects[ii].x,
-                                                    rects[ii].y,
-                                                    rects[ii].width,
-                                                    rects[ii].height);
-                ecore_x_window_shape_input_rectangles_set(pwin, rects, num);
-              }
+               ecore_x_window_shape_input_rectangles_set(pwin, rects, num);
              changed = EINA_TRUE;
              evas_object_pass_events_set(ec->frame, 1);
              free(ec->shape_input_rects);
