@@ -177,18 +177,15 @@ parse_layout(Eldbus_Message_Iter *layout, E_DBusMenu_Item *parent, E_DBusMenu_Ct
 static void
 dbus_menu_free(E_DBusMenu_Item *m)
 {
-   Eina_Inlist *inlist;
    E_DBusMenu_Item *child;
 
-   EINA_INLIST_FOREACH_SAFE(m->sub_items, inlist, child)
+   while (m->sub_items)
      {
-        e_dbusmenu_item_unref(child);
-     }
-   EINA_INLIST_FREE(m->sub_items, child)
-     {
-        m->sub_items = eina_inlist_remove
-          (m->sub_items, EINA_INLIST_GET(child));
+        child = (E_DBusMenu_Item *)m->sub_items;
+
+        m->sub_items = eina_inlist_remove(m->sub_items, m->sub_items);
         child->parent = NULL;
+        e_dbusmenu_item_unref(child);
      }
    if (m->icon_name) eina_stringshare_del(m->icon_name);
    if (m->label) eina_stringshare_del(m->label);
