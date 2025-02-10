@@ -99,6 +99,7 @@ E_API void e_comp_object_effect_mover_del(E_Comp_Object_Mover *prov);
 E_API void e_comp_object_frame_volume_update(Evas_Object *obj);
 E_API Evas_Object *e_comp_object_frame_icon_get(Evas_Object *obj);
 E_API Evas_Object *e_comp_object_frame_volume_get(Evas_Object *obj);
+E_API void e_comp_object_shape_input_update(Evas_Object *obj);
 
 #endif
 #endif
