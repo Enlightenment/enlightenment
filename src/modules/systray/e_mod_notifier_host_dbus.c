@@ -217,7 +217,7 @@ props_changed(void *data, const Eldbus_Message *msg)
      {
         Eldbus_Connection *conn = eldbus_object_connection_get(eldbus_proxy_object_get(item->proxy));
         item->dbus_item = NULL;
-        e_dbusmenu_unload(item->menu_data);
+        if (item->menu_data) e_dbusmenu_unload(item->menu_data);
         item->menu_data = e_dbusmenu_load(conn, item->bus_id, item->menu_path,
                                           item);
         e_dbusmenu_update_cb_set(item->menu_data, systray_notifier_update_menu);
@@ -581,8 +581,6 @@ void systray_notifier_dbus_shutdown(Context_Notifier_Host *ctx)
 {
    Eina_Inlist *safe_list;
    Notifier_Item *item;
-
-   ERR("systray_notifier_dbus_shutdown");
 
    EINA_INLIST_FOREACH_SAFE(ctx->item_list, safe_list, item)
      systray_notifier_item_free(item);

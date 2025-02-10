@@ -46,7 +46,7 @@ systray_notifier_item_free(Notifier_Item *item)
         free(ii);
         systray_size_updated(host_inst->inst);
      }
-   if (item->menu_path)
+   if (item->menu_data)
      e_dbusmenu_unload(item->menu_data);
    eina_stringshare_del(item->bus_id);
    eina_stringshare_del(item->path);
@@ -191,18 +191,18 @@ _menu_post_deactivate(void *data, E_Menu *m)
         e_object_data_set(E_OBJECT(m), NULL);
         e_dbusmenu_item_unref(item);
      }
-
-   if (gadcon) e_gadcon_locked_set(gadcon, 0);
    EINA_LIST_FOREACH(m->items, iter, mi)
      {
         item = e_object_data_get(E_OBJECT(mi));
         if (item)
           {
              e_object_data_set(E_OBJECT(m), NULL);
-             e_dbusmenu_item_unref(item);
           }
         if (mi->submenu) e_menu_deactivate(mi->submenu);
      }
+
+   if (gadcon) e_gadcon_locked_set(gadcon, 0);
+
    EINA_INLIST_FOREACH(ctx->instances, host_inst)
      {
         Notifier_Item_Icon *ii;
@@ -226,8 +226,11 @@ _item_submenu_new(E_DBusMenu_Item *item, E_Menu_Item *mi)
    E_Menu_Item *submi;
 
    m = e_menu_new();
-   e_dbusmenu_item_ref(item);
-   e_object_data_set(E_OBJECT(m), item);
+   if (mi == NULL)
+     {
+        e_dbusmenu_item_ref(item);
+        e_object_data_set(E_OBJECT(m), item);
+     }
    e_menu_post_deactivate_callback_set(m, _menu_post_deactivate, NULL);
    if (mi) e_menu_item_submenu_set(mi, m);
 
@@ -235,7 +238,6 @@ _item_submenu_new(E_DBusMenu_Item *item, E_Menu_Item *mi)
      {
         if (!child->visible) continue;
         submi = e_menu_item_new(m);
-        e_dbusmenu_item_ref(child);
         e_object_data_set(E_OBJECT(submi), child);
         if (child->type == E_DBUSMENU_ITEM_TYPE_SEPARATOR)
           e_menu_item_separator_set(submi, 1);
