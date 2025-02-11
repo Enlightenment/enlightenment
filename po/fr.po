@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2025-02-01 09:48+0100\n"
-"PO-Revision-Date: 2025-02-01 14:25+0100\n"
+"PO-Revision-Date: 2025-02-10 16:42+0100\n"
 "Last-Translator: Philippe Jean Guillaumie <similar@orange.fr>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -1030,7 +1030,8 @@ msgid ""
 "Your display server does not support the compositor overlay window.\n"
 "This is needed for Enlightenment to function."
 msgstr ""
-"Votre serveur d'affichage ne sait pas gérer le Composite Overlay Window.\n"
+"Votre serveur d'affichage ne sait pas gérer la composition en overlay "
+"window.\n"
 "Cette fonction est essentielle au bon fonctionnement de E."
 
 #: src/bin/e_comp_x.c:6051
@@ -2952,7 +2953,7 @@ msgstr ""
 
 #: src/bin/e_int_config_comp.c:207
 msgid "Edit window matches"
-msgstr "Modifications spécifiques"
+msgstr "Ajustements spécifiques"
 
 #: src/bin/e_int_config_comp.c:210 src/bin/e_int_config_comp.c:495
 msgid "Select default style"
@@ -3318,7 +3319,7 @@ msgstr "Objets"
 
 #: src/bin/e_int_config_comp_match.c:945
 msgid "Composite Match Settings"
-msgstr "Paramètres des modificateurs composites"
+msgstr "Paramètres d'ajustement composite"
 
 #: src/bin/e_int_config_modules.c:51
 msgid "Utilities"
@@ -8546,7 +8547,7 @@ msgstr ""
 "page<ps/>    <hilight>&lt;Entrée&gt;</hilight> exécute une action<ps/>    "
 "<hilight>&lt;Ctrl+Entrée&gt;</hilight> exécute une action et continue<ps/"
 ">    <hilight>&lt;Tab&gt;</hilight> passe d'un sélecteur à l'autre<ps/>    "
-"<hilight>&lt;Ctrl+Tab&gt;</hilight> détail des entrées (ça dépend du "
+"<hilight>&lt;Ctrl+Tab&gt;</hilight> complète la saisie (ça dépend du "
 "greffon)<ps/>    <hilight>&lt;Ctrl+« x »&gt;</hilight> va au greffon "
 "commençant par la lettre « x »<ps/>    <hilight>&lt;Ctrl+Flèche gauche / "
 "droite&gt;</hilight> circule parmi les greffons<ps/>    <hilight>&lt;Ctrl"
