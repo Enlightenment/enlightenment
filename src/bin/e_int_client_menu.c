@@ -702,7 +702,8 @@ _e_client_menu_cb_application_pre(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item
                                         _e_client_menu_cb_ibar_add_pre, ec);
    e_util_menu_item_theme_icon_set(submi, "preferences-applications-ibar");
 
-   if (e_configure_registry_exists("keyboard_and_mouse/key_bindings"))
+   if (e_configure_registry_exists("keyboard_and_mouse/key_bindings") &&
+       (ec->desktop))
      {
         submi = e_menu_item_new(subm);
         e_menu_item_label_set(submi, _("Create Keyboard Shortcut"));
@@ -1688,8 +1689,9 @@ _e_client_menu_cb_kbdshrtct_add(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *
    if (!(ec = data)) return;
    zone = e_zone_current_get();
    if (!zone) return;
-   e_configure_registry_call("keyboard_and_mouse/key_bindings",
-                             NULL, ec->desktop->exec);
+   if ((ec->desktop) && (ec->desktop->exec))
+     e_configure_registry_call("keyboard_and_mouse/key_bindings",
+                               NULL, ec->desktop->exec);
 }
 
 static void
