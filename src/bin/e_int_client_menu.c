@@ -688,28 +688,30 @@ _e_client_menu_cb_application_pre(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item
         e_menu_item_callback_set(submi, _e_client_menu_cb_icon_edit, ec);
      }
 
-   submi = e_menu_item_new(subm);
-   e_menu_item_separator_set(submi, 1);
+   if (ec->desktop)
+    {
+      submi = e_menu_item_new(subm);
+      e_menu_item_separator_set(submi, 1);
 
-   submi = e_menu_item_new(subm);
-   e_menu_item_label_set(submi, _("Add to Favorites Menu"));
-   e_menu_item_callback_set(submi, _e_client_menu_cb_fav_add, ec);
-   e_util_menu_item_theme_icon_set(submi, "user-bookmarks");
+      submi = e_menu_item_new(subm);
+      e_menu_item_label_set(submi, _("Add to Favorites Menu"));
+      e_menu_item_callback_set(submi, _e_client_menu_cb_fav_add, ec);
+      e_util_menu_item_theme_icon_set(submi, "user-bookmarks");
 
-   submi = e_menu_item_new(subm);
-   e_menu_item_label_set(submi, _("Add to IBar"));
-   e_menu_item_submenu_pre_callback_set(submi,
-                                        _e_client_menu_cb_ibar_add_pre, ec);
-   e_util_menu_item_theme_icon_set(submi, "preferences-applications-ibar");
+      submi = e_menu_item_new(subm);
+      e_menu_item_label_set(submi, _("Add to IBar"));
+      e_menu_item_submenu_pre_callback_set(submi,
+                                           _e_client_menu_cb_ibar_add_pre, ec);
+      e_util_menu_item_theme_icon_set(submi, "preferences-applications-ibar");
 
-   if (e_configure_registry_exists("keyboard_and_mouse/key_bindings") &&
-       (ec->desktop))
-     {
-        submi = e_menu_item_new(subm);
-        e_menu_item_label_set(submi, _("Create Keyboard Shortcut"));
-        e_menu_item_callback_set(submi, _e_client_menu_cb_kbdshrtct_add, ec);
-        e_util_menu_item_theme_icon_set(submi, "preferences-desktop-keyboard");
-     }
+      if (e_configure_registry_exists("keyboard_and_mouse/key_bindings"))
+        {
+          submi = e_menu_item_new(subm);
+          e_menu_item_label_set(submi, _("Create Keyboard Shortcut"));
+          e_menu_item_callback_set(submi, _e_client_menu_cb_kbdshrtct_add, ec);
+          e_util_menu_item_theme_icon_set(submi, "preferences-desktop-keyboard");
+        }
+    }
 #if 0
    if (ec->color_editor || (!e_pixmap_is_x(ec->pixmap))) return;
    submi = e_menu_item_new(subm);
