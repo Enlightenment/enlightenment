@@ -743,12 +743,23 @@ _e_winlist_size_list_adjust(void)
    evas_object_geometry_set(_winlist, x, y, w, h);
 }
 
+typedef struct
+{
+  int padw, padh;
+} Calc_Pad;
+
+static void
+_cb_calcpad_del(void *data, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *info EINA_UNUSED)
+{
+  free(data);
+}
+
 static int
 _e_winlist_large_item_height_set(Evas_Coord h)
 {
    E_Winlist_Win *ww;
    Eina_List *l, *boxes, *bl;
-   Evas_Coord mw, mh, lw, lh;
+   Evas_Coord mw, mh, mw2, mh2, lw, lh;
    Evas_Object *o, *box;
    int rows = 1;
    int rowlen = 0;
@@ -764,6 +775,8 @@ _e_winlist_large_item_height_set(Evas_Coord h)
    if (!bl) return 0;
    EINA_LIST_FOREACH(_wins, l, ww)
      {
+        Calc_Pad *calcpad;
+
         mh = h;
         if (mh > ww->client->h)
           mh = ww->client->h;
@@ -771,12 +784,34 @@ _e_winlist_large_item_height_set(Evas_Coord h)
           mw = (ww->client->w * mh) / ww->client->h;
         else
           mw = mh;
-        edje_object_part_unswallow(ww->bg_object, ww->win_object);
-        evas_object_size_hint_min_set(ww->win_object, mw, mh);
-        evas_object_size_hint_max_set(ww->win_object, mw, mh);
-        edje_object_part_swallow(ww->bg_object, "e.swallow.win", ww->win_object);
-        edje_object_size_min_calc(ww->bg_object, &mw, &mh);
-        evas_object_size_hint_min_set(ww->bg_object, mw, mh);
+        calcpad = evas_object_data_get(ww->bg_object, "cpad");
+        if (!calcpad)
+         {
+           evas_object_size_hint_min_set(ww->win_object, mw, mh);
+           evas_object_size_hint_max_set(ww->win_object, mw, mh);
+           edje_object_part_swallow(ww->bg_object, "e.swallow.win", ww->win_object);
+           edje_object_size_min_calc(ww->bg_object, &mw2, &mh2);
+           calcpad = malloc(sizeof(Calc_Pad));
+           if (calcpad)
+             {
+               calcpad->padw = mw2 - mw;
+               calcpad->padh = mh2 - mh;
+               evas_object_data_set(ww->bg_object, "cpad", calcpad);
+               evas_object_event_callback_add(ww->bg_object, EVAS_CALLBACK_DEL, _cb_calcpad_del, calcpad);
+             }
+           mw = mw2;
+           mh = mh2;
+           evas_object_size_hint_min_set(ww->bg_object, mw, mh);
+           evas_object_size_hint_min_set(ww->win_object, 0, 0);
+           evas_object_size_hint_max_set(ww->win_object, -1, -1);
+           edje_object_part_swallow(ww->bg_object, "e.swallow.win", ww->win_object);
+         }
+       else
+         {
+           mw += calcpad->padw;
+           mh += calcpad->padh;
+           evas_object_size_hint_min_set(ww->bg_object, mw, mh);
+         }
         rowlen += mw;
         if ((rowlen > lw) && (mw != rowlen))
           {
