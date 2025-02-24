@@ -802,11 +802,12 @@ _e_winlist_large_item_height_set(Evas_Coord h)
            mw = mw2;
            mh = mh2;
            evas_object_size_hint_min_set(ww->bg_object, mw, mh);
+           evas_object_size_hint_max_set(ww->bg_object, mw, mh);
            evas_object_size_hint_min_set(ww->win_object, 0, 0);
            evas_object_size_hint_max_set(ww->win_object, -1, -1);
            edje_object_part_swallow(ww->bg_object, "e.swallow.win", ww->win_object);
          }
-       else
+        else
          {
            mw += calcpad->padw;
            mh += calcpad->padh;
