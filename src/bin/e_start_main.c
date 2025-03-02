@@ -368,7 +368,7 @@ _e_start_stdout_err_redir(const char *home)
 }
 
 static int
-_e_start_child(const char *home, char **args, Eina_Bool really_know)
+_e_start_child(const char *home, char **args, Eina_Bool really_know, Eina_Bool trace)
 {
    // have e process die with parent enlightenment_start
 #ifdef HAVE_PRCTL
@@ -378,7 +378,7 @@ _e_start_child(const char *home, char **args, Eina_Bool really_know)
    procctl(P_PID, 0, PROC_PDEATHSIG_CTL, &sig);
 #endif
    _e_start_stdout_err_redir(home);
-   _e_ptrace_traceme(really_know);
+   if (trace) _e_ptrace_traceme(really_know);
    execv(args[0], args);
    // We failed, 0 means normal exit from E with no restart or crash so
    // let's exit
@@ -527,6 +527,7 @@ main(int argc, char **argv)
    struct sigaction action;
    pid_t child = -1;
    Eina_Bool restart = EINA_TRUE;
+   Eina_Bool vgd = EINA_FALSE;
    unsigned int provided_eina_version, required_eina_version;
 
    unsetenv("NOTIFY_SOCKET");
@@ -665,6 +666,11 @@ main(int argc, char **argv)
           {
              really_know = EINA_TRUE;
           }
+        else if (!strcmp(argv[i], "-valgrind"))
+          {
+             vgd = EINA_TRUE;
+             putenv("E_NO_WATCHDOG=1");
+          }
      }
 
    bindir = eina_prefix_bin_get(pfx);
@@ -694,13 +700,33 @@ main(int argc, char **argv)
      }
 
    /* run e directly now */
-   myasprintf(&buf, "%s/enlightenment", eina_prefix_bin_get(pfx));
+  myasprintf(&buf, "%s/enlightenment", eina_prefix_bin_get(pfx));
+   if (vgd)
+     {
+       args = alloca((argc + 11) * sizeof(char *));
+       args[0] = "/usr/bin/valgrind";
+       args[1] = "--tool=memcheck";
+       args[2] = "--num-callers=256";
+       args[3] = "--show-reachable=no";
+       args[4] = "--read-var-info=yes";
+       args[5] = "--leak-check=no";
+       args[6] = "--undef-value-errors=yes";
+       args[7] = "--track-origins=yes";
+       args[8] = "--redzone-size=512";
+       args[9] = "--freelist-vol=100000000";
+       args[10] = buf;
+       copy_args(&args[11], argv + 1, argc - 1);
+       argc += 10;
+       args[argc] = NULL;
+     }
+   else
+     {
+       args = alloca((argc + 1) * sizeof(char *));
+       args[0] = buf;
+       copy_args(&args[1], argv + 1, argc - 1);
+       args[argc] = NULL;
+     }
 
-   args = alloca((argc + 1) * sizeof(char *));
-   printf("Enlightenment: Command: %s\n", buf);
-   args[0] = buf;
-   copy_args(&args[1], argv + 1, argc - 1);
-   args[argc] = NULL;
 
    /* Now looping until */
    while (restart)
@@ -722,14 +748,14 @@ main(int argc, char **argv)
           }
         else if (child == 0)
           { // we are in the child fork - so exec
-             ret = _e_start_child(home, args, really_know);
+             ret = _e_start_child(home, args, really_know, !vgd);
              break;
           }
 
         putenv("E_RESTART_OK=");
         /* in the parent - ptrace attach and continue */
         putenv("E_RESTART=1");
-        _e_ptrace_attach(child, &status, really_know);
+        if (!vgd) _e_ptrace_attach(child, &status, really_know);
 
         /* now loop until done */
 not_done:
