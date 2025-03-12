@@ -1306,6 +1306,11 @@ _e_fm_ipc_dir_del(E_Dir *ed)
         ecore_thread_cancel(ed->lister_thread);
         return;
      }
+   if (ed->mon)
+     {
+        ecore_file_monitor_del(ed->mon);
+        ed->mon = NULL;
+     }
    eina_stringshare_del(ed->dir);
    if (ed->recent_clean) ecore_timer_del(ed->recent_clean);
    EINA_LIST_FREE(ed->recent_mods, m)
