@@ -1,6 +1,6 @@
 ##### project
 project('enlightenment', 'c',
-        version        : '0.27.0',
+        version        : '0.27.1',
         license        : 'BSD 2 clause',
         default_options: [ 'buildtype=release', 'c_std=gnu99', 'warning_level=2' ],
         meson_version  : '>= 0.47.0')
