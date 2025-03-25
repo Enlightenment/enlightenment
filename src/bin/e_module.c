@@ -704,7 +704,7 @@ _e_module_whitelist_dialog_timer(void *badl)
    e_dialog_title_set(dia, _("Unstable module tainting"));
    e_dialog_icon_set(dia, "enlightenment", 64);
    e_dialog_text_set(dia, eina_strbuf_string_get(sbuf));
-   e_dialog_button_add(dia, _("OK"), NULL, _cleanup_cb, badl);
+   e_dialog_button_add(dia, _("Ask again"), NULL, _cleanup_cb, badl);
    e_dialog_button_add(dia, _("I know"), NULL, _ignore_cb, badl);
    elm_win_center(dia->win, 1, 1);
    e_dialog_show(dia);
