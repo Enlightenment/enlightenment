@@ -34,6 +34,8 @@ typedef struct _Instance Instance;
 
 typedef struct __Popup_Widgets
 {
+   Battery     *bat;
+
    Evas_Object *pb_usage;
    Evas_Object *state;
    Evas_Object *remaining;
@@ -43,6 +45,7 @@ typedef struct __Popup_Widgets
    Evas_Object *drain;
    Evas_Object *full;
    Evas_Object *power;
+   Evas_Object *charge_lim;
 
    Evas_Object *gr_bat;
    Evas_Object *gr_pow;
@@ -373,6 +376,9 @@ _battery_popup_usage_content_update_cb(void *data)
         else
           elm_object_text_set(w->power, _("Unknown"));
 
+        if ((w->charge_lim) && (bat->charge_lim >= 0))
+          elm_slider_value_set(w->charge_lim, bat->charge_lim);
+
          {
            int *v_full, *v_pow, *v_crg, age;
            unsigned int vals_num;
@@ -468,6 +474,16 @@ _icon_get(void *data EINA_UNUSED, Evas_Object *obj, const char *part)
    evas_object_size_hint_min_set(ic, ELM_SCALE_SIZE(20), ELM_SCALE_SIZE(20));
    evas_object_show(ic);
    return ic;
+}
+
+static void
+_cb_charge_lim_change(void *data, Evas_Object *obj, void *info EINA_UNUSED)
+{
+   _Popup_Widgets *w = data;
+   double v = elm_slider_value_get(obj);
+
+   w->bat->charge_lim = (int)v;
+   e_system_send("battery-lim-set", "%s %i\n", w->bat->udi, (int)v);
 }
 
 static Evas_Object *
@@ -599,21 +615,24 @@ _content_get(void *data, Evas_Object *obj, const char *part)
    elm_table_pack(tb, o, 1, 3, 1, 1);
    evas_object_show(o);
 
+   if (w->bat->charge_lim >= 0)
+     {
+       w->charge_lim = o = elm_slider_add(obj);
+       evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+       evas_object_size_hint_weight_set(o, 1.0,  1.0);
+       elm_object_text_set(o, _("Charge Limit"));
+       elm_slider_unit_format_set(o, "%1.0f%%");
+       elm_slider_indicator_format_set(o, "%1.0f%%");
+       elm_slider_min_max_set(o, 10, 100);
+       elm_slider_step_set(o, 5);
+       elm_slider_value_set(o, w->bat->charge_lim);
+       evas_object_smart_callback_add(o, "changed", _cb_charge_lim_change, w);
+       elm_table_pack(tb, o, 0, 4, 8, 1);
+       evas_object_show(o);
+     }
+   else w->charge_lim = NULL;
+
    w->gr_pow = o = e_graph_add(obj);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_weight_set(o, 1.0,  1.0);
-   evas_object_size_hint_min_set(o, ELM_SCALE_SIZE(80), ELM_SCALE_SIZE(40));
-   elm_table_pack(tb, o, 0, 4, 8, 1);
-   evas_object_show(o);
-
-   o = elm_label_add(obj);
-   elm_object_text_set(o, _("Energy"));
-   evas_object_size_hint_align_set(o, 0.0, 0.0);
-   evas_object_size_hint_weight_set(o, 1.0, 0);
-   elm_table_pack(tb, o, 1, 4, 1, 1);
-   evas_object_show(o);
-
-   w->gr_crg = o = e_graph_add(obj);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(o, 1.0,  1.0);
    evas_object_size_hint_min_set(o, ELM_SCALE_SIZE(80), ELM_SCALE_SIZE(40));
@@ -621,10 +640,24 @@ _content_get(void *data, Evas_Object *obj, const char *part)
    evas_object_show(o);
 
    o = elm_label_add(obj);
+   elm_object_text_set(o, _("Energy"));
+   evas_object_size_hint_align_set(o, 0.0, 0.0);
+   evas_object_size_hint_weight_set(o, 1.0, 0);
+   elm_table_pack(tb, o, 1, 6, 1, 1);
+   evas_object_show(o);
+
+   w->gr_crg = o = e_graph_add(obj);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(o, 1.0,  1.0);
+   evas_object_size_hint_min_set(o, ELM_SCALE_SIZE(80), ELM_SCALE_SIZE(40));
+   elm_table_pack(tb, o, 0, 7, 8, 1);
+   evas_object_show(o);
+
+   o = elm_label_add(obj);
    elm_object_text_set(o, _("(Dis)charge"));
    evas_object_size_hint_align_set(o, 0.0, 0.0);
    evas_object_size_hint_weight_set(o, 1.0, 0);
-   elm_table_pack(tb, o, 1, 5, 1, 1);
+   elm_table_pack(tb, o, 1, 8, 1, 1);
    evas_object_show(o);
 
    return tb;
@@ -657,8 +690,8 @@ _battery_popup_usage_new(Instance *inst)
    evas_object_show(tb);
 
    rec = evas_object_rectangle_add(evas_object_evas_get(base));
-   evas_object_size_hint_min_set(rec, ELM_SCALE_SIZE(400), ELM_SCALE_SIZE(280));
-   evas_object_size_hint_max_set(rec, ELM_SCALE_SIZE(560), ELM_SCALE_SIZE(450));
+   evas_object_size_hint_min_set(rec, ELM_SCALE_SIZE(400), ELM_SCALE_SIZE(330));
+   evas_object_size_hint_max_set(rec, ELM_SCALE_SIZE(560), ELM_SCALE_SIZE(480));
    elm_table_pack(tb, rec, 0, 0, 1, 1);
 
    glist = elm_genlist_add(base);
@@ -687,6 +720,8 @@ _battery_popup_usage_new(Instance *inst)
    EINA_LIST_FOREACH(device_batteries, l, bat)
      {
         _Popup_Widgets *w = &pd->widgets[i++];
+
+        w->bat = bat;
         if ((bat->vendor) && (bat->model))
           snprintf(buf, sizeof(buf), _("Battery: %s (%s)"), bat->vendor, bat->model);
         else if (bat->vendor)

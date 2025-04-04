@@ -117,6 +117,7 @@ struct _Battery
    const char   *technology;
    const char   *model;
    const char   *vendor;
+   int           charge_lim;
    int           history_power_now_max;
    Eina_Bool     got_prop E_BITFIELD;
    Eldbus_Proxy *proxy;

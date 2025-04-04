@@ -62,6 +62,7 @@ _battery_sysctl_start(void)
              bat->technology = eina_stringshare_add("Unknown");
              bat->model = eina_stringshare_add("Unknown");
              bat->vendor = eina_stringshare_add("Unknown");
+             bat->charge_lim = -1;
              bat->timer = ecore_timer_add(10.0, _battery_sysctl_battery_update_poll, NULL);
              device_batteries = eina_list_append(device_batteries, bat);
           }
@@ -105,6 +106,7 @@ _battery_sysctl_start(void)
              bat->model = eina_stringshare_add(battio.bix.model);
              bat->design_charge = battio.bix.dcap;
              bat->last_full_charge = battio.bix.lfcap;
+             bat->charge_lim = -1;
              bat->timer = ecore_timer_add(10.0, _battery_sysctl_battery_update_poll, NULL);
              bat->unit = i;
              device_batteries = eina_list_append(device_batteries, bat);

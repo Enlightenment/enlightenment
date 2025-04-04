@@ -163,6 +163,10 @@ _battery_udev_battery_add(const char *syspath)
    bat->last_update = ecore_time_get();
    bat->udi = eina_stringshare_add(syspath);
    bat->timer = ecore_timer_add(10.0, _battery_udev_battery_update_poll, bat);
+
+   test = eeze_udev_syspath_get_sysattr(syspath, "charge_control_end_threshold");
+   if (!test) bat->charge_lim = -1;
+   else bat->charge_lim = atoi(test);
    device_batteries = eina_list_append(device_batteries, bat);
    _battery_udev_battery_update(syspath, bat);
 }
@@ -330,6 +334,11 @@ _battery_udev_battery_update(const char *syspath, Battery *bat)
      }
    else
      bat->charging = 0;
+
+   test = eeze_udev_syspath_get_sysattr(bat->udi, "charge_control_end_threshold");
+   if (!test) bat->charge_lim = -1;
+   else bat->charge_lim = atoi(test);
+
    test = eeze_udev_syspath_get_property(bat->udi, "POWER_SUPPLY_ENERGY_NOW");
    if (!test)
      test = eeze_udev_syspath_get_property(bat->udi, "POWER_SUPPLY_CHARGE_NOW");

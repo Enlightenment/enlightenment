@@ -174,6 +174,7 @@ main(int argc EINA_UNUSED, const char **argv EINA_UNUSED)
    CONF_INIT_CHECK("l2ping",    e_system_l2ping_init,    init_l2ping);
    CONF_INIT_CHECK("cpufreq",   e_system_cpufreq_init,   init_cpufreq);
    CONF_INIT_CHECK("acpi",      e_system_acpi_init,      init_acpi);
+   CONF_INIT_CHECK("battery",   e_system_battery_init,   init_battery);
 
    if (systems == 0)
      {
@@ -185,6 +186,7 @@ main(int argc EINA_UNUSED, const char **argv EINA_UNUSED)
 
    ecore_main_loop_begin();
 
+   CONF_SHUTDOWN(e_system_battery_shutdown,   init_battery);
    CONF_SHUTDOWN(e_system_acpi_shutdown,      init_acpi);
    CONF_SHUTDOWN(e_system_cpufreq_shutdown,   init_cpufreq);
    CONF_SHUTDOWN(e_system_l2ping_shutdown,    init_l2ping);

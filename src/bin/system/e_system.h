@@ -129,6 +129,9 @@ void e_system_ddc_shutdown(void);
 void e_system_acpi_init(void);
 void e_system_acpi_shutdown(void);
 
+void e_system_battery_init(void);
+void e_system_battery_shutdown(void);
+
 extern Ecore_Exe *e_system_run(const char *exe);
 
 #endif

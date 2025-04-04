@@ -227,6 +227,7 @@ _process_battery(Eldbus_Proxy *proxy)
    bat->udi = eina_stringshare_add(eldbus_object_path_get(eldbus_proxy_object_get(proxy)));
    eldbus_proxy_property_get_all(proxy, _bat_get_all_cb, bat);
    eldbus_proxy_signal_handler_add(upower_proxy_bat, "PropertiesChanged", _bat_changed_cb, bat);
+   bat->charge_lim = -1;
    device_batteries = eina_list_append(device_batteries, bat);
    _battery_device_update();
 }
