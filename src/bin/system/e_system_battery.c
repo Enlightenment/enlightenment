@@ -47,7 +47,6 @@ dev_add(const char *syspath)
 {
   Dev *d = NULL;
 
-  fprintf(stderr, "BAT: ADD BAT [%s]\n", syspath);
   d = calloc(1, sizeof(Dev));
   if (!d) return NULL;
   d->syspath = strdup(syspath);
@@ -90,12 +89,10 @@ _cb_battery_lim_set(void *data EINA_UNUSED, const char *params EINA_UNUSED)
   if (val < 1) val = 1;
   else if (val > 100) val = 100;
   d = dev_find(dev);
-  fprintf(stderr, "BAT: device = %p for [%s]\n", d, dev);
   if (!d) return;
   snprintf(dev, sizeof(dev), "%s/charge_control_end_threshold", d->syspath);
   snprintf(buf2, sizeof(buf2), "%i", val);
   fd = open(dev, O_WRONLY);
-  fprintf(stderr, "BAT: device [%s] fd = %i -> [%s]\n", dev, fd, buf2);
   if (fd >= 0)
     {
       if (write(fd, buf2, strlen(buf2)) <= 0)
@@ -117,7 +114,6 @@ e_system_battery_init(void)
   const char *dev;
 
   devs = eeze_udev_find_by_type(EEZE_UDEV_TYPE_POWER_BAT, NULL);
-  fprintf(stderr, "BAT: devices = %p\n", devs);
   EINA_LIST_FREE(devs, dev)
     {
       if (!dev_have(dev)) dev_add(dev);
