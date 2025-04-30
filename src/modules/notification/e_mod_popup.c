@@ -761,6 +761,18 @@ _notification_popdown(Popup_Data                  *popup,
    E_FREE_LIST(popup->mirrors, evas_object_del);
    if (popup->win)
      {
+       edje_object_signal_callback_del
+         (popup->theme, "notification,deleted", "*",
+          (Edje_Signal_Cb)_notification_theme_cb_deleted);
+       edje_object_signal_callback_del
+         (popup->theme, "notification,close", "*",
+          (Edje_Signal_Cb)_notification_theme_cb_close);
+       edje_object_signal_callback_del
+         (popup->theme, "notification,find", "*",
+          (Edje_Signal_Cb)_notification_theme_cb_find);
+       edje_object_signal_callback_del
+         (popup->theme, "anchor,mouse,clicked,1,*", "notification.textblock.message",
+          (Edje_Signal_Cb)_notification_theme_cb_anchor);
         evas_object_event_callback_del_full(popup->win, EVAS_CALLBACK_DEL, _notification_popup_del_cb, popup);
         evas_object_hide(popup->win);
         evas_object_del(popup->win);
