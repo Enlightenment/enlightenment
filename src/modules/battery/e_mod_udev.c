@@ -101,6 +101,8 @@ _battery_udev_battery_add(const char *syspath)
    double full_design = 0.0;
    double voltage_min_design = 0.0;
    double full = 0.0;
+   Config_Battery *cb;
+   Eina_List *l;
 
    if ((bat = _battery_battery_find(syspath)))
      {
@@ -166,7 +168,22 @@ _battery_udev_battery_add(const char *syspath)
 
    test = eeze_udev_syspath_get_sysattr(syspath, "charge_control_end_threshold");
    if (!test) bat->charge_lim = -1;
-   else bat->charge_lim = atoi(test);
+   else
+    {
+      bat->charge_lim = atoi(test);
+      // find a matching battery config entry and retore from there
+      EINA_LIST_FOREACH(battery_config->battery_configs, l, cb)
+        {
+          if ((cb->udi) && (bat->udi) && (!strcmp(cb->udi, bat->udi)))
+            {
+              if (cb->charge_limit < 10) cb->charge_limit = 10;
+              else if (cb->charge_limit > 100) cb->charge_limit = 100;
+              bat->charge_lim = cb->charge_limit;
+              e_system_send("battery-lim-set", "%s %i\n", bat->udi, bat->charge_lim);
+            }
+        }
+    }
+
    device_batteries = eina_list_append(device_batteries, bat);
    _battery_udev_battery_update(syspath, bat);
 }

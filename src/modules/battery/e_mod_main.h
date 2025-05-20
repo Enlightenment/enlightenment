@@ -23,6 +23,13 @@
 
 #define POPUP_DEBOUNCE_CYCLES  2
 
+typedef struct _Config_Battery Config_Battery;
+struct _Config_Battery
+{
+  const char *udi;
+  int         charge_limit;
+};
+
 typedef struct _Config Config;
 struct _Config
 {
@@ -32,6 +39,7 @@ struct _Config
    int                  alert_timeout;  /* Popup dismissal timeout */
    int                  suspend_below;  /* Suspend if battery drops below this level */
    int                  suspend_method; /* Method used to suspend the machine */
+   Eina_List           *battery_configs;/* Per battery config */
    /* just config state */
    E_Module            *module;
    E_Config_Dialog     *config_dialog;

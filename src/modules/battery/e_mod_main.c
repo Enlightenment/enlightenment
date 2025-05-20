@@ -90,6 +90,7 @@ static void      _battery_popup_usage_new(Instance *inst);
 
 static Eina_Bool _powersave_cb_config_update(void *data, int type, void *event);
 
+static E_Config_DD *conf_battery_edd = NULL;
 static E_Config_DD *conf_edd = NULL;
 static Ecore_Event_Handler *_handler = NULL;
 
@@ -481,9 +482,30 @@ _cb_charge_lim_change(void *data, Evas_Object *obj, void *info EINA_UNUSED)
 {
    _Popup_Widgets *w = data;
    double v = elm_slider_value_get(obj);
+   Config_Battery *cb;
+   Eina_List *l;
 
    w->bat->charge_lim = (int)v;
    e_system_send("battery-lim-set", "%s %i\n", w->bat->udi, (int)v);
+   EINA_LIST_FOREACH(battery_config->battery_configs, l, cb)
+    {
+      if ((cb->udi) && (w->bat->udi) && (!strcmp(cb->udi, w->bat->udi))) break;
+      cb = NULL;
+    }
+  if (!cb)
+    {
+      cb = E_NEW(Config_Battery, 1);
+      if (cb)
+        {
+          battery_config->battery_configs = eina_list_append(battery_config->battery_configs, cb);
+          cb->udi = eina_stringshare_add(w->bat->udi);
+        }
+    }
+  if (cb)
+    {
+      cb->charge_limit = w->bat->charge_lim;
+      e_config_save_queue();
+    }
 }
 
 static Evas_Object *
@@ -1309,6 +1331,14 @@ E_API E_Module_Api e_modapi =
 E_API void *
 e_modapi_init(E_Module *m)
 {
+   conf_battery_edd = E_CONFIG_DD_NEW("Battery_Config_Battery", Config_Battery);
+#undef T
+#undef D
+#define T Config_Battery
+#define D conf_battery_edd
+   E_CONFIG_VAL(D, T, udi, STR);
+   E_CONFIG_VAL(D, T, charge_limit, INT);
+
    conf_edd = E_CONFIG_DD_NEW("Battery_Config", Config);
 #undef T
 #undef D
@@ -1318,10 +1348,12 @@ e_modapi_init(E_Module *m)
    E_CONFIG_VAL(D, T, alert_p, INT);
    E_CONFIG_VAL(D, T, alert_timeout, INT);
    E_CONFIG_VAL(D, T, suspend_below, INT);
+   E_CONFIG_VAL(D, T, suspend_method, INT);
+   E_CONFIG_VAL(D, T, desktop_notifications, INT);
+   E_CONFIG_LIST(D, T, battery_configs, conf_battery_edd);
 #if defined HAVE_EEZE || defined(__OpenBSD__)
    E_CONFIG_VAL(D, T, fuzzy, INT);
 #endif
-   E_CONFIG_VAL(D, T, desktop_notifications, INT);
 
    battery_config = e_config_domain_load("module.battery", conf_edd);
    if (!battery_config)
@@ -1331,10 +1363,10 @@ e_modapi_init(E_Module *m)
         battery_config->alert_p = 10;
         battery_config->alert_timeout = 0;
         battery_config->suspend_below = 0;
+        battery_config->desktop_notifications = 0;
 #if defined HAVE_EEZE || defined(__OpenBSD__)
         battery_config->fuzzy = 0;
 #endif
-        battery_config->desktop_notifications = 0;
      }
    E_CONFIG_LIMIT(battery_config->alert, 0, 60);
    E_CONFIG_LIMIT(battery_config->alert_p, 0, 100);
@@ -1365,6 +1397,8 @@ e_modapi_init(E_Module *m)
 E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
+   Config_Battery *cb;
+
    e_configure_registry_item_del("advanced/battery");
    e_configure_registry_category_del("advanced");
    e_gadcon_provider_unregister(&_gadcon_class);
@@ -1383,9 +1417,16 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    _battery_upower_stop();
 #endif
 
+   EINA_LIST_FREE(battery_config->battery_configs, cb)
+     {
+        eina_stringshare_del(cb->udi);
+        free(cb);
+     }
+
    free(battery_config);
    battery_config = NULL;
    E_CONFIG_DD_FREE(conf_edd);
+   E_CONFIG_DD_FREE(conf_battery_edd);
    return 1;
 }
 
