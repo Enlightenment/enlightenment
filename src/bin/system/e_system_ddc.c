@@ -309,6 +309,7 @@ _ddc_probe(void)
                   d->edid[j * 2] = 0;
                   d->screen = i;
                   eina_lock_take(&_devices_lock);
+                  fprintf(stderr, "DDC: foumd [%s]\n", d->edid);
                   _devices = eina_list_append(_devices, d);
                   eina_lock_release(&_devices_lock);
                   if (alert_backlight_reset)

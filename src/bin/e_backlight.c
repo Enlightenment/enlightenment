@@ -150,10 +150,13 @@ _backlight_devices_zone_device_find(E_Zone *zone)
    *sep = '\0';
    out = tmp;
    edid = sep + 1;
+//   printf("BL: FIND zone [%i]... has out [%s] edid [%s]\n", zone->num, out, edid);
    EINA_LIST_FOREACH(_devices, l, bd)
      {
+//        printf("BL:   bd->output = [%s]\n", bd->output);
         if ((bd->output) && (!strcmp(out, bd->output)))
           {
+//            printf("BL:     bd->edid = [%s]\n", bd->edid);
              if ((edid[0] && (!strcmp(edid, bd->edid))) || (!edid[0]))
                {
                   free(tmp);
@@ -162,6 +165,7 @@ _backlight_devices_zone_device_find(E_Zone *zone)
           }
      }
    free(tmp);
+//   printf("BL: not found\n");
    return NULL;
 }
 
@@ -377,14 +381,44 @@ _backlight_devices_screen_edid_get(const char *edid)
    Eina_List *l;
    E_Randr2_Screen *sc;
    const char *id;
+   char *tmpid;
+   size_t len;
 
    if (!e_randr2) return NULL;
+//   printf("BL: ........... FIND!!!!!!!!!!!!!!! [%s]\n", edid);
    EINA_LIST_FOREACH(e_randr2->screens, l, sc)
      {
         id = sc->info.edid;
         if (!id) id = "";
+//        printf("BL: screen find [%s] == [%s] [%s]\n", edid, id, sc->info.name);
         if (!strncmp(id, edid, strlen(edid))) return sc;
      }
+//   return NULL;
+   // didn't find based on edid... now here's an interesting one. i've found
+   // sometimes ddcutil produces differen edid's - like a sub-section of what
+   // we get from randr... who is right? not sure, but it means we dont match
+   // ... i have found that strip off the last 2 bytes of the ddc edid and
+   // look for a "substring match" and .. it works.
+   tmpid = strdup(edid);
+   if (!tmpid) return NULL;
+   len = strlen(tmpid);
+   if (len > 6)
+    {
+      tmpid[len - 6] = 0; // truncate last 2 bytes (4 hex)
+      EINA_LIST_FOREACH(e_randr2->screens, l, sc)
+        {
+          id = sc->info.edid;
+          if (!id) id = "";
+//          printf("BL: screen fallback find [%s] in [%s]\n", tmpid, id);
+          if (strstr(id, tmpid))
+            {
+//              printf("BL:   falback found!\n");
+              free(tmpid);
+              return sc;
+            }
+        }
+    }
+   free(tmpid);
    return NULL;
 }
 
@@ -447,6 +481,8 @@ _backlight_devices_edid_register(const char *dev, const char *edid)
 {
    E_Randr2_Screen *sc = _backlight_devices_screen_edid_get(edid);
    Backlight_Device *bd;
+
+//   printf("BL: edid reg [%s] [%s] - sc = %p\n", dev, edid, sc);
    if (!sc) return;
    bd = _backlight_devices_edid_find(sc->info.edid);
    if (!bd)
@@ -474,6 +510,7 @@ _backlight_devices_edid_register(const char *dev, const char *edid)
      {
         if (!strcmp(bd->dev, "randr")) return; // randr devices win
      }
+//   printf("BL: edid reg ... replace [%s]\n", dev);
    eina_stringshare_replace(&(bd->dev), dev);
 }
 
@@ -496,6 +533,7 @@ _backlight_system_list_cb(void *data EINA_UNUSED, const char *params)
                   flag = *p;
                   if (flag)
                     {
+                      printf("BL: add bl dev [%s]\n", dev);
                        bl_devs = eina_list_append
                          (bl_devs, eina_stringshare_add(dev));
                        if ((devnum == 0) || (flag == 'p') ||
@@ -544,6 +582,7 @@ _backlight_system_ddc_list_cb(void *data EINA_UNUSED, const char *params)
           {
              p += strlen(dev);
              snprintf(buf, sizeof(buf), "ddc:%s", dev);
+             printf("BL: add bl dev [%s]\n", buf);
              bl_devs = eina_list_append
                (bl_devs, eina_stringshare_add(buf));
              _backlight_devices_edid_register(buf, dev);
@@ -577,6 +616,7 @@ _backlight_devices_probe(Eina_Bool initial)
              int i, num = 0;
              Eina_Bool found = EINA_FALSE;
 
+             printf("BL: add bl dev [%s]\n", "randr");
              bl_devs = eina_list_append(bl_devs, eina_stringshare_add("randr"));
              out = ecore_x_randr_window_outputs_get(root, &num);
              if ((out) && (num > 0))
