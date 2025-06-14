@@ -224,6 +224,8 @@ struct {
      (double multiplier);
    bool (*ddca_enable_sleep_suppression)
      (bool newval);
+   DDCA_Status (*ddca_redetect_displays)
+     (void);
 } ddc_func;
 
 static DDCA_Display_Info_List *ddc_dlist = NULL;
@@ -270,6 +272,7 @@ _ddc_probe(void)
    // the below can be quite sluggish, so we don't want to do this
    // often, even though this is isolated in a worker thread. it will
    // block the ddc worker thread while this is done.
+   if (ddc_func.ddca_redetect_displays) ddc_func.ddca_redetect_displays();
    if (ddc_func.ddca_get_display_info_list2(false, &ddc_dlist) != 0) goto err;
    if (!ddc_dlist) goto err;
    ddc_dh = calloc(ddc_dlist->ct, sizeof(DDCA_Display_Handle));
@@ -362,6 +365,7 @@ _ddc_init(void)
    } while (0)
    SYM_OPT(ddca_set_global_sleep_multiplier);
    SYM_OPT(ddca_enable_sleep_suppression);
+   SYM_OPT(ddca_redetect_displays);
 
    // brute force modprobe this as it likely is needed - probe will fail
    // if this doesn't work or find devices anyway
