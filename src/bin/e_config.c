@@ -1974,7 +1974,7 @@ e_config_load(void)
    E_CONFIG_LIMIT(e_config->menu_apps_show, 0, 1);
    E_CONFIG_LIMIT(e_config->menu_gadcon_client_toplevel, 0, 1);
 
-   E_CONFIG_LIMIT(e_config->ping_clients_interval, 16, 1024);
+   E_CONFIG_LIMIT(e_config->ping_clients_interval, 4, 1024);
 
    E_CONFIG_LIMIT(e_config->exec.expire_timeout, 0.1, 1000);
    E_CONFIG_LIMIT(e_config->exec.show_run_dialog, 0, 1);

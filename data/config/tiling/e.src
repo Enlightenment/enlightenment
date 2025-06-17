@@ -172,7 +172,7 @@ group "E_Config" struct {
     value "screen_limits" int: 0;
     value "menu_favorites_show" int: 1;
     value "menu_apps_show" int: 1;
-    value "ping_clients_interval" int: 128;
+    value "ping_clients_interval" int: 16;
     value "cache_flush_poll_interval" int: 512;
     value "thumbscroll_enable" int: 0;
     value "thumbscroll_threshhold" int: 8;
