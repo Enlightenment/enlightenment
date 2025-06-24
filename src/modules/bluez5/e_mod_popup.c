@@ -12,7 +12,7 @@ static int unlock_do = 0;
 static Eina_Bool unlock_block = EINA_FALSE;
 
 static Config_Device *
-_devices_conifg_find(const char *address)
+_devices_config_find(const char *address)
 {
    Config_Device *dev;
    Eina_List *l;
@@ -45,7 +45,7 @@ _devices_eval(void)
              Eina_Bool need_ping = EINA_FALSE;
              Obj *adapter = bz_obj_find(o->adapter);
 
-             dev = _devices_conifg_find(o->address);
+             dev = _devices_config_find(o->address);
              if ((dev) && (adapter) && (adapter->powered))
                {
                   printf("=== dev: %s|%s [%s]\n", dev->addr, o->address, o->name);
@@ -576,7 +576,7 @@ _cb_dev_content_get(void *data, Evas_Object *obj,
              if (o->trusted)
                {
                   bt = util_button_icon_add(obj, "security-low",
-                                            _("Disrust this device"));
+                                            _("Distrust this device"));
                   evas_object_data_set(bt, "genlist", obj);
                   evas_object_smart_callback_add(bt, "clicked", _cb_distrust, o);
                }

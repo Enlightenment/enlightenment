@@ -326,6 +326,38 @@ cb_obj_prop_bat_changed(void *data EINA_UNUSED, const Eldbus_Message *msg EINA_U
    eldbus_proxy_property_get_all(o->proxy_bat, cb_obj_prop_bat, o);
 }
 
+static void
+_reload_device_props(Obj *o)
+{
+   if (!o->proxy)
+     o->proxy = eldbus_proxy_get(o->obj, "org.bluez.Device1");
+   if (o->proxy)
+     {
+	    eldbus_proxy_property_get_all(o->proxy, cb_obj_prop, o);
+		if (!o->prop_proxy)
+          o->prop_proxy = eldbus_proxy_get(o->obj,
+                                           "org.freedesktop.DBus.Properties");
+        if (o->prop_proxy && !o->prop_sig)
+          o->prop_sig = eldbus_proxy_signal_handler_add(o->prop_proxy,
+                                                        "PropertiesChanged",
+                                                        cb_obj_prop_changed, o);
+     }
+   // battery properties - if it supports it
+   if (!o->proxy_bat)
+     o->proxy_bat = eldbus_proxy_get(o->obj, "org.bluez.Battery1");
+   if (o->proxy_bat)
+     {
+       eldbus_proxy_property_get_all(o->proxy_bat, cb_obj_prop_bat, o);
+	   if (!o->prop_proxy_bat)
+         o->prop_proxy_bat = eldbus_proxy_get(o->obj,
+                                              "org.freedesktop.DBus.Properties");
+       if (o->prop_proxy_bat && !o->prop_sig_bat)
+         o->prop_sig_bat = eldbus_proxy_signal_handler_add(o->prop_proxy_bat,
+                                                           "PropertiesChanged",
+                                                           cb_obj_prop_bat_changed, o);
+     }
+}
+
 //static void
 //cb_obj_discovery_filter(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
 //{
@@ -358,29 +390,7 @@ bz_obj_add(const char *path)
      {
         o->type = BZ_OBJ_DEVICE;
         // device properties
-        o->proxy = eldbus_proxy_get(o->obj, "org.bluez.Device1");
-        if (o->proxy)
-          {
-             eldbus_proxy_property_get_all(o->proxy, cb_obj_prop, o);
-             o->prop_proxy = eldbus_proxy_get(o->obj,
-                                              "org.freedesktop.DBus.Properties");
-             if (o->prop_proxy)
-               o->prop_sig = eldbus_proxy_signal_handler_add(o->prop_proxy,
-                                                             "PropertiesChanged",
-                                                             cb_obj_prop_changed, o);
-          }
-        // battery properties - if it supports it
-        o->proxy_bat = eldbus_proxy_get(o->obj, "org.bluez.Battery1");
-        if (o->proxy_bat)
-          {
-             eldbus_proxy_property_get_all(o->proxy_bat, cb_obj_prop_bat, o);
-             o->prop_proxy_bat = eldbus_proxy_get(o->obj,
-                                              "org.freedesktop.DBus.Properties");
-             if (o->prop_proxy_bat)
-               o->prop_sig_bat = eldbus_proxy_signal_handler_add(o->prop_proxy_bat,
-                                                                 "PropertiesChanged",
-                                                                 cb_obj_prop_bat_changed, o);
-          }
+        _reload_device_props(o);
         goto done;
      }
    // all dadapters begin with /org/bluez/
@@ -921,8 +931,13 @@ cb_obj_add(void *data EINA_UNUSED, const Eldbus_Message *msg)
    const char *path = NULL;
 
    if (!eldbus_message_arguments_get(msg, "o", &path)) return;
-   if (bz_obj_find(path)) return;
    printf("BZ: cb_obj_add [%s]\n", path);
+   Obj* o;
+   if ((o = bz_obj_find(path)))
+     {
+       _reload_device_props(o);
+       return;
+     }
    bz_obj_add(path);
 }
 
@@ -941,6 +956,7 @@ cb_obj_del_prop(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending E
     }
   printf("BZ: cb_obj_del_prop %p not gone\n", o);
   // we managed to get props ... the obj is not really gone
+  o->bat_percent = -1;
 }
 
 static void
