@@ -922,7 +922,25 @@ cb_obj_add(void *data EINA_UNUSED, const Eldbus_Message *msg)
 
    if (!eldbus_message_arguments_get(msg, "o", &path)) return;
    if (bz_obj_find(path)) return;
+   printf("BZ: cb_obj_add [%s]\n", path);
    bz_obj_add(path);
+}
+
+static void
+cb_obj_del_prop(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
+{
+  Obj *o = data;
+  if (eldbus_message_error_get(msg, NULL, NULL))
+    { // prop get error - obj really gone
+      bz_obj_ref(o);
+      if (o->fn_del) o->fn_del(o);
+      bz_obj_unref(o);
+      bz_obj_unref(o);
+      printf("BZ: cb_obj_del_prop %p really is gone\n", o);
+      return;
+    }
+  printf("BZ: cb_obj_del_prop %p not gone\n", o);
+  // we managed to get props ... the obj is not really gone
 }
 
 static void
@@ -933,12 +951,10 @@ cb_obj_del(void *data EINA_UNUSED, const Eldbus_Message *msg)
 
    if (!eldbus_message_arguments_get(msg, "o", &path)) return;
    o = bz_obj_find(path);
+   printf("BZ: cb_obj_del [%s] found = %p\n", path, o);
    if (o)
-     {
-        bz_obj_ref(o);
-        if (o->fn_del) o->fn_del(o);
-        bz_obj_unref(o);
-        bz_obj_unref(o);
+     { // check if a prop fetch errs or is ok to check its really gone
+        eldbus_proxy_property_get_all(o->proxy, cb_obj_del_prop, o);
      }
 }
 
@@ -961,6 +977,7 @@ cb_getobj(void *data EINA_UNUSED, const Eldbus_Message *msg,
                {
                   return;
                }
+             printf("BZ: cb_getobj [%s]\n", path);
              bz_obj_add(path);
           }
      }
