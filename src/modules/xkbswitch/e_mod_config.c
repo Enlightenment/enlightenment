@@ -1,3 +1,4 @@
+#include "Evas.h"
 #include "e.h"
 #include "e_mod_main.h"
 #include "e_mod_parse.h"
@@ -14,6 +15,8 @@ struct _E_Config_Dialog_Data
 
    Evas_Object *btn_layout;
    Evas_Object *led_list;
+   Evas_Object *key_rate_slider;
+   Evas_Object *key_delay_slider;
    Evas_Object *switch_list;
    Evas_Object *ctrl_list;
    Evas_Object *lv3_list;
@@ -59,6 +62,8 @@ struct _E_Config_Dialog_Data
 
    int          only_label;
    int          dont_touch_my_damn_keyboard;
+   int          key_rate;
+   int          key_delay;
 
    E_Dialog *dlg_add_new;
    E_Config_Dialog *cfd;
@@ -76,6 +81,8 @@ static int          _check_changed(E_Config_Dialog_Data *cfdata);
 
 static void         _dont_touch_my_damn_keyboard_changed(void *data, Evas_Object *obj, void *event);
 static void         _only_label_changed(void *data, Evas_Object *obj, void *event);
+static void         _key_rate_changed(void *data, Evas_Object *obj, void *event);
+static void         _key_delay_changed(void *data, Evas_Object *obj, void *event);
 
 static void         _layout_clicked(void *data, Evas_Object *obj, void *event);
 static void         _cb_add(void *data, Evas_Object *obj, void *event);
@@ -164,6 +171,7 @@ _fill_data(E_XKB_Option *op, const char *name, int size, Eina_List *check, Eina_
                }
           }
      }
+   
    return EINA_FALSE;
 }
 
@@ -197,6 +205,8 @@ _create_data(E_Config_Dialog *cfd)
 
    cfdata->only_label = e_config->xkb.only_label;
    cfdata->dont_touch_my_damn_keyboard = e_config->xkb.dont_touch_my_damn_keyboard;
+   cfdata->key_rate = e_config->keyboard.repeat_rate;
+   cfdata->key_delay = e_config->keyboard.repeat_delay;
 
 #undef FILL_DATA
 #define FILL_DATA(name, list_name) \
@@ -293,7 +303,9 @@ _check_changed(E_Config_Dialog_Data *cfdata)
         eina_list_count(cfdata->cfg_layouts)) ||
        (e_config->xkb.default_model != cfdata->default_model) ||
        (e_config->xkb.only_label != cfdata->only_label) ||
-       (e_config->xkb.dont_touch_my_damn_keyboard != cfdata->dont_touch_my_damn_keyboard))
+       (e_config->xkb.dont_touch_my_damn_keyboard != cfdata->dont_touch_my_damn_keyboard) ||
+	   (e_config->keyboard.repeat_delay != cfdata->key_delay) ||
+	   (e_config->keyboard.repeat_rate != cfdata->key_rate))
      return 1;
 
    l2 = cfdata->cfg_layouts;
@@ -435,6 +447,8 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
    /* Save options */
    e_config->xkb.only_label = cfdata->only_label;
    e_config->xkb.dont_touch_my_damn_keyboard = cfdata->dont_touch_my_damn_keyboard;
+   e_config->keyboard.repeat_delay = cfdata->key_delay;
+   e_config->keyboard.repeat_rate = cfdata->key_rate;
 
    EINA_LIST_FREE(e_config->xkb.used_options, oc)
      {
@@ -523,6 +537,8 @@ _basic_create_fill(E_Config_Dialog_Data *cfdata)
      elm_object_text_set(cfdata->btn_layout, cfdata->default_model);
    else
      elm_object_text_set(cfdata->btn_layout, "default");
+   elm_slider_value_set(cfdata->key_delay_slider, cfdata->key_delay);
+   elm_slider_value_set(cfdata->key_rate_slider, cfdata->key_rate);
 
    /* Update the list of used layouts */
    elm_list_clear(cfdata->used_list);
@@ -609,7 +625,8 @@ static Evas_Object *
 _config_basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    Evas_Object *mainn, *configs, *buttons, *only_label,
-               *dont_touch_my_damn_keyboard;
+               *dont_touch_my_damn_keyboard, *key_rate,
+			   *key_delay;
    Evas_Object *listh, *frame;
    Evas_Object *o;
 
@@ -640,6 +657,33 @@ _config_basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfd
    evas_object_show(only_label);
    evas_object_size_hint_align_set(only_label, 0.0, 0.5);
    elm_box_pack_end(mainn, only_label);
+   
+   o = elm_separator_add(mainn);
+   elm_separator_horizontal_set(o, EINA_TRUE);
+   
+   key_rate = elm_slider_add(mainn);
+   elm_slider_min_max_set(key_rate, 30, 1000);
+   elm_slider_value_set(mainn, cfdata->key_rate);
+   elm_object_text_set(key_rate, _("Key rate"));
+   evas_object_smart_callback_add(key_rate, "changed",
+                                  _key_rate_changed, cfdata);
+   evas_object_size_hint_fill_set(key_rate, EVAS_HINT_FILL, 0.5);
+   evas_object_size_hint_weight_set(key_rate, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(key_rate);
+   elm_box_pack_end(mainn, key_rate);
+   cfdata->key_rate_slider = key_rate;
+   
+   key_delay = elm_slider_add(mainn);
+   elm_slider_min_max_set(key_delay, 30, 3000);
+   elm_slider_value_set(mainn, cfdata->key_delay);
+   elm_object_text_set(key_delay, _("Key delay"));
+   evas_object_smart_callback_add(key_delay, "changed",
+                                  _key_delay_changed, cfdata);
+   evas_object_size_hint_fill_set(key_delay, EVAS_HINT_FILL, 0.5);
+   evas_object_size_hint_weight_set(key_delay, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(key_delay);
+   elm_box_pack_end(mainn, key_delay);
+   cfdata->key_delay_slider = key_delay;
 
    o = elm_separator_add(mainn);
    elm_separator_horizontal_set(o, EINA_TRUE);
@@ -1263,6 +1307,28 @@ _only_label_changed(void *data, Evas_Object *obj, void *event EINA_UNUSED)
    if (!(cfdata = data)) return;
 
    cfdata->only_label = elm_check_state_get(obj);
+   e_config_dialog_changed_set(cfdata->cfd, _check_changed(cfdata));
+}
+
+static void
+_key_rate_changed(void *data, Evas_Object *obj, void *event)
+{
+   E_Config_Dialog_Data *cfdata;
+   double val = elm_slider_value_get(obj);
+
+   if (!(cfdata = data)) return;
+   cfdata->key_rate = val;
+   e_config_dialog_changed_set(cfdata->cfd, _check_changed(cfdata));
+}
+
+static void
+_key_delay_changed(void *data, Evas_Object *obj, void *event)
+{
+   E_Config_Dialog_Data *cfdata;
+   double val = elm_slider_value_get(obj);
+
+   if (!(cfdata = data)) return;
+   cfdata->key_delay = val;
    e_config_dialog_changed_set(cfdata->cfd, _check_changed(cfdata));
 }
 

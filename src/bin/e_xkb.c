@@ -252,6 +252,7 @@ _e_x_xkb_reconfig(void)
                }
           }
      }
+   e_xkb_repeat_set(e_config->keyboard.repeat_delay, e_config->keyboard.repeat_rate);
 #ifndef HAVE_WAYLAND_ONLY
    skip_new_keyboard ++;
 #endif
@@ -523,6 +524,21 @@ e_xkb_flag_file_get(char *buf, size_t bufsize, const char *name)
    if (!ecore_file_exists(buf))
      snprintf(buf, bufsize, "%s/data/flags/unknown_flag.png",
               e_prefix_data_get());
+}
+
+E_API void
+e_xkb_repeat_set(int delay, int rate)
+{
+#ifndef HAVE_WAYLAND_ONLY
+   Ecore_X_Display *display = ecore_x_display_get();
+   if (!display)
+     return;
+   Ecore_X_Keyboard_Repeat repeat = {
+     .delay = delay,
+     .rate = rate,
+   };
+   ecore_x_keyboard_repeat_set(display, &repeat);
+#endif
 }
 
 E_API Eina_Bool
