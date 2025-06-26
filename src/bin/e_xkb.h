@@ -12,7 +12,6 @@ E_API void e_xkb_layout_prev(void);
 E_API E_Config_XKB_Layout *e_xkb_layout_get(void);
 E_API void e_xkb_repeat_set(int delay, int rate);
 E_API void e_xkb_layout_set(const E_Config_XKB_Layout *cl);
-E_API void e_xkb_keyboard_repeat_get();
 E_API const char *e_xkb_layout_name_reduce(const char *name);
 E_API void e_xkb_e_icon_flag_setup(Evas_Object *eicon, const char *name);
 E_API void e_xkb_flag_file_get(char *buf, size_t bufsize, const char *name);
