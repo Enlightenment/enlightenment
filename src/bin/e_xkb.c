@@ -530,14 +530,11 @@ E_API void
 e_xkb_repeat_set(int delay, int rate)
 {
 #ifndef HAVE_WAYLAND_ONLY
-   Ecore_X_Display *display = ecore_x_display_get();
-   if (!display)
-     return;
    Ecore_X_Keyboard_Repeat repeat = {
      .delay = delay,
      .rate = rate,
    };
-   ecore_x_keyboard_repeat_set(display, &repeat);
+   ecore_x_keyboard_repeat_set(&repeat);
 #endif
 }
 
