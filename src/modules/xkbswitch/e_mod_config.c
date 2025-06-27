@@ -1311,7 +1311,7 @@ _only_label_changed(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 }
 
 static void
-_key_rate_changed(void *data, Evas_Object *obj, void *event)
+_key_rate_changed(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
    double val = elm_slider_value_get(obj);
@@ -1322,7 +1322,7 @@ _key_rate_changed(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_key_delay_changed(void *data, Evas_Object *obj, void *event)
+_key_delay_changed(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
    double val = elm_slider_value_get(obj);
