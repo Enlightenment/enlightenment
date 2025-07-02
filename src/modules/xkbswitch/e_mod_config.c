@@ -626,7 +626,7 @@ _config_basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfd
 {
    Evas_Object *mainn, *configs, *buttons, *only_label,
                *dont_touch_my_damn_keyboard, *key_rate,
-			   *key_delay;
+               *key_delay;
    Evas_Object *listh, *frame;
    Evas_Object *o;
 
