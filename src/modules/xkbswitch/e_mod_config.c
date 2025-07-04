@@ -206,7 +206,10 @@ _create_data(E_Config_Dialog *cfd)
 
    cfdata->only_label = e_config->xkb.only_label;
    cfdata->dont_touch_my_damn_keyboard = e_config->xkb.dont_touch_my_damn_keyboard;
-   cfdata->key_rate = -1000.0f / -e_config->keyboard.repeat_rate;
+   if (e_config->keyboard.repeat_rate != 0)
+     cfdata->key_rate = 1000.0f / e_config->keyboard.repeat_rate;
+   else
+     cfdata->key_rate = 1000.0f / 20.0f;
    cfdata->key_delay = e_config->keyboard.repeat_delay / 1000.0f;
 
 #undef FILL_DATA
