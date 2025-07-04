@@ -1,3 +1,4 @@
+#include "Elementary.h"
 #include "Evas.h"
 #include "e.h"
 #include "e_mod_main.h"
@@ -62,8 +63,8 @@ struct _E_Config_Dialog_Data
 
    int          only_label;
    int          dont_touch_my_damn_keyboard;
-   int          key_rate;
-   int          key_delay;
+   float        key_rate;
+   float        key_delay;
 
    E_Dialog *dlg_add_new;
    E_Config_Dialog *cfd;
@@ -205,8 +206,8 @@ _create_data(E_Config_Dialog *cfd)
 
    cfdata->only_label = e_config->xkb.only_label;
    cfdata->dont_touch_my_damn_keyboard = e_config->xkb.dont_touch_my_damn_keyboard;
-   cfdata->key_rate = e_config->keyboard.repeat_rate;
-   cfdata->key_delay = e_config->keyboard.repeat_delay;
+   cfdata->key_rate = -1000.0f / -e_config->keyboard.repeat_rate;
+   cfdata->key_delay = e_config->keyboard.repeat_delay / 1000.0f;
 
 #undef FILL_DATA
 #define FILL_DATA(name, list_name) \
@@ -304,8 +305,8 @@ _check_changed(E_Config_Dialog_Data *cfdata)
        (e_config->xkb.default_model != cfdata->default_model) ||
        (e_config->xkb.only_label != cfdata->only_label) ||
        (e_config->xkb.dont_touch_my_damn_keyboard != cfdata->dont_touch_my_damn_keyboard) ||
-	   (e_config->keyboard.repeat_delay != cfdata->key_delay) ||
-	   (e_config->keyboard.repeat_rate != cfdata->key_rate))
+       (e_config->keyboard.repeat_delay != (int)cfdata->key_delay) ||
+       (e_config->keyboard.repeat_rate != (int)cfdata->key_rate))
      return 1;
 
    l2 = cfdata->cfg_layouts;
@@ -447,8 +448,8 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
    /* Save options */
    e_config->xkb.only_label = cfdata->only_label;
    e_config->xkb.dont_touch_my_damn_keyboard = cfdata->dont_touch_my_damn_keyboard;
-   e_config->keyboard.repeat_delay = cfdata->key_delay;
-   e_config->keyboard.repeat_rate = cfdata->key_rate;
+   e_config->keyboard.repeat_delay = cfdata->key_delay * 1000;
+   e_config->keyboard.repeat_rate = 1000 / cfdata->key_rate;
 
    EINA_LIST_FREE(e_config->xkb.used_options, oc)
      {
@@ -662,9 +663,10 @@ _config_basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfd
    elm_separator_horizontal_set(o, EINA_TRUE);
    
    key_rate = elm_slider_add(mainn);
-   elm_slider_min_max_set(key_rate, 30, 1000);
-   elm_slider_value_set(mainn, cfdata->key_rate);
-   elm_object_text_set(key_rate, _("Key rate"));
+   elm_slider_min_max_set(key_rate, 1, 333);
+   elm_slider_value_set(key_rate, 1000.0f / cfdata->key_rate);
+   elm_slider_indicator_format_set(key_rate, "%.0f keys/second");
+   elm_object_text_set(key_rate, _("Repeat rate"));
    evas_object_smart_callback_add(key_rate, "changed",
                                   _key_rate_changed, cfdata);
    evas_object_size_hint_fill_set(key_rate, EVAS_HINT_FILL, 0.5);
@@ -674,9 +676,11 @@ _config_basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfd
    cfdata->key_rate_slider = key_rate;
    
    key_delay = elm_slider_add(mainn);
-   elm_slider_min_max_set(key_delay, 30, 3000);
-   elm_slider_value_set(mainn, cfdata->key_delay);
-   elm_object_text_set(key_delay, _("Key delay"));
+   elm_slider_min_max_set(key_delay, 0.1, 3);
+   elm_slider_step_set(key_delay, 0.05);
+   elm_slider_value_set(key_delay, cfdata->key_delay);
+   elm_object_text_set(key_delay, _("Repeat delay"));
+   elm_slider_indicator_format_set(key_delay, "%.2f seconds");
    evas_object_smart_callback_add(key_delay, "changed",
                                   _key_delay_changed, cfdata);
    evas_object_size_hint_fill_set(key_delay, EVAS_HINT_FILL, 0.5);
