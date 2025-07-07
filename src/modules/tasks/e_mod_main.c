@@ -387,7 +387,7 @@ _tasks_cb_iconify_provider(void *data, Evas_Object *obj, const char *signal)
 }
 
 static void
-_taks_client_remove(E_Client *ec)
+_tasks_client_remove(E_Client *ec)
 {
    Tasks *tasks;
    Eina_List *l;
@@ -403,7 +403,7 @@ _taks_client_remove(E_Client *ec)
 static void
 _tasks_cb_client_del(void *data EINA_UNUSED, void *obj)
 {
-   _taks_client_remove(obj);
+   _tasks_client_remove(obj);
 }
 
 static Tasks *
@@ -1215,7 +1215,7 @@ _tasks_cb_event_client_remove(void *data EINA_UNUSED, int type EINA_UNUSED, void
 {
    E_Event_Client *ev = event;
 
-   _taks_client_remove(ev->ec);
+   _tasks_client_remove(ev->ec);
    return EINA_TRUE;
 }
 
