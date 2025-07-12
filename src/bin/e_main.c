@@ -1336,6 +1336,11 @@ _e_main_parse_arguments(int argc, char **argv)
 EINTERN void
 _e_main_cb_x_fatal(void *data EINA_UNUSED)
 {
+   if (ecore_x_io_error_display_still_there_get())
+     {
+        fprintf(stderr, "X I/O Error but display is still there. Restart.\n");
+        exit(122); // like watchdog - restart but due to bad things
+     }
    fprintf(stderr, "X I/O Error - fatal. Exiting.\n");
    exit(101);
 }
