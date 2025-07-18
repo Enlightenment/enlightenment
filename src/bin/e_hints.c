@@ -1272,7 +1272,7 @@ e_hints_window_visible_set(E_Client *ec)
      {
         if (ec->icccm.state != ECORE_X_WINDOW_STATE_HINT_WITHDRAWN)
           ec->icccm.state = ECORE_X_WINDOW_STATE_HINT_NORMAL;
-        ecore_x_icccm_state_set(e_client_util_win_get(ec), ECORE_X_WINDOW_STATE_HINT_ICONIC);
+        ecore_x_icccm_state_set(e_client_util_win_get(ec), ECORE_X_WINDOW_STATE_HINT_NORMAL);
      }
    if (ec->netwm.state.hidden)
      {
