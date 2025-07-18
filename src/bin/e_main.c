@@ -384,6 +384,8 @@ main(int argc, char **argv)
    TS("Ecore Init Done");
    _e_main_shutdown_push(ecore_shutdown);
 
+   e_watchdog_begin();
+
    TS("E Comp Canvas Intercept Init");
    e_comp_canvas_intercept();
    TS("E Comp Canvas Intercept Init Done");
@@ -1127,7 +1129,6 @@ main(int argc, char **argv)
         E_LIST_FOREACH(e_comp->zones, e_comp_canvas_zone_restarted);
      }
 
-   e_watchdog_begin();
    TS("MAIN LOOP AT LAST");
    if (!setjmp(x_fatal_buff))
      {
@@ -1136,7 +1137,6 @@ main(int argc, char **argv)
      }
    else
      CRI("FATAL: X Died. Connection gone. Abbreviated Shutdown\n");
-   e_watchdog_end();
    e_main_loop_running = EINA_FALSE;
 
    inloop = EINA_FALSE;
@@ -1148,6 +1148,8 @@ main(int argc, char **argv)
    _e_main_desk_save();
    e_remember_internal_save();
    e_comp_internal_save();
+
+   e_watchdog_end();
 
    _e_main_shutdown(0);
 
