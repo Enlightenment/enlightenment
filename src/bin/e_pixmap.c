@@ -63,6 +63,13 @@ struct _E_Pixmap
 
 #ifdef HAVE_WAYLAND
 
+static inline int64_t
+_e_pixmap_win_get(E_Pixmap *cp)
+{
+  if (cp->parent) return cp->parent;
+  return cp->win;
+}
+
 static void
 _e_pixmap_cb_deferred_buffer_destroy(struct wl_listener *listener, void *data EINA_UNUSED)
 {
@@ -106,9 +113,12 @@ _e_pixmap_clear(E_Pixmap *cp, Eina_Bool cache)
 #ifndef HAVE_WAYLAND_ONLY
         if (cp->pixmap)
           {
+//             printf("PMAP: + win 0x%08x: free 0x%08x\n",
+//                    (int)_e_pixmap_win_get(cp),
+//                    (int)cp->pixmap);
              ecore_x_pixmap_free(cp->pixmap);
              cp->pixmap = 0;
-             ecore_x_e_comp_pixmap_set(cp->parent ?: (Ecore_X_Window)cp->win, 0);
+             ecore_x_e_comp_pixmap_set(_e_pixmap_win_get(cp), 0);
              e_pixmap_image_clear(cp, cache);
           }
 #endif
@@ -521,55 +531,83 @@ e_pixmap_refresh(E_Pixmap *cp)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(cp, EINA_FALSE);
 
-   if (!cp->dirty) return EINA_TRUE;
+   if (!cp->dirty)
+     {
+//        printf("PMAP: + win 0x%08x: not dirty\n",
+//               (int)_e_pixmap_win_get(cp));
+        return EINA_TRUE;
+     }
    switch (cp->type)
      {
       case E_PIXMAP_TYPE_X:
 #ifndef HAVE_WAYLAND_ONLY
         {
            uint32_t pixmap;
-           int pw, ph;
-           E_Comp_X_Client_Data *cd = NULL;
+           int pw = -1, ph = -1;
+//           E_Comp_X_Client_Data *cd = NULL;
 
            if (!cp->usable)
              {
                 cp->failures++;
+//                printf("PMAP: + win 0x%08x: not usable - failures = %i\n",
+//                       (int)_e_pixmap_win_get(cp),
+//                       cp->failures);
                 return EINA_FALSE;
              }
            pixmap =
-             ecore_x_composite_name_window_pixmap_get(cp->parent ?:
-                                                      (Ecore_X_Window)cp->win);
-           if (cp->client)
-             {
-                cd = (E_Comp_X_Client_Data*)cp->client->comp_data;
-             }
+             ecore_x_composite_name_window_pixmap_get(_e_pixmap_win_get(cp));
+//           if (cp->client)
+//             {
+//                cd = (E_Comp_X_Client_Data*)cp->client->comp_data;
+//             }
            success = !!pixmap;
            if (!success) break;
-           if (cd && cd->pw && cd->ph)
-             {
-                pw = cd->pw;
-                ph = cd->ph;
-             }
-           else
+//           if (cd && cd->pw && cd->ph)
+//             {
+//                pw = cd->pw;
+//                ph = cd->ph;
+//             }
+//           else
              ecore_x_pixmap_geometry_get(pixmap, NULL, NULL, &pw, &ph);
            success = (pw > 0) && (ph > 0);
            if (success)
              {
+//                printf("PMAP: + win 0x%08x: 0x%08x -> 0x%08x [%4i x %4i] -> [%4i x %4i]\n",
+//                       (int)_e_pixmap_win_get(cp),
+//                       (int)cp->pixmap,
+//                       (int)pixmap,
+//                       cp->w, cp->h,
+//                       pw, ph);
                 if ((pw != cp->w) || (ph != cp->h))
                   {
-                     ecore_x_pixmap_free(cp->pixmap);
+                     if (cp->pixmap)
+                       {
+//                          printf("PMAP: + win 0x%08x: free 0x%08x\n",
+//                                 (int)_e_pixmap_win_get(cp),
+//                                 (int)cp->pixmap);
+                          ecore_x_pixmap_free(cp->pixmap);
+                       }
                      cp->pixmap = pixmap;
                      cp->w = pw, cp->h = ph;
-                     ecore_x_e_comp_pixmap_set(cp->parent ?:
-                                               (Ecore_X_Window)cp->win,
+                     ecore_x_e_comp_pixmap_set(_e_pixmap_win_get(cp),
                                                cp->pixmap);
                      e_pixmap_image_clear(cp, 0);
                   }
                 else
-                  ecore_x_pixmap_free(pixmap);
+                  {
+//                     printf("PMAP: + win 0x%08x: free 0x%08x (size same)\n",
+//                            (int)_e_pixmap_win_get(cp),
+//                            (int)pixmap);
+                     ecore_x_pixmap_free(pixmap);
+                  }
              }
            else
-             ecore_x_pixmap_free(pixmap);
+             {
+//                printf("PMAP: + win 0x%08x: free 0x%08x (no success)\n",
+//                       (int)_e_pixmap_win_get(cp),
+//                       (int)pixmap);
+                ecore_x_pixmap_free(pixmap);
+             }
         }
 #endif
         break;
@@ -1215,6 +1253,65 @@ e_pixmap_alias(E_Pixmap *cp, E_Pixmap_Type type, ...)
      }
    va_end(l);
 }
+
+/*
+static Eina_Bool
+_e_pixmap_pre_render_pixmap_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data EINA_UNUSED, void *fdata EINA_UNUSED)
+{
+#if 0
+#ifndef HAVE_WAYLAND_ONLY
+  E_Pixmap *p = data;
+
+  if (p->pixmap)
+    {
+      Ecore_X_Pixmap pixmap =
+        ecore_x_composite_name_window_pixmap_get(_e_pixmap_win_get(p));
+      if (pixmap != p->pixmap)
+        {
+          Ecore_X_Pixmap pixmap_old = p->pixmap;
+
+          p->pixmap = pixmap;
+          ecore_x_e_comp_pixmap_set(_e_pixmap_win_get(p),
+                                    p->pixmap);
+          e_pixmap_image_clear(p, 0);
+          if (pixmap_old)
+            {
+              printf("PMAP: + win 0x%08x: free 0x%08x\n",
+                     (int)_e_pixmap_win_get(p),
+                     (int)pixmap_old);
+              ecore_x_pixmap_free(pixmap_old);
+            }
+        }
+      else if (pixmap)
+        ecore_x_pixmap_free(pixmap);
+    }
+#endif
+#else
+//  E_Pixmap *p = data;
+
+//  e_pixmap_dirty(p);
+//  e_pixmap_refresh(p);
+#endif
+  return EINA_TRUE;
+}
+*/
+
+E_API void
+e_pixmap_pre_render(void)
+{
+/*
+  const E_Pixmap_Type types[] = {
+    E_PIXMAP_TYPE_X
+  };
+  int i;
+
+  for (i = 0; i < (int)(sizeof(types) / sizeof(types[0])); i++)
+    {
+      eina_hash_foreach(pixmaps[i], _e_pixmap_pre_render_pixmap_cb, NULL);
+    }
+ */
+}
+
 
 #ifdef HAVE_WAYLAND
 E_API Eina_Bool

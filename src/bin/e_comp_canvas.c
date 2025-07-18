@@ -483,6 +483,8 @@ _e_comp_canvas_prerender(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *even
 
    EINA_LIST_FOREACH(e_comp->pre_render_cbs, l, cb)
      cb();
+
+   e_pixmap_pre_render();
 }
 
 static Eina_Bool
