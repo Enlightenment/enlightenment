@@ -3920,7 +3920,11 @@ e_client_focused_set(E_Client *ec)
           }
 
         if ((ec) && (ec_unfocus) && (ec_unfocus->unfullscreen_forced))
-           evas_object_stack_above(ec->frame, ec_unfocus->frame);
+          {
+             if (evas_object_layer_get(ec->frame) ==
+                 evas_object_layer_get(ec_unfocus->frame))
+                evas_object_stack_above(ec->frame, ec_unfocus->frame);
+          }
 
         _e_client_hook_call(E_CLIENT_HOOK_FOCUS_UNSET, ec_unfocus);
         /* only send event here if we're not being deleted */
@@ -4752,6 +4756,8 @@ e_client_uniconify(E_Client *ec)
    if (!ec->zone) return;
    if (ec->shading || (!ec->iconic)) return;
 
+   if ((ec->fullscreen) && (!e_config->allow_above_fullscreen))
+     evas_object_layer_set(ec->frame, E_LAYER_CLIENT_FULLSCREEN);
    if (((ec->stack.prev || ec->stack.next)) && (!ec->stack.ignore))
      {
         Eina_List *l, *list = e_client_stack_list_prepare(ec);
