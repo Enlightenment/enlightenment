@@ -227,8 +227,11 @@ static void
 _ibar_cb_iconify_end_cb(void *data, Evas_Object *obj EINA_UNUSED, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
 {
    E_Client *ec = data;
+   int layer = ec->layer;
 
-   evas_object_layer_set(ec->frame, ec->layer);
+   if ((!e_config->allow_above_fullscreen) && (ec->fullscreen))
+     layer = E_LAYER_CLIENT_FULLSCREEN;
+   evas_object_layer_set(ec->frame, layer);
    ec->layer_block = 0;
    if (ec->iconic)
      evas_object_hide(ec->frame);
@@ -241,13 +244,16 @@ _ibar_cb_iconify_provider(void *data, Evas_Object *obj, const char *signal EINA_
    IBar_Icon *ic;
    int ox, oy, ow, oh;
    E_Client *ec;
+   int layer = E_LAYER_CLIENT_PRIO;
 
    ec = e_comp_object_client_get(obj);
    if (ec->zone != inst->gcc->gadcon->zone) return EINA_FALSE;
    ic = eina_hash_find(inst->ibar->icon_hash, _desktop_name_get(ec->exe_inst ? ec->exe_inst->desktop : ec->desktop));
    if (!ic) return EINA_FALSE;
    ec->layer_block = 1;
-   evas_object_layer_set(ec->frame, E_LAYER_CLIENT_PRIO);
+   if ((!e_config->allow_above_fullscreen) && (ec->fullscreen))
+     layer = E_LAYER_CLIENT_FULLSCREEN;
+   evas_object_layer_set(ec->frame, layer);
    evas_object_geometry_get(ic->o_holder, &ox, &oy, &ow, &oh);
    e_comp_object_effect_set(ec->frame, "iconify/ibar");
    e_comp_object_effect_params_set(ec->frame, 1, (int[]){ec->x, ec->y, ec->w, ec->h, ox, oy, ow, oh}, 8);
