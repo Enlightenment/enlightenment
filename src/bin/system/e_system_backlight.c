@@ -236,11 +236,22 @@ static Eina_Bool
 _light_device_include(const char *dev)
 { // filter out known undesirable devices
    fprintf(stderr, "BL: found [%s]\n", dev);
+   if (strstr(dev, "::")) return EINA_FALSE;
+   // the above catches all the below
+/*
    if (strstr(dev, "::capslock")) return EINA_FALSE;
    if (strstr(dev, "::numlock")) return EINA_FALSE;
    if (strstr(dev, "::scrolllock")) return EINA_FALSE;
    if (strstr(dev, "::compose")) return EINA_FALSE;
    if (strstr(dev, "::kana")) return EINA_FALSE;
+   if (strstr(dev, "::micmute")) return EINA_FALSE;
+   if (strstr(dev, "::mute")) return EINA_FALSE;
+   if (strstr(dev, "::kbd_backlight")) return EINA_FALSE;
+   if (strstr(dev, "::lid_logo_dot")) return EINA_FALSE;
+   if (strstr(dev, "::power")) return EINA_FALSE;
+   if (strstr(dev, "::standby")) return EINA_FALSE;
+   if (strstr(dev, "::thinkvantage")) return EINA_FALSE;
+ */
    return EINA_TRUE;
 }
 #endif
