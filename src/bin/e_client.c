@@ -2451,6 +2451,7 @@ _e_client_eval(E_Client *ec)
 
    if (ec->need_fullscreen)
      {
+//        printf("HINT: 0x%x need fullscreen\n", (int)e_client_util_win_get(ec));
         e_client_fullscreen(ec, e_config->fullscreen_policy);
         ec->need_fullscreen = 0;
      }
@@ -3370,6 +3371,7 @@ e_client_res_change_geometry_restore(E_Client *ec)
         else
           {
              e_client_unfullscreen(ec);
+//             printf("HINT: 0x%x geometry restore fullscreen\n", (int)e_client_util_win_get(ec));
              e_client_fullscreen(ec, e_config->fullscreen_policy);
           }
      }
@@ -3854,6 +3856,7 @@ e_client_focused_set(E_Client *ec)
           }
         if (ec->unfullscreen_forced)
           {
+//             printf("HINT: 0x%x geometry focus set fullscreen\n", (int)e_client_util_win_get(ec));
              e_client_fullscreen(ec, e_config->fullscreen_policy);
           }
      }
@@ -4533,6 +4536,7 @@ e_client_fullscreen(E_Client *ec, E_Fullscreen policy)
    if ((!e_config->allow_above_fullscreen) && (!ec->desk->visible)) return;
    ec->need_fullscreen = 1;
    if (ec->new_client) return;
+//   printf("HINT: 0x%x fullscreen\n", (int)e_client_util_win_get(ec));
    if (e_comp->nocomp_ec && (ec->desk == e_comp->nocomp_ec->desk))
      {
         e_object_unref(E_OBJECT(e_comp->nocomp_ec));
@@ -4632,6 +4636,8 @@ e_client_unfullscreen(E_Client *ec)
    if (!ec->zone) return;
    if ((ec->shaded) || (ec->shading)) return;
    if (!ec->fullscreen) return;
+
+//   printf("HINT: 0x%x unfullscreen\n", (int)e_client_util_win_get(ec));
    ec->pre_res_change.valid = 0;
    ec->fullscreen = 0;
    ec->unfullscreen_forced = 0;
@@ -4690,6 +4696,8 @@ e_client_iconify(E_Client *ec)
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
    if (!ec->zone) return;
    if (ec->shading || ec->iconic) return;
+
+//   printf("HINT: 0x%x iconify\n", (int)e_client_util_win_get(ec));
    if (((ec->stack.prev || ec->stack.next)) && (!ec->stack.ignore))
      {
         Eina_List *l, *list = e_client_stack_list_prepare(ec);
@@ -4756,6 +4764,7 @@ e_client_uniconify(E_Client *ec)
    if (!ec->zone) return;
    if (ec->shading || (!ec->iconic)) return;
 
+//   printf("HINT: 0x%x un-iconify\n", (int)e_client_util_win_get(ec));
    if ((ec->fullscreen) && (!e_config->allow_above_fullscreen))
      evas_object_layer_set(ec->frame, E_LAYER_CLIENT_FULLSCREEN);
    if (((ec->stack.prev || ec->stack.next)) && (!ec->stack.ignore))

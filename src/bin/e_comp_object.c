@@ -3234,7 +3234,10 @@ e_comp_object_util_fullscreen(Evas_Object *obj)
    SOFT_ENTRY();
 
    if (cw)
-     e_client_fullscreen(cw->ec, E_FULLSCREEN_RESIZE);
+     {
+//        printf("HINT: 0x%x fullscreen copy object\n", (int)e_client_util_win_get(cw->ec));
+        e_client_fullscreen(cw->ec, E_FULLSCREEN_RESIZE);
+     }
    else
      {
         evas_object_move(obj, 0, 0);
