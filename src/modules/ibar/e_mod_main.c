@@ -1260,7 +1260,7 @@ _ibar_cb_icon_menu_img_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, vo
 
    if (!ic->menu) return; //who knows
    edje_object_part_box_remove(ic->menu->o_bg, "e.box", data);
-   ec = evas_object_data_get(obj, "E_Client");
+   ec = evas_object_data_get(obj, "client");
    if (ec)
      {
         e_comp_object_signal_callback_del_full(ec->frame, "e,state,*focused", "e", _ibar_cb_icon_menu_focus_change, data);
