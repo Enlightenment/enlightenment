@@ -61,14 +61,14 @@ struct _E_Pixmap
    Eina_Bool image_argb E_BITFIELD;
 };
 
-#ifdef HAVE_WAYLAND
-
 static inline int64_t
 _e_pixmap_win_get(E_Pixmap *cp)
 {
   if (cp->parent) return cp->parent;
   return cp->win;
 }
+
+#ifdef HAVE_WAYLAND
 
 static void
 _e_pixmap_cb_deferred_buffer_destroy(struct wl_listener *listener, void *data EINA_UNUSED)
