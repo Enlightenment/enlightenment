@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-05 08:32+0200\n"
-"PO-Revision-Date: 2025-04-05 08:33+0200\n"
+"POT-Creation-Date: 2025-08-05 13:51+0200\n"
+"PO-Revision-Date: 2025-08-05 13:54+0200\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: General\n"
 "Language: it\n"
@@ -881,11 +881,11 @@ msgstr "Layout di tastiera precedente"
 msgid "Set As Background"
 msgstr "Imposta come sfondo"
 
-#: src/bin/e_client.c:4985
+#: src/bin/e_client.c:5000
 msgid "Client Error!"
 msgstr "Errore del client!"
 
-#: src/bin/e_client.c:4985
+#: src/bin/e_client.c:5000
 msgid "Something has attempted to set a border when it shouldn't! Report this!"
 msgstr "Qualcosa ha tentato indebitamente di impostare un bordo! Riportatelo!"
 
@@ -917,9 +917,9 @@ msgstr "Seleziona"
 #: src/modules/quickaccess/e_mod_quickaccess.c:396
 #: src/modules/shot/e_mod_delay.c:86 src/modules/shot/e_mod_preview.c:118
 #: src/modules/shot/e_mod_share.c:225 src/modules/shot/e_mod_share.c:254
-#: src/modules/syscon/e_syscon.c:92 src/modules/xkbswitch/e_mod_config.c:893
-#: src/modules/xkbswitch/e_mod_config.c:1024
-#: src/modules/xkbswitch/e_mod_config.c:1449
+#: src/modules/syscon/e_syscon.c:92 src/modules/xkbswitch/e_mod_config.c:944
+#: src/modules/xkbswitch/e_mod_config.c:1075
+#: src/modules/xkbswitch/e_mod_config.c:1522
 msgid "Cancel"
 msgstr "Annulla"
 
@@ -992,11 +992,11 @@ msgstr ""
 "compositing è necessaria<ps/>una GPU in grado di supportare OpenGL 2.0 (o "
 "OpenGL<ps/>ES 2.0)."
 
-#: src/bin/e_comp_x.c:5911
+#: src/bin/e_comp_x.c:5913
 msgid "Lock Failed"
 msgstr "Blocco fallito"
 
-#: src/bin/e_comp_x.c:5912
+#: src/bin/e_comp_x.c:5914
 msgid ""
 "Locking the desktop failed because some application<ps/>has grabbed either "
 "the keyboard or the mouse or both<ps/>and their grab is unable to be broken."
@@ -1005,11 +1005,11 @@ msgstr ""
 "catturato la tastiera e/o il<ps/>mouse e questa cattura non può essere "
 "sciolta."
 
-#: src/bin/e_comp_x.c:5930
+#: src/bin/e_comp_x.c:5932
 msgid "Another compositor is already running on your display server."
 msgstr "Un altro compositor è già in esecuzione sul vostro server grafico."
 
-#: src/bin/e_comp_x.c:5955
+#: src/bin/e_comp_x.c:5957
 msgid ""
 "Your display server does not support the compositor overlay window.\n"
 "This is needed for Enlightenment to function."
@@ -1017,12 +1017,12 @@ msgstr ""
 "Il vostro server grafico non supporta la finestra overlay del compositor. "
 "Ciò è necessario per il funzionamento di Enlightenment."
 
-#: src/bin/e_comp_x.c:6096
+#: src/bin/e_comp_x.c:6098
 #, c-format
 msgid "Enlightenment cannot initialize X Connection...\n"
 msgstr "Enlightenment non riesce ad inizializzare la connessione con X...\n"
 
-#: src/bin/e_comp_x.c:6111
+#: src/bin/e_comp_x.c:6113
 msgid ""
 "Your display server does not support XComposite, or Ecore-X was built "
 "without XComposite support. Note that for composite support you will also "
@@ -1032,7 +1032,7 @@ msgstr ""
 "compilato senza supporto per XComposite. Notare che il supporto per il "
 "compositing richiede anche il supporto per XRender e XFixes in X11 ed Ecore."
 
-#: src/bin/e_comp_x.c:6120
+#: src/bin/e_comp_x.c:6122
 msgid ""
 "Your display server does not support XDamage or Ecore was built without "
 "XDamage support."
@@ -1040,7 +1040,7 @@ msgstr ""
 "Il vostro server grafico non supporta XDamage o Ecore è stato compilato "
 "senza il supporto per XDamage."
 
-#: src/bin/e_comp_x.c:6226
+#: src/bin/e_comp_x.c:6228
 msgid "Enlightenment cannot initialize the XSettings system.\n"
 msgstr "Enlightenment non riesce a inizializzare il suo sistema XSettings.\n"
 
@@ -1072,7 +1072,7 @@ msgstr ""
 #: src/modules/conf_theme/e_int_config_theme_import.c:118
 #: src/modules/fileman/e_int_config_mime_edit.c:313
 #: src/modules/polkit/auth_ui.c:184 src/modules/shot/e_mod_delay.c:79
-#: src/modules/xkbswitch/e_mod_config.c:1448
+#: src/modules/xkbswitch/e_mod_config.c:1521
 msgid "OK"
 msgstr "OK"
 
@@ -1213,7 +1213,7 @@ msgstr ""
 msgid "Settings Upgraded"
 msgstr "Impostazioni aggiornate"
 
-#: src/bin/e_config_dialog.c:222 src/modules/battery/e_mod_main.c:1357
+#: src/bin/e_config_dialog.c:222 src/modules/battery/e_mod_main.c:1389
 #: src/modules/conf_bindings/e_mod_main.c:43 src/modules/conf/e_mod_main.c:278
 #: src/modules/conf_paths/e_mod_main.c:17
 #: src/modules/conf_performance/e_mod_main.c:17
@@ -1691,7 +1691,7 @@ msgid "Eject"
 msgstr "Espelli"
 
 #: src/bin/e_fm.c:9389 src/bin/e_int_client_remember.c:807
-#: src/modules/ibar/e_mod_main.c:1643
+#: src/modules/ibar/e_mod_main.c:1649
 msgid "Properties"
 msgstr "Proprietà"
 
@@ -2740,7 +2740,7 @@ msgstr "Richiede posizione"
 #: src/bin/e_int_client_prop.c:483 src/bin/e_int_client_prop.c:518
 #: src/bin/e_int_config_modules.c:58 src/bin/e_int_menus.c:299
 #: src/bin/e_shelf.c:2367 src/modules/backlight/e_mod_main.c:259
-#: src/modules/battery/e_mod_main.c:767 src/modules/clock/e_mod_main.c:360
+#: src/modules/battery/e_mod_main.c:789 src/modules/clock/e_mod_main.c:360
 #: src/modules/clock/e_mod_main.c:599 src/modules/conf_dialogs/e_mod_main.c:17
 #: src/modules/conf/e_conf.c:115 src/modules/conf/e_conf.c:126
 #: src/modules/conf/e_mod_main.c:101
@@ -2750,8 +2750,8 @@ msgstr "Richiede posizione"
 #: src/modules/everything/evry_gadget.c:511
 #: src/modules/everything/evry_gadget.c:683
 #: src/modules/everything/evry_plug_settings.c:183
-#: src/modules/geolocation/e_mod_main.c:235 src/modules/ibar/e_mod_main.c:497
-#: src/modules/ibar/e_mod_main.c:1636 src/modules/ibox/e_mod_main.c:358
+#: src/modules/geolocation/e_mod_main.c:235 src/modules/ibar/e_mod_main.c:503
+#: src/modules/ibar/e_mod_main.c:1642 src/modules/ibox/e_mod_main.c:358
 #: src/modules/ibox/e_mod_main.c:791 src/modules/mixer/e_mod_main.c:1043
 #: src/modules/music-control/ui.c:359 src/modules/packagekit/e_mod_main.c:47
 #: src/modules/pager/e_mod_main.c:1026 src/modules/tasks/e_mod_main.c:938
@@ -3157,9 +3157,9 @@ msgstr "Utilità"
 #: src/bin/e_int_config_comp_match.c:444 src/bin/e_utils.c:641
 #: src/bin/e_widget_filepreview.c:696 src/bin/e_widget_filepreview.c:697
 #: src/bin/e_widget_filepreview.c:698 src/bin/e_widget_filepreview.c:728
-#: src/bin/e_widget_filepreview.c:739 src/modules/battery/e_mod_main.c:343
-#: src/modules/battery/e_mod_main.c:356 src/modules/battery/e_mod_main.c:359
-#: src/modules/battery/e_mod_main.c:368 src/modules/battery/e_mod_main.c:377
+#: src/bin/e_widget_filepreview.c:739 src/modules/battery/e_mod_main.c:344
+#: src/modules/battery/e_mod_main.c:357 src/modules/battery/e_mod_main.c:360
+#: src/modules/battery/e_mod_main.c:369 src/modules/battery/e_mod_main.c:378
 #: src/modules/bluez5/e_mod_popup.c:510 src/modules/bluez5/e_mod_popup.c:511
 #: src/modules/bluez5/e_mod_util.c:261
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:429
@@ -3246,13 +3246,13 @@ msgstr "Effetto"
 
 #: src/bin/e_int_config_comp_match.c:741 src/bin/e_widget_config_list.c:80
 #: src/modules/conf_applications/e_int_config_apps.c:348
-#: src/modules/xkbswitch/e_mod_config.c:712
+#: src/modules/xkbswitch/e_mod_config.c:763
 msgid "Up"
 msgstr "Su"
 
 #: src/bin/e_int_config_comp_match.c:743 src/bin/e_widget_config_list.c:86
 #: src/modules/conf_applications/e_int_config_apps.c:352
-#: src/modules/xkbswitch/e_mod_config.c:721
+#: src/modules/xkbswitch/e_mod_config.c:772
 msgid "Down"
 msgstr "Giù"
 
@@ -3270,12 +3270,12 @@ msgstr "Giù"
 #: src/modules/conf_dialogs/e_int_config_profiles.c:134
 #: src/modules/conf_paths/e_int_config_env.c:337
 #: src/modules/conf_shelves/e_int_config_shelf.c:137
-#: src/modules/ibar/e_mod_config.c:114 src/modules/xkbswitch/e_mod_config.c:695
+#: src/modules/ibar/e_mod_config.c:114 src/modules/xkbswitch/e_mod_config.c:746
 msgid "Add"
 msgstr "Aggiungi"
 
 #: src/bin/e_int_config_comp_match.c:747
-#: src/modules/xkbswitch/e_mod_config.c:703
+#: src/modules/xkbswitch/e_mod_config.c:754
 msgid "Del"
 msgstr "Elimina"
 
@@ -3573,7 +3573,7 @@ msgstr "Mostra sui desktop specificati"
 msgid "Toolbar Settings"
 msgstr "Impostazioni barra strumenti"
 
-#: src/bin/e_int_toolbar_config.c:77 src/modules/xkbswitch/e_mod_config.c:1407
+#: src/bin/e_int_toolbar_config.c:77 src/modules/xkbswitch/e_mod_config.c:1480
 msgid "Layout"
 msgstr "Posizione"
 
@@ -3593,15 +3593,15 @@ msgstr "Enlightenment non riesce ad inizializzare Eet!\n"
 msgid "Enlightenment cannot initialize Ecore!\n"
 msgstr "Enlightenment non riesce ad inizializzare Ecore!\n"
 
-#: src/bin/e_main.c:400
+#: src/bin/e_main.c:402
 msgid "Enlightenment cannot initialize EFX!\n"
 msgstr "Enlightenment non riesce ad inizializzare EFX!\n"
 
-#: src/bin/e_main.c:409
+#: src/bin/e_main.c:411
 msgid "Enlightenment cannot initialize EIO!\n"
 msgstr "Enlightenment non riesce ad inizializzare EIO!\n"
 
-#: src/bin/e_main.c:421
+#: src/bin/e_main.c:423
 msgid ""
 "Enlightenment cannot set up an exit signal handler.\n"
 "Perhaps you are out of memory?"
@@ -3609,7 +3609,7 @@ msgstr ""
 "Enlightenment non riesce a configurare un gestore di segnali d'uscita.\n"
 "Forse siete a corto di memoria?"
 
-#: src/bin/e_main.c:428
+#: src/bin/e_main.c:430
 msgid ""
 "Enlightenment cannot set up a HUP signal handler.\n"
 "Perhaps you are out of memory?"
@@ -3617,7 +3617,7 @@ msgstr ""
 "Enlightenment non riesce a configurare un gestore di segnali HUP.\n"
 "Forse siete a corto di memoria?"
 
-#: src/bin/e_main.c:435
+#: src/bin/e_main.c:437
 msgid ""
 "Enlightenment cannot set up a USER signal handler.\n"
 "Perhaps you are out of memory?"
@@ -3625,31 +3625,31 @@ msgstr ""
 "Enlightenment non riesce a configurare un gestore di segnali USER.\n"
 "Forse siete a corto di memoria?"
 
-#: src/bin/e_main.c:444
+#: src/bin/e_main.c:446
 msgid "Enlightenment cannot initialize Ecore_File!\n"
 msgstr "Enlightenment non riesce ad inizializzare Ecore_File!\n"
 
-#: src/bin/e_main.c:453
+#: src/bin/e_main.c:455
 msgid "Enlightenment cannot initialize Ecore_Con!\n"
 msgstr "Enlightenment non riesce ad inizializzare Ecore_Con!\n"
 
-#: src/bin/e_main.c:462
+#: src/bin/e_main.c:464
 msgid "Enlightenment cannot initialize Ecore_Ipc!\n"
 msgstr "Enlightenment non riesce ad inizializzare Ecore_Ipc!\n"
 
-#: src/bin/e_main.c:473
+#: src/bin/e_main.c:475
 msgid "Enlightenment cannot initialize Ecore_Evas!\n"
 msgstr "Enlightenment non riesce ad inizializzare Ecore_Evas!\n"
 
-#: src/bin/e_main.c:482
+#: src/bin/e_main.c:484
 msgid "Enlightenment cannot initialize Elementary!\n"
 msgstr "Enlightenment non riesce ad inizializzare Elementary!\n"
 
-#: src/bin/e_main.c:491
+#: src/bin/e_main.c:493
 msgid "Enlightenment cannot initialize Emotion!\n"
 msgstr "Enlightenment non riesce ad inizializzare Emotion!\n"
 
-#: src/bin/e_main.c:505
+#: src/bin/e_main.c:507
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Wayland SHM\n"
 "rendering in Evas. Please check your installation of Evas and\n"
@@ -3659,7 +3659,7 @@ msgstr ""
 "Wayland SHM in Evas. Controllate le vostre installazioni di Evas e\n"
 "Ecore e il loro supporto per il motore di rendering Wayland SHM."
 
-#: src/bin/e_main.c:515
+#: src/bin/e_main.c:517
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Software X11\n"
 "rendering in Evas. Please check your installation of Evas and\n"
@@ -3669,7 +3669,7 @@ msgstr ""
 "software X11 in Evas. Controllate le vostre installazioni di Evas e\n"
 "Ecore e il loro supporto per il motore di rendering software X11."
 
-#: src/bin/e_main.c:524
+#: src/bin/e_main.c:526
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Software Buffer\n"
 "rendering in Evas. Please check your installation of Evas and\n"
@@ -3679,11 +3679,11 @@ msgstr ""
 "software Buffer in Evas. Controllate le vostre installazioni di Evas e\n"
 "Ecore e il loro supporto per il motore di rendering software Buffer."
 
-#: src/bin/e_main.c:538
+#: src/bin/e_main.c:540
 msgid "Enlightenment cannot initialize E_Intl!\n"
 msgstr "Enlightenment non riesce ad inizializzare E_Intl!\n"
 
-#: src/bin/e_main.c:549
+#: src/bin/e_main.c:551
 msgid ""
 "Enlightenment cannot initialize its emergency alert system.\n"
 "Have you set your DISPLAY variable?"
@@ -3692,7 +3692,7 @@ msgstr ""
 "di allarme d'emergenza.\n"
 "Avete impostato la variabile DISPLAY?"
 
-#: src/bin/e_main.c:561
+#: src/bin/e_main.c:563
 msgid ""
 "Enlightenment cannot create directories in your home directory.\n"
 "Perhaps you have no home directory or the disk is full?"
@@ -3700,23 +3700,23 @@ msgstr ""
 "Enlightenment non riesce a creare directory nella vostra home.\n"
 "Forse non avete home directory, o il disco è pieno?"
 
-#: src/bin/e_main.c:571
+#: src/bin/e_main.c:573
 msgid "Enlightenment cannot set up its file registry system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di file registry.\n"
 
-#: src/bin/e_main.c:580
+#: src/bin/e_main.c:582
 msgid "Enlightenment cannot set up its config system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di configurazione.\n"
 
-#: src/bin/e_main.c:624
+#: src/bin/e_main.c:626
 msgid "Enlightenment cannot set up its environment.\n"
 msgstr "Enlightenment non riesce ad impostare il suo ambiente.\n"
 
-#: src/bin/e_main.c:643
+#: src/bin/e_main.c:645
 msgid ""
 "Enlightenment cannot set up paths for finding files.\n"
 "Perhaps you are out of memory?"
@@ -3724,19 +3724,19 @@ msgstr ""
 "Enlightenment non riesce a configurare i percorsi per la\n"
 "ricerca dei file. Forse siete a corto di memoria?"
 
-#: src/bin/e_main.c:710
+#: src/bin/e_main.c:712
 msgid "Enlightenment cannot set up its font system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di font.\n"
 
-#: src/bin/e_main.c:723
+#: src/bin/e_main.c:725
 msgid "Enlightenment cannot set up its theme system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di temi.\n"
 
-#: src/bin/e_main.c:739
+#: src/bin/e_main.c:741
 msgid ""
 "Enlightenment cannot create a dbus session connection.\n"
 "At best this will break many things, at worst it will hard lock your "
@@ -3748,7 +3748,7 @@ msgstr ""
 "arriverà al blocco della macchina.\n"
 "Se siete sicuri di sapere cosa state facendo esportate E_NO_DBUS_SESSION=1"
 
-#: src/bin/e_main.c:752
+#: src/bin/e_main.c:754
 msgid ""
 "Enlightenment cannot initialize the FDO desktop system.\n"
 "Perhaps you lack permissions on ~/.cache/efreet or are\n"
@@ -3758,30 +3758,30 @@ msgstr ""
 "Forse non avete permessi per accedere a ~/.cache/efreet o\n"
 "siete a corto di spazio su disco?"
 
-#: src/bin/e_main.c:763
+#: src/bin/e_main.c:765
 msgid "Enlightenment cannot set up its intl system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di intl (internazionalizzazione).\n"
 
-#: src/bin/e_main.c:778
+#: src/bin/e_main.c:780
 msgid "Enlightenment cannot set up its actions system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di azioni.\n"
 
-#: src/bin/e_main.c:794
+#: src/bin/e_main.c:796
 msgid "Enlightenment cannot initialize the Privilege System access system.\n"
 msgstr ""
 "Enlightenment non riesce a inizializzare il sistema di accessi Privelege "
 "System.\n"
 
-#: src/bin/e_main.c:803
+#: src/bin/e_main.c:805
 msgid "Enlightenment cannot set up its powersave modes.\n"
 msgstr ""
 "Enlightenment non riesce a configurare le modalità di risparmio energetico.\n"
 
-#: src/bin/e_main.c:816
+#: src/bin/e_main.c:818
 msgid ""
 "Enlightenment set up window management for all the screens on your system\n"
 "failed. Perhaps another window manager is running?\n"
@@ -3790,151 +3790,151 @@ msgstr ""
 "da parte di Enlightenment è fallita. Forse c'è un altro window\n"
 "manager in esecuzione?\n"
 
-#: src/bin/e_main.c:826
+#: src/bin/e_main.c:828
 msgid "Enlightenment cannot set up its pointer system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di puntatore.\n"
 
-#: src/bin/e_main.c:836
+#: src/bin/e_main.c:838
 msgid "Enlightenment cannot set up its scale system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di scaling.\n"
 
-#: src/bin/e_main.c:845
+#: src/bin/e_main.c:847
 msgid "Enlightenment cannot set up its init screen.\n"
 msgstr ""
 "Enlightenment non riesce a configurare la sua\n"
 "schermata di iniziazione.\n"
 
-#: src/bin/e_main.c:880
+#: src/bin/e_main.c:882
 msgid "Enlightenment cannot configure the backlight.\n"
 msgstr ""
 "Enlightenment non riesce a configurare la\n"
 "retroilluminazione.\n"
 
-#: src/bin/e_main.c:888
+#: src/bin/e_main.c:890
 msgid "Enlightenment cannot configure the DPMS settings.\n"
 msgstr ""
 "Enlightenment non riesce a configurare le\n"
 "impostazioni DPMS.\n"
 
-#: src/bin/e_main.c:897
+#: src/bin/e_main.c:899
 msgid "Enlightenment cannot set up its desk locking system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di blocco dello schermo.\n"
 
-#: src/bin/e_main.c:917
+#: src/bin/e_main.c:919
 msgid "Enlightenment cannot initialize the System Command system.\n"
 msgstr ""
 "Enlightenment non riesce a inizializzare il sistema di comandi di sistema.\n"
 
-#: src/bin/e_main.c:926
+#: src/bin/e_main.c:928
 msgid "Enlightenment cannot set up its exec system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di esecuzione.\n"
 
-#: src/bin/e_main.c:938
+#: src/bin/e_main.c:940
 msgid "Enlightenment cannot initialize the File manager.\n"
 msgstr "Enlightenment non riesce ad inizializzare il File manager.\n"
 
-#: src/bin/e_main.c:947
+#: src/bin/e_main.c:949
 msgid "Enlightenment cannot set up its msg system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di messaggi.\n"
 
-#: src/bin/e_main.c:956
+#: src/bin/e_main.c:958
 msgid "Enlightenment cannot set up its grab input handling system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di gestione della cattura dell'input.\n"
 
-#: src/bin/e_main.c:965 src/bin/e_main.c:1107
+#: src/bin/e_main.c:967 src/bin/e_main.c:1109
 msgid "Enlightenment cannot set up its module system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di moduli.\n"
 
-#: src/bin/e_main.c:974
+#: src/bin/e_main.c:976
 msgid "Enlightenment cannot setup remember settings.\n"
 msgstr ""
 "Enlightenment non riesce a configurare le\n"
 "impostazioni da ricordare.\n"
 
-#: src/bin/e_main.c:983
+#: src/bin/e_main.c:985
 msgid "Enlightenment cannot set up its gadget control system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di controllo dei gadget.\n"
 
-#: src/bin/e_main.c:992
+#: src/bin/e_main.c:994
 msgid "Enlightenment cannot set up its toolbars.\n"
 msgstr ""
 "Enlightenment non riesce a configurare le sue\n"
 "barre degli strumenti.\n"
 
-#: src/bin/e_main.c:1001
+#: src/bin/e_main.c:1003
 msgid "Enlightenment cannot set up its desktop background system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di sfondi del desktop.\n"
 
-#: src/bin/e_main.c:1010
+#: src/bin/e_main.c:1012
 msgid "Enlightenment cannot configure the mouse settings.\n"
 msgstr ""
 "Enlightenment non riesce a configurare le\n"
 "impostazioni del mouse.\n"
 
-#: src/bin/e_main.c:1018
+#: src/bin/e_main.c:1020
 msgid "Enlightenment cannot set up its bindings system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di binding (associazioni).\n"
 
-#: src/bin/e_main.c:1027
+#: src/bin/e_main.c:1029
 msgid "Enlightenment cannot initialize the Thumbnailing system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di thumbnailing (anteprime).\n"
 
-#: src/bin/e_main.c:1036
+#: src/bin/e_main.c:1038
 msgid "Enlightenment cannot initialize the Icon Cache system.\n"
 msgstr ""
 "Enlightenment non riesce a inizializzare il suo sistema di\n"
 "cache delle icone.\n"
 
-#: src/bin/e_main.c:1045
+#: src/bin/e_main.c:1047
 msgid "Enlightenment cannot initialize the Update system.\n"
 msgstr ""
 "Enlightenment non riesce a inizializzare il suo sistema di\n"
 "aggiornamenti.\n"
 
-#: src/bin/e_main.c:1054
+#: src/bin/e_main.c:1056
 msgid "Enlightenment cannot initialize its desktop environment.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "ambiente desktop.\n"
 
-#: src/bin/e_main.c:1063
+#: src/bin/e_main.c:1065
 msgid "Enlightenment cannot set up its order file system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di ordinamento file.\n"
 
-#: src/bin/e_main.c:1115 src/modules/wizard/e_wizard.c:262
+#: src/bin/e_main.c:1117 src/modules/wizard/e_wizard.c:262
 msgid "Welcome to Enlightenment"
 msgstr "Benvenuti in Enlightenment"
 
-#: src/bin/e_main.c:1263
+#: src/bin/e_main.c:1265
 #, c-format
 msgid "Version: %s\n"
 msgstr "Versione: %s\n"
 
-#: src/bin/e_main.c:1272
+#: src/bin/e_main.c:1274
 #, c-format
 msgid ""
 "Options:\n"
@@ -3989,7 +3989,7 @@ msgstr ""
 "    Se hai bisogno di questo aiuto non hai bisogno di questa opzione.\n"
 "  -versione\n"
 
-#: src/bin/e_main.c:1326
+#: src/bin/e_main.c:1328
 msgid ""
 "You are executing enlightenment directly. This is\n"
 "bad. Please do not execute the \"enlightenment\"\n"
@@ -4006,17 +4006,17 @@ msgstr ""
 "altre cose simili prima di cominciare l'esecuzione di\n"
 "enlightenment stesso.\n"
 
-#: src/bin/e_main.c:1589
+#: src/bin/e_main.c:1596
 msgid "Enlightenment cannot create a compositor.\n"
 msgstr "Enlightenment non riesce a creare un compositor.\n"
 
-#: src/bin/e_main.c:1602
+#: src/bin/e_main.c:1609
 msgid "Enlightenment cannot set up its dnd system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di 'drag & drop'.\n"
 
-#: src/bin/e_main.c:1763
+#: src/bin/e_main.c:1770
 #, c-format
 msgid ""
 "Enlightenment crashed early on start and has<ps/>been restarted. There was "
@@ -4027,11 +4027,11 @@ msgstr ""
 "C'è stato un errore nel<ps/>caricamento del modulo: %s. Questo modulo è "
 "stato<ps/>disabilitato e non verrà caricato."
 
-#: src/bin/e_main.c:1768 src/bin/e_main.c:1784
+#: src/bin/e_main.c:1775 src/bin/e_main.c:1791
 msgid "Enlightenment crashed early on start and has been restarted"
 msgstr "Enlightenment è andato subito in crash ed è stato riavviato"
 
-#: src/bin/e_main.c:1769
+#: src/bin/e_main.c:1776
 #, c-format
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<ps/>There was "
@@ -4042,7 +4042,7 @@ msgstr ""
 ">C'è stato un errore nel caricamento del modulo: %s.<ps/><ps/>Questo modulo "
 "è stato disabilitato e non verrà caricato."
 
-#: src/bin/e_main.c:1777
+#: src/bin/e_main.c:1784
 msgid ""
 "Enlightenment crashed early on start and has<ps/>been restarted. All modules "
 "have been disabled<ps/>and will not be loaded to help remove any problem<ps/"
@@ -4055,7 +4055,7 @@ msgstr ""
 "finestra di configurazione<ps/>dei moduli dovrebbe permettervi di "
 "selezionare<ps/>nuovamente i vostri moduli.\n"
 
-#: src/bin/e_main.c:1785
+#: src/bin/e_main.c:1792
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<ps/>All modules "
 "have been disabled and will not be loaded to help<ps/>remove any problem "
@@ -4267,8 +4267,8 @@ msgid "Rename Shelf"
 msgstr "Rinomina mensola"
 
 #: src/bin/e_shelf.c:2362 src/modules/conf_shelves/e_int_config_shelf.c:145
-#: src/modules/ibar/e_mod_config.c:118 src/modules/ibar/e_mod_main.c:491
-#: src/modules/ibar/e_mod_main.c:1630
+#: src/modules/ibar/e_mod_config.c:118 src/modules/ibar/e_mod_main.c:497
+#: src/modules/ibar/e_mod_main.c:1636
 msgid "Contents"
 msgstr "Contenuti"
 
@@ -4927,70 +4927,69 @@ msgstr "Modalità vaga"
 msgid "Hardware"
 msgstr "Hardware"
 
-#: src/modules/battery/e_mod_main.c:175 src/modules/battery/e_mod_main.c:732
-#: src/modules/battery/e_mod_main.c:1019
+#: src/modules/battery/e_mod_main.c:176 src/modules/battery/e_mod_main.c:754
+#: src/modules/battery/e_mod_main.c:1041
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:354
 #, c-format
 msgid "Battery"
 msgstr "Battery"
 
-#: src/modules/battery/e_mod_main.c:310
+#: src/modules/battery/e_mod_main.c:311
 msgid "Charging"
 msgstr "In carica"
 
-#: src/modules/battery/e_mod_main.c:315
+#: src/modules/battery/e_mod_main.c:316
 msgid "Discharging"
 msgstr "In scaricamento"
 
-#: src/modules/battery/e_mod_main.c:320
+#: src/modules/battery/e_mod_main.c:321
 msgid "Charged"
 msgstr "Caricata"
 
-#: src/modules/battery/e_mod_main.c:612
+#: src/modules/battery/e_mod_main.c:634
 #: src/modules/conf_performance/e_int_config_powermanagement.c:166
 msgid "Level"
 msgstr "Livello"
 
-#: src/modules/battery/e_mod_main.c:623
-#, fuzzy
+#: src/modules/battery/e_mod_main.c:645
 msgid "Charge Limit"
-msgstr "Limiti ricarica"
+msgstr "Limite ricarica"
 
-#: src/modules/battery/e_mod_main.c:643
+#: src/modules/battery/e_mod_main.c:665
 msgid "Energy"
 msgstr "Energia"
 
-#: src/modules/battery/e_mod_main.c:657
+#: src/modules/battery/e_mod_main.c:679
 msgid "(Dis)charge"
 msgstr "(S)carica"
 
-#: src/modules/battery/e_mod_main.c:726
+#: src/modules/battery/e_mod_main.c:748
 #, c-format
 msgid "Battery: %s (%s)"
 msgstr "Batteria: %s (%s)"
 
-#: src/modules/battery/e_mod_main.c:728 src/modules/battery/e_mod_main.c:730
+#: src/modules/battery/e_mod_main.c:750 src/modules/battery/e_mod_main.c:752
 #, c-format
 msgid "Battery: %s"
 msgstr "Batteria: %s"
 
-#: src/modules/battery/e_mod_main.c:773
+#: src/modules/battery/e_mod_main.c:795
 msgid "Power Management Timing"
 msgstr "Temporizzazioni gestione alimentazione"
 
-#: src/modules/battery/e_mod_main.c:1022 src/modules/battery/e_mod_main.c:1054
+#: src/modules/battery/e_mod_main.c:1044 src/modules/battery/e_mod_main.c:1076
 msgid "Your battery is low!"
 msgstr "Basso livello batteria!"
 
-#: src/modules/battery/e_mod_main.c:1023 src/modules/battery/e_mod_main.c:1056
+#: src/modules/battery/e_mod_main.c:1045 src/modules/battery/e_mod_main.c:1078
 msgid "AC power is recommended."
 msgstr "Consigliata alimentazione AC."
 
-#: src/modules/battery/e_mod_main.c:1141 src/modules/battery/e_mod_main.c:1145
+#: src/modules/battery/e_mod_main.c:1163 src/modules/battery/e_mod_main.c:1167
 msgid "N/A"
 msgstr "N/D"
 
-#: src/modules/battery/e_mod_main.c:1359
+#: src/modules/battery/e_mod_main.c:1391
 msgid "Battery Meter"
 msgstr "Indicatore di carica"
 
@@ -5161,7 +5160,7 @@ msgid "Connect this device"
 msgstr "Connetti questo dispositivo"
 
 #: src/modules/bluez5/e_mod_popup.c:579
-msgid "Disrust this device"
+msgid "Distrust this device"
 msgstr "Considera non fidato questo dispositivo"
 
 #: src/modules/bluez5/e_mod_popup.c:586
@@ -6769,8 +6768,8 @@ msgstr "%2.2f s"
 #: src/modules/conf_menus/e_int_config_menus.c:317
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:377
 #: src/modules/notification/e_mod_config.c:161
-#: src/modules/xkbswitch/e_mod_config.c:812
-#: src/modules/xkbswitch/e_mod_config.c:1240
+#: src/modules/xkbswitch/e_mod_config.c:863
+#: src/modules/xkbswitch/e_mod_config.c:1291
 msgid "Miscellaneous"
 msgstr "Miscellanea"
 
@@ -9129,28 +9128,28 @@ msgstr ""
 msgid "Are you sure you want to delete this bar source?"
 msgstr "Siete sicuri di voler rimuovere questa sorgente per Ibar?"
 
-#: src/modules/ibar/e_mod_main.c:370 src/modules/ibar/e_mod_main.c:2938
+#: src/modules/ibar/e_mod_main.c:376 src/modules/ibar/e_mod_main.c:2944
 msgid "IBar"
 msgstr "IBar"
 
-#: src/modules/ibar/e_mod_main.c:480 src/modules/ibar/e_mod_main.c:1619
+#: src/modules/ibar/e_mod_main.c:486 src/modules/ibar/e_mod_main.c:1625
 msgid "Create new Icon"
 msgstr "Crea nuova icona"
 
-#: src/modules/ibar/e_mod_main.c:1650
+#: src/modules/ibar/e_mod_main.c:1656
 msgid "Add to bar"
 msgstr "Aggiungi alla barra"
 
-#: src/modules/ibar/e_mod_main.c:1656
+#: src/modules/ibar/e_mod_main.c:1662
 msgid "Remove from bar"
 msgstr "Elimina dalla barra"
 
-#: src/modules/ibar/e_mod_main.c:1662
+#: src/modules/ibar/e_mod_main.c:1668
 #, c-format
 msgid "Icon %s"
 msgstr "Icona %s"
 
-#: src/modules/ibar/e_mod_main.c:2938
+#: src/modules/ibar/e_mod_main.c:2944
 msgid "Focus IBar"
 msgstr "Fuoco di Ibar"
 
@@ -10727,134 +10726,142 @@ msgstr ""
 msgid "Enable Taskbar"
 msgstr "Abilita taskbar"
 
-#: src/modules/xkbswitch/e_mod_config.c:140
+#: src/modules/xkbswitch/e_mod_config.c:148
 msgid "Keyboard Settings"
 msgstr "Impostazioni della tastiera"
 
-#: src/modules/xkbswitch/e_mod_config.c:540
-#: src/modules/xkbswitch/e_mod_config.c:1505
-#: src/modules/xkbswitch/e_mod_config.c:1631
+#: src/modules/xkbswitch/e_mod_config.c:560
+#: src/modules/xkbswitch/e_mod_config.c:1578
+#: src/modules/xkbswitch/e_mod_config.c:1704
 msgid "No Name"
 msgstr "Nessun nome"
 
-#: src/modules/xkbswitch/e_mod_config.c:630
+#: src/modules/xkbswitch/e_mod_config.c:651
 msgid "Do not apply any keyboard settings ever"
 msgstr "Non applicare mai alcuna impostazione di tastiera"
 
-#: src/modules/xkbswitch/e_mod_config.c:639
+#: src/modules/xkbswitch/e_mod_config.c:660
 msgid "Label only in gadgets"
 msgstr "Etichette solo nei gadget"
 
-#: src/modules/xkbswitch/e_mod_config.c:656
-#: src/modules/xkbswitch/e_mod_config.c:857
+#: src/modules/xkbswitch/e_mod_config.c:672
+msgid "Repeat rate"
+msgstr "Frequenza ripetizione"
+
+#: src/modules/xkbswitch/e_mod_config.c:685
+msgid "Repeat delay"
+msgstr "Ritardo ripetizione"
+
+#: src/modules/xkbswitch/e_mod_config.c:707
+#: src/modules/xkbswitch/e_mod_config.c:908
 msgid "Default keyboard layout"
 msgstr "Layout di tastiera predefinito"
 
-#: src/modules/xkbswitch/e_mod_config.c:762
-#: src/modules/xkbswitch/e_mod_config.c:1051
+#: src/modules/xkbswitch/e_mod_config.c:813
+#: src/modules/xkbswitch/e_mod_config.c:1102
 msgid "Compose"
 msgstr "Tasto 'compose'"
 
-#: src/modules/xkbswitch/e_mod_config.c:763
-#: src/modules/xkbswitch/e_mod_config.c:1062
+#: src/modules/xkbswitch/e_mod_config.c:814
+#: src/modules/xkbswitch/e_mod_config.c:1113
 msgid "Third level"
 msgstr "Terzo livello"
 
-#: src/modules/xkbswitch/e_mod_config.c:764
+#: src/modules/xkbswitch/e_mod_config.c:815
 msgid "Switch layout"
 msgstr "Cambia layout"
 
-#: src/modules/xkbswitch/e_mod_config.c:798
-#: src/modules/xkbswitch/e_mod_config.c:1084
+#: src/modules/xkbswitch/e_mod_config.c:849
+#: src/modules/xkbswitch/e_mod_config.c:1135
 msgid "Led"
 msgstr "Led"
 
-#: src/modules/xkbswitch/e_mod_config.c:799
-#: src/modules/xkbswitch/e_mod_config.c:1096
+#: src/modules/xkbswitch/e_mod_config.c:850
+#: src/modules/xkbswitch/e_mod_config.c:1147
 msgid "Control"
 msgstr "Tasto 'control'"
 
-#: src/modules/xkbswitch/e_mod_config.c:800
-#: src/modules/xkbswitch/e_mod_config.c:1107
+#: src/modules/xkbswitch/e_mod_config.c:851
+#: src/modules/xkbswitch/e_mod_config.c:1158
 msgid "Keypad"
 msgstr "Tastierino numerico"
 
-#: src/modules/xkbswitch/e_mod_config.c:801
-#: src/modules/xkbswitch/e_mod_config.c:1119
+#: src/modules/xkbswitch/e_mod_config.c:852
+#: src/modules/xkbswitch/e_mod_config.c:1170
 msgid "Keypad delete key"
 msgstr "Tasto 'canc' del tastierino"
 
-#: src/modules/xkbswitch/e_mod_config.c:802
-#: src/modules/xkbswitch/e_mod_config.c:1130
+#: src/modules/xkbswitch/e_mod_config.c:853
+#: src/modules/xkbswitch/e_mod_config.c:1181
 msgid "Capslock"
 msgstr "Blocco maiuscole"
 
-#: src/modules/xkbswitch/e_mod_config.c:803
+#: src/modules/xkbswitch/e_mod_config.c:854
 msgid "Alt win"
 msgstr "Alt win"
 
-#: src/modules/xkbswitch/e_mod_config.c:804
-#: src/modules/xkbswitch/e_mod_config.c:1152
+#: src/modules/xkbswitch/e_mod_config.c:855
+#: src/modules/xkbswitch/e_mod_config.c:1203
 msgid "Currency"
 msgstr "Valuta"
 
-#: src/modules/xkbswitch/e_mod_config.c:805
-#: src/modules/xkbswitch/e_mod_config.c:1163
+#: src/modules/xkbswitch/e_mod_config.c:856
+#: src/modules/xkbswitch/e_mod_config.c:1214
 msgid "Fifth level"
 msgstr "Quinto livello"
 
-#: src/modules/xkbswitch/e_mod_config.c:806
-#: src/modules/xkbswitch/e_mod_config.c:1174
+#: src/modules/xkbswitch/e_mod_config.c:857
+#: src/modules/xkbswitch/e_mod_config.c:1225
 msgid "Spacebar"
 msgstr "Barra spaziatrice"
 
-#: src/modules/xkbswitch/e_mod_config.c:807
-#: src/modules/xkbswitch/e_mod_config.c:1185
+#: src/modules/xkbswitch/e_mod_config.c:858
+#: src/modules/xkbswitch/e_mod_config.c:1236
 msgid "Japan"
 msgstr "Giapponese"
 
-#: src/modules/xkbswitch/e_mod_config.c:808
-#: src/modules/xkbswitch/e_mod_config.c:1196
+#: src/modules/xkbswitch/e_mod_config.c:859
+#: src/modules/xkbswitch/e_mod_config.c:1247
 msgid "Korean"
 msgstr "Coreano"
 
-#: src/modules/xkbswitch/e_mod_config.c:809
-#: src/modules/xkbswitch/e_mod_config.c:1207
+#: src/modules/xkbswitch/e_mod_config.c:860
+#: src/modules/xkbswitch/e_mod_config.c:1258
 msgid "Esperanto"
 msgstr "Esperanto"
 
-#: src/modules/xkbswitch/e_mod_config.c:810
-#: src/modules/xkbswitch/e_mod_config.c:1218
+#: src/modules/xkbswitch/e_mod_config.c:861
+#: src/modules/xkbswitch/e_mod_config.c:1269
 msgid "Solaris"
 msgstr "Solaris"
 
-#: src/modules/xkbswitch/e_mod_config.c:811
-#: src/modules/xkbswitch/e_mod_config.c:1229
+#: src/modules/xkbswitch/e_mod_config.c:862
+#: src/modules/xkbswitch/e_mod_config.c:1280
 msgid "Terminate X"
 msgstr "Termina X"
 
-#: src/modules/xkbswitch/e_mod_config.c:1073
+#: src/modules/xkbswitch/e_mod_config.c:1124
 msgid "Switch Layout"
 msgstr "Cambia layout"
 
-#: src/modules/xkbswitch/e_mod_config.c:1141
+#: src/modules/xkbswitch/e_mod_config.c:1192
 msgid "Alternate win key"
 msgstr "Tasto win alternativo"
 
-#: src/modules/xkbswitch/e_mod_config.c:1383
+#: src/modules/xkbswitch/e_mod_config.c:1456
 msgid "Add New Configuration"
 msgstr "Aggiungi nuova configurazione"
 
-#: src/modules/xkbswitch/e_mod_config.c:1410
+#: src/modules/xkbswitch/e_mod_config.c:1483
 msgid "Model"
 msgstr "Modello"
 
-#: src/modules/xkbswitch/e_mod_config.c:1412
+#: src/modules/xkbswitch/e_mod_config.c:1485
 msgid "Variant"
 msgstr "Variante"
 
-#: src/modules/xkbswitch/e_mod_config.c:1532
-#: src/modules/xkbswitch/e_mod_config.c:1617
+#: src/modules/xkbswitch/e_mod_config.c:1605
+#: src/modules/xkbswitch/e_mod_config.c:1690
 msgid "No Description"
 msgstr "Nessuna descrizione"
 
