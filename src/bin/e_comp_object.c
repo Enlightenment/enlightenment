@@ -4948,7 +4948,7 @@ e_comp_object_shape_input_update(Evas_Object *obj)
         {
           unsigned int i;
 
-          evas_object_pass_events_set(cw->obj, EINA_TRUE);
+          evas_object_pass_events_set(cw->obj, EINA_FALSE);
 //          printf("SHP: XXXXX [%p] [%s]\n", cw->obj, evas_object_type_get(cw->obj));
           for (i = 0; i < ec->shape_input_rects_num; i++)
             {
@@ -4969,7 +4969,7 @@ e_comp_object_shape_input_update(Evas_Object *obj)
   else
     {
 //      printf("SHP: XXXXX [%p] [%s] RESET!!!!!\n", cw->obj, evas_object_type_get(cw->obj));
-      evas_object_pass_events_set(cw->obj, EINA_FALSE);
+      evas_object_pass_events_set(cw->obj, EINA_TRUE);
       evas_object_event_rects_set(cw->obj, NULL);
     }
 }
