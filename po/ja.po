@@ -10627,7 +10627,7 @@ msgstr "ネットワークの管理を行うには、以下のいずれかのモ
 
 #: src/modules/wizard/page_110.c:154
 msgid "Checking to see if Connman exists"
-msgstr "Connman が存在するかどうかを確認する"
+msgstr "Connman が存在するかどうかをチェックしています"
 
 #: src/modules/wizard/page_115.c:10
 msgid "Bluetooth Management"
