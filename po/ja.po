@@ -10591,7 +10591,7 @@ msgstr "不足しているアプリのファイルを追加しています"
 
 #: src/modules/wizard/page_050.c:131
 msgid "Select preferred size"
-msgstr "推奨サイズを選択する"
+msgstr "標準の文字サイズを選択してください"
 
 #: src/modules/wizard/page_060.c:29
 msgid "Focus:"
