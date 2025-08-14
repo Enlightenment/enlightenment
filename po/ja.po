@@ -10672,7 +10672,7 @@ msgstr "更新"
 
 #: src/modules/wizard/page_170.c:27
 msgid "Check for available updates"
-msgstr "利用可能な更新をチェックする"
+msgstr "利用可能な更新があるかチェックします"
 
 #: src/modules/wizard/page_170.c:38
 msgid ""
