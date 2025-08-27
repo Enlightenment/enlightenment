@@ -18,8 +18,8 @@ static const char *conn_types[] =
 {
    "None", "VGA", "DVI-I", "DVI-D", "DVI-A",
    "Composite", "S-Video", "LVDS", "Component", "DIN",
-   "DisplayPort", "HDMI-A", "HDMI-B", "TV", "eDP", "Virtual",
-   "DSI", "UNKNOWN"
+   "DisplayPort", "HDMI-A", "HDMI-B", "TV", "eDP", "Virtual", "DSI",
+   "DPI", "WRITEBACK", "SPI", "USB", "UNKNOWN",
 };
 
 static E_Randr2_Connector rtype[] =
@@ -276,48 +276,48 @@ _drm2_randr_create(void)
    const Eina_List *l;
    E_Randr2 *r = NULL;
    Ecore_Drm2_Device *dev;
-   const Eina_List *outputs;
-   Ecore_Drm2_Output *output;
+   const Eina_List *displays;
+   Ecore_Drm2_Display *disp;
    unsigned int type;
    E_Zone *zone;
 
    dev = ecore_evas_data_get(e_comp->ee, "device");
    if (!dev) return NULL;
 
-   outputs = ecore_drm2_outputs_get(dev);
-   if (!outputs) return NULL;
+   displays = ecore_drm2_device_displays_get(dev);
+   if (!displays) return NULL;
 
    printf("DRM2 RRR: ................. info get!\n");
 
    r = E_NEW(E_Randr2, 1);
    if (!r) return NULL;
 
-   EINA_LIST_FOREACH(outputs, l, output)
+   EINA_LIST_FOREACH(displays, l, disp)
      {
         E_Randr2_Screen *s;
         const Eina_List *m;
-        Ecore_Drm2_Output_Mode *omode;
+        Ecore_Drm2_Display_Mode *dmode;
         E_Config_Randr2_Screen *cs = NULL;
         unsigned int *crtcs;
         int priority = 0, num = 0, j = 0;
         Eina_Bool ok = EINA_FALSE;
         Eina_Bool possible = EINA_FALSE;
 
-        if (!ecore_drm2_output_connected_get(output))
+        if (!ecore_drm2_display_connected_get(disp))
           continue;
 
         s = E_NEW(E_Randr2_Screen, 1);
         if (!s) continue;
 
-        s->info.name = ecore_drm2_output_name_get(output);
+        s->info.name = ecore_drm2_display_name_get(disp);
         printf("DRM2 RRR: .... out %s\n", s->info.name);
 
-        s->info.connected = ecore_drm2_output_connected_get(output);
+        s->info.connected = ecore_drm2_display_connected_get(disp);
         printf("DRM2 RRR: ...... connected %i\n", s->info.connected);
 
-        s->info.screen = ecore_drm2_output_model_get(output);
+        s->info.screen = ecore_drm2_display_model_get(disp);
 
-        s->info.edid = ecore_drm2_output_edid_get(output);
+        s->info.edid = ecore_drm2_display_edid_get(disp);
         if (s->info.edid)
           s->id = malloc(strlen(s->info.name) + 1 + strlen(s->info.edid) + 1);
         else
@@ -336,7 +336,7 @@ _drm2_randr_create(void)
 
         printf("DRM2 RRR: Created Screen: %s\n", s->id);
 
-        type = MIN(ecore_drm2_output_connector_type_get(output),
+        type = MIN(ecore_drm2_display_connector_type_get(disp),
                    EINA_C_ARRAY_LENGTH(conn_types) - 1);
         s->info.connector = rtype[type];
         s->info.is_lid = ((type == DRM_MODE_CONNECTOR_LVDS) ||
@@ -345,13 +345,13 @@ _drm2_randr_create(void)
         printf("DRM2 RRR: ...... lid_closed = %i (%i && %i)\n",
                s->info.lid_closed, s->info.is_lid, e_acpi_lid_is_closed());
 
-        s->info.backlight = ecore_drm2_output_backlight_get(output);
-        s->info.subpixel = ecore_drm2_output_subpixel_get(output);
+        s->info.backlight = ecore_drm2_display_backlight_get(disp);
+        s->info.subpixel = ecore_drm2_display_subpixel_get(disp);
 
-        ecore_drm2_output_physical_size_get(output, &s->info.size.w,
-                                            &s->info.size.h);
+        ecore_drm2_display_physical_size_get(disp, &s->info.size.w,
+                                             &s->info.size.h);
 
-        EINA_LIST_FOREACH(ecore_drm2_output_modes_get(output), m, omode)
+        EINA_LIST_FOREACH(ecore_drm2_display_modes_get(disp), m, dmode)
           {
              E_Randr2_Mode *rmode;
              unsigned int flags, refresh;
@@ -359,8 +359,8 @@ _drm2_randr_create(void)
              rmode = malloc(sizeof(E_Randr2_Mode));
              if (!rmode) continue;
 
-             ecore_drm2_output_mode_info_get(omode, &rmode->w, &rmode->h,
-                                             &refresh, &flags);
+             ecore_drm2_display_mode_info_get(dmode, &rmode->w, &rmode->h,
+                                              &refresh, &flags);
 
              rmode->refresh = refresh;
              rmode->preferred = (flags & DRM_MODE_TYPE_PREFERRED);
@@ -374,14 +374,14 @@ _drm2_randr_create(void)
           cs = e_randr2_config_screen_find(s, e_randr2_cfg);
         if (cs)
           priority = cs->priority;
-        else if (ecore_drm2_output_primary_get(output))
+        else if (ecore_drm2_display_primary_get(disp))
           priority = 100;
         s->config.priority = priority;
 
         crtcs = ecore_drm2_device_crtcs_get(dev, &num);
         for (j = 0; j < num; j++)
           {
-             if (crtcs[j] == ecore_drm2_output_crtc_get(output))
+             if (crtcs[j] == ecore_drm2_display_crtc_get(disp))
                {
                   ok = EINA_TRUE;
                   break;
@@ -393,7 +393,7 @@ _drm2_randr_create(void)
              /* get possible crtcs, compare to output_crtc_get */
              for (j = 0; j < num; j++)
                {
-                  if (ecore_drm2_output_possible_crtc_get(output, crtcs[j]))
+                  if (ecore_drm2_display_possible_crtc_get(disp, crtcs[j]))
                     {
                        ok = EINA_TRUE;
                        possible = EINA_TRUE;
@@ -410,12 +410,12 @@ _drm2_randr_create(void)
                {
                   unsigned int refresh;
 
-                  ecore_drm2_output_info_get(output,
-                                             &s->config.geom.x,
-                                             &s->config.geom.y,
-                                             &s->config.geom.w,
-                                             &s->config.geom.h,
-                                             &refresh);
+                  ecore_drm2_display_info_get(disp,
+                                              &s->config.geom.x,
+                                              &s->config.geom.y,
+                                              &s->config.geom.w,
+                                              &s->config.geom.h,
+                                              &refresh);
                   s->config.mode.w = s->config.geom.w;
                   s->config.mode.h = s->config.geom.h;
                   s->config.mode.refresh = refresh;
@@ -427,7 +427,7 @@ _drm2_randr_create(void)
                          s->config.geom.w, s->config.geom.h);
                }
 
-             outrot = ecore_drm2_output_rotation_get(output);
+             outrot = ecore_drm2_display_rotation_get(disp);
              if (outrot & ECORE_DRM2_ROTATION_NORMAL)
                s->config.rotation = 0;
              else if (outrot & ECORE_DRM2_ROTATION_90)
@@ -450,7 +450,7 @@ _drm2_randr_create(void)
              s->info.can_rot_270 = EINA_FALSE;
 
              rotations =
-               ecore_drm2_output_supported_rotations_get(output);
+               ecore_drm2_display_supported_rotations_get(disp);
              if (!(rotations &
                    (ECORE_DRM2_ROTATION_NORMAL | ECORE_DRM2_ROTATION_90 |
                     ECORE_DRM2_ROTATION_180 | ECORE_DRM2_ROTATION_270)))
@@ -486,23 +486,23 @@ _drm2_randr_create(void)
    return r;
 }
 
-static Ecore_Drm2_Output *
-_drm2_output_find(const Eina_List *outputs, const char *oname)
+static Ecore_Drm2_Display *
+_drm2_display_find(const Eina_List *displays, const char *oname)
 {
    const Eina_List *l;
-   Ecore_Drm2_Output *output = NULL;
+   Ecore_Drm2_Display *disp = NULL;
 
-   EINA_LIST_FOREACH(outputs, l, output)
+   EINA_LIST_FOREACH(displays, l, disp)
      {
         char *name;
 
-        name = ecore_drm2_output_name_get(output);
+        name = ecore_drm2_display_name_get(disp);
         if (!name) continue;
 
         if (!strcmp(name, oname))
           {
              free(name);
-             return output;
+             return disp;
           }
 
         free(name);
@@ -511,19 +511,19 @@ _drm2_output_find(const Eina_List *outputs, const char *oname)
    return NULL;
 }
 
-static Ecore_Drm2_Output_Mode *
-_drm2_mode_screen_find(E_Randr2_Screen *s, Ecore_Drm2_Output *output)
+static Ecore_Drm2_Display_Mode *
+_drm2_mode_screen_find(E_Randr2_Screen *s, Ecore_Drm2_Display *disp)
 {
-   Ecore_Drm2_Output_Mode *mode, *m = NULL;
+   Ecore_Drm2_Display_Mode *mode, *m = NULL;
    const Eina_List *l;
    int diff, distance = 0x7fffffff;
 
-   EINA_LIST_FOREACH(ecore_drm2_output_modes_get(output), l, mode)
+   EINA_LIST_FOREACH(ecore_drm2_display_modes_get(disp), l, mode)
      {
         int width, height;
         unsigned int refresh;
 
-        ecore_drm2_output_mode_info_get(mode, &width, &height, &refresh, NULL);
+        ecore_drm2_display_mode_info_get(mode, &width, &height, &refresh, NULL);
 
         diff = (100 * abs(s->config.mode.w - width)) +
           (100 * abs(s->config.mode.h - height)) +
@@ -539,27 +539,27 @@ _drm2_mode_screen_find(E_Randr2_Screen *s, Ecore_Drm2_Output *output)
 }
 
 static void
-_drm2_output_primary_set(const Eina_List *outputs, Ecore_Drm2_Output *output)
+_drm2_display_primary_set(const Eina_List *outputs, Ecore_Drm2_Display *disp)
 {
    const Eina_List *l;
-   Ecore_Drm2_Output *o;
+   Ecore_Drm2_Display *d;
 
-   EINA_LIST_FOREACH(outputs, l, o)
+   EINA_LIST_FOREACH(displays, l, d)
      {
-        if (o == output)
-          ecore_drm2_output_primary_set(output, EINA_TRUE);
+        if (d == disp)
+          ecore_drm2_display_primary_set(disp, EINA_TRUE);
         else
-          ecore_drm2_output_primary_set(output, EINA_FALSE);
+          ecore_drm2_display_primary_set(disp, EINA_FALSE);
      }
 }
 
 static Eina_Bool
-_drm2_rotation_exists(Ecore_Drm2_Output *output, int rot)
+_drm2_rotation_exists(Ecore_Drm2_Display *disp, int rot)
 {
    int rots;
 
-   rots = ecore_drm2_output_supported_rotations_get(output);
-   printf("RRR: DRM2 ..... rots for %p rots=%x input=%x\n", output, rots, rot);
+   rots = ecore_drm2_display_supported_rotations_get(disp);
+   printf("RRR: DRM2 ..... rots for %p rots=%x input=%x\n", disp, rots, rot);
    // hack for ... broken drivers that don't say anything about rotations
    if (!(rots &
          (ECORE_DRM2_ROTATION_NORMAL | ECORE_DRM2_ROTATION_90 |
@@ -585,7 +585,7 @@ static void
 _drm2_randr_apply(void)
 {
    Ecore_Drm2_Device *dev;
-   Ecore_Drm2_Output **outconf, *out;
+   Ecore_Drm2_Display **outconf, *out;
    int nw = 0, nh = 0;
    int minw, minh, maxw, maxh;
    int rot;
@@ -606,7 +606,7 @@ _drm2_randr_apply(void)
    printf("RRR: size range: %ix%i -> %ix%i\n", minw, minh, maxw, maxh);
 
    crtcs = ecore_drm2_device_crtcs_get(dev, &num_crtcs);
-   outputs = ecore_drm2_outputs_get(dev);
+   outputs = ecore_drm2_device_displays_get(dev);
 
    if ((crtcs) && (outputs))
      {
@@ -614,9 +614,9 @@ _drm2_randr_apply(void)
         Eina_List *l;
         int top_priority = 0, i;
 
-        outconf = alloca(num_crtcs * sizeof(Ecore_Drm2_Output *));
+        outconf = alloca(num_crtcs * sizeof(Ecore_Drm2_Display *));
         screenconf = alloca(num_crtcs * sizeof(E_Randr2_Screen *));
-        memset(outconf, 0, num_crtcs * sizeof(Ecore_Drm2_Output *));
+        memset(outconf, 0, num_crtcs * sizeof(Ecore_Drm2_Display *));
         memset(screenconf, 0, num_crtcs * sizeof(E_Randr2_Screen *));
 
         /* decide which outputs gets which crtcs */
@@ -630,7 +630,7 @@ _drm2_randr_apply(void)
                   continue;
                }
 
-             out = _drm2_output_find(outputs, s->info.name);
+             out = _drm2_display_find(outputs, s->info.name);
              if (out)
                {
                   printf("RRR:   enabled: %i\n", s->config.enabled);
@@ -644,7 +644,7 @@ _drm2_randr_apply(void)
                             if (!outconf[i])
                               {
                                  printf("RRR:   crtc slot empty: %i\n", i);
-                                 if (ecore_drm2_output_possible_crtc_get(out, crtcs[i]))
+                                 if (ecore_drm2_display_possible_crtc_get(out, crtcs[i]))
                                    {
                                       printf("RRR:     output is possible...\n");
                                       if (_drm2_rotation_exists(out, s->config.rotation))
@@ -671,7 +671,7 @@ _drm2_randr_apply(void)
                {
                   if (outconf[i])
                     {
-                       Ecore_Drm2_Output_Mode *mode;
+                       Ecore_Drm2_Display_Mode *mode;
                        Ecore_Drm2_Rotation orient = ECORE_DRM2_ROTATION_NORMAL;
                        Ecore_Drm2_Relative_Mode relmode;
 
@@ -693,12 +693,12 @@ _drm2_randr_apply(void)
                               screenconf[i]->config.geom.h,
                               orient, mode, outconf[i]);
 
-                       ecore_drm2_output_mode_set(outconf[i], mode,
-                                                  screenconf[i]->config.geom.x,
-                                                  screenconf[i]->config.geom.y);
+                       ecore_drm2_display_mode_set(outconf[i], mode,
+                                                   screenconf[i]->config.geom.x,
+                                                   screenconf[i]->config.geom.y);
 
-                       ecore_drm2_output_relative_to_set(outconf[i],
-                                                         screenconf[i]->config.relative.to);
+                       ecore_drm2_display_relative_to_set(outconf[i],
+                                                          screenconf[i]->config.relative.to);
                        relmode = ECORE_DRM2_RELATIVE_MODE_NONE;
                        switch (screenconf[i]->config.relative.mode)
                          {
@@ -726,18 +726,18 @@ _drm2_randr_apply(void)
                           default:
                             break;
                          }
-                       ecore_drm2_output_relative_mode_set(outconf[i], relmode);
+                       ecore_drm2_display_relative_mode_set(outconf[i], relmode);
 
                        if (screenconf[i]->config.priority == top_priority)
                          {
-                            _drm2_output_primary_set(outputs, outconf[i]);
+                            _drm2_display_primary_set(outputs, outconf[i]);
                             top_priority = -1;
                          }
 
-                       ecore_drm2_output_enabled_set(outconf[i],
-                                                     screenconf[i]->config.enabled);
+                       ecore_drm2_display_enabled_set(outconf[i],
+                                                      screenconf[i]->config.enabled);
 
-                       ecore_drm2_output_rotation_set(outconf[i], orient);
+                       ecore_drm2_display_rotation_set(outconf[i], orient);
 
                        ecore_evas_rotation_with_resize_set(e_comp->ee,
                                                            screenconf[i]->config.rotation);
@@ -786,28 +786,28 @@ _drm2_dpms(int set)
    E_Randr2_Screen *s;
    Ecore_Drm2_Device *dev;
    const Eina_List *outputs, *ll;
-   Ecore_Drm2_Output *output;
+   Ecore_Drm2_Display *disp;
 
    dev = ecore_evas_data_get(e_comp->ee, "device");
    if (!dev) return;
 
-   outputs = ecore_drm2_outputs_get(dev);
+   outputs = ecore_drm2_device_displays_get(dev);
    if (!outputs) return;
 
    EINA_LIST_FOREACH(e_randr2->screens, l, s)
      {
-        EINA_LIST_FOREACH(outputs, ll, output)
+        EINA_LIST_FOREACH(outputs, ll, disp)
           {
              char *name;
 
-             name = ecore_drm2_output_name_get(output);
+             name = ecore_drm2_display_name_get(disp);
              if (!name) continue;
 
              if (!strcmp(name, s->info.name))
                {
                   if ((!s->config.configured) || s->config.enabled)
-                    if (ecore_drm2_output_dpms_get(output) != set)
-                      ecore_drm2_output_dpms_set(output, set);
+                    if (ecore_drm2_display_dpms_get(disp) != set)
+                      ecore_drm2_display_dpms_set(disp, set);
                }
 
              free(name);
