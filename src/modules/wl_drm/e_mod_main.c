@@ -741,6 +741,8 @@ _drm2_randr_apply(void)
 
                        ecore_evas_rotation_with_resize_set(e_comp->ee,
                                                            screenconf[i]->config.rotation);
+
+                       ecore_drm2_display_changes_apply(outconf[i]);
                     }
                   else
                     {
