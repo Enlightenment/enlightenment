@@ -750,9 +750,9 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
           edje_object_part_swallow(cw->shobj, "e.swallow.content", cw->obj);
      }
    if ((cw->input_objs) || ((cw->ec) && (cw->ec->shaped)))
-     evas_object_pass_events_set(cw->obj, 1);
-   else
      evas_object_pass_events_set(cw->obj, 0);
+   else
+     evas_object_pass_events_set(cw->obj, 1);
 #ifdef BORDER_ZOOMAPS
    if (cw->zoomobj) e_zoomap_child_edje_solid_setup(cw->zoomobj);
 #endif
@@ -1907,7 +1907,7 @@ _e_comp_object_frame_recalc(E_Comp_Object *cw)
         if (cw->obj) edje_object_part_swallow(cw->frame_object, "e.swallow.client", cw->obj);
         evas_object_resize(cw->frame_object, w, h);
         if (!cw->input_objs)
-          evas_object_pass_events_set(cw->obj, 0);
+          evas_object_pass_events_set(cw->obj, 1);
      }
    else
      {
