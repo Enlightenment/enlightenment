@@ -376,9 +376,9 @@ _e_powersave_event_update_free(void *data EINA_UNUSED, void *event)
           e_sys_action_do(E_SYS_HIBERNATE, NULL);
         else if (powersave_deferred_suspend)
           e_sys_action_do(E_SYS_SUSPEND_MODE, NULL);
+        powersave_deferred_hibernate = EINA_FALSE;
+        powersave_deferred_suspend = EINA_FALSE;
      }
-   powersave_deferred_hibernate = EINA_FALSE;
-   powersave_deferred_suspend = EINA_FALSE;
 }
 
 static void
