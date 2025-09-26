@@ -136,12 +136,12 @@ _cb_sys_acpi_event(void *data EINA_UNUSED, const char *params)
         {
         case E_ACPI_TYPE_LID:
           acpi_event->status = _e_acpi_lid_status_get(device, bus);
-          printf("RRR: acpi event @%1.8f\n", ecore_time_get());
+          printf("PWSV: acpi event @%1.8f\n", ecore_time_get());
           /* no change in lid state */
           if (lid_is_closed == (acpi_event->status == E_ACPI_LID_CLOSED))
             break;
           lid_is_closed = (acpi_event->status == E_ACPI_LID_CLOSED);
-          printf("RRR: lid event for lid %i\n", lid_is_closed);
+          printf("PWSV: lid event for lid %i\n", lid_is_closed);
           if (!e_randr2_cfg->ignore_acpi_events)
             e_randr2_screen_refresh_queue(EINA_TRUE);
           if (!lid_is_closed) e_powersave_defer_cancel();

@@ -2561,8 +2561,10 @@ _should_suspend_if_plugged_in(void)
 
 ACT_FN_GO(suspend_smart, EINA_UNUSED)
 {
+   printf("PWSV: swmart suspend\n");
    if (!_have_lid_and_external_screens_on())
      {
+        printf("PWSV: no lid and ext screens\n");
         if (_should_suspend_if_plugged_in())
           e_sys_action_do(E_SYS_SUSPEND_MODE, NULL);
         else

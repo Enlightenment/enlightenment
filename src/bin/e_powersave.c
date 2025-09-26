@@ -255,18 +255,21 @@ e_powersave_sleeper_sleep(E_Powersave_Sleeper *sleeper, int poll_interval, Eina_
 E_API void
 e_powersave_defer_suspend(void)
 {
+   printf("PWSV: defer suspend on %1.3f\n", ecore_time_get());
    powersave_deferred_suspend = EINA_TRUE;
 }
 
 E_API void
 e_powersave_defer_hibernate(void)
 {
+   printf("PWSV: defer hibernate on\n");
    powersave_deferred_hibernate = EINA_TRUE;
 }
 
 E_API void
 e_powersave_defer_cancel(void)
 {
+   printf("PWSV: defer suspend/hibernate off %1.3f\n", ecore_time_get());
    powersave_deferred_suspend = EINA_FALSE;
    powersave_deferred_hibernate = EINA_FALSE;
 }
@@ -365,10 +368,10 @@ _e_powersave_event_update_free(void *data EINA_UNUSED, void *event)
    else mode = powersave_mode;
    free(event);
 
-   printf("PWSAVE: update free...\n");
+   printf("PWSV: update free... %i\n", mode);
    if (mode > E_POWERSAVE_MODE_LOW)
      {
-        printf("PWSAVE: low pwr hib=%i sus=%i\n", powersave_deferred_hibernate, powersave_deferred_suspend);
+        printf("PWSV: low pwr hib=%i sus=%i\n", powersave_deferred_hibernate, powersave_deferred_suspend);
         if (powersave_deferred_hibernate)
           e_sys_action_do(E_SYS_HIBERNATE, NULL);
         else if (powersave_deferred_suspend)
@@ -383,7 +386,7 @@ _e_powersave_event_change_send(E_Powersave_Mode mode)
 {
    E_Event_Powersave_Update *ev;
 
-   printf("PWSAVE TO %i/%i\n", (int)mode, (int)E_POWERSAVE_MODE_FREEZE);
+   printf("PWSV: PWSV TO %i/%i\n", (int)mode, (int)E_POWERSAVE_MODE_FREEZE);
    ev = E_NEW(E_Event_Powersave_Update, 1);
    ev->mode = mode;
    ecore_event_add(E_EVENT_POWERSAVE_UPDATE, ev, _e_powersave_event_update_free, NULL);
