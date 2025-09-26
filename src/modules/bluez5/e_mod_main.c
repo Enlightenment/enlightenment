@@ -198,11 +198,14 @@ ebluez5_popups_show(void)
 static void
 _cb_rfkill_unblock(void *datam EINA_UNUSED, const char *params)
 {
+   char buf[64] = {0};
    int ret_code = 0;
 
-   if (sscanf(params, "%i %*s", &ret_code) != 1) return;
+   if (sscanf(params, "%i %63s", &ret_code, buf) != 2) return;
 
    if (ret_code == 0) return;
+
+   printf("BZ: e_systtem rfkill-unblock err for [%s] ret=%i\n", buf, ret_code);
 
    e_util_dialog_show
      (_("Bluetooth rfkill run Error"),
