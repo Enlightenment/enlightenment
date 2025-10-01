@@ -368,6 +368,8 @@ Obj *
 bz_obj_add(const char *path)
 {
    Obj *o = calloc(1, sizeof(Obj));
+
+   if (!o) return NULL;
    o->ref = 1;
    o->path = eina_stringshare_add(path);
    o->obj = eldbus_object_get(bz_conn, "org.bluez", o->path);
@@ -928,11 +930,11 @@ bz_obj_agent_request(Obj *o, const char *req, void (*fn) (Eldbus_Message *msg, c
 static void
 cb_obj_add(void *data EINA_UNUSED, const Eldbus_Message *msg)
 {
+   Obj* o;
    const char *path = NULL;
 
    if (!eldbus_message_arguments_get(msg, "o", &path)) return;
    printf("BZ: cb_obj_add [%s]\n", path);
-   Obj* o;
    if ((o = bz_obj_find(path)))
      {
        _reload_device_props(o);
@@ -941,15 +943,21 @@ cb_obj_add(void *data EINA_UNUSED, const Eldbus_Message *msg)
    bz_obj_add(path);
 }
 
+static unsigned int _obj_del_inside = 0;
+
 static void
 cb_obj_del_prop(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
 {
   Obj *o = data;
+
+  // sometimes we get this called not from cb_obj_del()
+  if (_obj_del_inside == 0) return;
   if (eldbus_message_error_get(msg, NULL, NULL))
     { // prop get error - obj really gone
+      printf("BZ: cb_obj_del_prop for ... %p\n", o);
       bz_obj_ref(o);
       if (o->fn_del) o->fn_del(o);
-      bz_obj_unref(o);
+      printf("BZ: cb_obj_del_prop %p unref1\n", o);
       bz_obj_unref(o);
       printf("BZ: cb_obj_del_prop %p really is gone\n", o);
       return;
@@ -970,7 +978,14 @@ cb_obj_del(void *data EINA_UNUSED, const Eldbus_Message *msg)
    printf("BZ: cb_obj_del [%s] found = %p\n", path, o);
    if (o)
      { // check if a prop fetch errs or is ok to check its really gone
+        printf("BZ: cb_obj_del [%s] %p ref=%i\n", path, o, o->ref);
+        _obj_del_inside++;
+        bz_obj_ref(o);
         eldbus_proxy_property_get_all(o->proxy, cb_obj_del_prop, o);
+        bz_obj_unref(o);
+        bz_obj_unref(o); // we want to delete this obj. the above kept it alive
+        _obj_del_inside--;
+        printf("BZ: cb_obj_del [%s] %p DONE!\n", path, o);
      }
 }
 
@@ -986,6 +1001,7 @@ cb_getobj(void *data EINA_UNUSED, const Eldbus_Message *msg,
      {
         while (eldbus_message_iter_get_and_next(prop, 'e', &dict))
           {
+             Obj *o;
              const char *path;
 
              path = NULL;
@@ -994,7 +1010,14 @@ cb_getobj(void *data EINA_UNUSED, const Eldbus_Message *msg,
                   return;
                }
              printf("BZ: cb_getobj [%s]\n", path);
-             bz_obj_add(path);
+             if ((o = bz_obj_find(path)))
+               {
+                  _reload_device_props(o);
+               }
+             else
+               {
+                  bz_obj_add(path);
+               }
           }
      }
 }
@@ -1009,6 +1032,7 @@ _obj_hash_free(Obj *o)
 void
 bz_obj_init(void)
 {
+   printf("BZ: bz_obj_init\n");
    obj_table = eina_hash_string_superfast_new((void *)_obj_hash_free);
 
    objman_obj = eldbus_object_get(bz_conn, "org.bluez", "/");
@@ -1024,6 +1048,7 @@ bz_obj_init(void)
 void
 bz_obj_shutdown(void)
 {
+   printf("BZ: bz_obj_shutdown\n");
    eina_hash_free(obj_table);
    obj_table = NULL;
    if (pend_getobj)
@@ -1051,6 +1076,7 @@ bz_obj_shutdown(void)
         eldbus_object_unref(objman_obj);
         objman_obj = NULL;
      }
+   printf("BZ: bz_obj_shutdown done\n");
 }
 
 void
