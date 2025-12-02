@@ -12,9 +12,9 @@ static const char      *_gc_label(const E_Gadcon_Client_Class *client_class);
 static Evas_Object     *_gc_icon(const E_Gadcon_Client_Class *client_class, Evas *evas);
 static const char      *_gc_id_new(const E_Gadcon_Client_Class *client_class);
 
-Eina_List *device_batteries;
-Eina_List *device_ac_adapters;
-double init_time;
+Eina_List *device_batteries = NULL;
+Eina_List *device_ac_adapters = NULL;
+double init_time = 0.0;
 
 /* and actually define the gadcon class that this module provides (just 1) */
 static const E_Gadcon_Client_Class _gadcon_class =
