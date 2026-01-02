@@ -72,6 +72,7 @@ mods = [
 ### XXX: disabled for now
 #  'wl_fb'
   'pants',
+  'clipboard',
 ]
 
 foreach m: mods

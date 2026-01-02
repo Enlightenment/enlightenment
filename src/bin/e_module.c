@@ -787,6 +787,7 @@ _e_module_whitelist_check(void)
          "xwayland",
          "procstats",
          "pants",
+         "clipboard",
       NULL   // end marker
    };
 
