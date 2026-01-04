@@ -88,12 +88,12 @@ _clip_config_new(E_Module *m)
     clip_cfg->trim_ws        = CF_DEFAULT_WS;
     clip_cfg->trim_nl        = CF_DEFAULT_NL;
   }
+  E_CONFIG_LIMIT(clip_cfg->hist_items, HIST_MIN, HIST_MAX);
+  E_CONFIG_LIMIT(clip_cfg->label_length, LABEL_MIN, LABEL_MAX);
   E_CONFIG_LIMIT(clip_cfg->clip_copy, 0, 1);
   E_CONFIG_LIMIT(clip_cfg->clip_select, 0, 1);
   E_CONFIG_LIMIT(clip_cfg->persistence, 0, 1);
   E_CONFIG_LIMIT(clip_cfg->hist_reverse, 0, 1);
-  E_CONFIG_LIMIT(clip_cfg->hist_items, HIST_MIN, HIST_MAX);
-  E_CONFIG_LIMIT(clip_cfg->label_length, LABEL_MIN, LABEL_MAX);
   E_CONFIG_LIMIT(clip_cfg->confirm_clear, 0, 1);
   E_CONFIG_LIMIT(clip_cfg->ignore_ws, 0, 1);
   E_CONFIG_LIMIT(clip_cfg->ignore_ws_copy, 0, 1);
@@ -635,14 +635,14 @@ e_modapi_init (E_Module *m)
 #define T Config
 #define D conf_edd
   E_CONFIG_LIST(D, T, items, conf_item_edd);
-  E_CONFIG_VAL(D, T, version, INT);
+  E_CONFIG_VAL(D, T, version, UINT);
+  E_CONFIG_VAL(D, T, label_length, UINT);
+  E_CONFIG_VAL(D, T, hist_items, INT);
   E_CONFIG_VAL(D, T, clip_copy, INT);
   E_CONFIG_VAL(D, T, clip_select, INT);
   E_CONFIG_VAL(D, T, persistence, INT);
   E_CONFIG_VAL(D, T, hist_reverse, INT);
-  E_CONFIG_VAL(D, T, hist_items, DOUBLE);
   E_CONFIG_VAL(D, T, confirm_clear, INT);
-  E_CONFIG_VAL(D, T, label_length, DOUBLE);
   E_CONFIG_VAL(D, T, ignore_ws, INT);
   E_CONFIG_VAL(D, T, ignore_ws_copy, INT);
   E_CONFIG_VAL(D, T, trim_ws, INT);
@@ -714,12 +714,12 @@ e_modapi_init (E_Module *m)
                                       clip_inst);
   E_LIST_HANDLER_APPEND(clip_inst->handle,
                         ECORE_EVENT_MOUSE_BUTTON_UP,
-                        (Ecore_Event_Handler_Cb)_clipboard_cb_event_selection,
+                        _clipboard_cb_event_selection,
                         clip_inst);
   /* Does not seem to fire */
   E_LIST_HANDLER_APPEND(clip_inst->handle,
                         ELM_CNP_EVENT_SELECTION_CHANGED,
-                        (Ecore_Event_Handler_Cb)_clipboard_cb_event_selection,
+                        _clipboard_cb_event_selection,
                         clip_inst);
 
   /* Tell any gadget containers (shelves, etc) that we provide a module */

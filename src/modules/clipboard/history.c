@@ -1,39 +1,24 @@
 #include "history.h"
 
 #define CLIPBOARD_MOD_NAME "clipboard"
-#define DATA_DIR    CLIPBOARD_MOD_NAME
-#define HISTORY_NAME "history"
-#define HISTORY_VERSION     1 /* must be < 9  */
-
-#if 0
-  #define PATH_MAX 4096
-  /** PATH_MAX is defined in <linux/limits.h>
-   *     While this define is used through out enlightenment source code
-   *     its use is perhaps a bad idea.
-   *
-   * see http://insanecoding.blogspot.com/2007/11/pathmax-simply-isnt.html
-   *    "Since a path can be longer than PATH_MAX, the define is useless,
-   *     writing code based off of it is wrong, and the functions that
-   *     require it are broken."
-   *
-   * Regardless in the e-dev tradition we are using it here.
-   */
-#endif
+#define DATA_DIR           CLIPBOARD_MOD_NAME
+#define HISTORY_NAME       "history"
+#define HISTORY_VERSION    1 /* must be < 9  */
 
 /* convenience macros to compress code */
 #define CALLOC_DIGIT_STR(str, n)                     \
 do {                                                 \
   long _digits_ = 1;                                 \
-  long _tempn_ = n;                                  \
+  long _tempn_ = n + 9;                              \
   while (_tempn_ /= 10) _digits_++;                  \
-  str = calloc(_digits_ + 1, sizeof(long));          \
+  str = calloc(_digits_ + 1, sizeof(char));          \
   if (!str) {                                        \
     /* This is bad, leave it to calling function */  \
     CRI("ERROR: Memory allocation Failed!!");        \
     eet_close(history_file);                         \
     return EET_ERROR_OUT_OF_MEMORY;                  \
    }                                                 \
-   snprintf(str, _digits_, "%d", 0);                  \
+   snprintf(str, _digits_ + 1, "%d", 0);             \
  } while(0)
 
 #define PATH_MAX_ERR                                              \
@@ -89,7 +74,7 @@ _set_data_path(char *path)
      */
     temp_str = getenv("XDG_DATA_HOME");
     if (temp_str && temp_str[0] == '/' ) {
-      const int len = snprintf(NULL, 0, "%s", temp_str) 
+      const int len = snprintf(NULL, 0, "%s", temp_str)
                               + 1 + (temp_str[strlen(temp_str)] != '/');
       if (len <= PATH_MAX) {
         snprintf(path, strlen(temp_str)+1, "%s", temp_str);
@@ -304,7 +289,7 @@ save_history(Eina_List *items)
       EINA_LIST_FOREACH(items, l, cd) {
         snprintf(str, str_len, "%d", i);
         eet_write(history_file, str,  cd->content, strlen(cd->content) + 1, 0);
-	i++;
+        i++;
       }
       /* and wrap it up */
       eet_write(history_file, "MAX_ITEMS",  str, strlen(str) + 1, 0);

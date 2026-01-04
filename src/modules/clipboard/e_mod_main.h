@@ -6,13 +6,6 @@
 #include "history.h"
 #include "utility.h"
 
-#ifdef ENABLE_NLS
-# include <libintl.h>
-# define _(x) gettext(x)
-#else
-# define _(x) (x)
-#endif
-
 /* Key Board Bindings action names */
 #define ACT_FLOAT   _("Show History")
 #define ACT_CONFIG  _("Show Settings")

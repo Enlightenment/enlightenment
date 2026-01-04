@@ -7,15 +7,15 @@ struct _E_Config_Dialog_Data
 
   /* Store some initial states of clipboard configuration we will need    */
 
-  double init_label_length;  /* Initial label length.                     */
+  unsigned int init_label_length; /* Initial label length.                     */
   /* Actual options user can change */
   int   clip_copy;      /* Clipboard to use                                */
   int   clip_select;    /* Clipboard to use                                */
   int   persistence;    /* History file persistance                        */
   int   hist_reverse;   /* Order to display History                        */
-  double hist_items;    /* Number of history items to store                */
+  double hist_items;     /* Number of history items to store                */
   int   confirm_clear;  /* Display history confirmation dialog on deletion */
-  double label_length;  /* Number of characters of item to display         */
+  double label_length;   /* Number of characters of item to display         */
   int   ignore_ws;      /* Should we ignore White space in label           */
   int   ignore_ws_copy; /* Should we not copy White space only             */
   int   trim_ws;        /* Should we trim White space from selection       */
@@ -71,16 +71,16 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata
   clip_cfg->clip_select    = cfdata->clip_select;
   clip_cfg->persistence    = cfdata->persistence;
   clip_cfg->hist_reverse   = cfdata->hist_reverse;
-  
+
   /* Do we need to Truncate our history list? */
-  if (clip_cfg->hist_items != cfdata->hist_items)
+  if (clip_cfg->hist_items != (unsigned int)cfdata->hist_items)
     truncate_history(cfdata-> hist_items);
-    
+
   clip_cfg->hist_items     = cfdata->hist_items;
   clip_cfg->confirm_clear  = cfdata->confirm_clear;
-  
+
   /* Has clipboard label name length changed ? */
-  if (cfdata->label_length != cfdata->init_label_length) {
+  if ((unsigned int)cfdata->label_length != cfdata->init_label_length) {
     clip_cfg->label_length_changed = EINA_TRUE;
     cfdata->init_label_length = cfdata->label_length;
   }
@@ -113,7 +113,7 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cf
   e_widget_framelist_object_append(of, ob);
 
   e_widget_list_object_append(o, of, 1, 0, 0.5);
-  
+
   /* History Config Section       */
   of = e_widget_framelist_add(evas, _("History"), 0);
   ob = e_widget_check_add(evas, _(" Save History"), &(cfdata->persistence));
@@ -121,7 +121,7 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cf
 
   ob = e_widget_check_add(evas, _(" Reverse Order"), &(cfdata->hist_reverse));
   e_widget_framelist_object_append(of, ob);
-  
+
   ob = e_widget_check_add(evas, _(" Confirm before Clearing"), &(cfdata->confirm_clear));
   e_widget_framelist_object_append(of, ob);
 
@@ -131,24 +131,24 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cf
   e_widget_framelist_object_append(of, ob);
 
   e_widget_list_object_append(o, of, 1, 0, 0.5);
-  
+
   /* Label Config Section       */
   of = e_widget_framelist_add(evas, _("Labels"), 0);
   ob = e_widget_check_add(evas, _(" Ignore Whitespace"), &(cfdata->ignore_ws));
   e_widget_framelist_object_append(of, ob);
-  
+
   ob = e_widget_label_add(evas, _(" Label Length"));
   e_widget_framelist_object_append(of, ob);
   ob = e_widget_slider_add(evas, 1, 0, "%2.0f", LABEL_MIN, LABEL_MAX, 1.0, 0, &(cfdata->label_length), NULL, 40);
   e_widget_framelist_object_append(of, ob);
-  
+
   e_widget_list_object_append(o, of, 1, 0, 0.5);
-  
+
   /* Content Config Section */
   of = e_widget_framelist_add(evas, _("Content"), 0);
   ob = e_widget_check_add(evas, _(" Ignore Whitespace"), &(cfdata->ignore_ws_copy));
   e_widget_framelist_object_append(of, ob);
-  
+
   ob = e_widget_check_add(evas, _(" Trim Whitespace"), &(cfdata->trim_ws));
   e_widget_framelist_object_append(of, ob);
 
@@ -156,7 +156,7 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cf
   e_widget_framelist_object_append(of, ob);
 
   e_widget_list_object_append(o, of, 1, 0, 0.5);
-  
+
   e_dialog_resizable_set(cfd->dia, EINA_TRUE);
   return o;
 }
@@ -190,9 +190,9 @@ _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
   if (clip_cfg->clip_select    != cfdata->clip_select) return 1;
   if (clip_cfg->persistence    != cfdata->persistence) return 1;
   if (clip_cfg->hist_reverse   != cfdata->hist_reverse) return 1;
-  if (clip_cfg->hist_items     != cfdata->hist_items) return 1;
-  if (clip_cfg->confirm_clear  != cfdata->confirm_clear) return 1;  
-  if (clip_cfg->label_length   != cfdata->label_length) return 1;
+  if (clip_cfg->hist_items     != (unsigned int)cfdata->hist_items) return 1;
+  if (clip_cfg->confirm_clear  != cfdata->confirm_clear) return 1;
+  if (clip_cfg->label_length   != (unsigned int)cfdata->label_length) return 1;
   if (clip_cfg->ignore_ws      != cfdata->ignore_ws) return 1;
   if (clip_cfg->ignore_ws_copy != cfdata->ignore_ws_copy) return 1;
   if (clip_cfg->trim_ws        != cfdata->trim_ws) return 1;
