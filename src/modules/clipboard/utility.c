@@ -12,47 +12,50 @@ Eina_Bool
 set_clip_content(char **content, char* text, int mode)
 {
   Eina_Bool ret = EINA_TRUE;
-  char *temp;
-  char *trim;
-  /* Sanity check */
-  if (!text) {
-    WRN("ERROR: Text is NULL\n");
-    text = "";
-  }
-  if (content) {
-    switch (mode) {
-      case 0:
-        /* Don't trim */
-        temp = strdup(text);
-        break;
-      case 1:
-        /* Trim new lines */
-        trim = strip_whitespace(text, TRIM_NEWLINES);
-        temp = strdup(trim);
-        break;
-      case 2:
-        /* Trim all white Space
-         *  since white space includes new lines
-         *  drop thru here */
-      case 3:
-        /* Trim white space and new lines */
-        trim = strip_whitespace(text, TRIM_SPACES);
-        temp = strdup(trim);
-        break;
-      default :
-        /* Error Don't trim */
-        WRN("ERROR: Invalid strip_mode %d\n", mode);
-        temp = strdup(text);
-        break;
+  char *temp, *trim;
+
+  if (!text) // Sanity check
+    {
+      WRN("ERROR: Text is NULL\n");
+      text = "";
     }
-    if (!temp) {
-      /* This is bad, leave it to calling function */
-      CRI("ERROR: Memory allocation Failed!!");
-      ret = EINA_FALSE;
+  if (content)
+    {
+      switch (mode)
+        {
+         case 0:
+          /* Don't trim */
+          temp = strdup(text);
+          break;
+         case 1:
+          /* Trim new lines */
+          trim = strip_whitespace(text, TRIM_NEWLINES);
+          temp = strdup(trim);
+          break;
+         case 2:
+          /* Trim all white Space
+           *  since white space includes new lines
+           *  drop thru here */
+         case 3:
+          /* Trim white space and new lines */
+          trim = strip_whitespace(text, TRIM_SPACES);
+          temp = strdup(trim);
+          break;
+         default :
+          /* Error Don't trim */
+          WRN("ERROR: Invalid strip_mode %d\n", mode);
+          temp = strdup(text);
+          break;
+        }
+      if (!temp)
+        {
+          /* This is bad, leave it to calling function */
+          CRI("ERROR: Memory allocation Failed!!");
+          ret = EINA_FALSE;
+        }
+      *content = temp;
     }
-    *content = temp;
-  } else
-    ERR("Error: Clip content pointer is Null!!");
+  else ERR("Error: Clip content pointer is Null!!");
   return ret;
 }
 
@@ -62,24 +65,24 @@ set_clip_name(char **name, char * text, int mode, int n)
   Eina_Bool ret = EINA_TRUE;
 
   /* Sanity check */
-  if (!text) {
-    WRN("ERROR: Text is NULL\n");
-    text = "";
-  }
+  if (!text)
+    {
+      WRN("ERROR: Text is NULL\n");
+      text = "";
+    }
   /* to be continued latter */
-  if (name)
-    *name = _sanitize_ln(text, n, mode);
-  else {
-    ERR("Error: Clip name pointer is Null!!");
-    return EINA_FALSE;
-  }
-
-  if (!*name) {
+  if (name) *name = _sanitize_ln(text, n, mode);
+  else
+    {
+      ERR("Error: Clip name pointer is Null!!");
+      return EINA_FALSE;
+    }
+  if (!*name)
+    {
       /* This is bad, leave it to calling function */
       CRI("ERROR: Memory allocation Failed!!");
       ret = EINA_FALSE;
     }
-
   return ret;
 }
 
@@ -95,34 +98,33 @@ _sanitize_ln(char *text, const unsigned int n, const int mode)
 
   if (!ret) return NULL;
 
-  if (mode)
-    text = strip_whitespace(text, TRIM_SPACES);
+  if (mode) text = strip_whitespace(text, TRIM_SPACES);
 
-  while (1) {
-    chr = *text;
-    if (chr == 0)
-      break;
-    if (chr < 32) {
-      /* is it a tab */
-      if (chr == 9){
-        // default tab
-        for (; i + 4; i++){
-          if (i == n) break;
-          *temp++ = ' ';
+  for (;;)
+    {
+      chr = *text;
+      if (chr == 0) break;
+      if (chr < 32)
+        { // is it a tab
+          if (chr == '\t')
+            {
+              // default tab
+              for (; i + 4; i++)
+                { // XXX: we inset tabs... is n big enough? we truncate? why?
+                  if (i == n) break;
+                  *temp++ = ' ';
+                }
+              text++;
+            }
+          else text++;
         }
-        text++;
-      }
-      else {
-        text++;
-      }
+      else
+        { // assume char is ok and add to temp buffer
+          *temp++ = *text++;
+          i++;
+        }
+      if (i == n) break;
     }
-    else {
-    /* assume char is ok and add to temp buffer */
-    *temp++ = *text++;
-    i++;
-    }
-    if (i == n) break;
-  }
   *temp = 0;
   return ret;
 }
@@ -151,17 +153,15 @@ strip_whitespace(char *str, int mode)
   if (mode == TRIM_SPACES) compare = isspace;
   else                     compare = isnewline;
 
-  while((*compare)(*str)) str++;
+  while ((*compare)(*str)) str++;
 
-  if(*str == 0)  // empty string ?
-    return str;
+  if (*str == 0) return str; // empty string ?
 
   end = str + strlen(str) - 1;
-  while(end > str && (*compare)(*end))
-    end--;
+  while(end > str && (*compare)(*end)) end--;
 
   // Write new null terminator
-  *(end+1) = 0;
+  *(end + 1) = 0;
 
   return str;
 }
@@ -169,14 +169,14 @@ strip_whitespace(char *str, int mode)
 int
 isnewline(const int c)
 {
-  return (c == '\n')||(c == '\r');
+  return ((c == '\n') || (c == '\r'));
 }
 
-Eina_Bool 
+Eina_Bool
 is_empty(const char *str)
 {
   EINA_SAFETY_ON_NULL_RETURN_VAL(str, EINA_TRUE);
-  
-  while (isspace((unsigned char) *str) && str++);
+
+  while (isspace((unsigned char)*str) && str++);
   return !*str;
 }

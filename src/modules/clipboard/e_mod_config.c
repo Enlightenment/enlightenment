@@ -74,16 +74,19 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata
 
   /* Do we need to Truncate our history list? */
   if (clip_cfg->hist_items != (unsigned int)cfdata->hist_items)
-    truncate_history(cfdata-> hist_items);
+    {
+      truncate_history(cfdata-> hist_items);
+    }
 
   clip_cfg->hist_items     = cfdata->hist_items;
   clip_cfg->confirm_clear  = cfdata->confirm_clear;
 
   /* Has clipboard label name length changed ? */
-  if ((unsigned int)cfdata->label_length != cfdata->init_label_length) {
-    clip_cfg->label_length_changed = EINA_TRUE;
-    cfdata->init_label_length = cfdata->label_length;
-  }
+  if ((unsigned int)cfdata->label_length != cfdata->init_label_length)
+    {
+      clip_cfg->label_length_changed = EINA_TRUE;
+      cfdata->init_label_length = cfdata->label_length;
+    }
   clip_cfg->label_length   = cfdata->label_length;
 
   clip_cfg->ignore_ws      = cfdata->ignore_ws;
@@ -168,7 +171,7 @@ config_clipboard_module(Evas_Object *parent EINA_UNUSED,
   E_Config_Dialog *cfd;
   E_Config_Dialog_View *v;
 
-  if(e_config_dialog_find("E", "settings/clipboard")) return NULL;
+  if (e_config_dialog_find("E", "settings/clipboard")) return NULL;
   v = E_NEW(E_Config_Dialog_View, 1);
   v->create_cfdata = _create_data;
   v->free_cfdata = _free_data;
@@ -177,8 +180,8 @@ config_clipboard_module(Evas_Object *parent EINA_UNUSED,
   v->basic.check_changed = _basic_check_changed;
 
   cfd = e_config_dialog_new(NULL, _("Clipboard Settings"),
-            "E", "preferences/clipboard",
-            "preferences-engine", 0, v, NULL);
+                            "E", "preferences/clipboard",
+                            "preferences-engine", 0, v, NULL);
   clip_cfg->config_dialog = cfd;
   return cfd;
 }
@@ -207,18 +210,18 @@ truncate_history(const unsigned int n)
   Eet_Error err = EET_ERROR_NONE;
 
   EINA_SAFETY_ON_NULL_RETURN_VAL(clip_inst, EET_ERROR_BAD_OBJECT);
-  if (clip_inst->items) {
-    if (eina_list_count(clip_inst->items) > n) {
-      Eina_List *last;
-      Eina_List *discard;
-      last = eina_list_nth_list(clip_inst->items, n-1);
-      clip_inst->items = eina_list_split_list(clip_inst->items, last, &discard);
-      if (discard)
-        E_FREE_LIST(discard, free_clip_data);
-      err = clip_save(clip_inst->items);
+  if (clip_inst->items)
+    {
+      if (eina_list_count(clip_inst->items) > n)
+        {
+          Eina_List *last;
+          Eina_List *discard;
+          last = eina_list_nth_list(clip_inst->items, n-1);
+          clip_inst->items = eina_list_split_list(clip_inst->items, last, &discard);
+          if (discard) E_FREE_LIST(discard, free_clip_data);
+          err = clip_save(clip_inst->items);
+        }
     }
-  }
-  else
-    err = EET_ERROR_EMPTY;
+  else err = EET_ERROR_EMPTY;
   return err;
 }
