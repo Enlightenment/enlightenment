@@ -5,21 +5,20 @@ struct _E_Config_Dialog_Data
   E_Config_Dialog *cfd;
   Evas_Object *obj;
 
-  /* Store some initial states of clipboard configuration we will need    */
-
-  unsigned int init_label_length; /* Initial label length.                     */
-  /* Actual options user can change */
-  int   clip_copy;      /* Clipboard to use                                */
-  int   clip_select;    /* Clipboard to use                                */
-  int   persistence;    /* History file persistance                        */
-  int   hist_reverse;   /* Order to display History                        */
-  double hist_items;     /* Number of history items to store                */
-  int   confirm_clear;  /* Display history confirmation dialog on deletion */
-  double label_length;   /* Number of characters of item to display         */
-  int   ignore_ws;      /* Should we ignore White space in label           */
-  int   ignore_ws_copy; /* Should we not copy White space only             */
-  int   trim_ws;        /* Should we trim White space from selection       */
-  int   trim_nl;        /* Should we trim new lines from selection         */
+  // store some initial states of clipboard configuration we will need
+  unsigned int init_label_length; // initial label length
+  // actual options user can change
+  int    clip_copy;      // clipboard to use
+  int    clip_select;    // clipboard to use
+  int    persistence;    // history file persistance
+  int    hist_reverse;   // order to display History
+  double hist_items;     // number of history items to store
+  int    confirm_clear;  // display history confirmation dialog on deletion
+  double label_length;   // number of characters of item to display
+  int    ignore_ws;      // should we ignore White space in label
+  int    ignore_ws_copy; // should we not copy White space only
+  int    trim_ws;        // should we trim White space from selection
+  int    trim_nl;        // should we trim new lines from selection
 };
 
 static int           _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata);
@@ -28,7 +27,7 @@ static int           _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Co
 static void          _fill_data(E_Config_Dialog_Data *cfdata);
 void                 _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata);
 static Evas_Object  *_basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata);
-extern Mod_Inst     *clip_inst; /* Found in e_mod_main.c */
+extern Mod_Inst     *clip_inst; // in e_mod_main.c
 
 static void *
 _create_data(E_Config_Dialog *cfd EINA_UNUSED)
@@ -72,18 +71,19 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata
   clip_cfg->persistence    = cfdata->persistence;
   clip_cfg->hist_reverse   = cfdata->hist_reverse;
 
-  /* Do we need to Truncate our history list? */
+  // do we need to Truncate our history list?
   if (clip_cfg->hist_items != (unsigned int)cfdata->hist_items)
     truncate_history(cfdata-> hist_items);
 
   clip_cfg->hist_items     = cfdata->hist_items;
   clip_cfg->confirm_clear  = cfdata->confirm_clear;
 
-  /* Has clipboard label name length changed ? */
-  if ((unsigned int)cfdata->label_length != cfdata->init_label_length) {
-    clip_cfg->label_length_changed = EINA_TRUE;
-    cfdata->init_label_length = cfdata->label_length;
-  }
+  // has clipboard label name length changed?
+  if ((unsigned int)cfdata->label_length != cfdata->init_label_length)
+    {
+      clip_cfg->label_length_changed = EINA_TRUE;
+      cfdata->init_label_length = cfdata->label_length;
+    }
   clip_cfg->label_length   = cfdata->label_length;
 
   clip_cfg->ignore_ws      = cfdata->ignore_ws;
@@ -91,7 +91,7 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata
   clip_cfg->trim_ws        = cfdata->trim_ws;
   clip_cfg->trim_nl        = cfdata->trim_nl;
 
-  /* Now save configuration */
+  // now save configuration
   e_config_save_queue();
   return 1;
 }
@@ -104,7 +104,7 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cf
   Evas_Object *of;
 
   o = e_widget_list_add(evas, 0, 0);
-  /* Clipboard Config Section     */
+  // clipboard config section
   of = e_widget_framelist_add(evas, _("Clipboards"), 0);
   ob = e_widget_check_add(evas, _(" Use Copy (Ctrl-C)"), &(cfdata->clip_copy));
   e_widget_framelist_object_append(of, ob);
@@ -114,7 +114,7 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cf
 
   e_widget_list_object_append(o, of, 1, 0, 0.5);
 
-  /* History Config Section       */
+  // history config section
   of = e_widget_framelist_add(evas, _("History"), 0);
   ob = e_widget_check_add(evas, _(" Save History"), &(cfdata->persistence));
   e_widget_framelist_object_append(of, ob);
@@ -132,7 +132,7 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cf
 
   e_widget_list_object_append(o, of, 1, 0, 0.5);
 
-  /* Label Config Section       */
+  // label config section
   of = e_widget_framelist_add(evas, _("Labels"), 0);
   ob = e_widget_check_add(evas, _(" Ignore Whitespace"), &(cfdata->ignore_ws));
   e_widget_framelist_object_append(of, ob);
@@ -144,7 +144,7 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cf
 
   e_widget_list_object_append(o, of, 1, 0, 0.5);
 
-  /* Content Config Section */
+  // content config section
   of = e_widget_framelist_add(evas, _("Content"), 0);
   ob = e_widget_check_add(evas, _(" Ignore Whitespace"), &(cfdata->ignore_ws_copy));
   e_widget_framelist_object_append(of, ob);
@@ -168,7 +168,7 @@ config_clipboard_module(Evas_Object *parent EINA_UNUSED,
   E_Config_Dialog *cfd;
   E_Config_Dialog_View *v;
 
-  if(e_config_dialog_find("E", "settings/clipboard")) return NULL;
+  if (e_config_dialog_find("E", "settings/clipboard")) return NULL;
   v = E_NEW(E_Config_Dialog_View, 1);
   v->create_cfdata = _create_data;
   v->free_cfdata = _free_data;
@@ -177,8 +177,8 @@ config_clipboard_module(Evas_Object *parent EINA_UNUSED,
   v->basic.check_changed = _basic_check_changed;
 
   cfd = e_config_dialog_new(NULL, _("Clipboard Settings"),
-            "E", "preferences/clipboard",
-            "preferences-engine", 0, v, NULL);
+                            "E", "preferences/clipboard",
+                            "preferences-engine", 0, v, NULL);
   clip_cfg->config_dialog = cfd;
   return cfd;
 }
@@ -197,7 +197,6 @@ _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
   if (clip_cfg->ignore_ws_copy != cfdata->ignore_ws_copy) return 1;
   if (clip_cfg->trim_ws        != cfdata->trim_ws) return 1;
   if (clip_cfg->trim_nl        != cfdata->trim_nl) return 1;
-
   return 0;
 }
 
@@ -207,18 +206,17 @@ truncate_history(const unsigned int n)
   Eet_Error err = EET_ERROR_NONE;
 
   EINA_SAFETY_ON_NULL_RETURN_VAL(clip_inst, EET_ERROR_BAD_OBJECT);
-  if (clip_inst->items) {
-    if (eina_list_count(clip_inst->items) > n) {
-      Eina_List *last;
-      Eina_List *discard;
-      last = eina_list_nth_list(clip_inst->items, n-1);
-      clip_inst->items = eina_list_split_list(clip_inst->items, last, &discard);
-      if (discard)
-        E_FREE_LIST(discard, free_clip_data);
-      err = clip_save(clip_inst->items);
+  if (clip_inst->items)
+    {
+      if (eina_list_count(clip_inst->items) > n)
+        {
+          Eina_List *discard;
+          Eina_List *last = eina_list_nth_list(clip_inst->items, n - 1);
+          clip_inst->items = eina_list_split_list(clip_inst->items, last, &discard);
+          if (discard) E_FREE_LIST(discard, free_clip_data);
+          err = clip_save(clip_inst->items);
+        }
     }
-  }
-  else
-    err = EET_ERROR_EMPTY;
+  else err = EET_ERROR_EMPTY;
   return err;
 }

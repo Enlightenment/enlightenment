@@ -1,9 +1,11 @@
 #ifndef CLIP_LOG_H
 #define CLIP_LOG_H
 
+// XXX: nuke this custom log stuff
+
 extern int clipboard_log;
 
-/* EINA_LOG support macros and global */
+// EINA_LOG support macros and global
 #undef DBG
 #undef INF
 #undef WRN
@@ -16,7 +18,7 @@ extern int clipboard_log;
 #define CRI(...)            EINA_LOG_DOM_CRIT(clipboard_log, __VA_ARGS__)
 
 Eina_Bool logger_init(char *package);
-int logger_shutdown(char *package);
-void cb_mod_log(const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line, const char *fmt, void *data, va_list args);
+int       logger_shutdown(char *package);
+void      cb_mod_log(const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line, const char *fmt, void *data, va_list args);
 
 #endif /* CLIP_LOG_H */

@@ -1,7 +1,7 @@
 #ifndef CONFIG_DEFAULTS_H
 #define CONFIG_DEFAULTS_H
 
-/* Configuration Defaults */
+// configuration defaults
 #define  CF_DEFAULT_COPY            1
 #define  CF_DEFAULT_SELECT          0
 #define  CF_DEFAULT_SYNC            0
