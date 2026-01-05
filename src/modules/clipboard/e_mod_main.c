@@ -1,12 +1,9 @@
 #include "e_mod_main.h"
-#include "config_defaults.h"
 
-/* Stuff for convenience to compress code */
+// Stuff for convenience to compress code
 #define CLIP_TRIM_MODE(x) (x->trim_nl + 2 * (x->trim_ws))
-#define MOUSE_BUTTON ECORE_EVENT_MOUSE_BUTTON_DOWN
-typedef Evas_Event_Mouse_Down Mouse_Event;
 
-/* gadcon requirements */
+// gadcon requirements
 static     Evas_Object  *_gc_icon(const E_Gadcon_Client_Class *client_class EINA_UNUSED, Evas * evas);
 static const char       *_gc_id_new(const E_Gadcon_Client_Class *client_class);
 static E_Gadcon_Client  *_gc_init(E_Gadcon * gc, const char *name, const char *id, const char *style);
@@ -15,14 +12,15 @@ static const char       *_gc_label(const E_Gadcon_Client_Class *client_class EIN
 static void              _gc_shutdown(E_Gadcon_Client * gcc);
 
 /* Define the gadcon class that this module provides (just 1) */
-static const E_Gadcon_Client_Class _gadcon_class = {
-   GADCON_CLIENT_CLASS_VERSION,
-   "clipboard",
-   {
-      _gc_init, _gc_shutdown, _gc_orient, _gc_label, _gc_icon, _gc_id_new, NULL,
-      e_gadcon_site_is_not_toolbar
-   },
-   E_GADCON_CLIENT_STYLE_PLAIN
+static const E_Gadcon_Client_Class _gadcon_class =
+{
+  GADCON_CLIENT_CLASS_VERSION,
+  "clipboard",
+  {
+    _gc_init, _gc_shutdown, _gc_orient, _gc_label, _gc_icon, _gc_id_new, NULL,
+    e_gadcon_site_is_not_toolbar
+  },
+  E_GADCON_CLIENT_STYLE_PLAIN
 };
 
 /* Set the version and the name IN the code (not just the .desktop file)
@@ -30,28 +28,29 @@ static const E_Gadcon_Client_Class _gadcon_class = {
  * modules that are compiled for an incorrect API version safely */
 E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Clipboard"};
 
-/* actual module specifics   */
+// actual module specifics
 Config *clip_cfg = NULL;
+Mod_Inst *clip_inst = NULL; // Need by e_mod_config.c
+
 static E_Config_DD *conf_edd = NULL;
 static E_Config_DD *conf_item_edd = NULL;
-Mod_Inst *clip_inst = NULL; /* Need by e_mod_config.c */
 static E_Action *act = NULL;
 static Ecore_Timer *delay_sel_timer = NULL;
 
-/*   First some call backs   */
+// first some call backs
 static void       _clipboard_cb_paste_item(void *d1, void *d2);
 static void       _cb_menu_post_deactivate(void *data, E_Menu *menu EINA_UNUSED);
-static void       _cb_context_show(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, Mouse_Event *event);
+static void       _cb_context_show(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, Evas_Event_Mouse_Down *event);
 static void       _cb_clear_history(void *d1, void *d2 EINA_UNUSED);
 static void       _cb_dialog_delete(void *data EINA_UNUSED);
 static void       _cb_dialog_keep(void *data EINA_UNUSED);
-static void       _cb_action_switch(E_Object *o EINA_UNUSED, const char *params, Instance *data, Evas *evas, Evas_Object *obj, Mouse_Event *event);
+static void       _cb_action_switch(E_Object *o EINA_UNUSED, const char *params, Instance *data, Evas *evas, Evas_Object *obj, Evas_Event_Mouse_Down *event);
 
 static void       _cb_config_show(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED);
 static void       _clipboard_config_show(void *d1, void *d2 EINA_UNUSED);
 static void       _clipboard_popup_free(Instance *inst);
 
-/*   And then some auxillary functions */
+// and then some auxillary functions
 static void       _clip_config_new(E_Module *m);
 static void       _clip_config_free(void);
 static void       _clip_inst_free(Instance *inst);
@@ -61,28 +60,28 @@ static void       _clear_history(void);
 static Eina_List *_item_in_history(Clip_Data *cd);
 static int        _clip_compare(Clip_Data *cd, char *text);
 
-/* new module needs a new config :), or config too old and we need one anyway */
+// new module needs a new config :), or config too old and we need one anyway
 static void
 _clip_config_new(E_Module *m)
 {
-  /* setup defaults */
+  // setup defaults
   if (!clip_cfg)
     {
       clip_cfg = E_NEW(Config, 1);
 
       clip_cfg->label_length_changed = EINA_FALSE;
 
-      clip_cfg->clip_copy      = CF_DEFAULT_COPY;
-      clip_cfg->clip_select    = CF_DEFAULT_SELECT;
-      clip_cfg->persistence    = CF_DEFAULT_PERSISTANCE;
-      clip_cfg->hist_reverse   = CF_DEFAULT_HIST_REVERSE;
-      clip_cfg->hist_items     = CF_DEFAULT_HIST_ITEMS;
-      clip_cfg->confirm_clear  = CF_DEFAULT_CONFIRM;
-      clip_cfg->label_length   = CF_DEFAULT_LABEL_LENGTH;
-      clip_cfg->ignore_ws      = CF_DEFAULT_IGNORE_WS;
-      clip_cfg->ignore_ws_copy = CF_DEFAULT_IGNORE_WS_COPY;
-      clip_cfg->trim_ws        = CF_DEFAULT_WS;
-      clip_cfg->trim_nl        = CF_DEFAULT_NL;
+      clip_cfg->clip_copy      = 1;
+      clip_cfg->clip_select    = 1;
+      clip_cfg->persistence    = 1;
+      clip_cfg->hist_reverse   = 0;
+      clip_cfg->hist_items     = 20;
+      clip_cfg->confirm_clear  = 1;
+      clip_cfg->label_length   = 50;
+      clip_cfg->ignore_ws      = 0;
+      clip_cfg->ignore_ws_copy = 0;
+      clip_cfg->trim_ws        = 0;
+      clip_cfg->trim_nl        = 0;
     }
   E_CONFIG_LIMIT(clip_cfg->hist_items, HIST_MIN, HIST_MAX);
   E_CONFIG_LIMIT(clip_cfg->label_length, LABEL_MIN, LABEL_MAX);
@@ -96,17 +95,15 @@ _clip_config_new(E_Module *m)
   E_CONFIG_LIMIT(clip_cfg->trim_ws, 0, 1);
   E_CONFIG_LIMIT(clip_cfg->trim_nl, 0, 1);
 
-
-  /* update the version */
+  // update the version
   clip_cfg->version = MOD_CONFIG_FILE_VERSION;
-
   clip_cfg->module = m;
-  /* save the config to disk */
+  // save the config to disk
   e_config_save_queue();
 }
 
-/* This is called when we need to cleanup the actual configuration,
- * for example when our configuration is too old */
+// This is called when we need to cleanup the actual configuration,
+// for example when our configuration is too old
 static void
 _clip_config_free(void)
 {
@@ -224,7 +221,7 @@ static void
 _cb_context_show(void *data,
                  Evas *evas EINA_UNUSED,
                  Evas_Object *obj EINA_UNUSED,
-                 Mouse_Event *event)
+                 Evas_Event_Mouse_Down *event)
 {
   Instance *inst = data;
   Evas_Coord x;
@@ -478,7 +475,7 @@ _cb_action_switch(E_Object *o EINA_UNUSED,
                   Instance *data,
                   Evas *evas EINA_UNUSED,
                   Evas_Object *obj EINA_UNUSED,
-                  Mouse_Event *event EINA_UNUSED)
+                  Evas_Event_Mouse_Down *event EINA_UNUSED)
 {
   if (!strcmp(params, "float")) _clipboard_popup_new(data);
   else if (!strcmp(params, "settings")) _cb_config_show(data, NULL, NULL);
@@ -691,8 +688,8 @@ e_modapi_init(E_Module *m)
     {
       if (eina_list_count(clip_inst->items) > clip_cfg->hist_items)
         {
-          /* FIXME: Do we need to warn user in case this is backed up data
-           *         being restored ? */
+          // FIXME: Do we need to warn user in case this is backed up data
+          // being restored ?
           WRN("History File truncation!");
           truncate_history(clip_cfg->hist_items);
         }
