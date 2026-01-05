@@ -1,6 +1,4 @@
 src = files(
-  'clip_log.c',
-  'clip_log.h',
   'common.h',
   'config_defaults.h',
   'e_mod_config.c',

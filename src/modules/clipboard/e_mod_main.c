@@ -1,11 +1,6 @@
-/* This is a test */
-
 #include "e_mod_main.h"
 #include "config_defaults.h"
 #include "history.h"
-#include "clip_log.h"
-
-#define CLIP_LOG_NAME  "MOD:CLIP"
 
 /* Stuff for convenience to compress code */
 #define CLIP_TRIM_MODE(x) (x->trim_nl + 2 * (x->trim_ws))
@@ -663,10 +658,6 @@ e_modapi_init(E_Module *m)
   // If we don't have a config yet, or it got erased above,
   // then create a default one
   if (!clip_cfg) _clip_config_new(m);
-
-  // Initialize Einna_log for developers
-  logger_init(CLIP_LOG_NAME);
-
   INF("Initialized Clipboard Module");
 
   // add Module Key Binding actions
@@ -809,8 +800,6 @@ noconfig:
   E_CONFIG_DD_FREE(conf_edd);
   E_CONFIG_DD_FREE(conf_item_edd);
   INF("Shutting down Clipboard Module");
-  // shutdown Logger XXX: we dont need this!
-  logger_shutdown(CLIP_LOG_NAME);
   // tell e the module is now unloaded. Gets removed from shelves, etc.
   e_gadcon_provider_unregister(&_gadcon_class);
   return 1;
