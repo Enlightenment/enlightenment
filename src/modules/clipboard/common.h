@@ -33,37 +33,37 @@ do {                                    \
 
 typedef struct _Clip_Data
 {
-  /* A structure used for storing clipboard data in */
-  char *name;
-  char *content;
+    /* A structure used for storing clipboard data in */
+    char *name;
+    char *content;
 } Clip_Data;
 
 typedef struct _Instance Instance;
 struct _Instance
 {
-  E_Gadcon_Client *gcc;
-  Evas_Object *o_button;
-  Evas_Object *table;
-  E_Gadcon_Popup *popup;
+    E_Gadcon_Client *gcc;
+    Evas_Object *o_button;
+    Evas_Object *table;
+    E_Gadcon_Popup *popup;
 };
 
 typedef struct _Mod_Inst Mod_Inst;
 struct _Mod_Inst
 {
-  /* Sructure to store a global module instance in
-   *   complete with a hidden window for event notification purposes */
-  Instance *inst;
-  /* A pointer to an window used to
-   * recieve or send clipboard events to */
-  Evas_Object *ewin;
-  /* Callback function to handle clipboard events */
-  Eina_List *handle;
-  /* Stores Clipboard History */
-  Eina_List *items;
+    /* Sructure to store a global module instance in
+     *   complete with a hidden window for event notification purposes */
+
+    Instance *inst;
+    /* A pointer to an window used to
+     * recieve or send clipboard events to */
+    Evas_Object *ewin;
+    /* Callback function to handle clipboard events */
+    Eina_List *handle;
+    /* Stores Clipboard History */
+    Eina_List *items;
 };
 
 void cb_mod_log(const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line, const char *fmt, void *data, va_list args);
-void free_clip_data(Clip_Data *clip);
-
 extern int clipboard_log;
+void   free_clip_data(Clip_Data *clip);
 #endif
