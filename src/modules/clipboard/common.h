@@ -54,6 +54,7 @@ struct _Mod_Inst
   Evas_Object *ewin; // window to send clipboard events to
   Eina_List *handle; // for handling clipboard events
   Eina_List *items; // clipboard history
+  Elm_Sel_Type sel_type; // type of sel we last saw change
 };
 
 void       cb_mod_log(const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line, const char *fmt, void *data, va_list args);

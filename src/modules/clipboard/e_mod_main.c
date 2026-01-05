@@ -42,6 +42,7 @@ static E_Config_DD *conf_edd = NULL;
 static E_Config_DD *conf_item_edd = NULL;
 Mod_Inst *clip_inst = NULL; /* Need by e_mod_config.c */
 static E_Action *act = NULL;
+static Ecore_Timer *delay_sel_timer = NULL;
 
 /*   First some call backs   */
 static void       _clipboard_cb_paste_item(void *d1, void *d2);
@@ -528,6 +529,9 @@ _cliboard_cb_paste(void *data,
 
   if (!paste) return EINA_TRUE;
 
+  // some debug here for now
+  printf("CP: [%6.3f] [%s]\n", ecore_time_get(), paste);
+
   if (!!strcmp(last, paste))
     {
       if (strlen(paste) == 0) return ECORE_CALLBACK_DONE;
@@ -570,23 +574,41 @@ _clipboard_cb_elm_selection_lost(void *data, Elm_Sel_Type selection)
 }
 
 static Eina_Bool
-_clipboard_cb_event_selection(void *data,
-                              Evas_Object *obj EINA_UNUSED,
-                              void *event EINA_UNUSED)
+_cb_sel_change_delay(void *data)
 {
   Mod_Inst *mod_inst = data;
+  Eina_Bool fetch = EINA_FALSE;
 
-  elm_cnp_selection_get(mod_inst->ewin,
-                        ELM_SEL_TYPE_CLIPBOARD,
-                        ELM_SEL_FORMAT_TARGETS,
-                        _cliboard_cb_paste,
-                        mod_inst);
-  if (clip_cfg->clip_select)
+  delay_sel_timer = NULL;
+  if ((mod_inst->sel_type == ELM_SEL_TYPE_PRIMARY) &&
+      (clip_cfg->clip_select))
+    fetch = EINA_TRUE;
+  else if (mod_inst->sel_type == ELM_SEL_TYPE_CLIPBOARD)
+    fetch = EINA_TRUE;
+  if (fetch)
     elm_cnp_selection_get(e_comp->evas,
-                          ELM_SEL_TYPE_PRIMARY,
+                          mod_inst->sel_type,
                           ELM_SEL_FORMAT_TARGETS,
                           _cliboard_cb_paste,
                           mod_inst);
+  return EINA_FALSE;
+}
+
+static Eina_Bool
+_clipboard_cb_event_selection(void *data,
+                              Evas_Object *obj EINA_UNUSED,
+                              void *event)
+{
+  Mod_Inst *mod_inst = data;
+  Elm_Cnp_Event_Selection_Changed *ev = event;
+
+  if (delay_sel_timer)
+    {
+      ecore_timer_del(delay_sel_timer);
+      delay_sel_timer = NULL;
+    }
+  delay_sel_timer = ecore_timer_add(0.25, _cb_sel_change_delay, data);
+  mod_inst->sel_type = ev->type;
   return EINA_TRUE;
 }
 
@@ -736,6 +758,8 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
   Config_Item *ci;
 
+  if (delay_sel_timer) ecore_timer_del(delay_sel_timer);
+  delay_sel_timer = NULL;
   // the 2 following EINA SAFETY checks should never happen
   // and i usually avoid gotos but here I feel their use is harmless */
   EINA_SAFETY_ON_NULL_GOTO(clip_inst, noclip);
