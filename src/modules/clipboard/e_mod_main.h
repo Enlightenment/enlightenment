@@ -2,9 +2,6 @@
 #define E_MOD_MAIN_H
 
 #include "common.h"
-#include "e_mod_config.h"
-#include "history.h"
-#include "utility.h"
 
 /* Key Board Bindings action names */
 #define ACT_FLOAT   _("Show History")

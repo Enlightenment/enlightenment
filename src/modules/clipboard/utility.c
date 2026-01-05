@@ -1,4 +1,4 @@
-#include "utility.h"
+#include "e_mod_main.h"
 
 #define TRIM_SPACES   0
 #define TRIM_NEWLINES 1

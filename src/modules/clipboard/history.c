@@ -1,4 +1,4 @@
-#include "history.h"
+#include "e_mod_main.h"
 
 #define CLIPBOARD_MOD_NAME "clipboard"
 #define DATA_DIR           CLIPBOARD_MOD_NAME

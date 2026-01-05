@@ -1,6 +1,5 @@
 #include "e_mod_main.h"
 #include "config_defaults.h"
-#include "history.h"
 
 /* Stuff for convenience to compress code */
 #define CLIP_TRIM_MODE(x) (x->trim_nl + 2 * (x->trim_ws))
