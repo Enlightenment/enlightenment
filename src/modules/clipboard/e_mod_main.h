@@ -67,11 +67,11 @@ struct _Instance
 struct _Mod_Inst
 { // sructure to store a global module instance in
   // complete with a hidden window for event notification purposes
-  Instance *inst;
   Evas_Object *ewin; // window to send clipboard events to
   Eina_List *handle; // for handling clipboard events
   Eina_List *items; // clipboard history
   Elm_Sel_Type sel_type; // type of sel we last saw change
+  Eina_List *instances; // all instances of gadgets
 };
 
 #define LABEL_MIN  5
@@ -121,5 +121,6 @@ Eet_Error        save_history(Eina_List *items);
 Eina_Bool        set_clip_content(char **content, char *text, int mode);
 Eina_Bool        set_clip_name(char **name, char *text, int mode, int n);
 Eina_Bool        is_empty(const char *str);
+Eina_Bool        conifg_new_limit(void);
 
 #endif

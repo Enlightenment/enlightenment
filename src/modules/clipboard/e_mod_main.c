@@ -44,14 +44,13 @@ static void       _cb_context_show(void *data, Evas *evas EINA_UNUSED, Evas_Obje
 static void       _cb_clear_history(void *d1, void *d2 EINA_UNUSED);
 static void       _cb_dialog_delete(void *data EINA_UNUSED);
 static void       _cb_dialog_keep(void *data EINA_UNUSED);
-static void       _cb_action_switch(E_Object *o EINA_UNUSED, const char *params, Instance *data, Evas *evas, Evas_Object *obj, Evas_Event_Mouse_Down *event);
+static void       _cb_action_switch(E_Object *o EINA_UNUSED, const char *params);
 
 static void       _cb_config_show(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED);
 static void       _clipboard_config_show(void *d1, void *d2 EINA_UNUSED);
 static void       _clipboard_popup_free(Instance *inst);
 
 // and then some auxillary functions
-static void       _clip_config_new(E_Module *m);
 static void       _clip_config_free(void);
 static void       _clip_inst_free(Instance *inst);
 static void       _clip_add_item(Clip_Data *clip_data);
@@ -59,48 +58,6 @@ static void       _clipboard_popup_new(Instance *inst);
 static void       _clear_history(void);
 static Eina_List *_item_in_history(Clip_Data *cd);
 static int        _clip_compare(Clip_Data *cd, char *text);
-
-// new module needs a new config :), or config too old and we need one anyway
-static void
-_clip_config_new(E_Module *m)
-{
-  // setup defaults
-  if (!clip_cfg)
-    {
-      clip_cfg = E_NEW(Config, 1);
-
-      clip_cfg->label_length_changed = EINA_FALSE;
-
-      clip_cfg->clip_copy      = 1;
-      clip_cfg->clip_select    = 1;
-      clip_cfg->persistence    = 1;
-      clip_cfg->hist_reverse   = 0;
-      clip_cfg->hist_items     = 20;
-      clip_cfg->confirm_clear  = 1;
-      clip_cfg->label_length   = 50;
-      clip_cfg->ignore_ws      = 0;
-      clip_cfg->ignore_ws_copy = 0;
-      clip_cfg->trim_ws        = 0;
-      clip_cfg->trim_nl        = 0;
-    }
-  E_CONFIG_LIMIT(clip_cfg->hist_items, HIST_MIN, HIST_MAX);
-  E_CONFIG_LIMIT(clip_cfg->label_length, LABEL_MIN, LABEL_MAX);
-  E_CONFIG_LIMIT(clip_cfg->clip_copy, 0, 1);
-  E_CONFIG_LIMIT(clip_cfg->clip_select, 0, 1);
-  E_CONFIG_LIMIT(clip_cfg->persistence, 0, 1);
-  E_CONFIG_LIMIT(clip_cfg->hist_reverse, 0, 1);
-  E_CONFIG_LIMIT(clip_cfg->confirm_clear, 0, 1);
-  E_CONFIG_LIMIT(clip_cfg->ignore_ws, 0, 1);
-  E_CONFIG_LIMIT(clip_cfg->ignore_ws_copy, 0, 1);
-  E_CONFIG_LIMIT(clip_cfg->trim_ws, 0, 1);
-  E_CONFIG_LIMIT(clip_cfg->trim_nl, 0, 1);
-
-  // update the version
-  clip_cfg->version = MOD_CONFIG_FILE_VERSION;
-  clip_cfg->module = m;
-  // save the config to disk
-  e_config_save_queue();
-}
 
 // This is called when we need to cleanup the actual configuration,
 // for example when our configuration is too old
@@ -149,6 +106,8 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
   inst = E_NEW(Instance, 1);
   if (!inst) return NULL;
 
+  clip_inst->instances = eina_list_append(clip_inst->instances, inst);
+
   o = e_icon_add(gc->evas);
   e_icon_fdo_icon_set(o, "edit-paste");
   evas_object_show(o);
@@ -173,8 +132,9 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
 static void
 _gc_shutdown(E_Gadcon_Client *gcc)
 {
-   Instance *inst = gcc->data;
+  Instance *inst = gcc->data;
   _clipboard_popup_free(inst);
+  clip_inst->instances = eina_list_remove(clip_inst->instances, inst);
   _clip_inst_free(inst);
 }
 
@@ -470,15 +430,14 @@ _cb_menu_post_deactivate(void *data, E_Menu *menu EINA_UNUSED)
 }
 
 static void
-_cb_action_switch(E_Object *o EINA_UNUSED,
-                  const char *params,
-                  Instance *data,
-                  Evas *evas EINA_UNUSED,
-                  Evas_Object *obj EINA_UNUSED,
-                  Evas_Event_Mouse_Down *event EINA_UNUSED)
+_cb_action_switch(E_Object *o EINA_UNUSED, const char *params)
 {
-  if (!strcmp(params, "float")) _clipboard_popup_new(data);
-  else if (!strcmp(params, "settings")) _cb_config_show(data, NULL, NULL);
+  Instance *inst;
+
+  if ((!clip_inst) || (!clip_inst->instances)) return;
+  inst = clip_inst->instances->data; // just use 1st one...
+  if (!strcmp(params, "float")) _clipboard_popup_new(inst);
+  else if (!strcmp(params, "settings")) _cb_config_show(inst, NULL, NULL);
   // Only call clear dialog if there is something to clear
   else if ((!strcmp(params, "clear")) && (clip_inst->items))
     _cb_clear_history(NULL, NULL);
@@ -603,6 +562,23 @@ _clipboard_cb_event_selection(void *data,
   return EINA_TRUE;
 }
 
+static void
+_clipboard_config_show(void *d1, void *d2 EINA_UNUSED)
+{
+  if (!clip_cfg) return;
+  if (clip_cfg->config_dialog) return;
+  config_clipboard_module(NULL, NULL);
+  _clipboard_popup_free((Instance *)d1);
+}
+
+static void
+_cb_config_show(void *data,
+                E_Menu *m EINA_UNUSED,
+                E_Menu_Item *mi EINA_UNUSED)
+{
+  _clipboard_config_show(data, NULL);
+}
+
 /*
  * This is the first function called by e17 when you load the module
  */
@@ -651,16 +627,13 @@ e_modapi_init(E_Module *m)
         _clip_config_free();
     }
 
-  // If we don't have a config yet, or it got erased above,
-  // then create a default one
-  if (!clip_cfg) _clip_config_new(m);
-  INF("Initialized Clipboard Module");
+  if (!conifg_new_limit()) return NULL;
+  clip_cfg->module = m;
 
-  // add Module Key Binding actions
-  act = e_action_add("clipboard");
+  act = e_action_add("clipboard"); // module key binding actions
   if (act)
     {
-      act->func.go = (void *) _cb_action_switch;
+      act->func.go = _cb_action_switch;
       e_action_predef_name_set(_("Clipboard"), ACT_FLOAT,  "clipboard", "float",    NULL, 0);
       e_action_predef_name_set(_("Clipboard"), ACT_CONFIG, "clipboard", "settings", NULL, 0);
       e_action_predef_name_set(_("Clipboard"), ACT_CLEAR,  "clipboard", "clear",    NULL, 0);
@@ -669,7 +642,6 @@ e_modapi_init(E_Module *m)
   // create a global clip_inst for our module
   // complete with a hidden window for event notification purposes
   clip_inst = E_NEW(Mod_Inst, 1);
-  clip_inst->inst = E_NEW(Instance, 1);
 
   // read History file and set clipboard
   hist_err = read_history(&(clip_inst->items), clip_cfg->ignore_ws, clip_cfg->label_length);
@@ -719,23 +691,6 @@ e_modapi_init(E_Module *m)
   return m;
 }
 
-static void
-_clipboard_config_show(void *d1, void *d2 EINA_UNUSED)
-{
-  if (!clip_cfg) return;
-  if (clip_cfg->config_dialog) return;
-  config_clipboard_module(NULL, NULL);
-  _clipboard_popup_free((Instance *)d1);
-}
-
-static void
-_cb_config_show(void *data,
-                E_Menu *m EINA_UNUSED,
-                E_Menu_Item *mi EINA_UNUSED)
-{
-  _clipboard_config_show(data, NULL);
-}
-
 /*
  * This function is called by e17 when you unload the module,
  * here you should free all resources used while the module was enabled.
@@ -745,6 +700,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
   Config_Item *ci;
 
+  e_gadcon_provider_unregister(&_gadcon_class);
   if (delay_sel_timer) ecore_timer_del(delay_sel_timer);
   delay_sel_timer = NULL;
   // the 2 following EINA SAFETY checks should never happen
@@ -755,7 +711,6 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
   E_FREE_LIST(clip_inst->handle, ecore_event_handler_del);
   clip_inst->handle = NULL;
   E_FREE_LIST(clip_inst->items, free_clip_data);
-  _clip_inst_free(clip_inst->inst);
   E_FREE(clip_inst);
 
 noclip:

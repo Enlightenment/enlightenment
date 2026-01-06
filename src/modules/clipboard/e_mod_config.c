@@ -220,3 +220,43 @@ truncate_history(const unsigned int n)
   else err = EET_ERROR_EMPTY;
   return err;
 }
+
+Eina_Bool
+conifg_new_limit(void)
+{
+  if (!clip_cfg)
+    {
+      clip_cfg = E_NEW(Config, 1);
+      if (!clip_cfg) return EINA_FALSE;
+      clip_cfg->label_length_changed = EINA_FALSE;
+      clip_cfg->clip_copy      = 1;
+      clip_cfg->clip_select    = 1;
+      clip_cfg->persistence    = 1;
+      clip_cfg->hist_reverse   = 0;
+      clip_cfg->hist_items     = 20;
+      clip_cfg->confirm_clear  = 1;
+      clip_cfg->label_length   = 50;
+      clip_cfg->ignore_ws      = 0;
+      clip_cfg->ignore_ws_copy = 0;
+      clip_cfg->trim_ws        = 0;
+      clip_cfg->trim_nl        = 0;
+    }
+  E_CONFIG_LIMIT(clip_cfg->hist_items, HIST_MIN, HIST_MAX);
+  E_CONFIG_LIMIT(clip_cfg->label_length, LABEL_MIN, LABEL_MAX);
+  E_CONFIG_LIMIT(clip_cfg->clip_copy, 0, 1);
+  E_CONFIG_LIMIT(clip_cfg->clip_select, 0, 1);
+  E_CONFIG_LIMIT(clip_cfg->persistence, 0, 1);
+  E_CONFIG_LIMIT(clip_cfg->hist_reverse, 0, 1);
+  E_CONFIG_LIMIT(clip_cfg->confirm_clear, 0, 1);
+  E_CONFIG_LIMIT(clip_cfg->ignore_ws, 0, 1);
+  E_CONFIG_LIMIT(clip_cfg->ignore_ws_copy, 0, 1);
+  E_CONFIG_LIMIT(clip_cfg->trim_ws, 0, 1);
+  E_CONFIG_LIMIT(clip_cfg->trim_nl, 0, 1);
+
+  if (clip_cfg->version != MOD_CONFIG_FILE_VERSION)
+    { // config is new or older - thus changed so save out
+      clip_cfg->version = MOD_CONFIG_FILE_VERSION;
+      e_config_save_queue();
+    }
+  return EINA_TRUE;
+}
