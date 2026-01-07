@@ -64,15 +64,9 @@ _fill_data(E_Config_Dialog_Data *cfdata)
 
   cfdata->clip_copy       = clip_cfg->clip_copy;
   cfdata->clip_select     = clip_cfg->clip_select;
-  cfdata->persistence     = clip_cfg->persistence;
   cfdata->hist_reverse    = clip_cfg->hist_reverse;
   cfdata->hist_items      = clip_cfg->hist_items;
-  cfdata->confirm_clear   = clip_cfg->confirm_clear;
   cfdata->label_length    = clip_cfg->label_length;
-  cfdata->ignore_ws       = clip_cfg->ignore_ws;
-  cfdata->ignore_ws_copy  = clip_cfg->ignore_ws_copy;
-  cfdata->trim_ws         = clip_cfg->trim_ws;
-  cfdata->trim_nl         = clip_cfg->trim_nl;
 }
 
 static int
@@ -80,16 +74,11 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata
 {
   clip_cfg->clip_copy      = cfdata->clip_copy;
   clip_cfg->clip_select    = cfdata->clip_select;
-  clip_cfg->persistence    = cfdata->persistence;
   clip_cfg->hist_reverse   = cfdata->hist_reverse;
-
-  // do we need to Truncate our history list?
+  // truncate hist list if needed
   if (clip_cfg->hist_items != (unsigned int)cfdata->hist_items)
     config_truncate_history(cfdata->hist_items);
-
   clip_cfg->hist_items     = cfdata->hist_items;
-  clip_cfg->confirm_clear  = cfdata->confirm_clear;
-
   // has clipboard label name length changed?
   if ((unsigned int)cfdata->label_length != cfdata->init_label_length)
     {
@@ -97,12 +86,6 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata
       cfdata->init_label_length = cfdata->label_length;
     }
   clip_cfg->label_length   = cfdata->label_length;
-
-  clip_cfg->ignore_ws      = cfdata->ignore_ws;
-  clip_cfg->ignore_ws_copy = cfdata->ignore_ws_copy;
-  clip_cfg->trim_ws        = cfdata->trim_ws;
-  clip_cfg->trim_nl        = cfdata->trim_nl;
-
   // now save configuration
   e_config_save_queue();
   return 1;
@@ -128,13 +111,8 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cf
 
   // history config section
   of = e_widget_framelist_add(evas, _("History"), 0);
-  ob = e_widget_check_add(evas, _(" Save History"), &(cfdata->persistence));
-  e_widget_framelist_object_append(of, ob);
 
   ob = e_widget_check_add(evas, _(" Reverse Order"), &(cfdata->hist_reverse));
-  e_widget_framelist_object_append(of, ob);
-
-  ob = e_widget_check_add(evas, _(" Confirm before Clearing"), &(cfdata->confirm_clear));
   e_widget_framelist_object_append(of, ob);
 
   ob = e_widget_label_add(evas, _(" Items in History"));
@@ -145,26 +123,9 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cf
   e_widget_list_object_append(o, of, 1, 0, 0.5);
 
   // label config section
-  of = e_widget_framelist_add(evas, _("Labels"), 0);
-  ob = e_widget_check_add(evas, _(" Ignore Whitespace"), &(cfdata->ignore_ws));
-  e_widget_framelist_object_append(of, ob);
-
   ob = e_widget_label_add(evas, _(" Label Length"));
   e_widget_framelist_object_append(of, ob);
   ob = e_widget_slider_add(evas, 1, 0, "%2.0f", LABEL_MIN, LABEL_MAX, 1.0, 0, &(cfdata->label_length), NULL, 40);
-  e_widget_framelist_object_append(of, ob);
-
-  e_widget_list_object_append(o, of, 1, 0, 0.5);
-
-  // content config section
-  of = e_widget_framelist_add(evas, _("Content"), 0);
-  ob = e_widget_check_add(evas, _(" Ignore Whitespace"), &(cfdata->ignore_ws_copy));
-  e_widget_framelist_object_append(of, ob);
-
-  ob = e_widget_check_add(evas, _(" Trim Whitespace"), &(cfdata->trim_ws));
-  e_widget_framelist_object_append(of, ob);
-
-  ob = e_widget_check_add(evas, _(" Trim Newlines"), &(cfdata->trim_nl));
   e_widget_framelist_object_append(of, ob);
 
   e_widget_list_object_append(o, of, 1, 0, 0.5);
@@ -200,15 +161,9 @@ _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
 {
   if (clip_cfg->clip_copy      != cfdata->clip_copy) return 1;
   if (clip_cfg->clip_select    != cfdata->clip_select) return 1;
-  if (clip_cfg->persistence    != cfdata->persistence) return 1;
   if (clip_cfg->hist_reverse   != cfdata->hist_reverse) return 1;
   if (clip_cfg->hist_items     != (unsigned int)cfdata->hist_items) return 1;
-  if (clip_cfg->confirm_clear  != cfdata->confirm_clear) return 1;
   if (clip_cfg->label_length   != (unsigned int)cfdata->label_length) return 1;
-  if (clip_cfg->ignore_ws      != cfdata->ignore_ws) return 1;
-  if (clip_cfg->ignore_ws_copy != cfdata->ignore_ws_copy) return 1;
-  if (clip_cfg->trim_ws        != cfdata->trim_ws) return 1;
-  if (clip_cfg->trim_nl        != cfdata->trim_nl) return 1;
   return 0;
 }
 
@@ -233,16 +188,10 @@ config_init(void)
   E_CONFIG_VAL(D, T, version, UINT);
   E_CONFIG_LIST(D, T, items, conf_item_edd);
   E_CONFIG_VAL(D, T, label_length, UINT);
-  E_CONFIG_VAL(D, T, hist_items, INT);
-  E_CONFIG_VAL(D, T, clip_copy, INT);
-  E_CONFIG_VAL(D, T, clip_select, INT);
-  E_CONFIG_VAL(D, T, persistence, INT);
-  E_CONFIG_VAL(D, T, hist_reverse, INT);
-  E_CONFIG_VAL(D, T, confirm_clear, INT);
-  E_CONFIG_VAL(D, T, ignore_ws, INT);
-  E_CONFIG_VAL(D, T, ignore_ws_copy, INT);
-  E_CONFIG_VAL(D, T, trim_ws, INT);
-  E_CONFIG_VAL(D, T, trim_nl, INT);
+  E_CONFIG_VAL(D, T, hist_items, UINT);
+  E_CONFIG_VAL(D, T, clip_copy, UCHAR);
+  E_CONFIG_VAL(D, T, clip_select, UCHAR);
+  E_CONFIG_VAL(D, T, hist_reverse, UCHAR);
 
   clip_cfg = e_config_domain_load("module.clipboard", conf_edd);
   if (clip_cfg)
@@ -272,33 +221,16 @@ conifg_new_limit(void)
       clip_cfg->label_length_changed = EINA_FALSE;
       clip_cfg->clip_copy      = 1;
       clip_cfg->clip_select    = 1;
-      clip_cfg->persistence    = 1;
       clip_cfg->hist_reverse   = 0;
       clip_cfg->hist_items     = 20;
-      clip_cfg->confirm_clear  = 1;
       clip_cfg->label_length   = 50;
-      clip_cfg->ignore_ws      = 0;
-      clip_cfg->ignore_ws_copy = 0;
-      clip_cfg->trim_ws        = 0;
-      clip_cfg->trim_nl        = 0;
     }
   E_CONFIG_LIMIT(clip_cfg->hist_items, HIST_MIN, HIST_MAX);
   E_CONFIG_LIMIT(clip_cfg->label_length, LABEL_MIN, LABEL_MAX);
   E_CONFIG_LIMIT(clip_cfg->clip_copy, 0, 1);
   E_CONFIG_LIMIT(clip_cfg->clip_select, 0, 1);
-  E_CONFIG_LIMIT(clip_cfg->persistence, 0, 1);
   E_CONFIG_LIMIT(clip_cfg->hist_reverse, 0, 1);
-  E_CONFIG_LIMIT(clip_cfg->confirm_clear, 0, 1);
-  E_CONFIG_LIMIT(clip_cfg->ignore_ws, 0, 1);
-  E_CONFIG_LIMIT(clip_cfg->ignore_ws_copy, 0, 1);
-  E_CONFIG_LIMIT(clip_cfg->trim_ws, 0, 1);
-  E_CONFIG_LIMIT(clip_cfg->trim_nl, 0, 1);
-
-  if (clip_cfg->version != MOD_CONFIG_FILE_VERSION)
-    { // config is new or older - thus changed so save out
-      clip_cfg->version = MOD_CONFIG_FILE_VERSION;
-      e_config_save_queue();
-    }
+  clip_cfg->version = MOD_CONFIG_FILE_VERSION;
   return EINA_TRUE;
 }
 

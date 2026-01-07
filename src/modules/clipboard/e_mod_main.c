@@ -40,8 +40,6 @@ static void       _clipboard_cb_paste_item(void *d1, void *d2);
 static void       _cb_menu_post_deactivate(void *data, E_Menu *menu EINA_UNUSED);
 static void       _cb_context_show(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, Evas_Event_Mouse_Down *event);
 static void       _cb_clear_history(void *d1, void *d2 EINA_UNUSED);
-static void       _cb_dialog_delete(void *data EINA_UNUSED);
-static void       _cb_dialog_keep(void *data EINA_UNUSED);
 static void       _cb_action_switch(E_Object *o EINA_UNUSED, const char *params);
 
 static void       _cb_config_show(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED);
@@ -228,6 +226,7 @@ _clipboard_popup_new(Instance *inst)
 
   inst->table = e_widget_table_add(e_win_evas_win_get(evas), 0);
 
+  // make this a scrollable genlist...
   if (clip_cfg->items)
     {
       Eina_List *it;
@@ -251,14 +250,13 @@ _clipboard_popup_new(Instance *inst)
           if (!cd->name)
             {
               eina_stringshare_del(cd->name);
-              set_clip_name(&cd->name, cd->str,
-                            clip_cfg->ignore_ws, clip_cfg->label_length);
+              set_clip_name(&cd->name, cd->str, clip_cfg->label_length);
             }
           o = e_widget_button_add(evas,
                                   cd->name,
                                   NULL,
                                   _clipboard_cb_paste_item,
-                                  cd->str,
+                                  (void *)cd->str, // XXX: what if items list changes while buttons up?
                                   inst);
           e_widget_table_object_align_append(inst->table, o, 0, row, 2, 1, 1, 0, 1, 0, 0, 0.5);
           row++;
@@ -273,6 +271,7 @@ _clipboard_popup_new(Instance *inst)
       row++;
     }
 
+  // XXX: make this a box - homogeneous below lsit above
   o = e_widget_button_add(evas, _("Clear"), "edit-clear", _cb_clear_history, inst, NULL);
   e_widget_disabled_set(o, !clip_cfg->items);
   e_widget_table_object_align_append(inst->table, o, 0, row, 1, 1, 0, 0, 0, 0, 0.5, 0.5);
@@ -353,31 +352,7 @@ static void
 _cb_clear_history(void *d1, void *d2 EINA_UNUSED)
 {
   EINA_SAFETY_ON_NULL_RETURN(clip_cfg);
-
-  if (clip_cfg->confirm_clear)
-    {
-      e_confirm_dialog_show(_("Confirm History Deletion"),
-                            "application-exit",
-                            _("You wish to delete the clipboards history.<br>"
-                              "<br>"
-                              "Are you sure you want to delete it?"),
-                            _("Delete"), _("Keep"),
-                            _cb_dialog_delete, NULL, NULL, NULL,
-                            _cb_dialog_keep, NULL);
-    }
-  else _clear_history();
   _clipboard_popup_free((Instance *)d1);
-}
-
-static void
-_cb_dialog_keep(void *data EINA_UNUSED)
-{
-  return;
-}
-
-static void
-_cb_dialog_delete(void *data EINA_UNUSED)
-{
   _clear_history();
 }
 
@@ -435,7 +410,7 @@ _cliboard_cb_paste(void *data,
   Config_Item *cd = NULL;
   Instance *instance = data;
   char *paste = NULL;
-  char *last = "";
+  const char *last = "";
 
   EINA_SAFETY_ON_NULL_RETURN_VAL(instance, EINA_TRUE);
 
@@ -446,21 +421,15 @@ _cliboard_cb_paste(void *data,
   if (!paste) return EINA_TRUE;
 
   if (!!strcmp(last, paste))
-    {
+    { // if new past differs to most recent stored...
       if (strlen(paste) == 0) return ECORE_CALLBACK_DONE;
-      if (clip_cfg->ignore_ws_copy && is_empty(paste)) return ECORE_CALLBACK_DONE;
+      if (is_empty(paste)) return ECORE_CALLBACK_DONE;
       cd = E_NEW(Config_Item, 1);
       if (cd)
         {
-          if (!set_clip_content(&cd->str, paste,
-                                CLIP_TRIM_MODE(clip_cfg)))
-            { // try to continue
-              CRI("Something bad happened !!");
-              E_FREE(cd);
-              goto error;
-            }
-          if (!set_clip_name(&cd->name, cd->str,
-                             clip_cfg->ignore_ws, clip_cfg->label_length))
+          // XXX: if we select huge amounts of text this could use a lot of ram
+          cd->str = eina_stringshare_add(paste);
+          if (!set_clip_name(&cd->name, cd->str, clip_cfg->label_length))
             { // try to continue
               CRI("Something bad happened !!");
               E_FREE(cd);

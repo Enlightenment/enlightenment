@@ -34,7 +34,7 @@ EAPI int   e_modapi_save     (E_Module *m EINA_UNUSED);
 // compatible anymore, it creates an entire new one.
 // You need to increment GENERATION when you add new values to the
 // configuration file but is not needed to delete the existing conf
-#define MOD_CONFIG_FILE_EPOCH      1
+#define MOD_CONFIG_FILE_EPOCH      2
 #define MOD_CONFIG_FILE_GENERATION 4
 #define MOD_CONFIG_FILE_VERSION    ((MOD_CONFIG_FILE_EPOCH * 1000000) + MOD_CONFIG_FILE_GENERATION)
 
@@ -82,27 +82,20 @@ struct _Config
   unsigned int hist_items;   /* Number of history items to store                */
   unsigned int label_length; /* Number of characters of item to display         */
   // these are booleans really...
-  int clip_copy;        /* Clipboard to use                                */
-  int clip_select;      /* Clipboard to use                                */
-  int persistence;      /* History file persistance                        */
-  int hist_reverse;     /* Order to display History                        */
-  int confirm_clear;    /* Display history confirmation dialog on deletion */
-  int ignore_ws;        /* Should we ignore White space in label           */
-  int ignore_ws_copy;   /* Should we not copy White space only             */
-  int trim_ws;          /* Should we trim White space from selection       */
-  int trim_nl;          /* Should we trim new lines from selection         */
+  unsigned char clip_copy;        /* Clipboard to use                                */
+  unsigned char clip_select;      /* Clipboard to use                                */
+  unsigned char hist_reverse;     /* Order to display History                        */
 };
 
 struct _Config_Item
 {
   char *name; // cut down label/name for gui
-  char *str; // stored string
+  const char *str; // stored string (stringshare)
 };
 
 E_Config_Dialog *config_clipboard_module(Evas_Object *parent, const char *params EINA_UNUSED);
 
-Eina_Bool        set_clip_content(char **content, char *text, int mode);
-Eina_Bool        set_clip_name(char **name, char *text, int mode, int n);
+Eina_Bool        set_clip_name(char **name, const char *text, int max);
 Eina_Bool        is_empty(const char *str);
 
 extern           Config *clip_cfg;

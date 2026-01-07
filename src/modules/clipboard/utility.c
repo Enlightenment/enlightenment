@@ -1,22 +1,19 @@
 #include "e_mod_main.h"
 
-#define TRIM_SPACES   0
-#define TRIM_NEWLINES 1
-
-static char *_strip_whitespace (char *str, int mode);
-static int   _is_newline       (const int c);
+static char *_strip_whitespace(char *str);
 
 static char *
-_sanitize_ln(char *text, const unsigned int n, const int mode)
+_sanitize_ln(char *text, const unsigned int n)
 {
   char *ret = malloc(n + 1);
   char *temp = ret;
-  unsigned int chr, i = 0;
+  unsigned char chr;
+  unsigned int i = 0;
 
   EINA_SAFETY_ON_NULL_RETURN_VAL(text, NULL);
   if (!ret) return NULL;
 
-  if (mode) text = _strip_whitespace(text, TRIM_SPACES);
+  text = _strip_whitespace(text);
   for (;;)
     {
       chr = *text;
@@ -60,88 +57,40 @@ _sanitize_ln(char *text, const unsigned int n, const int mode)
  * You have been warned!!
  */
 char *
-_strip_whitespace(char *str, int mode)
+_strip_whitespace(char *str)
 {
   char *end;
-  int (*compare)(int);
 
-  if (mode == TRIM_SPACES) compare = isspace;
-  else compare = _is_newline;
-  while ((*compare)(*str)) str++;
-  if (*str == 0) return str; // empty string ?
+  while (isspace(str[0])) str++;
+  if (str[0] == 0) return str; // empty string ?
   end = str + strlen(str) - 1;
-  while ((end > str) && (*compare)(*end)) end--;
-  *(end + 1) = 0; // write new null terminator
+  while ((end > str) && isspace(end[0])) end--;
+  (end + 1)[0] = 0; // write new null terminator
   return str;
 }
 
-static int
-_is_newline(const int c)
-{
-  return ((c == '\n') || (c == '\r'));
-}
-
 Eina_Bool
-set_clip_content(char **content, char *text, int mode)
-{
+set_clip_name(char **name, const char *text, int max)
+{ // this is dodgey.. do a proper processing into tb mrkup for genlist
   Eina_Bool ret = EINA_TRUE;
-  char *temp, *trim;
+  char *text2;
 
   if (!text) // sanity check
     {
       WRN("ERROR: Text is NULL\n");
       text = "";
     }
-  if (content)
-    {
-      switch (mode)
-        {
-         case 0: // don't trim
-          temp = strdup(text);
-          break;
-         case 1: // trim new lines
-          trim = _strip_whitespace(text, TRIM_NEWLINES);
-          temp = strdup(trim);
-          break;
-         case 2: // trim all whitespace since white space includes new lines drop thru here
-          EINA_FALLTHROUGH;
-         case 3: // trim white space and new lines
-          trim = _strip_whitespace(text, TRIM_SPACES);
-          temp = strdup(trim);
-          break;
-         default: // error don't trim
-          WRN("ERROR: Invalid strip_mode %d\n", mode);
-          temp = strdup(text);
-          break;
-        }
-      if (!temp)
-        { // this is bad, leave it to calling function
-          CRI("ERROR: Memory allocation Failed!!");
-          ret = EINA_FALSE;
-        }
-      *content = temp;
-    }
-  else ERR("Error: Clip content pointer is Null!!");
-  return ret;
-}
-
-Eina_Bool
-set_clip_name(char **name, char *text, int mode, int n)
-{
-  Eina_Bool ret = EINA_TRUE;
-
-  if (!text) // sanity check
-    {
-      WRN("ERROR: Text is NULL\n");
-      text = "";
-    }
+  text2 = strdup(text);
+  if (!text2) return EINA_FALSE;
   // to be continued later
-  if (name) *name = _sanitize_ln(text, n, mode);
+  if (name) *name = _sanitize_ln(text2, max);
   else
     {
+      free(text2);
       ERR("Error: Clip name pointer is Null!!");
       return EINA_FALSE;
     }
+  free(text2);
   if (!*name)
     { // this is bad, leave it to calling function
       CRI("ERROR: Memory allocation Failed!!");
