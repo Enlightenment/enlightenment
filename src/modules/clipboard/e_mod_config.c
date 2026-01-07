@@ -1,5 +1,7 @@
 #include "e_mod_main.h"
 
+extern Mod_Inst     *clip_inst; // in e_mod_main.c
+
 struct _E_Config_Dialog_Data
 {
   E_Config_Dialog *cfd;
@@ -21,13 +23,23 @@ struct _E_Config_Dialog_Data
   int    trim_nl;        // should we trim new lines from selection
 };
 
+/////////////////////////////////////////////////////////////////////////////
+//
 static int           _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata);
 static void         *_create_data(E_Config_Dialog *cfd EINA_UNUSED);
 static int           _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata);
 static void          _fill_data(E_Config_Dialog_Data *cfdata);
-void                 _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata);
+static void          _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata);
 static Evas_Object  *_basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata);
-extern Mod_Inst     *clip_inst; // in e_mod_main.c
+
+/////////////////////////////////////////////////////////////////////////////
+
+static E_Config_DD *conf_edd = NULL;
+static E_Config_DD *conf_item_edd = NULL;
+
+Config *clip_cfg = NULL;
+
+/////////////////////////////////////////////////////////////////////////////
 
 static void *
 _create_data(E_Config_Dialog *cfd EINA_UNUSED)
@@ -37,7 +49,7 @@ _create_data(E_Config_Dialog *cfd EINA_UNUSED)
   return cfdata;
 }
 
-void
+static void
 _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
   EINA_SAFETY_ON_NULL_RETURN(clip_cfg);
@@ -73,7 +85,7 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata
 
   // do we need to Truncate our history list?
   if (clip_cfg->hist_items != (unsigned int)cfdata->hist_items)
-    truncate_history(cfdata-> hist_items);
+    config_truncate_history(cfdata->hist_items);
 
   clip_cfg->hist_items     = cfdata->hist_items;
   clip_cfg->confirm_clear  = cfdata->confirm_clear;
@@ -200,25 +212,54 @@ _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
   return 0;
 }
 
-Eet_Error
-truncate_history(const unsigned int n)
-{
-  Eet_Error err = EET_ERROR_NONE;
+/////////////////////////////////////////////////////////////////////////////
 
-  EINA_SAFETY_ON_NULL_RETURN_VAL(clip_inst, EET_ERROR_BAD_OBJECT);
-  if (clip_inst->items)
-    {
-      if (eina_list_count(clip_inst->items) > n)
-        {
-          Eina_List *discard;
-          Eina_List *last = eina_list_nth_list(clip_inst->items, n - 1);
-          clip_inst->items = eina_list_split_list(clip_inst->items, last, &discard);
-          if (discard) E_FREE_LIST(discard, free_clip_data);
-          err = clip_save(clip_inst->items);
-        }
+Eina_Bool
+config_init(void)
+{
+  conf_item_edd = E_CONFIG_DD_NEW("Config_Item", Config_Item);
+  if (!conf_item_edd) return EINA_FALSE;
+#undef T
+#undef D
+#define T Config_Item
+#define D conf_item_edd
+  E_CONFIG_VAL(D, T, str, STRI);
+  conf_edd = E_CONFIG_DD_NEW("Config", Config);
+  if (!conf_edd) return EINA_FALSE;
+#undef T
+#undef D
+#define T Config
+#define D conf_edd
+  E_CONFIG_VAL(D, T, version, UINT);
+  E_CONFIG_LIST(D, T, items, conf_item_edd);
+  E_CONFIG_VAL(D, T, label_length, UINT);
+  E_CONFIG_VAL(D, T, hist_items, INT);
+  E_CONFIG_VAL(D, T, clip_copy, INT);
+  E_CONFIG_VAL(D, T, clip_select, INT);
+  E_CONFIG_VAL(D, T, persistence, INT);
+  E_CONFIG_VAL(D, T, hist_reverse, INT);
+  E_CONFIG_VAL(D, T, confirm_clear, INT);
+  E_CONFIG_VAL(D, T, ignore_ws, INT);
+  E_CONFIG_VAL(D, T, ignore_ws_copy, INT);
+  E_CONFIG_VAL(D, T, trim_ws, INT);
+  E_CONFIG_VAL(D, T, trim_nl, INT);
+
+  clip_cfg = e_config_domain_load("module.clipboard", conf_edd);
+  if (clip_cfg)
+    { // check config version
+      if (!e_util_module_config_check("Clipboard", clip_cfg->version,
+                                      MOD_CONFIG_FILE_VERSION))
+        config_free();
     }
-  else err = EET_ERROR_EMPTY;
-  return err;
+  return EINA_TRUE;
+}
+
+void
+config_shutdown(void)
+{
+  config_free();
+  E_CONFIG_DD_FREE(conf_edd);
+  E_CONFIG_DD_FREE(conf_item_edd);
 }
 
 Eina_Bool
@@ -259,4 +300,49 @@ conifg_new_limit(void)
       e_config_save_queue();
     }
   return EINA_TRUE;
+}
+
+void
+config_free(void)
+{
+  Config_Item *ci;
+
+  if (!clip_cfg) return;
+  EINA_LIST_FREE(clip_cfg->items, ci)
+    {
+      eina_stringshare_del(ci->name);
+      eina_stringshare_del(ci->str);
+      free(ci);
+    }
+  clip_cfg->module = NULL;
+  E_FREE(clip_cfg);
+}
+
+void
+config_save(void)
+{
+  e_config_domain_save("module.clipboard", conf_edd, clip_cfg);
+}
+
+void
+config_truncate_history(unsigned int max)
+{
+  EINA_SAFETY_ON_NULL_RETURN(clip_cfg);
+  if ((clip_cfg->items) && (eina_list_count(clip_cfg->items) > max))
+    {
+      Eina_List *discard = NULL;
+      Eina_List *last = eina_list_nth_list(clip_cfg->items, max - 1);
+      clip_cfg->items = eina_list_split_list(clip_cfg->items, last, &discard);
+      if (discard) E_FREE_LIST(discard, config_clip_data_free);
+      e_config_save_queue();
+    }
+}
+
+void
+config_clip_data_free(Config_Item *cd)
+{
+  EINA_SAFETY_ON_NULL_RETURN(cd);
+  free(cd->name);
+  eina_stringshare_del(cd->str);
+  free(cd);
 }

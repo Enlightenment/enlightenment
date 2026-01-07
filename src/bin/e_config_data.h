@@ -48,6 +48,7 @@
 #define UINT   EET_T_UINT
 #define ULL    EET_T_ULONG_LONG
 #define STR    EET_T_STRING
+#define STRI   EET_T_INLINED_STRING
 
 typedef Eet_Data_Descriptor                 E_Config_DD;
 
