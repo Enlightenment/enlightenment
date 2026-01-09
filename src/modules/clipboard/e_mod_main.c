@@ -34,9 +34,9 @@ Mod_Inst *clip_inst = NULL; // Need by e_mod_config.c
 static E_Action *act = NULL;
 static Ecore_Timer *delay_sel_timer = NULL;
 static double _mod_time_start = 0.0;
+static Elm_Genlist_Item_Class *list_itc = NULL;
 
 // first some call backs
-static void       _clipboard_cb_paste_item(void *d1, void *d2);
 static void       _cb_menu_post_deactivate(void *data, E_Menu *menu EINA_UNUSED);
 static void       _cb_context_show(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, Evas_Event_Mouse_Down *event);
 static void       _cb_clear_history(void *d1, void *d2 EINA_UNUSED);
@@ -112,7 +112,6 @@ static void
 _gc_shutdown(E_Gadcon_Client *gcc)
 {
   Instance *inst = gcc->data;
-  _clipboard_popup_free(inst);
   clip_inst->instances = eina_list_remove(clip_inst->instances, inst);
   _clip_inst_free(inst);
 }
@@ -212,74 +211,177 @@ _clipboard_popup_comp_del_cb(void *data, Evas_Object *obj EINA_UNUSED)
   _clipboard_popup_free(data);
 }
 
+static Evas_Object *
+_cb_gl_icon_get(void *data, Evas_Object *obj, const char *part EINA_UNUSED)
+{
+  Config_Item *cd = data;
+  Evas_Object *o;
+  Eina_Strbuf *buf = eina_strbuf_new();
+  char *s;
+  int idx = 0, len = 0;
+  unsigned int wid = 0, lines = 0;
+  Eina_Unicode uc[2] = { 0 };
+
+  if (!buf) return NULL;
+  // first clip_cfg->label_length chars per line, first few lines
+  for (uc[0] = eina_unicode_utf8_next_get(cd->str, &idx); uc[0];
+       uc[0] = eina_unicode_utf8_next_get(cd->str, &idx))
+    {
+      if (uc[0] == '\n')
+        { // add newline to our new str
+          eina_strbuf_append(buf, "\n");
+          lines++; // count lines - we now hav 1 more
+          wid = 0; // back to width being 0
+        }
+      else if (wid <= clip_cfg->label_length)
+        { // if we have less than the max chars per line...
+          if (lines > 2)
+            { // if max lines and we have more lines after add ...
+              eina_strbuf_append(buf, "…");
+              break; // no more - we are done with our string
+            }
+          // get a string from a unicode string of 1 item
+          s = eina_unicode_unicode_to_utf8(uc, &len);
+          if (s)
+            { // append it to our label string
+              eina_strbuf_append(buf, s);
+              free(s);
+              wid++; // width went up 1
+              // we hit the max width so add ...
+              // we keep skipping on this line until a newline gets wid to 0
+              if (wid == clip_cfg->label_length)
+                eina_strbuf_append(buf, "…");
+            }
+        }
+      else wid++;
+    }
+
+  o = elm_label_add(obj);
+  elm_object_style_set(o, "default/left");
+  evas_object_pass_events_set(o, EINA_TRUE);
+  s = elm_entry_utf8_to_markup(eina_strbuf_string_get(buf));
+  eina_strbuf_free(buf);
+  elm_object_text_set(o, s);
+  free(s);
+  evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+  evas_object_size_hint_align_set(o, 0.0, EVAS_HINT_FILL);
+  evas_object_resize(o, ELM_SCALE_SIZE(320), ELM_SCALE_SIZE(40));
+  evas_object_smart_calculate(o);
+  return o;
+}
+
+static void
+_cb_sel(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+  Instance *inst = data;
+  int idx = elm_genlist_item_index_get(event_info); // event_info is item
+  Config_Item *cd;
+
+  if (idx < 0) return;
+  cd = eina_list_nth(clip_cfg->items, idx - 1);
+  if (cd) elm_cnp_selection_set(clip_inst->ewin,
+                                ELM_SEL_TYPE_CLIPBOARD,
+                                ELM_SEL_FORMAT_TEXT,
+                                cd->str,
+                                strlen(cd->str));
+  _clipboard_popup_free(inst);
+}
+
+static void
+_cb_clear(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+  Eina_List *l;
+  Instance *inst;
+
+  EINA_SAFETY_ON_NULL_RETURN(clip_cfg);
+  EINA_LIST_FOREACH(clip_inst->instances, l, inst)
+    _clipboard_popup_free(inst);
+  _clear_history();
+}
+
+static void
+_cb_settings(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+  Eina_List *l;
+  Instance *inst;
+
+  EINA_SAFETY_ON_NULL_RETURN(clip_cfg);
+  EINA_LIST_FOREACH(clip_inst->instances, l, inst)
+    _clipboard_popup_free(inst);
+  if (clip_cfg->config_dialog) return;
+  config_clipboard_module(NULL, NULL);
+}
+
 static void
 _clipboard_popup_new(Instance *inst)
 {
-  Evas *evas;
-  Evas_Object *o;
-  int row = 0;
+  Evas_Object *o, *tb, *gl, *bt, *ic;
+  Eina_List *l;
+  Config_Item *cd;
 
   if (inst->popup) return;
-
   inst->popup = e_gadcon_popup_new(inst->gcc, 0);
-  evas = e_comp->evas;
 
-  inst->table = e_widget_table_add(e_win_evas_win_get(evas), 0);
-
-  // make this a scrollable genlist...
-  if (clip_cfg->items)
+  if (!list_itc)
     {
-      Eina_List *it;
-      Config_Item *cd;
-
-      // flag to see if label len changed
-      Eina_Bool label_length_changed = clip_cfg->label_length_changed;
-      clip_cfg->label_length_changed = EINA_FALSE;
-
-      // revert list if selected
-      if (clip_cfg->hist_reverse) clip_cfg->items=eina_list_reverse(clip_cfg->items);
-
-      // show list in history menu
-      EINA_LIST_FOREACH(clip_cfg->items, it, cd)
+      list_itc = elm_genlist_item_class_new();
+      if (list_itc)
         {
-          if (label_length_changed)
-            {
-              free(cd->name);
-              cd->name = NULL;
-            }
-          if (!cd->name)
-            {
-              eina_stringshare_del(cd->name);
-              set_clip_name(&cd->name, cd->str, clip_cfg->label_length);
-            }
-          o = e_widget_button_add(evas,
-                                  cd->name,
-                                  NULL,
-                                  _clipboard_cb_paste_item,
-                                  (void *)cd->str, // XXX: what if items list changes while buttons up?
-                                  inst);
-          e_widget_table_object_align_append(inst->table, o, 0, row, 2, 1, 1, 0, 1, 0, 0, 0.5);
-          row++;
+          list_itc->item_style = "full";
+          list_itc->func.text_get = NULL;
+          list_itc->func.content_get = _cb_gl_icon_get;
+          list_itc->func.state_get = NULL;
         }
-      // revert list back if selected
-      if (clip_cfg->hist_reverse) clip_cfg->items=eina_list_reverse(clip_cfg->items);
     }
-  else
+  tb = inst->table = o = elm_table_add(e_comp->elm);
+
+  gl = o = elm_genlist_add(e_comp->elm);
+  // make scroller expand to min size of items
+  elm_genlist_mode_set(o, ELM_LIST_EXPAND);
+  // and now limit genlist to this size beyond which it scrolls
+  evas_object_size_hint_max_set(o,
+                                ELM_SCALE_SIZE(320),
+                                ELM_SCALE_SIZE(320));
+  EINA_LIST_FOREACH(clip_cfg->items, l, cd)
     {
-      o = e_widget_label_add(evas, _("Empty"));
-      e_widget_table_object_align_append(inst->table, o, 0, row, 2, 1, 1, 0, 1, 0, 0.5, 0.5);
-      row++;
+      elm_genlist_item_append(o, list_itc, cd,
+                              NULL, // parent
+                              ELM_GENLIST_ITEM_NONE,
+                              _cb_sel, inst);
     }
+  elm_table_pack(tb, o, 0, 0, 2, 1);
 
-  // XXX: make this a box - homogeneous below lsit above
-  o = e_widget_button_add(evas, _("Clear"), "edit-clear", _cb_clear_history, inst, NULL);
-  e_widget_disabled_set(o, !clip_cfg->items);
-  e_widget_table_object_align_append(inst->table, o, 0, row, 1, 1, 0, 0, 0, 0, 0.5, 0.5);
+  bt = o = elm_button_add(e_comp->elm);
+  evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+  evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+  elm_object_text_set(o, _("Clear"));
+  evas_object_smart_callback_add(o, "clicked", _cb_clear, inst);
+  elm_table_pack(tb, o, 0, 1, 1, 1);
+  evas_object_show(o);
 
-  o = e_widget_button_add(evas, _("Settings"), "preferences-system", _clipboard_config_show, inst, NULL);
-  e_widget_table_object_align_append(inst->table, o, 1, row, 1, 1, 0, 0, 0, 0, 0.5, 0.5);
+  ic = o = elm_icon_add(e_comp->elm);
+  elm_icon_standard_set(ic, "edit-delete");
+  elm_object_content_set(bt, o);
+  evas_object_show(o);
+
+  bt = o = elm_button_add(e_comp->elm);
+  evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+  evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+  elm_object_text_set(o, _("Settings"));
+  evas_object_smart_callback_add(o, "clicked", _cb_settings, inst);
+  elm_table_pack(tb, o, 1, 1, 1, 1);
+  evas_object_show(o);
+
+  ic = o = elm_icon_add(e_comp->elm);
+  elm_icon_standard_set(ic, "preferences-system");
+  elm_object_content_set(bt, o);
+  evas_object_show(o);
+
+  evas_object_show(gl);
 
   e_gadcon_popup_content_set(inst->popup, inst->table);
+  evas_object_show(inst->table);
+
   e_gadcon_popup_show(inst->popup);
   e_comp_object_util_autoclose(inst->popup->comp_object,
                                _clipboard_popup_comp_del_cb,
@@ -292,10 +394,15 @@ _clipboard_popup_new(Instance *inst)
 static void
 _clip_add_item(Config_Item *cd)
 {
-  Eina_List *it;
+  Eina_List *l, *it;
+  Instance *inst;
 
   EINA_SAFETY_ON_NULL_RETURN(cd);
   if (cd->str[0] == 0) return;
+  // hide all popups - item lists point to data that might be invalid soon
+  EINA_LIST_FOREACH(clip_inst->instances, l, inst)
+    _clipboard_popup_free(inst);
+
   if ((it = _item_in_history(cd)))
     { // move to top of list
       clip_cfg->items = eina_list_promote_list(clip_cfg->items, it);
@@ -312,7 +419,7 @@ _clip_add_item(Config_Item *cd)
 
           if (l_last)
             {
-              config_clip_data_free(l_last->data);
+              config_clip_data_free(l_last->data); // makes popup ptrs invalid
               clip_cfg->items = eina_list_remove_list(clip_cfg->items, l_last);
             }
           //  add clipboard data stored in cd to the list as a first item
@@ -357,19 +464,6 @@ _cb_clear_history(void *d1, void *d2 EINA_UNUSED)
 }
 
 static void
-_clipboard_cb_paste_item(void *d1, void *d2)
-{
-  const char *paste = d1;
-
-  elm_cnp_selection_set(clip_inst->ewin,
-                        ELM_SEL_TYPE_CLIPBOARD,
-                        ELM_SEL_FORMAT_TEXT,
-                        paste,
-                        strlen(paste));
-  if (d2) _clipboard_popup_free(d2);
-}
-
-static void
 _cb_menu_post_deactivate(void *data, E_Menu *menu EINA_UNUSED)
 {
   Instance *inst = data;
@@ -397,6 +491,7 @@ static void
 _clip_inst_free(Instance *inst)
 {
   EINA_SAFETY_ON_NULL_RETURN(inst);
+  _clipboard_popup_free(inst);
   inst->gcc = NULL;
   if (inst->o_button) evas_object_del(inst->o_button);
   E_FREE(inst);
@@ -426,19 +521,11 @@ _cliboard_cb_paste(void *data,
       if (is_empty(paste)) return ECORE_CALLBACK_DONE;
       cd = E_NEW(Config_Item, 1);
       if (cd)
-        {
-          // XXX: if we select huge amounts of text this could use a lot of ram
+        { // XXX: if we select huge amounts of text this could use a lot of ram
           cd->str = eina_stringshare_add(paste);
-          if (!set_clip_name(&cd->name, cd->str, clip_cfg->label_length))
-            { // try to continue
-              CRI("Something bad happened !!");
-              E_FREE(cd);
-              goto error;
-            }
           _clip_add_item(cd);
         }
     }
-error:
   return EINA_TRUE;
 }
 
@@ -461,7 +548,6 @@ _cb_sel_change_delay(void *data)
   Mod_Inst *mod_inst = data;
   Eina_Bool fetch = EINA_FALSE;
 
-  printf("CP: delyay from sel change... get sel!\n");
   delay_sel_timer = NULL;
   if ((mod_inst->sel_type == ELM_SEL_TYPE_PRIMARY) &&
       (clip_cfg->clip_select))
@@ -613,6 +699,8 @@ noconfig:
 
   // tell e the module is now unloaded. Gets removed from shelves, etc.
   e_gadcon_provider_unregister(&_gadcon_class);
+  if (list_itc) elm_gengrid_item_class_free(list_itc);
+  list_itc = NULL;
   return 1;
 }
 

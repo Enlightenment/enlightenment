@@ -242,7 +242,6 @@ config_free(void)
   if (!clip_cfg) return;
   EINA_LIST_FREE(clip_cfg->items, ci)
     {
-      eina_stringshare_del(ci->name);
       eina_stringshare_del(ci->str);
       free(ci);
     }
@@ -274,7 +273,6 @@ void
 config_clip_data_free(Config_Item *cd)
 {
   EINA_SAFETY_ON_NULL_RETURN(cd);
-  free(cd->name);
   eina_stringshare_del(cd->str);
   free(cd);
 }

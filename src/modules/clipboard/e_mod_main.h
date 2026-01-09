@@ -89,13 +89,11 @@ struct _Config
 
 struct _Config_Item
 {
-  char *name; // cut down label/name for gui
   const char *str; // stored string (stringshare)
 };
 
 E_Config_Dialog *config_clipboard_module(Evas_Object *parent, const char *params EINA_UNUSED);
 
-Eina_Bool        set_clip_name(char **name, const char *text, int max);
 Eina_Bool        is_empty(const char *str);
 
 extern           Config *clip_cfg;
