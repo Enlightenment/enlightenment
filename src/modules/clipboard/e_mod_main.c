@@ -87,19 +87,19 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
 
   clip_inst->instances = eina_list_append(clip_inst->instances, inst);
 
-  o = e_icon_add(gc->evas);
-  e_icon_fdo_icon_set(o, "edit-paste");
-  evas_object_show(o);
+  o = edje_object_add(gc->evas);
+  e_theme_edje_object_set(o, "base/theme/modules/clipboard",
+                          "e/modules/clipboard/main");
 
   gcc = e_gadcon_client_new(gc, name, id, style, o);
   gcc->data = inst;
+
   inst->gcc = gcc;
   inst->o_button = o;
   e_gadcon_client_util_menu_attach(gcc);
-  evas_object_event_callback_add(inst->o_button,
-                                 EVAS_CALLBACK_MOUSE_DOWN,
-                                 _clipboard_cb_mouse_down,
-                                 inst);
+
+  evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
+                                 _clipboard_cb_mouse_down, inst);
   return gcc;
 }
 
