@@ -224,6 +224,8 @@ _cb_del_item(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNU
 
   clip_cfg->items = eina_list_remove(clip_cfg->items, cd);
   config_clip_data_free(cd);
+  // saving list to the file
+  e_config_save_queue();
 }
 
 static Evas_Object *
