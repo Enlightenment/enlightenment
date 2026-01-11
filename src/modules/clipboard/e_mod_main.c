@@ -211,11 +211,26 @@ _clipboard_popup_comp_del_cb(void *data, Evas_Object *obj EINA_UNUSED)
   _clipboard_popup_free(data);
 }
 
+static void
+_cb_del_item(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+  Config_Item *cd = data;
+  Eina_List *l;
+  Instance *inst;
+
+  EINA_SAFETY_ON_NULL_RETURN(clip_cfg);
+  EINA_LIST_FOREACH(clip_inst->instances, l, inst)
+    _clipboard_popup_free(inst);
+
+  clip_cfg->items = eina_list_remove(clip_cfg->items, cd);
+  config_clip_data_free(cd);
+}
+
 static Evas_Object *
 _cb_gl_icon_get(void *data, Evas_Object *obj, const char *part EINA_UNUSED)
 {
   Config_Item *cd = data;
-  Evas_Object *o;
+  Evas_Object *o, *bx, *bt, *ic;
   Eina_Strbuf *buf = eina_strbuf_new();
   char *s;
   int idx = 0, len = 0;
@@ -237,7 +252,7 @@ _cb_gl_icon_get(void *data, Evas_Object *obj, const char *part EINA_UNUSED)
         { // if we have less than the max chars per line...
           if (lines > 2)
             { // if max lines and we have more lines after add ...
-              eina_strbuf_append(buf, "…");
+              eina_strbuf_append(buf, "...");
               break; // no more - we are done with our string
             }
           // get a string from a unicode string of 1 item
@@ -246,15 +261,19 @@ _cb_gl_icon_get(void *data, Evas_Object *obj, const char *part EINA_UNUSED)
             { // append it to our label string
               eina_strbuf_append(buf, s);
               free(s);
-              wid++; // width went up 1
               // we hit the max width so add ...
               // we keep skipping on this line until a newline gets wid to 0
               if (wid == clip_cfg->label_length)
-                eina_strbuf_append(buf, "…");
+                eina_strbuf_append(buf, "...");
+              wid++; // width went up 1
             }
         }
       else wid++;
     }
+  bx = o = elm_box_add(obj);
+  elm_box_horizontal_set(o, EINA_TRUE);
+  evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+  evas_object_size_hint_align_set(o, 0.0, EVAS_HINT_FILL);
 
   o = elm_label_add(obj);
   elm_object_style_set(o, "default/left");
@@ -265,9 +284,24 @@ _cb_gl_icon_get(void *data, Evas_Object *obj, const char *part EINA_UNUSED)
   free(s);
   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
   evas_object_size_hint_align_set(o, 0.0, EVAS_HINT_FILL);
-  evas_object_resize(o, ELM_SCALE_SIZE(320), ELM_SCALE_SIZE(40));
-  evas_object_smart_calculate(o);
-  return o;
+  elm_box_pack_end(bx, o);
+  evas_object_show(o);
+
+  bt = o = elm_button_add(obj);
+  evas_object_propagate_events_set(o, EINA_FALSE);
+  evas_object_size_hint_weight_set(o, 0.0, EVAS_HINT_EXPAND);
+  evas_object_size_hint_align_set(o, 0.0, 0.5);
+  evas_object_smart_callback_add(o, "clicked", _cb_del_item, cd);
+
+  ic = o = elm_icon_add(e_comp->elm);
+  elm_icon_standard_set(ic, "edit-delete");
+  elm_object_content_set(bt, o);
+  evas_object_show(o);
+
+  elm_box_pack_end(bx, bt);
+  evas_object_show(bt);
+
+  return bx;
 }
 
 static void
