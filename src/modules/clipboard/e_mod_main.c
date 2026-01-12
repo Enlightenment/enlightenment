@@ -275,7 +275,7 @@ _cb_gl_icon_get(void *data, Evas_Object *obj, const char *part EINA_UNUSED)
   bx = o = elm_box_add(obj);
   elm_box_horizontal_set(o, EINA_TRUE);
   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-  evas_object_size_hint_align_set(o, 0.0, EVAS_HINT_FILL);
+  evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
   o = elm_label_add(obj);
   elm_object_style_set(o, "default/left");
@@ -285,7 +285,7 @@ _cb_gl_icon_get(void *data, Evas_Object *obj, const char *part EINA_UNUSED)
   elm_object_text_set(o, s);
   free(s);
   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-  evas_object_size_hint_align_set(o, 0.0, EVAS_HINT_FILL);
+  evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
   elm_box_pack_end(bx, o);
   evas_object_show(o);
 
