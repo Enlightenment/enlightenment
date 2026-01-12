@@ -222,7 +222,7 @@ conifg_new_limit(void)
       clip_cfg->clip_copy      = 1;
       clip_cfg->clip_select    = 1;
       clip_cfg->hist_reverse   = 0;
-      clip_cfg->hist_items     = 20;
+      clip_cfg->hist_items     = 10;
       clip_cfg->label_length   = 50;
     }
   E_CONFIG_LIMIT(clip_cfg->hist_items, HIST_MIN, HIST_MAX);
