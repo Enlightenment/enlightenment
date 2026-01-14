@@ -29,7 +29,6 @@ struct _Instance
   Evas_Object     *o_popup_lay;
   Evas_Object     *o_popup_disp;
   Evas_Object     *o_gadimg;
-  Ecore_Timer     *update_timer;
   Eina_List       *strings;
   int              gadimg_w, gadimg_h;
   int              popup_w;
@@ -255,7 +254,6 @@ _gc_shutdown(E_Gadcon_Client *gcc)
      eina_list_remove(cpufreq_config->instances, inst);
    evas_object_del(inst->o_gadimg);
    evas_object_del(inst->o_cpu);
-   if (inst->update_timer) ecore_timer_del(inst->update_timer);
    EINA_LIST_FREE(inst->strings, s) eina_stringshare_del(s);
    free(inst);
 
