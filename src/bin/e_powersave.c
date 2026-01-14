@@ -285,8 +285,6 @@ _e_powersave_sleepers_wake(void)
 
    EINA_LIST_FOREACH(powersave_sleepers, l, sleeper)
      {
-        if (write(ecore_pipe_write_fd(sleeper->pipe), buf, 1) < 0)
-          fprintf(stderr, "%s: ERROR WRITING TO FD\n", __func__);
         ecore_pipe_write(sleeper->pipe, buf, 1);
      }
 }
