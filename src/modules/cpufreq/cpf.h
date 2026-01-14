@@ -44,6 +44,8 @@ typedef struct
   Cpf_Render    **rend;
 } Cpf_Stats;
 
+extern Ecore_Pipe *cpf_pipe;
+
 void             cpf_init(void);
 void             cpf_shutdown(void);
 void             cpf_poll_time_set(double tim);
@@ -55,5 +57,6 @@ int              cpf_perf_level_get(void); // 0-100
 const Cpf_Stats *cpf_perf_stats_get(void); // per core stat/freq info
 void             cpf_render_req(Cpf_Render_Type type, int w, int h);
 void             cpf_render_unreq(Cpf_Render_Type type, int w, int h);
+void             cpf_wake(void);
 
 #endif

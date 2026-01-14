@@ -498,6 +498,9 @@ _handle_powersave_mode(E_Powersave_Mode mode)
       case E_POWERSAVE_MODE_LOW:
         printf("PWSV: low=%i\n", cpufreq_config->power_hi);
         cpf_perf_level_set(cpufreq_config->power_hi);
+        // ensure poll time is restored in case we were in freeze
+        cpf_poll_time_set(cpufreq_config->check_interval);
+        cpf_wake();
         break;
 
       case E_POWERSAVE_MODE_MEDIUM:
@@ -509,11 +512,17 @@ _handle_powersave_mode(E_Powersave_Mode mode)
       case E_POWERSAVE_MODE_EXTREME:
         printf("PWSV: extreme=%i\n", cpufreq_config->power_lo);
         cpf_perf_level_set(cpufreq_config->power_lo);
+        // ensure poll time is restored in case we were in freeze
+        cpf_poll_time_set(cpufreq_config->check_interval);
+        cpf_wake();
         break;
 
       case E_POWERSAVE_MODE_FREEZE:
         printf("PWSV: freeze\n");
         cpf_perf_level_set(0);
+        // when in freeze - eg screen off - only update every minute
+        cpf_poll_time_set(60.0);
+        cpf_wake();
         break;
 
       default:

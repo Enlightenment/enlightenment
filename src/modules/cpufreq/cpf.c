@@ -28,6 +28,10 @@ static Cpf_Stats     *_cpu_stats = NULL;
 // current cpu level
 static int            _cpu_level = -1;
 
+// wake up cpf poller thread
+static Ecore_Pipe    *_cpf_pipe = NULL;
+static int            _cpf_pipe_fd = -1;
+
 typedef struct
 {
   Cpf_Event   event;
@@ -140,6 +144,11 @@ _thread_main(void *data EINA_UNUSED, Ecore_Thread *eth)
   int i, y, pending;
   Cpf_Stats *cpf_stat;
   Cpf_Render *r;
+  int ret;
+  fd_set rfds, wfds, exfds;
+  struct timeval tv;
+  char buf[1] = { 0 };
+  double t;
 
   // lock we can wait on until this func is done
   eina_lock_take(&_poll_thread_lock);
@@ -242,7 +251,25 @@ skip:
       eina_lock_take(&_poll_lock);
       tim = _poll_time;
       eina_lock_release(&_poll_lock);
-      usleep(tim * 1000000);
+
+      t = 0.0;
+      while (t < 0.1)
+        {
+          FD_ZERO(&rfds);
+          FD_ZERO(&wfds);
+          FD_ZERO(&exfds);
+          FD_SET(_cpf_pipe_fd, &rfds);
+          tv.tv_sec = tim;
+          tv.tv_usec = (unsigned int)(tim * 1000000.0) % 1000000;
+          t = ecore_time_get(); // how long did we spend
+          ret = select(_cpf_pipe_fd + 1, &rfds, &wfds, &exfds, &tv);
+          t = ecore_time_get() - t; // time spent
+          if ((ret == 1) && (FD_ISSET(_cpf_pipe_fd, &rfds)))
+            {
+              if (read(_cpf_pipe_fd, buf, 1) < 0)
+                fprintf(stderr, "%s: ERROR READING FROM FD\n", __func__);
+            }
+        }
     }
   eina_lock_release(&_poll_thread_lock);
   cpu_perf_del(cp);
@@ -344,6 +371,11 @@ _cb_system_pwr_get(void *data EINA_UNUSED, const char *params)
     }
 }
 
+static void
+_cb_pipe_dummy(void *data EINA_UNUSED, void *buffer EINA_UNUSED, unsigned int bytes EINA_UNUSED)
+{
+}
+
 void
 cpf_init(void)
 { // set everything up
@@ -363,6 +395,9 @@ cpf_init(void)
   eina_lock_new(&_poll_thread_lock);
   eina_lock_new(&_renders_lock);
   eina_lock_new(&_cpu_stats_lock);
+  _cpf_pipe = ecore_pipe_add(_cb_pipe_dummy, NULL);
+  if (_cpf_pipe) ecore_pipe_freeze(_cpf_pipe);
+  if (_cpf_pipe) _cpf_pipe_fd = ecore_pipe_read_fd(_cpf_pipe);
   _poll_thread = ecore_thread_feedback_run
     (_thread_main, _thread_notify, _thread_end,
      _cancel, NULL, EINA_TRUE);
@@ -379,6 +414,7 @@ cpf_shutdown(void)
   ecore_thread_cancel(_poll_thread);
   _poll_thread = NULL;
   eina_lock_take(&_poll_thread_lock);
+  cpf_wake();
   eina_lock_release(&_poll_thread_lock);
   eina_lock_free(&_poll_thread_lock);
   eina_lock_free(&_poll_lock);
@@ -386,6 +422,9 @@ cpf_shutdown(void)
   eina_lock_free(&_cpu_stats_lock);
   evas_object_del(_renders_win);
   if (_cpu_stats) _cpf_stats_free(_cpu_stats);
+  if (_cpf_pipe) ecore_pipe_del(_cpf_pipe);
+  _cpf_pipe               = NULL;
+  _cpf_pipe_fd            = -1;
   _cpu_stats              = NULL;
   _renders_win            = NULL;
   _renders_data_cpu_usage = NULL;
@@ -450,7 +489,7 @@ cpf_event_callback_del(Cpf_Event event, void (*cb) (void *data), void *data)
               _callbacks = eina_list_remove_list(_callbacks, l);
               free(c);
               break;
-            } 
+            }
         }
     }
 }
@@ -548,4 +587,12 @@ cpf_render_unreq(Cpf_Render_Type type, int w, int h)
         }
     }
   eina_lock_release(&_renders_lock);
+}
+
+void
+cpf_wake(void)
+{
+  char buf[1] = { 1 };
+
+  if (_cpf_pipe) ecore_pipe_write(_cpf_pipe, buf, 1);
 }
