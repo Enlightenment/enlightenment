@@ -28,15 +28,13 @@ static const E_Gadcon_Client_Class _gadcon_class =
  * modules that are compiled for an incorrect API version safely */
 E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Clipboard"};
 
-// actual module specifics
-Mod_Inst *clip_inst = NULL; // Need by e_mod_config.c
+Mod mod = { 0 };
 
 static E_Action *act = NULL;
 static Ecore_Timer *delay_sel_timer = NULL;
 static double _mod_time_start = 0.0;
 static Elm_Genlist_Item_Class *list_itc = NULL;
 
-// first some call backs
 static void       _cb_menu_post_deactivate(void *data, E_Menu *menu EINA_UNUSED);
 static void       _cb_context_show(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, Evas_Event_Mouse_Down *event);
 static void       _cb_clear_history(void *d1, void *d2 EINA_UNUSED);
@@ -46,7 +44,6 @@ static void       _cb_config_show(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item
 static void       _clipboard_config_show(void *d1, void *d2 EINA_UNUSED);
 static void       _clipboard_popup_free(Instance *inst);
 
-// and then some auxillary functions
 static void       _clip_inst_free(Instance *inst);
 static void       _clip_add_item(Config_Item *cd);
 static void       _clipboard_popup_new(Instance *inst);
@@ -71,10 +68,6 @@ _clipboard_cb_mouse_down(void *data,
   else if (ev->button == 3) _cb_context_show(data, NULL, NULL, event);
 }
 
-/*
- * This function is called when you add the Module to a Shelf or Gadgets,
- *   this is where you want to add functions to do things.
- */
 static E_Gadcon_Client *
 _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
 {
@@ -85,7 +78,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
   inst = E_NEW(Instance, 1);
   if (!inst) return NULL;
 
-  clip_inst->instances = eina_list_append(clip_inst->instances, inst);
+  mod.instances = eina_list_append(mod.instances, inst);
 
   o = edje_object_add(gc->evas);
   e_theme_edje_object_set(o, "base/theme/modules/clipboard",
@@ -103,16 +96,11 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
   return gcc;
 }
 
-/*
- * This function is called when you remove the Module from a Shelf or Gadgets,
- * what this function really does is clean up, it removes everything the module
- * displays
- */
 static void
 _gc_shutdown(E_Gadcon_Client *gcc)
 {
   Instance *inst = gcc->data;
-  clip_inst->instances = eina_list_remove(clip_inst->instances, inst);
+  mod.instances = eina_list_remove(mod.instances, inst);
   _clip_inst_free(inst);
 }
 
@@ -123,20 +111,12 @@ _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient EINA_UNUSED)
   e_gadcon_client_min_size_set (gcc, 16, 16);
 }
 
-/*
- * This function sets the Gadcon name of the module,
- *  do not confuse this with E_Module_Api
- */
 static const char *
 _gc_label(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
 {
   return "Clipboard";
 }
 
-/*
- * This functions sets the Gadcon icon, the icon you see when you go to add
- * the module to a Shelf or Gadgets.
- */
 static Evas_Object *
 _gc_icon(const E_Gadcon_Client_Class *client_class EINA_UNUSED, Evas * evas)
 {
@@ -145,10 +125,6 @@ _gc_icon(const E_Gadcon_Client_Class *client_class EINA_UNUSED, Evas * evas)
   return o;
 }
 
-/*
- * This function sets the id for the module, so it is unique from other
- * modules
- */
 static const char *
 _gc_id_new(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
 {
@@ -218,13 +194,10 @@ _cb_del_item(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNU
   Eina_List *l;
   Instance *inst;
 
-  EINA_SAFETY_ON_NULL_RETURN(clip_cfg);
-  EINA_LIST_FOREACH(clip_inst->instances, l, inst)
-    _clipboard_popup_free(inst);
-
-  clip_cfg->items = eina_list_remove(clip_cfg->items, cd);
+  EINA_SAFETY_ON_NULL_RETURN(cfg);
+  EINA_LIST_FOREACH(mod.instances, l, inst) _clipboard_popup_free(inst);
+  cfg->items = eina_list_remove(cfg->items, cd);
   config_clip_data_free(cd);
-  // saving list to the file
   e_config_save_queue();
 }
 
@@ -232,7 +205,7 @@ static Evas_Object *
 _cb_gl_icon_get(void *data, Evas_Object *obj, const char *part EINA_UNUSED)
 {
   Config_Item *cd = data;
-  Evas_Object *o, *bx, *bt, *ic;
+  Evas_Object *o, *bx, *bt;
   Eina_Strbuf *buf = eina_strbuf_new();
   char *s;
   int idx = 0, len = 0;
@@ -240,7 +213,7 @@ _cb_gl_icon_get(void *data, Evas_Object *obj, const char *part EINA_UNUSED)
   Eina_Unicode uc[2] = { 0 };
 
   if (!buf) return NULL;
-  // first clip_cfg->label_length chars per line, first few lines
+  // first cfg->label_length chars per line, first few lines
   for (uc[0] = eina_unicode_utf8_next_get(cd->str, &idx); uc[0];
        uc[0] = eina_unicode_utf8_next_get(cd->str, &idx))
     {
@@ -250,7 +223,7 @@ _cb_gl_icon_get(void *data, Evas_Object *obj, const char *part EINA_UNUSED)
           lines++; // count lines - we now hav 1 more
           wid = 0; // back to width being 0
         }
-      else if (wid <= clip_cfg->label_length)
+      else if (wid <= cfg->label_length)
         { // if we have less than the max chars per line...
           if (lines > 2)
             { // if max lines and we have more lines after add ...
@@ -265,8 +238,7 @@ _cb_gl_icon_get(void *data, Evas_Object *obj, const char *part EINA_UNUSED)
               free(s);
               // we hit the max width so add ...
               // we keep skipping on this line until a newline gets wid to 0
-              if (wid == clip_cfg->label_length)
-                eina_strbuf_append(buf, "...");
+              if (wid == cfg->label_length) eina_strbuf_append(buf, "...");
               wid++; // width went up 1
             }
         }
@@ -295,8 +267,8 @@ _cb_gl_icon_get(void *data, Evas_Object *obj, const char *part EINA_UNUSED)
   evas_object_size_hint_align_set(o, 0.0, 0.5);
   evas_object_smart_callback_add(o, "clicked", _cb_del_item, cd);
 
-  ic = o = elm_icon_add(e_comp->elm);
-  elm_icon_standard_set(ic, "edit-delete");
+  o = elm_icon_add(e_comp->elm);
+  elm_icon_standard_set(o, "edit-delete");
   elm_object_content_set(bt, o);
   evas_object_show(o);
 
@@ -314,11 +286,9 @@ _cb_sel(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
   Config_Item *cd;
 
   if (idx < 0) return;
-  cd = eina_list_nth(clip_cfg->items, idx - 1);
-  if (cd) elm_cnp_selection_set(clip_inst->ewin,
-                                ELM_SEL_TYPE_CLIPBOARD,
-                                ELM_SEL_FORMAT_TEXT,
-                                cd->str,
+  cd = eina_list_nth(cfg->items, idx - 1);
+  if (cd) elm_cnp_selection_set(mod.ewin, ELM_SEL_TYPE_CLIPBOARD,
+                                ELM_SEL_FORMAT_TEXT, cd->str,
                                 strlen(cd->str));
   _clipboard_popup_free(inst);
 }
@@ -329,9 +299,8 @@ _cb_clear(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info
   Eina_List *l;
   Instance *inst;
 
-  EINA_SAFETY_ON_NULL_RETURN(clip_cfg);
-  EINA_LIST_FOREACH(clip_inst->instances, l, inst)
-    _clipboard_popup_free(inst);
+  EINA_SAFETY_ON_NULL_RETURN(cfg);
+  EINA_LIST_FOREACH(mod.instances, l, inst) _clipboard_popup_free(inst);
   _clear_history();
 }
 
@@ -341,10 +310,9 @@ _cb_settings(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
   Eina_List *l;
   Instance *inst;
 
-  EINA_SAFETY_ON_NULL_RETURN(clip_cfg);
-  EINA_LIST_FOREACH(clip_inst->instances, l, inst)
-    _clipboard_popup_free(inst);
-  if (clip_cfg->config_dialog) return;
+  EINA_SAFETY_ON_NULL_RETURN(cfg);
+  EINA_LIST_FOREACH(mod.instances, l, inst) _clipboard_popup_free(inst);
+  if (cfg->config_dialog) return;
   config_clipboard_module(NULL, NULL);
 }
 
@@ -374,16 +342,10 @@ _clipboard_popup_new(Instance *inst)
   gl = o = elm_genlist_add(e_comp->elm);
   // make scroller expand to min size of items
   elm_genlist_mode_set(o, ELM_LIST_EXPAND);
-  // and now limit genlist to this size beyond which it scrolls
-  evas_object_size_hint_max_set(o,
-                                ELM_SCALE_SIZE(320),
-                                ELM_SCALE_SIZE(320));
-  EINA_LIST_FOREACH(clip_cfg->items, l, cd)
+  EINA_LIST_FOREACH(cfg->items, l, cd)
     {
-      elm_genlist_item_append(o, list_itc, cd,
-                              NULL, // parent
-                              ELM_GENLIST_ITEM_NONE,
-                              _cb_sel, inst);
+      elm_genlist_item_append(o, list_itc, cd, NULL, // parent
+                              ELM_GENLIST_ITEM_NONE, _cb_sel, inst);
     }
   elm_table_pack(tb, o, 0, 0, 2, 1);
 
@@ -421,8 +383,7 @@ _clipboard_popup_new(Instance *inst)
   e_gadcon_popup_show(inst->popup);
   e_comp_object_util_autoclose(inst->popup->comp_object,
                                _clipboard_popup_comp_del_cb,
-                               NULL,
-                               inst);
+                               NULL, inst);
   e_object_data_set(E_OBJECT(inst->popup), inst);
   E_OBJECT_DEL_SET(inst->popup, _clipboard_popup_del_cb);
 }
@@ -436,30 +397,25 @@ _clip_add_item(Config_Item *cd)
   EINA_SAFETY_ON_NULL_RETURN(cd);
   if (cd->str[0] == 0) return;
   // hide all popups - item lists point to data that might be invalid soon
-  EINA_LIST_FOREACH(clip_inst->instances, l, inst)
-    _clipboard_popup_free(inst);
+  EINA_LIST_FOREACH(mod.instances, l, inst) _clipboard_popup_free(inst);
 
-  if ((it = _item_in_history(cd)))
-    { // move to top of list
-      clip_cfg->items = eina_list_promote_list(clip_cfg->items, it);
-    }
+  if ((it = _item_in_history(cd))) // move to top of list
+    cfg->items = eina_list_promote_list(cfg->items, it);
   else
     { // add item to the list
-      if (eina_list_count(clip_cfg->items) < clip_cfg->hist_items)
-        { // add to start of list
-          clip_cfg->items = eina_list_prepend(clip_cfg->items, cd);
-        }
+      if (eina_list_count(cfg->items) < cfg->hist_items) // add to start
+        cfg->items = eina_list_prepend(cfg->items, cd);
       else
         { // remove last item from the list
-          Eina_List *l_last = eina_list_last(clip_cfg->items);
+          Eina_List *l_last = eina_list_last(cfg->items);
 
           if (l_last)
             {
               config_clip_data_free(l_last->data); // makes popup ptrs invalid
-              clip_cfg->items = eina_list_remove_list(clip_cfg->items, l_last);
+              cfg->items = eina_list_remove_list(cfg->items, l_last);
             }
           //  add clipboard data stored in cd to the list as a first item
-          clip_cfg->items = eina_list_prepend(clip_cfg->items, cd);
+          cfg->items = eina_list_prepend(cfg->items, cd);
         }
     }
   // saving list to the file
@@ -469,9 +425,8 @@ _clip_add_item(Config_Item *cd)
 static Eina_List *
 _item_in_history(Config_Item *cd)
 {
-  EINA_SAFETY_ON_NULL_RETURN_VAL(cd, NULL);
-  if (clip_cfg->items)
-    return eina_list_search_unsorted_list(clip_cfg->items, (Eina_Compare_Cb) _clip_compare, cd->str);
+  if (cfg->items)
+    return eina_list_search_unsorted_list(cfg->items, (Eina_Compare_Cb)_clip_compare, cd->str);
   else
     return NULL;
 }
@@ -485,8 +440,8 @@ _clip_compare(Config_Item *cd, char *text)
 static void
 _clear_history(void)
 {
-  EINA_SAFETY_ON_NULL_RETURN(clip_cfg);
-  if (clip_cfg->items) E_FREE_LIST(clip_cfg->items, config_clip_data_free);
+  if (!cfg) return;
+  if (cfg->items) E_FREE_LIST(cfg->items, config_clip_data_free);
   elm_object_cnp_selection_clear(e_comp->evas, ELM_SEL_TYPE_CLIPBOARD);
   e_config_save_queue();
 }
@@ -494,8 +449,7 @@ _clear_history(void)
 static void
 _cb_clear_history(void *d1, void *d2 EINA_UNUSED)
 {
-  EINA_SAFETY_ON_NULL_RETURN(clip_cfg);
-  _clipboard_popup_free((Instance *)d1);
+  _clipboard_popup_free(d1);
   _clear_history();
 }
 
@@ -504,8 +458,6 @@ _cb_menu_post_deactivate(void *data, E_Menu *menu EINA_UNUSED)
 {
   Instance *inst = data;
 
-  EINA_SAFETY_ON_NULL_RETURN(inst);
-  //e_gadcon_locked_set(inst->gcc->gadcon, 0);
   edje_object_signal_emit(inst->o_button, "e,state,unfocused", "e");
 }
 
@@ -514,19 +466,17 @@ _cb_action_switch(E_Object *o EINA_UNUSED, const char *params)
 {
   Instance *inst;
 
-  if ((!clip_inst) || (!clip_inst->instances)) return;
-  inst = clip_inst->instances->data; // just use 1st one...
+  if (!mod.instances) return;
+  inst = mod.instances->data; // just use 1st one...
   if (!strcmp(params, "float")) _clipboard_popup_new(inst);
   else if (!strcmp(params, "settings")) _cb_config_show(inst, NULL, NULL);
-  // Only call clear dialog if there is something to clear
-  else if ((!strcmp(params, "clear")) && (clip_cfg->items))
+  else if ((!strcmp(params, "clear")) && (cfg->items))
     _cb_clear_history(NULL, NULL);
 }
 
 static void
 _clip_inst_free(Instance *inst)
 {
-  EINA_SAFETY_ON_NULL_RETURN(inst);
   _clipboard_popup_free(inst);
   inst->gcc = NULL;
   if (inst->o_button) evas_object_del(inst->o_button);
@@ -534,31 +484,34 @@ _clip_inst_free(Instance *inst)
 }
 
 static Eina_Bool
-_cliboard_cb_paste(void *data,
-                   Evas_Object *obj EINA_UNUSED,
+_empty(const char *s)
+{
+  // walk to first non-space char
+  while ((isspace((unsigned char)*s)) && (*s++));
+  // first non-empty char is NOT 0 byte (end of str) thus not empty
+  if (s[0]) return EINA_FALSE;
+  return EINA_TRUE;
+}
+
+static Eina_Bool
+_cliboard_cb_paste(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                    Elm_Selection_Data *event)
 {
   Config_Item *cd = NULL;
-  Instance *instance = data;
-  char *paste = NULL;
+  char *str = NULL;
   const char *last = "";
 
-  EINA_SAFETY_ON_NULL_RETURN_VAL(instance, EINA_TRUE);
+  if (cfg->items) last = ((Config_Item *)eina_list_data_get(cfg->items))->str;
+  if (event) str = event->data;
+  if (!str) return EINA_TRUE;
 
-  if (clip_cfg->items)
-    last = ((Config_Item *)eina_list_data_get(clip_cfg->items))->str;
-  if (event) paste = event->data;
-
-  if (!paste) return EINA_TRUE;
-
-  if (!!strcmp(last, paste))
-    { // if new past differs to most recent stored...
-      if (strlen(paste) == 0) return ECORE_CALLBACK_DONE;
-      if (is_empty(paste)) return ECORE_CALLBACK_DONE;
+  if (!!strcmp(last, str))
+    {
+      if (_empty(str)) return ECORE_CALLBACK_DONE;
       cd = E_NEW(Config_Item, 1);
       if (cd)
         { // XXX: if we select huge amounts of text this could use a lot of ram
-          cd->str = eina_stringshare_add(paste);
+          cd->str = eina_stringshare_add(str);
           _clip_add_item(cd);
         }
     }
@@ -566,45 +519,36 @@ _cliboard_cb_paste(void *data,
 }
 
 static void
-_clipboard_cb_elm_selection_lost(void *data, Elm_Sel_Type selection)
+_clipboard_cb_elm_selection_lost(void *data EINA_UNUSED,
+                                 Elm_Sel_Type selection)
 {
-  Mod_Inst *mod_inst = data;
-
-  if (selection == ELM_SEL_TYPE_CLIPBOARD)
-    elm_cnp_selection_get(mod_inst->ewin,
-                          ELM_SEL_TYPE_CLIPBOARD,
-                          ELM_SEL_FORMAT_TARGETS,
-                          _cliboard_cb_paste,
-                          mod_inst);
+  if (selection != ELM_SEL_TYPE_CLIPBOARD) return;
+  elm_cnp_selection_get(mod.ewin, ELM_SEL_TYPE_CLIPBOARD,
+                        ELM_SEL_FORMAT_TARGETS, _cliboard_cb_paste,
+                        NULL);
 }
 
 static Eina_Bool
-_cb_sel_change_delay(void *data)
+_cb_sel_change_delay(void *data EINA_UNUSED)
 {
-  Mod_Inst *mod_inst = data;
   Eina_Bool fetch = EINA_FALSE;
 
   delay_sel_timer = NULL;
-  if ((mod_inst->sel_type == ELM_SEL_TYPE_PRIMARY) &&
-      (clip_cfg->clip_select))
+  if ((mod.sel_type == ELM_SEL_TYPE_PRIMARY) && (cfg->clip_select))
     fetch = EINA_TRUE;
-  else if (mod_inst->sel_type == ELM_SEL_TYPE_CLIPBOARD)
+  else if (mod.sel_type == ELM_SEL_TYPE_CLIPBOARD)
     fetch = EINA_TRUE;
-  if (fetch)
-    elm_cnp_selection_get(e_comp->evas,
-                          mod_inst->sel_type,
-                          ELM_SEL_FORMAT_TARGETS,
-                          _cliboard_cb_paste,
-                          mod_inst);
+  if (fetch) elm_cnp_selection_get(e_comp->evas, mod.sel_type,
+                                   ELM_SEL_FORMAT_TARGETS,
+                                   _cliboard_cb_paste, NULL);
   return EINA_FALSE;
 }
 
 static Eina_Bool
-_clipboard_cb_event_selection(void *data,
+_clipboard_cb_event_selection(void *data EINA_UNUSED,
                               Evas_Object *obj EINA_UNUSED,
                               void *event)
 {
-  Mod_Inst *mod_inst = data;
   Elm_Cnp_Event_Selection_Changed *ev = event;
 
   // skip sel change event early on
@@ -615,17 +559,17 @@ _clipboard_cb_event_selection(void *data,
       delay_sel_timer = NULL;
     }
   delay_sel_timer = ecore_timer_add(0.25, _cb_sel_change_delay, data);
-  mod_inst->sel_type = ev->type;
+  mod.sel_type = ev->type;
   return EINA_TRUE;
 }
 
 static void
 _clipboard_config_show(void *d1, void *d2 EINA_UNUSED)
 {
-  if (!clip_cfg) return;
-  if (clip_cfg->config_dialog) return;
+  if (!cfg) return;
+  if (cfg->config_dialog) return;
   config_clipboard_module(NULL, NULL);
-  _clipboard_popup_free((Instance *)d1);
+  _clipboard_popup_free(d1);
 }
 
 static void
@@ -636,19 +580,16 @@ _cb_config_show(void *data,
   _clipboard_config_show(data, NULL);
 }
 
-/*
- * This is the first function called by e17 when you load the module
- */
 E_API void *
 e_modapi_init(E_Module *m)
 {
   if (!config_init()) return NULL;
   if (!conifg_new_limit()) return NULL;
-  config_truncate_history(clip_cfg->hist_items);
+  config_truncate_history(cfg->hist_items);
 
-  clip_cfg->module = m;
+  cfg->module = m;
 
-  act = e_action_add("clipboard"); // module key binding actions
+  act = e_action_add("clipboard");
   if (act)
     {
       act->func.go = _cb_action_switch;
@@ -656,74 +597,49 @@ e_modapi_init(E_Module *m)
       e_action_predef_name_set(_("Clipboard"), ACT_CONFIG, "clipboard", "settings", NULL, 0);
       e_action_predef_name_set(_("Clipboard"), ACT_CLEAR,  "clipboard", "clear",    NULL, 0);
     }
-  // display this module's config info in the main config panel
-  // under preferences catogory
   e_configure_registry_item_add("preferences/clipboard", 10,
-                                "Clipboard Settings", NULL,
+                                _("Clipboard Settings"), NULL,
                                 "edit-paste", config_clipboard_module);
-  // create a global clip_inst for our module
-  // complete with a hidden window for event notification purposes
-  clip_inst = E_NEW(Mod_Inst, 1);
-  if (!clip_inst) return NULL;
-  clip_inst->ewin = elm_win_add(NULL, NULL, ELM_WIN_BASIC);
-  // now add some callbacks to handle clipboard events
-  // re-add to history
+  memset(&mod, 0, sizeof(mod));
+  mod.ewin = elm_win_add(NULL, NULL, ELM_WIN_BASIC);
   elm_cnp_selection_loss_callback_set(e_comp->evas,
                                       ELM_SEL_TYPE_CLIPBOARD,
                                       _clipboard_cb_elm_selection_lost,
-                                      clip_inst);
-  E_LIST_HANDLER_APPEND(clip_inst->handles,
+                                      NULL);
+  E_LIST_HANDLER_APPEND(mod.handles,
                         ECORE_EVENT_MOUSE_BUTTON_UP,
                         _clipboard_cb_event_selection,
-                        clip_inst);
-  // Does not seem to fire?
-  E_LIST_HANDLER_APPEND(clip_inst->handles,
+                        NULL);
+  E_LIST_HANDLER_APPEND(mod.handles,
                         ELM_CNP_EVENT_SELECTION_CHANGED,
                         _clipboard_cb_event_selection,
-                        clip_inst);
-  // tell any gadget containers (shelves, etc) that we provide a module
+                        NULL);
   e_gadcon_provider_register(&_gadcon_class);
-  // give e the module
   _mod_time_start = ecore_time_get(); // rcored start time to skip early events
   return m;
 }
 
-/*
- * This function is called by e17 when you unload the module,
- * here you should free all resources used while the module was enabled.
- */
 E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
   e_gadcon_provider_unregister(&_gadcon_class);
   if (delay_sel_timer) ecore_timer_del(delay_sel_timer);
   delay_sel_timer = NULL;
-  // the 2 following EINA SAFETY checks should never happen
-  // and i usually avoid gotos but here I feel their use is harmless */
-  EINA_SAFETY_ON_NULL_GOTO(clip_inst, noclip);
+  E_FREE_LIST(mod.handles, ecore_event_handler_del);
+  memset(&mod, 0, sizeof(mod));
 
-  // kill our clip_inst and cleanup
-  E_FREE_LIST(clip_inst->handles, ecore_event_handler_del);
-  clip_inst->handles = NULL;
-  E_FREE(clip_inst);
-
-noclip:
-  EINA_SAFETY_ON_NULL_GOTO(clip_cfg, noconfig);
+  if (!cfg) goto noconfig;
 
   // kill the config dialog
-  while ((clip_cfg->config_dialog = e_config_dialog_get("E", "preferences/clipboard")))
-    e_object_del(E_OBJECT(clip_cfg->config_dialog));
-
-  if (clip_cfg->config_dialog) e_object_del(E_OBJECT(clip_cfg->config_dialog));
-  E_FREE(clip_cfg->config_dialog);
-
+  while ((cfg->config_dialog =
+          e_config_dialog_get("E", "preferences/clipboard")))
+    e_object_del(E_OBJECT(cfg->config_dialog));
+  if (cfg->config_dialog) e_object_del(E_OBJECT(cfg->config_dialog));
+  E_FREE(cfg->config_dialog);
   config_shutdown();
 
 noconfig:
-  // unregister the config dialog from the main panel
   e_configure_registry_item_del("preferences/clipboard");
-
-  // clean up all key binding actions
   if (act)
     {
       e_action_predef_name_del("Clipboard", ACT_FLOAT);
@@ -732,18 +648,12 @@ noconfig:
       e_action_del("clipboard");
       act = NULL;
     }
-
-  // tell e the module is now unloaded. Gets removed from shelves, etc.
   e_gadcon_provider_unregister(&_gadcon_class);
   if (list_itc) elm_gengrid_item_class_free(list_itc);
   list_itc = NULL;
   return 1;
 }
 
-/*
- * This function is used to save and store configuration info on local
- * storage
- */
 E_API int
 e_modapi_save(E_Module *m EINA_UNUSED)
 {

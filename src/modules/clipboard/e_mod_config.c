@@ -1,12 +1,11 @@
 #include "e_mod_main.h"
 
-extern Mod_Inst     *clip_inst; // in e_mod_main.c
+extern Mod mod;
 
 struct _E_Config_Dialog_Data
 {
   E_Config_Dialog *cfd;
   Evas_Object *obj;
-
   // store some initial states of clipboard configuration we will need
   unsigned int init_label_length; // initial label length
   // actual options user can change
@@ -24,22 +23,22 @@ struct _E_Config_Dialog_Data
 };
 
 /////////////////////////////////////////////////////////////////////////////
-//
-static int           _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata);
-static void         *_create_data(E_Config_Dialog *cfd EINA_UNUSED);
-static int           _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata);
-static void          _fill_data(E_Config_Dialog_Data *cfdata);
-static void          _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata);
-static Evas_Object  *_basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata);
-
+Config *cfg = NULL;
 /////////////////////////////////////////////////////////////////////////////
-
 static E_Config_DD *conf_edd = NULL;
 static E_Config_DD *conf_item_edd = NULL;
-
-Config *clip_cfg = NULL;
-
 /////////////////////////////////////////////////////////////////////////////
+
+static void
+_fill_data(E_Config_Dialog_Data *cfdata)
+{
+  cfdata->init_label_length = cfg->label_length;
+  cfdata->clip_copy         = cfg->clip_copy;
+  cfdata->clip_select       = cfg->clip_select;
+  cfdata->hist_reverse      = cfg->hist_reverse;
+  cfdata->hist_items        = cfg->hist_items;
+  cfdata->label_length      = cfg->label_length;
+}
 
 static void *
 _create_data(E_Config_Dialog *cfd EINA_UNUSED)
@@ -52,51 +51,48 @@ _create_data(E_Config_Dialog *cfd EINA_UNUSED)
 static void
 _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
-  EINA_SAFETY_ON_NULL_RETURN(clip_cfg);
-  clip_cfg->config_dialog = NULL;
+  EINA_SAFETY_ON_NULL_RETURN(cfg);
+  cfg->config_dialog = NULL;
   E_FREE(cfdata);
-}
-
-static void
-_fill_data(E_Config_Dialog_Data *cfdata)
-{
-  cfdata->init_label_length = clip_cfg->label_length;
-
-  cfdata->clip_copy       = clip_cfg->clip_copy;
-  cfdata->clip_select     = clip_cfg->clip_select;
-  cfdata->hist_reverse    = clip_cfg->hist_reverse;
-  cfdata->hist_items      = clip_cfg->hist_items;
-  cfdata->label_length    = clip_cfg->label_length;
 }
 
 static int
 _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
-  clip_cfg->clip_copy      = cfdata->clip_copy;
-  clip_cfg->clip_select    = cfdata->clip_select;
-  clip_cfg->hist_reverse   = cfdata->hist_reverse;
+  cfg->clip_copy      = cfdata->clip_copy;
+  cfg->clip_select    = cfdata->clip_select;
+  cfg->hist_reverse   = cfdata->hist_reverse;
   // truncate hist list if needed
-  if (clip_cfg->hist_items != (unsigned int)cfdata->hist_items)
+  if (cfg->hist_items != (unsigned int)cfdata->hist_items)
     config_truncate_history(cfdata->hist_items);
-  clip_cfg->hist_items     = cfdata->hist_items;
+  cfg->hist_items     = cfdata->hist_items;
   // has clipboard label name length changed?
   if ((unsigned int)cfdata->label_length != cfdata->init_label_length)
     {
-      clip_cfg->label_length_changed = EINA_TRUE;
+      cfg->label_length_changed = EINA_TRUE;
       cfdata->init_label_length = cfdata->label_length;
     }
-  clip_cfg->label_length   = cfdata->label_length;
+  cfg->label_length   = cfdata->label_length;
   // now save configuration
   e_config_save_queue();
   return 1;
 }
 
+static int
+_basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
+{
+  if (cfg->clip_copy    != cfdata->clip_copy) return 1;
+  if (cfg->clip_select  != cfdata->clip_select) return 1;
+  if (cfg->hist_reverse != cfdata->hist_reverse) return 1;
+  if (cfg->hist_items   != (unsigned int)cfdata->hist_items) return 1;
+  if (cfg->label_length != (unsigned int)cfdata->label_length) return 1;
+  return 0;
+}
+
 static Evas_Object *
 _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
-{
-  Evas_Object *o;
-  Evas_Object *ob;
-  Evas_Object *of;
+{ // XXX: move to elm?
+  Evas_Object *o, *ob, *of;
 
   o = e_widget_list_add(evas, 0, 0);
   // clipboard config section
@@ -143,28 +139,17 @@ config_clipboard_module(Evas_Object *parent EINA_UNUSED,
 
   if (e_config_dialog_find("E", "settings/clipboard")) return NULL;
   v = E_NEW(E_Config_Dialog_View, 1);
+  if (!v) return NULL;
   v->create_cfdata = _create_data;
   v->free_cfdata = _free_data;
   v->basic.create_widgets = _basic_create_widgets;
   v->basic.apply_cfdata = _basic_apply_data;
   v->basic.check_changed = _basic_check_changed;
-
   cfd = e_config_dialog_new(NULL, _("Clipboard Settings"),
                             "E", "preferences/clipboard",
                             "preferences-engine", 0, v, NULL);
-  clip_cfg->config_dialog = cfd;
+  cfg->config_dialog = cfd;
   return cfd;
-}
-
-static int
-_basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
-{
-  if (clip_cfg->clip_copy      != cfdata->clip_copy) return 1;
-  if (clip_cfg->clip_select    != cfdata->clip_select) return 1;
-  if (clip_cfg->hist_reverse   != cfdata->hist_reverse) return 1;
-  if (clip_cfg->hist_items     != (unsigned int)cfdata->hist_items) return 1;
-  if (clip_cfg->label_length   != (unsigned int)cfdata->label_length) return 1;
-  return 0;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -193,10 +178,10 @@ config_init(void)
   E_CONFIG_VAL(D, T, clip_select, UCHAR);
   E_CONFIG_VAL(D, T, hist_reverse, UCHAR);
 
-  clip_cfg = e_config_domain_load("module.clipboard", conf_edd);
-  if (clip_cfg)
+  cfg = e_config_domain_load("module.clipboard", conf_edd);
+  if (cfg)
     { // check config version
-      if (!e_util_module_config_check("Clipboard", clip_cfg->version,
+      if (!e_util_module_config_check("Clipboard", cfg->version,
                                       MOD_CONFIG_FILE_VERSION))
         config_free();
     }
@@ -214,56 +199,51 @@ config_shutdown(void)
 Eina_Bool
 conifg_new_limit(void)
 {
-  if (!clip_cfg)
+  if (!cfg)
     {
-      clip_cfg = E_NEW(Config, 1);
-      if (!clip_cfg) return EINA_FALSE;
-      clip_cfg->label_length_changed = EINA_FALSE;
-      clip_cfg->clip_copy      = 1;
-      clip_cfg->clip_select    = 1;
-      clip_cfg->hist_reverse   = 0;
-      clip_cfg->hist_items     = 10;
-      clip_cfg->label_length   = 50;
+      cfg = E_NEW(Config, 1);
+      if (!cfg) return EINA_FALSE;
+      cfg->label_length_changed = EINA_FALSE;
+      cfg->clip_copy      = 1;
+      cfg->clip_select    = 1;
+      cfg->hist_reverse   = 0;
+      cfg->hist_items     = 10;
+      cfg->label_length   = 50;
     }
-  E_CONFIG_LIMIT(clip_cfg->hist_items, HIST_MIN, HIST_MAX);
-  E_CONFIG_LIMIT(clip_cfg->label_length, LABEL_MIN, LABEL_MAX);
-  E_CONFIG_LIMIT(clip_cfg->clip_copy, 0, 1);
-  E_CONFIG_LIMIT(clip_cfg->clip_select, 0, 1);
-  E_CONFIG_LIMIT(clip_cfg->hist_reverse, 0, 1);
-  clip_cfg->version = MOD_CONFIG_FILE_VERSION;
+  E_CONFIG_LIMIT(cfg->hist_items, HIST_MIN, HIST_MAX);
+  E_CONFIG_LIMIT(cfg->label_length, LABEL_MIN, LABEL_MAX);
+  E_CONFIG_LIMIT(cfg->clip_copy, 0, 1);
+  E_CONFIG_LIMIT(cfg->clip_select, 0, 1);
+  E_CONFIG_LIMIT(cfg->hist_reverse, 0, 1);
+  cfg->version = MOD_CONFIG_FILE_VERSION;
   return EINA_TRUE;
 }
 
 void
 config_free(void)
 {
-  Config_Item *ci;
+  Config_Item *cd;
 
-  if (!clip_cfg) return;
-  EINA_LIST_FREE(clip_cfg->items, ci)
-    {
-      eina_stringshare_del(ci->str);
-      free(ci);
-    }
-  clip_cfg->module = NULL;
-  E_FREE(clip_cfg);
+  if (!cfg) return;
+  EINA_LIST_FREE(cfg->items, cd) config_clip_data_free(cd);
+  E_FREE(cfg);
 }
 
 void
 config_save(void)
 {
-  e_config_domain_save("module.clipboard", conf_edd, clip_cfg);
+  e_config_domain_save("module.clipboard", conf_edd, cfg);
 }
 
 void
 config_truncate_history(unsigned int max)
 {
-  EINA_SAFETY_ON_NULL_RETURN(clip_cfg);
-  if ((clip_cfg->items) && (eina_list_count(clip_cfg->items) > max))
+  if (!cfg) return;
+  if ((cfg->items) && (eina_list_count(cfg->items) > max))
     {
       Eina_List *discard = NULL;
-      Eina_List *last = eina_list_nth_list(clip_cfg->items, max - 1);
-      clip_cfg->items = eina_list_split_list(clip_cfg->items, last, &discard);
+      Eina_List *last = eina_list_nth_list(cfg->items, max - 1);
+      cfg->items = eina_list_split_list(cfg->items, last, &discard);
       if (discard) E_FREE_LIST(discard, config_clip_data_free);
       e_config_save_queue();
     }

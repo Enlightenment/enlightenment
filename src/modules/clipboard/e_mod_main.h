@@ -39,7 +39,7 @@ EAPI int   e_modapi_save     (E_Module *m EINA_UNUSED);
 #define MOD_CONFIG_FILE_VERSION    ((MOD_CONFIG_FILE_EPOCH * 1000000) + MOD_CONFIG_FILE_GENERATION)
 
 typedef struct _Instance    Instance;
-typedef struct _Mod_Inst    Mod_Inst;
+typedef struct _Mod         Mod;
 typedef struct _Config      Config;
 typedef struct _Config_Item Config_Item;
 
@@ -51,12 +51,11 @@ struct _Instance
   E_Gadcon_Popup  *popup;
 };
 
-struct _Mod_Inst
-{ // sructure to store a global module instance in
-  // complete with a hidden window for event notification purposes
-  Evas_Object  *ewin; // window to send clipboard events to
-  Eina_List    *handles; // for handling clipboard events
-  Elm_Sel_Type  sel_type; // type of sel we last saw change
+struct _Mod
+{ // global module state
+  Evas_Object  *ewin; // window for cnp events
+  Eina_List    *handles; // event handlers
+  Elm_Sel_Type  sel_type; // type of last sel
   Eina_List    *instances; // all instances of gadgets
 };
 
@@ -66,25 +65,21 @@ struct _Mod_Inst
 #define HIST_MIN   5
 #define HIST_MAX   100
 
-// We create a structure config for our module, and also a config structure
-// for every item element (you can have multiple gadgets for the same module)
 struct _Config
-{
-  // runtime stuff we don't store
+{ // runtime stuff we don't store
   E_Module *module;
   E_Config_Dialog *config_dialog;
-
-  Eina_Bool label_length_changed; // Flag indicating a need to update all clip labels as configfuration changed.
+  Eina_Bool label_length_changed;
 
   // stored data
-  int version;          /* Configuration version */
-  Eina_List *items;     /* list of stored selection texts */
-  unsigned int hist_items;   /* Number of history items to store                */
-  unsigned int label_length; /* Number of characters of item to display         */
+  int version;
+  Eina_List *items; // saved sel items
+  unsigned int hist_items; // max number of items
+  unsigned int label_length; // max label length for display
   // these are booleans really...
-  unsigned char clip_copy;        /* Clipboard to use                                */
-  unsigned char clip_select;      /* Clipboard to use                                */
-  unsigned char hist_reverse;     /* Order to display History                        */
+  unsigned char clip_copy; // store ctrl+c/x
+  unsigned char clip_select; // store mouse hilight
+  unsigned char hist_reverse; // reverse order in popup
 };
 
 struct _Config_Item
@@ -94,9 +89,7 @@ struct _Config_Item
 
 E_Config_Dialog *config_clipboard_module(Evas_Object *parent, const char *params EINA_UNUSED);
 
-Eina_Bool        is_empty(const char *str);
-
-extern           Config *clip_cfg;
+extern           Config *cfg;
 
 Eina_Bool        config_init(void);
 void             config_shutdown(void);
