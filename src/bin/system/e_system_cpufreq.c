@@ -190,6 +190,39 @@ sys_cpu_pwr_energy_set(int v)
 }
 
 static int
+sys_gpu_amdgpu_pwr_energy_set(int v)
+{
+  const char *path = "/sys/bus/pci/drivers/amdgpu";
+  const char *lv_str[4] = { "low", "auto", "auto", "high" };
+  const char *s;
+  Eina_Iterator *it;
+  char buf[PATH_MAX];
+  FILE *f;
+  int ret = 0;
+
+  it = eina_file_ls(path);
+  if (!it) return ret;
+  // find dirs with : in name for pciid and look for perf level file
+  EINA_ITERATOR_FOREACH(it, s)
+    {
+      if (!s) continue;
+      if (strchr(s, ':'))
+        {
+          snprintf(buf, sizeof(buf), "%s/power_dpm_force_performance_level", s);
+          f = fopen(buf, "w");
+          if (f)
+            { //  found perf level file - write string
+              if (fwrite(lv_str[v], strlen(lv_str[v]), 1, f) == 1) ret = 1;
+              fclose(f);
+            }
+        }
+      eina_stringshare_del(s);
+    }
+  eina_iterator_free(it);
+  return ret;
+}
+
+static int
 sys_cpu_pwr_pstate_set(int v)
 {
   FILE *f;
@@ -280,6 +313,9 @@ _cb_cpufreq_pwr_set(void *data EINA_UNUSED, const char *params)
           if (!sys_cpu_pwr_governor_set(v)) goto err;
         }
     }
+  // if we have amd gpus - try this
+  sys_gpu_amdgpu_pwr_energy_set(v);
+  // XXX: in future support other gpu drivers?
   e_system_inout_command_send("cpufreq-pwr-set", "ok");
   return;
 err:
