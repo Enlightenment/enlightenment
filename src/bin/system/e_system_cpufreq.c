@@ -37,10 +37,10 @@ sys_cpu_set_all_min_freq(void)
 }
 
 static int
-sys_cpu_acpi_setall(const char *control, const char *value)
+sys_cpu_acpi_set(const char *control, const char *value)
 {
    FILE *f;
-   char buf[4096];
+   char buf[PATH_MAX];
 
    snprintf(buf, sizeof(buf), "/sys/firmware/acpi/%s", control);
    f = fopen(buf, "w");
@@ -210,10 +210,10 @@ sys_firmware_pwr_energy_set(int v)
   char *p, **strs;
   char buf[1024];
   char *wrstr[4] = { NULL };
-  const char *lv0[]    = { "low-power", "cool", NULL };
-  const char *lv1[]    = { "quiet", NULL };
-  const char *lv2[]    = { "balanced", NULL };
-  const char *lv3[]    = { "balanced-performance", "performance", NULL };
+  const char *lv0[]    = { "low-power", "cool", "quiet", "balanced", "balanced-performance", "performance", NULL };
+  const char *lv1[]    = { "quiet", "cool", "balanced", "low-power", "balanced-performance", "performance", NULL };
+  const char *lv2[]    = { "balanced", "balanced-performance", "quiet", "cool", "performance", "low-power", NULL };
+  const char *lv3[]    = { "performance", "balanced-performance", "balanced", "quiet", "cool", "low-power", NULL };
 
   f = fopen("/sys/firmware/acpi/platform_profile_choices", "r");
   if (!f) return 0;
@@ -233,7 +233,7 @@ sys_firmware_pwr_energy_set(int v)
   wrstr[1] = find_preferred(strs, lv1, "quiet");
   wrstr[2] = find_preferred(strs, lv2, "balanced");
   wrstr[3] = find_preferred(strs, lv3, "performance");
-  sys_cpu_acpi_setall("platform_profile", wrstr[v]);
+  sys_cpu_acpi_set("platform_profile", wrstr[v]);
 
   free(strs[0]);
   free(strs);
