@@ -37,6 +37,20 @@ sys_cpu_set_all_min_freq(void)
 }
 
 static int
+sys_cpu_acpi_setall(const char *control, const char *value)
+{
+   FILE *f;
+   char buf[4096];
+
+   snprintf(buf, sizeof(buf), "/sys/firmware/acpi/%s", control);
+   f = fopen(buf, "w");
+   if (!f) return 1;
+   fprintf(f, "%s", value);
+   fclose(f);
+   return 0;
+}
+
+static int
 sys_cpu_setall(const char *control, const char *value)
 {
    int num = 0;
@@ -184,6 +198,14 @@ sys_cpu_pwr_energy_set(int v)
   if (v == 3) sys_cpu_setall("boost", "1");
   else sys_cpu_setall("boost", "0");
 
+  f = fopen("/sys/firmware/acpi/platform_profile_choices", "r");
+  if (f)
+    {
+       const char *profiles[]
+         =  {"low-power", "balanced", "balanced-performance", "performance", NULL };
+       sys_cpu_acpi_setall("platform_profile", profiles[v]);
+       fclose(f);
+    }
   free(strs[0]);
   free(strs);
   return 1;
@@ -353,8 +375,8 @@ _cb_cpufreq_pwr_get(void *data EINA_UNUSED, const char *params EINA_UNUSED)
                           lv1, lv1vals);
           if (v < 0)
             {
-              e_system_inout_command_send("cpufreq-pwr-get", "err");
-              return;
+               e_system_inout_command_send("cpufreq-pwr-get", "err");
+               return;
             }
         }
     }
