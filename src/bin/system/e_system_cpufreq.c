@@ -198,14 +198,43 @@ sys_cpu_pwr_energy_set(int v)
   if (v == 3) sys_cpu_setall("boost", "1");
   else sys_cpu_setall("boost", "0");
 
+  free(strs[0]);
+  free(strs);
+  return 1;
+}
+
+static int
+sys_firmware_pwr_energy_set(int v)
+{
+  FILE *f;
+  char *p, **strs;
+  char buf[1024];
+  char *wrstr[4] = { NULL };
+  const char *lv0[]    = { "low-power", "cool", NULL };
+  const char *lv1[]    = { "quiet", NULL };
+  const char *lv2[]    = { "balanced", NULL };
+  const char *lv3[]    = { "balanced-performance", "performance", NULL };
+
   f = fopen("/sys/firmware/acpi/platform_profile_choices", "r");
-  if (f)
+  if (!f) return 0;
+
+  if (!fgets(buf, sizeof(buf), f))
     {
-       const char *profiles[]
-         =  {"low-power", "balanced", "balanced-performance", "performance", NULL };
-       sys_cpu_acpi_setall("platform_profile", profiles[v]);
-       fclose(f);
+      fclose(f);
+      return 0;
     }
+  fclose(f);
+  p = strchr(buf, '\n');
+  if (p) *p = '\0';
+
+  strs = eina_str_split(buf, " ", 0);
+
+  wrstr[0] = find_preferred(strs, lv0, "low-power");
+  wrstr[1] = find_preferred(strs, lv1, "quiet");
+  wrstr[2] = find_preferred(strs, lv2, "balanced");
+  wrstr[3] = find_preferred(strs, lv3, "performance");
+  sys_cpu_acpi_setall("platform_profile", wrstr[v]);
+
   free(strs[0]);
   free(strs);
   return 1;
@@ -335,6 +364,9 @@ _cb_cpufreq_pwr_set(void *data EINA_UNUSED, const char *params)
           if (!sys_cpu_pwr_governor_set(v)) goto err;
         }
     }
+
+  // if we have firmware - try this
+  sys_firmware_pwr_energy_set(v);
   // if we have amd gpus - try this
   sys_gpu_amdgpu_pwr_energy_set(v);
   // XXX: in future support other gpu drivers?
