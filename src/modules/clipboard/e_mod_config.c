@@ -63,8 +63,7 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata
   cfg->clip_select    = cfdata->clip_select;
   cfg->hist_reverse   = cfdata->hist_reverse;
   // truncate hist list if needed
-  if (cfg->hist_items != (unsigned int)cfdata->hist_items)
-    config_truncate_history(cfdata->hist_items);
+  if (cfg->hist_items != (unsigned int)cfdata->hist_items) config_hist_limit();
   cfg->hist_items     = cfdata->hist_items;
   // has clipboard label name length changed?
   if ((unsigned int)cfdata->label_length != cfdata->init_label_length)
@@ -236,13 +235,13 @@ config_save(void)
 }
 
 void
-config_truncate_history(unsigned int max)
+config_hist_limit(void)
 {
   if (!cfg) return;
-  if ((cfg->items) && (eina_list_count(cfg->items) > max))
+  if ((cfg->items) && (eina_list_count(cfg->items) > cfg->hist_items))
     {
       Eina_List *discard = NULL;
-      Eina_List *last = eina_list_nth_list(cfg->items, max - 1);
+      Eina_List *last = eina_list_nth_list(cfg->items, cfg->hist_items - 1);
       cfg->items = eina_list_split_list(cfg->items, last, &discard);
       if (discard) E_FREE_LIST(discard, config_clip_data_free);
       e_config_save_queue();

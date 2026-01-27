@@ -96,7 +96,7 @@ void             config_shutdown(void);
 Eina_Bool        conifg_new_limit(void);
 void             config_free(void);
 void             config_save(void);
-void             config_truncate_history(unsigned int max);
+void             config_hist_limit(void);
 void             config_clip_data_free(Config_Item *cd);
 
 #endif

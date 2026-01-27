@@ -585,7 +585,7 @@ e_modapi_init(E_Module *m)
 {
   if (!config_init()) return NULL;
   if (!conifg_new_limit()) return NULL;
-  config_truncate_history(cfg->hist_items);
+  config_hist_limit();
 
   cfg->module = m;
 
