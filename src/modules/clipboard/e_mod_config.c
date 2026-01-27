@@ -29,6 +29,16 @@ static E_Config_DD *conf_edd = NULL;
 static E_Config_DD *conf_item_edd = NULL;
 /////////////////////////////////////////////////////////////////////////////
 
+static Eina_Bool
+_empty(const char *s)
+{
+  // walk to first non-space char
+  while ((isspace((unsigned char)*s)) && (*s++));
+  // first non-empty char is NOT 0 byte (end of str) thus not empty
+  if (s[0]) return EINA_FALSE;
+  return EINA_TRUE;
+}
+
 static void
 _fill_data(E_Config_Dialog_Data *cfdata)
 {
@@ -254,4 +264,32 @@ config_clip_data_free(Config_Item *cd)
   EINA_SAFETY_ON_NULL_RETURN(cd);
   eina_stringshare_del(cd->str);
   free(cd);
+}
+
+void
+config_paste_add(const char *data, size_t size, int type)
+{
+  Config_Item *cd = NULL;
+  const char *last = "";
+  Eina_List *l;
+
+  if (!data) return;
+  if (cfg->items) last = ((Config_Item *)eina_list_data_get(cfg->items))->str;
+  if (!strcmp(last, data)) return; // same as last one we added
+  if (_empty(data)) return; // empty - we don't want it
+  EINA_LIST_FOREACH(cfg->items, l, cd)
+    {
+      if (!strcmp(data, cd->str))
+        {// promote to last - already there
+          cfg->items = eina_list_promote_list(cfg->items, l);
+          return;
+        }
+    }
+  // not there already
+  cd = E_NEW(Config_Item, 1);
+  if (!cd) return;
+  // XXX: if we select huge amounts of text this could use a lot of ram
+  cd->str = eina_stringshare_add(data);
+  cfg->items = eina_list_prepend(cfg->items, cd);
+  config_hist_limit();
 }

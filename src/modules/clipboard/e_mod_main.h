@@ -98,5 +98,6 @@ void             config_free(void);
 void             config_save(void);
 void             config_hist_limit(void);
 void             config_clip_data_free(Config_Item *cd);
+void             config_paste_add(const char *data, size_t size, int type);
 
 #endif

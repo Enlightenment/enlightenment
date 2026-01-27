@@ -45,11 +45,8 @@ static void       _clipboard_config_show(void *d1, void *d2 EINA_UNUSED);
 static void       _clipboard_popup_free(Instance *inst);
 
 static void       _clip_inst_free(Instance *inst);
-static void       _clip_add_item(Config_Item *cd);
 static void       _clipboard_popup_new(Instance *inst);
 static void       _clear_history(void);
-static Eina_List *_item_in_history(Config_Item *cd);
-static int        _clip_compare(Config_Item *cd, char *text);
 
 static void
 _clipboard_cb_mouse_down(void *data,
@@ -194,7 +191,7 @@ _cb_del_item(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNU
   Eina_List *l;
   Instance *inst;
 
-  EINA_SAFETY_ON_NULL_RETURN(cfg);
+  if (!cfg) return;
   EINA_LIST_FOREACH(mod.instances, l, inst) _clipboard_popup_free(inst);
   cfg->items = eina_list_remove(cfg->items, cd);
   config_clip_data_free(cd);
@@ -389,55 +386,6 @@ _clipboard_popup_new(Instance *inst)
 }
 
 static void
-_clip_add_item(Config_Item *cd)
-{
-  Eina_List *l, *it;
-  Instance *inst;
-
-  EINA_SAFETY_ON_NULL_RETURN(cd);
-  if (cd->str[0] == 0) return;
-  // hide all popups - item lists point to data that might be invalid soon
-  EINA_LIST_FOREACH(mod.instances, l, inst) _clipboard_popup_free(inst);
-
-  if ((it = _item_in_history(cd))) // move to top of list
-    cfg->items = eina_list_promote_list(cfg->items, it);
-  else
-    { // add item to the list
-      if (eina_list_count(cfg->items) < cfg->hist_items) // add to start
-        cfg->items = eina_list_prepend(cfg->items, cd);
-      else
-        { // remove last item from the list
-          Eina_List *l_last = eina_list_last(cfg->items);
-
-          if (l_last)
-            {
-              config_clip_data_free(l_last->data); // makes popup ptrs invalid
-              cfg->items = eina_list_remove_list(cfg->items, l_last);
-            }
-          //  add clipboard data stored in cd to the list as a first item
-          cfg->items = eina_list_prepend(cfg->items, cd);
-        }
-    }
-  // saving list to the file
-  e_config_save_queue();
-}
-
-static Eina_List *
-_item_in_history(Config_Item *cd)
-{
-  if (cfg->items)
-    return eina_list_search_unsorted_list(cfg->items, (Eina_Compare_Cb)_clip_compare, cd->str);
-  else
-    return NULL;
-}
-
-static int
-_clip_compare(Config_Item *cd, char *text)
-{
-  return strcmp(cd->str, text);
-}
-
-static void
 _clear_history(void)
 {
   if (!cfg) return;
@@ -484,38 +432,18 @@ _clip_inst_free(Instance *inst)
 }
 
 static Eina_Bool
-_empty(const char *s)
-{
-  // walk to first non-space char
-  while ((isspace((unsigned char)*s)) && (*s++));
-  // first non-empty char is NOT 0 byte (end of str) thus not empty
-  if (s[0]) return EINA_FALSE;
-  return EINA_TRUE;
-}
-
-static Eina_Bool
 _cliboard_cb_paste(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                    Elm_Selection_Data *event)
 {
-  Config_Item *cd = NULL;
-  char *str = NULL;
-  const char *last = "";
+  Eina_List *l;
+  Instance *inst;
+  if (!event) goto done;
 
-  if (cfg->items) last = ((Config_Item *)eina_list_data_get(cfg->items))->str;
-  if (event) str = event->data;
-  if (!str) return EINA_TRUE;
-
-  if (!!strcmp(last, str))
-    {
-      if (_empty(str)) return ECORE_CALLBACK_DONE;
-      cd = E_NEW(Config_Item, 1);
-      if (cd)
-        { // XXX: if we select huge amounts of text this could use a lot of ram
-          cd->str = eina_stringshare_add(str);
-          _clip_add_item(cd);
-        }
-    }
-  return EINA_TRUE;
+  EINA_LIST_FOREACH(mod.instances, l, inst) _clipboard_popup_free(inst);
+  config_paste_add(event->data, event->len, event->format);
+  e_config_save_queue();
+done:
+  return ECORE_CALLBACK_DONE;
 }
 
 static void
