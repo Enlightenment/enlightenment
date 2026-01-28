@@ -285,8 +285,7 @@ _cb_sel(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
   if (idx < 0) return;
   cd = eina_list_nth(cfg->items, idx - 1);
   if (cd) elm_cnp_selection_set(mod.ewin, ELM_SEL_TYPE_CLIPBOARD,
-                                ELM_SEL_FORMAT_TEXT, cd->str,
-                                strlen(cd->str));
+                                cd->type, cd->str, strlen(cd->str));
   _clipboard_popup_free(inst);
 }
 

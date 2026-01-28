@@ -173,6 +173,7 @@ config_init(void)
 #define T Config_Item
 #define D conf_item_edd
   E_CONFIG_VAL(D, T, str, STRI);
+  E_CONFIG_VAL(D, T, type, INT);
   conf_edd = E_CONFIG_DD_NEW("Config", Config);
   if (!conf_edd) return EINA_FALSE;
 #undef T
@@ -270,26 +271,48 @@ void
 config_paste_add(const char *data, size_t size, int type)
 {
   Config_Item *cd = NULL;
-  const char *last = "";
+  Config_Item *cd_last = NULL;
+  char *str = NULL;
   Eina_List *l;
 
-  if (!data) return;
-  if (cfg->items) last = ((Config_Item *)eina_list_data_get(cfg->items))->str;
-  if (!strcmp(last, data)) return; // same as last one we added
-  if (_empty(data)) return; // empty - we don't want it
+  if (!data) goto done;
+  // if we don't handle the type - don't add.
+  if (!((type == ELM_SEL_FORMAT_TEXT) ||
+        (type == ELM_SEL_FORMAT_MARKUP) ||
+// not handled yet
+//        (type == ELM_SEL_FORMAT_IMAGE) ||
+        (type == ELM_SEL_FORMAT_HTML) ||
+        (type == ELM_SEL_FORMAT_URILIST))) goto done;
+  if (cfg->items) cd_last = eina_list_data_get(cfg->items);
+  // let's make a string we know is 0 terminated from data
+  str = malloc(size + 1);
+  if (!str) goto done;
+  memcpy(str, data, size);
+  str[size] = 0;
+  if (_empty(str)) goto done; // empty - we don't want it
+  if ((cd_last) && (cd_last->type == type))
+    { // same as last?
+      if (type != ELM_SEL_FORMAT_IMAGE) // all other types are string
+        { // same data - skip storing
+          if (!strcmp(cd_last->str, str)) goto done;
+        }
+    }
   EINA_LIST_FOREACH(cfg->items, l, cd)
     {
-      if (!strcmp(data, cd->str))
+      if (!strcmp(str, cd->str))
         {// promote to last - already there
           cfg->items = eina_list_promote_list(cfg->items, l);
-          return;
+          goto done;
         }
     }
   // not there already
   cd = E_NEW(Config_Item, 1);
-  if (!cd) return;
+  if (!cd) goto done;
   // XXX: if we select huge amounts of text this could use a lot of ram
-  cd->str = eina_stringshare_add(data);
+  cd->str = eina_stringshare_add(str);
+  cd->type = type;
   cfg->items = eina_list_prepend(cfg->items, cd);
   config_hist_limit();
+done:
+  free(str);
 }

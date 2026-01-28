@@ -84,7 +84,9 @@ struct _Config
 
 struct _Config_Item
 {
-  const char *str; // stored string (stringshare)
+  const char *str; // string label if needed
+  int         type; // type of matching file (Elm_Sel_Format)
+                    // 1 = text, 2 = markup, 4 = image, 16 = html, 32 = urilist
 };
 
 E_Config_Dialog *config_clipboard_module(Evas_Object *parent, const char *params EINA_UNUSED);
