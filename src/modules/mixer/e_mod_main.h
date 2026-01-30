@@ -22,4 +22,6 @@ E_API void *e_modapi_init(E_Module *m);
 E_API int   e_modapi_shutdown(E_Module *m);
 E_API int   e_modapi_save(E_Module *m);
 
+void popup_all(void);
+
 #endif /* _E_MOD_MAIN_H_ */

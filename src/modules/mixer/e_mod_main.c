@@ -45,6 +45,7 @@ struct _Context
    E_Module *module;
    Eina_List *instances;
    E_Menu *menu;
+   Ecore_Timer *popdown_timer;
 };
 
 typedef struct _Mon_Data Mon_Data;
@@ -140,6 +141,7 @@ static void _source_monitor(Instance *inst, Emix_Source *s);
 
 static void _popup_playback_box_refill(Instance *inst);
 static void _popup_recording_fill(Instance *inst);
+
 
 static void
 _cb_emix_event(void *data, enum Emix_Event event, void *event_info EINA_UNUSED)
@@ -1009,6 +1011,42 @@ _popup_new(Instance *inst)
      elm_list_item_selected_set(default_it, EINA_TRUE);
 }
 
+static Eina_Bool
+_cb_popdown_all_timer(void *data EINA_UNUSED)
+{
+  Eina_List *l;
+  Instance *inst;
+
+  mixer_context->popdown_timer = NULL;
+  EINA_LIST_FOREACH(mixer_context->instances, l, inst)
+    {
+      if (inst->popup) _popup_del(inst);
+    }
+  return EINA_FALSE;
+}
+
+void
+popup_all(void)
+{
+  Eina_List *l;
+  Instance *inst;
+
+  EINA_LIST_FOREACH(mixer_context->instances, l, inst)
+    {
+      if (!inst->popup)
+        {
+          if (inst->gcc->gadcon->zone == e_zone_current_get())
+            {
+              _popup_new(inst);
+              break;
+            }
+        }
+    }
+  if (mixer_context->popdown_timer)
+    ecore_timer_del(mixer_context->popdown_timer);
+  mixer_context->popdown_timer = ecore_timer_add(1.0, _cb_popdown_all_timer, NULL);
+}
+
 static void
 _menu_cb(void *data, E_Menu *menu EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
@@ -1199,6 +1237,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    E_FREE_LIST(_handlers, ecore_event_handler_del);
    if (mixer_context)
      {
+        E_FREE_FUNC(mixer_context->popdown_timer, ecore_timer_del);
         free(mixer_context->theme);
         E_FREE(mixer_context);
      }

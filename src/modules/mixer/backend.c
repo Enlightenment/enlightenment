@@ -36,6 +36,9 @@ static void _volume_mute_app_cb(E_Object *obj, const char *params);
 static void _volume_increase_source_cb(E_Object *obj, const char *params);
 static void _volume_decrease_source_cb(E_Object *obj, const char *params);
 static void _volume_mute_source_cb(E_Object *obj, const char *params);
+static void _volume_sink_set_cb(E_Object *obj, const char *params);
+static void _volume_sink_next_cb(E_Object *obj, const char *params);
+static void _volume_sink_prev_cb(E_Object *obj, const char *params);
 static void _actions_register(void);
 static void _actions_unregister(void);
 static void _sink_event(int type, void *info);
@@ -98,6 +101,9 @@ static E_Action *_action_mute_app = NULL;
 static E_Action *_action_incr_source = NULL;
 static E_Action *_action_decr_source = NULL;
 static E_Action *_action_mute_source = NULL;
+static E_Action *_action_set_sink = NULL;
+static E_Action *_action_next_sink = NULL;
+static E_Action *_action_prev_sink = NULL;
 
 static void
 _notify_cb(void *data EINA_UNUSED, unsigned int id)
@@ -336,6 +342,65 @@ _volume_mute_app_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
 }
 
 static void
+_volume_sink_set_cb(E_Object *obj EINA_UNUSED, const char *params)
+{
+  Eina_List *l;
+  Emix_Sink *sink;
+
+  if (!params) return;
+  EINA_LIST_FOREACH(backend_sinks_get(), l, sink)
+    {
+      if ((sink->name) && (!strcmp(sink->name, params)))
+        {
+          backend_sink_default_set(sink);
+          break;
+        }
+    }
+}
+
+static void
+_volume_sink_next_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
+{
+  Eina_List *sinks, *l;
+  Emix_Sink *sink, *cursink;
+
+  cursink = backend_sink_default_get();
+  sinks = backend_sinks_get();
+  EINA_LIST_FOREACH(sinks, l, sink)
+    {
+      if (sink == cursink)
+        {
+          if (l->next) sink = l->next->data;
+          else sink = sinks->data;
+          backend_sink_default_set(sink);
+          popup_all();
+          break;
+        }
+    }
+}
+
+static void
+_volume_sink_prev_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
+{
+  Eina_List *sinks, *l;
+  Emix_Sink *sink, *cursink;
+
+  cursink = backend_sink_default_get();
+  sinks = backend_sinks_get();
+  EINA_LIST_FOREACH(sinks, l, sink)
+    {
+      if (sink == cursink)
+        {
+          if (l->prev) sink = l->prev->data;
+          else sink = eina_list_last_data_get(sinks);
+          backend_sink_default_set(sink);
+          popup_all();
+          break;
+        }
+    }
+}
+
+static void
 _actions_register(void)
 {
    _action_incr = e_action_add("volume_increase");
@@ -356,7 +421,7 @@ _actions_register(void)
    if (_action_mute)
      {
         _action_mute->func.go = _volume_mute_cb;
-        e_action_predef_name_set("Mixer", _("Mute volume"),
+        e_action_predef_name_set("Mixer", _("Mute Volume"),
                                  "volume_mute", NULL, NULL, 0);
      }
    _action_incr_app = e_action_add("volume_increase_app");
@@ -401,8 +466,29 @@ _actions_register(void)
    if (_action_mute_source)
      {
         _action_mute_source->func.go = _volume_mute_source_cb;
-        e_action_predef_name_set("Mixer", _("Mute Mic volume"),
+        e_action_predef_name_set("Mixer", _("Mute Mic Volume"),
                                  "volume_mute_mic", NULL, NULL, 0);
+     }
+   _action_set_sink = e_action_add("volume_sink_set");
+   if (_action_set_sink)
+     {
+        _action_set_sink->func.go = _volume_sink_set_cb;
+        e_action_predef_name_set("Mixer", _("Set Sink Source"),
+                                 "volume_sink_set", NULL, NULL, 0);
+     }
+   _action_next_sink = e_action_add("volume_sink_next");
+   if (_action_next_sink)
+     {
+        _action_next_sink->func.go = _volume_sink_next_cb;
+        e_action_predef_name_set("Mixer", _("Next Sink Source"),
+                                 "volume_sink_next", NULL, NULL, 0);
+     }
+   _action_prev_sink = e_action_add("volume_sink_prev");
+   if (_action_prev_sink)
+     {
+        _action_prev_sink->func.go = _volume_sink_prev_cb;
+        e_action_predef_name_set("Mixer", _("Previous Sink Source"),
+                                 "volume_sink_prev", NULL, NULL, 0);
      }
 
    e_comp_canvas_keys_ungrab();
@@ -1562,6 +1648,12 @@ EINTERN const Emix_Sink *
 backend_sink_default_get(void)
 {
    return _sink_default;
+}
+
+EINTERN const Eina_List *
+backend_sinks_get(void)
+{
+   return emix_sinks_get();
 }
 
 //////////////////////////////////////////////////////////////////////////////

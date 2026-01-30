@@ -20,6 +20,7 @@ EINTERN Eina_Bool backend_mute_get(void);
 
 EINTERN void backend_sink_default_set(const Emix_Sink *s);
 EINTERN const Emix_Sink *backend_sink_default_get(void);
+EINTERN const Eina_List *backend_sinks_get(void);
 
 EINTERN Eina_Bool backend_source_active_get(void);
 EINTERN void backend_source_volume_decrease(void);
