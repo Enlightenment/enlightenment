@@ -344,7 +344,7 @@ _volume_mute_app_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
 static void
 _volume_sink_set_cb(E_Object *obj EINA_UNUSED, const char *params)
 {
-  Eina_List *l;
+  const Eina_List *l;
   Emix_Sink *sink;
 
   if (!params) return;
@@ -361,8 +361,9 @@ _volume_sink_set_cb(E_Object *obj EINA_UNUSED, const char *params)
 static void
 _volume_sink_next_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
 {
-  Eina_List *sinks, *l;
-  Emix_Sink *sink, *cursink;
+  const Eina_List *sinks, *l;
+  const Emix_Sink*cursink;
+  Emix_Sink *sink;
 
   cursink = backend_sink_default_get();
   sinks = backend_sinks_get();
@@ -382,8 +383,9 @@ _volume_sink_next_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
 static void
 _volume_sink_prev_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
 {
-  Eina_List *sinks, *l;
-  Emix_Sink *sink, *cursink;
+  const Eina_List *sinks, *l;
+  const Emix_Sink*cursink;
+  Emix_Sink *sink;
 
   cursink = backend_sink_default_get();
   sinks = backend_sinks_get();
