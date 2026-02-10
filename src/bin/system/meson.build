@@ -10,6 +10,7 @@ src = [
   'e_system_cpufreq.c',
   'e_system_acpi.c',
   'e_system_battery.c',
+  'e_system_nice.c',
   'e_system.h',
 ]
 executable('enlightenment_system', src,
