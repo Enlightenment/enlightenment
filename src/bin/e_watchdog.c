@@ -89,6 +89,7 @@ _cb_watchdog_thread_pingpong_end(void *data EINA_UNUSED, Ecore_Thread *thread EI
 E_API void
 e_watchdog_begin(void)
 {
+  if (getenv("E_NO_WATCHDOG")) return;
    // set up main-loop ping-pong to a thread
    _watchdog_pipe = ecore_pipe_add(_cb_watchdog_thread_pingpong_pipe, NULL);
    // stop mainloop watching with fd handler as wer wait manually
