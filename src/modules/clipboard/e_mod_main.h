@@ -57,6 +57,7 @@ struct _Mod
   Eina_List    *handles; // event handlers
   Elm_Sel_Type  sel_type; // type of last sel
   Eina_List    *instances; // all instances of gadgets
+  Ecore_Timer  *init_timer; // delayed init timer
 };
 
 #define LABEL_MIN  5

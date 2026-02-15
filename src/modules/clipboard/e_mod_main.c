@@ -509,6 +509,14 @@ _cb_config_show(void *data,
   _clipboard_config_show(data, NULL);
 }
 
+static Eina_Bool
+_cb_init_timer(void *data EINA_UNUSED)
+{
+  mod.init_timer = NULL;
+  mod.ewin = elm_win_add(NULL, NULL, ELM_WIN_BASIC);
+  return EINA_FALSE;
+}
+
 E_API void *
 e_modapi_init(E_Module *m)
 {
@@ -530,7 +538,7 @@ e_modapi_init(E_Module *m)
                                 _("Clipboard Settings"), NULL,
                                 "edit-paste", config_clipboard_module);
   memset(&mod, 0, sizeof(mod));
-  mod.ewin = elm_win_add(NULL, NULL, ELM_WIN_BASIC);
+  mod.init_timer = ecore_timer_add(1.0, _cb_init_timer, NULL);
   elm_cnp_selection_loss_callback_set(e_comp->evas,
                                       ELM_SEL_TYPE_CLIPBOARD,
                                       _clipboard_cb_elm_selection_lost,
@@ -555,6 +563,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
   if (delay_sel_timer) ecore_timer_del(delay_sel_timer);
   delay_sel_timer = NULL;
   E_FREE_LIST(mod.handles, ecore_event_handler_del);
+  if (mod.init_timer) ecore_timer_del(mod.init_timer);
   if (mod.ewin) evas_object_del(mod.ewin);
   memset(&mod, 0, sizeof(mod));
 
