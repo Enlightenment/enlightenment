@@ -1193,7 +1193,8 @@ e_comp_x_randr_canvas_new(Ecore_Window parent, int w, int h)
         if (ecore_evas_engine_type_supported_get(ECORE_EVAS_ENGINE_OPENGL_X11))
           e_comp_gl_set(EINA_TRUE);
      }
-   if (e_comp_gl_get() && (e_comp_config_get()->engine == E_COMP_ENGINE_GL))
+   if (e_comp_gl_get() && (e_comp_config_get()->engine == E_COMP_ENGINE_GL)
+       && (!getenv("E_COMP_NO_GL")))
      {
         int opt[20];
         int opt_i = 0;
