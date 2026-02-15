@@ -119,8 +119,8 @@ EINTERN void e_comp_x_xwayland_client_setup(E_Client *ec, E_Client *wc);
 
 E_API E_Pixmap *e_comp_x_client_pixmap_get(const E_Client *ec);
 
-EINTERN Eina_Bool _e_comp_x_screensaver_on();
-EINTERN Eina_Bool _e_comp_x_screensaver_off();
+EINTERN Eina_Bool _e_comp_x_screensaver_on(void *data, int type, void *event);
+EINTERN Eina_Bool _e_comp_x_screensaver_off(void *data, int type, void *event);
 
 # endif
 #endif

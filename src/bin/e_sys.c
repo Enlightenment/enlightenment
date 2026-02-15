@@ -193,7 +193,7 @@ _e_sys_comp_emit_cb_wait(E_Sys_Action a, const char *sig, const char *rep, Eina_
    _e_sys_comp_zones_fade(a, sig, nocomp_push);
 #ifndef HAVE_WAYLAND_ONLY
    if (e_comp->comp_type == E_PIXMAP_TYPE_X)
-     _e_comp_x_screensaver_on();
+     _e_comp_x_screensaver_on(NULL, E_EVENT_SCREENSAVER_ON, NULL);
 #endif
 #ifdef HAVE_WAYLAND
    if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
@@ -297,7 +297,7 @@ _e_sys_comp_resume2(void *data EINA_UNUSED)
 #ifndef HAVE_WAYLAND_ONLY
    if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      {
-        _e_comp_x_screensaver_off();
+        _e_comp_x_screensaver_off(NULL, E_EVENT_SCREENSAVER_OFF, NULL);
         ecore_x_screensaver_reset();
      }
 #endif

@@ -5378,7 +5378,7 @@ _e_comp_cb_pointer_suspend_resume_done(void *data, Evas_Object *obj, const char 
 }
 
 EINTERN Eina_Bool
-_e_comp_x_screensaver_on()
+_e_comp_x_screensaver_on(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    const char *s;
 
@@ -5424,7 +5424,7 @@ _e_comp_x_screensaver_on()
 }
 
 EINTERN Eina_Bool
-_e_comp_x_screensaver_off()
+_e_comp_x_screensaver_off(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    const char *s;
 
