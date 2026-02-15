@@ -354,6 +354,7 @@ _init_grad(Evas_Object *o_win, const char *grp, int len)
   evas_object_resize(o, len, 1);
   evas_object_show(o);
 
+  elm_win_render(o_subwin);
   return evas_object_image_data_get(o_rend, EINA_FALSE);
 }
 
