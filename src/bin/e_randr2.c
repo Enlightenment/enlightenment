@@ -1076,7 +1076,8 @@ static E_Randr2_Screen *
 _screen_fuzzy_fallback_find(E_Config_Randr2 *cfg, const char *id)
 {
    E_Randr2_Screen *s = NULL;
-   char *p, *name;
+   char *name;
+   const char *p;
 
    // strip out everythng in the string from / on as that is edid
    // and fall back to finding just the output name in the rel

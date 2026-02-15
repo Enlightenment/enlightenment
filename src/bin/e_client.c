@@ -5264,9 +5264,8 @@ e_client_icon_add(E_Client *ec, Evas *evas)
           {
              if (!ec->internal_icon_key)
                {
-                  char *ext;
+                  const char *ext = strrchr(ec->internal_icon, '.');
 
-                  ext = strrchr(ec->internal_icon, '.');
                   if ((ext) && ((!strcmp(ext, ".edj"))))
                     {
                        o = edje_object_add(evas);

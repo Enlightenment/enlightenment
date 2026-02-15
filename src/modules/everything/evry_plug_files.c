@@ -960,7 +960,7 @@ _recentf_items_add_cb(const Eina_Hash *hash EINA_UNUSED, const void *key, void *
      {
         /* dont show recent files from same dir */
         int len = strlen(p->directory);
-        char *end = strrchr(path, '/');
+        const char *end = strrchr(path, '/');
         if (strncmp(path, p->directory, len) ||
             (end - path) <= len)
           {

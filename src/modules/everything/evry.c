@@ -1290,7 +1290,7 @@ static int
 _evry_selector_thumb(Evry_Selector *sel, const Evry_Item *it)
 {
    Evry_Window *win = sel->win;
-   char *suffix = NULL;
+   const char *suffix = NULL;
 
    if (sel->do_thumb)
      e_thumb_icon_end(sel->o_thumb);

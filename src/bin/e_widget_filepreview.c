@@ -312,8 +312,7 @@ _e_wid_fprev_preview_video_widgets(E_Widget_Data *wd)
 {
    Evas *evas = evas_object_evas_get(wd->obj);
    Evas_Object *table, *o, *em, *win;
-   const char *mime, *path;
-   char *ext;
+   const char *mime, *path, *ext;
    Eina_Bool audio_artwork;
    int mw, mh, y = 3;
 

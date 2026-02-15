@@ -154,12 +154,11 @@ e_font_fontconfig_name_parse(const char *font)
 static E_Font_Properties *
 _e_font_fontconfig_name_parse(Eina_Hash **font_hash, E_Font_Properties *efp, const char *font)
 {
-   char *s1;
-
-   s1 = strchr(font, ':');
+   const char *s1 = strchr(font, ':');
    if (s1)
      {
-        char *s2, *name, *style, *temp;
+        const char *s2;
+        char *name, *style, *temp;
         int len;
 
         len = s1 - font;
@@ -184,7 +183,7 @@ _e_font_fontconfig_name_parse(Eina_Hash **font_hash, E_Font_Properties *efp, con
 
         if (strncmp(s1, E_TOK_STYLE, strlen(E_TOK_STYLE)) == 0)
           {
-             style = s1 + strlen(E_TOK_STYLE);
+             s1 = s1 + strlen(E_TOK_STYLE);
 
              if (font_hash) efp = eina_hash_find(*font_hash, name);
              if (!efp)
@@ -197,20 +196,20 @@ _e_font_fontconfig_name_parse(Eina_Hash **font_hash, E_Font_Properties *efp, con
                        eina_hash_add(*font_hash, name, efp);
                     }
                }
-             s2 = strchr(style, ',');
+             s2 = strchr(s1, ',');
              if (s2)
                {
-                  char *style_old;
+                  const char *style_old;
 
-                  len = s2 - style;
-                  style_old = style;
+                  len = s2 - s1;
+                  style_old = s1;
                   style = calloc(len + 1, sizeof(char));
                   strncpy(style, style_old, len);
                   efp->styles = eina_list_append(efp->styles, eina_stringshare_add(style));
                   free(style);
                }
              else
-               efp->styles = eina_list_append(efp->styles, eina_stringshare_add(style));
+               efp->styles = eina_list_append(efp->styles, eina_stringshare_add(s1));
           }
         free(name);
      }

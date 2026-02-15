@@ -173,7 +173,7 @@ _e_remember_restore_idler_cb(void *d EINA_UNUSED)
           }
         else if (!strncmp(rem->class, "_config::", 9))
           {
-             char *param = NULL;
+             const char *param;
              char path[1024];
              const char *p;
 

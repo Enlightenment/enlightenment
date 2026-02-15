@@ -220,9 +220,8 @@ _fill_list(E_Config_Dialog_Data *cfdata, const char *mtype)
           snprintf(buf, sizeof(buf), "e/icons/fileman/mime/%s", m->mime);
         else
           {
-             char *p;
+             const char *p = strrchr(tmp, '.');
 
-             p = strrchr(tmp, '.');
              if ((p) && (!strcmp(p, ".edj")))
                edj = 1;
              else if (p)

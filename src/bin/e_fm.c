@@ -1012,10 +1012,10 @@ _e_fm2_cb_unmount_ok(void *data)
 void
 _e_fm2_path_parent_set(Evas_Object *obj, const char *path)
 {
-   char buf[PATH_MAX], *p;
    int idx;
+   char buf[PATH_MAX];
+   const char *p = strrchr(path, '/');
 
-   p = strrchr(path, '/');
    if (!p || (p == path))
      e_fm2_path_set(obj, "/", "/");
    else
@@ -9107,7 +9107,8 @@ _e_fm2_icon_menu(E_Fm2_Icon *ic, Evas_Object *obj, unsigned int timestamp)
    Eina_List *sel;
    Eina_List *l = NULL;
    int x, y, can_w, can_w2, protect;
-   char buf[PATH_MAX], *ext;
+   char buf[PATH_MAX];
+   const char *ext;
    Eina_Bool writable;
 
    sd = ic->sd;
@@ -10461,6 +10462,7 @@ static Evas_Object *
 _e_fm2_icon_entry_widget_add(E_Fm2_Icon *ic)
 {
    Evas *e;
+   const char *dot;
 
    if (ic->sd->iop_icon)
      _e_fm2_icon_entry_widget_accept(ic->sd->iop_icon);
@@ -10483,13 +10485,12 @@ _e_fm2_icon_entry_widget_add(E_Fm2_Icon *ic)
    e_widget_entry_text_set(ic->entry_widget, ic->info.file);
    e_widget_focus_set(ic->entry_widget, 1);
    ic->focus_hook = e_client_hook_add(E_CLIENT_HOOK_FOCUS_SET, _e_fm2_icon_entry_widget_focus_out, ic);
-   char *dot = strchr(ic->info.file, '.');
+
+   dot = strchr(ic->info.file, '.');
    if (dot)
      {
         int end = (int)((long)(dot - ic->info.file));
-        printf("SEL: %i -> %i\n", 0, end);
-        e_widget_entry_select_set(ic->entry_widget, 0,
-                                  (int)((long)(dot - ic->info.file)));
+        e_widget_entry_select_set(ic->entry_widget, 0, end);
      }
    else
      e_widget_entry_select_all(ic->entry_widget);
