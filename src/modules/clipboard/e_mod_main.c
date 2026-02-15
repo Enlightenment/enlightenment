@@ -1,5 +1,7 @@
 #include "e_mod_main.h"
 
+#undef elm_win_add
+
 // Stuff for convenience to compress code
 #define CLIP_TRIM_MODE(x) (x->trim_nl + 2 * (x->trim_ws))
 

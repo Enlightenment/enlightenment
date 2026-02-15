@@ -1,6 +1,8 @@
 #include "e_mod_main.h"
 #include "cpf_cpu.h"
 
+#undef elm_win_add
+
 // time between polls
 static Eina_Lock      _poll_lock;
 static double         _poll_time = 0.2;
