@@ -555,6 +555,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
   if (delay_sel_timer) ecore_timer_del(delay_sel_timer);
   delay_sel_timer = NULL;
   E_FREE_LIST(mod.handles, ecore_event_handler_del);
+  if (mod.ewin) evas_object_del(mod.ewin);
   memset(&mod, 0, sizeof(mod));
 
   if (!cfg) goto noconfig;
