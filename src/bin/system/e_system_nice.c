@@ -1,6 +1,7 @@
 #include "e_system.h"
 
-#include <linux/ioprio.h>
+// ioprio_set() - dont need
+//#include <linux/ioprio.h>
 
 typedef enum
 {
