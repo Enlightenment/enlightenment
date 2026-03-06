@@ -33,6 +33,7 @@ mods = [
   'gadman',
   'geolocation',
   'connman',
+  'networkmanager',
   'bluez5',
   'syscon',
   'systray',

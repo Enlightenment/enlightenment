@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Link
+Name=NetworkManager
+GenericName=NetworkManager
+Comment=Control Wifi and wired networks via NetworkManager.
+Icon=e-module-connman
+X-Enlightenment-ModuleType=system
