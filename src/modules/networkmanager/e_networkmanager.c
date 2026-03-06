@@ -219,6 +219,8 @@ _ap_prop_changed(void *data, const Eldbus_Message *msg)
                ap->rsn_flags = flags;
           }
      }
+
+   enm_mod_manager_update(nm_manager);
 }
 
 static struct NM_Access_Point *
@@ -345,19 +347,32 @@ _device_ap_removed(void *data, const Eldbus_Message *msg)
 }
 
 static void
-_device_state_changed(void *data, const Eldbus_Message *msg)
+_device_prop_changed(void *data, const Eldbus_Message *msg)
 {
    struct NM_Device *dev = data;
-   uint32_t new_state, old_state, reason;
+   Eldbus_Message_Iter *changed_props, *invalidated, *dict, *var;
+   const char *iface, *key;
 
-   if (!eldbus_message_arguments_get(msg, "uuu",
-                                     &new_state, &old_state, &reason))
+   if (!eldbus_message_arguments_get(msg, "sa{sv}as",
+                                     &iface, &changed_props, &invalidated))
      return;
 
-   DBG("Device %s state %u -> %u (reason %u)", dev->path,
-       old_state, new_state, reason);
-   dev->state = new_state;
-   enm_mod_manager_update(nm_manager);
+   while (eldbus_message_iter_get_and_next(changed_props, 'e', &dict))
+     {
+        if (!eldbus_message_iter_arguments_get(dict, "sv", &key, &var))
+          continue;
+
+        if (!strcmp(key, "State"))
+          {
+             uint32_t state;
+             if (eldbus_message_iter_arguments_get(var, "u", &state))
+               {
+                  dev->state = state;
+                  DBG("Device %s state -> %u", dev->path, state);
+                  enm_mod_manager_update(nm_manager);
+               }
+          }
+     }
 }
 
 static void
@@ -454,7 +469,7 @@ _device_new(const char *path)
    dev->proxy = eldbus_proxy_get(obj, NM_IFACE_PROPS);
 
    eldbus_proxy_signal_handler_add(dev->proxy, "PropertiesChanged",
-                                   _device_state_changed, dev);
+                                   _device_prop_changed, dev);
 
    dev->pending.get_props = eldbus_proxy_call(dev->proxy, "GetAll",
                                               _device_get_props_cb, dev,
@@ -487,11 +502,7 @@ _device_free(struct NM_Device *dev)
    free(dev->interface);
 
    if (dev->wireless_proxy)
-     {
-        obj = eldbus_proxy_object_get(dev->wireless_proxy);
-        eldbus_proxy_unref(dev->wireless_proxy);
-        eldbus_object_unref(obj);
-     }
+     eldbus_proxy_unref(dev->wireless_proxy);
 
    if (dev->proxy)
      {
@@ -726,6 +737,16 @@ _manager_prop_changed(void *data, const Eldbus_Message *msg)
              /* Use first active connection */
              if (eldbus_message_iter_get_and_next(conn_array, 'o', &aconn_path))
                _manager_check_active_connections(nm, aconn_path);
+             else
+               {
+                  eina_stringshare_del(nm->active_ap_path);
+                  nm->active_ap_path = NULL;
+                  eina_stringshare_del(nm->active_connection_path);
+                  nm->active_connection_path = NULL;
+                  free(nm->ip_address);
+                  nm->ip_address = NULL;
+                  enm_mod_manager_update(nm);
+               }
           }
      }
 }
@@ -782,6 +803,15 @@ _manager_get_props_cb(void *data, const Eldbus_Message *msg,
 
              if (eldbus_message_iter_get_and_next(conn_array, 'o', &aconn_path))
                _manager_check_active_connections(nm, aconn_path);
+             else
+               {
+                  eina_stringshare_del(nm->active_ap_path);
+                  nm->active_ap_path = NULL;
+                  eina_stringshare_del(nm->active_connection_path);
+                  nm->active_connection_path = NULL;
+                  free(nm->ip_address);
+                  nm->ip_address = NULL;
+               }
           }
      }
 

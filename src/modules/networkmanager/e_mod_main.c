@@ -199,9 +199,10 @@ _enm_popup_update(struct NM_Manager *nm, E_NM_Instance *inst)
    e_widget_ilist_go(list);
 
    if (inst->ctxt)
-     inst->ctxt->wireless_enabled = nm->wireless_enabled ? 1 : 0;
-
-   e_widget_check_checked_set(enabled, inst->ctxt->wireless_enabled);
+     {
+        inst->ctxt->wireless_enabled = nm->wireless_enabled ? 1 : 0;
+        e_widget_check_checked_set(enabled, inst->ctxt->wireless_enabled);
+     }
 }
 
 static void
