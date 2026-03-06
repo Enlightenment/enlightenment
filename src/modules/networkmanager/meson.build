@@ -11,4 +11,5 @@ no_icon = true
 
 data = [
   'module.desktop',
+  'e-module-connman.edj',
 ]
