@@ -79,6 +79,14 @@ _enm_popup_selected_cb(void *data)
    ap = enm_manager_find_ap(nm, path);
    if (!ap) return;
 
+   /* If this AP is currently active, disconnect instead */
+   if (nm->active_ap_path && (nm->active_ap_path == ap->path))
+     {
+        INF("Disconnect from %s", ap->ssid ?: path);
+        enm_ap_disconnect(nm);
+        return;
+     }
+
    /* Walk devices to find which owns this AP */
    EINA_INLIST_FOREACH(nm->devices, dev)
      {
@@ -94,6 +102,65 @@ _enm_popup_selected_cb(void *data)
                }
           }
      }
+}
+
+static Evas_Object *
+_enm_ap_icon_new(struct NM_Manager *nm, struct NM_Access_Point *ap, Evas *evas)
+{
+   Edje_Message_Int_Set *msg;
+   Evas_Object *icon;
+   int state_val;
+
+   icon = edje_object_add(evas);
+   if (!e_theme_edje_object_set(icon, "base/theme/modules/networkmanager",
+                                "e/modules/networkmanager/icon/wifi"))
+     e_theme_edje_object_set(icon, "base/theme/modules/connman",
+                             "e/modules/connman/icon/wifi");
+
+   /* Map active AP to ONLINE(5), otherwise IDLE(1) — ConnMan theme values */
+   state_val = (nm->active_ap_path && nm->active_ap_path == ap->path) ? 5 : 1;
+
+   msg = malloc(sizeof(*msg) + sizeof(int));
+   if (msg)
+     {
+        msg->count = 2;
+        msg->val[0] = state_val;
+        msg->val[1] = ap->strength;
+        edje_object_message_send(icon, EDJE_MESSAGE_INT_SET, 1, msg);
+        free(msg);
+     }
+
+   return icon;
+}
+
+static Evas_Object *
+_enm_ap_end_new(struct NM_Access_Point *ap, Evas *evas)
+{
+   Evas_Object *end;
+   const char *sec;
+   char secbuf[128];
+
+   end = edje_object_add(evas);
+   if (!e_theme_edje_object_set(end, "base/theme/modules/networkmanager",
+                                "e/modules/networkmanager/end"))
+     e_theme_edje_object_set(end, "base/theme/modules/connman",
+                             "e/modules/connman/end");
+
+   sec = enm_ap_security_to_str(ap->wpa_flags, ap->rsn_flags);
+   if (sec && strcmp(sec, "open"))
+     {
+        if (!strcmp(sec, "wpa") || !strcmp(sec, "wpa2") || !strcmp(sec, "sae"))
+          snprintf(secbuf, sizeof(secbuf), "e,security,psk");
+        else if (!strcmp(sec, "wep"))
+          snprintf(secbuf, sizeof(secbuf), "e,security,wep");
+        else if (!strcmp(sec, "802.1x"))
+          snprintf(secbuf, sizeof(secbuf), "e,security,ieee8021x");
+        else
+          snprintf(secbuf, sizeof(secbuf), "e,security,%s", sec);
+        edje_object_signal_emit(end, secbuf, "e");
+     }
+
+   return end;
 }
 
 static void
@@ -118,15 +185,10 @@ _enm_popup_update(struct NM_Manager *nm, E_NM_Instance *inst)
 
         EINA_INLIST_FOREACH(dev->access_points, ap)
           {
-             Evas_Object *icon;
-             char buf[128];
+             Evas_Object *icon = _enm_ap_icon_new(nm, ap, evas);
+             Evas_Object *end = _enm_ap_end_new(ap, evas);
 
-             icon = edje_object_add(evas);
-             snprintf(buf, sizeof(buf), "e/modules/networkmanager/icon/wifi");
-             e_theme_edje_object_set(icon, "base/theme/modules/networkmanager",
-                                     buf);
-
-             e_widget_ilist_append_full(list, icon, NULL,
+             e_widget_ilist_append_full(list, icon, end,
                                         ap->ssid ?: hidden,
                                         _enm_popup_selected_cb,
                                         inst, ap->path);
@@ -244,20 +306,28 @@ _enm_gadget_setup(E_NM_Instance *inst)
 static void
 _enm_mod_manager_update_inst(E_NM_Module_Context *ctxt EINA_UNUSED,
                               E_NM_Instance *inst,
+                              struct NM_Manager *nm,
                               enum NM_State state)
 {
    Evas_Object *o = inst->ui.gadget;
    Edje_Message_Int_Set *msg;
+   struct NM_Access_Point *active_ap = NULL;
    const char *typestr = "wifi";
-   char buf[128];
+   char buf[256];
+   char tooltip[256];
+   uint8_t strength;
+
+   /* Resolve active AP for real signal strength */
+   if (nm && nm->active_ap_path)
+     active_ap = enm_manager_find_ap(nm, nm->active_ap_path);
+
+   strength = active_ap ? active_ap->strength : 0;
 
    msg = malloc(sizeof(*msg) + sizeof(int));
    if (!msg) return;
    msg->count = 2;
    msg->val[0] = state;
-   msg->val[1] = (state == NM_STATE_CONNECTED_GLOBAL ||
-                  state == NM_STATE_CONNECTED_SITE   ||
-                  state == NM_STATE_CONNECTED_LOCAL) ? 100 : 0;
+   msg->val[1] = strength;
 
    edje_object_message_send(o, EDJE_MESSAGE_INT_SET, 1, msg);
    free(msg);
@@ -265,7 +335,43 @@ _enm_mod_manager_update_inst(E_NM_Module_Context *ctxt EINA_UNUSED,
    snprintf(buf, sizeof(buf), "e,changed,technology,%s", typestr);
    edje_object_signal_emit(o, buf, "e");
 
-   DBG("state=%d", state);
+   /* Build tooltip text for the gadget label */
+   if (!nm)
+     snprintf(tooltip, sizeof(tooltip), _("NetworkManager unavailable"));
+   else if (state == NM_STATE_CONNECTED_GLOBAL ||
+            state == NM_STATE_CONNECTED_SITE   ||
+            state == NM_STATE_CONNECTED_LOCAL)
+     {
+        const char *ssid = active_ap ? active_ap->ssid : NULL;
+        const char *ip   = nm->ip_address;
+
+        if (ssid && ip)
+          snprintf(tooltip, sizeof(tooltip), _("WiFi: %s — %s"), ssid, ip);
+        else if (ssid)
+          snprintf(tooltip, sizeof(tooltip), _("WiFi: %s"), ssid);
+        else if (ip)
+          snprintf(tooltip, sizeof(tooltip), _("Connected — %s"), ip);
+        else
+          snprintf(tooltip, sizeof(tooltip), _("Connected"));
+     }
+   else if (state == NM_STATE_CONNECTING)
+     {
+        const char *ssid = active_ap ? active_ap->ssid : NULL;
+        if (ssid)
+          snprintf(tooltip, sizeof(tooltip), _("Connecting: %s"), ssid);
+        else
+          snprintf(tooltip, sizeof(tooltip), _("Connecting…"));
+     }
+   else if (state == NM_STATE_DISCONNECTED ||
+            state == NM_STATE_DISCONNECTING)
+     snprintf(tooltip, sizeof(tooltip), _("Disconnected"));
+   else
+     snprintf(tooltip, sizeof(tooltip), _("NetworkManager: %s"),
+              enm_state_to_str(state));
+
+   edje_object_part_text_set(o, "e.text.label", tooltip);
+
+   DBG("state=%d strength=%u tooltip='%s'", state, strength, tooltip);
 }
 
 void
@@ -278,7 +384,7 @@ enm_mod_manager_update(struct NM_Manager *nm)
    EINA_SAFETY_ON_NULL_RETURN(nm);
 
    EINA_LIST_FOREACH(ctxt->instances, l, inst)
-     _enm_mod_manager_update_inst(ctxt, inst, nm->state);
+     _enm_mod_manager_update_inst(ctxt, inst, nm, nm->state);
 }
 
 void
@@ -366,7 +472,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    _enm_gadget_setup(inst);
 
    if (ctxt->nm)
-     _enm_mod_manager_update_inst(ctxt, inst, ctxt->nm->state);
+     _enm_mod_manager_update_inst(ctxt, inst, ctxt->nm, ctxt->nm->state);
 
    ctxt->instances = eina_list_append(ctxt->instances, inst);
 
