@@ -668,6 +668,17 @@ _manager_watch_ip4(struct NM_Manager *nm, const char *ip4config_path)
 /* Active connection tracking (persistent watcher)                             */
 /* -------------------------------------------------------------------------- */
 
+static enum NM_Device_Type
+_nm_conn_type_parse(const char *type)
+{
+   if (!type) return NM_DEVICE_TYPE_UNKNOWN;
+   if (!strcmp(type, "802-3-ethernet")) return NM_DEVICE_TYPE_ETHERNET;
+   if (!strcmp(type, "802-11-wireless")) return NM_DEVICE_TYPE_WIFI;
+   if (!strcmp(type, "bluetooth")) return NM_DEVICE_TYPE_BLUETOOTH;
+   if (!strcmp(type, "gsm") || !strcmp(type, "cdma")) return NM_DEVICE_TYPE_MODEM;
+   return NM_DEVICE_TYPE_UNKNOWN;
+}
+
 static void
 _manager_active_conn_watch_free(struct NM_Manager *nm)
 {
@@ -770,10 +781,20 @@ _active_conn_get_props_cb(void *data, const Eldbus_Message *msg,
                   nm->active_ap_path = eina_stringshare_add(ap_path);
                }
           }
+        else if (!strcmp(key, "Type"))
+          {
+             const char *type;
+             if (eldbus_message_iter_arguments_get(var, "s", &type))
+               {
+                  nm->active_conn_type = _nm_conn_type_parse(type);
+                  DBG("ActiveConn Type=%s -> %d", type, nm->active_conn_type);
+               }
+          }
      }
 
    /* Proxy stays alive — updates arrive via _active_conn_prop_changed */
-   DBG("ActiveConn done: active_ap=%s", nm->active_ap_path ?: "(null)");
+   DBG("ActiveConn done: type=%d active_ap=%s",
+       nm->active_conn_type, nm->active_ap_path ?: "(null)");
    enm_mod_manager_update(nm);
    enm_mod_aps_changed(nm);
 }
@@ -884,6 +905,7 @@ _manager_prop_changed(void *data, const Eldbus_Message *msg)
                   nm->active_connection_path = NULL;
                   free(nm->ip_address);
                   nm->ip_address = NULL;
+                  nm->active_conn_type = NM_DEVICE_TYPE_UNKNOWN;
                   enm_mod_manager_update(nm);
                }
           }

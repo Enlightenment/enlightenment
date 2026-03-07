@@ -165,6 +165,35 @@ _enm_ap_end_new(struct NM_Access_Point *ap, Evas *evas)
    return end;
 }
 
+static Evas_Object *
+_enm_eth_icon_new(struct NM_Device *dev, Evas *evas)
+{
+   Edje_Message_Int_Set *msg;
+   Evas_Object *icon;
+   int state_val;
+
+   icon = edje_object_add(evas);
+   if (!e_theme_edje_object_set(icon, "base/theme/modules/networkmanager",
+                                "e/modules/networkmanager/icon/ethernet"))
+     e_theme_edje_object_set(icon, "base/theme/modules/connman",
+                             "e/modules/connman/icon/ethernet");
+
+   /* NM device state 100 = activated → ONLINE(5), otherwise IDLE(1) */
+   state_val = (dev->state >= 100) ? 5 : 1;
+
+   msg = malloc(sizeof(*msg) + sizeof(int));
+   if (msg)
+     {
+        msg->count = 2;
+        msg->val[0] = state_val;
+        msg->val[1] = 100; /* ethernet has no signal strength concept */
+        edje_object_message_send(icon, EDJE_MESSAGE_INT_SET, 1, msg);
+        free(msg);
+     }
+
+   return icon;
+}
+
 /* Find the best AP for a given SSID across all devices.
  * Prefers the active AP if it matches, otherwise picks highest strength.
  * Used to deduplicate multiple stations broadcasting the same network name. */
@@ -218,9 +247,22 @@ _enm_popup_update(struct NM_Manager *nm, E_NM_Instance *inst)
    e_widget_ilist_freeze(list);
    e_widget_ilist_clear(list);
 
+   /* Show connected ethernet devices first */
+   EINA_INLIST_FOREACH(nm->devices, dev)
+     {
+        Evas_Object *icon;
+
+        if (dev->type != NM_DEVICE_TYPE_ETHERNET) continue;
+        if (dev->state < 100) continue; /* not activated */
+
+        icon = _enm_eth_icon_new(dev, evas);
+        e_widget_ilist_append_full(list, icon, NULL,
+                                   dev->interface ?: _("Wired"),
+                                   NULL, NULL, NULL);
+     }
+
    /* Deduplicate APs by SSID — show only the strongest station per SSID */
    seen_ssids = eina_hash_string_superfast_new(NULL);
-
 
    EINA_INLIST_FOREACH(nm->devices, dev)
      {
@@ -408,16 +450,24 @@ _enm_mod_manager_update_inst(E_NM_Module_Context *ctxt EINA_UNUSED,
    Evas_Object *o = inst->ui.gadget;
    Edje_Message_Int_Set *msg;
    struct NM_Access_Point *active_ap = NULL;
-   const char *typestr = "wifi";
+   const char *typestr;
    char buf[256];
    uint8_t strength;
    int theme_state;
+
+   /* Determine connection technology type for gadget icon */
+   typestr = (nm && nm->active_conn_type == NM_DEVICE_TYPE_ETHERNET)
+     ? "ethernet" : "wifi";
 
    /* Resolve active AP for real signal strength */
    if (nm && nm->active_ap_path)
      active_ap = enm_manager_find_ap(nm, nm->active_ap_path);
 
-   strength = active_ap ? active_ap->strength : 0;
+   /* Ethernet: full strength; WiFi: from active AP */
+   if (nm && nm->active_conn_type == NM_DEVICE_TYPE_ETHERNET)
+     strength = 100;
+   else
+     strength = active_ap ? active_ap->strength : 0;
    theme_state = _enm_state_to_connman(state);
 
    msg = malloc(sizeof(*msg) + sizeof(int));

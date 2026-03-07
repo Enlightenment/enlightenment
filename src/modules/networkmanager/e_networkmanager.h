@@ -98,6 +98,7 @@ struct NM_Manager
    const char   *active_ap_path;
    const char   *active_connection_path;
    char         *ip_address;
+   enum NM_Device_Type active_conn_type; /* type of the primary active connection */
 
    struct
      {
