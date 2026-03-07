@@ -336,6 +336,11 @@ _do_apply(void)
    _screen_config_eval();
    printf("RRR: really apply config...\n");
    e_comp->screen->apply();
+   printf("RRR: update canvas and zones after apply...\n");
+   e_comp_canvas_resize(e_randr2->w, e_randr2->h);
+   e_randr2_screens_setup(e_comp->w, e_comp->h);
+   e_comp_canvas_update();
+   ecore_event_add(E_EVENT_RANDR_CHANGE, NULL, NULL, NULL);
    printf("RRR: done config...\n");
 }
 
