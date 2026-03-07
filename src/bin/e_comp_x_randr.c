@@ -769,10 +769,11 @@ _e_comp_xrandr_ecore_x(void)
    printf("RRR: crtcs=%p outputs=%p\n", crtcs, outputs);
    if ((crtcs) && (outputs))
      {
-        outconf = alloca(outputs_num * sizeof(Ecore_X_Randr_Output));
-        screenconf = alloca(outputs_num * sizeof(E_Randr2_Screen *));
-        memset(outconf, 0, outputs_num * sizeof(Ecore_X_Randr_Output));
-        memset(screenconf, 0, outputs_num * sizeof(E_Randr2_Screen *));
+        int conf_num = (crtcs_num > outputs_num) ? crtcs_num : outputs_num;
+        outconf = alloca(conf_num * sizeof(Ecore_X_Randr_Output));
+        screenconf = alloca(conf_num * sizeof(E_Randr2_Screen *));
+        memset(outconf, 0, conf_num * sizeof(Ecore_X_Randr_Output));
+        memset(screenconf, 0, conf_num * sizeof(E_Randr2_Screen *));
 
         // decide which outputs get which crtcs
         EINA_LIST_FOREACH(e_randr2->screens, l, s)
@@ -788,7 +789,7 @@ _e_comp_xrandr_ecore_x(void)
                     {
                        if (s->config.priority > top_priority)
                          top_priority = s->config.priority;
-                       for (i = 0; i < outputs_num; i++)
+                       for (i = 0; i < crtcs_num; i++)
                          {
                             if (!outconf[i])
                               {
@@ -826,7 +827,8 @@ _e_comp_xrandr_ecore_x(void)
 
              scrs_num = 0;
              // set up a crtc to drive each output (or not)
-             for (i = 0; i < numout; i++)
+             // iterate all crtcs so unassigned ones get disabled
+             for (i = 0; i < crtcs_num; i++)
                {
                   // XXX: find clones and set them as outputs in an array
                   if (outconf[i])
