@@ -482,10 +482,24 @@ _enm_mod_manager_update_inst(E_NM_Module_Context *ctxt EINA_UNUSED,
    snprintf(buf, sizeof(buf), "e,changed,technology,%s", typestr);
    edje_object_signal_emit(o, buf, "e");
 
-   DBG("state=%d (theme=%d) strength=%u active_ap=%s ip=%s",
-       state, theme_state, strength,
-       nm ? (nm->active_ap_path ?: "(null)") : "no-nm",
-       nm ? (nm->ip_address ?: "(null)") : "no-nm");
+   /* Set hover label text — shows SSID or interface name on mouse hover */
+   if (nm && active_ap && active_ap->ssid)
+     edje_object_part_text_set(o, "e.text.label", active_ap->ssid);
+   else if (nm && nm->active_conn_type == NM_DEVICE_TYPE_ETHERNET)
+     {
+        struct NM_Device *dev;
+        EINA_INLIST_FOREACH(nm->devices, dev)
+          {
+             if (dev->type == NM_DEVICE_TYPE_ETHERNET && dev->state >= 100)
+               {
+                  edje_object_part_text_set(o, "e.text.label",
+                                            dev->interface ?: _("Wired"));
+                  break;
+               }
+          }
+     }
+   else
+     edje_object_part_text_set(o, "e.text.label", "");
 }
 
 void
