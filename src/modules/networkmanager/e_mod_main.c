@@ -32,7 +32,7 @@ void
 enm_popup_del(E_NM_Instance *inst)
 {
    E_FREE_FUNC(inst->popup, e_object_del);
-   inst->ui.popup.enabled = inst->ui.popup.list = NULL;
+   inst->ui.popup.enabled = inst->ui.popup.list = inst->ui.popup.ip_label = NULL;
 }
 
 static void
@@ -61,6 +61,8 @@ _enm_wireless_changed(void *data, Evas_Object *obj EINA_UNUSED,
    enm_wireless_enabled_set(ctxt->nm, !!ctxt->wireless_enabled);
 }
 
+static Eina_Bool _enm_ssid_is_active(struct NM_Manager *nm, const char *ssid);
+
 static void
 _enm_popup_selected_cb(void *data)
 {
@@ -80,7 +82,7 @@ _enm_popup_selected_cb(void *data)
    if (!ap) return;
 
    /* If this AP is currently active, disconnect instead */
-   if (nm->active_ap_path && (nm->active_ap_path == ap->path))
+   if (nm->active_ap_path && _enm_ssid_is_active(nm, ap->ssid))
      {
         INF("Disconnect from %s", ap->ssid ?: path);
         enm_ap_disconnect(nm);
@@ -118,7 +120,7 @@ _enm_ap_icon_new(struct NM_Manager *nm, struct NM_Access_Point *ap, Evas *evas)
                              "e/modules/connman/icon/wifi");
 
    /* Map active AP to ONLINE(5), otherwise IDLE(1) — ConnMan theme values */
-   state_val = (nm->active_ap_path && nm->active_ap_path == ap->path) ? 5 : 1;
+   state_val = (ap->ssid && _enm_ssid_is_active(nm, ap->ssid)) ? 5 : 1;
 
    msg = malloc(sizeof(*msg) + sizeof(int));
    if (msg)
@@ -163,6 +165,45 @@ _enm_ap_end_new(struct NM_Access_Point *ap, Evas *evas)
    return end;
 }
 
+/* Find the best AP for a given SSID across all devices.
+ * Prefers the active AP if it matches, otherwise picks highest strength.
+ * Used to deduplicate multiple stations broadcasting the same network name. */
+static struct NM_Access_Point *
+_enm_best_ap_for_ssid(struct NM_Manager *nm, const char *ssid)
+{
+   struct NM_Device *dev;
+   struct NM_Access_Point *best = NULL;
+
+   EINA_INLIST_FOREACH(nm->devices, dev)
+     {
+        struct NM_Access_Point *ap;
+        if (dev->type != NM_DEVICE_TYPE_WIFI) continue;
+        EINA_INLIST_FOREACH(dev->access_points, ap)
+          {
+             if (!ap->ssid || !ap->ssid[0]) continue;
+             if (strcmp(ap->ssid, ssid)) continue;
+             /* Always prefer the active AP */
+             if (nm->active_ap_path && nm->active_ap_path == ap->path)
+               return ap;
+             if (!best || ap->strength > best->strength)
+               best = ap;
+          }
+     }
+   return best;
+}
+
+/* Check if the given SSID matches the currently connected network */
+static Eina_Bool
+_enm_ssid_is_active(struct NM_Manager *nm, const char *ssid)
+{
+   struct NM_Access_Point *active;
+
+   if (!nm->active_ap_path) return EINA_FALSE;
+   active = enm_manager_find_ap(nm, nm->active_ap_path);
+   if (!active || !active->ssid) return EINA_FALSE;
+   return !strcmp(active->ssid, ssid);
+}
+
 static void
 _enm_popup_update(struct NM_Manager *nm, E_NM_Instance *inst)
 {
@@ -170,12 +211,16 @@ _enm_popup_update(struct NM_Manager *nm, E_NM_Instance *inst)
    Evas_Object *enabled = inst->ui.popup.enabled;
    Evas *evas = evas_object_evas_get(list);
    struct NM_Device *dev;
-   const char *hidden = "«hidden»";
+   Eina_Hash *seen_ssids;
 
    EINA_SAFETY_ON_NULL_RETURN(nm);
 
    e_widget_ilist_freeze(list);
    e_widget_ilist_clear(list);
+
+   /* Deduplicate APs by SSID — show only the strongest station per SSID */
+   seen_ssids = eina_hash_string_superfast_new(NULL);
+
 
    EINA_INLIST_FOREACH(nm->devices, dev)
      {
@@ -185,24 +230,52 @@ _enm_popup_update(struct NM_Manager *nm, E_NM_Instance *inst)
 
         EINA_INLIST_FOREACH(dev->access_points, ap)
           {
-             Evas_Object *icon = _enm_ap_icon_new(nm, ap, evas);
-             Evas_Object *end = _enm_ap_end_new(ap, evas);
+             struct NM_Access_Point *best;
+             Evas_Object *icon, *end;
+
+             /* Skip hidden networks (empty or NULL SSID) */
+             if (!ap->ssid || !ap->ssid[0]) continue;
+
+             /* Skip if we already showed this SSID */
+             if (eina_hash_find(seen_ssids, ap->ssid)) continue;
+
+             /* Find the best AP for this SSID and only show that one */
+             best = _enm_best_ap_for_ssid(nm, ap->ssid);
+             if (!best) continue;
+
+             eina_hash_add(seen_ssids, ap->ssid, (void *)1);
+
+             icon = _enm_ap_icon_new(nm, best, evas);
+             end = _enm_ap_end_new(best, evas);
 
              e_widget_ilist_append_full(list, icon, end,
-                                        ap->ssid ?: hidden,
+                                        best->ssid,
                                         _enm_popup_selected_cb,
-                                        inst, ap->path);
+                                        inst, best->path);
           }
      }
 
+   eina_hash_free(seen_ssids);
+
    e_widget_ilist_thaw(list);
    e_widget_ilist_go(list);
+
+   /* Update IP label */
+   if (nm->ip_address)
+     {
+        char ipbuf[128];
+        snprintf(ipbuf, sizeof(ipbuf), "IP: %s", nm->ip_address);
+        e_widget_label_text_set(inst->ui.popup.ip_label, ipbuf);
+     }
+   else
+     e_widget_label_text_set(inst->ui.popup.ip_label, "");
 
    if (inst->ctxt)
      {
         inst->ctxt->wireless_enabled = nm->wireless_enabled ? 1 : 0;
         e_widget_check_checked_set(enabled, inst->ctxt->wireless_enabled);
      }
+
 }
 
 static void
@@ -254,6 +327,9 @@ _enm_popup_new(E_NM_Instance *inst)
    e_widget_size_min_set(inst->ui.popup.list, 60, 100);
    e_widget_list_object_append(list, inst->ui.popup.list, 1, 1, 0.5);
 
+   inst->ui.popup.ip_label = e_widget_label_add(evas, "");
+   e_widget_list_object_append(list, inst->ui.popup.ip_label, 1, 0, 0.5);
+
    ck = e_widget_check_add(evas, _("Wifi On"), &(ctxt->wireless_enabled));
    inst->ui.popup.enabled = ck;
    e_widget_list_object_append(list, ck, 1, 0, 0.5);
@@ -304,6 +380,25 @@ _enm_gadget_setup(E_NM_Instance *inst)
      edje_object_signal_emit(o, "e,available", "e");
 }
 
+/* Map NM state to ConnMan theme state values:
+ * OFFLINE=0, IDLE=1, ASSOCIATION=2, CONFIGURATION=3, READY=4, ONLINE=5 */
+static int
+_enm_state_to_connman(enum NM_State state)
+{
+   switch (state)
+     {
+      case NM_STATE_UNKNOWN:
+      case NM_STATE_ASLEEP:           return 0; /* OFFLINE */
+      case NM_STATE_DISCONNECTED:
+      case NM_STATE_DISCONNECTING:    return 1; /* IDLE */
+      case NM_STATE_CONNECTING:       return 2; /* ASSOCIATION */
+      case NM_STATE_CONNECTED_LOCAL:  return 4; /* READY */
+      case NM_STATE_CONNECTED_SITE:   return 4; /* READY */
+      case NM_STATE_CONNECTED_GLOBAL: return 5; /* ONLINE */
+      default:                        return 0;
+     }
+}
+
 static void
 _enm_mod_manager_update_inst(E_NM_Module_Context *ctxt EINA_UNUSED,
                               E_NM_Instance *inst,
@@ -315,19 +410,20 @@ _enm_mod_manager_update_inst(E_NM_Module_Context *ctxt EINA_UNUSED,
    struct NM_Access_Point *active_ap = NULL;
    const char *typestr = "wifi";
    char buf[256];
-   char tooltip[256];
    uint8_t strength;
+   int theme_state;
 
    /* Resolve active AP for real signal strength */
    if (nm && nm->active_ap_path)
      active_ap = enm_manager_find_ap(nm, nm->active_ap_path);
 
    strength = active_ap ? active_ap->strength : 0;
+   theme_state = _enm_state_to_connman(state);
 
    msg = malloc(sizeof(*msg) + sizeof(int));
    if (!msg) return;
    msg->count = 2;
-   msg->val[0] = state;
+   msg->val[0] = theme_state;
    msg->val[1] = strength;
 
    edje_object_message_send(o, EDJE_MESSAGE_INT_SET, 1, msg);
@@ -336,43 +432,10 @@ _enm_mod_manager_update_inst(E_NM_Module_Context *ctxt EINA_UNUSED,
    snprintf(buf, sizeof(buf), "e,changed,technology,%s", typestr);
    edje_object_signal_emit(o, buf, "e");
 
-   /* Build tooltip text for the gadget label */
-   if (!nm)
-     snprintf(tooltip, sizeof(tooltip), _("NetworkManager unavailable"));
-   else if (state == NM_STATE_CONNECTED_GLOBAL ||
-            state == NM_STATE_CONNECTED_SITE   ||
-            state == NM_STATE_CONNECTED_LOCAL)
-     {
-        const char *ssid = active_ap ? active_ap->ssid : NULL;
-        const char *ip   = nm->ip_address;
-
-        if (ssid && ip)
-          snprintf(tooltip, sizeof(tooltip), _("WiFi: %s — %s"), ssid, ip);
-        else if (ssid)
-          snprintf(tooltip, sizeof(tooltip), _("WiFi: %s"), ssid);
-        else if (ip)
-          snprintf(tooltip, sizeof(tooltip), _("Connected — %s"), ip);
-        else
-          snprintf(tooltip, sizeof(tooltip), _("Connected"));
-     }
-   else if (state == NM_STATE_CONNECTING)
-     {
-        const char *ssid = active_ap ? active_ap->ssid : NULL;
-        if (ssid)
-          snprintf(tooltip, sizeof(tooltip), _("Connecting: %s"), ssid);
-        else
-          snprintf(tooltip, sizeof(tooltip), _("Connecting…"));
-     }
-   else if (state == NM_STATE_DISCONNECTED ||
-            state == NM_STATE_DISCONNECTING)
-     snprintf(tooltip, sizeof(tooltip), _("Disconnected"));
-   else
-     snprintf(tooltip, sizeof(tooltip), _("NetworkManager: %s"),
-              enm_state_to_str(state));
-
-   edje_object_part_text_set(o, "e.text.label", tooltip);
-
-   DBG("state=%d strength=%u tooltip='%s'", state, strength, tooltip);
+   DBG("state=%d (theme=%d) strength=%u active_ap=%s ip=%s",
+       state, theme_state, strength,
+       nm ? (nm->active_ap_path ?: "(null)") : "no-nm",
+       nm ? (nm->ip_address ?: "(null)") : "no-nm");
 }
 
 void

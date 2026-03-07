@@ -516,8 +516,86 @@ _device_free(struct NM_Device *dev)
 }
 
 /* -------------------------------------------------------------------------- */
-/* IP tracking                                                                 */
+/* IP tracking (persistent watcher)                                            */
 /* -------------------------------------------------------------------------- */
+
+static void
+_manager_ip4_watch_free(struct NM_Manager *nm)
+{
+   if (nm->pending.ip4config)
+     {
+        eldbus_pending_cancel(nm->pending.ip4config);
+        nm->pending.ip4config = NULL;
+     }
+   if (nm->ip4_proxy)
+     {
+        eldbus_proxy_unref(nm->ip4_proxy);
+        eldbus_object_unref(nm->ip4_obj);
+        nm->ip4_proxy = NULL;
+        nm->ip4_obj = NULL;
+     }
+   eina_stringshare_del(nm->ip4_path);
+   nm->ip4_path = NULL;
+}
+
+/* Parse AddressData from a variant containing aa{sv} */
+static void
+_ip4_parse_address_data(struct NM_Manager *nm, Eldbus_Message_Iter *var)
+{
+   Eldbus_Message_Iter *addr_array, *addr_dict, *entry;
+   const char *entry_key;
+   Eldbus_Message_Iter *entry_var;
+
+   if (!eldbus_message_iter_arguments_get(var, "aa{sv}", &addr_array))
+     return;
+
+   /* Take the first address */
+   if (!eldbus_message_iter_get_and_next(addr_array, 'a', &addr_dict))
+     return;
+
+   while (eldbus_message_iter_get_and_next(addr_dict, 'e', &entry))
+     {
+        if (!eldbus_message_iter_arguments_get(entry, "sv",
+                                               &entry_key, &entry_var))
+          continue;
+        if (!strcmp(entry_key, "address"))
+          {
+             const char *addr;
+             if (eldbus_message_iter_arguments_get(entry_var, "s", &addr))
+               {
+                  free(nm->ip_address);
+                  nm->ip_address = strdup(addr);
+                  DBG("IP address: %s", nm->ip_address);
+               }
+          }
+     }
+}
+
+static void
+_ip4_prop_changed(void *data, const Eldbus_Message *msg)
+{
+   struct NM_Manager *nm = data;
+   Eldbus_Message_Iter *changed_props, *invalidated;
+   const char *iface;
+   Eldbus_Message_Iter *dict, *var;
+   const char *key;
+
+   if (!eldbus_message_arguments_get(msg, "sa{sv}as",
+                                     &iface, &changed_props, &invalidated))
+     return;
+
+   while (eldbus_message_iter_get_and_next(changed_props, 'e', &dict))
+     {
+        if (!eldbus_message_iter_arguments_get(dict, "sv", &key, &var))
+          continue;
+
+        if (!strcmp(key, "AddressData"))
+          {
+             _ip4_parse_address_data(nm, var);
+             enm_mod_manager_update(nm);
+          }
+     }
+}
 
 static void
 _ip4config_get_props_cb(void *data, const Eldbus_Message *msg,
@@ -547,66 +625,104 @@ _ip4config_get_props_cb(void *data, const Eldbus_Message *msg,
           continue;
 
         if (!strcmp(key, "AddressData"))
-          {
-             Eldbus_Message_Iter *addr_array, *addr_dict, *entry;
-             const char *entry_key;
-             Eldbus_Message_Iter *entry_var;
-
-             if (!eldbus_message_iter_arguments_get(var, "aa{sv}", &addr_array))
-               continue;
-
-             /* Take the first address */
-             if (!eldbus_message_iter_get_and_next(addr_array, 'a', &addr_dict))
-               continue;
-
-             while (eldbus_message_iter_get_and_next(addr_dict, 'e', &entry))
-               {
-                  if (!eldbus_message_iter_arguments_get(entry, "sv",
-                                                         &entry_key,
-                                                         &entry_var))
-                    continue;
-                  if (!strcmp(entry_key, "address"))
-                    {
-                       const char *addr;
-                       if (eldbus_message_iter_arguments_get(entry_var, "s",
-                                                             &addr))
-                         {
-                            free(nm->ip_address);
-                            nm->ip_address = strdup(addr);
-                            DBG("IP address: %s", nm->ip_address);
-                         }
-                    }
-               }
-          }
+          _ip4_parse_address_data(nm, var);
      }
+
+   /* Proxy stays alive — updates arrive via _ip4_prop_changed signal */
+   enm_mod_manager_update(nm);
 }
 
 static void
-_manager_fetch_ip(struct NM_Manager *nm, const char *ip4config_path)
+_manager_watch_ip4(struct NM_Manager *nm, const char *ip4config_path)
 {
    Eldbus_Object *obj;
    Eldbus_Proxy *props;
 
    if (!ip4config_path || !strcmp(ip4config_path, "/")) return;
 
-   if (nm->pending.ip4config)
-     eldbus_pending_cancel(nm->pending.ip4config);
+   /* Skip if already watching this exact path */
+   if (nm->ip4_path && !strcmp(nm->ip4_path, ip4config_path))
+     return;
+
+   /* Tear down previous watcher */
+   _manager_ip4_watch_free(nm);
 
    obj = eldbus_object_get(conn, NM_BUS_NAME, ip4config_path);
    props = eldbus_proxy_get(obj, NM_IFACE_PROPS);
 
+   nm->ip4_proxy = props;
+   nm->ip4_obj = obj;
+   nm->ip4_path = eina_stringshare_add(ip4config_path);
+
+   /* Subscribe to property changes — keeps proxy alive for signals */
+   eldbus_proxy_signal_handler_add(props, "PropertiesChanged",
+                                   _ip4_prop_changed, nm);
+
+   /* Initial fetch */
    nm->pending.ip4config = eldbus_proxy_call(props, "GetAll",
                                              _ip4config_get_props_cb, nm,
                                              -1, "s", NM_IFACE_IP4);
-
-   /* Unref proxy/obj; the pending keeps them alive until callback fires */
-   eldbus_proxy_unref(props);
-   eldbus_object_unref(obj);
 }
 
 /* -------------------------------------------------------------------------- */
-/* Active connection tracking                                                  */
+/* Active connection tracking (persistent watcher)                             */
 /* -------------------------------------------------------------------------- */
+
+static void
+_manager_active_conn_watch_free(struct NM_Manager *nm)
+{
+   if (nm->pending.active_conn)
+     {
+        eldbus_pending_cancel(nm->pending.active_conn);
+        nm->pending.active_conn = NULL;
+     }
+   if (nm->active_conn_proxy)
+     {
+        eldbus_proxy_unref(nm->active_conn_proxy);
+        eldbus_object_unref(nm->active_conn_obj);
+        nm->active_conn_proxy = NULL;
+        nm->active_conn_obj = NULL;
+     }
+}
+
+static void
+_active_conn_prop_changed(void *data, const Eldbus_Message *msg)
+{
+   struct NM_Manager *nm = data;
+   Eldbus_Message_Iter *changed_props, *invalidated;
+   const char *iface;
+   Eldbus_Message_Iter *dict, *var;
+   const char *key;
+
+   if (!eldbus_message_arguments_get(msg, "sa{sv}as",
+                                     &iface, &changed_props, &invalidated))
+     return;
+
+   while (eldbus_message_iter_get_and_next(changed_props, 'e', &dict))
+     {
+        if (!eldbus_message_iter_arguments_get(dict, "sv", &key, &var))
+          continue;
+
+        if (!strcmp(key, "Ip4Config"))
+          {
+             const char *ip4path;
+             if (eldbus_message_iter_arguments_get(var, "o", &ip4path))
+               _manager_watch_ip4(nm, ip4path);
+          }
+        else if (!strcmp(key, "SpecificObject"))
+          {
+             const char *ap_path;
+             if (eldbus_message_iter_arguments_get(var, "o", &ap_path))
+               {
+                  DBG("ActiveConn SpecificObject changed: %s", ap_path);
+                  eina_stringshare_del(nm->active_ap_path);
+                  nm->active_ap_path = eina_stringshare_add(ap_path);
+                  enm_mod_manager_update(nm);
+                  enm_mod_aps_changed(nm);
+               }
+          }
+     }
+}
 
 static void
 _active_conn_get_props_cb(void *data, const Eldbus_Message *msg,
@@ -625,7 +741,10 @@ _active_conn_get_props_cb(void *data, const Eldbus_Message *msg,
      }
 
    if (!eldbus_message_arguments_get(msg, "a{sv}", &array))
-     return;
+     {
+        WRN("ActiveConnection GetAll: cannot parse a{sv}");
+        return;
+     }
 
    while (eldbus_message_iter_get_and_next(array, 'e', &dict))
      {
@@ -639,45 +758,62 @@ _active_conn_get_props_cb(void *data, const Eldbus_Message *msg,
           {
              const char *ip4path;
              if (eldbus_message_iter_arguments_get(var, "o", &ip4path))
-               _manager_fetch_ip(nm, ip4path);
+               _manager_watch_ip4(nm, ip4path);
           }
         else if (!strcmp(key, "SpecificObject"))
           {
-             /* AP path for the active WiFi connection */
              const char *ap_path;
              if (eldbus_message_iter_arguments_get(var, "o", &ap_path))
                {
+                  DBG("ActiveConn SpecificObject=%s", ap_path);
                   eina_stringshare_del(nm->active_ap_path);
                   nm->active_ap_path = eina_stringshare_add(ap_path);
                }
           }
      }
+
+   /* Proxy stays alive — updates arrive via _active_conn_prop_changed */
+   DBG("ActiveConn done: active_ap=%s", nm->active_ap_path ?: "(null)");
+   enm_mod_manager_update(nm);
+   enm_mod_aps_changed(nm);
 }
 
 static void
-_manager_check_active_connections(struct NM_Manager *nm,
-                                   const char *active_conn_path)
+_manager_watch_active_conn(struct NM_Manager *nm,
+                            const char *active_conn_path)
 {
    Eldbus_Object *obj;
    Eldbus_Proxy *props;
 
+   DBG("_manager_watch_active_conn path=%s", active_conn_path ?: "(null)");
    if (!active_conn_path || !strcmp(active_conn_path, "/")) return;
+
+   /* Skip if already watching this exact connection */
+   if (nm->active_connection_path &&
+       !strcmp(nm->active_connection_path, active_conn_path))
+     return;
 
    eina_stringshare_del(nm->active_connection_path);
    nm->active_connection_path = eina_stringshare_add(active_conn_path);
 
-   if (nm->pending.active_conn)
-     eldbus_pending_cancel(nm->pending.active_conn);
+   /* Tear down previous watchers (active conn + ip4) */
+   _manager_active_conn_watch_free(nm);
+   _manager_ip4_watch_free(nm);
 
    obj = eldbus_object_get(conn, NM_BUS_NAME, active_conn_path);
    props = eldbus_proxy_get(obj, NM_IFACE_PROPS);
 
+   nm->active_conn_proxy = props;
+   nm->active_conn_obj = obj;
+
+   /* Subscribe to property changes — keeps proxy alive for signals */
+   eldbus_proxy_signal_handler_add(props, "PropertiesChanged",
+                                   _active_conn_prop_changed, nm);
+
+   /* Initial fetch */
    nm->pending.active_conn = eldbus_proxy_call(props, "GetAll",
                                                _active_conn_get_props_cb, nm,
                                                -1, "s", NM_IFACE_ACONN);
-
-   eldbus_proxy_unref(props);
-   eldbus_object_unref(obj);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -736,9 +872,12 @@ _manager_prop_changed(void *data, const Eldbus_Message *msg)
 
              /* Use first active connection */
              if (eldbus_message_iter_get_and_next(conn_array, 'o', &aconn_path))
-               _manager_check_active_connections(nm, aconn_path);
+               _manager_watch_active_conn(nm, aconn_path);
              else
                {
+                  /* No active connections — tear down watchers */
+                  _manager_active_conn_watch_free(nm);
+                  _manager_ip4_watch_free(nm);
                   eina_stringshare_del(nm->active_ap_path);
                   nm->active_ap_path = NULL;
                   eina_stringshare_del(nm->active_connection_path);
@@ -799,12 +938,19 @@ _manager_get_props_cb(void *data, const Eldbus_Message *msg,
              const char *aconn_path;
 
              if (!eldbus_message_iter_arguments_get(var, "ao", &conn_array))
-               continue;
+               {
+                  WRN("ActiveConnections: cannot parse ao from variant");
+                  continue;
+               }
 
              if (eldbus_message_iter_get_and_next(conn_array, 'o', &aconn_path))
-               _manager_check_active_connections(nm, aconn_path);
+               {
+                  DBG("ActiveConnections: first path=%s", aconn_path);
+                  _manager_watch_active_conn(nm, aconn_path);
+               }
              else
                {
+                  DBG("ActiveConnections: empty array");
                   eina_stringshare_del(nm->active_ap_path);
                   nm->active_ap_path = NULL;
                   eina_stringshare_del(nm->active_connection_path);
@@ -947,10 +1093,9 @@ _manager_free(struct NM_Manager *nm)
      eldbus_pending_cancel(nm->pending.get_props);
    if (nm->pending.get_devices)
      eldbus_pending_cancel(nm->pending.get_devices);
-   if (nm->pending.active_conn)
-     eldbus_pending_cancel(nm->pending.active_conn);
-   if (nm->pending.ip4config)
-     eldbus_pending_cancel(nm->pending.ip4config);
+
+   _manager_active_conn_watch_free(nm);
+   _manager_ip4_watch_free(nm);
 
    while (nm->devices)
      {

@@ -27,6 +27,7 @@ struct E_NM_Instance
         struct
           {
              Evas_Object *list;
+             Evas_Object *ip_label;
              Evas_Object *enabled; /* "Wifi On" checkbox */
           } popup;
      } ui;

@@ -106,6 +106,17 @@ struct NM_Manager
         Eldbus_Pending *active_conn;
         Eldbus_Pending *ip4config;
      } pending;
+
+   /* Persistent proxy/obj for watching active connection properties.
+    * Created when active connection changes, freed when it changes again
+    * or on manager shutdown.  Signal-driven via PropertiesChanged. */
+   Eldbus_Proxy  *active_conn_proxy;
+   Eldbus_Object *active_conn_obj;
+
+   /* Persistent proxy/obj for watching IP4Config properties. */
+   Eldbus_Proxy  *ip4_proxy;
+   Eldbus_Object *ip4_obj;
+   const char    *ip4_path;
 };
 
 /* Ecore Events */
