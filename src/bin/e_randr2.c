@@ -122,8 +122,8 @@ e_randr2_init(void)
      {
         _config_update(e_randr2, e_randr2_cfg, 0);
         ecore_job_add(_cb_delay_init_save, NULL);
-        ecore_event_add(E_EVENT_RANDR_CHANGE, NULL, NULL, NULL);
      }
+   ecore_event_add(E_EVENT_RANDR_CHANGE, NULL, NULL, NULL);
    return EINA_TRUE;
 }
 
@@ -336,11 +336,17 @@ _do_apply(void)
    _screen_config_eval();
    printf("RRR: really apply config...\n");
    e_comp->screen->apply();
-   printf("RRR: update canvas and zones after apply...\n");
-   e_comp_canvas_resize(e_randr2->w, e_randr2->h);
-   e_randr2_screens_setup(e_comp->w, e_comp->h);
-   e_comp_canvas_update();
-   ecore_event_add(E_EVENT_RANDR_CHANGE, NULL, NULL, NULL);
+   // only update canvas/zones if compositor is initialized. during
+   // e_randr2_init(), _do_apply() is called before e_comp->ee/evas exist,
+   // so e_comp_canvas_update() would create broken zones with NULL evas
+   // objects, causing duplicate zones and a black screen at startup.
+   if (e_comp->ee)
+     {
+        e_comp_canvas_resize(e_randr2->w, e_randr2->h);
+        e_randr2_screens_setup(e_comp->w, e_comp->h);
+        e_comp_canvas_update();
+        ecore_event_add(E_EVENT_RANDR_CHANGE, NULL, NULL, NULL);
+     }
    printf("RRR: done config...\n");
 }
 
