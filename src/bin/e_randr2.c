@@ -122,8 +122,8 @@ e_randr2_init(void)
      {
         _config_update(e_randr2, e_randr2_cfg, 0);
         ecore_job_add(_cb_delay_init_save, NULL);
+        ecore_event_add(E_EVENT_RANDR_CHANGE, NULL, NULL, NULL);
      }
-   ecore_event_add(E_EVENT_RANDR_CHANGE, NULL, NULL, NULL);
    return EINA_TRUE;
 }
 
@@ -989,11 +989,19 @@ _cb_screen_change_delay(void *data EINA_UNUSED)
      }
    // update screen info after the above apply or due to external changes
    e_randr2_screeninfo_update();
-   e_comp_canvas_resize(e_randr2->w, e_randr2->h);
-   e_randr2_screens_setup(e_comp->w, e_comp->h);
-   e_comp_canvas_update();
-   // tell the rest of e some screen reconfigure thing happened
-   ecore_event_add(E_EVENT_RANDR_CHANGE, NULL, NULL, NULL);
+   // only update canvas/zones here if _do_apply() won't do it later
+   // (via the animated apply callback). when change is true,
+   // _do_apply() handles canvas/zone update after the actual X config
+   // change to avoid a double zone reconfiguration that breaks shelf
+   // autohide and triggers desktop gadget rescans.
+   if (!change)
+     {
+        e_comp_canvas_resize(e_randr2->w, e_randr2->h);
+        e_randr2_screens_setup(e_comp->w, e_comp->h);
+        e_comp_canvas_update();
+        // tell the rest of e some screen reconfigure thing happened
+        ecore_event_add(E_EVENT_RANDR_CHANGE, NULL, NULL, NULL);
+     }
    event_screen = EINA_FALSE;
    event_ignore = EINA_FALSE;
    return EINA_FALSE;
