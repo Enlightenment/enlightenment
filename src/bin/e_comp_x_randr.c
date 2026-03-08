@@ -728,7 +728,7 @@ _e_comp_xrandr_ecore_x(void)
    int minw, minh, maxw, maxh, nw, nh, pw, ph, ww, hh;
    Ecore_X_Randr_Crtc *crtcs = NULL;
    Ecore_X_Randr_Output *outputs = NULL, out, *outconf;
-   E_Randr2_Screen **screenconf;
+   E_Randr2_Screen **screenconf = NULL;
    int crtcs_num = 0, outputs_num = 0, i, numout;
    Ecore_X_Randr_Crtc_Info *info;
    int top_priority = 0;
@@ -765,6 +765,15 @@ _e_comp_xrandr_ecore_x(void)
 
    crtcs = ecore_x_randr_crtcs_get(root, &crtcs_num);
    outputs = ecore_x_randr_outputs_get(root, &outputs_num);
+
+   // clear panning on all CRTCs upfront. old panning areas from the
+   // previous configuration persist even after a CRTC is disabled and
+   // prevent X from shrinking the virtual screen later.
+   if (crtcs)
+     {
+        for (i = 0; i < crtcs_num; i++)
+          ecore_x_randr_crtc_panning_area_set(root, crtcs[i], 0, 0, 0, 0);
+     }
 
    printf("RRR: crtcs=%p outputs=%p\n", crtcs, outputs);
    if ((crtcs) && (outputs))
@@ -869,12 +878,9 @@ _e_comp_xrandr_ecore_x(void)
                          (screenconf[i]->config.geom.w / 2);
                        py = screenconf[i]->config.geom.y +
                          (screenconf[i]->config.geom.h / 2);
-                       ecore_x_randr_crtc_panning_area_set
-                         (root, crtcs[i],
-                          screenconf[i]->config.geom.x,
-                          screenconf[i]->config.geom.y,
-                          screenconf[i]->config.geom.w,
-                          screenconf[i]->config.geom.h);
+                       // panning is set after the virtual screen resize
+                       // below, because X refuses to shrink the screen while
+                       // any CRTC has a panning area set.
                        if (screenconf[i]->config.priority == top_priority)
                          {
                             ecore_x_randr_primary_output_set(root, outconf[i]);
@@ -908,22 +914,37 @@ _e_comp_xrandr_ecore_x(void)
         ecore_x_pointer_warp(root, px, py);
      }
    free(outputs);
-   free(crtcs);
 
+   // release grab and sync so CRTC changes take effect before resize
+   ecore_x_ungrab();
+   ecore_x_sync();
+
+   // shrink the virtual screen to match the new layout.
+   // no panning areas are set yet (they're deferred to after resize)
+   // so X should be able to shrink without BadMatch.
    printf("RRR: set vsize2: %ix%i\n", nw, nh);
    ecore_x_randr_screen_current_size_set(root, nw, nh, -1, -1);
+   ecore_x_sync();
+
+   // now set panning on active CRTCs after the resize is done
+   if (crtcs)
      {
-        int dww = 0, dhh = 0, dww2 = 0, dhh2 = 0;
-        ecore_x_randr_screen_current_size_get(root, &dww, &dhh, &dww2, &dhh2);
-        printf("RRR: cur size: %ix%i\n", dww, dhh);
-//        ecore_x_randr_screen_reset(root);
-//        ecore_x_randr_screen_current_size_set(root, nw, nh, -1, -1);
-//        ecore_x_sync();
-//        ecore_x_randr_screen_current_size_get(root, &dww, &dhh, &dww2, &dhh2);
-//        printf("RRR: cur size: %ix%i\n", dww,d hh);
+        for (i = 0; i < crtcs_num; i++)
+          {
+             if ((screenconf) && (screenconf[i]))
+               {
+                  ecore_x_randr_crtc_panning_area_set
+                    (root, crtcs[i],
+                     screenconf[i]->config.geom.x,
+                     screenconf[i]->config.geom.y,
+                     screenconf[i]->config.geom.w,
+                     screenconf[i]->config.geom.h);
+               }
+          }
      }
+   free(crtcs);
+
    ecore_x_randr_screen_size_range_get(root, NULL, NULL, NULL, NULL);
-   ecore_x_ungrab();
    ecore_x_sync();
    // ignore the next batch of randr events - we caused them ourselves
    // XXX: a problem. thew first time we configure the screen we may not
