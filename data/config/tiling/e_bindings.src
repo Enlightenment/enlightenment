@@ -691,7 +691,7 @@ group "E_Config_Bindings" struct {
             value "modifiers" int: 6;
             value "key" string: "Insert";
             value "action" string: "app";
-            value "params" string: "file:terminology".desktop;
+            value "params" string: "file:terminology.desktop";
             value "any_mod" uchar: 0;
         }
         group "E_Config_Binding_Key" struct {
