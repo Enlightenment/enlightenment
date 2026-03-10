@@ -1134,9 +1134,6 @@ _saved_conn_settings_cb(void *data, const Eldbus_Message *msg,
                        eina_hash_del_by_key(ctx->nm->saved_connections, ssid_str);
                        eina_hash_add(ctx->nm->saved_connections, ssid_str,
                                      eina_stringshare_add(ctx->path));
-
-                       /* Trigger popup refresh so forget buttons appear */
-                       enm_mod_aps_changed(ctx->nm);
                     }
                   goto done;
                }
@@ -1147,6 +1144,11 @@ done:
    eldbus_proxy_unref(ctx->proxy);
    eldbus_object_unref(ctx->obj);
    eina_stringshare_del(ctx->path);
+   /* Refresh popup once all GetSettings replies have arrived */
+   if (ctx->nm->saved_conn_pending > 0)
+     ctx->nm->saved_conn_pending--;
+   if (ctx->nm->saved_conn_pending == 0)
+     enm_mod_aps_changed(ctx->nm);
    free(ctx);
 }
 
@@ -1163,6 +1165,8 @@ _saved_conn_list_cb(void *data, const Eldbus_Message *msg,
    if (!eldbus_message_arguments_get(msg, "ao", &conn_array))
      return;
 
+   nm->saved_conn_pending = 0;
+
    while (eldbus_message_iter_get_and_next(conn_array, 'o', &conn_path))
      {
         struct _Saved_Conn_Ctx *ctx;
@@ -1175,10 +1179,15 @@ _saved_conn_list_cb(void *data, const Eldbus_Message *msg,
         ctx->obj = eldbus_object_get(conn, NM_BUS_NAME, conn_path);
         ctx->proxy = eldbus_proxy_get(ctx->obj, NM_IFACE_SCONN);
 
+        nm->saved_conn_pending++;
         eldbus_proxy_call(ctx->proxy, "GetSettings",
                           _saved_conn_settings_cb, ctx, -1, "");
         /* ctx, proxy, and obj are freed/unref'd inside _saved_conn_settings_cb */
      }
+
+   /* If no connections found, trigger refresh immediately */
+   if (nm->saved_conn_pending == 0)
+     enm_mod_aps_changed(nm);
 }
 
 static void
@@ -1195,10 +1204,14 @@ enm_saved_connections_get(struct NM_Manager *nm)
 
    EINA_SAFETY_ON_NULL_RETURN(nm);
 
-   if (nm->saved_connections)
-     eina_hash_free(nm->saved_connections);
-   nm->saved_connections = eina_hash_string_superfast_new(
-                              _saved_connections_free_cb);
+   {
+      /* Swap pattern: assign new hash before freeing old to avoid a window
+       * where saved_connections is NULL (in-flight callbacks check it) */
+      Eina_Hash *old = nm->saved_connections;
+      nm->saved_connections = eina_hash_string_superfast_new(
+                                 _saved_connections_free_cb);
+      if (old) eina_hash_free(old);
+   }
 
    settings_obj = eldbus_object_get(conn, NM_BUS_NAME, NM_SETTINGS_PATH);
    settings_proxy = eldbus_proxy_get(settings_obj, NM_IFACE_SETTINGS);

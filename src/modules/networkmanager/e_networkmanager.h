@@ -121,6 +121,7 @@ struct NM_Manager
 
    /* Saved WiFi connections: SSID (string) -> connection D-Bus path (stringshare) */
    Eina_Hash    *saved_connections;
+   int           saved_conn_pending; /* outstanding GetSettings calls */
 };
 
 /* Ecore Events */

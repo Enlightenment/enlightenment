@@ -314,8 +314,10 @@ _enm_popup_update(struct NM_Manager *nm, E_NM_Instance *inst)
 
    /* Refresh saved connections for forget button visibility.
     * This is async — the hash populates as D-Bus replies arrive,
-    * then enm_mod_aps_changed() triggers a popup re-render. */
-   enm_saved_connections_get(nm);
+    * then enm_mod_aps_changed() triggers a popup re-render.
+    * Skip if a fetch is already in flight to avoid recursive storms. */
+   if (nm->saved_conn_pending == 0)
+     enm_saved_connections_get(nm);
 
    e_widget_ilist_freeze(list);
    e_widget_ilist_clear(list);
