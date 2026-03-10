@@ -47,31 +47,92 @@ _econnman_service_new_icon(struct Connman_Service *cs, Evas *evas)
    edje_object_message_send(icon, EDJE_MESSAGE_INT_SET, 1, msg);
    free(msg);
 
+   /* Emit security signals to show lock overlay on wifi icon */
+   if (cs->type == CONNMAN_SERVICE_TYPE_WIFI && cs->security)
+     {
+        Eina_Iterator *iter;
+        void *security;
+
+        iter = eina_array_iterator_new(cs->security);
+        while (eina_iterator_next(iter, &security))
+          {
+             snprintf(buf, sizeof(buf), "e,security,%s", (const char *)security);
+             edje_object_signal_emit(icon, buf, "e");
+          }
+        eina_iterator_free(iter);
+     }
+
    return icon;
 }
 
-static Evas_Object *
-_econnman_service_new_end(struct Connman_Service *cs, Evas *evas)
+struct _Econnman_Forget_Data
 {
-   Eina_Iterator *iter;
+   struct Connman_Manager *cm;
+   const char *path; /* stringshare */
+};
+
+static void
+_econnman_service_forget_cb(void *data EINA_UNUSED, const char *error)
+{
+   if (error)
+     ERR("Could not forget network: %s", error);
+}
+
+static void
+_econnman_forget_mouse_up_cb(void *data, Evas *e EINA_UNUSED,
+                              Evas_Object *obj EINA_UNUSED,
+                              void *event_info EINA_UNUSED)
+{
+   struct _Econnman_Forget_Data *fd = data;
+   struct Connman_Service *cs;
+
+   cs = econnman_manager_find_service(fd->cm, fd->path);
+   if (!cs) return;
+
+   INF("Forget %s (%s)", cs->name ?: "unknown", cs->path);
+   econnman_service_remove(cs, _econnman_service_forget_cb, NULL);
+}
+
+static void
+_econnman_forget_data_free_cb(void *data, Evas *e EINA_UNUSED,
+                               Evas_Object *obj EINA_UNUSED,
+                               void *event_info EINA_UNUSED)
+{
+   struct _Econnman_Forget_Data *fd = data;
+   eina_stringshare_del(fd->path);
+   free(fd);
+}
+
+static Evas_Object *
+_econnman_service_new_end(struct Connman_Manager *cm,
+                          struct Connman_Service *cs, Evas *evas)
+{
    Evas_Object *end;
-   void *security;
-   char buf[128];
+   struct _Econnman_Forget_Data *fd;
+
+   /* Only show forget button for WiFi services */
+   if (cs->type != CONNMAN_SERVICE_TYPE_WIFI)
+     return NULL;
 
    end = edje_object_add(evas);
-   e_theme_edje_object_set(end, "base/theme/modules/connman",
-                           "e/modules/connman/end");
-
-   if (!cs->security)
-     return end;
-
-   iter = eina_array_iterator_new(cs->security);
-   while (eina_iterator_next(iter, &security))
+   if (!e_theme_edje_object_set(end, "base/theme/modules/connman",
+                                "e/modules/connman/forget"))
      {
-        snprintf(buf, sizeof(buf), "e,security,%s", (const char *)security);
-        edje_object_signal_emit(end, buf, "e");
+        evas_object_del(end);
+        return NULL;
      }
-   eina_iterator_free(iter);
+
+   fd = malloc(sizeof(*fd));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fd, end);
+   fd->cm = cm;
+   fd->path = eina_stringshare_add(cs->path);
+
+   /* Prevent clicks from propagating to the list item selection */
+   evas_object_propagate_events_set(end, EINA_FALSE);
+   evas_object_event_callback_add(end, EVAS_CALLBACK_MOUSE_UP,
+                                  _econnman_forget_mouse_up_cb, fd);
+   evas_object_event_callback_add(end, EVAS_CALLBACK_DEL,
+                                  _econnman_forget_data_free_cb, fd);
 
    return end;
 }
@@ -145,7 +206,7 @@ _econnman_popup_update(struct Connman_Manager *cm, E_Connman_Instance *inst)
    EINA_INLIST_FOREACH(cm->services, cs)
      {
         Evas_Object *icon = _econnman_service_new_icon(cs, evas);
-        Evas_Object *end = _econnman_service_new_end(cs, evas);
+        Evas_Object *end = _econnman_service_new_end(cm, cs, evas);
         e_widget_ilist_append_full(list, icon, end, cs->name ?: hidden,
                                    _econnman_popup_selected_cb,
                                    inst, cs->path);
