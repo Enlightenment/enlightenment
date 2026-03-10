@@ -1092,10 +1092,19 @@ _saved_conn_settings_cb(void *data, const Eldbus_Message *msg,
    const char *setting_name, *key;
    char ssid_str[256];
 
-   if (eldbus_message_error_get(msg, NULL, NULL))
-     goto done;
+   {
+      const char *err_name = NULL, *err_msg = NULL;
+      if (eldbus_message_error_get(msg, &err_name, &err_msg))
+        {
+           ERR("GetSettings failed: %s %s", err_name ?: "", err_msg ?: "");
+           goto done;
+        }
+   }
    if (!eldbus_message_arguments_get(msg, "a{sa{sv}}", &settings))
-     goto done;
+     {
+        ERR("GetSettings: failed to parse reply arguments");
+        goto done;
+     }
 
    while (eldbus_message_iter_get_and_next(settings, 'e', &dict_entry))
      {
@@ -1134,6 +1143,7 @@ _saved_conn_settings_cb(void *data, const Eldbus_Message *msg,
                        eina_hash_del_by_key(ctx->nm->saved_connections, ssid_str);
                        eina_hash_add(ctx->nm->saved_connections, ssid_str,
                                      eina_stringshare_add(ctx->path));
+                       INF("saved_conn: added '%s' -> %s", ssid_str, ctx->path);
                     }
                   goto done;
                }
@@ -1152,18 +1162,40 @@ done:
    free(ctx);
 }
 
+struct _Settings_List_Ctx
+{
+   struct NM_Manager *nm;
+   Eldbus_Proxy  *proxy;
+   Eldbus_Object *obj;
+};
+
 static void
 _saved_conn_list_cb(void *data, const Eldbus_Message *msg,
                     Eldbus_Pending *pending EINA_UNUSED)
 {
-   struct NM_Manager *nm = data;
+   struct _Settings_List_Ctx *sctx = data;
+   struct NM_Manager *nm = sctx->nm;
    Eldbus_Message_Iter *conn_array;
    const char *conn_path;
 
-   if (eldbus_message_error_get(msg, NULL, NULL))
-     return;
+   /* Free the Settings proxy/obj that were kept alive for this call */
+   eldbus_proxy_unref(sctx->proxy);
+   eldbus_object_unref(sctx->obj);
+   free(sctx);
+
+   {
+      const char *err_name = NULL, *err_msg = NULL;
+      if (eldbus_message_error_get(msg, &err_name, &err_msg))
+        {
+           ERR("ListConnections failed: %s %s", err_name ?: "", err_msg ?: "");
+           return;
+        }
+   }
    if (!eldbus_message_arguments_get(msg, "ao", &conn_array))
-     return;
+     {
+        ERR("ListConnections: failed to parse reply");
+        return;
+     }
 
    nm->saved_conn_pending = 0;
 
@@ -1199,9 +1231,6 @@ _saved_connections_free_cb(void *data)
 void
 enm_saved_connections_get(struct NM_Manager *nm)
 {
-   Eldbus_Object *settings_obj;
-   Eldbus_Proxy *settings_proxy;
-
    EINA_SAFETY_ON_NULL_RETURN(nm);
 
    {
@@ -1213,13 +1242,17 @@ enm_saved_connections_get(struct NM_Manager *nm)
       if (old) eina_hash_free(old);
    }
 
-   settings_obj = eldbus_object_get(conn, NM_BUS_NAME, NM_SETTINGS_PATH);
-   settings_proxy = eldbus_proxy_get(settings_obj, NM_IFACE_SETTINGS);
-   eldbus_proxy_call(settings_proxy, "ListConnections",
-                     _saved_conn_list_cb, nm, -1, "");
-   /* Unref immediately — Eldbus holds internal refs during the pending call */
-   eldbus_proxy_unref(settings_proxy);
-   eldbus_object_unref(settings_obj);
+   {
+      struct _Settings_List_Ctx *sctx = malloc(sizeof(*sctx));
+      EINA_SAFETY_ON_NULL_RETURN(sctx);
+
+      sctx->nm = nm;
+      sctx->obj = eldbus_object_get(conn, NM_BUS_NAME, NM_SETTINGS_PATH);
+      sctx->proxy = eldbus_proxy_get(sctx->obj, NM_IFACE_SETTINGS);
+      eldbus_proxy_call(sctx->proxy, "ListConnections",
+                        _saved_conn_list_cb, sctx, -1, "");
+      /* proxy and obj are kept alive until _saved_conn_list_cb fires */
+   }
 }
 
 static void

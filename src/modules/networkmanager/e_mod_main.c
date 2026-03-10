@@ -191,11 +191,20 @@ _enm_ap_end_new(struct NM_Manager *nm, struct NM_Access_Point *ap, Evas *evas)
 
    /* Only show forget for saved (known) networks */
    if (!nm->saved_connections || !ap->ssid)
-     return NULL;
+     {
+        DBG("forget: no hash (%p) or no ssid (%p)", nm->saved_connections, ap->ssid);
+        return NULL;
+     }
 
    conn_path = eina_hash_find(nm->saved_connections, ap->ssid);
    if (!conn_path)
-     return NULL;
+     {
+        DBG("forget: ssid '%s' not in saved_connections hash (size=%d)",
+            ap->ssid, nm->saved_connections ? eina_hash_population(nm->saved_connections) : -1);
+        return NULL;
+     }
+
+   INF("forget: creating button for ssid '%s' -> %s", ap->ssid, conn_path);
 
    end = edje_object_add(evas);
    if (!e_theme_edje_object_set(end, "base/theme/modules/networkmanager",
@@ -204,6 +213,7 @@ _enm_ap_end_new(struct NM_Manager *nm, struct NM_Access_Point *ap, Evas *evas)
         if (!e_theme_edje_object_set(end, "base/theme/modules/connman",
                                      "e/modules/connman/forget"))
           {
+             ERR("forget: could not load theme group");
              evas_object_del(end);
              return NULL;
           }
