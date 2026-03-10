@@ -118,6 +118,9 @@ struct NM_Manager
    Eldbus_Proxy  *ip4_proxy;
    Eldbus_Object *ip4_obj;
    const char    *ip4_path;
+
+   /* Saved WiFi connections: SSID (string) -> connection D-Bus path (stringshare) */
+   Eina_Hash    *saved_connections;
 };
 
 /* Ecore Events */
@@ -150,6 +153,10 @@ void enm_mod_manager_inout(struct NM_Manager *nm);
 const char *enm_state_to_str(enum NM_State state);
 const char *enm_device_type_to_str(enum NM_Device_Type type);
 const char *enm_ap_security_to_str(uint32_t wpa_flags, uint32_t rsn_flags);
+
+/* Saved connections */
+void enm_saved_connections_get(struct NM_Manager *nm);
+void enm_connection_delete(struct NM_Manager *nm, const char *connection_path);
 
 /* Log */
 extern int _e_nm_log_dom;

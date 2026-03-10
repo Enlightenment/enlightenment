@@ -15,6 +15,9 @@
 #define NM_IFACE_IP4   "org.freedesktop.NetworkManager.IP4Config"
 #define NM_IFACE_PROPS "org.freedesktop.DBus.Properties"
 #define NM_IFACE_AGENT_MGR "org.freedesktop.NetworkManager.AgentManager"
+#define NM_IFACE_SETTINGS  "org.freedesktop.NetworkManager.Settings"
+#define NM_IFACE_SCONN     "org.freedesktop.NetworkManager.Settings.Connection"
+#define NM_SETTINGS_PATH   "/org/freedesktop/NetworkManager/Settings"
 
 #define NM_CONNECTION_TIMEOUT (60 * 1000)
 
@@ -1068,6 +1071,190 @@ _manager_device_removed(void *data, const Eldbus_Message *msg)
    eina_stringshare_del(shared);
 }
 
+/* -------------------------------------------------------------------------- */
+/* Saved connections (for forget button)                                       */
+/* -------------------------------------------------------------------------- */
+
+struct _Saved_Conn_Ctx
+{
+   struct NM_Manager *nm;
+   const char        *path;  /* stringshare: connection D-Bus object path */
+   Eldbus_Proxy      *proxy; /* Settings.Connection proxy — unref in callback */
+   Eldbus_Object     *obj;   /* connection object — unref in callback */
+};
+
+static void
+_saved_conn_settings_cb(void *data, const Eldbus_Message *msg,
+                        Eldbus_Pending *pending EINA_UNUSED)
+{
+   struct _Saved_Conn_Ctx *ctx = data;
+   Eldbus_Message_Iter *settings, *dict_entry, *setting_dict, *variant;
+   const char *setting_name, *key;
+   char ssid_str[256];
+
+   if (eldbus_message_error_get(msg, NULL, NULL))
+     goto done;
+   if (!eldbus_message_arguments_get(msg, "a{sa{sv}}", &settings))
+     goto done;
+
+   while (eldbus_message_iter_get_and_next(settings, 'e', &dict_entry))
+     {
+        Eldbus_Message_Iter *inner_entry;
+
+        if (!eldbus_message_iter_arguments_get(dict_entry, "sa{sv}",
+                                               &setting_name, &setting_dict))
+          continue;
+
+        if (strcmp(setting_name, "802-11-wireless") != 0)
+          continue;
+
+        while (eldbus_message_iter_get_and_next(setting_dict, 'e', &inner_entry))
+          {
+             if (!eldbus_message_iter_arguments_get(inner_entry, "sv",
+                                                    &key, &variant))
+               continue;
+
+             if (!strcmp(key, "ssid"))
+               {
+                  Eldbus_Message_Iter *ssid_iter;
+                  unsigned char byte;
+                  int i = 0;
+
+                  if (!eldbus_message_iter_arguments_get(variant, "ay", &ssid_iter))
+                    continue;
+
+                  while (eldbus_message_iter_get_and_next(ssid_iter, 'y', &byte)
+                         && i < (int)(sizeof(ssid_str) - 1))
+                    ssid_str[i++] = (char)byte;
+                  ssid_str[i] = '\0';
+
+                  if (i > 0 && ctx->nm->saved_connections)
+                    {
+                       /* Remove old entry first to avoid leaking stringshare */
+                       eina_hash_del_by_key(ctx->nm->saved_connections, ssid_str);
+                       eina_hash_add(ctx->nm->saved_connections, ssid_str,
+                                     eina_stringshare_add(ctx->path));
+
+                       /* Trigger popup refresh so forget buttons appear */
+                       enm_mod_aps_changed(ctx->nm);
+                    }
+                  goto done;
+               }
+          }
+     }
+
+done:
+   eldbus_proxy_unref(ctx->proxy);
+   eldbus_object_unref(ctx->obj);
+   eina_stringshare_del(ctx->path);
+   free(ctx);
+}
+
+static void
+_saved_conn_list_cb(void *data, const Eldbus_Message *msg,
+                    Eldbus_Pending *pending EINA_UNUSED)
+{
+   struct NM_Manager *nm = data;
+   Eldbus_Message_Iter *conn_array;
+   const char *conn_path;
+
+   if (eldbus_message_error_get(msg, NULL, NULL))
+     return;
+   if (!eldbus_message_arguments_get(msg, "ao", &conn_array))
+     return;
+
+   while (eldbus_message_iter_get_and_next(conn_array, 'o', &conn_path))
+     {
+        struct _Saved_Conn_Ctx *ctx;
+
+        ctx = malloc(sizeof(*ctx));
+        if (!ctx) continue;
+
+        ctx->nm = nm;
+        ctx->path = eina_stringshare_add(conn_path);
+        ctx->obj = eldbus_object_get(conn, NM_BUS_NAME, conn_path);
+        ctx->proxy = eldbus_proxy_get(ctx->obj, NM_IFACE_SCONN);
+
+        eldbus_proxy_call(ctx->proxy, "GetSettings",
+                          _saved_conn_settings_cb, ctx, -1, "");
+        /* ctx, proxy, and obj are freed/unref'd inside _saved_conn_settings_cb */
+     }
+}
+
+static void
+_saved_connections_free_cb(void *data)
+{
+   eina_stringshare_del(data);
+}
+
+void
+enm_saved_connections_get(struct NM_Manager *nm)
+{
+   Eldbus_Object *settings_obj;
+   Eldbus_Proxy *settings_proxy;
+
+   EINA_SAFETY_ON_NULL_RETURN(nm);
+
+   if (nm->saved_connections)
+     eina_hash_free(nm->saved_connections);
+   nm->saved_connections = eina_hash_string_superfast_new(
+                              _saved_connections_free_cb);
+
+   settings_obj = eldbus_object_get(conn, NM_BUS_NAME, NM_SETTINGS_PATH);
+   settings_proxy = eldbus_proxy_get(settings_obj, NM_IFACE_SETTINGS);
+   eldbus_proxy_call(settings_proxy, "ListConnections",
+                     _saved_conn_list_cb, nm, -1, "");
+   /* Unref immediately — Eldbus holds internal refs during the pending call */
+   eldbus_proxy_unref(settings_proxy);
+   eldbus_object_unref(settings_obj);
+}
+
+static void
+_connection_delete_cb(void *data, const Eldbus_Message *msg,
+                      Eldbus_Pending *pending EINA_UNUSED)
+{
+   struct _Saved_Conn_Ctx *ctx = data;
+   const char *err_name, *err_msg;
+
+   if (eldbus_message_error_get(msg, &err_name, &err_msg))
+     {
+        ERR("Failed to delete connection %s: %s %s",
+            ctx->path, err_name, err_msg);
+        goto done;
+     }
+
+   INF("Connection %s deleted successfully", ctx->path);
+   /* Refresh saved connections to update forget button visibility */
+   enm_saved_connections_get(ctx->nm);
+
+done:
+   eldbus_proxy_unref(ctx->proxy);
+   eldbus_object_unref(ctx->obj);
+   eina_stringshare_del(ctx->path);
+   free(ctx);
+}
+
+void
+enm_connection_delete(struct NM_Manager *nm, const char *connection_path)
+{
+   struct _Saved_Conn_Ctx *ctx;
+
+   EINA_SAFETY_ON_NULL_RETURN(nm);
+   EINA_SAFETY_ON_NULL_RETURN(connection_path);
+
+   ctx = malloc(sizeof(*ctx));
+   EINA_SAFETY_ON_NULL_RETURN(ctx);
+
+   ctx->nm = nm;
+   ctx->path = eina_stringshare_add(connection_path);
+   ctx->obj = eldbus_object_get(conn, NM_BUS_NAME, connection_path);
+   ctx->proxy = eldbus_proxy_get(ctx->obj, NM_IFACE_SCONN);
+
+   eldbus_proxy_call(ctx->proxy, "Delete",
+                     _connection_delete_cb, ctx, -1, "");
+   /* ctx, proxy, and obj are freed/unref'd inside _connection_delete_cb */
+}
+
 static struct NM_Manager *
 _manager_new(void)
 {
@@ -1124,6 +1311,12 @@ _manager_free(struct NM_Manager *nm)
         dev = EINA_INLIST_CONTAINER_GET(nm->devices, struct NM_Device);
         nm->devices = eina_inlist_remove(nm->devices, nm->devices);
         _device_free(dev);
+     }
+
+   if (nm->saved_connections)
+     {
+        eina_hash_free(nm->saved_connections);
+        nm->saved_connections = NULL;
      }
 
    free(nm->ip_address);

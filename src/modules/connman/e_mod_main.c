@@ -123,7 +123,11 @@ _econnman_service_new_end(struct Connman_Manager *cm,
      }
 
    fd = malloc(sizeof(*fd));
-   EINA_SAFETY_ON_NULL_RETURN_VAL(fd, end);
+   if (!fd)
+     {
+        evas_object_del(end);
+        return NULL;
+     }
    fd->cm = cm;
    fd->path = eina_stringshare_add(cs->path);
 
