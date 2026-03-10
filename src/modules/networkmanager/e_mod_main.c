@@ -217,6 +217,12 @@ _enm_ap_end_new(struct NM_Manager *nm, struct NM_Access_Point *ap, Evas *evas)
      }
    fd->nm = nm;
    fd->connection_path = eina_stringshare_add(conn_path);
+   if (!fd->connection_path)
+     {
+        free(fd);
+        evas_object_del(end);
+        return NULL;
+     }
 
    evas_object_propagate_events_set(end, EINA_FALSE);
    evas_object_event_callback_add(end, EVAS_CALLBACK_MOUSE_UP,
