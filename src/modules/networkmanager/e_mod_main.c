@@ -132,35 +132,97 @@ _enm_ap_icon_new(struct NM_Manager *nm, struct NM_Access_Point *ap, Evas *evas)
         free(msg);
      }
 
+   /* Emit security signal for lock overlay */
+   {
+      const char *sec;
+      char secbuf[128];
+
+      sec = enm_ap_security_to_str(ap->wpa_flags, ap->rsn_flags);
+      if (sec && strcmp(sec, "open"))
+        {
+           if (!strcmp(sec, "wpa") || !strcmp(sec, "wpa2") || !strcmp(sec, "sae"))
+             snprintf(secbuf, sizeof(secbuf), "e,security,psk");
+           else if (!strcmp(sec, "wep"))
+             snprintf(secbuf, sizeof(secbuf), "e,security,wep");
+           else if (!strcmp(sec, "802.1x"))
+             snprintf(secbuf, sizeof(secbuf), "e,security,ieee8021x");
+           else
+             snprintf(secbuf, sizeof(secbuf), "e,security,%s", sec);
+           edje_object_signal_emit(icon, secbuf, "e");
+        }
+   }
+
    return icon;
 }
 
+struct _Enm_Forget_Data
+{
+   struct NM_Manager *nm;
+   const char *connection_path; /* stringshare */
+};
+
+static void
+_enm_forget_mouse_up_cb(void *data, Evas *e EINA_UNUSED,
+                         Evas_Object *obj EINA_UNUSED,
+                         void *event_info EINA_UNUSED)
+{
+   struct _Enm_Forget_Data *fd = data;
+
+   INF("Forget connection: %s", fd->connection_path);
+   enm_connection_delete(fd->nm, fd->connection_path);
+}
+
+static void
+_enm_forget_data_free_cb(void *data, Evas *e EINA_UNUSED,
+                          Evas_Object *obj EINA_UNUSED,
+                          void *event_info EINA_UNUSED)
+{
+   struct _Enm_Forget_Data *fd = data;
+   eina_stringshare_del(fd->connection_path);
+   free(fd);
+}
+
 static Evas_Object *
-_enm_ap_end_new(struct NM_Access_Point *ap, Evas *evas)
+_enm_ap_end_new(struct NM_Manager *nm, struct NM_Access_Point *ap, Evas *evas)
 {
    Evas_Object *end;
-   const char *sec;
-   char secbuf[128];
+   const char *conn_path;
+   struct _Enm_Forget_Data *fd;
+
+   /* Only show forget for saved (known) networks */
+   if (!nm->saved_connections || !ap->ssid)
+     return NULL;
+
+   conn_path = eina_hash_find(nm->saved_connections, ap->ssid);
+   if (!conn_path)
+     return NULL;
 
    end = edje_object_add(evas);
    if (!e_theme_edje_object_set(end, "base/theme/modules/networkmanager",
-                                "e/modules/networkmanager/end"))
-     e_theme_edje_object_set(end, "base/theme/modules/connman",
-                             "e/modules/connman/end");
-
-   sec = enm_ap_security_to_str(ap->wpa_flags, ap->rsn_flags);
-   if (sec && strcmp(sec, "open"))
+                                "e/modules/networkmanager/forget"))
      {
-        if (!strcmp(sec, "wpa") || !strcmp(sec, "wpa2") || !strcmp(sec, "sae"))
-          snprintf(secbuf, sizeof(secbuf), "e,security,psk");
-        else if (!strcmp(sec, "wep"))
-          snprintf(secbuf, sizeof(secbuf), "e,security,wep");
-        else if (!strcmp(sec, "802.1x"))
-          snprintf(secbuf, sizeof(secbuf), "e,security,ieee8021x");
-        else
-          snprintf(secbuf, sizeof(secbuf), "e,security,%s", sec);
-        edje_object_signal_emit(end, secbuf, "e");
+        if (!e_theme_edje_object_set(end, "base/theme/modules/connman",
+                                     "e/modules/connman/forget"))
+          {
+             evas_object_del(end);
+             return NULL;
+          }
      }
+
+   fd = malloc(sizeof(*fd));
+   if (!fd)
+     {
+        evas_object_del(end);
+        return NULL;
+     }
+   fd->nm = nm;
+   fd->connection_path = eina_stringshare_add(conn_path);
+
+   evas_object_propagate_events_set(end, EINA_FALSE);
+   evas_object_event_callback_add(end, EVAS_CALLBACK_MOUSE_UP,
+                                  _enm_forget_mouse_up_cb, fd);
+   evas_object_event_callback_add(end, EVAS_CALLBACK_DEL,
+                                  _enm_forget_data_free_cb, fd);
 
    return end;
 }
@@ -244,6 +306,11 @@ _enm_popup_update(struct NM_Manager *nm, E_NM_Instance *inst)
 
    EINA_SAFETY_ON_NULL_RETURN(nm);
 
+   /* Refresh saved connections for forget button visibility.
+    * This is async — the hash populates as D-Bus replies arrive,
+    * then enm_mod_aps_changed() triggers a popup re-render. */
+   enm_saved_connections_get(nm);
+
    e_widget_ilist_freeze(list);
    e_widget_ilist_clear(list);
 
@@ -288,7 +355,7 @@ _enm_popup_update(struct NM_Manager *nm, E_NM_Instance *inst)
              eina_hash_add(seen_ssids, ap->ssid, (void *)1);
 
              icon = _enm_ap_icon_new(nm, best, evas);
-             end = _enm_ap_end_new(best, evas);
+             end = _enm_ap_end_new(nm, best, evas);
 
              e_widget_ilist_append_full(list, icon, end,
                                         best->ssid,
