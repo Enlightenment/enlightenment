@@ -189,6 +189,15 @@ static void _service_parse_prop_changed(struct Connman_Service *cs,
         cs->strength = strength;
         DBG("New strength: %d", strength);
      }
+   else if (strcmp(prop_name, "Frequency") == 0)
+     {
+        uint16_t freq;
+        EINA_SAFETY_ON_FALSE_RETURN(eldbus_message_iter_arguments_get(value,
+                                                                     "q",
+                                                                     &freq));
+        cs->frequency = freq;
+        DBG("New frequency: %u", freq);
+     }
    else if (strcmp(prop_name, "Security") == 0)
      {
         DBG("Old security count: %d",
@@ -340,8 +349,11 @@ static void _service_free(struct Connman_Service *cs)
      }
 
    free(cs->name);
-   _eina_str_array_clean(cs->security);
-   eina_array_free(cs->security);
+   if (cs->security)
+     {
+        _eina_str_array_clean(cs->security);
+        eina_array_free(cs->security);
+     }
    eina_stringshare_del(cs->path);
    obj = eldbus_proxy_object_get(cs->service_iface);
    eldbus_proxy_unref(cs->service_iface);

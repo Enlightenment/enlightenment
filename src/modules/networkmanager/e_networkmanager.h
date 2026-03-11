@@ -122,6 +122,12 @@ struct NM_Manager
    /* Saved WiFi connections: SSID (string) -> connection D-Bus path (stringshare) */
    Eina_Hash    *saved_connections;
    int           saved_conn_pending; /* outstanding GetSettings calls */
+
+   /* Generation counter incremented each time a new batch of active-connection
+    * probes is started.  Each probe captures the generation at creation time
+    * and discards its result in the callback if the generation has advanced,
+    * preventing stale probes from clobbering a newer watcher. */
+   unsigned int  probe_generation;
 };
 
 /* Ecore Events */

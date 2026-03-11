@@ -63,6 +63,7 @@ struct Connman_Service
    enum Connman_State state;
    enum Connman_Service_Type type;
    uint8_t strength;
+   uint16_t frequency;  /* MHz, 0 if unknown */
 
    /* Private */
    struct

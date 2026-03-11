@@ -40,12 +40,15 @@ _econnman_service_new_icon(struct Connman_Service *cs, Evas *evas)
    e_theme_edje_object_set(icon, "base/theme/modules/connman", buf);
 
    msg = malloc(sizeof(*msg) + sizeof(int));
-   msg->count = 2;
-   msg->val[0] = cs->state;
-   msg->val[1] = cs->strength;
+   if (msg)
+     {
+        msg->count = 2;
+        msg->val[0] = cs->state;
+        msg->val[1] = cs->strength;
 
-   edje_object_message_send(icon, EDJE_MESSAGE_INT_SET, 1, msg);
-   free(msg);
+        edje_object_message_send(icon, EDJE_MESSAGE_INT_SET, 1, msg);
+        free(msg);
+     }
 
    /* Emit security signals to show lock overlay on wifi icon */
    if (cs->type == CONNMAN_SERVICE_TYPE_WIFI && cs->security)
@@ -60,6 +63,21 @@ _econnman_service_new_icon(struct Connman_Service *cs, Evas *evas)
              edje_object_signal_emit(icon, buf, "e");
           }
         eina_iterator_free(iter);
+     }
+
+   /* Set frequency band label */
+   if (cs->type == CONNMAN_SERVICE_TYPE_WIFI && cs->frequency > 0)
+     {
+        const char *band;
+
+        if (cs->frequency >= 5925)
+          band = "6G";
+        else if (cs->frequency >= 3000)
+          band = "5G";
+        else
+          band = "2.4G";
+
+        edje_object_part_text_set(icon, "band_label", band);
      }
 
    return icon;

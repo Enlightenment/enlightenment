@@ -32,6 +32,7 @@ void
 enm_popup_del(E_NM_Instance *inst)
 {
    E_FREE_FUNC(inst->popup, e_object_del);
+   E_FREE_FUNC(inst->ctxt->popup_update_timer, ecore_timer_del);
    inst->ui.popup.enabled = inst->ui.popup.list = inst->ui.popup.ip_label = NULL;
 }
 
@@ -46,6 +47,7 @@ _enm_popup_del(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_NM_Instance *inst = data;
 
+   if (!inst->popup) return;
    E_FREE_FUNC(inst->popup, e_object_del);
 }
 
@@ -150,7 +152,24 @@ _enm_ap_icon_new(struct NM_Manager *nm, struct NM_Access_Point *ap, Evas *evas)
              snprintf(secbuf, sizeof(secbuf), "e,security,%s", sec);
            edje_object_signal_emit(icon, secbuf, "e");
         }
+      else
+        edje_object_signal_emit(icon, "e,security,off", "e");
    }
+
+   /* Set frequency band label */
+   if (ap->frequency > 0)
+     {
+        const char *band;
+
+        if (ap->frequency >= 5925)
+          band = "6G";
+        else if (ap->frequency >= 3000)
+          band = "5G";
+        else
+          band = "2.4G";
+
+        edje_object_part_text_set(icon, "band_label", band);
+     }
 
    return icon;
 }
@@ -311,42 +330,38 @@ _enm_ssid_is_active(struct NM_Manager *nm, const char *ssid)
    return !strcmp(active->ssid, ssid);
 }
 
-static void
-_enm_popup_update(struct NM_Manager *nm, E_NM_Instance *inst)
+/* Build the desired list of entries.  Returns count; caller frees labels/paths. */
+struct _Popup_Entry
 {
-   Evas_Object *list = inst->ui.popup.list;
-   Evas_Object *enabled = inst->ui.popup.enabled;
-   Evas *evas = evas_object_evas_get(list);
+   const char *label;   /* SSID or interface name — owned by AP/dev, do not free */
+   const char *ap_path; /* stringshare AP path for wifi, NULL for ethernet */
+   struct NM_Access_Point *ap; /* NULL for ethernet */
+   struct NM_Device       *dev; /* only for ethernet */
+};
+
+static int
+_enm_popup_build_entries(struct NM_Manager *nm,
+                         struct _Popup_Entry *out, int max)
+{
    struct NM_Device *dev;
    Eina_Hash *seen_ssids;
+   int n = 0;
 
-   EINA_SAFETY_ON_NULL_RETURN(nm);
-
-   /* Refresh saved connections for forget button visibility.
-    * This is async — the hash populates as D-Bus replies arrive,
-    * then enm_mod_aps_changed() triggers a popup re-render.
-    * Skip if a fetch is already in flight to avoid recursive storms. */
-   if (nm->saved_conn_pending == 0)
-     enm_saved_connections_get(nm);
-
-   e_widget_ilist_freeze(list);
-   e_widget_ilist_clear(list);
-
-   /* Show connected ethernet devices first */
+   /* Ethernet entries first */
    EINA_INLIST_FOREACH(nm->devices, dev)
      {
-        Evas_Object *icon;
-
         if (dev->type != NM_DEVICE_TYPE_ETHERNET) continue;
-        if (dev->state < 100) continue; /* not activated */
+        if (dev->state < 100) continue;
+        if (n >= max) break;
 
-        icon = _enm_eth_icon_new(dev, evas);
-        e_widget_ilist_append_full(list, icon, NULL,
-                                   dev->interface ?: _("Wired"),
-                                   NULL, NULL, NULL);
+        out[n].label = dev->interface ?: _("Wired");
+        out[n].ap_path = NULL;
+        out[n].ap = NULL;
+        out[n].dev = dev;
+        n++;
      }
 
-   /* Deduplicate APs by SSID — show only the strongest station per SSID */
+   /* Deduplicated WiFi entries */
    seen_ssids = eina_hash_string_superfast_new(NULL);
 
    EINA_INLIST_FOREACH(nm->devices, dev)
@@ -358,31 +373,111 @@ _enm_popup_update(struct NM_Manager *nm, E_NM_Instance *inst)
         EINA_INLIST_FOREACH(dev->access_points, ap)
           {
              struct NM_Access_Point *best;
-             Evas_Object *icon, *end;
 
-             /* Skip hidden networks (empty or NULL SSID) */
              if (!ap->ssid || !ap->ssid[0]) continue;
-
-             /* Skip if we already showed this SSID */
              if (eina_hash_find(seen_ssids, ap->ssid)) continue;
 
-             /* Find the best AP for this SSID and only show that one */
              best = _enm_best_ap_for_ssid(nm, ap->ssid);
              if (!best) continue;
 
              eina_hash_add(seen_ssids, ap->ssid, (void *)1);
 
-             icon = _enm_ap_icon_new(nm, best, evas);
-             end = _enm_ap_end_new(nm, best, evas);
-
-             e_widget_ilist_append_full(list, icon, end,
-                                        best->ssid,
-                                        _enm_popup_selected_cb,
-                                        inst, best->path);
+             if (n >= max) break;
+             out[n].label = best->ssid;
+             out[n].ap_path = best->path;
+             out[n].ap = best;
+             out[n].dev = NULL;
+             n++;
           }
      }
 
    eina_hash_free(seen_ssids);
+   return n;
+}
+
+static void
+_enm_popup_update(struct NM_Manager *nm, E_NM_Instance *inst)
+{
+   Evas_Object *list = inst->ui.popup.list;
+   Evas_Object *enabled = inst->ui.popup.enabled;
+   Evas *evas = evas_object_evas_get(list);
+   struct _Popup_Entry desired[256];
+   int want_n, have_n, i;
+
+   EINA_SAFETY_ON_NULL_RETURN(nm);
+
+   want_n = _enm_popup_build_entries(nm, desired, 256);
+   have_n = e_widget_ilist_count(list);
+
+   e_widget_ilist_freeze(list);
+
+   /* Update existing rows in-place, append new rows, remove extras */
+   for (i = 0; i < want_n; i++)
+     {
+        if (i < have_n)
+          {
+             const char *cur_label = e_widget_ilist_nth_label_get(list, i);
+
+             /* If the label matches, just update icon and end widget */
+             if (cur_label && desired[i].label &&
+                 !strcmp(cur_label, desired[i].label))
+               {
+                  Evas_Object *icon, *end;
+
+                  if (desired[i].ap)
+                    {
+                       icon = _enm_ap_icon_new(nm, desired[i].ap, evas);
+                       end = _enm_ap_end_new(nm, desired[i].ap, evas);
+                    }
+                  else
+                    {
+                       icon = _enm_eth_icon_new(desired[i].dev, evas);
+                       end = NULL;
+                    }
+                  e_widget_ilist_nth_icon_set(list, i, icon);
+                  e_widget_ilist_nth_end_set(list, i, end);
+                  continue;
+               }
+
+             /* Label mismatch — remove stale row.  Decrement i so the loop
+              * re-examines this position (which now holds the next item after
+              * the shift) on the next iteration instead of appending at the
+              * wrong position. */
+             e_widget_ilist_remove_num(list, i);
+             have_n--;
+             i--;
+             continue;
+          }
+
+        /* Append new row (only reached when i >= have_n) */
+        {
+           Evas_Object *icon, *end;
+
+           if (desired[i].ap)
+             {
+                icon = _enm_ap_icon_new(nm, desired[i].ap, evas);
+                end = _enm_ap_end_new(nm, desired[i].ap, evas);
+                e_widget_ilist_append_full(list, icon, end,
+                                           desired[i].label,
+                                           _enm_popup_selected_cb,
+                                           inst, desired[i].ap_path);
+             }
+           else
+             {
+                icon = _enm_eth_icon_new(desired[i].dev, evas);
+                e_widget_ilist_append_full(list, icon, NULL,
+                                           desired[i].label,
+                                           NULL, NULL, NULL);
+             }
+           have_n++;
+        }
+     }
+
+   /* Remove any trailing stale rows */
+   while (have_n > want_n)
+     {
+        e_widget_ilist_remove_num(list, --have_n);
+     }
 
    e_widget_ilist_thaw(list);
    e_widget_ilist_go(list);
@@ -476,18 +571,38 @@ _enm_popup_new(E_NM_Instance *inst)
 
 /* --- UI callbacks called from e_networkmanager.c -------------------------- */
 
-void
-enm_mod_aps_changed(struct NM_Manager *nm)
+static Eina_Bool
+_enm_popup_update_timer_cb(void *data)
 {
-   E_NM_Module_Context *ctxt = networkmanager_mod->data;
+   E_NM_Module_Context *ctxt = data;
    const Eina_List *l;
    E_NM_Instance *inst;
+
+   ctxt->popup_update_timer = NULL;
+
+   if (!ctxt->nm) return ECORE_CALLBACK_CANCEL;
 
    EINA_LIST_FOREACH(ctxt->instances, l, inst)
      {
         if (!inst->popup) continue;
-        _enm_popup_update(nm, inst);
+        _enm_popup_update(ctxt->nm, inst);
      }
+
+   return ECORE_CALLBACK_CANCEL;
+}
+
+void
+enm_mod_aps_changed(struct NM_Manager *nm EINA_UNUSED)
+{
+   E_NM_Module_Context *ctxt = networkmanager_mod->data;
+
+   /* Throttle popup rebuilds: coalesce rapid AP changes into a single
+    * update after 0.5s.  Without this, NM's continuous AccessPointAdded/
+    * Removed signals during scanning cause visible flicker. */
+   if (ctxt->popup_update_timer) return;
+   ctxt->popup_update_timer = ecore_timer_add(0.5,
+                                               _enm_popup_update_timer_cb,
+                                               ctxt);
 }
 
 static void
@@ -553,6 +668,10 @@ _enm_mod_manager_update_inst(E_NM_Module_Context *ctxt EINA_UNUSED,
      strength = 100;
    else
      strength = active_ap ? active_ap->strength : 0;
+
+   DBG("gadget_update: state=%d type=%s ap=%s strength=%d active_ap=%p",
+       state, typestr, nm ? (nm->active_ap_path ?: "(null)") : "no-nm",
+       strength, active_ap);
    theme_state = _enm_state_to_connman(state);
 
    msg = malloc(sizeof(*msg) + sizeof(int));
@@ -585,6 +704,51 @@ _enm_mod_manager_update_inst(E_NM_Module_Context *ctxt EINA_UNUSED,
      }
    else
      edje_object_part_text_set(o, "e.text.label", "");
+
+   /* Set security overlay and frequency band on gadget icon */
+   if (nm && active_ap)
+     {
+        const char *sec;
+
+        sec = enm_ap_security_to_str(active_ap->wpa_flags, active_ap->rsn_flags);
+        if (sec && strcmp(sec, "open"))
+          {
+             if (!strcmp(sec, "wpa") || !strcmp(sec, "wpa2") || !strcmp(sec, "sae"))
+               edje_object_signal_emit(o, "e,security,psk", "e");
+             else if (!strcmp(sec, "wep"))
+               edje_object_signal_emit(o, "e,security,wep", "e");
+             else if (!strcmp(sec, "802.1x"))
+               edje_object_signal_emit(o, "e,security,ieee8021x", "e");
+             else
+               {
+                  snprintf(buf, sizeof(buf), "e,security,%s", sec);
+                  edje_object_signal_emit(o, buf, "e");
+               }
+          }
+        else
+          edje_object_signal_emit(o, "e,security,off", "e");
+
+        if (active_ap->frequency > 0)
+          {
+             const char *band;
+
+             if (active_ap->frequency >= 5925)
+               band = "6G";
+             else if (active_ap->frequency >= 3000)
+               band = "5G";
+             else
+               band = "2.4G";
+
+             edje_object_part_text_set(o, "band_label", band);
+          }
+        else
+          edje_object_part_text_set(o, "band_label", "");
+     }
+   else
+     {
+        edje_object_signal_emit(o, "e,security,off", "e");
+        edje_object_part_text_set(o, "band_label", "");
+     }
 }
 
 void
@@ -614,7 +778,11 @@ enm_mod_manager_inout(struct NM_Manager *nm)
      _enm_gadget_setup(inst);
 
    if (ctxt->nm)
-     enm_mod_manager_update(nm);
+     {
+        enm_mod_manager_update(nm);
+        /* Pre-fetch saved connections so the hash is warm when popup opens */
+        enm_saved_connections_get(nm);
+     }
 }
 
 /* --- mouse / menu --------------------------------------------------------- */
@@ -860,6 +1028,7 @@ e_modapi_shutdown(E_Module *m)
    _enm_configure_registry_unregister();
    e_gadcon_provider_unregister(&_gc_class);
 
+   E_FREE_FUNC(ctxt->popup_update_timer, ecore_timer_del);
    E_FREE(ctxt);
    networkmanager_mod = NULL;
 

@@ -37,6 +37,7 @@ struct E_NM_Module_Context
 {
    Eina_List          *instances;
    E_Config_Dialog    *conf_dialog;
+   Ecore_Timer        *popup_update_timer;
 
    struct NM_Manager  *nm;
    int                 wireless_enabled; /* int for e_widget_check bitmask */

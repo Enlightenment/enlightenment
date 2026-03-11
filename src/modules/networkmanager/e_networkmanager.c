@@ -505,7 +505,11 @@ _device_free(struct NM_Device *dev)
    free(dev->interface);
 
    if (dev->wireless_proxy)
-     eldbus_proxy_unref(dev->wireless_proxy);
+     {
+        Eldbus_Object *wobj = eldbus_proxy_object_get(dev->wireless_proxy);
+        eldbus_proxy_unref(dev->wireless_proxy);
+        if (wobj) eldbus_object_unref(wobj);
+     }
 
    if (dev->proxy)
      {
@@ -685,11 +689,6 @@ _nm_conn_type_parse(const char *type)
 static void
 _manager_active_conn_watch_free(struct NM_Manager *nm)
 {
-   if (nm->pending.active_conn)
-     {
-        eldbus_pending_cancel(nm->pending.active_conn);
-        nm->pending.active_conn = NULL;
-     }
    if (nm->active_conn_proxy)
      {
         eldbus_proxy_unref(nm->active_conn_proxy);
@@ -730,7 +729,8 @@ _active_conn_prop_changed(void *data, const Eldbus_Message *msg)
                {
                   DBG("ActiveConn SpecificObject changed: %s", ap_path);
                   eina_stringshare_del(nm->active_ap_path);
-                  nm->active_ap_path = eina_stringshare_add(ap_path);
+                  nm->active_ap_path = (ap_path && strcmp(ap_path, "/"))
+                                       ? eina_stringshare_add(ap_path) : NULL;
                   enm_mod_manager_update(nm);
                   enm_mod_aps_changed(nm);
                }
@@ -738,28 +738,65 @@ _active_conn_prop_changed(void *data, const Eldbus_Message *msg)
      }
 }
 
-static void
-_active_conn_get_props_cb(void *data, const Eldbus_Message *msg,
-                          Eldbus_Pending *pending EINA_UNUSED)
+/* ------ Active connection probe ------ */
+/* We probe each active connection with a lightweight GetAll.  Only when the
+ * callback discovers a wifi/ethernet type do we "promote" that probe to the
+ * persistent watcher on NM_Manager.  Others (bridge, vpn, …) are freed. */
+
+struct _Active_Conn_Probe
 {
-   struct NM_Manager *nm = data;
+   struct NM_Manager *nm;
+   Eldbus_Proxy      *proxy;
+   Eldbus_Object     *obj;
+   const char        *path;       /* stringshare */
+   unsigned int       generation; /* snapshot of nm->probe_generation at creation */
+};
+
+static void
+_active_conn_probe_free(struct _Active_Conn_Probe *probe)
+{
+   if (!probe) return;
+   if (probe->proxy) eldbus_proxy_unref(probe->proxy);
+   if (probe->obj)   eldbus_object_unref(probe->obj);
+   eina_stringshare_del(probe->path);
+   free(probe);
+}
+
+static void
+_active_conn_probe_cb(void *data, const Eldbus_Message *msg,
+                      Eldbus_Pending *pending EINA_UNUSED)
+{
+   struct _Active_Conn_Probe *probe = data;
+   struct NM_Manager *nm = probe->nm;
    Eldbus_Message_Iter *array, *dict;
    const char *name, *text;
+   const char *ap_path = NULL, *ip4path = NULL, *type_str = NULL;
+   enum NM_Device_Type conn_type;
 
-   nm->pending.active_conn = NULL;
+   /* Discard stale probes that were superseded by a newer batch */
+   if (probe->generation != nm->probe_generation)
+     {
+        DBG("Discarding stale probe (gen %u vs current %u) path=%s",
+            probe->generation, nm->probe_generation, probe->path ?: "?");
+        _active_conn_probe_free(probe);
+        return;
+     }
 
    if (eldbus_message_error_get(msg, &name, &text))
      {
         WRN("ActiveConnection GetAll failed: %s: %s", name, text);
+        _active_conn_probe_free(probe);
         return;
      }
 
    if (!eldbus_message_arguments_get(msg, "a{sv}", &array))
      {
         WRN("ActiveConnection GetAll: cannot parse a{sv}");
+        _active_conn_probe_free(probe);
         return;
      }
 
+   /* Parse into locals first so we can check the type before committing */
    while (eldbus_message_iter_get_and_next(array, 'e', &dict))
      {
         Eldbus_Message_Iter *var;
@@ -769,47 +806,68 @@ _active_conn_get_props_cb(void *data, const Eldbus_Message *msg,
           continue;
 
         if (!strcmp(key, "Ip4Config"))
-          {
-             const char *ip4path;
-             if (eldbus_message_iter_arguments_get(var, "o", &ip4path))
-               _manager_watch_ip4(nm, ip4path);
-          }
+          eldbus_message_iter_arguments_get(var, "o", &ip4path);
         else if (!strcmp(key, "SpecificObject"))
-          {
-             const char *ap_path;
-             if (eldbus_message_iter_arguments_get(var, "o", &ap_path))
-               {
-                  DBG("ActiveConn SpecificObject=%s", ap_path);
-                  eina_stringshare_del(nm->active_ap_path);
-                  nm->active_ap_path = eina_stringshare_add(ap_path);
-               }
-          }
+          eldbus_message_iter_arguments_get(var, "o", &ap_path);
         else if (!strcmp(key, "Type"))
-          {
-             const char *type;
-             if (eldbus_message_iter_arguments_get(var, "s", &type))
-               {
-                  nm->active_conn_type = _nm_conn_type_parse(type);
-                  DBG("ActiveConn Type=%s -> %d", type, nm->active_conn_type);
-               }
-          }
+          eldbus_message_iter_arguments_get(var, "s", &type_str);
      }
 
-   /* Proxy stays alive — updates arrive via _active_conn_prop_changed */
-   DBG("ActiveConn done: type=%d active_ap=%s",
-       nm->active_conn_type, nm->active_ap_path ?: "(null)");
+   conn_type = _nm_conn_type_parse(type_str);
+
+   /* Skip non-network types (bridge, vpn, etc.) — they don't have
+    * useful SpecificObject or signal strength info. */
+   if (conn_type != NM_DEVICE_TYPE_WIFI &&
+       conn_type != NM_DEVICE_TYPE_ETHERNET)
+     {
+        DBG("ActiveConn type=%s (%d) — skipping", type_str ?: "?", conn_type);
+        _active_conn_probe_free(probe);
+        return;
+     }
+
+   /* This is a useful connection — promote probe to persistent watcher */
+   DBG("ActiveConn type=%s (%d) — adopting path=%s",
+       type_str ?: "?", conn_type, probe->path);
+
+   /* Tear down any previous persistent watcher */
+   _manager_active_conn_watch_free(nm);
+   _manager_ip4_watch_free(nm);
+
+   /* Transfer ownership from probe to nm */
+   eina_stringshare_del(nm->active_connection_path);
+   nm->active_connection_path = probe->path;
+   probe->path = NULL; /* transferred */
+
+   nm->active_conn_proxy = probe->proxy;
+   nm->active_conn_obj = probe->obj;
+   probe->proxy = NULL; /* transferred */
+   probe->obj = NULL;   /* transferred */
+
+   nm->active_conn_type = conn_type;
+
+   eina_stringshare_del(nm->active_ap_path);
+   nm->active_ap_path = ap_path ? eina_stringshare_add(ap_path) : NULL;
+
+   /* Subscribe to property changes on the now-persistent proxy */
+   eldbus_proxy_signal_handler_add(nm->active_conn_proxy, "PropertiesChanged",
+                                   _active_conn_prop_changed, nm);
+
+   if (ip4path)
+     _manager_watch_ip4(nm, ip4path);
+
+   free(probe); /* fields already transferred or NULL */
+
    enm_mod_manager_update(nm);
    enm_mod_aps_changed(nm);
 }
 
 static void
-_manager_watch_active_conn(struct NM_Manager *nm,
-                            const char *active_conn_path)
+_manager_probe_active_conn(struct NM_Manager *nm,
+                           const char *active_conn_path)
 {
-   Eldbus_Object *obj;
-   Eldbus_Proxy *props;
+   struct _Active_Conn_Probe *probe;
 
-   DBG("_manager_watch_active_conn path=%s", active_conn_path ?: "(null)");
+   DBG("_manager_probe_active_conn path=%s", active_conn_path ?: "(null)");
    if (!active_conn_path || !strcmp(active_conn_path, "/")) return;
 
    /* Skip if already watching this exact connection */
@@ -817,27 +875,18 @@ _manager_watch_active_conn(struct NM_Manager *nm,
        !strcmp(nm->active_connection_path, active_conn_path))
      return;
 
-   eina_stringshare_del(nm->active_connection_path);
-   nm->active_connection_path = eina_stringshare_add(active_conn_path);
+   probe = calloc(1, sizeof(*probe));
+   if (!probe) return;
 
-   /* Tear down previous watchers (active conn + ip4) */
-   _manager_active_conn_watch_free(nm);
-   _manager_ip4_watch_free(nm);
+   probe->nm = nm;
+   probe->generation = nm->probe_generation;
+   probe->path = eina_stringshare_add(active_conn_path);
+   probe->obj = eldbus_object_get(conn, NM_BUS_NAME, active_conn_path);
+   probe->proxy = eldbus_proxy_get(probe->obj, NM_IFACE_PROPS);
 
-   obj = eldbus_object_get(conn, NM_BUS_NAME, active_conn_path);
-   props = eldbus_proxy_get(obj, NM_IFACE_PROPS);
-
-   nm->active_conn_proxy = props;
-   nm->active_conn_obj = obj;
-
-   /* Subscribe to property changes — keeps proxy alive for signals */
-   eldbus_proxy_signal_handler_add(props, "PropertiesChanged",
-                                   _active_conn_prop_changed, nm);
-
-   /* Initial fetch */
-   nm->pending.active_conn = eldbus_proxy_call(props, "GetAll",
-                                               _active_conn_get_props_cb, nm,
-                                               -1, "s", NM_IFACE_ACONN);
+   eldbus_proxy_call(probe->proxy, "GetAll",
+                     _active_conn_probe_cb, probe,
+                     -1, "s", NM_IFACE_ACONN);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -894,14 +943,27 @@ _manager_prop_changed(void *data, const Eldbus_Message *msg)
              if (!eldbus_message_iter_arguments_get(var, "ao", &conn_array))
                continue;
 
-             /* Use first active connection */
+             /* Advance generation so any in-flight probes from the previous
+              * batch are discarded in their callbacks.  Then clear the old
+              * watchers so we don't display a stale connection while the new
+              * probes are in flight. */
+             nm->probe_generation++;
+             _manager_active_conn_watch_free(nm);
+             _manager_ip4_watch_free(nm);
+
+             /* Try each active connection — _active_conn_probe_cb
+              * filters out bridge/vpn types and only adopts wifi/ethernet */
              if (eldbus_message_iter_get_and_next(conn_array, 'o', &aconn_path))
-               _manager_watch_active_conn(nm, aconn_path);
+               {
+                  do
+                    {
+                       _manager_probe_active_conn(nm, aconn_path);
+                    }
+                  while (eldbus_message_iter_get_and_next(conn_array, 'o', &aconn_path));
+               }
              else
                {
-                  /* No active connections — tear down watchers */
-                  _manager_active_conn_watch_free(nm);
-                  _manager_ip4_watch_free(nm);
+                  /* No active connections — tear down already done above */
                   eina_stringshare_del(nm->active_ap_path);
                   nm->active_ap_path = NULL;
                   eina_stringshare_del(nm->active_connection_path);
@@ -961,6 +1023,7 @@ _manager_get_props_cb(void *data, const Eldbus_Message *msg,
           {
              Eldbus_Message_Iter *conn_array;
              const char *aconn_path;
+             Eina_Bool found = EINA_FALSE;
 
              if (!eldbus_message_iter_arguments_get(var, "ao", &conn_array))
                {
@@ -968,12 +1031,22 @@ _manager_get_props_cb(void *data, const Eldbus_Message *msg,
                   continue;
                }
 
-             if (eldbus_message_iter_get_and_next(conn_array, 'o', &aconn_path))
+             /* Advance generation and clear old watchers before probing so
+              * stale probes are discarded and no stale connection is shown. */
+             nm->probe_generation++;
+             _manager_active_conn_watch_free(nm);
+             _manager_ip4_watch_free(nm);
+
+             /* Try each active connection — _active_conn_probe_cb
+              * filters out bridge/vpn types and only adopts wifi/ethernet. */
+             while (eldbus_message_iter_get_and_next(conn_array, 'o', &aconn_path))
                {
-                  DBG("ActiveConnections: first path=%s", aconn_path);
-                  _manager_watch_active_conn(nm, aconn_path);
+                  DBG("ActiveConnections: trying path=%s", aconn_path);
+                  _manager_probe_active_conn(nm, aconn_path);
+                  found = EINA_TRUE;
                }
-             else
+
+             if (!found)
                {
                   DBG("ActiveConnections: empty array");
                   eina_stringshare_del(nm->active_ap_path);
@@ -986,6 +1059,8 @@ _manager_get_props_cb(void *data, const Eldbus_Message *msg,
           }
      }
 
+   DBG("manager_get_props done: state=%d active_ap=%s conn_type=%d",
+       nm->state, nm->active_ap_path ?: "(null)", nm->active_conn_type);
    enm_mod_manager_update(nm);
 }
 
@@ -1234,17 +1309,18 @@ enm_saved_connections_get(struct NM_Manager *nm)
    EINA_SAFETY_ON_NULL_RETURN(nm);
 
    {
-      /* Swap pattern: assign new hash before freeing old to avoid a window
-       * where saved_connections is NULL (in-flight callbacks check it) */
-      Eina_Hash *old = nm->saved_connections;
-      nm->saved_connections = eina_hash_string_superfast_new(
-                                 _saved_connections_free_cb);
-      if (old) eina_hash_free(old);
-   }
-
-   {
       struct _Settings_List_Ctx *sctx = malloc(sizeof(*sctx));
       EINA_SAFETY_ON_NULL_RETURN(sctx);
+
+      /* Swap pattern: assign new hash before freeing old to avoid a window
+       * where saved_connections is NULL (in-flight callbacks check it).
+       * Only performed after malloc succeeds so OOM cannot corrupt the hash. */
+      {
+         Eina_Hash *old = nm->saved_connections;
+         nm->saved_connections = eina_hash_string_superfast_new(
+                                    _saved_connections_free_cb);
+         if (old) eina_hash_free(old);
+      }
 
       sctx->nm = nm;
       sctx->obj = eldbus_object_get(conn, NM_BUS_NAME, NM_SETTINGS_PATH);
