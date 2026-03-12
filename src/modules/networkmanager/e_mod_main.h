@@ -41,6 +41,18 @@ struct E_NM_Module_Context
 
    struct NM_Manager  *nm;
    int                 wireless_enabled; /* int for e_widget_check bitmask */
+
+   /* Network activity indicator */
+   Ecore_Timer        *traffic_timer;
+   Ecore_Event_Handler *screensaver_on_handler;
+   Ecore_Event_Handler *screensaver_off_handler;
+   Ecore_Event_Handler *powersave_handler;
+   unsigned long long   prev_rx;
+   unsigned long long   prev_tx;
+   int                  rx_level; /* 0=idle, 1=low, 2=medium, 3=high */
+   int                  tx_level;
+   Eina_Bool            screen_off : 1;
+   Eina_Bool            powersave_high : 1;
 };
 
 E_API extern E_Module_Api e_modapi;

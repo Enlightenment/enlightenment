@@ -9,6 +9,10 @@ const char _e_nm_name[] = "networkmanager";
 const char _e_nm_Name[] = N_("NetworkManager");
 int _e_nm_log_dom = -1;
 
+/* Forward declarations for traffic monitor */
+static void _enm_traffic_timer_start(E_NM_Module_Context *ctxt);
+static void _enm_traffic_timer_stop(E_NM_Module_Context *ctxt);
+
 const char *
 e_nm_theme_path(void)
 {
@@ -762,6 +766,14 @@ enm_mod_manager_update(struct NM_Manager *nm)
 
    EINA_LIST_FOREACH(ctxt->instances, l, inst)
      _enm_mod_manager_update_inst(ctxt, inst, nm, nm->state);
+
+   /* Start or stop traffic monitor based on connection state */
+   if (nm->state >= NM_STATE_CONNECTED_LOCAL)
+     {
+        _enm_traffic_timer_start(ctxt);
+     }
+   else
+     _enm_traffic_timer_stop(ctxt);
 }
 
 void
@@ -783,6 +795,219 @@ enm_mod_manager_inout(struct NM_Manager *nm)
         /* Pre-fetch saved connections so the hash is warm when popup opens */
         enm_saved_connections_get(nm);
      }
+   else
+     _enm_traffic_timer_stop(ctxt);
+}
+
+/* --- network activity indicator ------------------------------------------- */
+
+/* Find the interface name for the active network connection */
+static const char *
+_enm_active_interface(struct NM_Manager *nm)
+{
+   struct NM_Device *dev;
+
+   if (!nm) return NULL;
+
+   /* WiFi: find first connected WiFi device (state >= 100 = activated) */
+   if (nm->active_conn_type == NM_DEVICE_TYPE_WIFI)
+     {
+        EINA_INLIST_FOREACH(nm->devices, dev)
+          {
+             if (dev->type == NM_DEVICE_TYPE_WIFI && dev->state >= 100)
+               return dev->interface;
+          }
+     }
+
+   /* Ethernet: find first connected ethernet device */
+   if (nm->active_conn_type == NM_DEVICE_TYPE_ETHERNET)
+     {
+        EINA_INLIST_FOREACH(nm->devices, dev)
+          {
+             if (dev->type == NM_DEVICE_TYPE_ETHERNET && dev->state >= 100)
+               return dev->interface;
+          }
+     }
+
+   return NULL;
+}
+
+static Eina_Bool
+_enm_read_sysfs_counter(const char *iface, const char *counter,
+                         unsigned long long *val)
+{
+   char path[256];
+   FILE *f;
+
+   snprintf(path, sizeof(path), "/sys/class/net/%s/statistics/%s", iface, counter);
+   f = fopen(path, "r");
+   if (!f) return EINA_FALSE;
+   if (fscanf(f, "%llu", val) != 1)
+     {
+        fclose(f);
+        return EINA_FALSE;
+     }
+   fclose(f);
+   return EINA_TRUE;
+}
+
+/* Classify bytes/sec into traffic level: 0=idle, 1=low, 2=medium, 3=high
+ * Uses hysteresis: higher threshold to go up, lower threshold to go down,
+ * preventing animation resets from boundary flickering. */
+static int
+_enm_traffic_level(unsigned long long bytes_per_sec, int current_level)
+{
+   /* Thresholds: up / down (with ~30% hysteresis) */
+   static const unsigned long long thresh_up[]   = { 1, 10240, 512000 };
+   static const unsigned long long thresh_down[] = { 0,  7168, 358400 };
+   int level = current_level;
+
+   if (level < 3 && bytes_per_sec >= thresh_up[level])
+     {
+        /* Move up to the highest matching level */
+        while (level < 3 && bytes_per_sec >= thresh_up[level])
+          level++;
+     }
+   else if (level > 0 && bytes_per_sec < thresh_down[level - 1])
+     {
+        /* Move down to the lowest matching level */
+        while (level > 0 && bytes_per_sec < thresh_down[level - 1])
+          level--;
+     }
+   return level;
+}
+
+static const char *_traffic_signals[] = {
+   "e,traffic,rx,idle", "e,traffic,rx,low",
+   "e,traffic,rx,medium", "e,traffic,rx,high",
+   "e,traffic,tx,idle", "e,traffic,tx,low",
+   "e,traffic,tx,medium", "e,traffic,tx,high",
+};
+
+static void
+_enm_traffic_signal_emit(E_NM_Module_Context *ctxt, int rx_level, int tx_level)
+{
+   E_NM_Instance *inst;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(ctxt->instances, l, inst)
+     {
+        if (!inst->ui.gadget) continue;
+        if (rx_level != ctxt->rx_level)
+          edje_object_signal_emit(inst->ui.gadget,
+                                  _traffic_signals[rx_level], "e");
+        if (tx_level != ctxt->tx_level)
+          edje_object_signal_emit(inst->ui.gadget,
+                                  _traffic_signals[4 + tx_level], "e");
+     }
+}
+
+static Eina_Bool
+_enm_traffic_poll_cb(void *data)
+{
+   E_NM_Module_Context *ctxt = data;
+   const char *iface;
+   unsigned long long rx = 0, tx = 0;
+   int rx_level, tx_level;
+
+   if (!ctxt->nm) return ECORE_CALLBACK_RENEW;
+   if (ctxt->nm->state < NM_STATE_CONNECTED_LOCAL) return ECORE_CALLBACK_RENEW;
+
+   iface = _enm_active_interface(ctxt->nm);
+   if (!iface) return ECORE_CALLBACK_RENEW;
+
+   if (!_enm_read_sysfs_counter(iface, "rx_bytes", &rx) ||
+       !_enm_read_sysfs_counter(iface, "tx_bytes", &tx))
+     return ECORE_CALLBACK_RENEW;
+
+   /* First poll: seed the counters */
+   if (ctxt->prev_rx == 0 && ctxt->prev_tx == 0)
+     {
+        ctxt->prev_rx = rx;
+        ctxt->prev_tx = tx;
+        return ECORE_CALLBACK_RENEW;
+     }
+
+   /* Poll interval is 0.5s, so bytes_per_sec = delta * 2 */
+   rx_level = _enm_traffic_level((rx - ctxt->prev_rx) * 2, ctxt->rx_level);
+   tx_level = _enm_traffic_level((tx - ctxt->prev_tx) * 2, ctxt->tx_level);
+   ctxt->prev_rx = rx;
+   ctxt->prev_tx = tx;
+
+   if (rx_level != ctxt->rx_level || tx_level != ctxt->tx_level)
+     {
+        _enm_traffic_signal_emit(ctxt, rx_level, tx_level);
+        ctxt->rx_level = rx_level;
+        ctxt->tx_level = tx_level;
+     }
+
+   return ECORE_CALLBACK_RENEW;
+}
+
+static void
+_enm_traffic_timer_start(E_NM_Module_Context *ctxt)
+{
+   if (ctxt->traffic_timer) return;
+   if (ctxt->screen_off || ctxt->powersave_high) return;
+   if (!ctxt->nm) return;
+   if (ctxt->nm->state < NM_STATE_CONNECTED_LOCAL) return;
+
+   ctxt->prev_rx = 0;
+   ctxt->prev_tx = 0;
+   ctxt->rx_level = 0;
+   ctxt->tx_level = 0;
+   ctxt->traffic_timer = ecore_timer_add(0.5, _enm_traffic_poll_cb, ctxt);
+}
+
+static void
+_enm_traffic_timer_stop(E_NM_Module_Context *ctxt)
+{
+   E_FREE_FUNC(ctxt->traffic_timer, ecore_timer_del);
+   if (ctxt->rx_level || ctxt->tx_level)
+     {
+        _enm_traffic_signal_emit(ctxt, 0, 0);
+        ctxt->rx_level = 0;
+        ctxt->tx_level = 0;
+     }
+}
+
+static Eina_Bool
+_enm_screensaver_on_cb(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
+{
+   E_NM_Module_Context *ctxt = data;
+
+   ctxt->screen_off = EINA_TRUE;
+   _enm_traffic_timer_stop(ctxt);
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_enm_screensaver_off_cb(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
+{
+   E_NM_Module_Context *ctxt = data;
+
+   ctxt->screen_off = EINA_FALSE;
+   _enm_traffic_timer_start(ctxt);
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_enm_powersave_cb(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
+{
+   E_NM_Module_Context *ctxt = data;
+   E_Powersave_Mode mode = e_powersave_mode_get();
+
+   if (mode >= E_POWERSAVE_MODE_EXTREME)
+     {
+        ctxt->powersave_high = EINA_TRUE;
+        _enm_traffic_timer_stop(ctxt);
+     }
+   else
+     {
+        ctxt->powersave_high = EINA_FALSE;
+        _enm_traffic_timer_start(ctxt);
+     }
+   return ECORE_CALLBACK_PASS_ON;
 }
 
 /* --- mouse / menu --------------------------------------------------------- */
@@ -986,6 +1211,20 @@ e_modapi_init(E_Module *m)
    ctxt->conf_dialog = NULL;
    networkmanager_mod = m;
 
+   /* Initialize power-aware traffic monitoring state */
+   ctxt->powersave_high = (e_powersave_mode_get() >= E_POWERSAVE_MODE_EXTREME);
+
+   /* Register event handlers for power-aware traffic monitoring */
+   ctxt->screensaver_on_handler =
+     ecore_event_handler_add(E_EVENT_SCREENSAVER_ON,
+                             _enm_screensaver_on_cb, ctxt);
+   ctxt->screensaver_off_handler =
+     ecore_event_handler_add(E_EVENT_SCREENSAVER_OFF,
+                             _enm_screensaver_off_cb, ctxt);
+   ctxt->powersave_handler =
+     ecore_event_handler_add(E_EVENT_POWERSAVE_UPDATE,
+                             _enm_powersave_cb, ctxt);
+
    _enm_configure_registry_register();
    e_gadcon_provider_register(&_gc_class);
 
@@ -1029,6 +1268,10 @@ e_modapi_shutdown(E_Module *m)
    e_gadcon_provider_unregister(&_gc_class);
 
    E_FREE_FUNC(ctxt->popup_update_timer, ecore_timer_del);
+   E_FREE_FUNC(ctxt->traffic_timer, ecore_timer_del);
+   E_FREE_FUNC(ctxt->screensaver_on_handler, ecore_event_handler_del);
+   E_FREE_FUNC(ctxt->screensaver_off_handler, ecore_event_handler_del);
+   E_FREE_FUNC(ctxt->powersave_handler, ecore_event_handler_del);
    E_FREE(ctxt);
    networkmanager_mod = NULL;
 
