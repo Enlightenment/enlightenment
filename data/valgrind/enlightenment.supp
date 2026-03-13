@@ -1,0 +1,41 @@
+##
+## Valgrind suppressions for known false positives in Enlightenment
+##
+
+##
+## SSE2-optimized strncmp over-read in glibc dynamic linker
+##
+## When libEGL.so is loaded via dlopen() during EGL initialization,
+## decompose_rpath() strdups a short RPATH string (typically ~15 bytes).
+## The SSE2 strncmp in glibc reads memory in 8-byte aligned chunks,
+## reading up to 7 bytes past the end of the malloc'd buffer.  The read
+## never crosses a page boundary and never segfaults at runtime, but
+## valgrind's byte-level shadow memory tracking flags it correctly.
+##
+## This is a well-known glibc/valgrind interaction with SIMD string
+## functions.  There is nothing to fix in enlightenment or EFL.
+##
+{
+   glibc-dynlinker-strncmp-sse2-is_dst-via-_dl_dst_count
+   Memcheck:Addr8
+   fun:strncmp
+   fun:is_dst
+   fun:_dl_dst_count
+   fun:expand_dynamic_string_token
+   fun:fillin_rpath*
+   fun:decompose_rpath
+   fun:cache_rpath
+   fun:_dl_map_object
+}
+
+{
+   glibc-dynlinker-strncmp-sse2-is_dst-via-_dl_dst_substitute
+   Memcheck:Addr8
+   fun:strncmp
+   fun:is_dst
+   fun:_dl_dst_substitute
+   fun:fillin_rpath*
+   fun:decompose_rpath
+   fun:cache_rpath
+   fun:_dl_map_object
+}

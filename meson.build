@@ -407,6 +407,7 @@ subdir('data/images')
 subdir('data/input_methods')
 subdir('data/units')
 subdir('data/session')
+subdir('data/valgrind')
 
 subdir('doc')
 

@@ -521,7 +521,7 @@ int
 main(int argc, char **argv)
 {
    int i, ret = -1;
-   char *buf = NULL, *buf2 = NULL, *buf3 = NULL, **args, *home;
+   char *buf = NULL, *buf2 = NULL, *buf3 = NULL, *buf4 = NULL, **args, *home;
    const char *bindir;
    Eina_Bool really_know = EINA_FALSE;
    struct sigaction action;
@@ -703,7 +703,9 @@ main(int argc, char **argv)
   myasprintf(&buf, "%s/enlightenment", eina_prefix_bin_get(pfx));
    if (vgd)
      {
-       args = alloca((argc + 11) * sizeof(char *));
+       myasprintf(&buf4, "--suppressions=%s/data/valgrind/enlightenment.supp",
+                  eina_prefix_data_get(pfx));
+       args = alloca((argc + 12) * sizeof(char *));
        args[0] = "/usr/bin/valgrind";
        args[1] = "--tool=memcheck";
        args[2] = "--num-callers=256";
@@ -714,9 +716,10 @@ main(int argc, char **argv)
        args[7] = "--track-origins=yes";
        args[8] = "--redzone-size=512";
        args[9] = "--freelist-vol=100000000";
-       args[10] = buf;
-       copy_args(&args[11], argv + 1, argc - 1);
-       argc += 10;
+       args[10] = buf4;
+       args[11] = buf;
+       copy_args(&args[12], argv + 1, argc - 1);
+       argc += 11;
        args[argc] = NULL;
      }
    else
