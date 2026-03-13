@@ -76,12 +76,18 @@ struct NM_Device
    enum NM_Device_Type type;
    uint32_t            state;
 
+   /* Transient paths read from Device.GetAll — used during startup probe
+    * to avoid an extra ActiveConnection.GetAll round-trip. */
+   char *active_conn_path; /* ActiveConnection object path */
+   char *ip4_path;         /* Ip4Config object path */
+
    Eina_Inlist  *access_points; /* NM_Access_Point inlist, WiFi only */
 
    struct
      {
         Eldbus_Pending *get_props;
         Eldbus_Pending *get_aps;
+        Eldbus_Pending *get_wifi_props; /* Device.Wireless GetAll */
      } pending;
 };
 
@@ -111,8 +117,9 @@ struct NM_Manager
    /* Persistent proxy/obj for watching active connection properties.
     * Created when active connection changes, freed when it changes again
     * or on manager shutdown.  Signal-driven via PropertiesChanged. */
-   Eldbus_Proxy  *active_conn_proxy;
-   Eldbus_Object *active_conn_obj;
+   Eldbus_Proxy          *active_conn_proxy;
+   Eldbus_Object         *active_conn_obj;
+   Eldbus_Signal_Handler *active_conn_signal_handler; /* for explicit removal */
 
    /* Persistent proxy/obj for watching IP4Config properties. */
    Eldbus_Proxy  *ip4_proxy;

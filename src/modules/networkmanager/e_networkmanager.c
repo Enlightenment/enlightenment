@@ -259,6 +259,13 @@ _ap_new(const char *path)
 
 static void _device_free(struct NM_Device *dev);
 static struct NM_Device *_device_new(const char *path);
+static void _device_wifi_props_cb(void *data, const Eldbus_Message *msg,
+                                  Eldbus_Pending *pending);
+static void _active_conn_prop_changed(void *data, const Eldbus_Message *msg);
+static void _manager_active_conn_watch_free(struct NM_Manager *nm);
+static void _manager_ip4_watch_free(struct NM_Manager *nm);
+static void _manager_watch_ip4(struct NM_Manager *nm,
+                               const char *ip4config_path);
 
 static void
 _device_get_aps_cb(void *data, const Eldbus_Message *msg,
@@ -432,6 +439,26 @@ _device_get_props_cb(void *data, const Eldbus_Message *msg,
              if (eldbus_message_iter_arguments_get(var, "u", &state))
                dev->state = state;
           }
+        else if (!strcmp(key, "ActiveConnection"))
+          {
+             const char *aconn_path;
+             if (eldbus_message_iter_arguments_get(var, "o", &aconn_path) &&
+                 aconn_path && strcmp(aconn_path, "/") != 0)
+               {
+                  free(dev->active_conn_path);
+                  dev->active_conn_path = strdup(aconn_path);
+               }
+          }
+        else if (!strcmp(key, "Ip4Config"))
+          {
+             const char *ip4;
+             if (eldbus_message_iter_arguments_get(var, "o", &ip4) &&
+                 ip4 && strcmp(ip4, "/") != 0)
+               {
+                  free(dev->ip4_path);
+                  dev->ip4_path = strdup(ip4);
+               }
+          }
      }
 
    /* If this is a WiFi device, get wireless proxy and fetch APs */
@@ -452,7 +479,153 @@ _device_get_props_cb(void *data, const Eldbus_Message *msg,
                                                   "GetAccessPoints",
                                                   _device_get_aps_cb, dev,
                                                   -1, "");
+
+        /* Also fetch WiFi-specific props (ActiveAccessPoint) in parallel
+         * with GetAccessPoints — this avoids the ActiveConnection.GetAll
+         * round-trip on the critical startup path. */
+        dev->pending.get_wifi_props =
+           eldbus_proxy_call(dev->wireless_proxy, "GetAll",
+                             _device_wifi_props_cb, dev,
+                             -1, "s", NM_IFACE_WIFI);
      }
+   else if (dev->type == NM_DEVICE_TYPE_ETHERNET && dev->state >= 100 &&
+            dev->active_conn_path)
+     {
+        /* Guard: nm_manager may have been freed if NM exited while this
+         * D-Bus reply was in flight. */
+        if (!nm_manager) return;
+
+        /* First active device wins — skip if another already adopted. */
+        if (nm_manager->active_connection_path) return;
+
+        /* Ethernet device is active — set manager state directly without
+         * an extra ActiveConnection.GetAll round-trip. */
+        DBG("Ethernet device %s active (state=%u), adopting connection %s",
+            dev->path, dev->state, dev->active_conn_path);
+
+        nm_manager->probe_generation++;
+        _manager_active_conn_watch_free(nm_manager);
+        _manager_ip4_watch_free(nm_manager);
+
+        eina_stringshare_del(nm_manager->active_connection_path);
+        nm_manager->active_connection_path =
+           eina_stringshare_add(dev->active_conn_path);
+
+        nm_manager->active_conn_type = NM_DEVICE_TYPE_ETHERNET;
+
+        eina_stringshare_del(nm_manager->active_ap_path);
+        nm_manager->active_ap_path = NULL;
+
+        /* Set up persistent watcher on the active connection object */
+        {
+           Eldbus_Object *aobj =
+              eldbus_object_get(conn, NM_BUS_NAME, dev->active_conn_path);
+           nm_manager->active_conn_obj = aobj;
+           nm_manager->active_conn_proxy = eldbus_proxy_get(aobj,
+                                                            NM_IFACE_PROPS);
+           nm_manager->active_conn_signal_handler =
+              eldbus_proxy_signal_handler_add(nm_manager->active_conn_proxy,
+                                              "PropertiesChanged",
+                                              _active_conn_prop_changed,
+                                              nm_manager);
+        }
+
+        if (dev->ip4_path)
+          _manager_watch_ip4(nm_manager, dev->ip4_path);
+
+        enm_mod_manager_update(nm_manager);
+        /* Saved connections are WiFi-specific — skip for Ethernet */
+     }
+}
+
+static void
+_device_wifi_props_cb(void *data, const Eldbus_Message *msg,
+                      Eldbus_Pending *pending EINA_UNUSED)
+{
+   struct NM_Device *dev = data;
+   Eldbus_Message_Iter *array, *dict;
+   const char *name, *text;
+   const char *ap_path = NULL;
+
+   /* Guard: nm_manager may have been freed if NM exited while this D-Bus
+    * reply was in flight (e.g. eldbus_pending_cancel called synchronously
+    * from _device_free during _e_nm_system_name_owner_exit). */
+   if (!nm_manager) return;
+
+   dev->pending.get_wifi_props = NULL;
+
+   if (eldbus_message_error_get(msg, &name, &text))
+     {
+        WRN("Device Wireless GetAll failed: %s: %s", name, text);
+        return;
+     }
+
+   if (!eldbus_message_arguments_get(msg, "a{sv}", &array))
+     {
+        WRN("Device Wireless GetAll: cannot parse reply");
+        return;
+     }
+
+   while (eldbus_message_iter_get_and_next(array, 'e', &dict))
+     {
+        Eldbus_Message_Iter *var;
+        const char *key;
+
+        if (!eldbus_message_iter_arguments_get(dict, "sv", &key, &var))
+          continue;
+
+        if (!strcmp(key, "ActiveAccessPoint"))
+          {
+             const char *path;
+             if (eldbus_message_iter_arguments_get(var, "o", &path) &&
+                 path && strcmp(path, "/") != 0)
+               ap_path = path;
+          }
+     }
+
+   DBG("Device %s ActiveAccessPoint=%s state=%u",
+       dev->path, ap_path ?: "(none)", dev->state);
+
+   /* Only adopt this device as the active connection if it is in activated
+    * state (>= 100) and has an active AP. */
+   if (dev->state < 100 || !ap_path || !dev->active_conn_path)
+     return;
+
+   /* First active device wins — skip if another already adopted. */
+   if (nm_manager->active_connection_path)
+     return;
+
+   nm_manager->probe_generation++;
+   _manager_active_conn_watch_free(nm_manager);
+   _manager_ip4_watch_free(nm_manager);
+
+   nm_manager->active_conn_type = NM_DEVICE_TYPE_WIFI;
+
+   eina_stringshare_del(nm_manager->active_ap_path);
+   nm_manager->active_ap_path = eina_stringshare_add(ap_path);
+
+   eina_stringshare_del(nm_manager->active_connection_path);
+   nm_manager->active_connection_path =
+      eina_stringshare_add(dev->active_conn_path);
+
+   /* Set up persistent watcher on the active connection object */
+   {
+      Eldbus_Object *aobj =
+         eldbus_object_get(conn, NM_BUS_NAME, dev->active_conn_path);
+      nm_manager->active_conn_obj = aobj;
+      nm_manager->active_conn_proxy = eldbus_proxy_get(aobj, NM_IFACE_PROPS);
+      nm_manager->active_conn_signal_handler =
+         eldbus_proxy_signal_handler_add(nm_manager->active_conn_proxy,
+                                         "PropertiesChanged",
+                                         _active_conn_prop_changed,
+                                         nm_manager);
+   }
+
+   if (dev->ip4_path)
+     _manager_watch_ip4(nm_manager, dev->ip4_path);
+
+   enm_mod_manager_update(nm_manager);
+   enm_saved_connections_get(nm_manager);
 }
 
 static struct NM_Device *
@@ -492,6 +665,8 @@ _device_free(struct NM_Device *dev)
      eldbus_pending_cancel(dev->pending.get_props);
    if (dev->pending.get_aps)
      eldbus_pending_cancel(dev->pending.get_aps);
+   if (dev->pending.get_wifi_props)
+     eldbus_pending_cancel(dev->pending.get_wifi_props);
 
    while (dev->access_points)
      {
@@ -503,6 +678,8 @@ _device_free(struct NM_Device *dev)
      }
 
    free(dev->interface);
+   free(dev->active_conn_path);
+   free(dev->ip4_path);
 
    if (dev->wireless_proxy)
      {
@@ -689,6 +866,11 @@ _nm_conn_type_parse(const char *type)
 static void
 _manager_active_conn_watch_free(struct NM_Manager *nm)
 {
+   if (nm->active_conn_signal_handler)
+     {
+        eldbus_signal_handler_del(nm->active_conn_signal_handler);
+        nm->active_conn_signal_handler = NULL;
+     }
    if (nm->active_conn_proxy)
      {
         eldbus_proxy_unref(nm->active_conn_proxy);
@@ -849,8 +1031,9 @@ _active_conn_probe_cb(void *data, const Eldbus_Message *msg,
    nm->active_ap_path = ap_path ? eina_stringshare_add(ap_path) : NULL;
 
    /* Subscribe to property changes on the now-persistent proxy */
-   eldbus_proxy_signal_handler_add(nm->active_conn_proxy, "PropertiesChanged",
-                                   _active_conn_prop_changed, nm);
+   nm->active_conn_signal_handler =
+      eldbus_proxy_signal_handler_add(nm->active_conn_proxy, "PropertiesChanged",
+                                      _active_conn_prop_changed, nm);
 
    if (ip4path)
      _manager_watch_ip4(nm, ip4path);
@@ -1023,7 +1206,6 @@ _manager_get_props_cb(void *data, const Eldbus_Message *msg,
           {
              Eldbus_Message_Iter *conn_array;
              const char *aconn_path;
-             Eina_Bool found = EINA_FALSE;
 
              if (!eldbus_message_iter_arguments_get(var, "ao", &conn_array))
                {
@@ -1031,36 +1213,23 @@ _manager_get_props_cb(void *data, const Eldbus_Message *msg,
                   continue;
                }
 
-             /* Advance generation and clear old watchers before probing so
-              * stale probes are discarded and no stale connection is shown. */
-             nm->probe_generation++;
-             _manager_active_conn_watch_free(nm);
-             _manager_ip4_watch_free(nm);
-
-             /* Try each active connection — _active_conn_probe_cb
-              * filters out bridge/vpn types and only adopts wifi/ethernet. */
+             /* On startup we do NOT launch ActiveConnection.GetAll probes
+              * here — the device callbacks (_device_wifi_props_cb for WiFi,
+              * _device_get_props_cb for Ethernet) derive all needed info from
+              * Device.GetAll / Device.Wireless.GetAll which are already
+              * running in parallel. */
              while (eldbus_message_iter_get_and_next(conn_array, 'o', &aconn_path))
-               {
-                  DBG("ActiveConnections: trying path=%s", aconn_path);
-                  _manager_probe_active_conn(nm, aconn_path);
-                  found = EINA_TRUE;
-               }
-
-             if (!found)
-               {
-                  DBG("ActiveConnections: empty array");
-                  eina_stringshare_del(nm->active_ap_path);
-                  nm->active_ap_path = NULL;
-                  eina_stringshare_del(nm->active_connection_path);
-                  nm->active_connection_path = NULL;
-                  free(nm->ip_address);
-                  nm->ip_address = NULL;
-               }
+               DBG("ActiveConnections (startup): path=%s — device probes pending",
+                   aconn_path);
           }
      }
 
    DBG("manager_get_props done: state=%d active_ap=%s conn_type=%d",
        nm->state, nm->active_ap_path ?: "(null)", nm->active_conn_type);
+
+   /* Always update the UI now so that disconnected/VPN-only/unassociated
+    * states are shown immediately.  Device callbacks will call
+    * enm_mod_manager_update again once they have full type and AP info. */
    enm_mod_manager_update(nm);
 }
 
