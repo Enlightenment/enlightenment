@@ -194,7 +194,7 @@ static void
 _poll_wakeup(void)
 { // in main loop
   int dummy = 1;
-  ecore_pipe_write(_poll_pipe, &dummy, sizeof(dummy));
+  if (_poll_pipe) ecore_pipe_write(_poll_pipe, &dummy, sizeof(dummy));
 }
 
 static void
