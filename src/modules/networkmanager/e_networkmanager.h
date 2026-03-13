@@ -130,6 +130,12 @@ struct NM_Manager
    Eina_Hash    *saved_connections;
    int           saved_conn_pending; /* outstanding GetSettings calls */
 
+   /* Long-lived Settings object/proxy for ConnectionRemoved signal subscription.
+    * Created in _manager_new, freed in _manager_free. */
+   Eldbus_Proxy          *settings_proxy;
+   Eldbus_Object         *settings_obj;
+   Eldbus_Signal_Handler *conn_removed_handler;
+
    /* Generation counter incremented each time a new batch of active-connection
     * probes is started.  Each probe captures the generation at creation time
     * and discards its result in the callback if the generation has advanced,

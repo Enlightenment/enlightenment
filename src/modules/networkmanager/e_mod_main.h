@@ -61,6 +61,7 @@ E_API int   e_modapi_shutdown(E_Module *m);
 E_API int   e_modapi_save(E_Module *m);
 
 void        enm_popup_del(E_NM_Instance *inst);
+void        enm_mod_aps_update_now(void);
 const char *e_nm_theme_path(void);
 
 E_NM_Agent *enm_agent_new(Eldbus_Connection *eldbus_conn) EINA_ARG_NONNULL(1);

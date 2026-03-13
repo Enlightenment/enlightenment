@@ -182,6 +182,7 @@ struct _Enm_Forget_Data
 {
    struct NM_Manager *nm;
    const char *connection_path; /* stringshare */
+   const char *ssid;            /* stringshare — for optimistic hash removal */
 };
 
 static void
@@ -190,9 +191,29 @@ _enm_forget_mouse_up_cb(void *data, Evas *e EINA_UNUSED,
                          void *event_info EINA_UNUSED)
 {
    struct _Enm_Forget_Data *fd = data;
+   struct NM_Manager *nm = fd->nm;
+   /* Take a ref now: enm_mod_aps_update_now() may delete the forget button
+    * widget (replacing it with NULL), which fires EVAS_CALLBACK_DEL and frees
+    * fd — including its connection_path stringshare — before we use it. */
+   const char *conn_path = eina_stringshare_ref(fd->connection_path);
 
-   INF("Forget connection: %s", fd->connection_path);
-   enm_connection_delete(fd->nm, fd->connection_path);
+   INF("Forget connection: %s (ssid=%s)", conn_path, fd->ssid ?: "(null)");
+
+   /* Optimistic update: remove SSID from local hash immediately so the
+    * forget icon disappears at once without waiting for D-Bus round trips.
+    * The authoritative refresh happens later via the ConnectionRemoved signal. */
+   if (nm->saved_connections && fd->ssid)
+     eina_hash_del_by_key(nm->saved_connections, fd->ssid);
+
+   /* Rebuild all open popups right now, bypassing the 0.5s throttle timer.
+    * This deletes the forget button widget, which frees fd — do not touch
+    * fd after this point. */
+   enm_mod_aps_update_now();
+
+   /* Kick off the actual async delete — ConnectionRemoved signal will
+    * trigger enm_saved_connections_get once NM has committed the removal. */
+   enm_connection_delete(nm, conn_path);
+   eina_stringshare_del(conn_path);
 }
 
 static void
@@ -202,6 +223,7 @@ _enm_forget_data_free_cb(void *data, Evas *e EINA_UNUSED,
 {
    struct _Enm_Forget_Data *fd = data;
    eina_stringshare_del(fd->connection_path);
+   eina_stringshare_del(fd->ssid);
    free(fd);
 }
 
@@ -256,6 +278,7 @@ _enm_ap_end_new(struct NM_Manager *nm, struct NM_Access_Point *ap, Evas *evas)
         evas_object_del(end);
         return NULL;
      }
+   fd->ssid = eina_stringshare_add(ap->ssid);
 
    evas_object_propagate_events_set(end, EINA_FALSE);
    evas_object_event_callback_add(end, EVAS_CALLBACK_MOUSE_UP,
@@ -607,6 +630,27 @@ enm_mod_aps_changed(struct NM_Manager *nm EINA_UNUSED)
    ctxt->popup_update_timer = ecore_timer_add(0.5,
                                                _enm_popup_update_timer_cb,
                                                ctxt);
+}
+
+void
+enm_mod_aps_update_now(void)
+{
+   E_NM_Module_Context *ctxt;
+   if (!networkmanager_mod) return;
+   ctxt = networkmanager_mod->data;
+   const Eina_List *l;
+   E_NM_Instance *inst;
+
+   /* Cancel any pending throttle timer — we are doing an immediate rebuild */
+   E_FREE_FUNC(ctxt->popup_update_timer, ecore_timer_del);
+
+   if (!ctxt->nm) return;
+
+   EINA_LIST_FOREACH(ctxt->instances, l, inst)
+     {
+        if (!inst->popup) continue;
+        _enm_popup_update(ctxt->nm, inst);
+     }
 }
 
 static void

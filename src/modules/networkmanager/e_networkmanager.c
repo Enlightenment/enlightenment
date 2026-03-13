@@ -1078,6 +1078,7 @@ _manager_probe_active_conn(struct NM_Manager *nm,
 
 static void _manager_free(struct NM_Manager *nm);
 static struct NM_Manager *_manager_new(void);
+static void _settings_conn_removed_cb(void *data, const Eldbus_Message *msg);
 
 static void
 _manager_prop_changed(void *data, const Eldbus_Message *msg)
@@ -1511,12 +1512,21 @@ _connection_delete_cb(void *data, const Eldbus_Message *msg,
      {
         ERR("Failed to delete connection %s: %s %s",
             ctx->path, err_name, err_msg);
+        /* Recover: the optimistic UI removal already hid the forget button.
+         * Refresh saved_connections so the button reappears if the delete
+         * failed (e.g. stale connection path). */
+        enm_saved_connections_get(ctx->nm);
         goto done;
      }
 
-   INF("Connection %s deleted successfully", ctx->path);
-   /* Refresh saved connections to update forget button visibility */
-   enm_saved_connections_get(ctx->nm);
+   INF("Connection %s deleted successfully — awaiting ConnectionRemoved signal",
+       ctx->path);
+   /* Do NOT call enm_saved_connections_get here: NM may not have removed the
+    * connection from its internal list yet, so ListConnections would still
+    * return the deleted path and the SSID would be re-added to the hash.
+    * The ConnectionRemoved signal (_settings_conn_removed_cb) fires once NM
+    * has actually removed the object and will trigger the authoritative
+    * refresh. */
 
 done:
    eldbus_proxy_unref(ctx->proxy);
@@ -1544,6 +1554,17 @@ enm_connection_delete(struct NM_Manager *nm, const char *connection_path)
    eldbus_proxy_call(ctx->proxy, "Delete",
                      _connection_delete_cb, ctx, -1, "");
    /* ctx, proxy, and obj are freed/unref'd inside _connection_delete_cb */
+}
+
+/* Called when NM removes a saved connection — refresh the hash so the
+ * forget button disappears without a visible race window. */
+static void
+_settings_conn_removed_cb(void *data, const Eldbus_Message *msg EINA_UNUSED)
+{
+   struct NM_Manager *nm = data;
+   if (!nm) return;
+   INF("ConnectionRemoved signal: refreshing saved connections");
+   enm_saved_connections_get(nm);
 }
 
 static struct NM_Manager *
@@ -1577,6 +1598,16 @@ _manager_new(void)
    nm->pending.get_devices =
       eldbus_proxy_call(nm->proxy, "GetDevices",
                         _manager_get_devices_cb, nm, -1, "");
+
+   /* Persistent Settings object for ConnectionRemoved signal.
+    * This avoids the race in _connection_delete_cb where ListConnections
+    * may still return the just-deleted path before NM's internal list is
+    * updated.  Instead we react to the authoritative signal. */
+   nm->settings_obj = eldbus_object_get(conn, NM_BUS_NAME, NM_SETTINGS_PATH);
+   nm->settings_proxy = eldbus_proxy_get(nm->settings_obj, NM_IFACE_SETTINGS);
+   nm->conn_removed_handler =
+      eldbus_proxy_signal_handler_add(nm->settings_proxy, "ConnectionRemoved",
+                                      _settings_conn_removed_cb, nm);
 
    return nm;
 }
@@ -1613,6 +1644,23 @@ _manager_free(struct NM_Manager *nm)
    free(nm->ip_address);
    eina_stringshare_del(nm->active_ap_path);
    eina_stringshare_del(nm->active_connection_path);
+
+   /* Tear down the Settings signal subscription */
+   if (nm->conn_removed_handler)
+     {
+        eldbus_signal_handler_del(nm->conn_removed_handler);
+        nm->conn_removed_handler = NULL;
+     }
+   if (nm->settings_proxy)
+     {
+        eldbus_proxy_unref(nm->settings_proxy);
+        nm->settings_proxy = NULL;
+     }
+   if (nm->settings_obj)
+     {
+        eldbus_object_unref(nm->settings_obj);
+        nm->settings_obj = NULL;
+     }
 
    obj = eldbus_proxy_object_get(nm->proxy);
    eldbus_proxy_unref(nm->proxy);
