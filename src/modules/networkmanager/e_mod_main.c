@@ -859,7 +859,7 @@ _enm_traffic_level(unsigned long long bytes_per_sec, int current_level)
 {
    /* Thresholds: up / down (with ~30% hysteresis) */
    static const unsigned long long thresh_up[]   = { 1, 10240, 512000 };
-   static const unsigned long long thresh_down[] = { 0,  7168, 358400 };
+   static const unsigned long long thresh_down[] = { 1,  7168, 358400 };
    int level = current_level;
 
    if (level < 3 && bytes_per_sec >= thresh_up[level])
