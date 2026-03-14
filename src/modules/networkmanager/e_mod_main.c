@@ -37,7 +37,23 @@ enm_popup_del(E_NM_Instance *inst)
 {
    E_FREE_FUNC(inst->popup, e_object_del);
    E_FREE_FUNC(inst->ctxt->popup_update_timer, ecore_timer_del);
-   inst->ui.popup.enabled = inst->ui.popup.list = inst->ui.popup.ip_label = NULL;
+   inst->ui.popup.enabled = inst->ui.popup.genlist = inst->ui.popup.ip_label = NULL;
+   /* Item classes are freed with the popup — clear pointers so update guard works */
+   if (inst->ui.popup.itc_group)
+     {
+        elm_genlist_item_class_free(inst->ui.popup.itc_group);
+        inst->ui.popup.itc_group = NULL;
+     }
+   if (inst->ui.popup.itc_ap)
+     {
+        elm_genlist_item_class_free(inst->ui.popup.itc_ap);
+        inst->ui.popup.itc_ap = NULL;
+     }
+   if (inst->ui.popup.itc_eth)
+     {
+        elm_genlist_item_class_free(inst->ui.popup.itc_eth);
+        inst->ui.popup.itc_eth = NULL;
+     }
 }
 
 static void
@@ -69,43 +85,152 @@ _enm_wireless_changed(void *data, Evas_Object *obj EINA_UNUSED,
 
 static Eina_Bool _enm_ssid_is_active(struct NM_Manager *nm, const char *ssid);
 
+/* Forward declarations for icon/forget-button factories used in item class
+ * callbacks defined before the factory implementations. */
+static Evas_Object *_enm_ap_icon_new(struct NM_Manager *nm,
+                                      struct NM_Access_Point *ap, Evas *evas);
+static Evas_Object *_enm_ap_end_new(struct NM_Manager *nm,
+                                     struct NM_Access_Point *ap, Evas *evas);
+static Evas_Object *_enm_eth_icon_new(struct NM_Device *dev, Evas *evas);
+
+/* Per-item data for genlist AP and ethernet rows */
+typedef struct _Enm_Item_Data
+{
+   struct NM_Manager      *nm;
+   struct NM_Access_Point *ap;   /* NULL for ethernet */
+   struct NM_Device       *dev;
+   const char             *ap_path;   /* stringshare — AP D-Bus object path */
+   const char             *ssid;      /* stringshare */
+} Enm_Item_Data;
+
 static void
-_enm_popup_selected_cb(void *data)
+_enm_item_data_free(Enm_Item_Data *id)
+{
+   if (!id) return;
+   eina_stringshare_del(id->ap_path);
+   eina_stringshare_del(id->ssid);
+   free(id);
+}
+
+/* Genlist item class del callback — frees per-item data */
+static void
+_enm_itc_item_del(void *data, Evas_Object *obj EINA_UNUSED)
+{
+   _enm_item_data_free(data);
+}
+
+/* Genlist text_get for AP rows: returns SSID */
+static char *
+_enm_itc_ap_text_get(void *data, Evas_Object *obj EINA_UNUSED,
+                      const char *part)
+{
+   Enm_Item_Data *id = data;
+
+   if (!strcmp(part, "elm.text"))
+     return id->ssid ? strdup(id->ssid) : NULL;
+   return NULL;
+}
+
+/* Genlist content_get for AP rows: icon in elm.swallow.icon, forget button
+ * in elm.swallow.end */
+static Evas_Object *
+_enm_itc_ap_content_get(void *data, Evas_Object *obj, const char *part)
+{
+   Enm_Item_Data *id = data;
+
+   if (!id->ap) return NULL;
+
+   if (!strcmp(part, "elm.swallow.icon"))
+     {
+        Evas_Object *ic = _enm_ap_icon_new(id->nm, id->ap, evas_object_evas_get(obj));
+        if (ic) evas_object_size_hint_min_set(ic, ELM_SCALE_SIZE(32), ELM_SCALE_SIZE(32));
+        return ic;
+     }
+   if (!strcmp(part, "elm.swallow.end"))
+     return _enm_ap_end_new(id->nm, id->ap, evas_object_evas_get(obj));
+   return NULL;
+}
+
+/* Genlist text_get for ethernet rows: returns interface name */
+static char *
+_enm_itc_eth_text_get(void *data, Evas_Object *obj EINA_UNUSED,
+                       const char *part)
+{
+   Enm_Item_Data *id = data;
+
+   if (!strcmp(part, "elm.text"))
+     return id->dev ? strdup(id->dev->interface ?: _("Wired")) : NULL;
+   return NULL;
+}
+
+/* Genlist content_get for ethernet rows: icon only */
+static Evas_Object *
+_enm_itc_eth_content_get(void *data, Evas_Object *obj, const char *part)
+{
+   Enm_Item_Data *id = data;
+
+   if (!id->dev) return NULL;
+
+   if (!strcmp(part, "elm.swallow.icon"))
+     {
+        Evas_Object *ic = _enm_eth_icon_new(id->dev, evas_object_evas_get(obj));
+        if (ic) evas_object_size_hint_min_set(ic, ELM_SCALE_SIZE(32), ELM_SCALE_SIZE(32));
+        return ic;
+     }
+   return NULL;
+}
+
+/* Genlist text_get for group headers: data is a string literal */
+static char *
+_enm_itc_group_text_get(void *data, Evas_Object *obj EINA_UNUSED,
+                         const char *part)
+{
+   if (!strcmp(part, "elm.text"))
+     return data ? strdup(data) : NULL;
+   return NULL;
+}
+
+/* Activated smart callback — handles connect/disconnect on row tap */
+static void
+_enm_item_activated_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                        void *event_info)
 {
    E_NM_Instance *inst = data;
-   const char *path;
-   struct NM_Access_Point *ap;
+   Elm_Object_Item *it = event_info;
+   Enm_Item_Data *id;
    struct NM_Manager *nm;
    struct NM_Device *dev;
+
+   if (!it) return;
+   id = elm_object_item_data_get(it);
+   if (!id) return;
 
    nm = inst->ctxt->nm;
    if (!nm) return;
 
-   path = e_widget_ilist_selected_value_get(inst->ui.popup.list);
-   if (!path) return;
+   /* Ethernet row: no connect action from list tap */
+   if (!id->ap) return;
 
-   ap = enm_manager_find_ap(nm, path);
-   if (!ap) return;
-
-   /* If this AP is currently active, disconnect instead */
-   if (nm->active_ap_path && _enm_ssid_is_active(nm, ap->ssid))
+   /* If this AP's SSID is currently active, disconnect */
+   if (nm->active_ap_path && _enm_ssid_is_active(nm, id->ap->ssid))
      {
-        INF("Disconnect from %s", ap->ssid ?: path);
+        INF("Disconnect from %s", id->ap->ssid ?: id->ap_path);
         enm_ap_disconnect(nm);
         return;
      }
 
-   /* Walk devices to find which owns this AP */
+   /* Walk devices to find which one owns this AP, then connect */
    EINA_INLIST_FOREACH(nm->devices, dev)
      {
         struct NM_Access_Point *a;
         EINA_INLIST_FOREACH(dev->access_points, a)
           {
-             if (a == ap)
+             if (a == id->ap)
                {
-                  INF("Connect to %s on device %s", ap->ssid ?: path,
+                  INF("Connect to %s on device %s",
+                      id->ap->ssid ?: id->ap_path,
                       dev->interface ?: dev->path);
-                  enm_ap_connect(nm, dev, ap);
+                  enm_ap_connect(nm, dev, id->ap);
                   return;
                }
           }
@@ -166,11 +291,11 @@ _enm_ap_icon_new(struct NM_Manager *nm, struct NM_Access_Point *ap, Evas *evas)
         const char *band;
 
         if (ap->frequency >= 5925)
-          band = "6G";
+          band = "6";
         else if (ap->frequency >= 3000)
-          band = "5G";
+          band = "5";
         else
-          band = "2.4G";
+          band = "2.4";
 
         edje_object_part_text_set(icon, "band_label", band);
      }
@@ -186,9 +311,9 @@ struct _Enm_Forget_Data
 };
 
 static void
-_enm_forget_mouse_up_cb(void *data, Evas *e EINA_UNUSED,
-                         Evas_Object *obj EINA_UNUSED,
-                         void *event_info EINA_UNUSED)
+_enm_forget_click_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                     const char *emission EINA_UNUSED,
+                     const char *source EINA_UNUSED)
 {
    struct _Enm_Forget_Data *fd = data;
    struct NM_Manager *nm = fd->nm;
@@ -280,11 +405,11 @@ _enm_ap_end_new(struct NM_Manager *nm, struct NM_Access_Point *ap, Evas *evas)
      }
    fd->ssid = eina_stringshare_add(ap->ssid);
 
-   evas_object_propagate_events_set(end, EINA_FALSE);
-   evas_object_event_callback_add(end, EVAS_CALLBACK_MOUSE_UP,
-                                  _enm_forget_mouse_up_cb, fd);
+   edje_object_signal_callback_add(end, "e,action,forget,click", "e",
+                                   _enm_forget_click_cb, fd);
    evas_object_event_callback_add(end, EVAS_CALLBACK_DEL,
                                   _enm_forget_data_free_cb, fd);
+   evas_object_size_hint_min_set(end, ELM_SCALE_SIZE(32), ELM_SCALE_SIZE(32));
 
    return end;
 }
@@ -425,89 +550,89 @@ _enm_popup_build_entries(struct NM_Manager *nm,
 static void
 _enm_popup_update(struct NM_Manager *nm, E_NM_Instance *inst)
 {
-   Evas_Object *list = inst->ui.popup.list;
+   Evas_Object *gl = inst->ui.popup.genlist;
    Evas_Object *enabled = inst->ui.popup.enabled;
-   Evas *evas = evas_object_evas_get(list);
    struct _Popup_Entry desired[256];
-   int want_n, have_n, i;
+   int want_n, i;
+   Elm_Object_Item *wifi_group = NULL, *eth_group = NULL;
+   int wifi_count = 0, eth_count = 0;
 
    EINA_SAFETY_ON_NULL_RETURN(nm);
+   EINA_SAFETY_ON_NULL_RETURN(gl);
 
    want_n = _enm_popup_build_entries(nm, desired, 256);
-   have_n = e_widget_ilist_count(list);
 
-   e_widget_ilist_freeze(list);
-
-   /* Update existing rows in-place, append new rows, remove extras */
+   /* Count per-type so we know whether to insert group headers */
    for (i = 0; i < want_n; i++)
      {
-        if (i < have_n)
-          {
-             const char *cur_label = e_widget_ilist_nth_label_get(list, i);
-
-             /* If the label matches, just update icon and end widget */
-             if (cur_label && desired[i].label &&
-                 !strcmp(cur_label, desired[i].label))
-               {
-                  Evas_Object *icon, *end;
-
-                  if (desired[i].ap)
-                    {
-                       icon = _enm_ap_icon_new(nm, desired[i].ap, evas);
-                       end = _enm_ap_end_new(nm, desired[i].ap, evas);
-                    }
-                  else
-                    {
-                       icon = _enm_eth_icon_new(desired[i].dev, evas);
-                       end = NULL;
-                    }
-                  e_widget_ilist_nth_icon_set(list, i, icon);
-                  e_widget_ilist_nth_end_set(list, i, end);
-                  continue;
-               }
-
-             /* Label mismatch — remove stale row.  Decrement i so the loop
-              * re-examines this position (which now holds the next item after
-              * the shift) on the next iteration instead of appending at the
-              * wrong position. */
-             e_widget_ilist_remove_num(list, i);
-             have_n--;
-             i--;
-             continue;
-          }
-
-        /* Append new row (only reached when i >= have_n) */
-        {
-           Evas_Object *icon, *end;
-
-           if (desired[i].ap)
-             {
-                icon = _enm_ap_icon_new(nm, desired[i].ap, evas);
-                end = _enm_ap_end_new(nm, desired[i].ap, evas);
-                e_widget_ilist_append_full(list, icon, end,
-                                           desired[i].label,
-                                           _enm_popup_selected_cb,
-                                           inst, desired[i].ap_path);
-             }
-           else
-             {
-                icon = _enm_eth_icon_new(desired[i].dev, evas);
-                e_widget_ilist_append_full(list, icon, NULL,
-                                           desired[i].label,
-                                           NULL, NULL, NULL);
-             }
-           have_n++;
-        }
+        if (desired[i].ap)
+          wifi_count++;
+        else
+          eth_count++;
      }
 
-   /* Remove any trailing stale rows */
-   while (have_n > want_n)
+   /* Clear and rebuild — simpler than incremental diff with grouped headers */
+   elm_genlist_clear(gl);
+
+   /* Insert ethernet group + items */
+   if (eth_count > 0)
      {
-        e_widget_ilist_remove_num(list, --have_n);
+        eth_group = elm_genlist_item_append(gl, inst->ui.popup.itc_group,
+                                            (void *)_("Wired"), NULL,
+                                            ELM_GENLIST_ITEM_GROUP,
+                                            NULL, NULL);
+        elm_genlist_item_select_mode_set(eth_group,
+                                         ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY);
+
+        for (i = 0; i < want_n; i++)
+          {
+             Enm_Item_Data *id;
+
+             if (desired[i].ap) continue; /* skip wifi entries here */
+
+             id = calloc(1, sizeof(*id));
+             if (!id) continue;
+             id->nm = nm;
+             id->ap = NULL;
+             id->dev = desired[i].dev;
+             id->ap_path = NULL;
+             id->ssid = NULL;
+
+             elm_genlist_item_append(gl, inst->ui.popup.itc_eth, id,
+                                     eth_group, ELM_GENLIST_ITEM_NONE,
+                                     NULL, NULL);
+          }
      }
 
-   e_widget_ilist_thaw(list);
-   e_widget_ilist_go(list);
+   /* Insert wifi group + items */
+   if (wifi_count > 0)
+     {
+        wifi_group = elm_genlist_item_append(gl, inst->ui.popup.itc_group,
+                                             (void *)_("Wireless"), NULL,
+                                             ELM_GENLIST_ITEM_GROUP,
+                                             NULL, NULL);
+        elm_genlist_item_select_mode_set(wifi_group,
+                                          ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY);
+
+        for (i = 0; i < want_n; i++)
+          {
+             Enm_Item_Data *id;
+
+             if (!desired[i].ap) continue; /* skip ethernet entries here */
+
+             id = calloc(1, sizeof(*id));
+             if (!id) continue;
+             id->nm = nm;
+             id->ap = desired[i].ap;
+             id->dev = NULL;
+             id->ap_path = eina_stringshare_add(desired[i].ap_path);
+             id->ssid = eina_stringshare_add(desired[i].label);
+
+             elm_genlist_item_append(gl, inst->ui.popup.itc_ap, id,
+                                     wifi_group, ELM_GENLIST_ITEM_NONE,
+                                     NULL, NULL);
+          }
+     }
 
    /* Update IP label */
    if (nm->ip_address)
@@ -524,7 +649,6 @@ _enm_popup_update(struct NM_Manager *nm, E_NM_Instance *inst)
         inst->ctxt->wireless_enabled = nm->wireless_enabled ? 1 : 0;
         e_widget_check_checked_set(enabled, inst->ctxt->wireless_enabled);
      }
-
 }
 
 static void
@@ -552,15 +676,16 @@ _enm_widget_size_set(E_NM_Instance *inst, Evas_Object *widget,
    if      (h < min_h) h = min_h;
    else if (h > max_h) h = max_h;
 
-   e_widget_size_min_set(widget, w, h);
+   evas_object_size_hint_min_set(widget, w, h);
 }
 
 static void
 _enm_popup_new(E_NM_Instance *inst)
 {
    E_NM_Module_Context *ctxt = inst->ctxt;
-   Evas_Object *list, *ck;
+   Evas_Object *box, *gl, *ck;
    Evas *evas;
+   Elm_Genlist_Item_Class *itc;
 
    EINA_SAFETY_ON_FALSE_RETURN(inst->popup == NULL);
 
@@ -571,24 +696,69 @@ _enm_popup_new(E_NM_Instance *inst)
    inst->popup = e_gadcon_popup_new(inst->gcc, 0);
    evas = e_comp->evas;
 
-   list = e_widget_list_add(evas, 0, 0);
-   inst->ui.popup.list = e_widget_ilist_add(evas, 24, 24, NULL);
-   e_widget_size_min_set(inst->ui.popup.list, 60, 100);
-   e_widget_list_object_append(list, inst->ui.popup.list, 1, 1, 0.5);
+   /* Outer elm box to stack genlist + IP label + wifi checkbox */
+   box = elm_box_add(e_comp->elm);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
+   /* Genlist for AP/ethernet rows */
+   gl = elm_genlist_add(box);
+   evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_min_set(gl, ELM_SCALE_SIZE(192), ELM_SCALE_SIZE(100));
+   elm_scroller_bounce_set(gl, EINA_FALSE, EINA_TRUE);
+   evas_object_show(gl);
+   inst->ui.popup.genlist = gl;
+
+   /* Item classes — created per-popup, freed in enm_popup_del */
+   itc = elm_genlist_item_class_new();
+   itc->item_style = "group_index";
+   itc->func.text_get = _enm_itc_group_text_get;
+   itc->func.content_get = NULL;
+   itc->func.state_get = NULL;
+   itc->func.del = NULL;
+   inst->ui.popup.itc_group = itc;
+
+   itc = elm_genlist_item_class_new();
+   itc->item_style = "default";
+   itc->func.text_get = _enm_itc_ap_text_get;
+   itc->func.content_get = _enm_itc_ap_content_get;
+   itc->func.state_get = NULL;
+   itc->func.del = _enm_itc_item_del;
+   inst->ui.popup.itc_ap = itc;
+
+   itc = elm_genlist_item_class_new();
+   itc->item_style = "default";
+   itc->func.text_get = _enm_itc_eth_text_get;
+   itc->func.content_get = _enm_itc_eth_content_get;
+   itc->func.state_get = NULL;
+   itc->func.del = _enm_itc_item_del;
+   inst->ui.popup.itc_eth = itc;
+
+   /* Activated signal for row tap → connect/disconnect */
+   evas_object_smart_callback_add(gl, "activated", _enm_item_activated_cb,
+                                   inst);
+
+   elm_box_pack_end(box, gl);
+
+   /* IP address label */
    inst->ui.popup.ip_label = e_widget_label_add(evas, "");
-   e_widget_list_object_append(list, inst->ui.popup.ip_label, 1, 0, 0.5);
+   elm_box_pack_end(box, inst->ui.popup.ip_label);
+   evas_object_show(inst->ui.popup.ip_label);
 
+   /* Wifi on/off checkbox */
    ck = e_widget_check_add(evas, _("Wifi On"), &(ctxt->wireless_enabled));
    inst->ui.popup.enabled = ck;
-   e_widget_list_object_append(list, ck, 1, 0, 0.5);
-   evas_object_smart_callback_add(ck, "changed",
-                                  _enm_wireless_changed, inst);
+   elm_box_pack_end(box, ck);
+   evas_object_show(ck);
+   evas_object_smart_callback_add(ck, "changed", _enm_wireless_changed, inst);
+
+   evas_object_show(box);
 
    _enm_popup_update(ctxt->nm, inst);
 
-   _enm_widget_size_set(inst, list, 10, 30, 192, 240, 360, 400);
-   e_gadcon_popup_content_set(inst->popup, list);
+   _enm_widget_size_set(inst, box, 10, 30, 192, 240, 360, 400);
+   e_gadcon_popup_content_set(inst->popup, box);
    e_comp_object_util_autoclose(inst->popup->comp_object, _enm_popup_del,
                                 NULL, inst);
    e_gadcon_popup_show(inst->popup);
