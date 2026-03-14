@@ -202,6 +202,8 @@ _enm_item_activated_cb(void *data, Evas_Object *obj EINA_UNUSED,
    struct NM_Device *dev;
 
    if (!it) return;
+   /* Deselect immediately so repeat clicks always fire "selected" */
+   elm_genlist_item_selected_set(it, EINA_FALSE);
    id = elm_object_item_data_get(it);
    if (!id) return;
 
@@ -735,8 +737,8 @@ _enm_popup_new(E_NM_Instance *inst)
    itc->func.del = _enm_itc_item_del;
    inst->ui.popup.itc_eth = itc;
 
-   /* Activated signal for row tap → connect/disconnect */
-   evas_object_smart_callback_add(gl, "activated", _enm_item_activated_cb,
+   /* Selected signal for row tap → connect/disconnect (single-click) */
+   evas_object_smart_callback_add(gl, "selected", _enm_item_activated_cb,
                                    inst);
 
    elm_box_pack_end(box, gl);

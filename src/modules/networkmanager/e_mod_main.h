@@ -5,7 +5,7 @@
 
 #include "e_networkmanager.h"
 
-#define AGENT_PATH "/org/enlightenment/networkmanager/agent"
+#define AGENT_PATH "/org/freedesktop/NetworkManager/SecretAgent"
 
 extern E_Module *networkmanager_mod;
 extern int _e_nm_log_dom;

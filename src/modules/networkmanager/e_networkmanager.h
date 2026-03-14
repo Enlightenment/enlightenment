@@ -58,6 +58,8 @@ struct NM_Access_Point
    Eldbus_Proxy *proxy;
    EINA_INLIST;
 
+   Eldbus_Signal_Handler *prop_changed_handler;
+
    char         *ssid;
    uint8_t       strength;
    uint32_t      wpa_flags;
@@ -71,6 +73,10 @@ struct NM_Device
    Eldbus_Proxy *proxy;
    Eldbus_Proxy *wireless_proxy;
    EINA_INLIST;
+
+   Eldbus_Signal_Handler *prop_changed_handler;
+   Eldbus_Signal_Handler *ap_added_handler;
+   Eldbus_Signal_Handler *ap_removed_handler;
 
    char              *interface;
    enum NM_Device_Type type;
@@ -110,7 +116,6 @@ struct NM_Manager
      {
         Eldbus_Pending *get_props;
         Eldbus_Pending *get_devices;
-        Eldbus_Pending *active_conn;
         Eldbus_Pending *ip4config;
      } pending;
 
@@ -122,19 +127,22 @@ struct NM_Manager
    Eldbus_Signal_Handler *active_conn_signal_handler; /* for explicit removal */
 
    /* Persistent proxy/obj for watching IP4Config properties. */
-   Eldbus_Proxy  *ip4_proxy;
-   Eldbus_Object *ip4_obj;
-   const char    *ip4_path;
+   Eldbus_Proxy          *ip4_proxy;
+   Eldbus_Object         *ip4_obj;
+   const char            *ip4_path;
+   Eldbus_Signal_Handler *ip4_prop_handler; /* for explicit removal */
 
    /* Saved WiFi connections: SSID (string) -> connection D-Bus path (stringshare) */
    Eina_Hash    *saved_connections;
-   int           saved_conn_pending; /* outstanding GetSettings calls */
+   int           saved_conn_pending;    /* outstanding GetSettings calls */
+   unsigned int  saved_conn_generation; /* increment to abort in-flight GetSettings */
 
    /* Long-lived Settings object/proxy for ConnectionRemoved signal subscription.
     * Created in _manager_new, freed in _manager_free. */
    Eldbus_Proxy          *settings_proxy;
    Eldbus_Object         *settings_obj;
    Eldbus_Signal_Handler *conn_removed_handler;
+   Eldbus_Signal_Handler *conn_added_handler;
 
    /* Generation counter incremented each time a new batch of active-connection
     * probes is started.  Each probe captures the generation at creation time

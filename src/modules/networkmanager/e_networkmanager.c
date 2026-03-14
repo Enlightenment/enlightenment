@@ -100,6 +100,11 @@ _ap_free(struct NM_Access_Point *ap)
 
    if (ap->proxy)
      {
+        if (ap->prop_changed_handler)
+          {
+             eldbus_signal_handler_del(ap->prop_changed_handler);
+             ap->prop_changed_handler = NULL;
+          }
         obj = eldbus_proxy_object_get(ap->proxy);
         eldbus_proxy_unref(ap->proxy);
         eldbus_object_unref(obj);
@@ -243,8 +248,9 @@ _ap_new(const char *path)
    ap->proxy = eldbus_proxy_get(obj, NM_IFACE_PROPS);
 
    /* Subscribe to PropertiesChanged on the AP object */
-   eldbus_proxy_signal_handler_add(ap->proxy, "PropertiesChanged",
-                                   _ap_prop_changed, ap);
+   ap->prop_changed_handler =
+      eldbus_proxy_signal_handler_add(ap->proxy, "PropertiesChanged",
+                                      _ap_prop_changed, ap);
 
    /* Fetch all AP properties */
    eldbus_proxy_call(ap->proxy, "GetAll", _ap_get_props_cb, ap, -1,
@@ -469,11 +475,13 @@ _device_get_props_cb(void *data, const Eldbus_Message *msg,
         /* Re-get object to get the wireless interface proxy */
         dev->wireless_proxy = eldbus_proxy_get(obj, NM_IFACE_WIFI);
 
-        eldbus_proxy_signal_handler_add(dev->wireless_proxy, "AccessPointAdded",
-                                        _device_ap_added, dev);
-        eldbus_proxy_signal_handler_add(dev->wireless_proxy,
-                                        "AccessPointRemoved",
-                                        _device_ap_removed, dev);
+        dev->ap_added_handler =
+           eldbus_proxy_signal_handler_add(dev->wireless_proxy, "AccessPointAdded",
+                                           _device_ap_added, dev);
+        dev->ap_removed_handler =
+           eldbus_proxy_signal_handler_add(dev->wireless_proxy,
+                                           "AccessPointRemoved",
+                                           _device_ap_removed, dev);
 
         dev->pending.get_aps = eldbus_proxy_call(dev->wireless_proxy,
                                                   "GetAccessPoints",
@@ -644,8 +652,9 @@ _device_new(const char *path)
    obj = eldbus_object_get(conn, NM_BUS_NAME, path);
    dev->proxy = eldbus_proxy_get(obj, NM_IFACE_PROPS);
 
-   eldbus_proxy_signal_handler_add(dev->proxy, "PropertiesChanged",
-                                   _device_prop_changed, dev);
+   dev->prop_changed_handler =
+      eldbus_proxy_signal_handler_add(dev->proxy, "PropertiesChanged",
+                                      _device_prop_changed, dev);
 
    dev->pending.get_props = eldbus_proxy_call(dev->proxy, "GetAll",
                                               _device_get_props_cb, dev,
@@ -684,12 +693,27 @@ _device_free(struct NM_Device *dev)
    if (dev->wireless_proxy)
      {
         Eldbus_Object *wobj = eldbus_proxy_object_get(dev->wireless_proxy);
+        if (dev->ap_added_handler)
+          {
+             eldbus_signal_handler_del(dev->ap_added_handler);
+             dev->ap_added_handler = NULL;
+          }
+        if (dev->ap_removed_handler)
+          {
+             eldbus_signal_handler_del(dev->ap_removed_handler);
+             dev->ap_removed_handler = NULL;
+          }
         eldbus_proxy_unref(dev->wireless_proxy);
         if (wobj) eldbus_object_unref(wobj);
      }
 
    if (dev->proxy)
      {
+        if (dev->prop_changed_handler)
+          {
+             eldbus_signal_handler_del(dev->prop_changed_handler);
+             dev->prop_changed_handler = NULL;
+          }
         obj = eldbus_proxy_object_get(dev->proxy);
         eldbus_proxy_unref(dev->proxy);
         eldbus_object_unref(obj);
@@ -713,6 +737,11 @@ _manager_ip4_watch_free(struct NM_Manager *nm)
      }
    if (nm->ip4_proxy)
      {
+        if (nm->ip4_prop_handler)
+          {
+             eldbus_signal_handler_del(nm->ip4_prop_handler);
+             nm->ip4_prop_handler = NULL;
+          }
         eldbus_proxy_unref(nm->ip4_proxy);
         eldbus_object_unref(nm->ip4_obj);
         nm->ip4_proxy = NULL;
@@ -839,8 +868,9 @@ _manager_watch_ip4(struct NM_Manager *nm, const char *ip4config_path)
    nm->ip4_path = eina_stringshare_add(ip4config_path);
 
    /* Subscribe to property changes — keeps proxy alive for signals */
-   eldbus_proxy_signal_handler_add(props, "PropertiesChanged",
-                                   _ip4_prop_changed, nm);
+   nm->ip4_prop_handler =
+      eldbus_proxy_signal_handler_add(props, "PropertiesChanged",
+                                      _ip4_prop_changed, nm);
 
    /* Initial fetch */
    nm->pending.ip4config = eldbus_proxy_call(props, "GetAll",
@@ -878,6 +908,10 @@ _manager_active_conn_watch_free(struct NM_Manager *nm)
         nm->active_conn_proxy = NULL;
         nm->active_conn_obj = NULL;
      }
+   eina_stringshare_del(nm->active_connection_path);
+   nm->active_connection_path = NULL;
+   eina_stringshare_del(nm->active_ap_path);
+   nm->active_ap_path = NULL;
 }
 
 static void
@@ -996,6 +1030,9 @@ _active_conn_probe_cb(void *data, const Eldbus_Message *msg,
      }
 
    conn_type = _nm_conn_type_parse(type_str);
+
+   /* NM uses "/" as the null/none sentinel for object paths */
+   if (ap_path && !strcmp(ap_path, "/")) ap_path = NULL;
 
    /* Skip non-network types (bridge, vpn, etc.) — they don't have
     * useful SpecificObject or signal strength info. */
@@ -1323,9 +1360,10 @@ _manager_device_removed(void *data, const Eldbus_Message *msg)
 struct _Saved_Conn_Ctx
 {
    struct NM_Manager *nm;
-   const char        *path;  /* stringshare: connection D-Bus object path */
-   Eldbus_Proxy      *proxy; /* Settings.Connection proxy — unref in callback */
-   Eldbus_Object     *obj;   /* connection object — unref in callback */
+   const char        *path;       /* stringshare: connection D-Bus object path */
+   Eldbus_Proxy      *proxy;      /* Settings.Connection proxy — unref in callback */
+   Eldbus_Object     *obj;        /* connection object — unref in callback */
+   unsigned int       generation; /* snapshot of nm->saved_conn_generation */
 };
 
 static void
@@ -1336,6 +1374,15 @@ _saved_conn_settings_cb(void *data, const Eldbus_Message *msg,
    Eldbus_Message_Iter *settings, *dict_entry, *setting_dict, *variant;
    const char *setting_name, *key;
    char ssid_str[256];
+
+   /* Bail out if the manager was freed or a new batch was started while
+    * this D-Bus call was in flight — avoids writing to freed/stale state. */
+   if (ctx->generation != ctx->nm->saved_conn_generation)
+     {
+        DBG("_saved_conn_settings_cb: stale generation %u vs %u, discarding",
+            ctx->generation, ctx->nm->saved_conn_generation);
+        goto done;
+     }
 
    {
       const char *err_name = NULL, *err_msg = NULL;
@@ -1410,8 +1457,9 @@ done:
 struct _Settings_List_Ctx
 {
    struct NM_Manager *nm;
-   Eldbus_Proxy  *proxy;
-   Eldbus_Object *obj;
+   Eldbus_Proxy      *proxy;
+   Eldbus_Object     *obj;
+   unsigned int       generation; /* snapshot of nm->saved_conn_generation */
 };
 
 static void
@@ -1420,6 +1468,7 @@ _saved_conn_list_cb(void *data, const Eldbus_Message *msg,
 {
    struct _Settings_List_Ctx *sctx = data;
    struct NM_Manager *nm = sctx->nm;
+   unsigned int generation = sctx->generation;
    Eldbus_Message_Iter *conn_array;
    const char *conn_path;
 
@@ -1427,6 +1476,14 @@ _saved_conn_list_cb(void *data, const Eldbus_Message *msg,
    eldbus_proxy_unref(sctx->proxy);
    eldbus_object_unref(sctx->obj);
    free(sctx);
+
+   /* Bail out if a newer batch was started or manager was freed. */
+   if (generation != nm->saved_conn_generation)
+     {
+        DBG("_saved_conn_list_cb: stale generation %u vs %u, discarding",
+            generation, nm->saved_conn_generation);
+        return;
+     }
 
    {
       const char *err_name = NULL, *err_msg = NULL;
@@ -1452,6 +1509,7 @@ _saved_conn_list_cb(void *data, const Eldbus_Message *msg,
         if (!ctx) continue;
 
         ctx->nm = nm;
+        ctx->generation = generation;
         ctx->path = eina_stringshare_add(conn_path);
         ctx->obj = eldbus_object_get(conn, NM_BUS_NAME, conn_path);
         ctx->proxy = eldbus_proxy_get(ctx->obj, NM_IFACE_SCONN);
@@ -1482,6 +1540,10 @@ enm_saved_connections_get(struct NM_Manager *nm)
       struct _Settings_List_Ctx *sctx = malloc(sizeof(*sctx));
       EINA_SAFETY_ON_NULL_RETURN(sctx);
 
+      /* Increment generation so any in-flight ListConnections/GetSettings
+       * callbacks from the previous batch will detect staleness and abort. */
+      nm->saved_conn_generation++;
+
       /* Swap pattern: assign new hash before freeing old to avoid a window
        * where saved_connections is NULL (in-flight callbacks check it).
        * Only performed after malloc succeeds so OOM cannot corrupt the hash. */
@@ -1493,6 +1555,7 @@ enm_saved_connections_get(struct NM_Manager *nm)
       }
 
       sctx->nm = nm;
+      sctx->generation = nm->saved_conn_generation;
       sctx->obj = eldbus_object_get(conn, NM_BUS_NAME, NM_SETTINGS_PATH);
       sctx->proxy = eldbus_proxy_get(sctx->obj, NM_IFACE_SETTINGS);
       eldbus_proxy_call(sctx->proxy, "ListConnections",
@@ -1567,6 +1630,17 @@ _settings_conn_removed_cb(void *data, const Eldbus_Message *msg EINA_UNUSED)
    enm_saved_connections_get(nm);
 }
 
+/* Called when NM adds a new connection (e.g. via AddAndActivateConnection) —
+ * refresh the hash so the forget button appears for the newly saved network. */
+static void
+_settings_conn_added_cb(void *data, const Eldbus_Message *msg EINA_UNUSED)
+{
+   struct NM_Manager *nm = data;
+   if (!nm) return;
+   INF("NewConnection signal: refreshing saved connections");
+   enm_saved_connections_get(nm);
+}
+
 static struct NM_Manager *
 _manager_new(void)
 {
@@ -1608,6 +1682,9 @@ _manager_new(void)
    nm->conn_removed_handler =
       eldbus_proxy_signal_handler_add(nm->settings_proxy, "ConnectionRemoved",
                                       _settings_conn_removed_cb, nm);
+   nm->conn_added_handler =
+      eldbus_proxy_signal_handler_add(nm->settings_proxy, "NewConnection",
+                                      _settings_conn_added_cb, nm);
 
    return nm;
 }
@@ -1619,6 +1696,11 @@ _manager_free(struct NM_Manager *nm)
    Eldbus_Object *obj;
 
    if (!nm) return;
+
+   /* Invalidate in-flight saved-connection probes before freeing anything.
+    * Both _saved_conn_list_cb and _saved_conn_settings_cb check this field
+    * and will bail out cleanly without touching the freed NM_Manager. */
+   nm->saved_conn_generation++;
 
    if (nm->pending.get_props)
      eldbus_pending_cancel(nm->pending.get_props);
@@ -1650,6 +1732,11 @@ _manager_free(struct NM_Manager *nm)
      {
         eldbus_signal_handler_del(nm->conn_removed_handler);
         nm->conn_removed_handler = NULL;
+     }
+   if (nm->conn_added_handler)
+     {
+        eldbus_signal_handler_del(nm->conn_added_handler);
+        nm->conn_added_handler = NULL;
      }
    if (nm->settings_proxy)
      {
@@ -1696,11 +1783,27 @@ _activate_cb(void *data, const Eldbus_Message *msg,
    free(cd);
 }
 
+static void
+_add_activate_cb(void *data, const Eldbus_Message *msg,
+                 Eldbus_Pending *pending EINA_UNUSED)
+{
+   struct connection_cb_data *cd = data;
+   const char *name, *text;
+
+   if (eldbus_message_error_get(msg, &name, &text))
+     ERR("AddAndActivateConnection failed: %s: %s", name, text);
+   else
+     INF("AddAndActivateConnection succeeded");
+
+   free(cd);
+}
+
 void
 enm_ap_connect(struct NM_Manager *nm, struct NM_Device *dev,
                struct NM_Access_Point *ap)
 {
    struct connection_cb_data *cd;
+   const char *conn_path = NULL;
 
    EINA_SAFETY_ON_NULL_RETURN(nm);
    EINA_SAFETY_ON_NULL_RETURN(dev);
@@ -1713,11 +1816,39 @@ enm_ap_connect(struct NM_Manager *nm, struct NM_Device *dev,
    cd->dev = dev;
    cd->ap  = ap;
 
-   /* ActivateConnection("/" means auto-select saved connection or create one,
-    * device path, AP path) */
-   eldbus_proxy_call(nm->proxy, "ActivateConnection",
-                     _activate_cb, cd, NM_CONNECTION_TIMEOUT,
-                     "ooo", "/", dev->path, ap->path);
+   if (nm->saved_connections && ap->ssid)
+     conn_path = eina_hash_find(nm->saved_connections, ap->ssid);
+
+   if (conn_path)
+     {
+        /* Known saved profile — activate it directly */
+        INF("ActivateConnection: saved profile %s for ssid=%s",
+            conn_path, ap->ssid);
+        eldbus_proxy_call(nm->proxy, "ActivateConnection",
+                          _activate_cb, cd, NM_CONNECTION_TIMEOUT,
+                          "ooo", conn_path, dev->path, ap->path);
+     }
+   else
+     {
+        /* No saved profile (new network or just forgotten) — let NM create
+         * a fresh profile and call our agent for credentials. */
+        Eldbus_Message *msg_call;
+        Eldbus_Message_Iter *iter, *empty_dict;
+
+        INF("AddAndActivateConnection: no saved profile for ssid=%s",
+            ap->ssid ?: "(null)");
+
+        msg_call = eldbus_proxy_method_call_new(nm->proxy,
+                                                "AddAndActivateConnection");
+        iter = eldbus_message_iter_get(msg_call);
+        /* Empty a{sa{sv}} connection dict — NM fills in security from the AP */
+        eldbus_message_iter_arguments_append(iter, "a{sa{sv}}", &empty_dict);
+        eldbus_message_iter_container_close(iter, empty_dict);
+        eldbus_message_iter_basic_append(iter, 'o', dev->path);
+        eldbus_message_iter_basic_append(iter, 'o', ap->path);
+        eldbus_proxy_send(nm->proxy, msg_call, _add_activate_cb, cd,
+                          NM_CONNECTION_TIMEOUT);
+     }
 }
 
 static void

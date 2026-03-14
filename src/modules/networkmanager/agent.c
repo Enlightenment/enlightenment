@@ -167,6 +167,10 @@ _page_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
    EINA_LIST_FREE(input_list, input)
      {
         free(input->key);
+        /* input->value is NOT freed here: it is a pointer into the EFL entry
+         * widget's internal buffer (set via e_widget_entry_add's &value
+         * parameter).  The widget owns the allocation; freeing it here would
+         * be a double-free once the widget itself is destroyed. */
         free(input);
      }
 }
@@ -186,7 +190,7 @@ _show_password_cb(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 /* -------------------------------------------------------------------------- */
 
 static void
-_dialog_psk_add(E_NM_Agent *agent, const char *ssid)
+_dialog_psk_add(E_Dialog *dialog, const char *ssid)
 {
    Evas_Object *toolbook, *list, *framelist, *entry, *check;
    E_NM_Agent_Input *input;
@@ -194,12 +198,12 @@ _dialog_psk_add(E_NM_Agent *agent, const char *ssid)
    char header[128];
    Evas *evas;
 
-   evas     = evas_object_evas_get(agent->dialog->win);
-   toolbook = agent->dialog->content_object;
+   evas     = evas_object_evas_get(dialog->win);
+   toolbook = dialog->content_object;
 
    input       = E_NEW(E_NM_Agent_Input, 1);
    input->key  = strdup("psk");
-   entry = e_widget_entry_add(agent->dialog->win, &(input->value),
+   entry = e_widget_entry_add(dialog->win, &(input->value),
                               NULL, NULL, NULL);
    evas_object_show(entry);
    e_widget_entry_password_set(entry, 1);
@@ -237,7 +241,7 @@ _dialog_psk_add(E_NM_Agent *agent, const char *ssid)
    evas_object_smart_callback_add(check, "changed",
                                   _show_password_cb, entry);
 
-   e_util_win_auto_resize_fill(agent->dialog->win);
+   e_util_win_auto_resize_fill(dialog->win);
 }
 
 static E_Dialog *
@@ -276,7 +280,7 @@ _dialog_new(E_NM_Agent *agent, const char *ssid)
    e_dialog_button_focus_num(dialog, 0);
    elm_win_center(dialog->win, 1, 1);
 
-   _dialog_psk_add(agent, ssid);
+   _dialog_psk_add(dialog, ssid);
 
    return dialog;
 }
@@ -361,7 +365,9 @@ _agent_get_secrets(const Eldbus_Service_Interface *iface,
      {
         eldbus_message_unref(agent->msg);
         agent->msg = NULL;
-        return eldbus_message_method_return_new(msg);
+        return eldbus_message_error_new(msg,
+                 "org.freedesktop.NetworkManager.SecretAgent.InternalError",
+                 "Failed to create password dialog");
      }
 
    /* Return NULL — reply will be sent asynchronously from _dialog_ok_cb */
