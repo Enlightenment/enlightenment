@@ -236,6 +236,11 @@ _ap_get_props_cb(void *data, const Eldbus_Message *msg,
 
    DBG("AP %s ssid=%s strength=%d", ap->path, ap->ssid ?: "(hidden)",
        ap->strength);
+
+   /* Refresh gadget now that AP data (strength, security, frequency) is
+    * available — avoids leaving stale strength=0/no-lock state if this
+    * callback races ahead of the active-conn probe. */
+   _notify_manager_update(nm_manager);
 }
 
 static void
@@ -542,7 +547,7 @@ _device_get_props_cb(void *data, const Eldbus_Message *msg,
          * with GetAccessPoints — this avoids the ActiveConnection.GetAll
          * round-trip on the critical startup path. */
         dev->pending.get_wifi_props =
-           eldbus_proxy_call(dev->wireless_proxy, "GetAll",
+           eldbus_proxy_call(dev->proxy, "GetAll",
                              _device_wifi_props_cb, dev,
                              -1, "s", NM_IFACE_WIFI);
      }
