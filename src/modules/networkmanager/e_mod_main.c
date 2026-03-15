@@ -217,11 +217,11 @@ _enm_itc_group_wifi_content_get(void *data, Evas_Object *obj,
    E_NM_Instance *inst = data;
    Evas_Object *ck;
 
-   if (!inst || !inst->ctxt) return NULL;
+   if (!inst || !inst->ctxt || !inst->ctxt->nm) return NULL;
    if (strcmp(part, "elm.swallow.end")) return NULL;
 
    ck = elm_check_add(obj);
-   elm_check_state_set(ck, !!inst->ctxt->wireless_enabled);
+   elm_check_state_set(ck, inst->ctxt->nm->wireless_enabled);
    evas_object_smart_callback_add(ck, "changed", _enm_wifi_toggle_changed, inst);
    evas_object_show(ck);
    return ck;

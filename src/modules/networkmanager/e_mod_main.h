@@ -43,7 +43,6 @@ struct E_NM_Module_Context
    Ecore_Timer        *popup_update_timer;
 
    struct NM_Manager  *nm;
-   int                 wireless_enabled; /* int for e_widget_check bitmask */
 
    /* Network activity indicator */
    Ecore_Timer        *traffic_timer;
