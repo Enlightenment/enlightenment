@@ -92,9 +92,21 @@ _notification_reshuffle_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Obj
      {
         if (popup->theme == obj)
           {
-             popup->pending = 0;
-             _notification_popdown(popup, 0);
              notification_cfg->popups = eina_list_remove_list(notification_cfg->popups, l);
+             if (popup->pending)
+               {
+                  /* _notification_popdown() is already in progress for this popup:
+                   * the reshuffle DEL callback fired re-entrantly via evas_object_hide()
+                   * inside that call.  Clear pending so the in-progress _notification_popdown
+                   * will proceed past the early-return guard and free the struct.
+                   * Also remove the DEL callback so it does not fire a second time when
+                   * evas_object_del(popup->win) finishes destroying the theme object. */
+                  evas_object_event_callback_del(popup->theme, EVAS_CALLBACK_DEL,
+                                                 _notification_reshuffle_cb);
+                  popup->pending = 0;
+               }
+             else
+               _notification_popdown(popup, 0);
           }
         else
           pos = _notification_popup_place(popup, pos);
