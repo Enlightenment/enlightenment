@@ -28,8 +28,8 @@ struct E_NM_Instance
           {
              Evas_Object            *genlist;
              Evas_Object            *ip_label;
-             Evas_Object            *enabled; /* "Wifi On" checkbox */
              Elm_Genlist_Item_Class *itc_group;
+             Elm_Genlist_Item_Class *itc_group_wifi;
              Elm_Genlist_Item_Class *itc_ap;
              Elm_Genlist_Item_Class *itc_eth;
           } popup;

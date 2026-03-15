@@ -37,12 +37,17 @@ enm_popup_del(E_NM_Instance *inst)
 {
    E_FREE_FUNC(inst->popup, e_object_del);
    E_FREE_FUNC(inst->ctxt->popup_update_timer, ecore_timer_del);
-   inst->ui.popup.enabled = inst->ui.popup.genlist = inst->ui.popup.ip_label = NULL;
+   inst->ui.popup.genlist = inst->ui.popup.ip_label = NULL;
    /* Item classes are freed with the popup — clear pointers so update guard works */
    if (inst->ui.popup.itc_group)
      {
         elm_genlist_item_class_free(inst->ui.popup.itc_group);
         inst->ui.popup.itc_group = NULL;
+     }
+   if (inst->ui.popup.itc_group_wifi)
+     {
+        elm_genlist_item_class_free(inst->ui.popup.itc_group_wifi);
+        inst->ui.popup.itc_group_wifi = NULL;
      }
    if (inst->ui.popup.itc_ap)
      {
@@ -71,17 +76,6 @@ _enm_popup_del(void *data, Evas_Object *obj EINA_UNUSED)
    E_FREE_FUNC(inst->popup, e_object_del);
 }
 
-static void
-_enm_wireless_changed(void *data, Evas_Object *obj EINA_UNUSED,
-                      void *info EINA_UNUSED)
-{
-   E_NM_Instance *inst = data;
-   E_NM_Module_Context *ctxt = inst->ctxt;
-
-   if (!ctxt) return;
-   if (!ctxt->nm) return;
-   enm_wireless_enabled_set(ctxt->nm, !!ctxt->wireless_enabled);
-}
 
 static Eina_Bool _enm_ssid_is_active(struct NM_Manager *nm, const char *ssid);
 
@@ -188,6 +182,49 @@ _enm_itc_group_text_get(void *data, Evas_Object *obj EINA_UNUSED,
    if (!strcmp(part, "elm.text"))
      return data ? strdup(data) : NULL;
    return NULL;
+}
+
+/* Genlist text_get for the wireless group header */
+static char *
+_enm_itc_group_wifi_text_get(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                              const char *part)
+{
+   if (!strcmp(part, "elm.text")) return strdup(_("Wireless"));
+   return NULL;
+}
+
+/* Toggle callback for the wireless group header on/off switch */
+static void
+_enm_wifi_toggle_changed(void *data, Evas_Object *obj,
+                          void *info EINA_UNUSED)
+{
+   E_NM_Instance *inst = data;
+   E_NM_Module_Context *ctxt;
+
+   if (!inst) return;
+   ctxt = inst->ctxt;
+   if (!ctxt || !ctxt->nm) return;
+
+   enm_wireless_enabled_set(ctxt->nm, elm_check_state_get(obj));
+   enm_mod_aps_update_now();
+}
+
+/* Genlist content_get for the wireless group header: toggle in end slot */
+static Evas_Object *
+_enm_itc_group_wifi_content_get(void *data, Evas_Object *obj,
+                                 const char *part)
+{
+   E_NM_Instance *inst = data;
+   Evas_Object *ck;
+
+   if (!inst || !inst->ctxt) return NULL;
+   if (strcmp(part, "elm.swallow.end")) return NULL;
+
+   ck = elm_check_add(obj);
+   elm_check_state_set(ck, !!inst->ctxt->wireless_enabled);
+   evas_object_smart_callback_add(ck, "changed", _enm_wifi_toggle_changed, inst);
+   evas_object_show(ck);
+   return ck;
 }
 
 /* Activated smart callback — handles connect/disconnect on row tap */
@@ -549,11 +586,20 @@ _enm_popup_build_entries(struct NM_Manager *nm,
    return n;
 }
 
+static Eina_Bool
+_enm_has_wifi_device(struct NM_Manager *nm)
+{
+   struct NM_Device *dev;
+   if (!nm) return EINA_FALSE;
+   EINA_INLIST_FOREACH(nm->devices, dev)
+     if (dev->type == NM_DEVICE_TYPE_WIFI) return EINA_TRUE;
+   return EINA_FALSE;
+}
+
 static void
 _enm_popup_update(struct NM_Manager *nm, E_NM_Instance *inst)
 {
    Evas_Object *gl = inst->ui.popup.genlist;
-   Evas_Object *enabled = inst->ui.popup.enabled;
    struct _Popup_Entry desired[256];
    int want_n, i;
    Elm_Object_Item *wifi_group = NULL, *eth_group = NULL;
@@ -606,33 +652,36 @@ _enm_popup_update(struct NM_Manager *nm, E_NM_Instance *inst)
           }
      }
 
-   /* Insert wifi group + items */
-   if (wifi_count > 0)
+   /* Insert wifi group header (always when adapter present) + AP items */
+   if (_enm_has_wifi_device(nm))
      {
-        wifi_group = elm_genlist_item_append(gl, inst->ui.popup.itc_group,
-                                             (void *)_("Wireless"), NULL,
+        wifi_group = elm_genlist_item_append(gl, inst->ui.popup.itc_group_wifi,
+                                             inst, NULL,
                                              ELM_GENLIST_ITEM_GROUP,
                                              NULL, NULL);
         elm_genlist_item_select_mode_set(wifi_group,
                                           ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY);
 
-        for (i = 0; i < want_n; i++)
+        if (wifi_count > 0)
           {
-             Enm_Item_Data *id;
+             for (i = 0; i < want_n; i++)
+               {
+                  Enm_Item_Data *id;
 
-             if (!desired[i].ap) continue; /* skip ethernet entries here */
+                  if (!desired[i].ap) continue;
 
-             id = calloc(1, sizeof(*id));
-             if (!id) continue;
-             id->nm = nm;
-             id->ap = desired[i].ap;
-             id->dev = NULL;
-             id->ap_path = eina_stringshare_add(desired[i].ap_path);
-             id->ssid = eina_stringshare_add(desired[i].label);
+                  id = calloc(1, sizeof(*id));
+                  if (!id) continue;
+                  id->nm = nm;
+                  id->ap = desired[i].ap;
+                  id->dev = NULL;
+                  id->ap_path = eina_stringshare_add(desired[i].ap_path);
+                  id->ssid = eina_stringshare_add(desired[i].label);
 
-             elm_genlist_item_append(gl, inst->ui.popup.itc_ap, id,
-                                     wifi_group, ELM_GENLIST_ITEM_NONE,
-                                     NULL, NULL);
+                  elm_genlist_item_append(gl, inst->ui.popup.itc_ap, id,
+                                          wifi_group, ELM_GENLIST_ITEM_NONE,
+                                          NULL, NULL);
+               }
           }
      }
 
@@ -646,11 +695,6 @@ _enm_popup_update(struct NM_Manager *nm, E_NM_Instance *inst)
    else
      e_widget_label_text_set(inst->ui.popup.ip_label, "");
 
-   if (inst->ctxt)
-     {
-        inst->ctxt->wireless_enabled = nm->wireless_enabled ? 1 : 0;
-        e_widget_check_checked_set(enabled, inst->ctxt->wireless_enabled);
-     }
 }
 
 static void
@@ -685,7 +729,7 @@ static void
 _enm_popup_new(E_NM_Instance *inst)
 {
    E_NM_Module_Context *ctxt = inst->ctxt;
-   Evas_Object *box, *gl, *ck;
+   Evas_Object *box, *gl;
    Evas *evas;
    Elm_Genlist_Item_Class *itc;
 
@@ -698,7 +742,7 @@ _enm_popup_new(E_NM_Instance *inst)
    inst->popup = e_gadcon_popup_new(inst->gcc, 0);
    evas = e_comp->evas;
 
-   /* Outer elm box to stack genlist + IP label + wifi checkbox */
+   /* Outer elm box to stack genlist + IP label */
    box = elm_box_add(e_comp->elm);
    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -720,6 +764,14 @@ _enm_popup_new(E_NM_Instance *inst)
    itc->func.state_get = NULL;
    itc->func.del = NULL;
    inst->ui.popup.itc_group = itc;
+
+   itc = elm_genlist_item_class_new();
+   itc->item_style = "group_index";
+   itc->func.text_get = _enm_itc_group_wifi_text_get;
+   itc->func.content_get = _enm_itc_group_wifi_content_get;
+   itc->func.state_get = NULL;
+   itc->func.del = NULL;
+   inst->ui.popup.itc_group_wifi = itc;
 
    itc = elm_genlist_item_class_new();
    itc->item_style = "default";
@@ -747,13 +799,6 @@ _enm_popup_new(E_NM_Instance *inst)
    inst->ui.popup.ip_label = e_widget_label_add(evas, "");
    elm_box_pack_end(box, inst->ui.popup.ip_label);
    evas_object_show(inst->ui.popup.ip_label);
-
-   /* Wifi on/off checkbox */
-   ck = e_widget_check_add(evas, _("Wifi On"), &(ctxt->wireless_enabled));
-   inst->ui.popup.enabled = ck;
-   elm_box_pack_end(box, ck);
-   evas_object_show(ck);
-   evas_object_smart_callback_add(ck, "changed", _enm_wireless_changed, inst);
 
    evas_object_show(box);
 
