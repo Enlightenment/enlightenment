@@ -59,6 +59,7 @@ struct NM_Access_Point
    EINA_INLIST;
 
    Eldbus_Signal_Handler *prop_changed_handler;
+   Eldbus_Pending        *pending_get_props;
 
    char         *ssid;
    uint8_t       strength;
@@ -101,6 +102,10 @@ struct NM_Manager
 {
    Eldbus_Proxy *proxy;       /* org.freedesktop.NetworkManager */
    Eldbus_Proxy *props_proxy; /* org.freedesktop.DBus.Properties on NM */
+
+   Eldbus_Signal_Handler *prop_changed_handler;   /* PropertiesChanged on props_proxy */
+   Eldbus_Signal_Handler *device_added_handler;   /* DeviceAdded on proxy */
+   Eldbus_Signal_Handler *device_removed_handler; /* DeviceRemoved on proxy */
 
    Eina_Inlist  *devices;    /* NM_Device inlist */
 

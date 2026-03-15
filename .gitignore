@@ -10,4 +10,6 @@
 Session.vim
 /build
 .cache
+.claude
+.superpowers
 *~

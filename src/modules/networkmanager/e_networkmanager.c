@@ -95,6 +95,12 @@ _ap_free(struct NM_Access_Point *ap)
 
    if (!ap) return;
 
+   if (ap->pending_get_props)
+     {
+        eldbus_pending_cancel(ap->pending_get_props);
+        ap->pending_get_props = NULL;
+     }
+
    free(ap->ssid);
    eina_stringshare_del(ap->path);
 
@@ -121,9 +127,12 @@ _ap_get_props_cb(void *data, const Eldbus_Message *msg,
    Eldbus_Message_Iter *array, *dict;
    const char *name, *text;
 
+   ap->pending_get_props = NULL;
+
    if (eldbus_message_error_get(msg, &name, &text))
      {
-        WRN("Could not get AP properties. %s: %s", name, text);
+        if (strcmp(name, ELDBUS_ERROR_PENDING_CANCELED) != 0)
+          WRN("Could not get AP properties. %s: %s", name, text);
         return;
      }
 
@@ -253,8 +262,9 @@ _ap_new(const char *path)
                                       _ap_prop_changed, ap);
 
    /* Fetch all AP properties */
-   eldbus_proxy_call(ap->proxy, "GetAll", _ap_get_props_cb, ap, -1,
-                     "s", NM_IFACE_AP);
+   ap->pending_get_props =
+      eldbus_proxy_call(ap->proxy, "GetAll", _ap_get_props_cb, ap, -1,
+                        "s", NM_IFACE_AP);
 
    return ap;
 }
@@ -1655,14 +1665,17 @@ _manager_new(void)
    nm->props_proxy = eldbus_proxy_get(obj, NM_IFACE_PROPS);
 
    /* PropertiesChanged on the org.freedesktop.DBus.Properties iface */
-   eldbus_proxy_signal_handler_add(nm->props_proxy, "PropertiesChanged",
-                                   _manager_prop_changed, nm);
+   nm->prop_changed_handler =
+      eldbus_proxy_signal_handler_add(nm->props_proxy, "PropertiesChanged",
+                                      _manager_prop_changed, nm);
 
    /* DeviceAdded / DeviceRemoved on NM iface */
-   eldbus_proxy_signal_handler_add(nm->proxy, "DeviceAdded",
-                                   _manager_device_added, nm);
-   eldbus_proxy_signal_handler_add(nm->proxy, "DeviceRemoved",
-                                   _manager_device_removed, nm);
+   nm->device_added_handler =
+      eldbus_proxy_signal_handler_add(nm->proxy, "DeviceAdded",
+                                      _manager_device_added, nm);
+   nm->device_removed_handler =
+      eldbus_proxy_signal_handler_add(nm->proxy, "DeviceRemoved",
+                                      _manager_device_removed, nm);
 
    nm->pending.get_props =
       eldbus_proxy_call(nm->props_proxy, "GetAll",
@@ -1724,8 +1737,8 @@ _manager_free(struct NM_Manager *nm)
      }
 
    free(nm->ip_address);
-   eina_stringshare_del(nm->active_ap_path);
-   eina_stringshare_del(nm->active_connection_path);
+   /* active_ap_path and active_connection_path already freed+NULLed
+    * by _manager_active_conn_watch_free() above */
 
    /* Tear down the Settings signal subscription */
    if (nm->conn_removed_handler)
@@ -1747,6 +1760,22 @@ _manager_free(struct NM_Manager *nm)
      {
         eldbus_object_unref(nm->settings_obj);
         nm->settings_obj = NULL;
+     }
+
+   if (nm->prop_changed_handler)
+     {
+        eldbus_signal_handler_del(nm->prop_changed_handler);
+        nm->prop_changed_handler = NULL;
+     }
+   if (nm->device_added_handler)
+     {
+        eldbus_signal_handler_del(nm->device_added_handler);
+        nm->device_added_handler = NULL;
+     }
+   if (nm->device_removed_handler)
+     {
+        eldbus_signal_handler_del(nm->device_removed_handler);
+        nm->device_removed_handler = NULL;
      }
 
    obj = eldbus_proxy_object_get(nm->proxy);
