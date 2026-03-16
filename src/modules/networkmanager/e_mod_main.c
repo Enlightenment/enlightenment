@@ -84,7 +84,8 @@ static Eina_Bool _enm_ssid_is_active(struct NM_Manager *nm, const char *ssid);
 static Evas_Object *_enm_ap_icon_new(struct NM_Manager *nm,
                                       struct NM_Access_Point *ap, Evas *evas);
 static Evas_Object *_enm_ap_end_new(struct NM_Manager *nm,
-                                     struct NM_Access_Point *ap, Evas *evas);
+                                     struct NM_Access_Point *ap,
+                                     Evas_Object *parent);
 static Evas_Object *_enm_eth_icon_new(struct NM_Device *dev, Evas *evas);
 
 /* Per-item data for genlist AP and ethernet rows */
@@ -141,7 +142,7 @@ _enm_itc_ap_content_get(void *data, Evas_Object *obj, const char *part)
         return ic;
      }
    if (!strcmp(part, "elm.swallow.end"))
-     return _enm_ap_end_new(id->nm, id->ap, evas_object_evas_get(obj));
+     return _enm_ap_end_new(id->nm, id->ap, obj);
    return NULL;
 }
 
@@ -224,6 +225,7 @@ _enm_itc_group_wifi_content_get(void *data, Evas_Object *obj,
    elm_check_state_set(ck, inst->ctxt->nm->wireless_enabled);
    evas_object_smart_callback_add(ck, "changed", _enm_wifi_toggle_changed, inst);
    evas_object_show(ck);
+   evas_object_propagate_events_set(ck, EINA_FALSE);
    return ck;
 }
 
@@ -351,8 +353,7 @@ struct _Enm_Forget_Data
 
 static void
 _enm_forget_click_cb(void *data, Evas_Object *obj EINA_UNUSED,
-                     const char *emission EINA_UNUSED,
-                     const char *source EINA_UNUSED)
+                     void *event_info EINA_UNUSED)
 {
    struct _Enm_Forget_Data *fd = data;
    struct NM_Manager *nm = fd->nm;
@@ -392,9 +393,10 @@ _enm_forget_data_free_cb(void *data, Evas *e EINA_UNUSED,
 }
 
 static Evas_Object *
-_enm_ap_end_new(struct NM_Manager *nm, struct NM_Access_Point *ap, Evas *evas)
+_enm_ap_end_new(struct NM_Manager *nm, struct NM_Access_Point *ap,
+                Evas_Object *parent)
 {
-   Evas_Object *end;
+   Evas_Object *end, *ic;
    const char *conn_path;
    struct _Enm_Forget_Data *fd;
 
@@ -415,37 +417,24 @@ _enm_ap_end_new(struct NM_Manager *nm, struct NM_Access_Point *ap, Evas *evas)
 
    INF("forget: creating button for ssid '%s' -> %s", ap->ssid, conn_path);
 
-   end = edje_object_add(evas);
-   if (!e_theme_edje_object_set(end, "base/theme/modules/networkmanager",
-                                "e/modules/networkmanager/forget"))
-     {
-        if (!e_theme_edje_object_set(end, "base/theme/modules/connman",
-                                     "e/modules/connman/forget"))
-          {
-             ERR("forget: could not load theme group");
-             evas_object_del(end);
-             return NULL;
-          }
-     }
-
    fd = malloc(sizeof(*fd));
-   if (!fd)
-     {
-        evas_object_del(end);
-        return NULL;
-     }
+   if (!fd) return NULL;
    fd->nm = nm;
    fd->connection_path = eina_stringshare_add(conn_path);
    if (!fd->connection_path)
      {
         free(fd);
-        evas_object_del(end);
         return NULL;
      }
    fd->ssid = eina_stringshare_add(ap->ssid);
 
-   edje_object_signal_callback_add(end, "e,action,forget,click", "e",
-                                   _enm_forget_click_cb, fd);
+   end = elm_button_add(parent);
+   elm_object_style_set(end, "overlay");
+   ic = elm_icon_add(parent);
+   elm_icon_standard_set(ic, "edit-delete");
+   elm_object_content_set(end, ic);
+   evas_object_show(ic);
+   evas_object_smart_callback_add(end, "clicked", _enm_forget_click_cb, fd);
    evas_object_event_callback_add(end, EVAS_CALLBACK_DEL,
                                   _enm_forget_data_free_cb, fd);
    evas_object_size_hint_min_set(end, ELM_SCALE_SIZE(32), ELM_SCALE_SIZE(32));
