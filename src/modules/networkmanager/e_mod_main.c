@@ -429,7 +429,6 @@ _enm_ap_end_new(struct NM_Manager *nm, struct NM_Access_Point *ap,
    fd->ssid = eina_stringshare_add(ap->ssid);
 
    end = elm_button_add(parent);
-   elm_object_style_set(end, "overlay");
    ic = elm_icon_add(end);
    elm_icon_standard_set(ic, "edit-delete");
    elm_object_content_set(end, ic);
