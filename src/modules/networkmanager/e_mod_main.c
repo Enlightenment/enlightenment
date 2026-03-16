@@ -137,9 +137,23 @@ _enm_itc_ap_content_get(void *data, Evas_Object *obj, const char *part)
 
    if (!strcmp(part, "elm.swallow.icon"))
      {
-        Evas_Object *ic = _enm_ap_icon_new(id->nm, id->ap, evas_object_evas_get(obj));
-        if (ic) evas_object_size_hint_min_set(ic, ELM_SCALE_SIZE(32), ELM_SCALE_SIZE(32));
-        return ic;
+        Evas_Object *ic, *tbl, *rect;
+
+        ic = _enm_ap_icon_new(id->nm, id->ap, evas_object_evas_get(obj));
+        if (!ic) return NULL;
+        evas_object_size_hint_min_set(ic, ELM_SCALE_SIZE(32), ELM_SCALE_SIZE(32));
+        evas_object_show(ic);
+
+        tbl = elm_table_add(obj);
+        elm_table_pack(tbl, ic, 0, 0, 1, 1);
+
+        rect = evas_object_rectangle_add(evas_object_evas_get(obj));
+        evas_object_color_set(rect, 0, 0, 0, 0);
+        evas_object_size_hint_min_set(rect, ELM_SCALE_SIZE(32), ELM_SCALE_SIZE(32));
+        evas_object_show(rect);
+        elm_table_pack(tbl, rect, 0, 0, 1, 1);
+
+        return tbl;
      }
    if (!strcmp(part, "elm.swallow.end"))
      return _enm_ap_end_new(id->nm, id->ap, obj);
@@ -168,9 +182,23 @@ _enm_itc_eth_content_get(void *data, Evas_Object *obj, const char *part)
 
    if (!strcmp(part, "elm.swallow.icon"))
      {
-        Evas_Object *ic = _enm_eth_icon_new(id->dev, evas_object_evas_get(obj));
-        if (ic) evas_object_size_hint_min_set(ic, ELM_SCALE_SIZE(32), ELM_SCALE_SIZE(32));
-        return ic;
+        Evas_Object *ic, *tbl, *rect;
+
+        ic = _enm_eth_icon_new(id->dev, evas_object_evas_get(obj));
+        if (!ic) return NULL;
+        evas_object_size_hint_min_set(ic, ELM_SCALE_SIZE(32), ELM_SCALE_SIZE(32));
+        evas_object_show(ic);
+
+        tbl = elm_table_add(obj);
+        elm_table_pack(tbl, ic, 0, 0, 1, 1);
+
+        rect = evas_object_rectangle_add(evas_object_evas_get(obj));
+        evas_object_color_set(rect, 0, 0, 0, 0);
+        evas_object_size_hint_min_set(rect, ELM_SCALE_SIZE(32), ELM_SCALE_SIZE(32));
+        evas_object_show(rect);
+        elm_table_pack(tbl, rect, 0, 0, 1, 1);
+
+        return tbl;
      }
    return NULL;
 }
