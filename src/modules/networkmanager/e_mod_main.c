@@ -194,39 +194,40 @@ _enm_itc_group_wifi_text_get(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
    return NULL;
 }
 
-/* Toggle callback for the wireless group header on/off switch */
+/* Click callback for the wireless group header icon toggle */
 static void
-_enm_wifi_toggle_changed(void *data, Evas_Object *obj,
-                          void *info EINA_UNUSED)
+_enm_wifi_icon_click_cb(void *data, Evas *e EINA_UNUSED,
+                         Evas_Object *obj EINA_UNUSED,
+                         void *event_info EINA_UNUSED)
 {
    E_NM_Instance *inst = data;
-   E_NM_Module_Context *ctxt;
 
-   if (!inst) return;
-   ctxt = inst->ctxt;
-   if (!ctxt || !ctxt->nm) return;
-
-   enm_wireless_enabled_set(ctxt->nm, elm_check_state_get(obj));
+   if (!inst || !inst->ctxt || !inst->ctxt->nm) return;
+   enm_wireless_enabled_set(inst->ctxt->nm, !inst->ctxt->nm->wireless_enabled);
    enm_mod_aps_update_now();
 }
 
-/* Genlist content_get for the wireless group header: toggle in end slot */
+/* Genlist content_get for the wireless group header: icon toggle in end slot.
+ * Uses a plain elm_icon instead of elm_check to avoid the check widget's own
+ * hover/fade visual on mouse-over, which looks jarring in a header row. */
 static Evas_Object *
 _enm_itc_group_wifi_content_get(void *data, Evas_Object *obj,
                                  const char *part)
 {
    E_NM_Instance *inst = data;
-   Evas_Object *ck;
+   Evas_Object *ic;
 
    if (!inst || !inst->ctxt || !inst->ctxt->nm) return NULL;
    if (strcmp(part, "elm.swallow.end")) return NULL;
 
-   ck = elm_check_add(obj);
-   elm_check_state_set(ck, inst->ctxt->nm->wireless_enabled);
-   evas_object_smart_callback_add(ck, "changed", _enm_wifi_toggle_changed, inst);
-   evas_object_show(ck);
-   evas_object_propagate_events_set(ck, EINA_FALSE);
-   return ck;
+   ic = elm_icon_add(obj);
+   elm_icon_standard_set(ic, inst->ctxt->nm->wireless_enabled ?
+                         "network-wireless" : "network-wireless-offline");
+   evas_object_propagate_events_set(ic, EINA_FALSE);
+   evas_object_event_callback_add(ic, EVAS_CALLBACK_MOUSE_UP,
+                                  _enm_wifi_icon_click_cb, inst);
+   evas_object_show(ic);
+   return ic;
 }
 
 /* Activated smart callback — handles connect/disconnect on row tap */
