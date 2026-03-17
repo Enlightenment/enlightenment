@@ -337,7 +337,14 @@ _proc_stats_client_gone(Proc_Stats_Client *client)
 
    EINA_LIST_FOREACH(e_comp->clients, l, ec)
      {
-        if (client->ec == ec) return 0;
+        if (client->ec == ec)
+          {
+
+             if (!edje_object_part_exists(ec->frame_object, "e.procstats.swallow"))
+               return 1;
+
+             return 0;
+          }
      }
 
    return 1;
