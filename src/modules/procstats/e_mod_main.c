@@ -83,6 +83,46 @@ _memory_total(void)
    return 1;
 }
 
+static int
+_cpu_count(void)
+{
+   static int cores = 0;
+
+   if (cores != 0)
+     return cores;
+
+#if defined(__linux__)
+   char buf[4096];
+   FILE *f;
+   int line = 0;
+
+   f = fopen("/proc/stat", "r");
+   if (!f) return 0;
+
+   while (fgets(buf, sizeof(buf), f))
+     {
+        if (line)
+          {
+             if (!strncmp(buf, "cpu", 3))
+               cores++;
+             else
+               break;
+          }
+        line++;
+     }
+
+   fclose(f);
+#elif defined(__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__)
+   size_t len;
+   int mib[2] = { CTL_HW, HW_NCPU };
+
+   len = sizeof(cores);
+   if (sysctl(mib, 2, &cores, &len, NULL, 0) < 0)
+     return 0;
+#endif
+   return cores;
+}
+
 static Eina_Bool
 _proc_stats_handler_fullscreen_check_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
@@ -339,7 +379,6 @@ _proc_stats_client_gone(Proc_Stats_Client *client)
      {
         if (client->ec == ec)
           {
-
              if (!edje_object_part_exists(ec->frame_object, "e.procstats.swallow"))
                return 1;
 
@@ -416,7 +455,7 @@ _proc_stats_client_display_update(Proc_Stats_Client *client)
    EINA_SAFETY_ON_NULL_RETURN(msg);
    msg->count = 5;
    msg->val[0] = eina_cpu_count();
-   msg->val[1] = (client->cpu_time - client->cpu_time_prev) / POLL_INTERVAL;
+   msg->val[1] = ((client->cpu_time - client->cpu_time_prev) / POLL_INTERVAL) / _cpu_count();
    msg->val[2] = (int) (_mem_total / 4096);
    msg->val[3] = (int) (client->mem_size / 4096);
    msg->val[4] = 0;
@@ -428,7 +467,7 @@ _proc_stats_client_display_update(Proc_Stats_Client *client)
 
    pb = evas_object_data_get(client->popup, "pb_cpu");
 
-   val = ((client->cpu_time - client->cpu_time_prev) / POLL_INTERVAL);
+   val = ((client->cpu_time - client->cpu_time_prev) / POLL_INTERVAL) / _cpu_count();
    elm_progressbar_value_set(pb, val / 100.0);
 
    buf = eina_strbuf_new();
