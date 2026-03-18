@@ -8,8 +8,7 @@
 
 #define POLL_INTERVAL 2.0
 
-static Ecore_Event_Handler *_proc_stats_handler_fullscreen = NULL;
-
+static Eina_List      *handlers = NULL;
 static int64_t         _mem_total;
 
 typedef struct
@@ -143,6 +142,12 @@ _proc_stats_handler_fullscreen_check_cb(void *data EINA_UNUSED, int type EINA_UN
      }
 
    return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_proc_stats_handler_client_hide_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   return _proc_stats_handler_fullscreen_check_cb(NULL, 0, event);
 }
 
 static Eina_Bool
@@ -582,8 +587,11 @@ e_modapi_init(E_Module *m)
    //module->sleeper = e_powersave_sleeper_new();
    module->poll_interval = POLL_INTERVAL;
 
-   _proc_stats_handler_fullscreen = ecore_event_handler_add
-      (E_EVENT_CLIENT_FULLSCREEN, _proc_stats_handler_fullscreen_check_cb, NULL);
+   handlers = eina_list_append(handlers, ecore_event_handler_add
+      (E_EVENT_CLIENT_FULLSCREEN, _proc_stats_handler_fullscreen_check_cb, NULL));
+   handlers = eina_list_append(handlers, ecore_event_handler_add
+      (E_EVENT_CLIENT_HIDE, _proc_stats_handler_client_hide_cb, NULL));
+
    _proc_stats_thread_feedback_cb(module, NULL, proc_info_all_children_get());
 
    module->thread = ecore_thread_feedback_run(_proc_stats_thread,
@@ -596,6 +604,7 @@ E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    Proc_Stats_Client *client;
+   Ecore_Event_Handler *h;
    Proc_Stats_Module *module = _this_module;
 
    ecore_thread_cancel(module->thread);
@@ -603,8 +612,8 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
 
    //e_powersave_sleeper_free(module->sleeper);
 
-   ecore_event_handler_del(_proc_stats_handler_fullscreen);
-   _proc_stats_handler_fullscreen = NULL;
+   EINA_LIST_FREE(handlers, h)
+     ecore_event_handler_del(h);
 
    EINA_LIST_FREE(module->clients, client)
      _proc_stats_client_del(client);
