@@ -198,7 +198,7 @@ _proc_stats_client_popup_add(Proc_Stats_Client *client)
    client->popup = o = elm_ctxpopup_add(e_comp->elm);
    E_FILL(o); E_EXPAND(o);
    elm_object_style_set(o, "noblock");
-   evas_object_layer_set(o, E_LAYER_MENU);
+   evas_object_layer_set(o, E_LAYER_CLIENT_NORMAL);
 
    tb = elm_table_add(o);
    E_FILL(tb); E_EXPAND(tb);
