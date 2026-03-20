@@ -437,7 +437,7 @@ _size_format(unsigned long long bytes)
         if ((value / powi) < powj) break;
         --precision;
      }
-   snprintf(buf, sizeof(buf), "%1.*f%s", precision, (double) value / powi, units[i]);
+   snprintf(buf, sizeof(buf), "%1.*f %s", precision, (double) value / powi, units[i]);
 
    return strdup(buf);
 }
