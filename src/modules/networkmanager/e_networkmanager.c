@@ -30,6 +30,12 @@ static Eldbus_Connection *conn;
 static struct NM_Manager *nm_manager;
 static E_NM_Agent        *agent;
 
+static Eina_Bool          suspended;         /* system is in suspend/sleep */
+static Eina_Bool          dialog_open;       /* "service missing" dialog shown */
+static E_Dialog          *nm_missing_dialog; /* live dialog pointer, or NULL */
+static Ecore_Event_Handler *suspend_handler;
+static Ecore_Event_Handler *resume_handler;
+
 E_API int E_NM_EVENT_MANAGER_IN;
 E_API int E_NM_EVENT_MANAGER_OUT;
 
@@ -1986,6 +1992,16 @@ enm_manager_find_ap(struct NM_Manager *nm, const char *path)
 /* -------------------------------------------------------------------------- */
 
 static void
+_nm_missing_dialog_del(void *obj EINA_UNUSED)
+{
+   /* Called by EFL when the dialog is destroyed by any means (OK button,
+    * window-close button, e_object_del from enter path, etc.). Reset both
+    * the flag and the pointer so a future exit can show the dialog again. */
+   nm_missing_dialog = NULL;
+   dialog_open       = EINA_FALSE;
+}
+
+static void
 _e_nm_system_name_owner_exit(Eina_Bool shutdown)
 {
    if (!nm_manager) return;
@@ -1996,15 +2012,36 @@ _e_nm_system_name_owner_exit(Eina_Bool shutdown)
 
    ecore_event_add(E_NM_EVENT_MANAGER_OUT, NULL, NULL, NULL);
 
-   if (!shutdown)
-     e_util_dialog_show(_("NetworkManager Service Missing"),
-                        _("The NetworkManager service is not available.<br>"
-                          "Is <b>NetworkManager</b> daemon running?"));
+   if (!shutdown && !suspended && !dialog_open)
+     {
+        dialog_open = EINA_TRUE;
+        nm_missing_dialog =
+           e_util_dialog_internal(_("NetworkManager Service Missing"),
+                                  _("The NetworkManager service is not available.<br>"
+                                    "Is <b>NetworkManager</b> daemon running?"));
+        if (nm_missing_dialog)
+          e_object_del_attach_func_set(E_OBJECT(nm_missing_dialog),
+                                       _nm_missing_dialog_del);
+        else
+          dialog_open = EINA_FALSE; /* allocation failed — don't block future attempts */
+     }
 }
 
 static void
 _e_nm_system_name_owner_enter(const char *owner EINA_UNUSED)
 {
+   /* If our "NM missing" dialog is still on screen, dismiss it now that NM
+    * is back.  The del-attach callback resets dialog_open and
+    * nm_missing_dialog, so we must not touch those fields directly here. */
+   if (nm_missing_dialog)
+     {
+        e_object_del(E_OBJECT(nm_missing_dialog));
+        /* nm_missing_dialog and dialog_open are now reset by the callback */
+     }
+   else
+     {
+        dialog_open = EINA_FALSE;
+     }
    nm_manager = _manager_new();
    ecore_event_add(E_NM_EVENT_MANAGER_IN, NULL, NULL, NULL);
    enm_mod_manager_inout(nm_manager);
@@ -2020,6 +2057,24 @@ _e_nm_system_name_owner_changed(void *data EINA_UNUSED,
      _e_nm_system_name_owner_enter(to);
    else
      _e_nm_system_name_owner_exit(EINA_FALSE);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Suspend / resume tracking                                                   */
+/* -------------------------------------------------------------------------- */
+
+static Eina_Bool
+_e_nm_sys_suspend_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
+{
+   suspended = EINA_TRUE;
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_e_nm_sys_resume_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
+{
+   suspended = EINA_FALSE;
+   return ECORE_CALLBACK_PASS_ON;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -2041,6 +2096,11 @@ e_nm_system_init(Eldbus_Connection *eldbus_conn)
                                           NULL, EINA_TRUE);
    agent = enm_agent_new(eldbus_conn);
 
+   suspend_handler = ecore_event_handler_add(E_EVENT_SYS_SUSPEND,
+                                             _e_nm_sys_suspend_cb, NULL);
+   resume_handler  = ecore_event_handler_add(E_EVENT_SYS_RESUME,
+                                             _e_nm_sys_resume_cb, NULL);
+
    return init_count;
 }
 
@@ -2055,6 +2115,14 @@ e_nm_system_shutdown(void)
 
    init_count--;
    if (init_count > 0) return init_count;
+
+   if (suspend_handler) ecore_event_handler_del(suspend_handler);
+   if (resume_handler)  ecore_event_handler_del(resume_handler);
+   suspend_handler = NULL;
+   resume_handler  = NULL;
+   suspended         = EINA_FALSE;
+   dialog_open       = EINA_FALSE;
+   nm_missing_dialog = NULL;
 
    eldbus_name_owner_changed_callback_del(conn, NM_BUS_NAME,
                                           _e_nm_system_name_owner_changed,

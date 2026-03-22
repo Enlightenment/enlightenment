@@ -386,6 +386,7 @@ _e_sys_systemd_signal_prepare_sleep(void *data EINA_UNUSED, const Eldbus_Message
    else
      {
         _e_sys_suspended = EINA_TRUE;
+        ecore_event_add(E_EVENT_SYS_SUSPEND, NULL, NULL, NULL);
         if (e_config->desklock_on_suspend)
           {
              if (!e_desklock_state_get())
