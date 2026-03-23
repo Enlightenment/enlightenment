@@ -96,6 +96,7 @@ struct _Battery
 {
    const char   *udi;
 #if defined HAVE_EEZE || defined __OpenBSD__ || defined __DragonFly__ || defined __FreeBSD__ || defined __NetBSD__
+   Ecore_Timer  *timer; // ued by bsd
    Eina_Bool     present E_BITFIELD;
    Eina_Bool     charging E_BITFIELD;
    Eina_Bool     is_micro_watts E_BITFIELD;

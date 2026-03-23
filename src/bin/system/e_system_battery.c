@@ -121,8 +121,8 @@ e_system_battery_init(void)
 
   watch = eeze_udev_watch_add(EEZE_UDEV_TYPE_POWER_BAT, EEZE_UDEV_EVENT_NONE,
                               _cb_eeze, NULL);
-#endif
   e_system_inout_command_register("battery-lim-set", _cb_battery_lim_set, NULL);
+#endif
 }
 
 void

@@ -904,14 +904,12 @@ _battery_device_update(void)
    int have_power = 0;
    int charging = 0;
    int batnum = 0;
-   int acnum = 0;
    unsigned long long tim = time(NULL);
 
    EINA_LIST_FOREACH(device_ac_adapters, l, ac)
      {
         if (ac->present)
           {
-             acnum++;
              have_power = 1;
           }
      }

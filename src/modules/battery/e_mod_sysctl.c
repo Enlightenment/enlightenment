@@ -17,7 +17,7 @@
 #endif
 
 static Eina_Bool   _battery_sysctl_battery_update_poll(void *data EINA_UNUSED);
-static int         _battery_sysctl_battery_update();
+static int         _battery_sysctl_battery_update(Battery *bat);
 
 extern Eina_List  *device_batteries;
 extern Eina_List  *device_ac_adapters;
@@ -124,7 +124,7 @@ _battery_sysctl_start(void)
       }
     close(fd);
 # endif
-   _battery_sysctl_battery_update();
+   _battery_sysctl_battery_update_poll(NULL);
 
    if (bat)
      bat->last_update = ecore_time_get();
