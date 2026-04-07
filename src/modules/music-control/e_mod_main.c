@@ -677,12 +677,16 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
         eldbus_pending_cancel(ctxt->bus_list_pend);
         ctxt->bus_list_pend = NULL;
      }
-   eldbus_name_owner_changed_callback_del
-     (ctxt->conn, ctxt->dbus_name, cb_name_owner_changed, ctxt);
+   if ((ctxt->conn) && (ctxt->dbus_name))
+     eldbus_name_owner_changed_callback_del
+       (ctxt->conn, ctxt->dbus_name, cb_name_owner_changed, ctxt);
    eina_stringshare_del(ctxt->dbus_name);
-   media_player2_player_proxy_unref(ctxt->mpris2_player);
-   mpris_media_player2_proxy_unref(ctxt->mrpis2);
-   eldbus_connection_unref(ctxt->conn);
+   if (ctxt->mpris2_player) media_player2_player_proxy_unref(ctxt->mpris2_player);
+   ctxt->mpris2_player = NULL;
+   if (ctxt->mrpis2) mpris_media_player2_proxy_unref(ctxt->mrpis2);
+   ctxt->mrpis2 = NULL;
+   if (ctxt->conn) eldbus_connection_unref(ctxt->conn);
+   ctxt->conn = NULL;
 
    e_gadcon_provider_unregister(&_gc_class);
 
