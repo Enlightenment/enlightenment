@@ -17,7 +17,7 @@ struct _E_Gadcon_Popup
    Evas_Object         *o_bg;
    Evas_Object        *content;
    Ecore_Event_Handler *autoclose_handlers[2];
-   Ecore_Idler         *show_idler;
+   Ecore_Idle_Enterer  *show_idle_enterer;
    Ecore_Animator      *show_animator;
    Evas_Coord           w, h;
 
