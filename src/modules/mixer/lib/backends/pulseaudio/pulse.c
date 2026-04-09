@@ -323,7 +323,7 @@ _sink_changed_cb(pa_context *c EINA_UNUSED, const pa_sink_info *info, int eol,
           }
      }
 
-   EINA_SAFETY_ON_NULL_RETURN(sink);
+   if (!sink) return;
 
    eina_stringshare_replace(&sink->base.name, info->description);
 
