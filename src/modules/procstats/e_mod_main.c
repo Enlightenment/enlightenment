@@ -387,6 +387,15 @@ _proc_stats_client_gone(Proc_Stats_Client *client)
              if (!edje_object_part_exists(ec->frame_object, "e.procstats.swallow"))
                return 1;
 
+             if (ec->frame_object != client->frame_obj)
+               {
+                  evas_object_event_callback_del(client->frame_obj, EVAS_CALLBACK_RESIZE, _proc_stats_client_resize_cb);
+                  client->frame_obj = ec->frame_object;
+                  edje_object_part_swallow(ec->frame_object, "e.procstats.swallow", client->obj);
+                  edje_object_signal_emit(ec->frame_object, "e,state,procstats,on", "e");
+                  evas_object_event_callback_add(client->frame_obj, EVAS_CALLBACK_RESIZE, _proc_stats_client_resize_cb, client);
+               }
+
              return 0;
           }
      }
