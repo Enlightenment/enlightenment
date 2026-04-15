@@ -741,10 +741,10 @@ _enm_popup_update(struct NM_Manager *nm, E_NM_Instance *inst)
      {
         char ipbuf[128];
         snprintf(ipbuf, sizeof(ipbuf), "IP: %s", nm->ip_address);
-        e_widget_label_text_set(inst->ui.popup.ip_label, ipbuf);
+        elm_object_text_set(inst->ui.popup.ip_label, ipbuf);
      }
    else
-     e_widget_label_text_set(inst->ui.popup.ip_label, "");
+     elm_object_text_set(inst->ui.popup.ip_label, "");
 
 }
 
@@ -781,7 +781,6 @@ _enm_popup_new(E_NM_Instance *inst)
 {
    E_NM_Module_Context *ctxt = inst->ctxt;
    Evas_Object *box, *gl;
-   Evas *evas;
    Elm_Genlist_Item_Class *itc;
 
    EINA_SAFETY_ON_FALSE_RETURN(inst->popup == NULL);
@@ -791,7 +790,6 @@ _enm_popup_new(E_NM_Instance *inst)
    e_nm_scan(ctxt->nm);
 
    inst->popup = e_gadcon_popup_new(inst->gcc, 0);
-   evas = e_comp->evas;
 
    /* Outer elm box to stack genlist + IP label */
    box = elm_box_add(e_comp->elm);
@@ -846,7 +844,12 @@ _enm_popup_new(E_NM_Instance *inst)
    elm_box_pack_end(box, gl);
 
    /* IP address label */
-   inst->ui.popup.ip_label = e_widget_label_add(evas, "");
+   inst->ui.popup.ip_label = elm_label_add(box);
+   evas_object_size_hint_align_set(inst->ui.popup.ip_label,
+                                   EVAS_HINT_FILL, 0.5);
+   evas_object_size_hint_weight_set(inst->ui.popup.ip_label,
+                                    EVAS_HINT_EXPAND, 0);
+   elm_object_text_set(inst->ui.popup.ip_label, "");
    elm_box_pack_end(box, inst->ui.popup.ip_label);
    evas_object_show(inst->ui.popup.ip_label);
 

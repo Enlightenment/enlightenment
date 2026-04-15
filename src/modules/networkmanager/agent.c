@@ -17,23 +17,18 @@
  * is the user-facing dialog that pops when NM asks for a WiFi password, and
  * nothing more.  The bridge between the two layers is the pair of callbacks
  * registered via e_nm_agent_callbacks_set() from enm_agent_ui_register().
+ *
+ * Widgets are Elementary — elm_frame / elm_box / elm_entry / elm_check —
+ * with no legacy e_widget_* dependencies.
  */
 
-/* One input field rendered inside the password page */
-typedef struct _E_NM_Agent_Input E_NM_Agent_Input;
-struct _E_NM_Agent_Input
-{
-   char *key;
-   char *value;
-   int   show_password;
-};
-
-/* State for one live dialog.  Owned by the dialog; freed in the del cb. */
+/* State for one live dialog.  Freed in the dialog del callback. */
 typedef struct _E_NM_Agent_Dialog E_NM_Agent_Dialog;
 struct _E_NM_Agent_Dialog
 {
    E_Dialog           *dialog;
-   E_NM_Agent_Request *req;  /* borrowed pointer — NULL after reply/cancel */
+   Evas_Object        *entry;  /* elm_entry holding the PSK */
+   E_NM_Agent_Request *req;    /* borrowed; NULL once reply/cancel sent */
 };
 
 static E_NM_Agent_Dialog *_current_dialog = NULL;
@@ -42,50 +37,45 @@ static E_NM_Agent_Dialog *_current_dialog = NULL;
 /* Dialog callbacks                                                            */
 /* -------------------------------------------------------------------------- */
 
-static const char *
-_dialog_first_psk(E_Dialog *dialog)
-{
-   Evas_Object *toolbook, *list;
-   Eina_List *input_list;
-   E_NM_Agent_Input *input;
-
-   toolbook = dialog->content_object;
-   list = evas_object_data_get(toolbook, "psk");
-   if (!list) list = evas_object_data_get(toolbook, "password");
-   if (!list) return NULL;
-
-   input_list = evas_object_data_get(list, "input_list");
-   if (!input_list) return NULL;
-   input = eina_list_data_get(input_list);
-   return input ? input->value : NULL;
-}
-
 static void
-_dialog_ok_cb(void *data, E_Dialog *dialog)
+_dialog_send_ok(E_NM_Agent_Dialog *ad)
 {
-   E_NM_Agent_Dialog *ad = data;
-   const char *psk;
+   char *psk = NULL;
 
-   psk = _dialog_first_psk(dialog);
+   /* elm_entry stores markup internally; convert to plain UTF-8 so that
+    * passwords containing '<' or '&' survive the round-trip to NM. */
+   psk = elm_entry_markup_to_utf8(elm_entry_entry_get(ad->entry));
+
    if (ad->req)
      {
         e_nm_agent_reply_secrets(ad->req, psk);
         ad->req = NULL;
      }
-   e_object_del(E_OBJECT(dialog));
+   free(psk);
+   e_object_del(E_OBJECT(ad->dialog));
 }
 
 static void
-_dialog_cancel_cb(void *data, E_Dialog *dialog)
+_dialog_send_cancel(E_NM_Agent_Dialog *ad)
 {
-   E_NM_Agent_Dialog *ad = data;
-
    if (ad->req)
      {
         e_nm_agent_reply_cancel(ad->req);
         ad->req = NULL;
      }
-   e_object_del(E_OBJECT(dialog));
+   e_object_del(E_OBJECT(ad->dialog));
+}
+
+static void
+_dialog_ok_cb(void *data, E_Dialog *dialog EINA_UNUSED)
+{
+   _dialog_send_ok(data);
+}
+
+static void
+_dialog_cancel_cb(void *data, E_Dialog *dialog EINA_UNUSED)
+{
+   _dialog_send_cancel(data);
 }
 
 static void
@@ -95,10 +85,19 @@ _dialog_key_down_cb(void *data, Evas *e EINA_UNUSED,
    Evas_Event_Key_Down *ev = event;
    E_NM_Agent_Dialog *ad = data;
 
-   if (!strcmp(ev->key, "Return"))
-     _dialog_ok_cb(ad, ad->dialog);
-   else if (!strcmp(ev->key, "Escape"))
-     _dialog_cancel_cb(ad, ad->dialog);
+   /* Enter is handled by the entry's "activated" callback so we do not
+    * ACK it here — doing both would run _dialog_send_ok twice on an
+    * already-deleted dialog.  Escape always cancels regardless of focus. */
+   if (!strcmp(ev->key, "Escape"))
+     _dialog_send_cancel(ad);
+}
+
+static void
+_entry_activated_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                    void *event_info EINA_UNUSED)
+{
+   /* Enter key inside the entry triggers Connect */
+   _dialog_send_ok(data);
 }
 
 static void
@@ -107,8 +106,10 @@ _dialog_del_cb(void *data)
    E_Dialog *dialog = data;
    E_NM_Agent_Dialog *ad = e_object_data_get(E_OBJECT(dialog));
 
-   /* If the dialog was closed via the WM (not via OK/Cancel buttons) the
-    * request is still live — treat as user cancel. */
+   if (!ad) return;
+
+   /* If the dialog was closed via the WM (not OK/Cancel) the request is
+    * still live — treat as user cancel. */
    if (ad->req)
      {
         e_nm_agent_reply_cancel(ad->req);
@@ -119,100 +120,23 @@ _dialog_del_cb(void *data)
 }
 
 static void
-_page_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
-          Evas_Object *obj, void *event_info EINA_UNUSED)
-{
-   E_NM_Agent_Input *input;
-   Eina_List *input_list;
-
-   input_list = evas_object_data_get(obj, "input_list");
-   EINA_LIST_FREE(input_list, input)
-     {
-        free(input->key);
-        /* input->value is NOT freed here: it is a pointer into the EFL entry
-         * widget's internal buffer (set via e_widget_entry_add's &value
-         * parameter).  The widget owns the allocation; freeing it here would
-         * be a double-free once the widget itself is destroyed. */
-        free(input);
-     }
-}
-
-static void
 _show_password_cb(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Evas_Object *entry = data;
-   int hidden;
-
-   hidden = !e_widget_check_checked_get(obj);
-   e_widget_entry_password_set(entry, hidden);
+   elm_entry_password_set(entry, !elm_check_state_get(obj));
 }
 
 /* -------------------------------------------------------------------------- */
 /* Dialog construction                                                         */
 /* -------------------------------------------------------------------------- */
 
-static void
-_dialog_psk_add(E_Dialog *dialog, const char *ssid)
-{
-   Evas_Object *toolbook, *list, *framelist, *entry, *check;
-   E_NM_Agent_Input *input;
-   Eina_List *input_list;
-   char header[128];
-   Evas *evas;
-
-   evas     = evas_object_evas_get(dialog->win);
-   toolbook = dialog->content_object;
-
-   input      = E_NEW(E_NM_Agent_Input, 1);
-   input->key = strdup("psk");
-   entry = e_widget_entry_add(dialog->win, &(input->value),
-                              NULL, NULL, NULL);
-   evas_object_show(entry);
-   e_widget_entry_password_set(entry, 1);
-
-   list = evas_object_data_get(toolbook, "psk");
-   if (!list)
-     {
-        list = e_widget_list_add(evas, 0, 0);
-        e_widget_toolbook_page_append(toolbook, NULL,
-                                      _("WiFi Password"),
-                                      list, 1, 1, 1, 1, 0.5, 0.0);
-        evas_object_data_set(toolbook, "psk", list);
-        e_widget_toolbook_page_show(toolbook, 0);
-        evas_object_event_callback_add(list, EVAS_CALLBACK_DEL,
-                                       _page_del, NULL);
-        e_widget_focus_set(entry, 1);
-     }
-
-   input_list = evas_object_data_get(list, "input_list");
-   input_list = eina_list_append(input_list, input);
-   evas_object_data_set(list, "input_list", input_list);
-
-   snprintf(header, sizeof(header),
-            _("Password required for \"%s\":"), ssid ?: "network");
-
-   framelist = e_widget_framelist_add(evas, header, 0);
-   evas_object_show(framelist);
-   e_widget_list_object_append(list, framelist, 1, 1, 0.5);
-   e_widget_framelist_object_append(framelist, entry);
-
-   check = e_widget_check_add(evas, _("Show password"),
-                               &(input->show_password));
-   evas_object_show(check);
-   e_widget_framelist_object_append(framelist, check);
-   evas_object_smart_callback_add(check, "changed",
-                                  _show_password_cb, entry);
-
-   e_util_win_auto_resize_fill(dialog->win);
-}
-
 static E_NM_Agent_Dialog *
 _dialog_new(E_NM_Agent_Request *req, const char *ssid)
 {
    E_NM_Agent_Dialog *ad;
-   Evas_Object *toolbook;
+   Evas_Object *frame, *box, *entry, *check;
    E_Dialog    *dialog;
-   int          mw, mh;
+   char         header[128];
 
    dialog = e_dialog_new(NULL, "E", "nm_secret_agent");
    if (!dialog) return NULL;
@@ -228,25 +152,53 @@ _dialog_new(E_NM_Agent_Request *req, const char *ssid)
    e_dialog_button_add(dialog, _("Connect"), NULL, _dialog_ok_cb, ad);
    e_dialog_button_add(dialog, _("Cancel"),  NULL, _dialog_cancel_cb, ad);
 
-   toolbook = e_widget_toolbook_add(
-                evas_object_evas_get(dialog->win),
-                48 * e_scale, 48 * e_scale);
-   evas_object_show(toolbook);
+   /* Labelled frame containing the password row + show-password check */
+   snprintf(header, sizeof(header),
+            _("Password required for \"%s\":"), ssid ?: "network");
+   frame = elm_frame_add(dialog->win);
+   elm_object_text_set(frame, header);
+   evas_object_size_hint_weight_set(frame, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(frame, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
-   e_widget_size_min_get(toolbook, &mw, &mh);
-   if (mw < 280) mw = 280;
-   if (mh < 140) mh = 140;
-   e_dialog_content_set(dialog, toolbook, mw, mh);
+   box = elm_box_add(frame);
+   elm_box_horizontal_set(box, EINA_FALSE);
+   elm_box_padding_set(box, 0, 4 * e_scale);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_content_set(frame, box);
+   evas_object_show(box);
+
+   entry = elm_entry_add(box);
+   elm_entry_single_line_set(entry, EINA_TRUE);
+   elm_entry_scrollable_set(entry, EINA_TRUE);
+   elm_entry_password_set(entry, EINA_TRUE);
+   evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, 0.5);
+   evas_object_smart_callback_add(entry, "activated",
+                                   _entry_activated_cb, ad);
+   elm_box_pack_end(box, entry);
+   evas_object_show(entry);
+   ad->entry = entry;
+
+   check = elm_check_add(box);
+   elm_object_text_set(check, _("Show password"));
+   elm_check_state_set(check, EINA_FALSE);
+   evas_object_size_hint_align_set(check, 0.0, 0.5);
+   evas_object_smart_callback_add(check, "changed",
+                                   _show_password_cb, entry);
+   elm_box_pack_end(box, check);
+   evas_object_show(check);
+
+   evas_object_show(frame);
+   e_dialog_content_set(dialog, frame, 280, 100);
    e_dialog_show(dialog);
 
    evas_object_event_callback_add(dialog->bg_object, EVAS_CALLBACK_KEY_DOWN,
                                   _dialog_key_down_cb, ad);
    e_object_del_attach_func_set(E_OBJECT(dialog), _dialog_del_cb);
    e_object_data_set(E_OBJECT(dialog), ad);
-   e_dialog_button_focus_num(dialog, 0);
+   elm_object_focus_set(entry, EINA_TRUE);
    elm_win_center(dialog->win, 1, 1);
-
-   _dialog_psk_add(dialog, ssid);
 
    return ad;
 }
@@ -259,9 +211,8 @@ static void
 _agent_ui_request_cb(void *data EINA_UNUSED, E_NM_Agent_Request *req,
                      const char *ssid)
 {
-   /* Only one dialog at a time — drop any stale one.  The data layer
-    * already freed the previous request when it arrived, so just tear
-    * down the widgets here. */
+   /* Only one dialog at a time — drop any stale one.  The data layer has
+    * already freed the previous request, so we just tear down widgets. */
    if (_current_dialog)
      {
         _current_dialog->req = NULL;   /* don't reply — request is gone */
@@ -283,7 +234,7 @@ _agent_ui_cancel_cb(void *data EINA_UNUSED,
                     E_NM_Agent_Request *req EINA_UNUSED)
 {
    /* NM is withdrawing the pending request.  Dismiss the dialog without
-    * sending any reply — the data layer will free the request after this
+    * sending any reply — the data layer frees the request after this
     * callback returns. */
    if (_current_dialog)
      {
