@@ -875,8 +875,8 @@ _enm_popup_update_timer_cb(void *data)
    return ECORE_CALLBACK_CANCEL;
 }
 
-void
-enm_mod_aps_changed(struct NM_Manager *nm EINA_UNUSED)
+static void
+_enm_mod_aps_changed(struct NM_Manager *nm EINA_UNUSED)
 {
    E_NM_Module_Context *ctxt = networkmanager_mod->data;
 
@@ -1057,8 +1057,8 @@ _enm_mod_manager_update_inst(E_NM_Module_Context *ctxt EINA_UNUSED,
      }
 }
 
-void
-enm_mod_manager_update(struct NM_Manager *nm)
+static void
+_enm_mod_manager_update(struct NM_Manager *nm)
 {
    E_NM_Module_Context *ctxt = networkmanager_mod->data;
    E_NM_Instance *inst;
@@ -1078,8 +1078,8 @@ enm_mod_manager_update(struct NM_Manager *nm)
      _enm_traffic_timer_stop(ctxt);
 }
 
-void
-enm_mod_manager_inout(struct NM_Manager *nm)
+static void
+_enm_mod_manager_inout(struct NM_Manager *nm)
 {
    E_NM_Module_Context *ctxt = networkmanager_mod->data;
    const Eina_List *l;
@@ -1093,13 +1093,20 @@ enm_mod_manager_inout(struct NM_Manager *nm)
 
    if (ctxt->nm)
      {
-        enm_mod_manager_update(nm);
+        _enm_mod_manager_update(nm);
         /* Pre-fetch saved connections so the hash is warm when popup opens */
         enm_saved_connections_get(nm);
      }
    else
      _enm_traffic_timer_stop(ctxt);
 }
+
+static const E_NM_Mod_Callbacks _enm_mod_cbs =
+{
+   .aps_changed    = _enm_mod_aps_changed,
+   .manager_update = _enm_mod_manager_update,
+   .manager_inout  = _enm_mod_manager_inout,
+};
 
 /* --- network activity indicator ------------------------------------------- */
 
@@ -1210,33 +1217,92 @@ _enm_traffic_signal_emit(E_NM_Module_Context *ctxt, int rx_level, int tx_level)
      }
 }
 
-static Eina_Bool
-_enm_traffic_poll_cb(void *data)
+/*
+ * Threaded traffic monitor.
+ *
+ * The worker struct holds a single-slot sample protected by a lock — the
+ * worker writes rx/tx under the lock and signals main via ecore_thread_feedback;
+ * the notify cb reads the slot under the lock.  No per-sample allocation, so
+ * there is nothing to leak if ecore_thread_cancel drops in-flight feedback
+ * messages.
+ *
+ * Cleanup is handled in the shared done path invoked from both the normal
+ * end callback and the cancel callback.  The `ctxt->traffic_thread == thread`
+ * check makes the done path robust against a stop+restart race: after
+ * stop() cancels the old thread, ctxt->traffic_thread is set to NULL and
+ * then reassigned to the new thread, so the old thread's delayed done cb
+ * finds a pointer that is either NULL or the new thread and leaves it alone.
+ */
+typedef struct _Enm_Traffic_Worker
 {
-   E_NM_Module_Context *ctxt = data;
-   const char *iface;
-   unsigned long long rx = 0, tx = 0;
+   E_NM_Module_Context *ctxt;
+   char                *iface;   /* strdup; worker-only read */
+   Eina_Lock            lock;
+   unsigned long long   rx;
+   unsigned long long   tx;
+   Eina_Bool            have_sample;
+} Enm_Traffic_Worker;
+
+static void
+_enm_traffic_worker_heavy(void *data, Ecore_Thread *thread)
+{
+   Enm_Traffic_Worker *w = data;
+
+   while (!ecore_thread_check(thread))
+     {
+        unsigned long long rx = 0, tx = 0;
+        int i;
+
+        /* ~0.5s tick split into 100ms chunks so cancel is responsive */
+        for (i = 0; i < 5; i++)
+          {
+             if (ecore_thread_check(thread)) return;
+             usleep(100 * 1000);
+          }
+
+        if (!_enm_read_sysfs_counter(w->iface, "rx_bytes", &rx) ||
+            !_enm_read_sysfs_counter(w->iface, "tx_bytes", &tx))
+          continue;
+
+        eina_lock_take(&w->lock);
+        w->rx = rx;
+        w->tx = tx;
+        w->have_sample = EINA_TRUE;
+        eina_lock_release(&w->lock);
+
+        /* msg_data is the worker itself — feedback carries no allocation */
+        ecore_thread_feedback(thread, w);
+     }
+}
+
+static void
+_enm_traffic_worker_notify(void *data, Ecore_Thread *thread EINA_UNUSED,
+                           void *msg_data EINA_UNUSED)
+{
+   Enm_Traffic_Worker *w = data;
+   E_NM_Module_Context *ctxt = w->ctxt;
+   unsigned long long rx, tx;
    int rx_level, tx_level;
+   Eina_Bool have;
 
-   if (!ctxt->nm) return ECORE_CALLBACK_RENEW;
-   if (ctxt->nm->state < NM_STATE_CONNECTED_LOCAL) return ECORE_CALLBACK_RENEW;
+   eina_lock_take(&w->lock);
+   have = w->have_sample;
+   rx = w->rx;
+   tx = w->tx;
+   w->have_sample = EINA_FALSE;
+   eina_lock_release(&w->lock);
 
-   iface = _enm_active_interface(ctxt->nm);
-   if (!iface) return ECORE_CALLBACK_RENEW;
+   if (!have) return;
 
-   if (!_enm_read_sysfs_counter(iface, "rx_bytes", &rx) ||
-       !_enm_read_sysfs_counter(iface, "tx_bytes", &tx))
-     return ECORE_CALLBACK_RENEW;
-
-   /* First poll: seed the counters */
+   /* First sample seeds the counters — no rate yet */
    if (ctxt->prev_rx == 0 && ctxt->prev_tx == 0)
      {
         ctxt->prev_rx = rx;
         ctxt->prev_tx = tx;
-        return ECORE_CALLBACK_RENEW;
+        return;
      }
 
-   /* Poll interval is 0.5s, so bytes_per_sec = delta * 2 */
+   /* Poll interval ~0.5s, so bytes_per_sec = delta * 2 */
    rx_level = _enm_traffic_level((rx - ctxt->prev_rx) * 2, ctxt->rx_level);
    tx_level = _enm_traffic_level((tx - ctxt->prev_tx) * 2, ctxt->tx_level);
    ctxt->prev_rx = rx;
@@ -1248,29 +1314,83 @@ _enm_traffic_poll_cb(void *data)
         ctxt->rx_level = rx_level;
         ctxt->tx_level = tx_level;
      }
+}
 
-   return ECORE_CALLBACK_RENEW;
+static void
+_enm_traffic_worker_done(void *data, Ecore_Thread *thread)
+{
+   Enm_Traffic_Worker *w = data;
+
+   /* Only clear ctxt->traffic_thread if it still points at us.  A stop()
+    * immediately followed by start() will have NULL'd and then replaced the
+    * pointer before this done cb runs for the cancelled predecessor. */
+   if (w->ctxt->traffic_thread == thread) w->ctxt->traffic_thread = NULL;
+   eina_lock_free(&w->lock);
+   free(w->iface);
+   free(w);
+}
+
+static void
+_enm_traffic_worker_cancel(void *data, Ecore_Thread *thread)
+{
+   _enm_traffic_worker_done(data, thread);
 }
 
 static void
 _enm_traffic_timer_start(E_NM_Module_Context *ctxt)
 {
-   if (ctxt->traffic_timer) return;
+   const char *iface;
+   Enm_Traffic_Worker *w;
+
    if (ctxt->powersave_high) return;
    if (!ctxt->nm) return;
    if (ctxt->nm->state < NM_STATE_CONNECTED_LOCAL) return;
+
+   iface = _enm_active_interface(ctxt->nm);
+   if (!iface) return;
+
+   /* If a worker is already running for the same iface, nothing to do */
+   if (ctxt->traffic_thread && ctxt->traffic_iface &&
+       !strcmp(ctxt->traffic_iface, iface))
+     return;
+
+   /* Iface changed (or first start): tear down any previous worker */
+   if (ctxt->traffic_thread)
+     {
+        ecore_thread_cancel(ctxt->traffic_thread);
+        ctxt->traffic_thread = NULL;
+     }
+   free(ctxt->traffic_iface);
+   ctxt->traffic_iface = strdup(iface);
 
    ctxt->prev_rx = 0;
    ctxt->prev_tx = 0;
    ctxt->rx_level = 0;
    ctxt->tx_level = 0;
-   ctxt->traffic_timer = ecore_timer_add(0.5, _enm_traffic_poll_cb, ctxt);
+
+   w = E_NEW(Enm_Traffic_Worker, 1);
+   w->ctxt  = ctxt;
+   w->iface = strdup(iface);
+   eina_lock_new(&w->lock);
+   ctxt->traffic_thread =
+      ecore_thread_feedback_run(_enm_traffic_worker_heavy,
+                                _enm_traffic_worker_notify,
+                                _enm_traffic_worker_done,
+                                _enm_traffic_worker_cancel,
+                                w, EINA_TRUE);
 }
 
 static void
 _enm_traffic_timer_stop(E_NM_Module_Context *ctxt)
 {
-   E_FREE_FUNC(ctxt->traffic_timer, ecore_timer_del);
+   if (ctxt->traffic_thread)
+     {
+        ecore_thread_cancel(ctxt->traffic_thread);
+        ctxt->traffic_thread = NULL;
+     }
+   free(ctxt->traffic_iface);
+   ctxt->traffic_iface = NULL;
+
    if (ctxt->rx_level || ctxt->tx_level)
      {
         _enm_traffic_signal_emit(ctxt, 0, 0);
@@ -1495,6 +1615,9 @@ e_modapi_init(E_Module *m)
    c = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
    if (!c) goto error_dbus_bus_get;
 
+   e_nm_module_callbacks_set(&_enm_mod_cbs);
+   enm_agent_ui_register();
+
    if (!e_nm_system_init(c)) goto error_nm_system_init;
 
    ctxt->conf_dialog = NULL;
@@ -1544,13 +1667,15 @@ e_modapi_shutdown(E_Module *m)
    if (!ctxt) return 0;
 
    e_nm_system_shutdown();
+   e_nm_module_callbacks_set(NULL);
+   e_nm_agent_callbacks_set(NULL, NULL);
 
    _enm_instances_free(ctxt);
    _enm_configure_registry_unregister();
    e_gadcon_provider_unregister(&_gc_class);
 
    E_FREE_FUNC(ctxt->popup_update_timer, ecore_timer_del);
-   E_FREE_FUNC(ctxt->traffic_timer, ecore_timer_del);
+   _enm_traffic_timer_stop(ctxt);
    E_FREE_FUNC(ctxt->powersave_handler, ecore_event_handler_del);
    E_FREE(ctxt);
    networkmanager_mod = NULL;

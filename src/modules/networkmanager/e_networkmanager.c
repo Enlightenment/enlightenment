@@ -40,6 +40,40 @@ E_API int E_NM_EVENT_MANAGER_IN;
 E_API int E_NM_EVENT_MANAGER_OUT;
 
 /* -------------------------------------------------------------------------- */
+/* Module callback indirection                                                 */
+/*                                                                             */
+/* The data layer never calls the UI layer directly; it invokes the callbacks */
+/* registered by the module at init time.  This keeps e_networkmanager.c free */
+/* of cross-file symbol references to e_mod_main.c.                           */
+/* -------------------------------------------------------------------------- */
+
+static const E_NM_Mod_Callbacks *_mod_cbs = NULL;
+
+void
+e_nm_module_callbacks_set(const E_NM_Mod_Callbacks *cbs)
+{
+   _mod_cbs = cbs;
+}
+
+static inline void
+_notify_aps_changed(struct NM_Manager *nm)
+{
+   if (_mod_cbs && _mod_cbs->aps_changed) _mod_cbs->aps_changed(nm);
+}
+
+static inline void
+_notify_manager_update(struct NM_Manager *nm)
+{
+   if (_mod_cbs && _mod_cbs->manager_update) _mod_cbs->manager_update(nm);
+}
+
+static inline void
+_notify_manager_inout(struct NM_Manager *nm)
+{
+   if (_mod_cbs && _mod_cbs->manager_inout) _mod_cbs->manager_inout(nm);
+}
+
+/* -------------------------------------------------------------------------- */
 /* Utility                                                                     */
 /* -------------------------------------------------------------------------- */
 
@@ -243,7 +277,7 @@ _ap_prop_changed(void *data, const Eldbus_Message *msg)
           }
      }
 
-   enm_mod_manager_update(nm_manager);
+   _notify_manager_update(nm_manager);
 }
 
 static struct NM_Access_Point *
@@ -320,7 +354,7 @@ _device_get_aps_cb(void *data, const Eldbus_Message *msg,
         DBG("Added AP %s to device %s", ap_path, dev->path);
      }
 
-   enm_mod_aps_changed(nm_manager);
+   _notify_aps_changed(nm_manager);
 }
 
 static void
@@ -349,7 +383,7 @@ _device_ap_added(void *data, const Eldbus_Message *msg)
    if (!ap) return;
    dev->access_points = eina_inlist_append(dev->access_points,
                                            EINA_INLIST_GET(ap));
-   enm_mod_aps_changed(nm_manager);
+   _notify_aps_changed(nm_manager);
 }
 
 static void
@@ -375,7 +409,7 @@ _device_ap_removed(void *data, const Eldbus_Message *msg)
           break;
        }
    eina_stringshare_del(shared);
-   enm_mod_aps_changed(nm_manager);
+   _notify_aps_changed(nm_manager);
 }
 
 static void
@@ -401,7 +435,7 @@ _device_prop_changed(void *data, const Eldbus_Message *msg)
                {
                   dev->state = state;
                   DBG("Device %s state -> %u", dev->path, state);
-                  enm_mod_manager_update(nm_manager);
+                  _notify_manager_update(nm_manager);
                }
           }
      }
@@ -555,7 +589,7 @@ _device_get_props_cb(void *data, const Eldbus_Message *msg,
         if (dev->ip4_path)
           _manager_watch_ip4(nm_manager, dev->ip4_path);
 
-        enm_mod_manager_update(nm_manager);
+        _notify_manager_update(nm_manager);
         /* Saved connections are WiFi-specific — skip for Ethernet */
      }
 }
@@ -643,7 +677,7 @@ _device_wifi_props_cb(void *data, const Eldbus_Message *msg,
    if (dev->ip4_path)
      _manager_watch_ip4(nm_manager, dev->ip4_path);
 
-   enm_mod_manager_update(nm_manager);
+   _notify_manager_update(nm_manager);
    enm_saved_connections_get(nm_manager);
 }
 
@@ -816,7 +850,7 @@ _ip4_prop_changed(void *data, const Eldbus_Message *msg)
         if (!strcmp(key, "AddressData"))
           {
              _ip4_parse_address_data(nm, var);
-             enm_mod_manager_update(nm);
+             _notify_manager_update(nm);
           }
      }
 }
@@ -853,7 +887,7 @@ _ip4config_get_props_cb(void *data, const Eldbus_Message *msg,
      }
 
    /* Proxy stays alive — updates arrive via _ip4_prop_changed signal */
-   enm_mod_manager_update(nm);
+   _notify_manager_update(nm);
 }
 
 static void
@@ -956,8 +990,8 @@ _active_conn_prop_changed(void *data, const Eldbus_Message *msg)
                   eina_stringshare_replace(&nm->active_ap_path,
                                            (ap_path && strcmp(ap_path, "/"))
                                            ? ap_path : NULL);
-                  enm_mod_manager_update(nm);
-                  enm_mod_aps_changed(nm);
+                  _notify_manager_update(nm);
+                  _notify_aps_changed(nm);
                }
           }
      }
@@ -1085,8 +1119,8 @@ _active_conn_probe_cb(void *data, const Eldbus_Message *msg,
 
    free(probe); /* fields already transferred or NULL */
 
-   enm_mod_manager_update(nm);
-   enm_mod_aps_changed(nm);
+   _notify_manager_update(nm);
+   _notify_aps_changed(nm);
 }
 
 static void
@@ -1152,7 +1186,7 @@ _manager_prop_changed(void *data, const Eldbus_Message *msg)
                   nm->state = (enum NM_State)state;
                   DBG("NM state changed: %u (%s)", state,
                       enm_state_to_str(nm->state));
-                  enm_mod_manager_update(nm);
+                  _notify_manager_update(nm);
                }
           }
         else if (!strcmp(key, "WirelessEnabled"))
@@ -1161,7 +1195,7 @@ _manager_prop_changed(void *data, const Eldbus_Message *msg)
              if (eldbus_message_iter_arguments_get(var, "b", &enabled))
                {
                   nm->wireless_enabled = enabled;
-                  enm_mod_manager_update(nm);
+                  _notify_manager_update(nm);
                }
           }
         else if (!strcmp(key, "ActiveConnections"))
@@ -1198,7 +1232,7 @@ _manager_prop_changed(void *data, const Eldbus_Message *msg)
                   free(nm->ip_address);
                   nm->ip_address = NULL;
                   nm->active_conn_type = NM_DEVICE_TYPE_UNKNOWN;
-                  enm_mod_manager_update(nm);
+                  _notify_manager_update(nm);
                }
           }
      }
@@ -1273,8 +1307,8 @@ _manager_get_props_cb(void *data, const Eldbus_Message *msg,
 
    /* Always update the UI now so that disconnected/VPN-only/unassociated
     * states are shown immediately.  Device callbacks will call
-    * enm_mod_manager_update again once they have full type and AP info. */
-   enm_mod_manager_update(nm);
+    * _notify_manager_update again once they have full type and AP info. */
+   _notify_manager_update(nm);
 }
 
 static void
@@ -1456,7 +1490,7 @@ done:
    if (ctx->nm->saved_conn_pending > 0)
      ctx->nm->saved_conn_pending--;
    if (ctx->nm->saved_conn_pending == 0)
-     enm_mod_aps_changed(ctx->nm);
+     _notify_aps_changed(ctx->nm);
    free(ctx);
 }
 
@@ -1528,7 +1562,7 @@ _saved_conn_list_cb(void *data, const Eldbus_Message *msg,
 
    /* If no connections found, trigger refresh immediately */
    if (nm->saved_conn_pending == 0)
-     enm_mod_aps_changed(nm);
+     _notify_aps_changed(nm);
 }
 
 static void
@@ -1996,7 +2030,7 @@ _e_nm_system_name_owner_exit(Eina_Bool shutdown)
 {
    if (!nm_manager) return;
 
-   enm_mod_manager_inout(NULL);
+   _notify_manager_inout(NULL);
    _manager_free(nm_manager);
    nm_manager = NULL;
 
@@ -2034,7 +2068,7 @@ _e_nm_system_name_owner_enter(const char *owner EINA_UNUSED)
      }
    nm_manager = _manager_new();
    ecore_event_add(E_NM_EVENT_MANAGER_IN, NULL, NULL, NULL);
-   enm_mod_manager_inout(nm_manager);
+   _notify_manager_inout(nm_manager);
 }
 
 static void
@@ -2067,6 +2101,318 @@ _e_nm_sys_resume_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EI
    return ECORE_CALLBACK_PASS_ON;
 }
 
+/* ========================================================================== */
+/* NetworkManager SecretAgent — D-Bus server side                             */
+/* ==========================================================================
+ *
+ * The data layer owns the NM SecretAgent D-Bus contract (interface register,
+ * method dispatch, reply construction).  The UI layer (agent.c) registers a
+ * pair of callbacks via e_nm_agent_callbacks_set() and replies to requests
+ * via e_nm_agent_reply_secrets() / e_nm_agent_reply_cancel().
+ */
+
+#define NM_AGENT_IFACE    "org.freedesktop.NetworkManager.SecretAgent"
+#define NM_AGENT_MGR_PATH "/org/freedesktop/NetworkManager/AgentManager"
+#define NM_AGENT_ID       "org.enlightenment.NetworkManager"
+#define AGENT_DATA_KEY    "agent"
+
+struct _E_NM_Agent
+{
+   Eldbus_Service_Interface *iface;
+   Eldbus_Connection        *eldbus_conn;
+   E_NM_Agent_Request       *pending;   /* at most one outstanding request */
+};
+
+struct _E_NM_Agent_Request
+{
+   E_NM_Agent     *agent;
+   Eldbus_Message *msg;                 /* ref held while request is live */
+};
+
+static E_NM_Agent_Callbacks _agent_cbs;
+static void                *_agent_cb_data;
+
+void
+e_nm_agent_callbacks_set(const E_NM_Agent_Callbacks *cbs, void *data)
+{
+   if (cbs) _agent_cbs = *cbs;
+   else memset(&_agent_cbs, 0, sizeof(_agent_cbs));
+   _agent_cb_data = data;
+}
+
+static void
+_agent_request_free(E_NM_Agent_Request *req)
+{
+   if (!req) return;
+   if (req->agent && req->agent->pending == req)
+     req->agent->pending = NULL;
+   if (req->msg) eldbus_message_unref(req->msg);
+   free(req);
+}
+
+static void
+_agent_dict_append_str(Eldbus_Message_Iter *array, const char *key,
+                       const char *val)
+{
+   Eldbus_Message_Iter *dict, *variant;
+
+   eldbus_message_iter_arguments_append(array, "{sv}", &dict);
+   eldbus_message_iter_basic_append(dict, 's', key);
+   variant = eldbus_message_iter_container_new(dict, 'v', "s");
+   eldbus_message_iter_basic_append(variant, 's', val ?: "");
+   eldbus_message_iter_container_close(dict, variant);
+   eldbus_message_iter_container_close(array, dict);
+}
+
+void
+e_nm_agent_reply_secrets(E_NM_Agent_Request *req, const char *psk)
+{
+   Eldbus_Message_Iter *iter, *outer, *inner_dict, *inner_array;
+   Eldbus_Message *reply;
+
+   if (!req) return;
+   if (!req->msg) { _agent_request_free(req); return; }
+
+   /*
+    * GetSecrets reply format: a{sa{sv}}
+    *   { "802-11-wireless-security": { "psk": <value> } }
+    */
+   reply = eldbus_message_method_return_new(req->msg);
+   iter  = eldbus_message_iter_get(reply);
+   eldbus_message_iter_arguments_append(iter, "a{sa{sv}}", &outer);
+   eldbus_message_iter_arguments_append(outer, "{sa{sv}}", &inner_dict);
+   eldbus_message_iter_basic_append(inner_dict, 's',
+                                    "802-11-wireless-security");
+   eldbus_message_iter_arguments_append(inner_dict, "a{sv}", &inner_array);
+   _agent_dict_append_str(inner_array, "psk", psk);
+   eldbus_message_iter_container_close(inner_dict, inner_array);
+   eldbus_message_iter_container_close(outer, inner_dict);
+   eldbus_message_iter_container_close(iter, outer);
+
+   eldbus_connection_send(req->agent->eldbus_conn, reply, NULL, NULL, -1);
+
+   _agent_request_free(req);
+}
+
+void
+e_nm_agent_reply_cancel(E_NM_Agent_Request *req)
+{
+   Eldbus_Message *reply;
+
+   if (!req) return;
+   if (!req->msg) { _agent_request_free(req); return; }
+
+   reply = eldbus_message_error_new(req->msg,
+            "org.freedesktop.NetworkManager.SecretAgent.UserCanceled",
+            "User canceled password dialog");
+   eldbus_connection_send(req->agent->eldbus_conn, reply, NULL, NULL, -1);
+
+   _agent_request_free(req);
+}
+
+static void
+_agent_ssid_extract(Eldbus_Message_Iter *conn_props, char *ssid, size_t max)
+{
+   Eldbus_Message_Iter *conn_dict;
+
+   while (eldbus_message_iter_get_and_next(conn_props, 'e', &conn_dict))
+     {
+        Eldbus_Message_Iter *inner, *entry, *evar, *bytes;
+        const char *sect, *ekey;
+        unsigned char b;
+        size_t pos = 0;
+
+        if (!eldbus_message_iter_arguments_get(conn_dict, "sa{sv}",
+                                               &sect, &inner))
+          continue;
+        if (strcmp(sect, "802-11-wireless")) continue;
+
+        while (eldbus_message_iter_get_and_next(inner, 'e', &entry))
+          {
+             if (!eldbus_message_iter_arguments_get(entry, "sv",
+                                                    &ekey, &evar))
+               continue;
+             if (strcmp(ekey, "ssid")) continue;
+             if (!eldbus_message_iter_arguments_get(evar, "ay", &bytes))
+               continue;
+             while (eldbus_message_iter_get_and_next(bytes, 'y', &b) &&
+                    pos < max - 1)
+               ssid[pos++] = (char)b;
+             ssid[pos] = '\0';
+             return;
+          }
+     }
+}
+
+static Eldbus_Message *
+_agent_get_secrets(const Eldbus_Service_Interface *iface,
+                   const Eldbus_Message *msg)
+{
+   E_NM_Agent *a;
+   E_NM_Agent_Request *req;
+   Eldbus_Message_Iter *conn_props, *hints;
+   const char *conn_path, *setting_name;
+   uint32_t flags;
+   char ssid[64] = "";
+
+   a = eldbus_service_object_data_get(iface, AGENT_DATA_KEY);
+
+   if (!eldbus_message_arguments_get(msg, "a{sa{sv}}osasu",
+                                     &conn_props, &conn_path,
+                                     &setting_name, &hints, &flags))
+     {
+        WRN("GetSecrets: cannot parse arguments");
+        return eldbus_message_method_return_new(msg);
+     }
+
+   DBG("GetSecrets for %s setting=%s flags=%u",
+       conn_path, setting_name, flags);
+
+   _agent_ssid_extract(conn_props, ssid, sizeof(ssid));
+
+   /* Drop any previous outstanding request — one dialog at a time */
+   if (a->pending) _agent_request_free(a->pending);
+
+   req = E_NEW(E_NM_Agent_Request, 1);
+   req->agent = a;
+   req->msg   = eldbus_message_ref((Eldbus_Message *)msg);
+   a->pending = req;
+
+   if (_agent_cbs.request)
+     _agent_cbs.request(_agent_cb_data, req, ssid[0] ? ssid : NULL);
+   else
+     {
+        WRN("No SecretAgent UI callback registered; cancelling request");
+        e_nm_agent_reply_cancel(req);
+     }
+
+   return NULL;  /* reply sent asynchronously */
+}
+
+static Eldbus_Message *
+_agent_cancel_get_secrets(const Eldbus_Service_Interface *iface,
+                          const Eldbus_Message *msg)
+{
+   E_NM_Agent *a;
+
+   DBG("CancelGetSecrets");
+
+   a = eldbus_service_object_data_get(iface, AGENT_DATA_KEY);
+   if (a && a->pending)
+     {
+        E_NM_Agent_Request *req = a->pending;
+        /* NM is withdrawing — UI should dismiss the dialog silently; no
+         * reply should be sent, NM is no longer waiting for one. */
+        if (_agent_cbs.cancel)
+          _agent_cbs.cancel(_agent_cb_data, req);
+        _agent_request_free(req);
+     }
+
+   return eldbus_message_method_return_new(msg);
+}
+
+static Eldbus_Message *
+_agent_save_secrets(const Eldbus_Service_Interface *iface EINA_UNUSED,
+                    const Eldbus_Message *msg)
+{
+   return eldbus_message_method_return_new(msg);
+}
+
+static Eldbus_Message *
+_agent_delete_secrets(const Eldbus_Service_Interface *iface EINA_UNUSED,
+                      const Eldbus_Message *msg)
+{
+   return eldbus_message_method_return_new(msg);
+}
+
+static const Eldbus_Method _agent_methods[] = {
+   {
+    "GetSecrets",
+    ELDBUS_ARGS({"a{sa{sv}}", "connection"}, {"o", "connection_path"},
+                {"s", "setting_name"}, {"as", "hints"}, {"u", "flags"}),
+    ELDBUS_ARGS({"a{sa{sv}}", "secrets"}),
+    _agent_get_secrets, 0
+   },
+   {
+    "CancelGetSecrets",
+    ELDBUS_ARGS({"o", "connection_path"}, {"s", "setting_name"}),
+    NULL,
+    _agent_cancel_get_secrets, 0
+   },
+   {
+    "SaveSecrets",
+    ELDBUS_ARGS({"a{sa{sv}}", "connection"}, {"o", "connection_path"}),
+    NULL,
+    _agent_save_secrets, 0
+   },
+   {
+    "DeleteSecrets",
+    ELDBUS_ARGS({"a{sa{sv}}", "connection"}, {"o", "connection_path"}),
+    NULL,
+    _agent_delete_secrets, 0
+   },
+   { NULL, NULL, NULL, NULL, 0 }
+};
+
+static const Eldbus_Service_Interface_Desc _agent_desc = {
+   NM_AGENT_IFACE, _agent_methods, NULL, NULL, NULL, NULL
+};
+
+static void
+_agent_register_cb(void *data EINA_UNUSED, const Eldbus_Message *msg,
+                   Eldbus_Pending *pending EINA_UNUSED)
+{
+   const char *name, *text;
+
+   if (eldbus_message_error_get(msg, &name, &text))
+     WRN("SecretAgent Register failed: %s: %s", name, text);
+   else
+     INF("SecretAgent registered with NetworkManager");
+}
+
+static E_NM_Agent *
+_e_nm_agent_new(Eldbus_Connection *eldbus_conn)
+{
+   Eldbus_Service_Interface *iface;
+   Eldbus_Object *obj;
+   Eldbus_Proxy  *proxy;
+   E_NM_Agent    *a;
+
+   a = E_NEW(E_NM_Agent, 1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(a, NULL);
+
+   iface = eldbus_service_interface_register(eldbus_conn, AGENT_PATH,
+                                              &_agent_desc);
+   if (!iface)
+     {
+        ERR("Failed to register SecretAgent D-Bus interface");
+        free(a);
+        return NULL;
+     }
+
+   eldbus_service_object_data_set(iface, AGENT_DATA_KEY, a);
+   a->iface       = iface;
+   a->eldbus_conn = eldbus_conn;
+
+   obj   = eldbus_object_get(a->eldbus_conn, NM_BUS_NAME, NM_AGENT_MGR_PATH);
+   proxy = eldbus_proxy_get(obj, NM_IFACE_AGENT_MGR);
+   eldbus_proxy_call(proxy, "Register", _agent_register_cb, NULL, -1,
+                     "s", NM_AGENT_ID);
+   eldbus_proxy_unref(proxy);
+   eldbus_object_unref(obj);
+
+   return a;
+}
+
+static void
+_e_nm_agent_del(E_NM_Agent *a)
+{
+   if (!a) return;
+   if (a->pending) _agent_request_free(a->pending);
+   if (a->iface) eldbus_service_object_unregister(a->iface);
+   free(a);
+}
+
 /* -------------------------------------------------------------------------- */
 /* Public lifecycle                                                            */
 /* -------------------------------------------------------------------------- */
@@ -2084,7 +2430,7 @@ e_nm_system_init(Eldbus_Connection *eldbus_conn)
    eldbus_name_owner_changed_callback_add(conn, NM_BUS_NAME,
                                           _e_nm_system_name_owner_changed,
                                           NULL, EINA_TRUE);
-   agent = enm_agent_new(eldbus_conn);
+   agent = _e_nm_agent_new(eldbus_conn);
 
    suspend_handler = ecore_event_handler_add(E_EVENT_SYS_SUSPEND,
                                              _e_nm_sys_suspend_cb, NULL);
@@ -2119,7 +2465,7 @@ e_nm_system_shutdown(void)
                                           NULL);
    _e_nm_system_name_owner_exit(EINA_TRUE);
 
-   if (agent) enm_agent_del(agent);
+   if (agent) _e_nm_agent_del(agent);
    if (conn) eldbus_connection_unref(conn);
 
    agent = NULL;

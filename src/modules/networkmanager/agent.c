@@ -10,15 +10,17 @@
 #include "e_networkmanager.h"
 #include "e_mod_main.h"
 
-#define NM_AGENT_IFACE    "org.freedesktop.NetworkManager.SecretAgent"
-#define NM_AGENT_MGR_IFACE "org.freedesktop.NetworkManager.AgentManager"
-#define NM_AGENT_MGR_PATH  "/org/freedesktop/NetworkManager/AgentManager"
-#define NM_AGENT_ID       "org.enlightenment.NetworkManager"
-#define AGENT_KEY         "agent"
+/*
+ * SecretAgent UI layer.
+ *
+ * All NM D-Bus SecretAgent handling lives in e_networkmanager.c.  This file
+ * is the user-facing dialog that pops when NM asks for a WiFi password, and
+ * nothing more.  The bridge between the two layers is the pair of callbacks
+ * registered via e_nm_agent_callbacks_set() from enm_agent_ui_register().
+ */
 
-/* Internal input struct for one dialog field */
+/* One input field rendered inside the password page */
 typedef struct _E_NM_Agent_Input E_NM_Agent_Input;
-
 struct _E_NM_Agent_Input
 {
    char *key;
@@ -26,94 +28,63 @@ struct _E_NM_Agent_Input
    int   show_password;
 };
 
-struct _E_NM_Agent
+/* State for one live dialog.  Owned by the dialog; freed in the del cb. */
+typedef struct _E_NM_Agent_Dialog E_NM_Agent_Dialog;
+struct _E_NM_Agent_Dialog
 {
-   E_Dialog                 *dialog;
-   Eldbus_Service_Interface *iface;
-   Eldbus_Message           *msg;
-   Eldbus_Connection        *conn;
-   Eina_Bool                 canceled E_BITFIELD;
+   E_Dialog           *dialog;
+   E_NM_Agent_Request *req;  /* borrowed pointer — NULL after reply/cancel */
 };
 
-/* -------------------------------------------------------------------------- */
-/* D-Bus reply helpers                                                         */
-/* -------------------------------------------------------------------------- */
-
-static void
-_dict_append_basic(Eldbus_Message_Iter *array, const char *key, void *val)
-{
-   Eldbus_Message_Iter *dict, *variant;
-
-   eldbus_message_iter_arguments_append(array, "{sv}", &dict);
-   eldbus_message_iter_basic_append(dict, 's', key);
-   variant = eldbus_message_iter_container_new(dict, 'v', "s");
-   eldbus_message_iter_basic_append(variant, 's', val ?: "");
-   eldbus_message_iter_container_close(dict, variant);
-   eldbus_message_iter_container_close(array, dict);
-}
+static E_NM_Agent_Dialog *_current_dialog = NULL;
 
 /* -------------------------------------------------------------------------- */
 /* Dialog callbacks                                                            */
 /* -------------------------------------------------------------------------- */
 
+static const char *
+_dialog_first_psk(E_Dialog *dialog)
+{
+   Evas_Object *toolbook, *list;
+   Eina_List *input_list;
+   E_NM_Agent_Input *input;
+
+   toolbook = dialog->content_object;
+   list = evas_object_data_get(toolbook, "psk");
+   if (!list) list = evas_object_data_get(toolbook, "password");
+   if (!list) return NULL;
+
+   input_list = evas_object_data_get(list, "input_list");
+   if (!input_list) return NULL;
+   input = eina_list_data_get(input_list);
+   return input ? input->value : NULL;
+}
+
 static void
 _dialog_ok_cb(void *data, E_Dialog *dialog)
 {
-   E_NM_Agent *agent = data;
-   E_NM_Agent_Input *input;
-   Evas_Object *toolbook, *list;
-   Eldbus_Message_Iter *iter, *outer_array, *inner_dict, *inner_array;
-   Eina_List *input_list, *l;
-   Eldbus_Message *reply;
+   E_NM_Agent_Dialog *ad = data;
+   const char *psk;
 
-   toolbook = agent->dialog->content_object;
-
-   list = evas_object_data_get(toolbook, "psk");
-   if (!list)
+   psk = _dialog_first_psk(dialog);
+   if (ad->req)
      {
-        list = evas_object_data_get(toolbook, "password");
-        if (!list)
-          {
-             ERR("Couldn't get user input.");
-             e_object_del(E_OBJECT(dialog));
-             return;
-          }
+        e_nm_agent_reply_secrets(ad->req, psk);
+        ad->req = NULL;
      }
-
-   agent->canceled = EINA_FALSE;
-   input_list = evas_object_data_get(list, "input_list");
-
-   /*
-    * GetSecrets reply format:
-    *   a{sa{sv}}
-    *   { "802-11-wireless-security": { "psk": <value> } }
-    */
-   reply = eldbus_message_method_return_new(agent->msg);
-   iter  = eldbus_message_iter_get(reply);
-   eldbus_message_iter_arguments_append(iter, "a{sa{sv}}", &outer_array);
-
-   eldbus_message_iter_arguments_append(outer_array, "{sa{sv}}", &inner_dict);
-   eldbus_message_iter_basic_append(inner_dict, 's',
-                                    "802-11-wireless-security");
-   eldbus_message_iter_arguments_append(inner_dict, "a{sv}", &inner_array);
-
-   EINA_LIST_FOREACH(input_list, l, input)
-     _dict_append_basic(inner_array, input->key, input->value);
-
-   eldbus_message_iter_container_close(inner_dict, inner_array);
-   eldbus_message_iter_container_close(outer_array, inner_dict);
-   eldbus_message_iter_container_close(iter, outer_array);
-
-   eldbus_connection_send(agent->conn, reply, NULL, NULL, -1);
-
    e_object_del(E_OBJECT(dialog));
 }
 
 static void
 _dialog_cancel_cb(void *data, E_Dialog *dialog)
 {
-   E_NM_Agent *agent = data;
-   agent->canceled = EINA_TRUE;
+   E_NM_Agent_Dialog *ad = data;
+
+   if (ad->req)
+     {
+        e_nm_agent_reply_cancel(ad->req);
+        ad->req = NULL;
+     }
    e_object_del(E_OBJECT(dialog));
 }
 
@@ -122,38 +93,29 @@ _dialog_key_down_cb(void *data, Evas *e EINA_UNUSED,
                     Evas_Object *o EINA_UNUSED, void *event)
 {
    Evas_Event_Key_Down *ev = event;
-   E_NM_Agent *agent = data;
+   E_NM_Agent_Dialog *ad = data;
 
    if (!strcmp(ev->key, "Return"))
-     _dialog_ok_cb(agent, agent->dialog);
+     _dialog_ok_cb(ad, ad->dialog);
    else if (!strcmp(ev->key, "Escape"))
-     _dialog_cancel_cb(agent, agent->dialog);
-}
-
-static void
-_dialog_send_cancel(E_NM_Agent *agent)
-{
-   Eldbus_Message *reply;
-
-   reply = eldbus_message_error_new(agent->msg,
-                                    "org.freedesktop.NetworkManager."
-                                    "SecretAgent.UserCanceled",
-                                    "User canceled password dialog");
-   eldbus_connection_send(agent->conn, reply, NULL, NULL, -1);
+     _dialog_cancel_cb(ad, ad->dialog);
 }
 
 static void
 _dialog_del_cb(void *data)
 {
    E_Dialog *dialog = data;
-   E_NM_Agent *agent = e_object_data_get(E_OBJECT(dialog));
+   E_NM_Agent_Dialog *ad = e_object_data_get(E_OBJECT(dialog));
 
-   if (agent->canceled)
-     _dialog_send_cancel(agent);
-
-   eldbus_message_unref(agent->msg);
-   agent->msg    = NULL;
-   agent->dialog = NULL;
+   /* If the dialog was closed via the WM (not via OK/Cancel buttons) the
+    * request is still live — treat as user cancel. */
+   if (ad->req)
+     {
+        e_nm_agent_reply_cancel(ad->req);
+        ad->req = NULL;
+     }
+   if (_current_dialog == ad) _current_dialog = NULL;
+   free(ad);
 }
 
 static void
@@ -201,8 +163,8 @@ _dialog_psk_add(E_Dialog *dialog, const char *ssid)
    evas     = evas_object_evas_get(dialog->win);
    toolbook = dialog->content_object;
 
-   input       = E_NEW(E_NM_Agent_Input, 1);
-   input->key  = strdup("psk");
+   input      = E_NEW(E_NM_Agent_Input, 1);
+   input->key = strdup("psk");
    entry = e_widget_entry_add(dialog->win, &(input->value),
                               NULL, NULL, NULL);
    evas_object_show(entry);
@@ -244,9 +206,10 @@ _dialog_psk_add(E_Dialog *dialog, const char *ssid)
    e_util_win_auto_resize_fill(dialog->win);
 }
 
-static E_Dialog *
-_dialog_new(E_NM_Agent *agent, const char *ssid)
+static E_NM_Agent_Dialog *
+_dialog_new(E_NM_Agent_Request *req, const char *ssid)
 {
+   E_NM_Agent_Dialog *ad;
    Evas_Object *toolbook;
    E_Dialog    *dialog;
    int          mw, mh;
@@ -254,13 +217,16 @@ _dialog_new(E_NM_Agent *agent, const char *ssid)
    dialog = e_dialog_new(NULL, "E", "nm_secret_agent");
    if (!dialog) return NULL;
 
+   ad = E_NEW(E_NM_Agent_Dialog, 1);
+   ad->dialog = dialog;
+   ad->req    = req;
+
    e_dialog_resizable_set(dialog, 1);
    e_dialog_title_set(dialog, _("WiFi Password Required"));
    e_dialog_border_icon_set(dialog, "dialog-password");
 
-   e_dialog_button_add(dialog, _("Connect"), NULL, _dialog_ok_cb, agent);
-   e_dialog_button_add(dialog, _("Cancel"),  NULL, _dialog_cancel_cb, agent);
-   agent->canceled = EINA_TRUE; /* closing window acts as cancel */
+   e_dialog_button_add(dialog, _("Connect"), NULL, _dialog_ok_cb, ad);
+   e_dialog_button_add(dialog, _("Cancel"),  NULL, _dialog_cancel_cb, ad);
 
    toolbook = e_widget_toolbook_add(
                 evas_object_evas_get(dialog->win),
@@ -274,263 +240,67 @@ _dialog_new(E_NM_Agent *agent, const char *ssid)
    e_dialog_show(dialog);
 
    evas_object_event_callback_add(dialog->bg_object, EVAS_CALLBACK_KEY_DOWN,
-                                  _dialog_key_down_cb, agent);
+                                  _dialog_key_down_cb, ad);
    e_object_del_attach_func_set(E_OBJECT(dialog), _dialog_del_cb);
-   e_object_data_set(E_OBJECT(dialog), agent);
+   e_object_data_set(E_OBJECT(dialog), ad);
    e_dialog_button_focus_num(dialog, 0);
    elm_win_center(dialog->win, 1, 1);
 
    _dialog_psk_add(dialog, ssid);
 
-   return dialog;
+   return ad;
 }
 
 /* -------------------------------------------------------------------------- */
-/* SecretAgent D-Bus method handlers                                           */
-/* -------------------------------------------------------------------------- */
-
-static Eldbus_Message *
-_agent_get_secrets(const Eldbus_Service_Interface *iface,
-                   const Eldbus_Message *msg)
-{
-   E_NM_Agent *agent;
-   Eldbus_Message_Iter *conn_props, *conn_dict, *hints;
-   const char *conn_path, *setting_name;
-   uint32_t flags;
-   char ssid[64] = "";
-
-   agent = eldbus_service_object_data_get(iface, AGENT_KEY);
-
-   /*
-    * GetSecrets(a{sa{sv}} connection, o connection_path,
-    *            s setting_name, as hints, u flags)
-    */
-   if (!eldbus_message_arguments_get(msg, "a{sa{sv}}osasu",
-                                     &conn_props, &conn_path,
-                                     &setting_name, &hints, &flags))
-     {
-        WRN("GetSecrets: cannot parse arguments");
-        return eldbus_message_method_return_new(msg);
-     }
-
-   DBG("GetSecrets for %s setting=%s flags=%u", conn_path, setting_name, flags);
-
-   /* Try to extract SSID from connection properties */
-   while (eldbus_message_iter_get_and_next(conn_props, 'e', &conn_dict))
-     {
-        Eldbus_Message_Iter *inner;
-        const char *sect;
-
-        if (!eldbus_message_iter_arguments_get(conn_dict, "sa{sv}", &sect,
-                                               &inner))
-          continue;
-
-        if (!strcmp(sect, "802-11-wireless"))
-          {
-             Eldbus_Message_Iter *entry, *evar;
-             const char *ekey;
-
-             while (eldbus_message_iter_get_and_next(inner, 'e', &entry))
-               {
-                  if (!eldbus_message_iter_arguments_get(entry, "sv", &ekey,
-                                                         &evar))
-                    continue;
-                  if (!strcmp(ekey, "ssid"))
-                    {
-                       Eldbus_Message_Iter *bytes;
-                       unsigned char b;
-                       size_t pos = 0;
-
-                       if (eldbus_message_iter_arguments_get(evar, "ay",
-                                                             &bytes))
-                         while (eldbus_message_iter_get_and_next(bytes, 'y',
-                                                                 &b) &&
-                                pos < sizeof(ssid) - 1)
-                           ssid[pos++] = (char)b;
-                       ssid[pos] = '\0';
-                    }
-               }
-          }
-     }
-
-   /* Discard any previous pending request */
-   if (agent->msg) eldbus_message_unref(agent->msg);
-   agent->msg = eldbus_message_ref((Eldbus_Message *)msg);
-
-   if (agent->dialog)
-     e_object_del(E_OBJECT(agent->dialog));
-
-   agent->dialog = _dialog_new(agent, ssid[0] ? ssid : NULL);
-   if (!agent->dialog)
-     {
-        eldbus_message_unref(agent->msg);
-        agent->msg = NULL;
-        return eldbus_message_error_new(msg,
-                 "org.freedesktop.NetworkManager.SecretAgent.InternalError",
-                 "Failed to create password dialog");
-     }
-
-   /* Return NULL — reply will be sent asynchronously from _dialog_ok_cb */
-   return NULL;
-}
-
-static Eldbus_Message *
-_agent_cancel_get_secrets(const Eldbus_Service_Interface *iface,
-                          const Eldbus_Message *msg)
-{
-   E_NM_Agent *agent;
-
-   DBG("CancelGetSecrets");
-
-   agent = eldbus_service_object_data_get(iface, AGENT_KEY);
-   if (agent && agent->dialog)
-     {
-        agent->canceled = EINA_FALSE; /* don't send error reply on del */
-        e_object_del(E_OBJECT(agent->dialog));
-     }
-
-   return eldbus_message_method_return_new(msg);
-}
-
-static Eldbus_Message *
-_agent_save_secrets(const Eldbus_Service_Interface *iface EINA_UNUSED,
-                    const Eldbus_Message *msg)
-{
-   /* no-op */
-   return eldbus_message_method_return_new(msg);
-}
-
-static Eldbus_Message *
-_agent_delete_secrets(const Eldbus_Service_Interface *iface EINA_UNUSED,
-                      const Eldbus_Message *msg)
-{
-   /* no-op */
-   return eldbus_message_method_return_new(msg);
-}
-
-/* -------------------------------------------------------------------------- */
-/* Interface descriptor                                                        */
-/* -------------------------------------------------------------------------- */
-
-static const Eldbus_Method _agent_methods[] = {
-   {
-    "GetSecrets",
-    ELDBUS_ARGS({"a{sa{sv}}", "connection"}, {"o", "connection_path"},
-                {"s", "setting_name"}, {"as", "hints"}, {"u", "flags"}),
-    ELDBUS_ARGS({"a{sa{sv}}", "secrets"}),
-    _agent_get_secrets, 0
-   },
-   {
-    "CancelGetSecrets",
-    ELDBUS_ARGS({"o", "connection_path"}, {"s", "setting_name"}),
-    NULL,
-    _agent_cancel_get_secrets, 0
-   },
-   {
-    "SaveSecrets",
-    ELDBUS_ARGS({"a{sa{sv}}", "connection"}, {"o", "connection_path"}),
-    NULL,
-    _agent_save_secrets, 0
-   },
-   {
-    "DeleteSecrets",
-    ELDBUS_ARGS({"a{sa{sv}}", "connection"}, {"o", "connection_path"}),
-    NULL,
-    _agent_delete_secrets, 0
-   },
-   { NULL, NULL, NULL, NULL, 0 }
-};
-
-static const Eldbus_Service_Interface_Desc _agent_desc = {
-   NM_AGENT_IFACE, _agent_methods, NULL, NULL, NULL, NULL
-};
-
-/* -------------------------------------------------------------------------- */
-/* AgentManager registration                                                   */
+/* Agent UI callback bridge                                                    */
 /* -------------------------------------------------------------------------- */
 
 static void
-_agent_register_cb(void *data EINA_UNUSED, const Eldbus_Message *msg,
-                   Eldbus_Pending *pending EINA_UNUSED)
+_agent_ui_request_cb(void *data EINA_UNUSED, E_NM_Agent_Request *req,
+                     const char *ssid)
 {
-   const char *name, *text;
+   /* Only one dialog at a time — drop any stale one.  The data layer
+    * already freed the previous request when it arrived, so just tear
+    * down the widgets here. */
+   if (_current_dialog)
+     {
+        _current_dialog->req = NULL;   /* don't reply — request is gone */
+        e_object_del(E_OBJECT(_current_dialog->dialog));
+        _current_dialog = NULL;
+     }
 
-   if (eldbus_message_error_get(msg, &name, &text))
-     WRN("SecretAgent Register failed: %s: %s", name, text);
-   else
-     INF("SecretAgent registered with NetworkManager");
+   _current_dialog = _dialog_new(req, ssid);
+   if (!_current_dialog)
+     {
+        ERR("Failed to create SecretAgent dialog");
+        e_nm_agent_reply_cancel(req);
+        return;
+     }
 }
 
 static void
-_agent_register(E_NM_Agent *agent)
+_agent_ui_cancel_cb(void *data EINA_UNUSED,
+                    E_NM_Agent_Request *req EINA_UNUSED)
 {
-   Eldbus_Object *obj;
-   Eldbus_Proxy  *proxy;
-
-   obj   = eldbus_object_get(agent->conn,
-                              "org.freedesktop.NetworkManager",
-                              NM_AGENT_MGR_PATH);
-   proxy = eldbus_proxy_get(obj, NM_AGENT_MGR_IFACE);
-
-   eldbus_proxy_call(proxy, "Register", _agent_register_cb, NULL, -1,
-                     "s", NM_AGENT_ID);
-
-   /* Unref immediately; the pending call keeps them alive */
-   eldbus_proxy_unref(proxy);
-   eldbus_object_unref(obj);
-}
-
-/* -------------------------------------------------------------------------- */
-/* Public lifecycle                                                            */
-/* -------------------------------------------------------------------------- */
-
-E_NM_Agent *
-enm_agent_new(Eldbus_Connection *eldbus_conn)
-{
-   Eldbus_Service_Interface *iface;
-   E_NM_Agent *agent;
-
-   agent = E_NEW(E_NM_Agent, 1);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(agent, NULL);
-
-   iface = eldbus_service_interface_register(eldbus_conn, AGENT_PATH,
-                                              &_agent_desc);
-   if (!iface)
+   /* NM is withdrawing the pending request.  Dismiss the dialog without
+    * sending any reply — the data layer will free the request after this
+    * callback returns. */
+   if (_current_dialog)
      {
-        ERR("Failed to register SecretAgent D-Bus interface");
-        free(agent);
-        return NULL;
+        _current_dialog->req = NULL;
+        e_object_del(E_OBJECT(_current_dialog->dialog));
+        _current_dialog = NULL;
      }
-
-   eldbus_service_object_data_set(iface, AGENT_KEY, agent);
-
-   agent->iface = iface;
-   agent->conn  = eldbus_conn;
-
-   _agent_register(agent);
-
-   return agent;
 }
+
+static const E_NM_Agent_Callbacks _ui_cbs =
+{
+   .request = _agent_ui_request_cb,
+   .cancel  = _agent_ui_cancel_cb,
+};
 
 void
-enm_agent_del(E_NM_Agent *agent)
+enm_agent_ui_register(void)
 {
-   EINA_SAFETY_ON_NULL_RETURN(agent);
-
-   if (agent->msg)
-     {
-        eldbus_message_unref(agent->msg);
-        agent->msg = NULL;
-     }
-
-   if (agent->dialog)
-     {
-        agent->canceled = EINA_FALSE; /* suppress cancel reply on del */
-        e_object_del(E_OBJECT(agent->dialog));
-        agent->dialog = NULL;
-     }
-
-   eldbus_service_object_unregister(agent->iface);
-   agent->iface = NULL;
-   free(agent);
+   e_nm_agent_callbacks_set(&_ui_cbs, NULL);
 }

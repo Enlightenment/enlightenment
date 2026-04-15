@@ -4,7 +4,43 @@
 #include "e.h"
 #include <Eldbus.h>
 
-typedef struct _E_NM_Agent E_NM_Agent;
+typedef struct _E_NM_Agent         E_NM_Agent;
+typedef struct _E_NM_Agent_Request E_NM_Agent_Request;
+
+/*
+ * SecretAgent UI callbacks.
+ *
+ * The data layer (e_networkmanager.c) owns the NM SecretAgent D-Bus
+ * contract: it registers the interface, dispatches methods, and builds
+ * replies.  When NM asks for a secret it invokes `request` with the
+ * extracted SSID; the UI pops whatever widgets it likes and then calls
+ * e_nm_agent_reply_secrets() with the collected PSK, or
+ * e_nm_agent_reply_cancel() if the user declined.
+ *
+ * `cancel` is invoked when NM withdraws a pending GetSecrets request
+ * (e.g. connection attempt aborted).  The UI should dismiss its dialog
+ * WITHOUT calling any reply function — NM is no longer waiting.
+ *
+ * Contract for `cancel`: the callback MUST NOT store the `req` pointer
+ * and MUST NOT call e_nm_agent_reply_*.  After the callback returns the
+ * data layer frees the request; any subsequent access is a use-after-free.
+ */
+typedef void (*E_NM_Agent_Secrets_Request_Cb)(void *data,
+                                               E_NM_Agent_Request *req,
+                                               const char *ssid);
+typedef void (*E_NM_Agent_Secrets_Cancel_Cb)(void *data,
+                                              E_NM_Agent_Request *req);
+
+typedef struct _E_NM_Agent_Callbacks E_NM_Agent_Callbacks;
+struct _E_NM_Agent_Callbacks
+{
+   E_NM_Agent_Secrets_Request_Cb request;
+   E_NM_Agent_Secrets_Cancel_Cb  cancel;
+};
+
+void e_nm_agent_callbacks_set(const E_NM_Agent_Callbacks *cbs, void *data);
+void e_nm_agent_reply_secrets(E_NM_Agent_Request *req, const char *psk);
+void e_nm_agent_reply_cancel(E_NM_Agent_Request *req);
 
 /*
  * NM D-Bus state values, matching org.freedesktop.NetworkManager.State
@@ -177,10 +213,23 @@ void enm_wireless_enabled_set(struct NM_Manager *nm, Eina_Bool enabled);
 struct NM_Access_Point *enm_manager_find_ap(struct NM_Manager *nm,
                                             const char *path) EINA_ARG_NONNULL(1, 2);
 
-/* UI callbacks (implemented in e_mod_main.c) */
-void enm_mod_aps_changed(struct NM_Manager *nm);
-void enm_mod_manager_update(struct NM_Manager *nm);
-void enm_mod_manager_inout(struct NM_Manager *nm);
+/*
+ * Module callbacks.
+ *
+ * The data layer (e_networkmanager.c) does not depend on the UI layer
+ * (e_mod_main.c) directly.  Instead the module registers a set of
+ * callbacks at init time; the data layer invokes them through this
+ * indirection when NM state changes.
+ */
+typedef struct _E_NM_Mod_Callbacks E_NM_Mod_Callbacks;
+struct _E_NM_Mod_Callbacks
+{
+   void (*aps_changed)(struct NM_Manager *nm);
+   void (*manager_update)(struct NM_Manager *nm);
+   void (*manager_inout)(struct NM_Manager *nm);
+};
+
+void e_nm_module_callbacks_set(const E_NM_Mod_Callbacks *cbs);
 
 /* Utility */
 const char *enm_state_to_str(enum NM_State state);

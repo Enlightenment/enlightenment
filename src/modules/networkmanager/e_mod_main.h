@@ -46,12 +46,15 @@ struct E_NM_Module_Context
 
    struct NM_Manager  *nm;
 
-   /* Network activity indicator */
-   Ecore_Timer        *traffic_timer;
+   /* Network activity indicator.  Polling happens on a background thread
+    * via ecore_thread_feedback_run; samples are delivered back to the main
+    * loop which computes traffic levels and emits edje signals. */
+   Ecore_Thread        *traffic_thread;
+   char                *traffic_iface;   /* strdup of iface thread is reading */
    Ecore_Event_Handler *powersave_handler;
    unsigned long long   prev_rx;
    unsigned long long   prev_tx;
-   int                  rx_level; /* 0=idle, 1=low, 2=medium, 3=high */
+   int                  rx_level;        /* 0=idle, 1=low, 2=medium, 3=high */
    int                  tx_level;
    Eina_Bool            powersave_high : 1;
 };
@@ -65,8 +68,8 @@ void        enm_popup_del(E_NM_Instance *inst);
 void        enm_mod_aps_update_now(void);
 const char *e_nm_theme_path(void);
 
-E_NM_Agent *enm_agent_new(Eldbus_Connection *eldbus_conn) EINA_ARG_NONNULL(1);
-void        enm_agent_del(E_NM_Agent *agent);
+/* Register the password-dialog UI callbacks with the agent subsystem. */
+void        enm_agent_ui_register(void);
 
 /**
  * @addtogroup Optional_Devices
