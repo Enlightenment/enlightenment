@@ -3,7 +3,7 @@
 #include "e_networkmanager.h"
 
 E_Module *networkmanager_mod = NULL;
-static char tmpbuf[4096]; /* general purpose buffer, use immediately */
+static Eina_Stringshare *_theme_path = NULL;
 
 const char _e_nm_name[] = "networkmanager";
 const char _e_nm_Name[] = N_("NetworkManager");
@@ -16,18 +16,14 @@ static void _enm_traffic_timer_stop(E_NM_Module_Context *ctxt);
 const char *
 e_nm_theme_path(void)
 {
-#define TF "/e-module-connman.edj"
-   size_t dirlen;
+   char buf[PATH_MAX];
 
-   dirlen = strlen(networkmanager_mod->dir);
-   if (dirlen >= sizeof(tmpbuf) - sizeof(TF))
-     return NULL;
-
-   memcpy(tmpbuf, networkmanager_mod->dir, dirlen);
-   memcpy(tmpbuf + dirlen, TF, sizeof(TF));
-
-   return tmpbuf;
-#undef TF
+   if (_theme_path) return _theme_path;
+   if (!networkmanager_mod || !networkmanager_mod->dir) return NULL;
+   snprintf(buf, sizeof(buf), "%s/e-module-connman.edj",
+            networkmanager_mod->dir);
+   _theme_path = eina_stringshare_add(buf);
+   return _theme_path;
 }
 
 /* --- popup ---------------------------------------------------------------- */
@@ -35,6 +31,8 @@ e_nm_theme_path(void)
 void
 enm_popup_del(E_NM_Instance *inst)
 {
+   E_FREE_FUNC(inst->ui.popup.deselect_timer, ecore_timer_del);
+   inst->ui.popup.deselect_item = NULL;
    E_FREE_FUNC(inst->popup, e_object_del);
    E_FREE_FUNC(inst->ctxt->popup_update_timer, ecore_timer_del);
    inst->ui.popup.genlist = inst->ui.popup.ip_label = NULL;
@@ -253,6 +251,27 @@ _enm_itc_group_wifi_content_get(void *data, Evas_Object *obj,
    return ck;
 }
 
+static Eina_Bool
+_enm_deselect_timer_cb(void *data)
+{
+   E_NM_Instance *inst = data;
+
+   if (inst->ui.popup.deselect_item)
+     elm_genlist_item_selected_set(inst->ui.popup.deselect_item, EINA_FALSE);
+   inst->ui.popup.deselect_item = NULL;
+   inst->ui.popup.deselect_timer = NULL;
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static void
+_enm_deselect_timer_schedule(E_NM_Instance *inst, Elm_Object_Item *it)
+{
+   E_FREE_FUNC(inst->ui.popup.deselect_timer, ecore_timer_del);
+   inst->ui.popup.deselect_item = it;
+   inst->ui.popup.deselect_timer =
+      ecore_timer_add(0.5, _enm_deselect_timer_cb, inst);
+}
+
 /* Activated smart callback — handles connect/disconnect on row tap */
 static void
 _enm_item_activated_cb(void *data, Evas_Object *obj EINA_UNUSED,
@@ -265,8 +284,8 @@ _enm_item_activated_cb(void *data, Evas_Object *obj EINA_UNUSED,
    struct NM_Device *dev;
 
    if (!it) return;
-   /* Deselect immediately so repeat clicks always fire "selected" */
-   elm_genlist_item_selected_set(it, EINA_FALSE);
+   /* Delay deselect so the user sees their click landed. */
+   _enm_deselect_timer_schedule(inst, it);
    id = elm_object_item_data_get(it);
    if (!id) return;
 
@@ -550,6 +569,8 @@ _enm_popup_build_entries(struct NM_Manager *nm,
    Eina_Hash *seen_ssids;
    int n = 0;
 
+   if (!nm) return 0;
+
    /* Ethernet entries first */
    EINA_INLIST_FOREACH(nm->devices, dev)
      {
@@ -619,6 +640,11 @@ _enm_popup_update(struct NM_Manager *nm, E_NM_Instance *inst)
 
    EINA_SAFETY_ON_NULL_RETURN(nm);
    EINA_SAFETY_ON_NULL_RETURN(gl);
+
+   /* elm_genlist_clear() below frees all items — drop any pending
+    * deselect targeting an item about to be destroyed. */
+   E_FREE_FUNC(inst->ui.popup.deselect_timer, ecore_timer_del);
+   inst->ui.popup.deselect_item = NULL;
 
    want_n = _enm_popup_build_entries(nm, desired, 256);
 
@@ -763,7 +789,6 @@ _enm_popup_new(E_NM_Instance *inst)
    gl = elm_genlist_add(box);
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_min_set(gl, ELM_SCALE_SIZE(192), ELM_SCALE_SIZE(100));
    elm_scroller_bounce_set(gl, EINA_FALSE, EINA_TRUE);
    evas_object_show(gl);
    inst->ui.popup.genlist = gl;
@@ -831,19 +856,9 @@ static Eina_Bool
 _enm_popup_update_timer_cb(void *data)
 {
    E_NM_Module_Context *ctxt = data;
-   const Eina_List *l;
-   E_NM_Instance *inst;
 
    ctxt->popup_update_timer = NULL;
-
-   if (!ctxt->nm) return ECORE_CALLBACK_CANCEL;
-
-   EINA_LIST_FOREACH(ctxt->instances, l, inst)
-     {
-        if (!inst->popup) continue;
-        _enm_popup_update(ctxt->nm, inst);
-     }
-
+   enm_mod_aps_update_now();
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -865,10 +880,11 @@ void
 enm_mod_aps_update_now(void)
 {
    E_NM_Module_Context *ctxt;
-   if (!networkmanager_mod) return;
-   ctxt = networkmanager_mod->data;
    const Eina_List *l;
    E_NM_Instance *inst;
+
+   if (!networkmanager_mod) return;
+   ctxt = networkmanager_mod->data;
 
    /* Cancel any pending throttle timer — we are doing an immediate rebuild */
    E_FREE_FUNC(ctxt->popup_update_timer, ecore_timer_del);
@@ -1109,6 +1125,7 @@ static Eina_Bool
 _enm_read_sysfs_counter(const char *iface, const char *counter,
                          unsigned long long *val)
 {
+#ifdef __linux__
    char path[256];
    FILE *f;
 
@@ -1122,6 +1139,11 @@ _enm_read_sysfs_counter(const char *iface, const char *counter,
      }
    fclose(f);
    return EINA_TRUE;
+#else
+   (void)iface; (void)counter;
+   *val = 0;
+   return EINA_FALSE;
+#endif
 }
 
 /* Classify bytes/sec into traffic level: 0=idle, 1=low, 2=medium, 3=high
@@ -1221,7 +1243,7 @@ static void
 _enm_traffic_timer_start(E_NM_Module_Context *ctxt)
 {
    if (ctxt->traffic_timer) return;
-   if (ctxt->screen_off || ctxt->powersave_high) return;
+   if (ctxt->powersave_high) return;
    if (!ctxt->nm) return;
    if (ctxt->nm->state < NM_STATE_CONNECTED_LOCAL) return;
 
@@ -1242,26 +1264,6 @@ _enm_traffic_timer_stop(E_NM_Module_Context *ctxt)
         ctxt->rx_level = 0;
         ctxt->tx_level = 0;
      }
-}
-
-static Eina_Bool
-_enm_screensaver_on_cb(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
-{
-   E_NM_Module_Context *ctxt = data;
-
-   ctxt->screen_off = EINA_TRUE;
-   _enm_traffic_timer_stop(ctxt);
-   return ECORE_CALLBACK_PASS_ON;
-}
-
-static Eina_Bool
-_enm_screensaver_off_cb(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
-{
-   E_NM_Module_Context *ctxt = data;
-
-   ctxt->screen_off = EINA_FALSE;
-   _enm_traffic_timer_start(ctxt);
-   return ECORE_CALLBACK_PASS_ON;
 }
 
 static Eina_Bool
@@ -1407,6 +1409,7 @@ _gc_icon(const E_Gadcon_Client_Class *client_class EINA_UNUSED, Evas *evas)
 static const char *
 _gc_id_new(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
 {
+   static char idbuf[64]; /* returned string — use immediately */
    E_NM_Module_Context *ctxt;
    Eina_List *instances;
 
@@ -1416,9 +1419,9 @@ _gc_id_new(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
    if (!ctxt) return NULL;
 
    instances = ctxt->instances;
-   snprintf(tmpbuf, sizeof(tmpbuf), "networkmanager.%d",
+   snprintf(idbuf, sizeof(idbuf), "networkmanager.%d",
             eina_list_count(instances));
-   return tmpbuf;
+   return idbuf;
 }
 
 static const E_Gadcon_Client_Class _gc_class =
@@ -1487,13 +1490,6 @@ e_modapi_init(E_Module *m)
    /* Initialize power-aware traffic monitoring state */
    ctxt->powersave_high = (e_powersave_mode_get() >= E_POWERSAVE_MODE_EXTREME);
 
-   /* Register event handlers for power-aware traffic monitoring */
-   ctxt->screensaver_on_handler =
-     ecore_event_handler_add(E_EVENT_SCREENSAVER_ON,
-                             _enm_screensaver_on_cb, ctxt);
-   ctxt->screensaver_off_handler =
-     ecore_event_handler_add(E_EVENT_SCREENSAVER_OFF,
-                             _enm_screensaver_off_cb, ctxt);
    ctxt->powersave_handler =
      ecore_event_handler_add(E_EVENT_POWERSAVE_UPDATE,
                              _enm_powersave_cb, ctxt);
@@ -1542,11 +1538,11 @@ e_modapi_shutdown(E_Module *m)
 
    E_FREE_FUNC(ctxt->popup_update_timer, ecore_timer_del);
    E_FREE_FUNC(ctxt->traffic_timer, ecore_timer_del);
-   E_FREE_FUNC(ctxt->screensaver_on_handler, ecore_event_handler_del);
-   E_FREE_FUNC(ctxt->screensaver_off_handler, ecore_event_handler_del);
    E_FREE_FUNC(ctxt->powersave_handler, ecore_event_handler_del);
    E_FREE(ctxt);
    networkmanager_mod = NULL;
+
+   eina_stringshare_replace(&_theme_path, NULL);
 
    eina_log_domain_unregister(_e_nm_log_dom);
    _e_nm_log_dom = -1;

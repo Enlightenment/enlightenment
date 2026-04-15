@@ -531,14 +531,12 @@ _device_get_props_cb(void *data, const Eldbus_Message *msg,
         _manager_active_conn_watch_free(nm_manager);
         _manager_ip4_watch_free(nm_manager);
 
-        eina_stringshare_del(nm_manager->active_connection_path);
-        nm_manager->active_connection_path =
-           eina_stringshare_add(dev->active_conn_path);
+        eina_stringshare_replace(&nm_manager->active_connection_path,
+                                 dev->active_conn_path);
 
         nm_manager->active_conn_type = NM_DEVICE_TYPE_ETHERNET;
 
-        eina_stringshare_del(nm_manager->active_ap_path);
-        nm_manager->active_ap_path = NULL;
+        eina_stringshare_replace(&nm_manager->active_ap_path, NULL);
 
         /* Set up persistent watcher on the active connection object */
         {
@@ -625,12 +623,9 @@ _device_wifi_props_cb(void *data, const Eldbus_Message *msg,
 
    nm_manager->active_conn_type = NM_DEVICE_TYPE_WIFI;
 
-   eina_stringshare_del(nm_manager->active_ap_path);
-   nm_manager->active_ap_path = eina_stringshare_add(ap_path);
-
-   eina_stringshare_del(nm_manager->active_connection_path);
-   nm_manager->active_connection_path =
-      eina_stringshare_add(dev->active_conn_path);
+   eina_stringshare_replace(&nm_manager->active_ap_path, ap_path);
+   eina_stringshare_replace(&nm_manager->active_connection_path,
+                            dev->active_conn_path);
 
    /* Set up persistent watcher on the active connection object */
    {
@@ -924,10 +919,8 @@ _manager_active_conn_watch_free(struct NM_Manager *nm)
         nm->active_conn_proxy = NULL;
         nm->active_conn_obj = NULL;
      }
-   eina_stringshare_del(nm->active_connection_path);
-   nm->active_connection_path = NULL;
-   eina_stringshare_del(nm->active_ap_path);
-   nm->active_ap_path = NULL;
+   eina_stringshare_replace(&nm->active_connection_path, NULL);
+   eina_stringshare_replace(&nm->active_ap_path, NULL);
 }
 
 static void
@@ -960,9 +953,9 @@ _active_conn_prop_changed(void *data, const Eldbus_Message *msg)
              if (eldbus_message_iter_arguments_get(var, "o", &ap_path))
                {
                   DBG("ActiveConn SpecificObject changed: %s", ap_path);
-                  eina_stringshare_del(nm->active_ap_path);
-                  nm->active_ap_path = (ap_path && strcmp(ap_path, "/"))
-                                       ? eina_stringshare_add(ap_path) : NULL;
+                  eina_stringshare_replace(&nm->active_ap_path,
+                                           (ap_path && strcmp(ap_path, "/"))
+                                           ? ap_path : NULL);
                   enm_mod_manager_update(nm);
                   enm_mod_aps_changed(nm);
                }
@@ -1080,8 +1073,7 @@ _active_conn_probe_cb(void *data, const Eldbus_Message *msg,
 
    nm->active_conn_type = conn_type;
 
-   eina_stringshare_del(nm->active_ap_path);
-   nm->active_ap_path = ap_path ? eina_stringshare_add(ap_path) : NULL;
+   eina_stringshare_replace(&nm->active_ap_path, ap_path);
 
    /* Subscribe to property changes on the now-persistent proxy */
    nm->active_conn_signal_handler =
@@ -1201,10 +1193,8 @@ _manager_prop_changed(void *data, const Eldbus_Message *msg)
              else
                {
                   /* No active connections — tear down already done above */
-                  eina_stringshare_del(nm->active_ap_path);
-                  nm->active_ap_path = NULL;
-                  eina_stringshare_del(nm->active_connection_path);
-                  nm->active_connection_path = NULL;
+                  eina_stringshare_replace(&nm->active_ap_path, NULL);
+                  eina_stringshare_replace(&nm->active_connection_path, NULL);
                   free(nm->ip_address);
                   nm->ip_address = NULL;
                   nm->active_conn_type = NM_DEVICE_TYPE_UNKNOWN;

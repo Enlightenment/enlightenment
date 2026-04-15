@@ -32,6 +32,8 @@ struct E_NM_Instance
              Elm_Genlist_Item_Class *itc_group_wifi;
              Elm_Genlist_Item_Class *itc_ap;
              Elm_Genlist_Item_Class *itc_eth;
+             Ecore_Timer            *deselect_timer;
+             Elm_Object_Item        *deselect_item;
           } popup;
      } ui;
 };
@@ -46,14 +48,11 @@ struct E_NM_Module_Context
 
    /* Network activity indicator */
    Ecore_Timer        *traffic_timer;
-   Ecore_Event_Handler *screensaver_on_handler;
-   Ecore_Event_Handler *screensaver_off_handler;
    Ecore_Event_Handler *powersave_handler;
    unsigned long long   prev_rx;
    unsigned long long   prev_tx;
    int                  rx_level; /* 0=idle, 1=low, 2=medium, 3=high */
    int                  tx_level;
-   Eina_Bool            screen_off : 1;
    Eina_Bool            powersave_high : 1;
 };
 
