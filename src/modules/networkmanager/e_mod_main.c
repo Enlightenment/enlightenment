@@ -13,6 +13,19 @@ int _e_nm_log_dom = -1;
 static void _enm_traffic_timer_start(E_NM_Module_Context *ctxt);
 static void _enm_traffic_timer_stop(E_NM_Module_Context *ctxt);
 
+/* Set the WiFi band label on whichever part the loaded theme exposes.
+ * Guarded with edje_object_part_exists so we don't emit ERR logs for the
+ * part that isn't present.  The module is compatible with connman's legacy
+ * "band_label" and the new namespaced "e.text.band-label". */
+static inline void
+_enm_band_label_set(Evas_Object *o, const char *text)
+{
+   if (edje_object_part_exists(o, "e.text.band-label"))
+     edje_object_part_text_set(o, "e.text.band-label", text);
+   if (edje_object_part_exists(o, "band_label"))
+     edje_object_part_text_set(o, "band_label", text);
+}
+
 const char *
 e_nm_theme_path(void)
 {
@@ -20,7 +33,7 @@ e_nm_theme_path(void)
 
    if (_theme_path) return _theme_path;
    if (!networkmanager_mod || !networkmanager_mod->dir) return NULL;
-   snprintf(buf, sizeof(buf), "%s/e-module-connman.edj",
+   snprintf(buf, sizeof(buf), "%s/e-module-networkmanager.edj",
             networkmanager_mod->dir);
    _theme_path = eina_stringshare_add(buf);
    return _theme_path;
@@ -381,7 +394,7 @@ _enm_ap_icon_new(struct NM_Manager *nm, struct NM_Access_Point *ap, Evas *evas)
         else
           band = "2.4";
 
-        edje_object_part_text_set(icon, "band_label", band);
+        _enm_band_label_set(icon, band);
      }
 
    return icon;
@@ -1032,15 +1045,15 @@ _enm_mod_manager_update_inst(E_NM_Module_Context *ctxt EINA_UNUSED,
              else
                band = "2.4G";
 
-             edje_object_part_text_set(o, "band_label", band);
+             _enm_band_label_set(o, band);
           }
         else
-          edje_object_part_text_set(o, "band_label", "");
+          _enm_band_label_set(o, "");
      }
    else
      {
         edje_object_signal_emit(o, "e,security,off", "e");
-        edje_object_part_text_set(o, "band_label", "");
+        _enm_band_label_set(o, "");
      }
 }
 

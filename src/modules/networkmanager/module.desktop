@@ -3,5 +3,5 @@ Type=Link
 Name=NetworkManager
 GenericName=NetworkManager
 Comment=Control Wifi and wired networks via NetworkManager.
-Icon=e-module-connman
+Icon=e-module-networkmanager
 X-Enlightenment-ModuleType=system
