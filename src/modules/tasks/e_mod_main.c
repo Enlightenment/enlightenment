@@ -62,6 +62,8 @@ static void         _tasks_free(Tasks *tasks);
 static void         _tasks_refill(Tasks *tasks);
 static void         _tasks_refill_all();
 static void         _tasks_refill_border(E_Client *ec);
+static Eina_Bool    _tasks_refill_deferred(void *data EINA_UNUSED);
+static void         _tasks_refill_deferred_schedule(void);
 
 static Tasks_Item  *_tasks_item_find(Tasks *tasks, E_Client *ec);
 static Tasks_Item  *_tasks_item_new(Tasks *tasks, E_Client *ec);
@@ -103,6 +105,7 @@ static E_Config_DD *conf_edd = NULL;
 static E_Config_DD *conf_item_edd = NULL;
 
 static Ecore_Timer *task_refill_timer;
+static Ecore_Timer *task_refill_deferred_timer;
 
 Config *tasks_config = NULL;
 
@@ -183,6 +186,8 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    Config_Item *cfg;
 
    e_gadcon_provider_unregister(&_gadcon_class);
+   E_FREE_FUNC(task_refill_deferred_timer, ecore_timer_del);
+   E_FREE_FUNC(task_refill_timer, ecore_timer_del);
 
    EINA_LIST_FREE(tasks_config->tasks, tasks)
      {
@@ -544,6 +549,23 @@ _tasks_refill_all(void)
      {
         _tasks_refill(tasks);
      }
+}
+
+static Eina_Bool
+_tasks_refill_deferred(void *data EINA_UNUSED)
+{
+   task_refill_deferred_timer = NULL;
+   _tasks_refill_all();
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static void
+_tasks_refill_deferred_schedule(void)
+{
+   if (task_refill_deferred_timer)
+     ecore_timer_loop_reset(task_refill_deferred_timer);
+   else
+     task_refill_deferred_timer = ecore_timer_loop_add(0.08, _tasks_refill_deferred, NULL);
 }
 
 static void
@@ -1206,7 +1228,7 @@ _tasks_cb_event_client_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *e
              tasks->clients = eina_list_append(tasks->clients, ev->ec);
           }
      }
-   _tasks_refill_all();
+   _tasks_refill_deferred_schedule();
    return EINA_TRUE;
 }
 
@@ -1216,6 +1238,7 @@ _tasks_cb_event_client_remove(void *data EINA_UNUSED, int type EINA_UNUSED, void
    E_Event_Client *ev = event;
 
    _tasks_client_remove(ev->ec);
+   _tasks_refill_deferred_schedule();
    return EINA_TRUE;
 }
 
