@@ -2212,7 +2212,10 @@ _e_gadcon_moveresize_handle(E_Gadcon_Client *gcc)
           }
      }
    evas_object_size_hint_min_set(gcc->o_base, w, h);
-   evas_object_size_hint_max_set(gcc->o_base, mw, mh);
+   if (gcc->autoscroll)
+     evas_object_size_hint_max_set(gcc->o_base, -1, -1);
+   else
+     evas_object_size_hint_max_set(gcc->o_base, mw, mh);
    evas_object_size_hint_min_set(gcc->o_box, 0, 0);
    _e_gadcon_client_scroll_state_update(gcc);
 }
