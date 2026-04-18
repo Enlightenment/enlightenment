@@ -111,7 +111,6 @@ static void         _ibox_inst_cb_scroll(void *data);
 static void         _ibox_mouse_move_eval(IBox *b);
 static Eina_Bool    _ibox_refill_timer(void *data);
 static void         _ibox_refill_all(void);
-static Eina_Bool    _ibox_cb_event_client_add(void *data, int type, void *event);
 static Eina_Bool    _ibox_cb_event_client_remove(void *data, int type, void *event);
 static Eina_Bool    _ibox_cb_event_client_iconify(void *data, int type, void *event);
 static Eina_Bool    _ibox_cb_event_client_uniconify(void *data, int type, void *event);
@@ -1178,16 +1177,6 @@ atend:
 }
 
 static Eina_Bool
-_ibox_cb_event_client_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
-{
-   E_Event_Client *ev = event;
-
-   if (!ev->ec->iconic) return ECORE_CALLBACK_RENEW;
-   _ibox_refill_all();
-   return ECORE_CALLBACK_PASS_ON;
-}
-
-static Eina_Bool
 _ibox_cb_event_client_remove(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    _ibox_refill_all();
@@ -1389,7 +1378,6 @@ e_modapi_init(E_Module *m)
 
    ibox_config->module = m;
 
-   E_LIST_HANDLER_APPEND(ibox_config->handlers, E_EVENT_CLIENT_ADD, _ibox_cb_event_client_add, NULL);
    E_LIST_HANDLER_APPEND(ibox_config->handlers, E_EVENT_CLIENT_REMOVE, _ibox_cb_event_client_remove, NULL);
    E_LIST_HANDLER_APPEND(ibox_config->handlers, E_EVENT_CLIENT_ICONIFY, _ibox_cb_event_client_iconify, NULL);
    E_LIST_HANDLER_APPEND(ibox_config->handlers, E_EVENT_CLIENT_UNICONIFY, _ibox_cb_event_client_uniconify, NULL);
