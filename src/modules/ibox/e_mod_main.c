@@ -109,8 +109,6 @@ static void         _ibox_inst_cb_drop(void *data, const char *type, void *event
 static void         _ibox_drop_position_update(Instance *inst, Evas_Coord x, Evas_Coord y);
 static void         _ibox_inst_cb_scroll(void *data);
 static void         _ibox_mouse_move_eval(IBox *b);
-static Eina_Bool    _ibox_refill_deferred(void *data);
-static void         _ibox_refill_deferred_schedule(void);
 static Eina_Bool    _ibox_refill_timer(void *data);
 static void         _ibox_refill_all(void);
 static Eina_Bool    _ibox_cb_event_client_add(void *data, int type, void *event);
@@ -126,7 +124,6 @@ static E_Config_DD *conf_item_edd = NULL;
 
 Config *ibox_config = NULL;
 static Ecore_Timer *ibox_refill_timer = NULL;
-static Ecore_Timer *ibox_refill_deferred_timer = NULL;
 
 static void
 _ibox_cb_iconify_end_cb(void *data, Evas_Object *obj EINA_UNUSED, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
@@ -548,23 +545,6 @@ _ibox_refill_all(void)
         _gc_orient(inst->gcc, -1);
         _ibox_mouse_move_eval(inst->ibox);
      }
-}
-
-static Eina_Bool
-_ibox_refill_deferred(void *data EINA_UNUSED)
-{
-   ibox_refill_deferred_timer = NULL;
-   _ibox_refill_all();
-   return ECORE_CALLBACK_CANCEL;
-}
-
-static void
-_ibox_refill_deferred_schedule(void)
-{
-   if (ibox_refill_deferred_timer)
-     ecore_timer_loop_reset(ibox_refill_deferred_timer);
-   else
-     ibox_refill_deferred_timer = ecore_timer_loop_add(0.08, _ibox_refill_deferred, NULL);
 }
 
 static IBox_Icon *
@@ -1203,14 +1183,14 @@ _ibox_cb_event_client_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev
    E_Event_Client *ev = event;
 
    if (!ev->ec->iconic) return ECORE_CALLBACK_RENEW;
-   _ibox_refill_deferred_schedule();
+   _ibox_refill_all();
    return ECORE_CALLBACK_PASS_ON;
 }
 
 static Eina_Bool
 _ibox_cb_event_client_remove(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
-   _ibox_refill_deferred_schedule();
+   _ibox_refill_all();
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -1443,7 +1423,6 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    Config_Item *ci;
    e_gadcon_provider_unregister(&_gadcon_class);
-   E_FREE_FUNC(ibox_refill_deferred_timer, ecore_timer_del);
    E_FREE_FUNC(ibox_refill_timer, ecore_timer_del);
 
    E_FREE_LIST(ibox_config->handlers, ecore_event_handler_del);
