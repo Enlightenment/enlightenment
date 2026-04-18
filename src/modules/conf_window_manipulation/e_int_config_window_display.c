@@ -248,6 +248,10 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
 
+   ow = e_widget_radio_add(evas, _("Roll up"), E_TRANSITION_ROLL_UP, rg);
+   e_widget_check_widget_disable_on_unchecked_add(oc, ow);
+   e_widget_list_object_append(ol, ow, 1, 1, 0.5);
+
    e_widget_toolbook_page_append(otb, NULL, _("Shading"), ol,
                                  1, 1, 1, 0, 0.0, 0.0);
 

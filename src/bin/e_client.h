@@ -31,7 +31,8 @@ typedef enum _E_Transition
    E_TRANSITION_DECELERATE_LOTS = 5,
    E_TRANSITION_SINUSOIDAL_LOTS = 6,
    E_TRANSITION_BOUNCE = 7,
-   E_TRANSITION_BOUNCE_LOTS = 8
+   E_TRANSITION_BOUNCE_LOTS = 8,
+   E_TRANSITION_ROLL_UP = 9
 } E_Transition;
 
 typedef enum _E_Stacking

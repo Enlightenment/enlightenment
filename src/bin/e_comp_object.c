@@ -1956,6 +1956,7 @@ static Eina_Bool
 _e_comp_object_shade_animator(void *data)
 {
    E_Comp_Object *cw = data;
+   Eina_Bool roll = EINA_FALSE;
    Eina_Bool move = EINA_FALSE;
    int x, y, w, h;
    double dt, val;
@@ -2024,6 +2025,13 @@ _e_comp_object_shade_animator(void *data)
           ecore_animator_pos_map(val, ECORE_POS_MAP_BOUNCE, 1.2, 5.0);
         if (!cw->ec->shaded) cw->shade.val = 1.0 - cw->shade.val;
      }
+   else if (e_config->border_shade_transition == E_TRANSITION_ROLL_UP)
+     {
+        cw->shade.val =
+          ecore_animator_pos_map(val, ECORE_POS_MAP_LINEAR, 0.0, 0.0);
+        if (!cw->ec->shaded) cw->shade.val = 1.0 - cw->shade.val;
+        roll = EINA_TRUE;
+     }
    else
      {
         cw->shade.val =
@@ -2056,11 +2064,49 @@ _e_comp_object_shade_animator(void *data)
 
    if (move) evas_object_move(cw->smart_obj, x, y);
    evas_object_resize(cw->smart_obj, w, h);
+   if (roll &&
+       ((cw->shade.dir == E_DIRECTION_UP) || (cw->shade.dir == E_DIRECTION_DOWN)))
+     {
+        Evas_Map *m;
+        int ow, oh;
+        int vish;
+        double offset;
+        double p;
+
+        evas_object_geometry_get(cw->obj, NULL, NULL, &ow, &oh);
+        if ((ow > 0) && (oh > 0))
+          {
+             p = cw->shade.val;
+             if (p < 0.0) p = 0.0;
+             else if (p > 1.0) p = 1.0;
+             /* lock UV scroll to the exact visible shaded height to avoid jitter */
+             vish = MAX(1, h - cw->client_inset.t);
+             if (vish > cw->ec->client.h) vish = cw->ec->client.h;
+             offset = (double)(cw->ec->client.h - vish);
+
+             m = evas_map_new(4);
+             evas_map_util_points_populate_from_object(m, cw->obj);
+             /* Keep geometry unchanged and shift only texture sampling upward. */
+             evas_map_point_image_uv_set(m, 0, 0, offset);
+             evas_map_point_image_uv_set(m, 1, ow, offset);
+             evas_map_point_image_uv_set(m, 2, ow, oh + offset);
+             evas_map_point_image_uv_set(m, 3, 0, oh + offset);
+             evas_map_smooth_set(m, EINA_TRUE);
+             evas_object_map_set(cw->obj, m);
+             evas_object_map_enable_set(cw->obj, EINA_TRUE);
+             evas_map_free(m);
+          }
+        else
+          evas_object_map_enable_set(cw->obj, EINA_FALSE);
+     }
+   else
+     evas_object_map_enable_set(cw->obj, EINA_FALSE);
 
    /* we're done */
    if (EINA_DBL_EQ(val, 1))
      {
         cw->shade.anim = NULL;
+        evas_object_map_enable_set(cw->obj, EINA_FALSE);
 
         evas_object_smart_callback_call(cw->smart_obj, "shade_done", NULL);
         if (cw->ec->shaded)

@@ -1830,7 +1830,7 @@ e_config_load(void)
    E_CONFIG_LIMIT(e_config->window_maximize_transition, 0, E_EFX_EFFECT_SPEED_SINUSOIDAL);
    E_CONFIG_LIMIT(e_config->window_maximize_time, 0.0, 1.0);
    E_CONFIG_LIMIT(e_config->border_shade_animate, 0, 1);
-   E_CONFIG_LIMIT(e_config->border_shade_transition, 0, 8);
+   E_CONFIG_LIMIT(e_config->border_shade_transition, 0, 9);
    E_CONFIG_LIMIT(e_config->border_shade_speed, 1.0, 20000.0);
    E_CONFIG_LIMIT(e_config->priority, 0, 19);
    E_CONFIG_LIMIT(e_config->zone_desks_x_count, 1, 64);
