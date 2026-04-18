@@ -1217,14 +1217,14 @@ _ibox_cb_event_client_remove(void *data EINA_UNUSED, int type EINA_UNUSED, void 
 static Eina_Bool
 _ibox_cb_event_client_iconify(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
-   _ibox_refill_deferred_schedule();
+   _ibox_refill_all();
    return ECORE_CALLBACK_PASS_ON;
 }
 
 static Eina_Bool
 _ibox_cb_event_client_uniconify(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
-   _ibox_refill_deferred_schedule();
+   _ibox_refill_all();
    return ECORE_CALLBACK_PASS_ON;
 }
 
