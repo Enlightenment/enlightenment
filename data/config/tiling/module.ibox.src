@@ -6,6 +6,7 @@ group "IBox_Config" struct {
       value "show_zone" int: 1;
       value "show_desk" int: 0;
       value "icon_label" int: 0;
+      value "live_preview" int: 0;
     }
   }
   group "items" list {
@@ -15,6 +16,7 @@ group "IBox_Config" struct {
       value "show_zone" int: 1;
       value "show_desk" int: 0;
       value "icon_label" int: 0;
+      value "live_preview" int: 0;
     }
   }
 }

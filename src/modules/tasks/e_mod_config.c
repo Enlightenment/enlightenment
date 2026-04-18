@@ -4,6 +4,7 @@
 struct _E_Config_Dialog_Data
 {
    Evas_Object *icon, *text;
+   Evas_Object *preview_live_obj, *preview_size_obj, *preview_size_label_obj;
    int show_all_desktops;
    int show_all_screens;
    int minw, minh;
@@ -11,6 +12,7 @@ struct _E_Config_Dialog_Data
    int text_only;
    int preview;
    int preview_size;
+   int live_preview;
 };
 
 /* Protos */
@@ -18,6 +20,7 @@ static void        *_create_data(E_Config_Dialog *cfd);
 static void         _free_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 static Evas_Object *_basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata);
 static int          _basic_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
+static void         _toggle_preview(void *data, Evas_Object *obj);
 
 void
 _config_tasks_module(Config_Item *ci)
@@ -50,6 +53,7 @@ _fill_data(Config_Item *ci, E_Config_Dialog_Data *cfdata)
    cfdata->text_only = ci->text_only;
    cfdata->preview = ci->preview;
    cfdata->preview_size = ci->preview_size;
+   cfdata->live_preview = ci->live_preview;
 }
 
 static void *
@@ -80,10 +84,21 @@ _toggle_check(void *data, Evas_Object *obj EINA_UNUSED)
    e_widget_disabled_set(cfdata->icon, cfdata->text_only);
 }
 
+static void
+_toggle_preview(void *data, Evas_Object *obj)
+{
+   E_Config_Dialog_Data *cfdata = data;
+   Eina_Bool enabled = e_widget_check_checked_get(obj);
+
+   e_widget_disabled_set(cfdata->preview_live_obj, !enabled);
+   e_widget_disabled_set(cfdata->preview_size_label_obj, !enabled);
+   e_widget_disabled_set(cfdata->preview_size_obj, !enabled);
+}
+
 static Evas_Object *
 _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
-   Evas_Object *o, *of, *ob, *ow;
+   Evas_Object *o, *of, *ob, *ow, *preview_check;
 
    o = e_widget_list_add(evas, 0, 0);
 
@@ -116,16 +131,20 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
 
    e_widget_list_object_append(o, of, 1, 1, 0.5);
 
-   e_widget_framelist_object_append(of, ob);
    of = e_widget_framelist_add(evas, _("Preview"), 0);
-   ob = e_widget_check_add(evas, _("Show"),
-                           &(cfdata->preview));
+   preview_check = e_widget_check_add(evas, _("Show previews"),
+                                      &(cfdata->preview));
+   e_widget_framelist_object_append(of, preview_check);
+   cfdata->preview_live_obj = ob = e_widget_check_add(evas, _("Keep iconified windows updating"),
+                                                       &(cfdata->live_preview));
    e_widget_framelist_object_append(of, ob);
-   ow = e_widget_label_add(evas, _("Preview Size"));
+   cfdata->preview_size_label_obj = ow = e_widget_label_add(evas, _("Preview Size"));
    e_widget_framelist_object_append(of, ow);
-   ow = e_widget_slider_add(evas, 1, 0, _("%1.0f px"), 20, 420, 1, 0,
-                            NULL, &(cfdata->preview_size), 100);
+   cfdata->preview_size_obj = ow = e_widget_slider_add(evas, 1, 0, _("%1.0f px"), 20, 420, 1, 0,
+                                                       NULL, &(cfdata->preview_size), 100);
    e_widget_framelist_object_append(of, ow);
+   e_widget_on_change_hook_set(preview_check, _toggle_preview, cfdata);
+   _toggle_preview(cfdata, preview_check);
    _toggle_check(cfdata, NULL);
 
    e_widget_list_object_append(o, of, 1, 1, 0.5);
@@ -146,8 +165,8 @@ _basic_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
    ci->text_only = cfdata->text_only;
    ci->preview = cfdata->preview;
    ci->preview_size = cfdata->preview_size;
+   ci->live_preview = cfdata->live_preview;
    e_config_save_queue();
    _tasks_config_updated(ci);
    return 1;
 }
-

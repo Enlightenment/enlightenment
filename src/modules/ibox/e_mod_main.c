@@ -62,6 +62,7 @@ struct _IBox_Icon
    Evas_Object *o_icon2;
    E_Client    *client;
    Ecore_Timer *fill_timer;
+   Eina_Bool    live_preview E_BITFIELD;
    struct
    {
       unsigned char start E_BITFIELD;
@@ -191,6 +192,8 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    inst->ibox = b;
    o = b->o_box;
    gcc = e_gadcon_client_new(gc, name, id, style, o);
+   /* Match tasks behavior: keep autoscroll enabled when contents overflow. */
+   e_gadcon_client_autoscroll_toggle_disabled_set(gcc, 1);
    gcc->data = inst;
    ci->gcc = gcc;
 
@@ -608,6 +611,11 @@ _ibox_icon_fill_preview(IBox_Icon *ic, Eina_Bool is_retry)
    int w, h;
 
    ec = ic->client;
+   if (ic->ibox->inst->ci->live_preview && ec->iconic && (!ic->live_preview))
+     {
+        e_comp_object_iconic_preview_add(ec->frame);
+        ic->live_preview = EINA_TRUE;
+     }
 
    img = e_comp_object_util_frame_mirror_add(ec->frame);
    if ((!img) && (!is_retry))
@@ -692,6 +700,11 @@ _ibox_icon_fill_label(IBox_Icon *ic)
 static void
 _ibox_icon_empty(IBox_Icon *ic)
 {
+   if (ic->live_preview)
+     {
+        e_comp_object_iconic_preview_del(ic->client->frame);
+        ic->live_preview = EINA_FALSE;
+     }
    if (ic->o_icon) evas_object_del(ic->o_icon);
    if (ic->o_icon2) evas_object_del(ic->o_icon2);
    ic->o_icon = NULL;
@@ -1314,6 +1327,7 @@ _ibox_config_item_get(const char *id)
    ci->show_zone = 1;
    ci->show_desk = 0;
    ci->icon_label = 0;
+   ci->live_preview = 0;
    ibox_config->items = eina_list_append(ibox_config->items, ci);
    return ci;
 }
@@ -1379,6 +1393,7 @@ e_modapi_init(E_Module *m)
    E_CONFIG_VAL(D, T, show_desk, INT);
    E_CONFIG_VAL(D, T, icon_label, INT);
    E_CONFIG_VAL(D, T, show_preview, INT);
+   E_CONFIG_VAL(D, T, live_preview, INT);
 
    conf_edd = E_CONFIG_DD_NEW("IBox_Config", Config);
    #undef T
@@ -1400,6 +1415,7 @@ e_modapi_init(E_Module *m)
         ci->show_zone = 1;
         ci->show_desk = 0;
         ci->icon_label = 0;
+        ci->live_preview = 0;
         ibox_config->items = eina_list_append(ibox_config->items, ci);
      }
 
@@ -1466,4 +1482,3 @@ e_modapi_save(E_Module *m EINA_UNUSED)
    e_config_domain_save("module.ibox", conf_edd, ibox_config);
    return 1;
 }
-

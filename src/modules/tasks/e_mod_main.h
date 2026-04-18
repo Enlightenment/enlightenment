@@ -25,6 +25,7 @@ struct _Config_Item
    Eina_Bool icon_only;
    Eina_Bool text_only;
    Eina_Bool preview;
+   Eina_Bool live_preview;
 };
 
 E_API extern E_Module_Api e_modapi;

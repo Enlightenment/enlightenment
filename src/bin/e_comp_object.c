@@ -103,6 +103,7 @@ typedef struct _E_Comp_Object
    unsigned int         animating;  // it's busy animating
    unsigned int         failures; //number of consecutive e_pixmap_image_draw() failures
    unsigned int         force_visible; //number of visible obj_mirror objects
+   unsigned int         iconic_preview_visible; //number of forced iconic live previews
    Eina_Bool            deleted E_BITFIELD;  // deleted
    Eina_Bool            defer_hide E_BITFIELD;  // flag to get hide to work on deferred hide
    Eina_Bool            showing E_BITFIELD;  // object is currently in "show" animation
@@ -233,7 +234,7 @@ _e_comp_object_cb_mirror_show(void *data, Evas *e EINA_UNUSED, Evas_Object *obj 
 {
    E_Comp_Object *cw = data;
 
-   if ((!cw->force_visible) && (!cw->deleted) && (!e_object_is_del(E_OBJECT(cw->ec))))
+   if ((!cw->force_visible) && (!cw->iconic_preview_visible) && (!cw->deleted) && (!e_object_is_del(E_OBJECT(cw->ec))))
      evas_object_smart_callback_call(cw->smart_obj, "visibility_force", cw->ec);
    cw->force_visible++;
    if ((!cw->native) && cw->pending_updates && (!cw->update) && cw->real_hid)
@@ -246,7 +247,7 @@ _e_comp_object_cb_mirror_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj 
    E_Comp_Object *cw = data;
 
    cw->force_visible--;
-   if ((!cw->force_visible) && (!cw->deleted) && (!e_object_is_del(E_OBJECT(cw->ec))))
+   if ((!cw->force_visible) && (!cw->iconic_preview_visible) && (!cw->deleted) && (!e_object_is_del(E_OBJECT(cw->ec))))
      evas_object_smart_callback_call(cw->smart_obj, "visibility_normal", cw->ec);
 }
 
@@ -2772,7 +2773,39 @@ E_API Eina_Bool
 e_comp_object_mirror_visibility_check(Evas_Object *obj)
 {
    API_ENTRY EINA_FALSE;
-   return !!cw->force_visible;
+   return !!(cw->force_visible || cw->iconic_preview_visible);
+}
+
+E_API Eina_Bool
+e_comp_object_iconic_preview_visibility_check(Evas_Object *obj)
+{
+   API_ENTRY EINA_FALSE;
+   return !!cw->iconic_preview_visible;
+}
+
+E_API void
+e_comp_object_iconic_preview_add(Evas_Object *obj)
+{
+   API_ENTRY;
+
+   if (!cw->ec) return;
+   if ((!cw->force_visible) && (!cw->iconic_preview_visible) &&
+       (!cw->deleted) && (!e_object_is_del(E_OBJECT(cw->ec))))
+     evas_object_smart_callback_call(cw->smart_obj, "visibility_force", cw->ec);
+   cw->iconic_preview_visible++;
+}
+
+E_API void
+e_comp_object_iconic_preview_del(Evas_Object *obj)
+{
+   API_ENTRY;
+
+   if (!cw->ec) return;
+   if (!cw->iconic_preview_visible) return;
+   cw->iconic_preview_visible--;
+   if ((!cw->force_visible) && (!cw->iconic_preview_visible) &&
+       (!cw->deleted) && (!e_object_is_del(E_OBJECT(cw->ec))))
+     evas_object_smart_callback_call(cw->smart_obj, "visibility_normal", cw->ec);
 }
 /////////////////////////////////////////////////////////
 

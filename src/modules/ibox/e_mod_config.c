@@ -9,6 +9,8 @@ struct _E_Config_Dialog_Data
    int   icon_label;
    int   expand_on_desktop;
    int   show_preview;
+   int   live_preview;
+   Evas_Object *o_preview_live;
    struct
      {
 	Evas_Object *o_desk_show_all;
@@ -25,6 +27,7 @@ static Evas_Object *_basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Co
 static int _basic_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 static void _cb_disable_check_list(void *data, Evas_Object *obj);
 static void _cb_zone_policy_change(void *data, Evas_Object *obj);
+static void _cb_preview_change(void *data, Evas_Object *obj);
 // unused
 //static void _cb_disable_check(void *data, Evas_Object *obj);
 void
@@ -62,6 +65,7 @@ _fill_data(Config_Item *ci, E_Config_Dialog_Data *cfdata)
    cfdata->icon_label = ci->icon_label;
    cfdata->expand_on_desktop = ci->expand_on_desktop;
    cfdata->show_preview = ci->show_preview;
+   cfdata->live_preview = ci->live_preview;
 }
 
 static void *
@@ -89,16 +93,22 @@ static Evas_Object *
 _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    E_Radio_Group *rg;
-   Evas_Object *o, *of, *ob;
+   Evas_Object *o, *of, *ob, *preview_check;
    Evas_Object *show_check = NULL;
    int zone_count = 0;
 
    o = e_widget_list_add(evas, 0, 0);
 
-   of = e_widget_framelist_add(evas, _("General Settings"), 0);
-
-   ob = e_widget_check_add(evas, _("Preview"), &(cfdata->show_preview));
+   of = e_widget_framelist_add(evas, _("Preview"), 0);
+   preview_check = e_widget_check_add(evas, _("Show previews"), &(cfdata->show_preview));
+   e_widget_framelist_object_append(of, preview_check);
+   cfdata->o_preview_live = ob = e_widget_check_add(evas, _("Keep iconified windows updating"), &(cfdata->live_preview));
    e_widget_framelist_object_append(of, ob);
+   e_widget_on_change_hook_set(preview_check, _cb_preview_change, cfdata);
+   _cb_preview_change(cfdata, preview_check);
+   e_widget_list_object_append(o, of, 1, 1, 0.5);
+
+   of = e_widget_framelist_add(evas, _("General Settings"), 0);
 
    ob = e_widget_check_add(evas, _("Expand When On Desktop"), &(cfdata->expand_on_desktop));
    e_widget_framelist_object_append(of, ob);
@@ -185,6 +195,7 @@ _basic_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
    ci->show_desk = cfdata->desk_policy;
    ci->expand_on_desktop = cfdata->expand_on_desktop;
    ci->show_preview = cfdata->show_preview;
+   ci->live_preview = cfdata->live_preview;
 
    _ibox_config_update(ci);
    e_config_save_queue();
@@ -212,6 +223,16 @@ _cb_zone_policy_change(void *data, Evas_Object *obj EINA_UNUSED)
 	e_widget_disabled_set(cfdata->gui.o_desk_show_active, 0);
      }
 }
+
+static void
+_cb_preview_change(void *data, Evas_Object *obj)
+{
+   E_Config_Dialog_Data *cfdata = data;
+
+   e_widget_disabled_set(cfdata->o_preview_live,
+                         !e_widget_check_checked_get(obj));
+}
+
 
 /*!
  * @param data A Evas_Object to chain together with the checkbox

@@ -54,6 +54,8 @@ struct _Tasks_Item
    Eina_Bool urgent E_BITFIELD;
    Eina_Bool iconified E_BITFIELD;
    Eina_Bool iconifying E_BITFIELD;
+   Eina_Bool live_preview_perm E_BITFIELD;
+   Eina_Bool live_preview_temp E_BITFIELD;
    Eina_Bool delete_me E_BITFIELD;
 };
 
@@ -78,6 +80,7 @@ static void         _tasks_item_free(Tasks_Item *item);
 static void         _tasks_item_signal_emit(Tasks_Item *item, char *sig, char *src);
 static void         _tasks_item_preview_add(Tasks_Item *item);
 static void         _tasks_item_preview_del(Tasks_Item *item);
+static void         _tasks_item_live_preview_eval(Tasks_Item *item);
 
 static Config_Item *_tasks_config_item_get(const char *id);
 
@@ -134,6 +137,7 @@ e_modapi_init(E_Module *m)
    E_CONFIG_VAL(D, T, icon_only, UCHAR);
    E_CONFIG_VAL(D, T, text_only, UCHAR);
    E_CONFIG_VAL(D, T, preview, UCHAR);
+   E_CONFIG_VAL(D, T, live_preview, UCHAR);
 
    conf_edd = E_CONFIG_DD_NEW("Tasks_Config", Config);
 
@@ -158,6 +162,7 @@ e_modapi_init(E_Module *m)
         config->minh = 32;
         config->preview = 0;
         config->preview_size = 240;
+        config->live_preview = 0;
         tasks_config->items = eina_list_append(tasks_config->items, config);
      }
 
@@ -737,6 +742,28 @@ _tasks_item_preview_del(Tasks_Item *item)
 }
 
 static void
+_tasks_item_live_preview_eval(Tasks_Item *item)
+{
+   Eina_Bool want_perm;
+
+   if (!item) return;
+   if (!item->tasks || !item->tasks->config) return;
+
+   want_perm = item->tasks->config->live_preview &&
+     e_client_stack_iconified_get(item->client);
+
+   if (want_perm == item->live_preview_perm) return;
+   item->live_preview_perm = want_perm;
+   if (item->live_preview_perm)
+     {
+        if (!item->live_preview_temp)
+          e_comp_object_iconic_preview_add(item->client->frame);
+     }
+   else if (!item->live_preview_temp)
+     e_comp_object_iconic_preview_del(item->client->frame);
+}
+
+static void
 _tasks_item_free(Tasks_Item *item)
 {
    if (item->o_icon)
@@ -747,6 +774,12 @@ _tasks_item_free(Tasks_Item *item)
    if (e_object_is_del(E_OBJECT(item->client)))
      item->tasks->clients = eina_list_remove(item->tasks->clients, item->client);
    e_object_unref(E_OBJECT(item->client));
+   if (item->live_preview_temp || item->live_preview_perm)
+     {
+        e_comp_object_iconic_preview_del(item->client->frame);
+        item->live_preview_temp = 0;
+        item->live_preview_perm = 0;
+     }
    _tasks_item_preview_del(item);
    if (item->o_item)
      {
@@ -805,6 +838,7 @@ _tasks_iconified_eval(Tasks_Item *item)
         else
           _tasks_item_signal_emit(item, "e,state,uniconified", "e");
      }
+   _tasks_item_live_preview_eval(item);
 }
 
 static void
@@ -895,6 +929,7 @@ _tasks_config_item_get(const char *id)
    config->show_all_screens = 0;
    config->minw = 100;
    config->minh = 32;
+   config->live_preview = 0;
 
    tasks_config->items = eina_list_append(tasks_config->items, config);
 
@@ -986,6 +1021,12 @@ _tasks_cb_timer_del(void *data)
 {
    Tasks_Item *item = data;
 
+   if (item->live_preview_temp)
+     {
+        item->live_preview_temp = 0;
+        if (!item->live_preview_perm)
+          e_comp_object_iconic_preview_del(item->client->frame);
+     }
    if (item->o_preview)
      evas_object_del(item->o_preview);
    if (item->timer)
@@ -1002,6 +1043,7 @@ _tasks_item_preview_add(Tasks_Item *item)
    Evas_Object *o, *ot, *or, *img;
    Evas_Coord ox, oy, ow, oh, size;
    double n;
+   int w, h;
 
    if (item->o_preview) _tasks_cb_timer_del(item);
 
@@ -1020,26 +1062,43 @@ _tasks_item_preview_add(Tasks_Item *item)
    evas_object_show(ot);
 
    ec = item->client;
-   img = e_comp_object_util_mirror_add(ec->frame);
-   evas_object_size_hint_aspect_set(img, EVAS_ASPECT_CONTROL_BOTH, ec->client.w, ec->client.h);
+   if (ec->iconic && (!item->live_preview_temp))
+     {
+        if (!item->live_preview_perm)
+          e_comp_object_iconic_preview_add(ec->frame);
+        item->live_preview_temp = 1;
+     }
+   img = e_comp_object_util_frame_mirror_add(ec->frame);
+   if (!img) img = e_comp_object_util_mirror_add(ec->frame);
+   if (!img)
+     {
+        _tasks_cb_timer_del(item);
+        return;
+     }
+
+   w = ec->client.w;
+   h = ec->client.h;
+   if (ec->shaded)
+     evas_object_geometry_get(ec->frame_object, NULL, NULL, &w, &h);
+   evas_object_size_hint_aspect_set(img, EVAS_ASPECT_CONTROL_BOTH, w, h);
    evas_object_show(img);
 
    or = evas_object_rectangle_add(evas_object_evas_get(o));
 
    size = item->tasks->config->preview_size;
-   if (ec->client.w > ec->client.h)
+   if (w > h)
      {
-        n = size * (1.0 / ec->client.w);
-        evas_object_size_hint_min_set(img, size, n * ec->client.h);
-        evas_object_size_hint_max_set(img, size, n * ec->client.h);
-        evas_object_size_hint_min_set(or,  size + 1, (n * ec->client.h) + 1);
+        n = size * (1.0 / w);
+        evas_object_size_hint_min_set(img, size, n * h);
+        evas_object_size_hint_max_set(img, size, n * h);
+        evas_object_size_hint_min_set(or,  size + 1, (n * h) + 1);
      }
    else
      {
-        n = size * (1.0 / ec->client.h);
-        evas_object_size_hint_min_set(img, n * ec->client.w, size);
-        evas_object_size_hint_max_set(img, n * ec->client.w, size);
-        evas_object_size_hint_min_set(or, (n * ec->client.w) + 1, size + 1);
+        n = size * (1.0 / h);
+        evas_object_size_hint_min_set(img, n * w, size);
+        evas_object_size_hint_max_set(img, n * w, size);
+        evas_object_size_hint_min_set(or, (n * w) + 1, size + 1);
      }
 
    elm_table_pack(ot, or, 0, 0, 1, 1);
