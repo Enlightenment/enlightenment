@@ -245,6 +245,7 @@ gadman_gadget_add_handler(void *d EINA_UNUSED, int type EINA_UNUSED, E_Event_Gad
      edje_object_signal_emit(ev->gcc->o_frame, "e,state,visibility,inset", "e");
    else
      edje_object_signal_emit(ev->gcc->o_frame, "e,state,visibility,plain", "e");
+   gadman_gadget_place_under_pointer(ev->gcc);
    gadman_gadget_edit_start(ev->gcc);
 
    return ECORE_CALLBACK_RENEW;

@@ -4,7 +4,11 @@
 static void             _attach_menu(void *data, E_Gadcon_Client *gcc, E_Menu *menu);
 static void             _save_widget_position(E_Gadcon_Client *gcc);
 static void             _save_widget_position_for_zone(E_Gadcon_Client *gcc, E_Zone *zone);
+static void             _save_widget_position_for_geometry(E_Gadcon_Client *gcc, E_Zone *zone, int x, int y, int w, int h);
+static void             _gadman_gadget_geometry_sync(E_Gadcon_Client *gcc, E_Zone *zone, int x, int y, int w, int h);
 static void             _apply_widget_position(E_Gadcon_Client *gcc);
+static void             _gadman_gadget_geometry_clamp(E_Gadcon_Client *gcc, E_Zone *zone, int *x, int *y, int *w, int *h);
+static Eina_Bool        _gadman_gadget_retarget(E_Gadcon_Client *gcc, E_Zone *zone);
 static E_Gadcon_Client *_gadman_gadget_add(const E_Gadcon_Client_Class *cc, Gadman_Layer_Type layer, E_Config_Gadcon_Client *src_cf);
 static Eina_Bool _gadman_module_init_end_cb(void *d EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED);
 static Evas_Object     *_create_mover(E_Gadcon *gc);
@@ -683,8 +687,11 @@ _gadman_gadcon_free(E_Gadcon *gc)
 static void
 _gadman_gadcon_dnd_enter_cb(E_Gadcon *gc, E_Gadcon_Client *gcc)
 {
-   Evas_Object *o;
-   int ox, oy, mx, my;
+   E_Gadcon_Client *drag_gcc;
+   Evas_Object *mover, *o;
+   E_Zone *zone;
+   int x, y, w, h;
+   unsigned int layer;
 
    /* only use this for dragging gadcons around the desktop */
    if ((!eina_list_data_find(Man->gadcons[GADMAN_LAYER_BG], gc)) &&
@@ -692,14 +699,27 @@ _gadman_gadcon_dnd_enter_cb(E_Gadcon *gc, E_Gadcon_Client *gcc)
      return;
    if (gc != gcc->gadcon) return;
 
-   /* Keep mover and widget aligned to the existing grab point for all DnD sources. */
-   o = gcc->o_frame ? gcc->o_frame : gcc->o_base;
-   if (o)
+   layer = gcc->gadcon->id - ID_GADMAN_LAYER_BASE;
+   drag_gcc = Man->drag_gcc[layer];
+   if (drag_gcc && drag_gcc->moving && (drag_gcc != gcc))
      {
-        evas_pointer_output_xy_get(gc->evas, &mx, &my);
-        evas_object_geometry_get(o, &ox, &oy, NULL, NULL);
-        gcc->dx = mx - ox;
-        gcc->dy = my - oy;
+        mover = _get_mover(drag_gcc);
+        o = gcc->o_frame ?: gcc->o_base;
+        zone = e_gadcon_zone_get(gc);
+        if (mover && o && zone)
+          {
+             evas_pointer_output_xy_get(gc->evas, &x, &y);
+             evas_object_geometry_get(mover, NULL, NULL, &w, &h);
+             x -= w / 2;
+             y -= h / 2;
+             _gadman_gadget_geometry_clamp(drag_gcc, zone, &x, &y, &w, &h);
+             _gadman_gadget_geometry_sync(gcc, zone, x, y, w, h);
+             evas_object_move(mover, x, y);
+             evas_object_resize(mover, w, h);
+             evas_object_move(o, x, y);
+             evas_object_resize(o, w, h);
+          }
+        return;
      }
 
    //INF("ENTER: %u", e_object_ref_get((void*)gcc));
@@ -742,7 +762,7 @@ _gadman_gadcon_dnd_move_cb(E_Gadcon *gc, E_Gadcon_Client *gcc)
 {
    Evas_Object *mover;
    E_Zone *zone;
-   int x, y, mx, my;
+   int x, y;
    int ow, oh;
 
    /* only use this for dragging gadcons around the desktop */
@@ -754,52 +774,64 @@ _gadman_gadcon_dnd_move_cb(E_Gadcon *gc, E_Gadcon_Client *gcc)
    evas_pointer_output_xy_get(gc->evas, &x, &y);
    evas_object_geometry_get(mover, NULL, NULL, &ow, &oh);
 
-   /* keep drag origin under pointer and clamp to active zone */
+   /* Keep the preview centered under the pointer for desktop/screen moves
+    * without touching shared shelf drag offsets.
+    */
    zone = e_comp_zone_xy_get(x, y);
    if (!zone) zone = e_gadcon_zone_get(gc);
-   mx = MIN(Man->width, zone->x + zone->w), my = MIN(Man->height, zone->y + zone->h);
-   x = MAX(x, zone->x + gcc->dx);
-   y = MAX(y, zone->y + gcc->dy);
-   x = MIN(x, mx - ow + gcc->dx);
-   y = MIN(y, my - oh + gcc->dy);
+   x -= ow / 2;
+   y -= oh / 2;
+   _gadman_gadget_geometry_clamp(gcc, zone, &x, &y, &ow, &oh);
+   _gadman_gadget_geometry_sync(gcc, zone, x, y, ow, oh);
 
-   evas_object_move(gcc->o_frame, x - gcc->dx, y - gcc->dy);
-   evas_object_move(mover, x - gcc->dx, y - gcc->dy);
+   evas_object_move(gcc->o_frame, x, y);
+   evas_object_resize(gcc->o_frame, ow, oh);
+   evas_object_move(mover, x, y);
+   evas_object_resize(mover, ow, oh);
    evas_object_raise(gcc->o_frame);
    evas_object_raise(mover);
-   _save_widget_position_for_zone(gcc, zone);
 }
 
 static void
 _gadman_gadcon_dnd_drop_cb(E_Gadcon *gc, E_Gadcon_Client *gcc)
 {
-   E_Config_Gadcon_Client *cf;
+   E_Gadcon_Client *drag_gcc;
+   Evas_Object *mover;
    E_Zone *dst_zone = NULL, *src_zone = NULL;
-   E_Gadcon *dst_gadcon;
+   int x, y, w, h;
+   unsigned int layer;
 
    /* only use this for dragging gadcons around the desktop */
    if ((!eina_list_data_find(Man->gadcons[GADMAN_LAYER_BG], gc)) &&
        (!eina_list_data_find(Man->gadcons[GADMAN_LAYER_TOP], gc)))
      return;
 
-   gcc->moving = 0;
-   gcc->dx = gcc->dy = 0;
-
    /* Use the drop target zone from the receiving gadcon.
     * Using mover geometry can pick the old zone while crossing screen edges.
     */
    dst_zone = e_gadcon_zone_get(gc);
-   src_zone = e_gadcon_zone_get(gcc->gadcon);
-   if (dst_zone && src_zone && (src_zone != dst_zone))
+   layer = gc->id - ID_GADMAN_LAYER_BASE;
+   drag_gcc = Man->drag_gcc[layer];
+   if (!drag_gcc) drag_gcc = gcc;
+   drag_gcc->moving = 0;
+   drag_gcc->dx = drag_gcc->dy = 0;
+   src_zone = e_gadcon_zone_get(drag_gcc->gadcon);
+   mover = _get_mover(drag_gcc);
+   if (!dst_zone) dst_zone = src_zone;
+   if (dst_zone)
      {
-        unsigned int layer = gcc->gadcon->id - ID_GADMAN_LAYER_BASE;
-        cf = gcc->cf;
-        gcc->gadcon->cf->clients = eina_list_remove(gcc->gadcon->cf->clients, cf);
-        dst_gadcon = gadman_gadcon_get(dst_zone, layer);
-        if (dst_gadcon)
-          dst_gadcon->cf->clients = eina_list_append(dst_gadcon->cf->clients, cf);
+        if (mover) evas_object_geometry_get(mover, &x, &y, &w, &h);
+        else evas_object_geometry_get(gcc->o_frame, &x, &y, &w, &h);
+        _gadman_gadget_geometry_clamp(drag_gcc, dst_zone, &x, &y, &w, &h);
+        if (gcc->o_frame)
+          {
+             evas_object_move(gcc->o_frame, x, y);
+             evas_object_resize(gcc->o_frame, w, h);
+          }
+        _save_widget_position_for_geometry(drag_gcc, dst_zone, x, y, w, h);
+        if (drag_gcc == gcc)
+          _gadman_gadget_retarget(drag_gcc, dst_zone);
      }
-   _save_widget_position_for_zone(gcc, dst_zone ?: src_zone);
    e_config_save_queue();
 }
 
@@ -997,18 +1029,18 @@ static void
 _save_widget_position_for_zone(E_Gadcon_Client *gcc, E_Zone *zone)
 {
    int x, y, w, h;
-   int zw, zh;
 
    if (!zone) return;
-   zw = MAX(zone->w, 1);
-   zh = MAX(zone->h, 1);
 
    evas_object_geometry_get(gcc->o_frame, &x, &y, &w, &h);
-   x -= zone->x, y -= zone->y;
-   gcc->config.pos_x = (double)x / (double)zw;
-   gcc->config.pos_y = (double)y / (double)zh;
-   gcc->config.size_w = (double)w / (double)zw;
-   gcc->config.size_h = (double)h / (double)zh;
+   _save_widget_position_for_geometry(gcc, zone, x, y, w, h);
+}
+
+static void
+_save_widget_position_for_geometry(E_Gadcon_Client *gcc, E_Zone *zone, int x, int y, int w, int h)
+{
+   if ((!gcc) || (!zone)) return;
+   _gadman_gadget_geometry_sync(gcc, zone, x, y, w, h);
    if (gcc->cf)
      {
         gcc->cf->geom.pos_x = gcc->config.pos_x;
@@ -1017,6 +1049,77 @@ _save_widget_position_for_zone(E_Gadcon_Client *gcc, E_Zone *zone)
         gcc->cf->geom.size_h = gcc->config.size_h;
         e_config_save_queue();
      }
+}
+
+static void
+_gadman_gadget_geometry_sync(E_Gadcon_Client *gcc, E_Zone *zone, int x, int y, int w, int h)
+{
+   int zw, zh;
+
+   if ((!gcc) || (!zone)) return;
+
+   zw = MAX(zone->w, 1);
+   zh = MAX(zone->h, 1);
+   x -= zone->x;
+   y -= zone->y;
+   gcc->config.pos_x = (double)x / (double)zw;
+   gcc->config.pos_y = (double)y / (double)zh;
+   gcc->config.size_w = (double)w / (double)zw;
+   gcc->config.size_h = (double)h / (double)zh;
+}
+
+static void
+_gadman_gadget_geometry_clamp(E_Gadcon_Client *gcc, E_Zone *zone, int *x, int *y, int *w, int *h)
+{
+   int max_x, max_y;
+
+   if (!zone) return;
+
+   if (gcc)
+     {
+        if (*w < gcc->min.w) *w = gcc->min.w;
+        if (*h < gcc->min.h) *h = gcc->min.h;
+     }
+   if (*w < 1) *w = 1;
+   if (*h < 1) *h = 1;
+
+   max_x = zone->x + zone->w + MIN_VISIBLE_MARIGIN - *w;
+   max_y = zone->y + zone->h + MIN_VISIBLE_MARIGIN - *h;
+
+   if (*x < zone->x) *x = zone->x;
+   if (*y < zone->y) *y = zone->y;
+   if (*x > max_x) *x = max_x;
+   if (*y > max_y) *y = max_y;
+}
+
+static Eina_Bool
+_gadman_gadget_retarget(E_Gadcon_Client *gcc, E_Zone *zone)
+{
+   E_Gadcon *src_gadcon, *dst_gadcon;
+   unsigned int layer;
+
+   if ((!gcc) || (!zone)) return EINA_FALSE;
+   if (gcc->gadcon->zone == zone) return EINA_FALSE;
+
+   layer = gcc->gadcon->id - ID_GADMAN_LAYER_BASE;
+   dst_gadcon = gadman_gadcon_get(zone, layer);
+   if (!dst_gadcon) return EINA_FALSE;
+
+   src_gadcon = gcc->gadcon;
+   if (src_gadcon == dst_gadcon) return EINA_FALSE;
+
+   src_gadcon->clients = eina_list_remove(src_gadcon->clients, gcc);
+   dst_gadcon->clients = eina_list_append(dst_gadcon->clients, gcc);
+   if (gcc->cf)
+     {
+        src_gadcon->cf->clients = eina_list_remove(src_gadcon->cf->clients, gcc->cf);
+        if (!eina_list_data_find(dst_gadcon->cf->clients, gcc->cf))
+          dst_gadcon->cf->clients = eina_list_append(dst_gadcon->cf->clients, gcc->cf);
+     }
+   if (src_gadcon->drag_gcc == gcc) src_gadcon->drag_gcc = NULL;
+   if (src_gadcon->new_gcc == gcc) src_gadcon->new_gcc = NULL;
+   gcc->gadcon = dst_gadcon;
+   return EINA_TRUE;
 }
 
 static void
@@ -1055,22 +1158,9 @@ _apply_widget_position(E_Gadcon_Client *gcc)
         return;
      }
 
-   /* Respect min sizes */
-   if (h < gcc->min.h) h = gcc->min.h;
-   if (w < gcc->min.w) w = gcc->min.w;
    if (h < 1) h = 100;
    if (w < 1) w = 100;
-
-   /* Respect zone marigin */
-   if (x < zone->x) x = zone->x;
-   if (y < zone->y) y = zone->y;
-   if (x > (zone->x + zone->w)) x = zone->x;
-   if (y > (zone->y + zone->h)) y = zone->y;
-
-   if ((y + h) > (zone->y + zone->h + MIN_VISIBLE_MARIGIN))
-     h = ((zone->y + zone->h + MIN_VISIBLE_MARIGIN) - y);
-   if ((x + w) > (zone->x + zone->w + MIN_VISIBLE_MARIGIN))
-     w = ((zone->x + zone->w + MIN_VISIBLE_MARIGIN) - x);
+   _gadman_gadget_geometry_clamp(gcc, zone, &x, &y, &w, &h);
 
    evas_object_move(gcc->o_frame, x, y);
    evas_object_resize(gcc->o_frame, w, h);
@@ -1081,6 +1171,34 @@ _apply_widget_position(E_Gadcon_Client *gcc)
    if (!mover) return;
    evas_object_move(mover, x, y);
    evas_object_resize(mover, w, h);
+}
+
+void
+gadman_gadget_place_under_pointer(E_Gadcon_Client *gcc)
+{
+   E_Zone *zone;
+   int x, y, w, h;
+
+   if ((!gcc) || (!gcc->o_frame)) return;
+
+   evas_pointer_output_xy_get(e_comp->evas, &x, &y);
+   zone = e_comp_zone_xy_get(x, y);
+   if (!zone) zone = gcc->gadcon->zone;
+   _gadman_gadget_retarget(gcc, zone);
+   zone = gcc->gadcon->zone;
+
+   evas_object_geometry_get(gcc->o_frame, NULL, NULL, &w, &h);
+   if ((w < 1) || (h < 1))
+     {
+        w = gcc->cf->geom.size_w * zone->w;
+        h = gcc->cf->geom.size_h * zone->h;
+     }
+   x -= w / 2;
+   y -= h / 2;
+   _gadman_gadget_geometry_clamp(gcc, zone, &x, &y, &w, &h);
+   evas_object_move(gcc->o_frame, x, y);
+   evas_object_resize(gcc->o_frame, w, h);
+   _save_widget_position_for_zone(gcc, zone);
 }
 
 static void
