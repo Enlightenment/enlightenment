@@ -775,7 +775,6 @@ _gadman_gadcon_dnd_move_cb(E_Gadcon *gc, E_Gadcon_Client *gcc)
    evas_object_geometry_get(mover, NULL, NULL, &ow, &oh);
 
    /* Keep the preview centered under the pointer for desktop/screen moves
-    * without touching shared shelf drag offsets.
     */
    zone = e_comp_zone_xy_get(x, y);
    if (!zone) zone = e_gadcon_zone_get(gc);
@@ -790,6 +789,8 @@ _gadman_gadcon_dnd_move_cb(E_Gadcon *gc, E_Gadcon_Client *gcc)
    evas_object_resize(mover, ow, oh);
    evas_object_raise(gcc->o_frame);
    evas_object_raise(mover);
+   /* shelf */
+   _save_widget_position_for_zone(gcc, zone);
 }
 
 static void
