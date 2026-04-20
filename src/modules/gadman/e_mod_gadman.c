@@ -1713,6 +1713,7 @@ on_move(void *data, Evas_Object *o EINA_UNUSED, const char *em EINA_UNUSED, cons
    E_Gadcon *gc;
    E_Gadcon_Client *drag_gcc;
    E_Drag *drag;
+   Eina_Bool gadman_gc;
    const char *drag_types[] = { "enlightenment/gadcon_client" };
 
    /* DRAG_START */
@@ -1723,7 +1724,15 @@ on_move(void *data, Evas_Object *o EINA_UNUSED, const char *em EINA_UNUSED, cons
    mover = _get_mover(drag_gcc);
 
    drag_gcc->moving = 1;
-   gc->cf->clients = eina_list_remove(gc->cf->clients, drag_gcc->cf);
+
+   gadman_gc = ((gc->id == ID_GADMAN_LAYER_BG) || (gc->id == ID_GADMAN_LAYER_TOP));
+   if (gadman_gc)
+     gc->cf->clients = eina_list_remove(gc->cf->clients, drag_gcc->cf);
+   else
+     {
+        /* Preserve and persist shelf/panel ordering during moves */
+        e_config_save_queue();
+     }
    e_gadcon_client_drag_set(drag_gcc);
    e_object_ref(E_OBJECT(drag_gcc));
    evas_pointer_output_xy_get(gc->evas, &mx, &my);
