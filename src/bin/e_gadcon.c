@@ -18,6 +18,7 @@ static Eina_Bool                _e_gadcon_cb_client_scroll_animator(void *data);
 static void                     _e_gadcon_cb_client_frame_mouse_move(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void                     _e_gadcon_cb_client_frame_moveresize(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void                     _e_gadcon_client_save(E_Gadcon_Client *gcc);
+static void                     _e_gadcon_client_order_save(E_Gadcon *gc);
 static void                     _e_gadcon_client_drag_begin(E_Gadcon_Client *gcc, int x, int y);
 static void                     _e_gadcon_client_inject(E_Gadcon *gc, E_Gadcon_Client *gcc, int x, int y);
 
@@ -2363,6 +2364,28 @@ _e_gadcon_client_save(E_Gadcon_Client *gcc)
 }
 
 static void
+_e_gadcon_client_order_save(E_Gadcon *gc)
+{
+   E_Gadcon_Client *gcc;
+   Eina_List *l;
+
+   if (!gc) return;
+   if (!gc->cf) return;
+   if (!gc->o_container) return;
+
+   _e_gadcon_layout_smart_sync_clients(gc);
+
+   gc->cf->clients = eina_list_free(gc->cf->clients);
+   EINA_LIST_FOREACH(gc->clients, l, gcc)
+     {
+        if (!gcc->cf) continue;
+        gc->cf->clients = eina_list_append(gc->cf->clients, gcc->cf);
+     }
+
+   e_config_save_queue();
+}
+
+static void
 _e_gadcon_client_drag_begin(E_Gadcon_Client *gcc, int x, int y)
 {
    E_Drag *drag;
@@ -3280,6 +3303,7 @@ _e_gadcon_cb_dnd_drop(void *data, const char *type EINA_UNUSED, void *event EINA
         _e_gadcon_client_save(drag_gcc);
         e_gadcon_client_show(drag_gcc);
         if (gc->dnd_drop_cb) gc->dnd_drop_cb(gc, drag_gcc);
+	_e_gadcon_client_order_save(gc);
         return;
      }
 
@@ -3328,6 +3352,7 @@ _e_gadcon_cb_dnd_drop(void *data, const char *type EINA_UNUSED, void *event EINA
      }
    if (gc->editing) e_gadcon_client_edit_begin(gc->new_gcc);
    gc->new_gcc = NULL;
+   _e_gadcon_client_order_save(gc);
    e_config_save_queue();
    if (gc->dnd_drop_cb) gc->dnd_drop_cb(gc, gcc);
 
