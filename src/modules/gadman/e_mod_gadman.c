@@ -841,7 +841,6 @@ _gadman_gadcon_dnd_drop_cb(E_Gadcon *gc, E_Gadcon_Client *gcc)
    E_Zone *dst_zone = NULL, *src_zone = NULL;
    int x, y, w, h;
    unsigned int layer;
-   Eina_Bool retargeted = EINA_FALSE;
 
    /* only use this for dragging gadcons around the desktop */
    if ((!eina_list_data_find(Man->gadcons[GADMAN_LAYER_BG], gc)) &&
