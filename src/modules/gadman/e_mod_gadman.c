@@ -758,6 +758,42 @@ _gadman_gadcon_dnd_leave_cb(E_Gadcon *gc, E_Gadcon_Client *gcc)
 }
 
 static void
+_gadman_gadget_desktop_drag_size_ensure(E_Gadcon_Client *gcc, E_Zone *zone, int *w, int *h)
+{
+   int minw, minh;
+
+   if ((!zone) || (!w) || (!h)) return;
+
+   minw = 1;
+   minh = 1;
+
+   if (gcc)
+     {
+        if (gcc->min.w > minw) minw = gcc->min.w;
+        if (gcc->min.h > minh) minh = gcc->min.h;
+     }
+
+   /* When a gadget is dragged from a shelf to the desktop, the live object
+    * size can still reflect the shelf-constrained geometry. If that tiny size
+    * gets normalized into desktop config, the gadget becomes effectively
+    * invisible on drop. Ensure a sane minimum size for desktop placement.
+    */
+   if (zone->w > 0)
+     {
+        int desk_minw = zone->w / 12;
+        if (desk_minw > minw) minw = desk_minw;
+     }
+   if (zone->h > 0)
+     {
+        int desk_minh = zone->h / 12;
+        if (desk_minh > minh) minh = desk_minh;
+     }
+
+   if (*w < minw) *w = minw;
+   if (*h < minh) *h = minh;
+}
+
+static void
 _gadman_gadcon_dnd_move_cb(E_Gadcon *gc, E_Gadcon_Client *gcc)
 {
    Evas_Object *mover;
@@ -778,10 +814,12 @@ _gadman_gadcon_dnd_move_cb(E_Gadcon *gc, E_Gadcon_Client *gcc)
     */
    zone = e_comp_zone_xy_get(x, y);
    if (!zone) zone = e_gadcon_zone_get(gc);
+
    x -= ow / 2;
    y -= oh / 2;
    _gadman_gadget_geometry_clamp(gcc, zone, &x, &y, &ow, &oh);
    _gadman_gadget_geometry_sync(gcc, zone, x, y, ow, oh);
+   _gadman_gadget_desktop_drag_size_ensure(gcc, zone, &ow, &oh);
 
    evas_object_move(gcc->o_frame, x, y);
    evas_object_resize(gcc->o_frame, ow, oh);
@@ -790,7 +828,9 @@ _gadman_gadcon_dnd_move_cb(E_Gadcon *gc, E_Gadcon_Client *gcc)
    evas_object_raise(gcc->o_frame);
    evas_object_raise(mover);
    /* shelf */
-   _save_widget_position_for_zone(gcc, zone);
+   _save_widget_position_for_geometry(gcc, zone, x, y, ow, oh);
+
+   e_config_save_queue();
 }
 
 static void
@@ -801,6 +841,7 @@ _gadman_gadcon_dnd_drop_cb(E_Gadcon *gc, E_Gadcon_Client *gcc)
    E_Zone *dst_zone = NULL, *src_zone = NULL;
    int x, y, w, h;
    unsigned int layer;
+   Eina_Bool retargeted = EINA_FALSE;
 
    /* only use this for dragging gadcons around the desktop */
    if ((!eina_list_data_find(Man->gadcons[GADMAN_LAYER_BG], gc)) &&
