@@ -817,9 +817,9 @@ _gadman_gadcon_dnd_move_cb(E_Gadcon *gc, E_Gadcon_Client *gcc)
 
    x -= ow / 2;
    y -= oh / 2;
+   _gadman_gadget_desktop_drag_size_ensure(gcc, zone, &ow, &oh);
    _gadman_gadget_geometry_clamp(gcc, zone, &x, &y, &ow, &oh);
    _gadman_gadget_geometry_sync(gcc, zone, x, y, ow, oh);
-   _gadman_gadget_desktop_drag_size_ensure(gcc, zone, &ow, &oh);
 
    evas_object_move(gcc->o_frame, x, y);
    evas_object_resize(gcc->o_frame, ow, oh);
