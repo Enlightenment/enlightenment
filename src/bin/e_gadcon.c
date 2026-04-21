@@ -50,6 +50,8 @@ static void                     _e_gadcon_cb_dnd_enter(void *data, const char *t
 static void                     _e_gadcon_cb_dnd_move(void *data, const char *type, void *event);
 static void                     _e_gadcon_cb_dnd_leave(void *data, const char *type, void *event);
 static void                     _e_gadcon_cb_dnd_drop(void *data, const char *type, void *event);
+static Eina_Bool                _e_gadcon_location_dnd_allowed(const E_Gadcon *src, const E_Gadcon *dst);
+
 
 static int                      _e_gadcon_client_class_feature_check(const E_Gadcon_Client_Class *cc, const char *name, void *feature);
 static void                     _e_gadcon_client_cb_menu_post(void *data, E_Menu *m);
@@ -2725,6 +2727,11 @@ _e_gadcon_client_move_go(E_Gadcon_Client *gcc)
    if ((cy + e_config->drag_resist < 0 || cy - e_config->drag_resist >= gh) ||
        (cx + e_config->drag_resist < 0 || cx - e_config->drag_resist > gw))
      {
+        /* Never start detach-DND from a shelf gadcon. */
+
+        if ((!gcc->gadcon) || (!gcc->gadcon->location) ||
+            (gcc->gadcon->location->site == E_GADCON_SITE_SHELF))
+          return;
         _e_gadcon_client_drag_begin(gcc, cx, cy);
         return;
      }
@@ -2801,6 +2808,32 @@ _e_gadcon_client_move_go(E_Gadcon_Client *gcc)
 
    gcc->dx += x;
    gcc->dy += y;
+}
+
+/* Restrict cross-site gadget drag/drop policy.
+ *
+ * We explicitly forbid shelf <-> desktop transfers in both directions.
+ * This keeps shelf gadgets on shelves and desktop gadgets on the desktop.
+ *
+ * Returning EINA_TRUE means the destination gadcon may accept the drag.
+ * Returning EINA_FALSE means the drag should be ignored/rejected.
+ */
+static Eina_Bool
+_e_gadcon_location_dnd_allowed(const E_Gadcon *src, const E_Gadcon *dst)
+{
+   E_Gadcon_Site s, d;
+
+   if (!src || !dst) return EINA_FALSE;
+   if (!src->location || !dst->location) return EINA_TRUE;
+
+   s = src->location->site;
+   d = dst->location->site;
+
+   if (((s == E_GADCON_SITE_SHELF) && (d == E_GADCON_SITE_DESKTOP)) ||
+       ((s == E_GADCON_SITE_DESKTOP) && (d == E_GADCON_SITE_SHELF)))
+     return EINA_FALSE;
+
+   return EINA_TRUE;
 }
 
 static void
@@ -2994,6 +3027,8 @@ _e_gadcon_cb_dnd_enter(void *data, const char *type EINA_UNUSED, void *event)
    gc = data;
    //INF("DND ENTER");
    gcc = gc->drag_gcc;
+   /* Reject forbidden cross-site drags before creating preview state. */
+   if (gcc && !_e_gadcon_location_dnd_allowed(gcc->gadcon, gc)) return;
    if (!gcc) return;  // dnd from efm or something
    if ((!gcc->hidden) && (gcc->gadcon == gc))
      {
@@ -3164,6 +3199,10 @@ _e_gadcon_cb_dnd_move(void *data, const char *type EINA_UNUSED, void *event)
    gc = data;
    //INF("DND (%d,%d)", ev->x, ev->y);
    gcc = gc->new_gcc ? : gc->drag_gcc;
+   /* Ignore motion updates for disallowed source/destination pairs.
+    * This is a second safety check in case the drag somehow reaches here.
+    */
+   if (gc->drag_gcc && !_e_gadcon_location_dnd_allowed(gc->drag_gcc->gadcon, gc)) return;
    if (!gcc) return;
 
    if (gcc->state_info.resist > 0)
@@ -3270,6 +3309,19 @@ _e_gadcon_cb_dnd_drop(void *data, const char *type EINA_UNUSED, void *event EINA
           }
         return;
      }
+   /* Final safety check: do not allow forbidden cross-site drops.
+    * If a preview object was created, discard it cleanly.
+    */
+   if (!_e_gadcon_location_dnd_allowed(drag_gcc->gadcon, gc))
+     {
+        if (gc->new_gcc)
+          {
+             e_object_del(E_OBJECT(gc->new_gcc));
+             gc->new_gcc = NULL;
+          }
+        return;
+     }
+
    //INF("DND DROP");
    gc->cf->clients = eina_list_append(gc->cf->clients, drag_gcc->cf);
    if (!gc->new_gcc)
