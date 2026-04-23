@@ -2203,7 +2203,7 @@ e_nm_agent_reply_cancel(E_NM_Agent_Request *req)
    if (!req->msg) { _agent_request_free(req); return; }
 
    reply = eldbus_message_error_new(req->msg,
-            "org.freedesktop.NetworkManager.SecretAgent.UserCanceled",
+            NM_AGENT_IFACE ".UserCanceled",
             "User canceled password dialog");
    eldbus_connection_send(req->agent->eldbus_conn, reply, NULL, NULL, -1);
 
@@ -2418,19 +2418,25 @@ _e_nm_agent_del(E_NM_Agent *a)
 /* -------------------------------------------------------------------------- */
 
 unsigned int
-e_nm_system_init(Eldbus_Connection *eldbus_conn)
+e_nm_system_init(void)
 {
    init_count++;
    if (init_count > 1) return init_count;
 
+   conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   if (!conn)
+     {
+        init_count--;
+        return 0;
+     }
+
    E_NM_EVENT_MANAGER_IN  = ecore_event_type_new();
    E_NM_EVENT_MANAGER_OUT = ecore_event_type_new();
 
-   conn = eldbus_conn;
    eldbus_name_owner_changed_callback_add(conn, NM_BUS_NAME,
                                           _e_nm_system_name_owner_changed,
                                           NULL, EINA_TRUE);
-   agent = _e_nm_agent_new(eldbus_conn);
+   agent = _e_nm_agent_new(conn);
 
    suspend_handler = ecore_event_handler_add(E_EVENT_SYS_SUSPEND,
                                              _e_nm_sys_suspend_cb, NULL);

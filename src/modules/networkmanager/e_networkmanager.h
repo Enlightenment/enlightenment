@@ -197,7 +197,7 @@ extern int E_NM_EVENT_MANAGER_IN;
 extern int E_NM_EVENT_MANAGER_OUT;
 
 /* Lifecycle */
-unsigned int e_nm_system_init(Eldbus_Connection *eldbus_conn) EINA_ARG_NONNULL(1);
+unsigned int e_nm_system_init(void);
 unsigned int e_nm_system_shutdown(void);
 
 /* Scan */

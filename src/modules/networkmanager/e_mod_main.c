@@ -49,27 +49,10 @@ enm_popup_del(E_NM_Instance *inst)
    E_FREE_FUNC(inst->popup, e_object_del);
    E_FREE_FUNC(inst->ctxt->popup_update_timer, ecore_timer_del);
    inst->ui.popup.genlist = inst->ui.popup.ip_label = NULL;
-   /* Item classes are freed with the popup — clear pointers so update guard works */
-   if (inst->ui.popup.itc_group)
-     {
-        elm_genlist_item_class_free(inst->ui.popup.itc_group);
-        inst->ui.popup.itc_group = NULL;
-     }
-   if (inst->ui.popup.itc_group_wifi)
-     {
-        elm_genlist_item_class_free(inst->ui.popup.itc_group_wifi);
-        inst->ui.popup.itc_group_wifi = NULL;
-     }
-   if (inst->ui.popup.itc_ap)
-     {
-        elm_genlist_item_class_free(inst->ui.popup.itc_ap);
-        inst->ui.popup.itc_ap = NULL;
-     }
-   if (inst->ui.popup.itc_eth)
-     {
-        elm_genlist_item_class_free(inst->ui.popup.itc_eth);
-        inst->ui.popup.itc_eth = NULL;
-     }
+   E_FREE_FUNC(inst->ui.popup.itc_group, elm_genlist_item_class_free);
+   E_FREE_FUNC(inst->ui.popup.itc_group_wifi, elm_genlist_item_class_free);
+   E_FREE_FUNC(inst->ui.popup.itc_ap, elm_genlist_item_class_free);
+   E_FREE_FUNC(inst->ui.popup.itc_eth, elm_genlist_item_class_free);
 }
 
 static void
@@ -150,18 +133,21 @@ _enm_itc_ap_content_get(void *data, Evas_Object *obj, const char *part)
      {
         Evas_Object *ic, *tbl, *rect;
 
-        ic = _enm_ap_icon_new(id->nm, id->ap, evas_object_evas_get(obj));
-        if (!ic) return NULL;
-        evas_object_size_hint_min_set(ic, ELM_SCALE_SIZE(32), ELM_SCALE_SIZE(32));
-        evas_object_show(ic);
-
         tbl = elm_table_add(obj);
+
+        ic = _enm_ap_icon_new(id->nm, id->ap, evas_object_evas_get(obj));
+        if (!ic)
+          {
+             evas_object_del(tbl);
+             return NULL;
+          }
+        evas_object_show(ic);
         elm_table_pack(tbl, ic, 0, 0, 1, 1);
 
         rect = evas_object_rectangle_add(evas_object_evas_get(obj));
         evas_object_color_set(rect, 0, 0, 0, 0);
-        evas_object_size_hint_min_set(rect, ELM_SCALE_SIZE(32), ELM_SCALE_SIZE(32));
-        evas_object_show(rect);
+        evas_object_size_hint_min_set(rect, ELM_SCALE_SIZE(32),
+                                      ELM_SCALE_SIZE(32));
         elm_table_pack(tbl, rect, 0, 0, 1, 1);
 
         return tbl;
@@ -195,18 +181,21 @@ _enm_itc_eth_content_get(void *data, Evas_Object *obj, const char *part)
      {
         Evas_Object *ic, *tbl, *rect;
 
-        ic = _enm_eth_icon_new(id->dev, evas_object_evas_get(obj));
-        if (!ic) return NULL;
-        evas_object_size_hint_min_set(ic, ELM_SCALE_SIZE(32), ELM_SCALE_SIZE(32));
-        evas_object_show(ic);
-
         tbl = elm_table_add(obj);
+
+        ic = _enm_eth_icon_new(id->dev, evas_object_evas_get(obj));
+        if (!ic)
+          {
+             evas_object_del(tbl);
+             return NULL;
+          }
+        evas_object_show(ic);
         elm_table_pack(tbl, ic, 0, 0, 1, 1);
 
         rect = evas_object_rectangle_add(evas_object_evas_get(obj));
         evas_object_color_set(rect, 0, 0, 0, 0);
-        evas_object_size_hint_min_set(rect, ELM_SCALE_SIZE(32), ELM_SCALE_SIZE(32));
-        evas_object_show(rect);
+        evas_object_size_hint_min_set(rect, ELM_SCALE_SIZE(32),
+                                      ELM_SCALE_SIZE(32));
         elm_table_pack(tbl, rect, 0, 0, 1, 1);
 
         return tbl;
@@ -492,7 +481,6 @@ _enm_ap_end_new(struct NM_Manager *nm, struct NM_Access_Point *ap,
    evas_object_smart_callback_add(end, "clicked", _enm_forget_click_cb, fd);
    evas_object_event_callback_add(end, EVAS_CALLBACK_DEL,
                                   _enm_forget_data_free_cb, fd);
-   evas_object_size_hint_min_set(end, ELM_SCALE_SIZE(32), ELM_SCALE_SIZE(32));
 
    return end;
 }
@@ -748,12 +736,16 @@ _enm_popup_update(struct NM_Manager *nm, E_NM_Instance *inst)
 
 }
 
-static void
-_enm_widget_size_set(E_NM_Instance *inst, Evas_Object *widget,
-                     Evas_Coord percent_w, Evas_Coord percent_h,
-                     Evas_Coord min_w, Evas_Coord min_h,
-                     Evas_Coord max_w, Evas_Coord max_h)
+/* Wrap content in an elm_table with a transparent sizer rect so the whole
+ * assembly has a floor of w x h (zone-relative, clamped by min/max) without
+ * fighting the content's own min-size calculation. */
+static Evas_Object *
+_enm_widget_size_wrap(E_NM_Instance *inst, Evas_Object *content,
+                      Evas_Coord percent_w, Evas_Coord percent_h,
+                      Evas_Coord min_w, Evas_Coord min_h,
+                      Evas_Coord max_w, Evas_Coord max_h)
 {
+   Evas_Object *tbl, *rect;
    Evas_Coord w, h, zw, zh;
    E_Zone *zone;
 
@@ -773,7 +765,16 @@ _enm_widget_size_set(E_NM_Instance *inst, Evas_Object *widget,
    if      (h < min_h) h = min_h;
    else if (h > max_h) h = max_h;
 
-   evas_object_size_hint_min_set(widget, w, h);
+   tbl = elm_table_add(e_comp->elm);
+
+   rect = evas_object_rectangle_add(evas_object_evas_get(content));
+   evas_object_color_set(rect, 0, 0, 0, 0);
+   evas_object_size_hint_min_set(rect, w, h);
+   elm_table_pack(tbl, rect, 0, 0, 1, 1);
+
+   elm_table_pack(tbl, content, 0, 0, 1, 1);
+
+   return tbl;
 }
 
 static void
@@ -801,7 +802,6 @@ _enm_popup_new(E_NM_Instance *inst)
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_scroller_bounce_set(gl, EINA_FALSE, EINA_TRUE);
-   evas_object_show(gl);
    inst->ui.popup.genlist = gl;
 
    /* Item classes — created per-popup, freed in enm_popup_del */
@@ -842,6 +842,7 @@ _enm_popup_new(E_NM_Instance *inst)
                                    inst);
 
    elm_box_pack_end(box, gl);
+   evas_object_show(gl);
 
    /* IP address label */
    inst->ui.popup.ip_label = elm_label_add(box);
@@ -857,8 +858,14 @@ _enm_popup_new(E_NM_Instance *inst)
 
    _enm_popup_update(ctxt->nm, inst);
 
-   _enm_widget_size_set(inst, box, 10, 30, 192, 240, 360, 400);
-   e_gadcon_popup_content_set(inst->popup, box);
+   {
+      Evas_Object *wrapper = _enm_widget_size_wrap(inst, box,
+                                                    10, 30,
+                                                    192, 240,
+                                                    360, 400);
+      evas_object_show(wrapper);
+      e_gadcon_popup_content_set(inst->popup, wrapper);
+   }
    e_comp_object_util_autoclose(inst->popup->comp_object, _enm_popup_del,
                                 NULL, inst);
    e_gadcon_popup_show(inst->popup);
@@ -1599,7 +1606,6 @@ E_API void *
 e_modapi_init(E_Module *m)
 {
    E_NM_Module_Context *ctxt;
-   Eldbus_Connection *c;
 
    if (_e_nm_log_dom < 0)
      {
@@ -1615,13 +1621,10 @@ e_modapi_init(E_Module *m)
    ctxt = E_NEW(E_NM_Module_Context, 1);
    if (!ctxt) goto error_nm_context;
 
-   c = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
-   if (!c) goto error_dbus_bus_get;
-
    e_nm_module_callbacks_set(&_enm_mod_cbs);
    enm_agent_ui_register();
 
-   if (!e_nm_system_init(c)) goto error_nm_system_init;
+   if (!e_nm_system_init()) goto error_nm_system_init;
 
    ctxt->conf_dialog = NULL;
    networkmanager_mod = m;
@@ -1639,8 +1642,6 @@ e_modapi_init(E_Module *m)
    return ctxt;
 
 error_nm_system_init:
-   eldbus_connection_unref(c);
-error_dbus_bus_get:
    E_FREE(ctxt);
 error_nm_context:
    eina_log_domain_unregister(_e_nm_log_dom);

@@ -755,6 +755,7 @@ _e_module_whitelist_check(void)
          "luncher",
          "mixer",
          "msgbus",
+         "networkmanager",
          "notification",
          "ofono",
          "pager",
