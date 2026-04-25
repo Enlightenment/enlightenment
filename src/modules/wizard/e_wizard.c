@@ -70,6 +70,8 @@ wizard_shutdown(void)
 
    if (next_timer) ecore_timer_del(next_timer);
    next_timer = NULL;
+   if (next_xdg_timer) ecore_timer_del(next_xdg_timer);
+   next_xdg_timer = NULL;
    E_FREE_LIST(handlers, ecore_event_handler_del);
    return 1;
 }

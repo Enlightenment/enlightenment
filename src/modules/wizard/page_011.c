@@ -63,7 +63,10 @@ int
 parse_rules(void)
 {
    char buf[4096];
-   FILE *f = fopen(rules_file, "r");
+   FILE *f;
+
+   if (!rules_file) return 0;
+   f = fopen(rules_file, "r");
    if (!f) return 0;
 
    for (;; )
@@ -202,6 +205,13 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
           sel_it = it;
      }
 
+   if (!layouts)
+     {
+        /* No rules file parsed; skip page safely. */
+        evas_object_del(of);
+        return 0;
+     }
+
    evas_object_show(ob);
    evas_object_show(of);
    E_EXPAND(of);
@@ -230,4 +240,3 @@ wizard_page_apply(E_Wizard_Page *pg EINA_UNUSED)
    implement_layout();
    return 1;
 }
-
