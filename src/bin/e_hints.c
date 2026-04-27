@@ -3,7 +3,6 @@
 #ifndef HAVE_WAYLAND_ONLY
 static void e_hints_e16_comms_pretend(Ecore_X_Window root, Ecore_X_Window propwin);
 static void e_hints_openoffice_gnome_fake(Ecore_Window root);
-static void e_hints_java_nonreparenting_fake(Ecore_Window root);
 //static void e_hints_openoffice_kde_fake(Ecore_Window root);
 
 E_API Ecore_X_Atom ATM__QTOPIA_SOFT_MENU = 0;
@@ -217,8 +216,6 @@ e_hints_init(Ecore_Window root, Ecore_Window propwin)
    ecore_x_netwm_wm_identify(root, propwin, "Enlightenment");
 /* this makes openoffice.org read gtk settings so it doesn't look like shit */
    e_hints_openoffice_gnome_fake(root);
-/* this makes java detect non-reparenting without relying on env vars */
-   e_hints_java_nonreparenting_fake(root);
 
    ecore_x_netwm_supported_set(root, supported, supported_num);
 
@@ -232,17 +229,6 @@ e_hints_init(Ecore_Window root, Ecore_Window propwin)
 }
 
 #ifndef HAVE_WAYLAND_ONLY
-static void
-e_hints_java_nonreparenting_fake(Ecore_Window root)
-{
-   Ecore_X_Atom atm_java_nonreparenting;
-   const char *string = "1";
-
-   atm_java_nonreparenting = ecore_x_atom_get("_JAVA_AWT_WM_NONREPARENTING");
-   ecore_x_window_prop_property_set(root, atm_java_nonreparenting, ECORE_X_ATOM_STRING,
-                                    8, (void *)string, strlen(string));
-}
-
 /*
  * This is here so we don't have to pretend to be Kwin anymore - we pretend
  * to do old e16 style ipc. in fact we just ignore it... but set up the
