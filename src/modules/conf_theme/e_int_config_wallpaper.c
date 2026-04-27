@@ -365,6 +365,8 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    const E_Config_Desktop_Background *cfbg;
    char path[PATH_MAX];
 
+   cfdata->all_this_desk_screen = E_CONFIG_WALLPAPER_SCREEN;
+
    cw = cfdata->cfd->data;
    if (cw->specific_config)
      {
