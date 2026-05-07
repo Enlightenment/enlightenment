@@ -3449,24 +3449,8 @@ _e_comp_x_hook_client_post_new_client(void *d EINA_UNUSED, E_Client *ec)
 }
 
 static void
-_e_comp_x_frame_extents_adjust(E_Client *ec EINA_UNUSED, int exl EINA_UNUSED, int exr EINA_UNUSED, int ext EINA_UNUSED, int exb EINA_UNUSED)
+_e_comp_x_frame_extents_adjust(E_Client *ec, int exl, int exr, int ext, int exb)
 {
-/*
- * _GTK_FRAME_EXTENTS is a client-side hint describing extents used by
- * the application/toolkit (typically CSD shadows/titlebar drag regions),
- * not WM-managed server-side frame geometry.
- *
- * Some Chromium/Brave windows publish _GTK_FRAME_EXTENTS even when they
- * should receive normal Enlightenment decorations. Using those values here
- * to rewrite E's internal frame geometry causes the client to be treated
- * as effectively borderless or to get incorrect maximize/bounds behavior
- * (for example, no system titlebar/border or slightly off-screen sizing).
- *
- * In practice this path breaks Brave, while doing nothing here preserves
- * correct Enlightenment-managed framing. So this function is intentionally
- * a no-op: E must not let client-provided _GTK_FRAME_EXTENTS override its
- * own frame geometry decisions.
-
    unsigned int extentscurrent;
    unsigned int extentsall = exl | exr | ext | exb;
    int insl = 0, insr = 0, inst = 0, insb = 0;
@@ -3487,7 +3471,6 @@ _e_comp_x_frame_extents_adjust(E_Client *ec EINA_UNUSED, int exl EINA_UNUSED, in
             (ec->y == ec->comp_data->initial_attributes.y))
           e_comp_object_frame_xy_adjust(ec->frame, ec->x, ec->y, &ec->x, &ec->y);
      }
-*/
 }
 
 static Eina_Bool
