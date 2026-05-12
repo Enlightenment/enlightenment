@@ -27,6 +27,26 @@ _enm_theme_edje_object_set(Evas_Object *o, const char *group)
    return e_theme_edje_object_set(o, "base/theme/modules/connman", buf);
 }
 
+/* Same fallback chain but for elm_layout, so the theme's group min:
+ * propagates into the layout's evas size hint min (elm_table/genlist will
+ * then honor it). */
+static Eina_Bool
+_enm_theme_layout_file_set(Evas_Object *layout, const char *group)
+{
+   char buf[256];
+   const char *file;
+
+   snprintf(buf, sizeof(buf), "e/modules/networkmanager/%s", group);
+   file = elm_theme_group_path_find(NULL, buf);
+   if (!file)
+     {
+        snprintf(buf, sizeof(buf), "e/modules/connman/%s", group);
+        file = elm_theme_group_path_find(NULL, buf);
+        if (!file) return EINA_FALSE;
+     }
+   return elm_layout_file_set(layout, file, buf);
+}
+
 const char *
 e_nm_theme_path(void)
 {
@@ -77,11 +97,13 @@ static Eina_Bool _enm_ssid_is_active(struct NM_Manager *nm, const char *ssid);
 /* Forward declarations for icon/forget-button factories used in item class
  * callbacks defined before the factory implementations. */
 static Evas_Object *_enm_ap_icon_new(struct NM_Manager *nm,
-                                      struct NM_Access_Point *ap, Evas *evas);
+                                      struct NM_Access_Point *ap,
+                                      Evas_Object *parent);
 static Evas_Object *_enm_ap_end_new(struct NM_Manager *nm,
                                      struct NM_Access_Point *ap,
                                      Evas_Object *parent);
-static Evas_Object *_enm_eth_icon_new(struct NM_Device *dev, Evas *evas);
+static Evas_Object *_enm_eth_icon_new(struct NM_Device *dev,
+                                       Evas_Object *parent);
 
 /* Per-item data for genlist AP and ethernet rows */
 typedef struct _Enm_Item_Data
@@ -136,7 +158,7 @@ _enm_itc_ap_content_get(void *data, Evas_Object *obj, const char *part)
 
         tbl = elm_table_add(obj);
 
-        ic = _enm_ap_icon_new(id->nm, id->ap, evas_object_evas_get(obj));
+        ic = _enm_ap_icon_new(id->nm, id->ap, obj);
         if (!ic)
           {
              evas_object_del(tbl);
@@ -184,7 +206,7 @@ _enm_itc_eth_content_get(void *data, Evas_Object *obj, const char *part)
 
         tbl = elm_table_add(obj);
 
-        ic = _enm_eth_icon_new(id->dev, evas_object_evas_get(obj));
+        ic = _enm_eth_icon_new(id->dev, obj);
         if (!ic)
           {
              evas_object_del(tbl);
@@ -325,14 +347,18 @@ _enm_item_activated_cb(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 static Evas_Object *
-_enm_ap_icon_new(struct NM_Manager *nm, struct NM_Access_Point *ap, Evas *evas)
+_enm_ap_icon_new(struct NM_Manager *nm, struct NM_Access_Point *ap,
+                  Evas_Object *parent)
 {
    Edje_Message_Int_Set *msg;
-   Evas_Object *icon;
+   Evas_Object *icon, *ed;
    int state_val;
 
-   icon = edje_object_add(evas);
-   _enm_theme_edje_object_set(icon, "icon/wifi");
+   icon = elm_layout_add(parent);
+   _enm_theme_layout_file_set(icon, "icon/wifi");
+   evas_object_size_hint_weight_set(icon, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(icon, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   ed = elm_layout_edje_get(icon);
 
    /* Map active AP to ONLINE(5), otherwise IDLE(1) — ConnMan theme values */
    state_val = (ap->ssid && _enm_ssid_is_active(nm, ap->ssid)) ? 5 : 1;
@@ -343,7 +369,7 @@ _enm_ap_icon_new(struct NM_Manager *nm, struct NM_Access_Point *ap, Evas *evas)
         msg->count = 2;
         msg->val[0] = state_val;
         msg->val[1] = ap->strength;
-        edje_object_message_send(icon, EDJE_MESSAGE_INT_SET, 1, msg);
+        edje_object_message_send(ed, EDJE_MESSAGE_INT_SET, 1, msg);
         free(msg);
      }
 
@@ -363,10 +389,10 @@ _enm_ap_icon_new(struct NM_Manager *nm, struct NM_Access_Point *ap, Evas *evas)
              snprintf(secbuf, sizeof(secbuf), "e,security,ieee8021x");
            else
              snprintf(secbuf, sizeof(secbuf), "e,security,%s", sec);
-           edje_object_signal_emit(icon, secbuf, "e");
+           elm_layout_signal_emit(icon, secbuf, "e");
         }
       else
-        edje_object_signal_emit(icon, "e,security,off", "e");
+        elm_layout_signal_emit(icon, "e,security,off", "e");
    }
 
    /* Set frequency band label */
@@ -381,7 +407,7 @@ _enm_ap_icon_new(struct NM_Manager *nm, struct NM_Access_Point *ap, Evas *evas)
         else
           band = "2.4";
 
-        edje_object_part_text_set(icon, "e.text.band-label", band);
+        elm_object_part_text_set(icon, "e.text.band-label", band);
      }
 
    return icon;
@@ -484,14 +510,17 @@ _enm_ap_end_new(struct NM_Manager *nm, struct NM_Access_Point *ap,
 }
 
 static Evas_Object *
-_enm_eth_icon_new(struct NM_Device *dev, Evas *evas)
+_enm_eth_icon_new(struct NM_Device *dev, Evas_Object *parent)
 {
    Edje_Message_Int_Set *msg;
-   Evas_Object *icon;
+   Evas_Object *icon, *ed;
    int state_val;
 
-   icon = edje_object_add(evas);
-   _enm_theme_edje_object_set(icon, "icon/ethernet");
+   icon = elm_layout_add(parent);
+   _enm_theme_layout_file_set(icon, "icon/ethernet");
+   evas_object_size_hint_weight_set(icon, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(icon, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   ed = elm_layout_edje_get(icon);
 
    /* NM device state 100 = activated → ONLINE(5), otherwise IDLE(1) */
    state_val = (dev->state >= 100) ? 5 : 1;
@@ -502,7 +531,7 @@ _enm_eth_icon_new(struct NM_Device *dev, Evas *evas)
         msg->count = 2;
         msg->val[0] = state_val;
         msg->val[1] = 100; /* ethernet has no signal strength concept */
-        edje_object_message_send(icon, EDJE_MESSAGE_INT_SET, 1, msg);
+        edje_object_message_send(ed, EDJE_MESSAGE_INT_SET, 1, msg);
         free(msg);
      }
 
