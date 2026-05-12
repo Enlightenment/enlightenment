@@ -13,17 +13,18 @@ int _e_nm_log_dom = -1;
 static void _enm_traffic_timer_start(E_NM_Module_Context *ctxt);
 static void _enm_traffic_timer_stop(E_NM_Module_Context *ctxt);
 
-/* Set the WiFi band label on whichever part the loaded theme exposes.
- * Guarded with edje_object_part_exists so we don't emit ERR logs for the
- * part that isn't present.  The module is compatible with connman's legacy
- * "band_label" and the new namespaced "e.text.band-label". */
-static inline void
-_enm_band_label_set(Evas_Object *o, const char *text)
+/* Try our own theme first, fall back to connman's so the gadget keeps working
+ * on installs that only ship the legacy theme. */
+static Eina_Bool
+_enm_theme_edje_object_set(Evas_Object *o, const char *group)
 {
-   if (edje_object_part_exists(o, "e.text.band-label"))
-     edje_object_part_text_set(o, "e.text.band-label", text);
-   if (edje_object_part_exists(o, "band_label"))
-     edje_object_part_text_set(o, "band_label", text);
+   char buf[256];
+
+   snprintf(buf, sizeof(buf), "e/modules/networkmanager/%s", group);
+   if (e_theme_edje_object_set(o, "base/theme/modules/networkmanager", buf))
+     return EINA_TRUE;
+   snprintf(buf, sizeof(buf), "e/modules/connman/%s", group);
+   return e_theme_edje_object_set(o, "base/theme/modules/connman", buf);
 }
 
 const char *
@@ -331,10 +332,7 @@ _enm_ap_icon_new(struct NM_Manager *nm, struct NM_Access_Point *ap, Evas *evas)
    int state_val;
 
    icon = edje_object_add(evas);
-   if (!e_theme_edje_object_set(icon, "base/theme/modules/networkmanager",
-                                "e/modules/networkmanager/icon/wifi"))
-     e_theme_edje_object_set(icon, "base/theme/modules/connman",
-                             "e/modules/connman/icon/wifi");
+   _enm_theme_edje_object_set(icon, "icon/wifi");
 
    /* Map active AP to ONLINE(5), otherwise IDLE(1) — ConnMan theme values */
    state_val = (ap->ssid && _enm_ssid_is_active(nm, ap->ssid)) ? 5 : 1;
@@ -383,7 +381,7 @@ _enm_ap_icon_new(struct NM_Manager *nm, struct NM_Access_Point *ap, Evas *evas)
         else
           band = "2.4";
 
-        _enm_band_label_set(icon, band);
+        edje_object_part_text_set(icon, "e.text.band-label", band);
      }
 
    return icon;
@@ -493,10 +491,7 @@ _enm_eth_icon_new(struct NM_Device *dev, Evas *evas)
    int state_val;
 
    icon = edje_object_add(evas);
-   if (!e_theme_edje_object_set(icon, "base/theme/modules/networkmanager",
-                                "e/modules/networkmanager/icon/ethernet"))
-     e_theme_edje_object_set(icon, "base/theme/modules/connman",
-                             "e/modules/connman/icon/ethernet");
+   _enm_theme_edje_object_set(icon, "icon/ethernet");
 
    /* NM device state 100 = activated → ONLINE(5), otherwise IDLE(1) */
    state_val = (dev->state >= 100) ? 5 : 1;
@@ -1055,15 +1050,15 @@ _enm_mod_manager_update_inst(E_NM_Module_Context *ctxt EINA_UNUSED,
              else
                band = "2.4G";
 
-             _enm_band_label_set(o, band);
+             edje_object_part_text_set(o, "e.text.band-label", band);
           }
         else
-          _enm_band_label_set(o, "");
+          edje_object_part_text_set(o, "e.text.band-label", "");
      }
    else
      {
         edje_object_signal_emit(o, "e,security,off", "e");
-        _enm_band_label_set(o, "");
+        edje_object_part_text_set(o, "e.text.band-label", "");
      }
 }
 
@@ -1478,14 +1473,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    inst = E_NEW(E_NM_Instance, 1);
    inst->ctxt = ctxt;
    inst->ui.gadget = edje_object_add(gc->evas);
-
-   /* Try networkmanager theme first, fall back to connman */
-   if (!e_theme_edje_object_set(inst->ui.gadget,
-                                "base/theme/modules/networkmanager",
-                                "e/modules/networkmanager/main"))
-     e_theme_edje_object_set(inst->ui.gadget,
-                             "base/theme/modules/connman",
-                             "e/modules/connman/main");
+   _enm_theme_edje_object_set(inst->ui.gadget, "main");
 
    inst->gcc = e_gadcon_client_new(gc, name, id, style, inst->ui.gadget);
    inst->gcc->data = inst;

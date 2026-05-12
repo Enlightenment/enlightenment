@@ -77,7 +77,7 @@ _econnman_service_new_icon(struct Connman_Service *cs, Evas *evas)
         else
           band = "2.4G";
 
-        edje_object_part_text_set(icon, "band_label", band);
+        edje_object_part_text_set(icon, "e.text.band-label", band);
      }
 
    return icon;
