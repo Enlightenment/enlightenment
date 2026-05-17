@@ -1328,6 +1328,7 @@ _enm_traffic_worker_notify(void *data, Ecore_Thread *thread EINA_UNUSED,
 
    if (!have) return;
 
+   if (!ctxt) return;
    /* First sample seeds the counters — no rate yet */
    if (ctxt->prev_rx == 0 && ctxt->prev_tx == 0)
      {
@@ -1405,6 +1406,7 @@ _enm_traffic_timer_start(E_NM_Module_Context *ctxt)
    w = E_NEW(Enm_Traffic_Worker, 1);
    w->ctxt  = ctxt;
    w->iface = strdup(iface);
+   ctxt->worker = w;
    eina_lock_new(&w->lock);
    ctxt->traffic_thread =
       ecore_thread_feedback_run(_enm_traffic_worker_heavy,
@@ -1687,6 +1689,11 @@ e_modapi_shutdown(E_Module *m)
    ctxt = m->data;
    if (!ctxt) return 0;
 
+   if (ctxt->worker)
+     {
+        Enm_Traffic_Worker *w = ctxt->worker;
+        w->ctxt = NULL;
+     }
    e_nm_system_shutdown();
    e_nm_module_callbacks_set(NULL);
    e_nm_agent_callbacks_set(NULL, NULL);
