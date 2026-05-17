@@ -1359,7 +1359,11 @@ _enm_traffic_worker_done(void *data, Ecore_Thread *thread)
    /* Only clear ctxt->traffic_thread if it still points at us.  A stop()
     * immediately followed by start() will have NULL'd and then replaced the
     * pointer before this done cb runs for the cancelled predecessor. */
-   if (w->ctxt->traffic_thread == thread) w->ctxt->traffic_thread = NULL;
+   if ((w->ctxt) && (w->ctxt->traffic_thread == thread))
+     {
+        w->ctxt->traffic_thread = NULL;
+        w->ctxt->worker = NULL;
+     }
    eina_lock_free(&w->lock);
    free(w->iface);
    free(w);
