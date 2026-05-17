@@ -742,7 +742,6 @@ _device_free(struct NM_Device *dev)
 
    if (dev->wireless_proxy)
      {
-        Eldbus_Object *wobj = eldbus_proxy_object_get(dev->wireless_proxy);
         if (dev->ap_added_handler)
           {
              eldbus_signal_handler_del(dev->ap_added_handler);
@@ -753,8 +752,13 @@ _device_free(struct NM_Device *dev)
              eldbus_signal_handler_del(dev->ap_removed_handler);
              dev->ap_removed_handler = NULL;
           }
+        /* wireless_proxy shares the same Eldbus_Object as dev->proxy.
+         * eldbus_proxy_get() does NOT increment the object's refcount, so
+         * proxy_unref here must NOT be paired with an object_unref — doing so
+         * would drop the object to refcount 0, triggering _eldbus_object_clear
+         * which frees dev->proxy via its _on_object_free callback, causing a
+         * use-after-free when the dev->proxy block below runs. */
         eldbus_proxy_unref(dev->wireless_proxy);
-        if (wobj) eldbus_object_unref(wobj);
      }
 
    if (dev->proxy)
@@ -764,6 +768,9 @@ _device_free(struct NM_Device *dev)
              eldbus_signal_handler_del(dev->prop_changed_handler);
              dev->prop_changed_handler = NULL;
           }
+        /* The sole object ref belongs to this proxy (taken by eldbus_object_get
+         * in _device_new and never stored separately). Unref proxy first, then
+         * unref the object exactly once. */
         obj = eldbus_proxy_object_get(dev->proxy);
         eldbus_proxy_unref(dev->proxy);
         eldbus_object_unref(obj);
