@@ -13,6 +13,14 @@ int _e_nm_log_dom = -1;
 static void _enm_traffic_timer_start(E_NM_Module_Context *ctxt);
 static void _enm_traffic_timer_stop(E_NM_Module_Context *ctxt);
 
+static void
+_enm_poll_wake(E_NM_Module_Context *ctxt)
+{
+  char buf[1] = { 1 };
+
+  if (ctxt->pipe) ecore_pipe_write(ctxt->pipe, buf, 1);
+}
+
 /* Try our own theme first, fall back to connman's so the gadget keeps working
  * on installs that only ship the legacy theme. */
 static Eina_Bool
@@ -1274,26 +1282,46 @@ typedef struct _Enm_Traffic_Worker
    Eina_Lock            lock;
    unsigned long long   rx;
    unsigned long long   tx;
-   Eina_Bool            have_sample;
+   int                  pipe_fd;
+   Eina_Bool            have_sample : 1;
 } Enm_Traffic_Worker;
 
 static void
 _enm_traffic_worker_heavy(void *data, Ecore_Thread *thread)
 {
    Enm_Traffic_Worker *w = data;
+   fd_set rfds, wfds, exfds;
+   struct timeval tv;
 
    while (!ecore_thread_check(thread))
      {
         unsigned long long rx = 0, tx = 0;
-        int i;
+        int ret;
+        double tim = 0.0;
 
-        /* ~0.5s tick split into 100ms chunks so cancel is responsive */
-        for (i = 0; i < 5; i++)
+        eina_lock_take(&w->lock);
+        if (w->ctxt) tim = w->ctxt->poll_time;
+        eina_lock_release(&w->lock);
+        FD_ZERO(&rfds);
+        FD_ZERO(&wfds);
+        FD_ZERO(&exfds);
+        FD_SET(w->pipe_fd, &rfds);
+        tv.tv_sec = tim;
+        tv.tv_usec = (unsigned int)(tim * 1000000.0) % 1000000;
+        ret = select(w->pipe_fd + 1, &rfds, &wfds, &exfds, &tv);
+        if ((ret == 1) && (FD_ISSET(w->pipe_fd, &rfds)))
           {
-             if (ecore_thread_check(thread)) return;
-             usleep(100 * 1000);
-          }
+            char buf[1];
 
+            if (read(w->pipe_fd, buf, 1) < 0)
+              fprintf(stderr, "%s: ERROR READING FROM FD\n", __func__);
+            // our pipe fd was written to. we have been woken up by the
+            // main loop so re-think thnigs.
+            if (ecore_thread_check(thread)) break; // canceled thread
+            // if we were not canceled, then poll time may have changed
+            // so poll now and try again with new poll time
+          }
+        // XXX: open these files once and keep fd's and use pread()
         if (!_enm_read_sysfs_counter(w->iface, "rx_bytes", &rx) ||
             !_enm_read_sysfs_counter(w->iface, "tx_bytes", &tx))
           continue;
@@ -1363,6 +1391,9 @@ _enm_traffic_worker_done(void *data, Ecore_Thread *thread)
      {
         w->ctxt->traffic_thread = NULL;
         w->ctxt->worker = NULL;
+        if (w->ctxt->pipe) ecore_pipe_del(w->ctxt->pipe);
+        w->ctxt->pipe = NULL;
+        w->ctxt->pipe_fd = -1;
      }
    eina_lock_free(&w->lock);
    free(w->iface);
@@ -1373,6 +1404,11 @@ static void
 _enm_traffic_worker_cancel(void *data, Ecore_Thread *thread)
 {
    _enm_traffic_worker_done(data, thread);
+}
+
+static void
+_cb_pipe_dummy(void *data EINA_UNUSED, void *buffer EINA_UNUSED, unsigned int bytes EINA_UNUSED)
+{
 }
 
 static void
@@ -1398,6 +1434,10 @@ _enm_traffic_timer_start(E_NM_Module_Context *ctxt)
      {
         ecore_thread_cancel(ctxt->traffic_thread);
         ctxt->traffic_thread = NULL;
+        _enm_poll_wake(ctxt);
+        if (ctxt->pipe) ecore_pipe_del(ctxt->pipe);
+        ctxt->pipe = NULL;
+        ctxt->pipe_fd = -1;
      }
    free(ctxt->traffic_iface);
    ctxt->traffic_iface = strdup(iface);
@@ -1410,8 +1450,13 @@ _enm_traffic_timer_start(E_NM_Module_Context *ctxt)
    w = E_NEW(Enm_Traffic_Worker, 1);
    w->ctxt  = ctxt;
    w->iface = strdup(iface);
+   w->pipe_fd = ctxt->pipe_fd; // store fd local to worker thread
    ctxt->worker = w;
    eina_lock_new(&w->lock);
+   ctxt->pipe = ecore_pipe_add(_cb_pipe_dummy, NULL);
+   if (ctxt->pipe) ecore_pipe_freeze(ctxt->pipe);
+   if (ctxt->pipe) ctxt->pipe_fd = ecore_pipe_read_fd(ctxt->pipe);
+   else ctxt->pipe_fd = -1;
    ctxt->traffic_thread =
       ecore_thread_feedback_run(_enm_traffic_worker_heavy,
                                 _enm_traffic_worker_notify,
@@ -1427,6 +1472,10 @@ _enm_traffic_timer_stop(E_NM_Module_Context *ctxt)
      {
         ecore_thread_cancel(ctxt->traffic_thread);
         ctxt->traffic_thread = NULL;
+        _enm_poll_wake(ctxt);
+        if (ctxt->pipe) ecore_pipe_del(ctxt->pipe);
+        ctxt->pipe = NULL;
+        ctxt->pipe_fd = -1;
      }
    free(ctxt->traffic_iface);
    ctxt->traffic_iface = NULL;
@@ -1644,6 +1693,10 @@ e_modapi_init(E_Module *m)
    ctxt = E_NEW(E_NM_Module_Context, 1);
    if (!ctxt) goto error_nm_context;
 
+   ctxt->pipe_fd = -1;
+   ctxt->poll_time = 0.5; // XXX: make this gui config
+   // also any future changes to this require taking a lock on
+   // ctxt->worker->lock while changing and then a _enm_poll_wake(ctxt)
    e_nm_module_callbacks_set(&_enm_mod_cbs);
    enm_agent_ui_register();
 

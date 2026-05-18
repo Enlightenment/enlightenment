@@ -51,10 +51,13 @@ struct E_NM_Module_Context
     * loop which computes traffic levels and emits edje signals. */
    Ecore_Thread        *traffic_thread;
    char                *traffic_iface;   /* strdup of iface thread is reading */
+   Ecore_Pipe          *pipe;
+   int                  pipe_fd;
    Ecore_Event_Handler *powersave_handler;
    void                *worker;
    unsigned long long   prev_rx;
    unsigned long long   prev_tx;
+   double               poll_time;
    int                  rx_level;        /* 0=idle, 1=low, 2=medium, 3=high */
    int                  tx_level;
    Eina_Bool            powersave_high : 1;
