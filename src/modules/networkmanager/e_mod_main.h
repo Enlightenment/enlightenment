@@ -6,12 +6,22 @@
 #include "e_networkmanager.h"
 
 #define AGENT_PATH "/org/freedesktop/NetworkManager/SecretAgent"
+#define NETWORKMANAGER_CONFIG_VERSION 1
 
 extern E_Module *networkmanager_mod;
 extern int _e_nm_log_dom;
 
 typedef struct E_NM_Instance       E_NM_Instance;
 typedef struct E_NM_Module_Context E_NM_Module_Context;
+typedef struct E_NM_Config         E_NM_Config;
+
+struct E_NM_Config
+{
+   int               config_version;
+   double            poll_time;
+   E_Config_Dialog  *config_dialog;
+   E_Module         *module;
+};
 
 struct E_NM_Instance
 {
@@ -68,12 +78,18 @@ E_API void *e_modapi_init(E_Module *m);
 E_API int   e_modapi_shutdown(E_Module *m);
 E_API int   e_modapi_save(E_Module *m);
 
+E_Config_Dialog *e_int_config_networkmanager_module(Evas_Object *parent,
+                                                    const char *params);
 void        enm_popup_del(E_NM_Instance *inst);
 void        enm_mod_aps_update_now(void);
+void        enm_config_dialog_show(E_NM_Instance *inst);
+void        enm_config_poll_time_set(double tim);
 const char *e_nm_theme_path(void);
 
 /* Register the password-dialog UI callbacks with the agent subsystem. */
 void        enm_agent_ui_register(void);
+
+extern E_NM_Config *networkmanager_config;
 
 /**
  * @addtogroup Optional_Devices

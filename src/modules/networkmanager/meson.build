@@ -1,5 +1,6 @@
 src = files(
   'e_mod_main.c',
+  'e_mod_config.c',
   'agent.c',
   'e_networkmanager.c',
   'e_networkmanager.h',

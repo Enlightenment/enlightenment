@@ -3,7 +3,9 @@
 #include "e_networkmanager.h"
 
 E_Module *networkmanager_mod = NULL;
+E_NM_Config *networkmanager_config = NULL;
 static Eina_Stringshare *_theme_path = NULL;
+static E_Config_DD *conf_edd = NULL;
 
 const char _e_nm_name[] = "networkmanager";
 const char _e_nm_Name[] = N_("NetworkManager");
@@ -12,6 +14,19 @@ int _e_nm_log_dom = -1;
 /* Forward declarations for traffic monitor */
 static void _enm_traffic_timer_start(E_NM_Module_Context *ctxt);
 static void _enm_traffic_timer_stop(E_NM_Module_Context *ctxt);
+static void _enm_configure_registry_register(void);
+static void _enm_configure_registry_unregister(void);
+
+typedef struct _Enm_Traffic_Worker
+{
+   E_NM_Module_Context *ctxt;
+   char                *iface;   /* strdup; worker-only read */
+   Eina_Lock            lock;
+   unsigned long long   rx;
+   unsigned long long   tx;
+   int                  pipe_fd;
+   Eina_Bool            have_sample : 1;
+} Enm_Traffic_Worker;
 
 static void
 _enm_poll_wake(E_NM_Module_Context *ctxt)
@@ -19,6 +34,37 @@ _enm_poll_wake(E_NM_Module_Context *ctxt)
   char buf[1] = { 1 };
 
   if (ctxt->pipe) ecore_pipe_write(ctxt->pipe, buf, 1);
+}
+
+void
+enm_config_poll_time_set(double tim)
+{
+   E_NM_Module_Context *ctxt;
+
+   if (!networkmanager_mod) return;
+
+   ctxt = networkmanager_mod->data;
+   if (!ctxt) return;
+
+   ctxt->poll_time = tim;
+   if (ctxt->worker)
+     {
+        Enm_Traffic_Worker *w = ctxt->worker;
+
+        eina_lock_take(&w->lock);
+        if (w->ctxt) w->ctxt->poll_time = tim;
+        eina_lock_release(&w->lock);
+     }
+   _enm_poll_wake(ctxt);
+}
+
+void
+enm_config_dialog_show(E_NM_Instance *inst)
+{
+   if (!networkmanager_config) return;
+   if (networkmanager_config->config_dialog) return;
+   if (inst && inst->popup) enm_popup_del(inst);
+   e_int_config_networkmanager_module(NULL, NULL);
 }
 
 /* Try our own theme first, fall back to connman's so the gadget keeps working
@@ -97,6 +143,13 @@ _enm_popup_del(void *data, Evas_Object *obj EINA_UNUSED)
 
    if (!inst->popup) return;
    E_FREE_FUNC(inst->popup, e_object_del);
+}
+
+static void
+_enm_popup_settings_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                       void *info EINA_UNUSED)
+{
+   enm_config_dialog_show(data);
 }
 
 
@@ -813,7 +866,7 @@ static void
 _enm_popup_new(E_NM_Instance *inst)
 {
    E_NM_Module_Context *ctxt = inst->ctxt;
-   Evas_Object *box, *gl;
+   Evas_Object *box, *button, *gl, *icon;
    Elm_Genlist_Item_Class *itc;
 
    EINA_SAFETY_ON_FALSE_RETURN(inst->popup == NULL);
@@ -885,6 +938,20 @@ _enm_popup_new(E_NM_Instance *inst)
    elm_object_text_set(inst->ui.popup.ip_label, "");
    elm_box_pack_end(box, inst->ui.popup.ip_label);
    evas_object_show(inst->ui.popup.ip_label);
+
+   button = elm_button_add(box);
+   elm_object_text_set(button, _("Settings"));
+   evas_object_size_hint_align_set(button, 0.5, 0.5);
+   evas_object_size_hint_weight_set(button, EVAS_HINT_EXPAND, 0.0);
+   evas_object_smart_callback_add(button, "clicked",
+                                  _enm_popup_settings_cb, inst);
+   elm_box_pack_end(box, button);
+   evas_object_show(button);
+
+   icon = elm_icon_add(button);
+   elm_icon_standard_set(icon, "preferences-system");
+   elm_object_content_set(button, icon);
+   evas_object_show(icon);
 
    evas_object_show(box);
 
@@ -1275,17 +1342,6 @@ _enm_traffic_signal_emit(E_NM_Module_Context *ctxt, int rx_level, int tx_level)
  * then reassigned to the new thread, so the old thread's delayed done cb
  * finds a pointer that is either NULL or the new thread and leaves it alone.
  */
-typedef struct _Enm_Traffic_Worker
-{
-   E_NM_Module_Context *ctxt;
-   char                *iface;   /* strdup; worker-only read */
-   Eina_Lock            lock;
-   unsigned long long   rx;
-   unsigned long long   tx;
-   int                  pipe_fd;
-   Eina_Bool            have_sample : 1;
-} Enm_Traffic_Worker;
-
 static void
 _enm_traffic_worker_heavy(void *data, Ecore_Thread *thread)
 {
@@ -1345,6 +1401,7 @@ _enm_traffic_worker_notify(void *data, Ecore_Thread *thread EINA_UNUSED,
    E_NM_Module_Context *ctxt = w->ctxt;
    unsigned long long rx, tx;
    int rx_level, tx_level;
+   double divide;
    Eina_Bool have;
 
    eina_lock_take(&w->lock);
@@ -1366,8 +1423,10 @@ _enm_traffic_worker_notify(void *data, Ecore_Thread *thread EINA_UNUSED,
      }
 
    /* Poll interval ~0.5s, so bytes_per_sec = delta * 2 */
-   rx_level = _enm_traffic_level((rx - ctxt->prev_rx) * 2, ctxt->rx_level);
-   tx_level = _enm_traffic_level((tx - ctxt->prev_tx) * 2, ctxt->tx_level);
+   divide = ctxt->poll_time;
+   if (divide < 0.1) divide = 0.1;
+   rx_level = _enm_traffic_level((rx - ctxt->prev_rx) / divide, ctxt->rx_level);
+   tx_level = _enm_traffic_level((tx - ctxt->prev_tx) / divide, ctxt->tx_level);
    ctxt->prev_rx = rx;
    ctxt->prev_tx = tx;
 
@@ -1450,13 +1509,13 @@ _enm_traffic_timer_start(E_NM_Module_Context *ctxt)
    w = E_NEW(Enm_Traffic_Worker, 1);
    w->ctxt  = ctxt;
    w->iface = strdup(iface);
-   w->pipe_fd = ctxt->pipe_fd; // store fd local to worker thread
    ctxt->worker = w;
    eina_lock_new(&w->lock);
    ctxt->pipe = ecore_pipe_add(_cb_pipe_dummy, NULL);
    if (ctxt->pipe) ecore_pipe_freeze(ctxt->pipe);
    if (ctxt->pipe) ctxt->pipe_fd = ecore_pipe_read_fd(ctxt->pipe);
    else ctxt->pipe_fd = -1;
+   w->pipe_fd = ctxt->pipe_fd; // store fd local to worker thread
    ctxt->traffic_thread =
       ecore_thread_feedback_run(_enm_traffic_worker_heavy,
                                 _enm_traffic_worker_notify,
@@ -1510,12 +1569,24 @@ _enm_powersave_cb(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
 /* --- mouse / menu --------------------------------------------------------- */
 
 static void
+_enm_cb_menu_configure(void *data, E_Menu *m EINA_UNUSED,
+                       E_Menu_Item *mi EINA_UNUSED)
+{
+   enm_config_dialog_show(data);
+}
+
+static void
 _enm_menu_new(E_NM_Instance *inst, Evas_Event_Mouse_Down *ev)
 {
    E_Menu *m;
+   E_Menu_Item *mi;
    int x, y;
 
    m = e_menu_new();
+   mi = e_menu_item_new(m);
+   e_menu_item_label_set(mi, _("Settings"));
+   e_util_menu_item_theme_icon_set(mi, "configure");
+   e_menu_item_callback_set(mi, _enm_cb_menu_configure, inst);
    m = e_gadcon_client_util_menu_items_append(inst->gcc, m, 0);
    e_gadcon_canvas_zone_geometry_get(inst->gcc->gadcon, &x, &y, NULL, NULL);
    e_menu_activate_mouse(m,
@@ -1662,7 +1733,8 @@ _enm_configure_registry_register(void)
    e_configure_registry_category_add(_reg_cat, 90, _("Extensions"), NULL,
                                      "preferences-extensions");
    e_configure_registry_item_add(_reg_item, 111, _(_e_nm_Name), NULL,
-                                 "preferences-network", NULL);
+                                 "preferences-network",
+                                 e_int_config_networkmanager_module);
 }
 
 static void
@@ -1679,6 +1751,30 @@ e_modapi_init(E_Module *m)
 {
    E_NM_Module_Context *ctxt;
 
+   conf_edd = E_CONFIG_DD_NEW("NetworkManager_Config", E_NM_Config);
+#undef T
+#undef D
+#define T E_NM_Config
+#define D conf_edd
+   E_CONFIG_VAL(D, T, config_version, INT);
+   E_CONFIG_VAL(D, T, poll_time, DOUBLE);
+
+   networkmanager_config = e_config_domain_load("module.networkmanager",
+                                                conf_edd);
+   if ((networkmanager_config) &&
+       (networkmanager_config->config_version != NETWORKMANAGER_CONFIG_VERSION))
+     E_FREE(networkmanager_config);
+
+   if (!networkmanager_config)
+     {
+        networkmanager_config = E_NEW(E_NM_Config, 1);
+        if (!networkmanager_config) goto error_config;
+        networkmanager_config->config_version = NETWORKMANAGER_CONFIG_VERSION;
+        networkmanager_config->poll_time = 0.5;
+     }
+   E_CONFIG_LIMIT(networkmanager_config->poll_time, 0.1, 10.0);
+   networkmanager_config->module = m;
+
    if (_e_nm_log_dom < 0)
      {
         _e_nm_log_dom = eina_log_domain_register("networkmanager",
@@ -1694,9 +1790,7 @@ e_modapi_init(E_Module *m)
    if (!ctxt) goto error_nm_context;
 
    ctxt->pipe_fd = -1;
-   ctxt->poll_time = 0.5; // XXX: make this gui config
-   // also any future changes to this require taking a lock on
-   // ctxt->worker->lock while changing and then a _enm_poll_wake(ctxt)
+   ctxt->poll_time = networkmanager_config->poll_time;
    e_nm_module_callbacks_set(&_enm_mod_cbs);
    enm_agent_ui_register();
 
@@ -1723,6 +1817,9 @@ error_nm_context:
    eina_log_domain_unregister(_e_nm_log_dom);
 error_log_domain:
    _e_nm_log_dom = -1;
+   E_FREE(networkmanager_config);
+error_config:
+   E_CONFIG_DD_FREE(conf_edd);
    return NULL;
 }
 
@@ -1767,6 +1864,11 @@ e_modapi_shutdown(E_Module *m)
 
    eina_stringshare_replace(&_theme_path, NULL);
 
+   if (networkmanager_config && networkmanager_config->config_dialog)
+     e_object_del(E_OBJECT(networkmanager_config->config_dialog));
+   E_FREE(networkmanager_config);
+   E_CONFIG_DD_FREE(conf_edd);
+
    eina_log_domain_unregister(_e_nm_log_dom);
    _e_nm_log_dom = -1;
 
@@ -1780,5 +1882,8 @@ e_modapi_save(E_Module *m)
 
    ctxt = m->data;
    if (!ctxt) return 0;
+   if (!networkmanager_config) return 0;
+   e_config_domain_save("module.networkmanager", conf_edd,
+                        networkmanager_config);
    return 1;
 }
