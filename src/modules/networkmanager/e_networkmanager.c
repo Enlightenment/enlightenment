@@ -327,6 +327,8 @@ static void _manager_active_conn_watch_free(struct NM_Manager *nm);
 static void _manager_ip4_watch_free(struct NM_Manager *nm);
 static void _manager_watch_ip4(struct NM_Manager *nm,
                                const char *ip4config_path);
+static void _try_wifi_adopt(struct NM_Device *dev);
+static void _try_ethernet_adopt(struct NM_Device *dev);
 
 static void
 _device_get_aps_cb(void *data, const Eldbus_Message *msg,
@@ -359,7 +361,18 @@ _device_get_aps_cb(void *data, const Eldbus_Message *msg,
         DBG("Added AP %s to device %s", ap_path, dev->path);
      }
 
+   /* Guard: nm_manager may have been freed if NM exited while GetAccessPoints
+    * was in flight.  Mirror the pattern in _device_wifi_props_cb. */
+   if (!nm_manager) return;
+
    _notify_aps_changed(nm_manager);
+
+   /* If the manager already has an active AP, the gadget should be refreshed
+    * now that AP properties (strength, security, frequency) are populated.
+    * This covers the secondary race where AP-list completion races ahead of
+    * the adoption probe. */
+   if (nm_manager->active_ap_path)
+     _notify_manager_update(nm_manager);
 }
 
 static void
@@ -423,6 +436,7 @@ _device_prop_changed(void *data, const Eldbus_Message *msg)
    struct NM_Device *dev = data;
    Eldbus_Message_Iter *changed_props, *invalidated, *dict, *var;
    const char *iface, *key;
+   Eina_Bool try_adopt = EINA_FALSE;
 
    if (!eldbus_message_arguments_get(msg, "sa{sv}as",
                                      &iface, &changed_props, &invalidated))
@@ -441,6 +455,205 @@ _device_prop_changed(void *data, const Eldbus_Message *msg)
                   dev->state = state;
                   DBG("Device %s state -> %u", dev->path, state);
                   _notify_manager_update(nm_manager);
+                  try_adopt = EINA_TRUE;
+               }
+          }
+        else if (!strcmp(key, "ActiveConnection"))
+          {
+             /* On cold start NM may report ActiveConnection="/" in the initial
+              * Device.GetAll and only populate it later via PropertiesChanged.
+              * Capture it here so that _try_*_adopt can succeed on retry. */
+             const char *aconn_path;
+             if (eldbus_message_iter_arguments_get(var, "o", &aconn_path))
+               {
+                  if (aconn_path && strcmp(aconn_path, "/") != 0)
+                    {
+                       free(dev->active_conn_path);
+                       dev->active_conn_path = strdup(aconn_path);
+                       DBG("Device %s ActiveConnection -> %s", dev->path, aconn_path);
+                    }
+                  else
+                    {
+                       free(dev->active_conn_path);
+                       dev->active_conn_path = NULL;
+                    }
+                  try_adopt = EINA_TRUE;
+               }
+          }
+     }
+
+   /* Re-attempt adoption when state or active-connection path changes.
+    * This closes the cold-start race where the initial Device.GetAll returned
+    * ActiveConnection="/" before NM had settled, so the one-shot
+    * _device_wifi_props_cb / _device_get_props_cb adoption attempt failed.
+    *
+    * Skip if nm_manager already has an adopted connection — the "first wins"
+    * guard in the helpers would no-op anyway, but this avoids a redundant
+    * WiFi GetAll on every State change during normal operation. */
+   if (try_adopt && nm_manager && !nm_manager->active_connection_path &&
+       dev->state >= 100 && dev->active_conn_path)
+     {
+        if (dev->type == NM_DEVICE_TYPE_ETHERNET)
+          _try_ethernet_adopt(dev);
+        else if (dev->type == NM_DEVICE_TYPE_WIFI)
+          {
+             /* Re-issue WiFi GetAll only if one is not already pending.
+              * _device_wifi_props_cb stores the result in dev->active_ap_path
+              * and calls _try_wifi_adopt(). */
+             if (!dev->pending.get_wifi_props)
+               dev->pending.get_wifi_props =
+                  eldbus_proxy_call(dev->proxy, "GetAll",
+                                    _device_wifi_props_cb, dev,
+                                    -1, "s", NM_IFACE_WIFI);
+          }
+     }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Active-connection adoption helpers                                          */
+/*                                                                             */
+/* Factored out of _device_get_props_cb (Ethernet) and _device_wifi_props_cb  */
+/* (WiFi) so that _device_prop_changed can re-attempt adoption when a         */
+/* cold-start race caused the initial one-shot attempt to fail.               */
+/* -------------------------------------------------------------------------- */
+
+static void
+_try_ethernet_adopt(struct NM_Device *dev)
+{
+   if (!nm_manager) return;
+   if (dev->state < 100 || !dev->active_conn_path) return;
+
+   /* First active device wins — skip if another already adopted. */
+   if (nm_manager->active_connection_path) return;
+
+   DBG("Ethernet device %s adopting connection %s (state=%u)",
+       dev->path, dev->active_conn_path, dev->state);
+
+   nm_manager->probe_generation++;
+   _manager_active_conn_watch_free(nm_manager);
+   _manager_ip4_watch_free(nm_manager);
+
+   eina_stringshare_replace(&nm_manager->active_connection_path,
+                            dev->active_conn_path);
+   nm_manager->active_conn_type = NM_DEVICE_TYPE_ETHERNET;
+   eina_stringshare_replace(&nm_manager->active_ap_path, NULL);
+
+   {
+      Eldbus_Object *aobj =
+         eldbus_object_get(conn, NM_BUS_NAME, dev->active_conn_path);
+      nm_manager->active_conn_obj = aobj;
+      nm_manager->active_conn_proxy = eldbus_proxy_get(aobj, NM_IFACE_PROPS);
+      nm_manager->active_conn_signal_handler =
+         eldbus_proxy_signal_handler_add(nm_manager->active_conn_proxy,
+                                         "PropertiesChanged",
+                                         _active_conn_prop_changed,
+                                         nm_manager);
+   }
+
+   if (dev->ip4_path)
+     _manager_watch_ip4(nm_manager, dev->ip4_path);
+
+   _notify_manager_update(nm_manager);
+}
+
+static void
+_try_wifi_adopt(struct NM_Device *dev)
+{
+   if (!nm_manager) return;
+   if (dev->state < 100 || !dev->active_ap_path || !dev->active_conn_path)
+     return;
+
+   /* First active device wins — skip if another already adopted. */
+   if (nm_manager->active_connection_path) return;
+
+   DBG("WiFi device %s adopting conn=%s ap=%s (state=%u)",
+       dev->path, dev->active_conn_path, dev->active_ap_path, dev->state);
+
+   nm_manager->probe_generation++;
+   _manager_active_conn_watch_free(nm_manager);
+   _manager_ip4_watch_free(nm_manager);
+
+   nm_manager->active_conn_type = NM_DEVICE_TYPE_WIFI;
+   eina_stringshare_replace(&nm_manager->active_ap_path, dev->active_ap_path);
+   eina_stringshare_replace(&nm_manager->active_connection_path,
+                            dev->active_conn_path);
+
+   {
+      Eldbus_Object *aobj =
+         eldbus_object_get(conn, NM_BUS_NAME, dev->active_conn_path);
+      nm_manager->active_conn_obj = aobj;
+      nm_manager->active_conn_proxy = eldbus_proxy_get(aobj, NM_IFACE_PROPS);
+      nm_manager->active_conn_signal_handler =
+         eldbus_proxy_signal_handler_add(nm_manager->active_conn_proxy,
+                                         "PropertiesChanged",
+                                         _active_conn_prop_changed,
+                                         nm_manager);
+   }
+
+   if (dev->ip4_path)
+     _manager_watch_ip4(nm_manager, dev->ip4_path);
+
+   _notify_manager_update(nm_manager);
+   enm_saved_connections_get(nm_manager);
+}
+
+/* Handle PropertiesChanged on the Device.Wireless interface.
+ * Watches for ActiveAccessPoint changes that may arrive after the initial
+ * Device.Wireless.GetAll callback has already run (another cold-start window:
+ * NM returns ActiveAccessPoint="/" in GetAll but sets it shortly after). */
+static void
+_device_wifi_prop_changed(void *data, const Eldbus_Message *msg)
+{
+   struct NM_Device *dev = data;
+   Eldbus_Message_Iter *changed_props, *invalidated, *dict, *var;
+   const char *iface, *key;
+
+   if (!eldbus_message_arguments_get(msg, "sa{sv}as",
+                                     &iface, &changed_props, &invalidated))
+     return;
+
+   while (eldbus_message_iter_get_and_next(changed_props, 'e', &dict))
+     {
+        if (!eldbus_message_iter_arguments_get(dict, "sv", &key, &var))
+          continue;
+
+        if (!strcmp(key, "ActiveAccessPoint"))
+          {
+             const char *path;
+             if (eldbus_message_iter_arguments_get(var, "o", &path))
+               {
+                  free(dev->active_ap_path);
+                  if (path && strcmp(path, "/") != 0)
+                    {
+                       dev->active_ap_path = strdup(path);
+                       DBG("Device %s ActiveAccessPoint -> %s", dev->path, path);
+                    }
+                  else
+                    dev->active_ap_path = NULL;
+
+                  /* Snapshot whether this device is ALREADY the adopted device
+                   * before attempting adoption.  If it was already adopted the
+                   * AP change is a genuine roam and must refresh the gadget.
+                   * If it was not yet adopted, _try_wifi_adopt() below will
+                   * call _notify_manager_update() itself — running the roam
+                   * path on top of that would be a spurious double update. */
+                  Eina_Bool was_adopted = (nm_manager && dev->active_conn_path &&
+                                           nm_manager->active_connection_path &&
+                                           !strcmp(nm_manager->active_connection_path,
+                                                   dev->active_conn_path));
+
+                  /* Re-attempt adoption if not yet done — this closes the window
+                   * where NM emits AP after the initial GetAll returned "/". */
+                  _try_wifi_adopt(dev);
+
+                  /* Refresh the gadget only for a genuine roam (device was
+                   * already the adopted device before this AP change). */
+                  if (was_adopted && nm_manager && dev->active_ap_path)
+                    {
+                       eina_stringshare_replace(&nm_manager->active_ap_path,
+                                                dev->active_ap_path);
+                       _notify_manager_update(nm_manager);
+                    }
                }
           }
      }
@@ -527,7 +740,9 @@ _device_get_props_cb(void *data, const Eldbus_Message *msg,
      {
         Eldbus_Object *obj = eldbus_proxy_object_get(dev->proxy);
 
-        /* Re-get object to get the wireless interface proxy */
+        /* Re-get object to get the wireless interface proxy.
+         * eldbus_proxy_get() does NOT increment the object refcount — the
+         * object ref is already held by dev->proxy's parent object. */
         dev->wireless_proxy = eldbus_proxy_get(obj, NM_IFACE_WIFI);
 
         dev->ap_added_handler =
@@ -537,6 +752,14 @@ _device_get_props_cb(void *data, const Eldbus_Message *msg,
            eldbus_proxy_signal_handler_add(dev->wireless_proxy,
                                            "AccessPointRemoved",
                                            _device_ap_removed, dev);
+
+        /* Watch for ActiveAccessPoint changes on the WiFi interface.
+         * This is the signal that fires when NM settles its AP association
+         * after the initial GetAll returned "/" (cold-start race). */
+        dev->wifi_prop_changed_handler =
+           eldbus_proxy_signal_handler_add(dev->wireless_proxy,
+                                           "PropertiesChanged",
+                                           _device_wifi_prop_changed, dev);
 
         dev->pending.get_aps = eldbus_proxy_call(dev->wireless_proxy,
                                                   "GetAccessPoints",
@@ -551,51 +774,11 @@ _device_get_props_cb(void *data, const Eldbus_Message *msg,
                              _device_wifi_props_cb, dev,
                              -1, "s", NM_IFACE_WIFI);
      }
-   else if (dev->type == NM_DEVICE_TYPE_ETHERNET && dev->state >= 100 &&
-            dev->active_conn_path)
+   else if (dev->type == NM_DEVICE_TYPE_ETHERNET)
      {
-        /* Guard: nm_manager may have been freed if NM exited while this
-         * D-Bus reply was in flight. */
-        if (!nm_manager) return;
-
-        /* First active device wins — skip if another already adopted. */
-        if (nm_manager->active_connection_path) return;
-
-        /* Ethernet device is active — set manager state directly without
-         * an extra ActiveConnection.GetAll round-trip. */
-        DBG("Ethernet device %s active (state=%u), adopting connection %s",
-            dev->path, dev->state, dev->active_conn_path);
-
-        nm_manager->probe_generation++;
-        _manager_active_conn_watch_free(nm_manager);
-        _manager_ip4_watch_free(nm_manager);
-
-        eina_stringshare_replace(&nm_manager->active_connection_path,
-                                 dev->active_conn_path);
-
-        nm_manager->active_conn_type = NM_DEVICE_TYPE_ETHERNET;
-
-        eina_stringshare_replace(&nm_manager->active_ap_path, NULL);
-
-        /* Set up persistent watcher on the active connection object */
-        {
-           Eldbus_Object *aobj =
-              eldbus_object_get(conn, NM_BUS_NAME, dev->active_conn_path);
-           nm_manager->active_conn_obj = aobj;
-           nm_manager->active_conn_proxy = eldbus_proxy_get(aobj,
-                                                            NM_IFACE_PROPS);
-           nm_manager->active_conn_signal_handler =
-              eldbus_proxy_signal_handler_add(nm_manager->active_conn_proxy,
-                                              "PropertiesChanged",
-                                              _active_conn_prop_changed,
-                                              nm_manager);
-        }
-
-        if (dev->ip4_path)
-          _manager_watch_ip4(nm_manager, dev->ip4_path);
-
-        _notify_manager_update(nm_manager);
-        /* Saved connections are WiFi-specific — skip for Ethernet */
+        /* Attempt adoption via the factored helper — it checks state>=100 and
+         * active_conn_path internally, and handles the "first wins" guard. */
+        _try_ethernet_adopt(dev);
      }
 }
 
@@ -647,43 +830,13 @@ _device_wifi_props_cb(void *data, const Eldbus_Message *msg,
    DBG("Device %s ActiveAccessPoint=%s state=%u",
        dev->path, ap_path ?: "(none)", dev->state);
 
-   /* Only adopt this device as the active connection if it is in activated
-    * state (>= 100) and has an active AP. */
-   if (dev->state < 100 || !ap_path || !dev->active_conn_path)
-     return;
+   /* Persist the active AP path on the device so that _try_wifi_adopt() can
+    * be called from multiple entry points (here, _device_wifi_prop_changed)
+    * without re-issuing GetAll. */
+   free(dev->active_ap_path);
+   dev->active_ap_path = ap_path ? strdup(ap_path) : NULL;
 
-   /* First active device wins — skip if another already adopted. */
-   if (nm_manager->active_connection_path)
-     return;
-
-   nm_manager->probe_generation++;
-   _manager_active_conn_watch_free(nm_manager);
-   _manager_ip4_watch_free(nm_manager);
-
-   nm_manager->active_conn_type = NM_DEVICE_TYPE_WIFI;
-
-   eina_stringshare_replace(&nm_manager->active_ap_path, ap_path);
-   eina_stringshare_replace(&nm_manager->active_connection_path,
-                            dev->active_conn_path);
-
-   /* Set up persistent watcher on the active connection object */
-   {
-      Eldbus_Object *aobj =
-         eldbus_object_get(conn, NM_BUS_NAME, dev->active_conn_path);
-      nm_manager->active_conn_obj = aobj;
-      nm_manager->active_conn_proxy = eldbus_proxy_get(aobj, NM_IFACE_PROPS);
-      nm_manager->active_conn_signal_handler =
-         eldbus_proxy_signal_handler_add(nm_manager->active_conn_proxy,
-                                         "PropertiesChanged",
-                                         _active_conn_prop_changed,
-                                         nm_manager);
-   }
-
-   if (dev->ip4_path)
-     _manager_watch_ip4(nm_manager, dev->ip4_path);
-
-   _notify_manager_update(nm_manager);
-   enm_saved_connections_get(nm_manager);
+   _try_wifi_adopt(dev);
 }
 
 static struct NM_Device *
@@ -738,10 +891,16 @@ _device_free(struct NM_Device *dev)
 
    free(dev->interface);
    free(dev->active_conn_path);
+   free(dev->active_ap_path);
    free(dev->ip4_path);
 
    if (dev->wireless_proxy)
      {
+        if (dev->wifi_prop_changed_handler)
+          {
+             eldbus_signal_handler_del(dev->wifi_prop_changed_handler);
+             dev->wifi_prop_changed_handler = NULL;
+          }
         if (dev->ap_added_handler)
           {
              eldbus_signal_handler_del(dev->ap_added_handler);

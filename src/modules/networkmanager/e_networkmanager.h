@@ -112,6 +112,7 @@ struct NM_Device
    EINA_INLIST;
 
    Eldbus_Signal_Handler *prop_changed_handler;
+   Eldbus_Signal_Handler *wifi_prop_changed_handler; /* PropertiesChanged on wireless_proxy */
    Eldbus_Signal_Handler *ap_added_handler;
    Eldbus_Signal_Handler *ap_removed_handler;
 
@@ -119,9 +120,12 @@ struct NM_Device
    enum NM_Device_Type type;
    uint32_t            state;
 
-   /* Transient paths read from Device.GetAll — used during startup probe
-    * to avoid an extra ActiveConnection.GetAll round-trip. */
-   char *active_conn_path; /* ActiveConnection object path */
+   /* Transient paths read from Device.GetAll / Device.Wireless.GetAll — kept
+    * up-to-date via PropertiesChanged so that re-adoption can be attempted
+    * whenever any of the three conditions (state>=100, active_conn_path,
+    * active_ap_path) first becomes satisfied after a cold-start miss. */
+   char *active_conn_path; /* ActiveConnection object path (Device iface) */
+   char *active_ap_path;   /* ActiveAccessPoint object path (Wireless iface) */
    char *ip4_path;         /* Ip4Config object path */
 
    Eina_Inlist  *access_points; /* NM_Access_Point inlist, WiFi only */
