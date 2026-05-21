@@ -1,6 +1,8 @@
 #include "e.h"
 #include "e_mod_main.h"
 #include "e_networkmanager.h"
+#include "e_networkmanager_vpn.h"
+#include "e_networkmanager_import.h"
 
 E_Module *networkmanager_mod = NULL;
 E_NM_Config *networkmanager_config = NULL;
@@ -123,11 +125,19 @@ enm_popup_del(E_NM_Instance *inst)
    inst->ui.popup.deselect_item = NULL;
    E_FREE_FUNC(inst->popup, e_object_del);
    E_FREE_FUNC(inst->ctxt->popup_update_timer, ecore_timer_del);
-   inst->ui.popup.genlist = inst->ui.popup.ip_label = NULL;
+   inst->ui.popup.genlist = NULL;
+   /* Section-header items live inside the genlist that just died with
+    * the popup — clear the cached pointers so the next popup starts
+    * fresh in _enm_popup_update. */
+   inst->ui.popup.group_eth = NULL;
+   inst->ui.popup.group_wifi = NULL;
+   inst->ui.popup.group_vpn = NULL;
    E_FREE_FUNC(inst->ui.popup.itc_group, elm_genlist_item_class_free);
    E_FREE_FUNC(inst->ui.popup.itc_group_wifi, elm_genlist_item_class_free);
+   E_FREE_FUNC(inst->ui.popup.itc_group_vpn, elm_genlist_item_class_free);
    E_FREE_FUNC(inst->ui.popup.itc_ap, elm_genlist_item_class_free);
    E_FREE_FUNC(inst->ui.popup.itc_eth, elm_genlist_item_class_free);
+   E_FREE_FUNC(inst->ui.popup.itc_vpn, elm_genlist_item_class_free);
 }
 
 static void
@@ -192,7 +202,9 @@ _enm_itc_item_del(void *data, Evas_Object *obj EINA_UNUSED)
    _enm_item_data_free(data);
 }
 
-/* Genlist text_get for AP rows: returns SSID */
+/* Genlist text_get for AP rows: returns SSID on elm.text; on elm.text.sub
+ * returns the assigned IP when this is the active AP, or the security type
+ * otherwise. */
 static char *
 _enm_itc_ap_text_get(void *data, Evas_Object *obj EINA_UNUSED,
                       const char *part)
@@ -201,6 +213,26 @@ _enm_itc_ap_text_get(void *data, Evas_Object *obj EINA_UNUSED,
 
    if (!strcmp(part, "elm.text"))
      return id->ssid ? strdup(id->ssid) : NULL;
+
+   if (!strcmp(part, "elm.text.sub"))
+     {
+        struct NM_Manager *nm = id->nm;
+
+        /* Active AP with a known IP → show the IP */
+        if (nm && id->ap_path && nm->active_ap_path &&
+            !strcmp(id->ap_path, nm->active_ap_path) && nm->ip_address)
+          return strdup(nm->ip_address);
+
+        /* Inactive or no IP → show security type */
+        if (id->ap)
+          {
+             const char *sec = enm_ap_security_to_str(id->ap->wpa_flags,
+                                                       id->ap->rsn_flags);
+             if (sec) return strdup(sec);
+          }
+        return NULL;
+     }
+
    return NULL;
 }
 
@@ -241,7 +273,9 @@ _enm_itc_ap_content_get(void *data, Evas_Object *obj, const char *part)
    return NULL;
 }
 
-/* Genlist text_get for ethernet rows: returns interface name */
+/* Genlist text_get for ethernet rows: returns interface name on elm.text;
+ * on elm.text.sub returns the assigned IP when this is the active ethernet
+ * device, or NULL otherwise. */
 static char *
 _enm_itc_eth_text_get(void *data, Evas_Object *obj EINA_UNUSED,
                        const char *part)
@@ -250,6 +284,21 @@ _enm_itc_eth_text_get(void *data, Evas_Object *obj EINA_UNUSED,
 
    if (!strcmp(part, "elm.text"))
      return id->dev ? strdup(id->dev->interface ?: _("Wired")) : NULL;
+
+   if (!strcmp(part, "elm.text.sub"))
+     {
+        struct NM_Manager *nm = id->nm;
+
+        /* Show IP only when this ethernet device is the active connection */
+        if (nm && id->dev &&
+            nm->state >= NM_STATE_CONNECTED_LOCAL &&
+            nm->active_conn_type == NM_DEVICE_TYPE_ETHERNET &&
+            nm->ip_address)
+          return strdup(nm->ip_address);
+
+        return NULL;
+     }
+
    return NULL;
 }
 
@@ -285,6 +334,366 @@ _enm_itc_eth_content_get(void *data, Evas_Object *obj, const char *part)
         return tbl;
      }
    return NULL;
+}
+
+/* ---- VPN item class callbacks --------------------------------------------- */
+
+static void
+_enm_vpn_import_done_cb(void *data EINA_UNUSED, Eina_Bool ok, const char *err)
+{
+   E_Dialog *err_dlg;
+   if (ok) { INF("VPN import succeeded"); return; }
+
+   ERR("VPN import failed: %s", err ?: "(no output)");
+
+   err_dlg = e_dialog_new(NULL, "E", "nm_vpn_import_error");
+   if (!err_dlg) return;
+   e_dialog_title_set(err_dlg, _("VPN import failed"));
+   /* e_dialog_text_set uses an Elementary label that recognises <br>
+    * but not raw \n; convert so multi-line nmcli stderr is readable. */
+   if (err)
+     {
+        Eina_Strbuf *b = eina_strbuf_new();
+        if (b)
+          {
+             eina_strbuf_append(b, err);
+             eina_strbuf_replace_all(b, "\n", "<br>");
+             e_dialog_text_set(err_dlg, eina_strbuf_string_get(b));
+             eina_strbuf_free(b);
+          }
+        else
+          e_dialog_text_set(err_dlg, err);
+     }
+   else
+     e_dialog_text_set(err_dlg, _("Unknown error"));
+   e_dialog_button_add(err_dlg, _("Close"), NULL, NULL, NULL);
+   elm_win_center(err_dlg->win, 1, 1);
+   e_dialog_show(err_dlg);
+}
+
+static void
+_enm_vpn_fs_done_cb(void *data, Evas_Object *fs EINA_UNUSED, void *event)
+{
+   E_Dialog *dialog = data;
+   const char *file = event;
+
+   if (!file)
+     { e_object_del(E_OBJECT(dialog)); return; }
+
+   const char *type = enm_import_detect_type(file);
+   if (!type)
+     {
+        _enm_vpn_import_done_cb(NULL, EINA_FALSE,
+              _("Could not detect VPN type from file extension. "
+                "Use a .conf (WireGuard) or .ovpn (OpenVPN) file."));
+     }
+   else
+     {
+        enm_import_run(type, file, _enm_vpn_import_done_cb, NULL);
+     }
+   e_object_del(E_OBJECT(dialog));
+}
+
+static void
+_enm_vpn_import_clicked_cb(void *data, Evas_Object *o EINA_UNUSED,
+                           void *einfo EINA_UNUSED)
+{
+   E_NM_Instance *inst = data;
+   E_Dialog *dialog;
+   Evas_Object *fs;
+   const char *dir = efreet_download_dir_get();
+
+   dialog = e_dialog_new(NULL, "E", "nm_vpn_import_picker");
+   if (!dialog) return;
+   e_dialog_resizable_set(dialog, 1);
+   e_dialog_title_set(dialog, _("Import VPN Configuration"));
+
+   fs = elm_fileselector_add(dialog->win);
+   elm_fileselector_expandable_set(fs, EINA_FALSE);
+   elm_fileselector_is_save_set(fs, EINA_FALSE);
+   if (dir) elm_fileselector_path_set(fs, dir);
+   evas_object_size_hint_weight_set(fs, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(fs, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_smart_callback_add(fs, "done", _enm_vpn_fs_done_cb, dialog);
+   evas_object_smart_callback_add(fs, "activated", _enm_vpn_fs_done_cb, dialog);
+   evas_object_show(fs);
+   e_dialog_content_set(dialog, fs, ELM_SCALE_SIZE(360), ELM_SCALE_SIZE(320));
+   elm_win_center(dialog->win, 1, 1);
+   e_dialog_show(dialog);
+   enm_popup_del(inst);
+}
+
+/* VPN group header: text "VPN" */
+static char *
+_enm_itc_group_vpn_text_get(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                             const char *part EINA_UNUSED)
+{
+   return strdup(_("VPN"));
+}
+
+/* VPN group header: [+] button in the end slot */
+static Evas_Object *
+_enm_itc_group_vpn_content_get(void *data, Evas_Object *obj, const char *part)
+{
+   E_NM_Instance *inst = data;
+   Evas_Object *btn, *o;
+
+   if (strcmp(part, "elm.swallow.end")) return NULL;
+
+   btn = elm_button_add(obj);
+
+   o = elm_icon_add(obj);
+   elm_icon_standard_set(o, "add");
+   elm_object_content_set(btn, o);
+   evas_object_show(o);
+
+   if (!enm_import_nmcli_path())
+     {
+        elm_object_disabled_set(btn, EINA_TRUE);
+        elm_object_tooltip_text_set(btn,
+            _("nmcli not installed — install NetworkManager CLI tools to import VPN configs."));
+     }
+   else
+     {
+        evas_object_smart_callback_add(btn, "clicked",
+                                       _enm_vpn_import_clicked_cb, inst);
+     }
+   evas_object_propagate_events_set(btn, EINA_FALSE);
+   return btn;
+}
+
+/* VPN row text: connection name (elm.text) and type+IP subtitle (elm.text.sub) */
+static char *
+_enm_itc_vpn_text_get(void *data, Evas_Object *obj EINA_UNUSED,
+                       const char *part)
+{
+   struct NM_VPN_Connection *vc = data;
+
+   if (!strcmp(part, "elm.text"))
+     return strdup(vc->name ? vc->name : _("VPN"));
+   if (!strcmp(part, "elm.text.sub"))
+     {
+        /* Subtitle is just the tunnel IP when active. */
+        if (vc->active_path && vc->ip_address)
+          return strdup(vc->ip_address);
+        return NULL;
+     }
+   if (!strcmp(part, "elm.text.protocol"))
+     return strdup(enm_vpn_type_label(vc->conn_type, vc->service_type));
+   return NULL;
+}
+
+/* Forward declaration needed for _enm_itc_vpn_content_get */
+static void _enm_vpn_forget_btn_click_cb(void *data, Evas_Object *o EINA_UNUSED,
+                                         void *einfo EINA_UNUSED);
+
+/* VPN row content: shield icon in icon slot, edit-delete forget button in end */
+static Evas_Object *
+_enm_itc_vpn_content_get(void *data, Evas_Object *obj, const char *part)
+{
+   struct NM_VPN_Connection *vc = data;
+   E_NM_Instance *inst = evas_object_data_get(obj, "instance");
+
+   if (!strcmp(part, "elm.swallow.icon"))
+     {
+        /* Reuse elementary's stock shield icons: security-high (gold)
+         * for active VPN, security-low (gray) for inactive. */
+        Evas_Object *ic = elm_icon_add(obj);
+        if (!ic) return NULL;
+        elm_icon_standard_set(ic,
+            vc->vpn_state == NM_VPN_STATE_ACTIVATED
+              ? "security-high" : "security-low");
+        evas_object_size_hint_min_set(ic, ELM_SCALE_SIZE(24), ELM_SCALE_SIZE(24));
+        return ic;
+     }
+   if (!strcmp(part, "elm.swallow.end"))
+     {
+        /* Forget (delete) button — same edit-delete icon used by wifi rows. */
+        Evas_Object *btn = elm_button_add(obj);
+        Evas_Object *ic = elm_icon_add(btn);
+        elm_icon_standard_set(ic, "edit-delete");
+        elm_object_content_set(btn, ic);
+        evas_object_show(ic);
+        evas_object_smart_callback_add(btn, "clicked",
+                                       _enm_vpn_forget_btn_click_cb, vc);
+        evas_object_data_set(btn, "instance", inst);
+        evas_object_propagate_events_set(btn, EINA_FALSE);
+        return btn;
+     }
+   return NULL;
+}
+
+/* ---- VPN right-click context menu ---------------------------------------- */
+
+/* Autoconnect toggle callback: flip the autoconnect flag for the VPN. */
+static void
+_enm_vpn_menu_autoconn_cb(void *data, E_Menu *m EINA_UNUSED,
+                           E_Menu_Item *mi)
+{
+   struct NM_VPN_Connection *vc = data;
+   E_NM_Module_Context *ctxt = networkmanager_mod ?
+       networkmanager_mod->data : NULL;
+   if (!ctxt || !ctxt->nm) return;
+   enm_vpn_set_autoconnect(ctxt->nm, vc, e_menu_item_toggle_get(mi));
+}
+
+/* Small context struct that carries a copy of the VPN uuid into the
+ * confirmation dialog callbacks.  Using a uuid copy instead of a raw vc
+ * pointer means a ConnectionRemoved event that frees vc between the
+ * right-click and the OK click cannot cause a dangling-pointer dereference. */
+struct _enm_vpn_forget_ctx
+{
+   char *uuid;
+};
+
+static void
+_enm_vpn_forget_ctx_free(struct _enm_vpn_forget_ctx *ctx)
+{
+   if (!ctx) return;
+   free(ctx->uuid);
+   free(ctx);
+}
+
+/* Fired when the dialog is destroyed without going through OK or Cancel
+ * (e.g. window-manager close button). */
+static void
+_enm_vpn_forget_dialog_del_cb(void *obj)
+{
+   struct _enm_vpn_forget_ctx *ctx = e_object_data_get(E_OBJECT(obj));
+   _enm_vpn_forget_ctx_free(ctx);
+}
+
+/* Confirmation dialog "Forget" button callback. */
+static void
+_enm_vpn_forget_ok_cb(void *data, E_Dialog *d)
+{
+   struct _enm_vpn_forget_ctx *ctx = data;
+   E_NM_Module_Context *ctxt = networkmanager_mod ?
+       networkmanager_mod->data : NULL;
+   if (ctxt && ctxt->nm && ctx && ctx->uuid)
+     {
+        struct NM_VPN_Connection *vc =
+            enm_vpn_find_by_uuid(ctxt->nm, ctx->uuid);
+        if (vc) enm_vpn_delete(ctxt->nm, vc);
+     }
+   /* Clear the dialog's data ref before delete so the del-attach cb
+    * cannot double-free the ctx. */
+   e_object_data_set(E_OBJECT(d), NULL);
+   _enm_vpn_forget_ctx_free(ctx);
+   e_object_del(E_OBJECT(d));
+}
+
+static void
+_enm_vpn_forget_cancel_cb(void *data, E_Dialog *d)
+{
+   struct _enm_vpn_forget_ctx *ctx = data;
+   e_object_data_set(E_OBJECT(d), NULL);
+   _enm_vpn_forget_ctx_free(ctx);
+   e_object_del(E_OBJECT(d));
+}
+
+/* Pop the "Forget this VPN?" confirmation dialog.  Captures vc->uuid now
+ * so the dialog can survive a ConnectionRemoved race that frees vc. */
+static void
+_enm_vpn_show_forget_dialog(struct NM_VPN_Connection *vc)
+{
+   struct _enm_vpn_forget_ctx *ctx;
+   E_Dialog *d;
+   char body[256];
+
+   if (!vc) return;
+   ctx = E_NEW(struct _enm_vpn_forget_ctx, 1);
+   if (!ctx) return;
+   ctx->uuid = vc->uuid ? strdup(vc->uuid) : NULL;
+   if (!ctx->uuid) { free(ctx); return; }
+
+   d = e_dialog_new(NULL, "E", "nm_vpn_forget_confirm");
+   if (!d) { _enm_vpn_forget_ctx_free(ctx); return; }
+   e_dialog_title_set(d, _("Forget VPN"));
+   snprintf(body, sizeof(body),
+            _("Delete the VPN connection \"%s\"?  This cannot be undone."),
+            vc->name ? vc->name : "VPN");
+   e_dialog_text_set(d, body);
+   e_dialog_button_add(d, _("Forget"), NULL, _enm_vpn_forget_ok_cb, ctx);
+   e_dialog_button_add(d, _("Cancel"), NULL, _enm_vpn_forget_cancel_cb, ctx);
+   e_object_data_set(E_OBJECT(d), ctx);
+   e_object_del_attach_func_set(E_OBJECT(d), _enm_vpn_forget_dialog_del_cb);
+   elm_win_center(d->win, 1, 1);
+   e_dialog_show(d);
+}
+
+static void
+_enm_vpn_menu_forget_cb(void *data, E_Menu *m EINA_UNUSED,
+                         E_Menu_Item *mi EINA_UNUSED)
+{
+   _enm_vpn_show_forget_dialog(data);
+}
+
+/* "edit-delete" forget button on each VPN row (mirrors the wifi forget UX). */
+static void
+_enm_vpn_forget_btn_click_cb(void *data, Evas_Object *o,
+                              void *einfo EINA_UNUSED)
+{
+   E_NM_Instance *inst = evas_object_data_get(o, "instance");
+   enm_popup_del(inst);
+   _enm_vpn_show_forget_dialog(data);
+}
+
+/* Genlist "clicked,right" smart callback: pops the VPN context menu for
+ * right-clicks on VPN rows.  event_info is the Elm_Object_Item. */
+static void
+_enm_vpn_genlist_clicked_right_cb(void *data, Evas_Object *gl EINA_UNUSED,
+                                   void *event_info)
+{
+   E_NM_Instance *inst = data;
+   Elm_Object_Item *it = event_info;
+   struct NM_VPN_Connection *vc;
+   E_Menu *m;
+   E_Menu_Item *mi;
+   Evas_Coord x, y;
+
+   if (!it) return;
+   if (elm_genlist_item_item_class_get(it) != inst->ui.popup.itc_vpn) return;
+
+   vc = elm_object_item_data_get(it);
+   if (!vc) return;
+
+   evas_pointer_canvas_xy_get(evas_object_evas_get(gl), &x, &y);
+
+   m = e_menu_new();
+
+   mi = e_menu_item_new(m);
+   e_menu_item_label_set(mi, _("Connect automatically"));
+   e_menu_item_check_set(mi, EINA_TRUE);
+   e_menu_item_toggle_set(mi, vc->autoconnect);
+   e_menu_item_callback_set(mi, _enm_vpn_menu_autoconn_cb, vc);
+
+   mi = e_menu_item_new(m);
+   e_menu_item_separator_set(mi, EINA_TRUE);
+
+   mi = e_menu_item_new(m);
+   e_menu_item_label_set(mi, _("Forget"));
+   e_menu_item_callback_set(mi, _enm_vpn_menu_forget_cb, vc);
+
+   e_menu_activate_mouse(m, e_zone_current_get(),
+                         x, y, 1, 1,
+                         E_MENU_POP_DIRECTION_DOWN,
+                         ecore_x_current_time_get());
+}
+
+/* Genlist "realized" smart callback: when a VPN row's view exists, ask the
+ * item theme to reveal the protocol pill.  The default state hides the pill
+ * parts so non-VPN rows (wifi/ethernet) leave the slot collapsed. */
+static void
+_enm_vpn_genlist_realized_cb(void *data, Evas_Object *gl EINA_UNUSED,
+                              void *event_info)
+{
+   E_NM_Instance *inst = data;
+   Elm_Object_Item *it = event_info;
+
+   if (!it) return;
+   if (elm_genlist_item_item_class_get(it) != inst->ui.popup.itc_vpn) return;
+   elm_object_item_signal_emit(it, "e,pill,show", "e");
 }
 
 /* Genlist text_get for group headers: data is a string literal */
@@ -370,6 +779,33 @@ _enm_item_activated_cb(void *data, Evas_Object *obj EINA_UNUSED,
    struct NM_Device *dev;
 
    if (!it) return;
+   /* VPN rows carry a struct NM_VPN_Connection*, not Enm_Item_Data*.
+    * Dispatch them inline and bail before any cast-as-Enm_Item_Data. */
+   if (elm_genlist_item_item_class_get(it) == inst->ui.popup.itc_vpn)
+     {
+        struct NM_VPN_Connection *vc = elm_object_item_data_get(it);
+        E_NM_Module_Context *ctxt = networkmanager_mod ?
+            networkmanager_mod->data : NULL;
+        _enm_deselect_timer_schedule(inst, it);
+        if (ctxt && ctxt->nm && vc)
+          {
+             /* Tap on an active row disconnects; tap on an inactive row
+              * activates.  Mirrors the wifi/ethernet row-tap UX. */
+             if (vc->active_path)
+               {
+                  DBG("VPN row tapped (active): deactivating '%s'",
+                      vc->name ?: "?");
+                  enm_vpn_deactivate(ctxt->nm, vc);
+               }
+             else
+               {
+                  DBG("VPN row tapped (inactive): activating '%s'",
+                      vc->name ?: "?");
+                  enm_vpn_activate(ctxt->nm, vc);
+               }
+          }
+        return;
+     }
    /* Delay deselect so the user sees their click landed. */
    _enm_deselect_timer_schedule(inst, it);
    id = elm_object_item_data_get(it);
@@ -715,110 +1151,310 @@ _enm_has_wifi_device(struct NM_Manager *nm)
    return EINA_FALSE;
 }
 
+/* Drop a tracked group-header pointer if it matches.  Used in the orphan
+ * cleanup pass so we don't leave stale Elm_Object_Item * pointers in
+ * inst->ui.popup.group_{eth,wifi,vpn}. */
+static void
+_enm_drop_group_if(E_NM_Instance *inst, Elm_Object_Item *it)
+{
+   if (inst->ui.popup.group_eth == it)  inst->ui.popup.group_eth = NULL;
+   if (inst->ui.popup.group_wifi == it) inst->ui.popup.group_wifi = NULL;
+   if (inst->ui.popup.group_vpn == it)  inst->ui.popup.group_vpn = NULL;
+}
+
+/* Diff-and-sync update of the popup genlist contents.
+ *
+ * The previous implementation called elm_genlist_clear() and re-appended
+ * every row on each call, which produced a visible blink whenever any
+ * NetworkManager state changed (new AP, signal strength tick, VPN
+ * activate/deactivate, ...).  This walker keeps existing rows in place,
+ * re-runs their text_get/content_get only when needed via
+ * elm_genlist_item_update(), and only appends/removes items at the diff
+ * boundary.
+ *
+ * Identity per row:
+ *   - ethernet: Enm_Item_Data.dev pointer (stable per device)
+ *   - wifi:     Enm_Item_Data.ssid stringshare (stable per SSID, while the
+ *               concrete "best AP" struct backing it can change across
+ *               scans — we refresh id->ap and id->ap_path on reuse)
+ *   - VPN:      NM_VPN_Connection.path stringshare
+ *   - groups:   the per-instance itc pointer (one of each per popup)
+ */
 static void
 _enm_popup_update(struct NM_Manager *nm, E_NM_Instance *inst)
 {
    Evas_Object *gl = inst->ui.popup.genlist;
    struct _Popup_Entry desired[256];
-   int want_n, i;
-   Elm_Object_Item *wifi_group = NULL, *eth_group = NULL;
-   int wifi_count = 0, eth_count = 0;
+   int want_n, i, eth_count = 0, wifi_count = 0;
+   Eina_Hash *eth_idx, *ap_idx, *vpn_idx;
+   Eina_List *orphans = NULL;
+   Elm_Object_Item *it, *prev;
+   Eina_Iterator *itr;
 
    EINA_SAFETY_ON_NULL_RETURN(nm);
    EINA_SAFETY_ON_NULL_RETURN(gl);
 
-   /* elm_genlist_clear() below frees all items — drop any pending
-    * deselect targeting an item about to be destroyed. */
-   E_FREE_FUNC(inst->ui.popup.deselect_timer, ecore_timer_del);
-   inst->ui.popup.deselect_item = NULL;
+   /* NOTE: we intentionally do NOT kill the deselect timer here.  When the
+    * user taps a row we schedule a 0.5s deselect so the highlight feels
+    * deliberate.  The VPN active-changed path runs synchronously via an
+    * Ecore_Job and would land in _enm_popup_update almost immediately —
+    * killing the timer here meant the tapped row stayed selected, and
+    * Elementary genlist doesn't refire "selected" on an already-selected
+    * item, so the user couldn't tap again to deactivate.  Instead we
+    * cancel only when the target item is actually deleted (orphan pass
+    * below). */
 
    want_n = _enm_popup_build_entries(nm, desired, 256);
-
-   /* Count per-type so we know whether to insert group headers */
    for (i = 0; i < want_n; i++)
      {
-        if (desired[i].ap)
-          wifi_count++;
-        else
-          eth_count++;
+        if (desired[i].ap) wifi_count++;
+        else               eth_count++;
      }
 
-   /* Clear and rebuild — simpler than incremental diff with grouped headers */
-   elm_genlist_clear(gl);
+   /* ------------------------------------------------------------------
+    * Pass 1: index every existing row by its identity.  Group headers
+    * already live on inst->ui.popup.group_*, so they're skipped here.
+    * ------------------------------------------------------------------ */
+   eth_idx = eina_hash_pointer_new(NULL);   /* key: NM_Device *      */
+   ap_idx  = eina_hash_string_superfast_new(NULL); /* key: ssid stringshare */
+   vpn_idx = eina_hash_string_superfast_new(NULL); /* key: vc->path        */
 
-   /* Insert ethernet group + items */
+   it = elm_genlist_first_item_get(gl);
+   while (it)
+     {
+        const Elm_Genlist_Item_Class *icl = elm_genlist_item_item_class_get(it);
+
+        if (icl == inst->ui.popup.itc_eth)
+          {
+             Enm_Item_Data *id = elm_object_item_data_get(it);
+             if (id && id->dev) eina_hash_add(eth_idx, &id->dev, it);
+          }
+        else if (icl == inst->ui.popup.itc_ap)
+          {
+             Enm_Item_Data *id = elm_object_item_data_get(it);
+             if (id && id->ssid) eina_hash_add(ap_idx, id->ssid, it);
+          }
+        else if (icl == inst->ui.popup.itc_vpn)
+          {
+             struct NM_VPN_Connection *vc = elm_object_item_data_get(it);
+             if (vc && vc->path) eina_hash_add(vpn_idx, vc->path, it);
+          }
+        it = elm_genlist_item_next_get(it);
+     }
+
+   /* ------------------------------------------------------------------
+    * Pass 2: sync ethernet section.
+    * Keep prev pointing at the just-placed item so new rows insert
+    * after their predecessor and ordering is preserved.
+    * ------------------------------------------------------------------ */
    if (eth_count > 0)
      {
-        eth_group = elm_genlist_item_append(gl, inst->ui.popup.itc_group,
-                                            (void *)_("Wired"), NULL,
-                                            ELM_GENLIST_ITEM_GROUP,
-                                            NULL, NULL);
-        elm_genlist_item_select_mode_set(eth_group,
-                                         ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY);
+        if (!inst->ui.popup.group_eth)
+          {
+             inst->ui.popup.group_eth = elm_genlist_item_append(
+                gl, inst->ui.popup.itc_group, (void *)_("Wired"), NULL,
+                ELM_GENLIST_ITEM_GROUP, NULL, NULL);
+             elm_genlist_item_select_mode_set(inst->ui.popup.group_eth,
+                ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY);
+          }
+        /* prev tracks the last placed real row in this section.  While it
+         * is NULL we have no real predecessor yet, so the first cache-miss
+         * insert must use elm_genlist_item_append(parent=group) — passing
+         * the group header itself as the "after" of insert_after misroutes
+         * the new item (it lands as a sibling at top level instead of as a
+         * child of the group), breaking section grouping and the pass-1
+         * index next refresh. */
+        prev = NULL;
 
         for (i = 0; i < want_n; i++)
           {
-             Enm_Item_Data *id;
-
-             if (desired[i].ap) continue; /* skip wifi entries here */
-
-             id = calloc(1, sizeof(*id));
-             if (!id) continue;
-             id->nm = nm;
-             id->ap = NULL;
-             id->dev = desired[i].dev;
-             id->ap_path = NULL;
-             id->ssid = NULL;
-
-             elm_genlist_item_append(gl, inst->ui.popup.itc_eth, id,
-                                     eth_group, ELM_GENLIST_ITEM_NONE,
-                                     NULL, NULL);
+             if (desired[i].ap) continue;
+             it = eina_hash_find(eth_idx, &desired[i].dev);
+             if (it)
+               {
+                  /* Reuse: refresh nm pointer (paranoia) and re-run cbs. */
+                  Enm_Item_Data *id = elm_object_item_data_get(it);
+                  if (id) id->nm = nm;
+                  elm_genlist_item_update(it);
+                  eina_hash_del(eth_idx, &desired[i].dev, it);
+               }
+             else
+               {
+                  Enm_Item_Data *id = calloc(1, sizeof(*id));
+                  if (!id) continue;
+                  id->nm = nm;
+                  id->dev = desired[i].dev;
+                  if (!prev)
+                    it = elm_genlist_item_append(
+                       gl, inst->ui.popup.itc_eth, id,
+                       inst->ui.popup.group_eth,
+                       ELM_GENLIST_ITEM_NONE, NULL, NULL);
+                  else
+                    it = elm_genlist_item_insert_after(
+                       gl, inst->ui.popup.itc_eth, id,
+                       inst->ui.popup.group_eth, prev,
+                       ELM_GENLIST_ITEM_NONE, NULL, NULL);
+               }
+             prev = it;
           }
      }
+   else if (inst->ui.popup.group_eth)
+     {
+        /* No ethernet rows desired and no group needed.  Any leftover
+         * eth rows are picked up by the orphan pass below. */
+        elm_object_item_del(inst->ui.popup.group_eth);
+        inst->ui.popup.group_eth = NULL;
+     }
 
-   /* Insert wifi group header (always when adapter present) + AP items */
+   /* ------------------------------------------------------------------
+    * Pass 3: sync wifi section.  Header is present whenever a wifi
+    * adapter exists, regardless of AP count.
+    * ------------------------------------------------------------------ */
    if (_enm_has_wifi_device(nm))
      {
-        wifi_group = elm_genlist_item_append(gl, inst->ui.popup.itc_group_wifi,
-                                             inst, NULL,
-                                             ELM_GENLIST_ITEM_GROUP,
-                                             NULL, NULL);
-        elm_genlist_item_select_mode_set(wifi_group,
-                                          ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY);
-
-        if (wifi_count > 0)
+        if (!inst->ui.popup.group_wifi)
           {
-             for (i = 0; i < want_n; i++)
+             inst->ui.popup.group_wifi = elm_genlist_item_append(
+                gl, inst->ui.popup.itc_group_wifi, inst, NULL,
+                ELM_GENLIST_ITEM_GROUP, NULL, NULL);
+             elm_genlist_item_select_mode_set(inst->ui.popup.group_wifi,
+                ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY);
+          }
+        else
+          {
+             /* Wireless-enabled toggle state may have flipped — refresh. */
+             elm_genlist_item_update(inst->ui.popup.group_wifi);
+          }
+        prev = NULL;
+
+        for (i = 0; i < want_n; i++)
+          {
+             if (!desired[i].ap) continue;
+             it = eina_hash_find(ap_idx, desired[i].label);
+             if (it)
                {
-                  Enm_Item_Data *id;
-
-                  if (!desired[i].ap) continue;
-
-                  id = calloc(1, sizeof(*id));
+                  /* Reuse: the "best AP" pointer for this SSID may have
+                   * rotated to a stronger AP, and signal strength/security
+                   * almost certainly changed — refresh the Enm_Item_Data
+                   * fields before triggering a content/text re-fetch. */
+                  Enm_Item_Data *id = elm_object_item_data_get(it);
+                  if (id)
+                    {
+                       id->nm = nm;
+                       id->ap = desired[i].ap;
+                       eina_stringshare_replace(&id->ap_path,
+                                                desired[i].ap_path);
+                    }
+                  elm_genlist_item_update(it);
+                  eina_hash_del(ap_idx, desired[i].label, it);
+               }
+             else
+               {
+                  Enm_Item_Data *id = calloc(1, sizeof(*id));
                   if (!id) continue;
                   id->nm = nm;
                   id->ap = desired[i].ap;
-                  id->dev = NULL;
                   id->ap_path = eina_stringshare_add(desired[i].ap_path);
                   id->ssid = eina_stringshare_add(desired[i].label);
-
-                  elm_genlist_item_append(gl, inst->ui.popup.itc_ap, id,
-                                          wifi_group, ELM_GENLIST_ITEM_NONE,
-                                          NULL, NULL);
+                  if (!prev)
+                    it = elm_genlist_item_append(
+                       gl, inst->ui.popup.itc_ap, id,
+                       inst->ui.popup.group_wifi,
+                       ELM_GENLIST_ITEM_NONE, NULL, NULL);
+                  else
+                    it = elm_genlist_item_insert_after(
+                       gl, inst->ui.popup.itc_ap, id,
+                       inst->ui.popup.group_wifi, prev,
+                       ELM_GENLIST_ITEM_NONE, NULL, NULL);
                }
+             prev = it;
           }
      }
-
-   /* Update IP label */
-   if (nm->ip_address)
+   else if (inst->ui.popup.group_wifi)
      {
-        char ipbuf[128];
-        snprintf(ipbuf, sizeof(ipbuf), "IP: %s", nm->ip_address);
-        elm_object_text_set(inst->ui.popup.ip_label, ipbuf);
+        elm_object_item_del(inst->ui.popup.group_wifi);
+        inst->ui.popup.group_wifi = NULL;
      }
-   else
-     elm_object_text_set(inst->ui.popup.ip_label, "");
 
+   /* ------------------------------------------------------------------
+    * Pass 4: sync VPN section.  Always present.
+    * ------------------------------------------------------------------ */
+   {
+      struct NM_VPN_Connection *vc;
+
+      if (!inst->ui.popup.group_vpn)
+        {
+           inst->ui.popup.group_vpn = elm_genlist_item_append(
+              gl, inst->ui.popup.itc_group_vpn, inst, NULL,
+              ELM_GENLIST_ITEM_GROUP, NULL, NULL);
+           elm_genlist_item_select_mode_set(inst->ui.popup.group_vpn,
+              ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY);
+        }
+      prev = NULL;
+
+      EINA_INLIST_FOREACH(nm->vpn_connections, vc)
+        {
+           if (!vc->path) continue;
+           it = eina_hash_find(vpn_idx, vc->path);
+           if (it)
+             {
+                elm_genlist_item_update(it);
+                eina_hash_del(vpn_idx, vc->path, it);
+             }
+           else
+             {
+                if (!prev)
+                  it = elm_genlist_item_append(
+                     gl, inst->ui.popup.itc_vpn, vc,
+                     inst->ui.popup.group_vpn,
+                     ELM_GENLIST_ITEM_NONE, NULL, NULL);
+                else
+                  it = elm_genlist_item_insert_after(
+                     gl, inst->ui.popup.itc_vpn, vc,
+                     inst->ui.popup.group_vpn, prev,
+                     ELM_GENLIST_ITEM_NONE, NULL, NULL);
+                /* New VPN row: the genlist's "realized" smart callback
+                 * will fire when the row is rendered and emit
+                 * "e,pill,show".  No extra wiring needed here. */
+             }
+           prev = it;
+        }
+   }
+
+   /* ------------------------------------------------------------------
+    * Pass 5: any items left in the indexes are orphans — desired set
+    * no longer contains them, so delete.  Their itc->func.del takes
+    * care of freeing Enm_Item_Data; VPN rows have del=NULL because the
+    * module owns NM_VPN_Connection lifetime.
+    * ------------------------------------------------------------------ */
+   itr = eina_hash_iterator_data_new(eth_idx);
+   EINA_ITERATOR_FOREACH(itr, it) orphans = eina_list_append(orphans, it);
+   eina_iterator_free(itr);
+
+   itr = eina_hash_iterator_data_new(ap_idx);
+   EINA_ITERATOR_FOREACH(itr, it) orphans = eina_list_append(orphans, it);
+   eina_iterator_free(itr);
+
+   itr = eina_hash_iterator_data_new(vpn_idx);
+   EINA_ITERATOR_FOREACH(itr, it) orphans = eina_list_append(orphans, it);
+   eina_iterator_free(itr);
+
+   EINA_LIST_FREE(orphans, it)
+     {
+        _enm_drop_group_if(inst, it); /* defensive — shouldn't be a group */
+        /* If the row being deleted is the pending deselect target,
+         * cancel the timer so it doesn't fire on a dangling pointer. */
+        if (inst->ui.popup.deselect_item == it)
+          {
+             E_FREE_FUNC(inst->ui.popup.deselect_timer, ecore_timer_del);
+             inst->ui.popup.deselect_item = NULL;
+          }
+        elm_object_item_del(it);
+     }
+
+   eina_hash_free(eth_idx);
+   eina_hash_free(ap_idx);
+   eina_hash_free(vpn_idx);
 }
 
 /* Wrap content in an elm_table with a transparent sizer rect so the whole
@@ -887,6 +1523,7 @@ _enm_popup_new(E_NM_Instance *inst)
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_scroller_bounce_set(gl, EINA_FALSE, EINA_TRUE);
+   evas_object_data_set(gl, "instance", inst);
    inst->ui.popup.genlist = gl;
 
    /* Item classes — created per-popup, freed in enm_popup_del */
@@ -907,7 +1544,9 @@ _enm_popup_new(E_NM_Instance *inst)
    inst->ui.popup.itc_group_wifi = itc;
 
    itc = elm_genlist_item_class_new();
-   itc->item_style = "default";
+   /* double_label_blue: same layout as double_label but elm.text.sub is
+    * rendered in wifi-band blue (51 153 255) so IPs stand out clearly. */
+   itc->item_style = "double_label";
    itc->func.text_get = _enm_itc_ap_text_get;
    itc->func.content_get = _enm_itc_ap_content_get;
    itc->func.state_get = NULL;
@@ -915,30 +1554,48 @@ _enm_popup_new(E_NM_Instance *inst)
    inst->ui.popup.itc_ap = itc;
 
    itc = elm_genlist_item_class_new();
-   itc->item_style = "default";
+   itc->item_style = "double_label";
    itc->func.text_get = _enm_itc_eth_text_get;
    itc->func.content_get = _enm_itc_eth_content_get;
    itc->func.state_get = NULL;
    itc->func.del = _enm_itc_item_del;
    inst->ui.popup.itc_eth = itc;
 
+   itc = elm_genlist_item_class_new();
+   itc->item_style = "group_index";
+   itc->func.text_get = _enm_itc_group_vpn_text_get;
+   itc->func.content_get = _enm_itc_group_vpn_content_get;
+   itc->func.state_get = NULL;
+   itc->func.del = NULL;
+   inst->ui.popup.itc_group_vpn = itc;
+
+   itc = elm_genlist_item_class_new();
+   itc->item_style = "double_label";
+   itc->func.text_get = _enm_itc_vpn_text_get;
+   itc->func.content_get = _enm_itc_vpn_content_get;
+   itc->func.state_get = NULL;
+   itc->func.del = NULL;
+   inst->ui.popup.itc_vpn = itc;
+
    /* Selected signal for row tap → connect/disconnect (single-click) */
    evas_object_smart_callback_add(gl, "selected", _enm_item_activated_cb,
                                    inst);
 
+   /* Right-click context menu for VPN rows: use genlist's per-item
+    * "clicked,right" smart signal.  event_info is the Elm_Object_Item. */
+   evas_object_smart_callback_add(gl, "clicked,right",
+                                  _enm_vpn_genlist_clicked_right_cb, inst);
+
+   /* Reveal the protocol pill on VPN rows once their view is realised. */
+   evas_object_smart_callback_add(gl, "realized",
+                                  _enm_vpn_genlist_realized_cb, inst);
+
    elm_box_pack_end(box, gl);
    evas_object_show(gl);
 
-   /* IP address label */
-   inst->ui.popup.ip_label = elm_label_add(box);
-   evas_object_size_hint_align_set(inst->ui.popup.ip_label,
-                                   EVAS_HINT_FILL, 0.5);
-   evas_object_size_hint_weight_set(inst->ui.popup.ip_label,
-                                    EVAS_HINT_EXPAND, 0);
-   elm_object_text_set(inst->ui.popup.ip_label, "");
-   elm_box_pack_end(box, inst->ui.popup.ip_label);
-   evas_object_show(inst->ui.popup.ip_label);
-
+   /* Settings cog at the bottom of the popup.  IP label that used to sit
+    * here was dropped — the assigned IP now appears under the wifi /
+    * ethernet / VPN row name in wifi-band blue. */
    button = elm_button_add(box);
    elm_object_text_set(button, _("Settings"));
    evas_object_size_hint_align_set(button, 0.5, 0.5);
@@ -1164,6 +1821,56 @@ _enm_mod_manager_update_inst(E_NM_Module_Context *ctxt EINA_UNUSED,
         edje_object_signal_emit(o, "e,security,off", "e");
         edje_object_part_text_set(o, "e.text.band-label", "");
      }
+
+   /* Build and set a tooltip on the gadget summarising connection + VPN. */
+/* this is invalid as it sets it on th3e gaget.. and the gadget is not elm
+   {
+      Eina_Strbuf *tbuf = eina_strbuf_new();
+      if (tbuf)
+        {
+           // Primary connection name (SSID or interface)
+           if (nm && active_ap && active_ap->ssid)
+             eina_strbuf_append(tbuf, active_ap->ssid);
+           else if (nm && nm->active_conn_type == NM_DEVICE_TYPE_ETHERNET)
+             {
+                struct NM_Device *tdev;
+                EINA_INLIST_FOREACH(nm->devices, tdev)
+                  {
+                     if (tdev->type == NM_DEVICE_TYPE_ETHERNET &&
+                         tdev->state >= 100)
+                       {
+                          eina_strbuf_append(tbuf,
+                              tdev->interface ?: _("Wired"));
+                          break;
+                       }
+                  }
+             }
+
+           // Append VPN line if any VPN is active
+           if (nm && enm_vpn_active_count(nm) > 0)
+             {
+                struct NM_VPN_Connection *vc;
+                Eina_Bool first = EINA_TRUE;
+                eina_strbuf_append(tbuf, "\nVPN: ");
+                EINA_INLIST_FOREACH(nm->vpn_connections, vc)
+                  {
+                     if (vc->vpn_state != NM_VPN_STATE_ACTIVATED) continue;
+                     if (!first) eina_strbuf_append(tbuf, ", ");
+                     eina_strbuf_append(tbuf, vc->name ?: "VPN");
+                     first = EINA_FALSE;
+                  }
+             }
+
+           if (eina_strbuf_length_get(tbuf) > 0)
+             elm_object_tooltip_text_set(o,
+                 eina_strbuf_string_get(tbuf));
+           else
+             elm_object_tooltip_unset(o);
+
+           eina_strbuf_free(tbuf);
+        }
+   }
+ */
 }
 
 static void
@@ -1210,11 +1917,134 @@ _enm_mod_manager_inout(struct NM_Manager *nm)
      _enm_traffic_timer_stop(ctxt);
 }
 
+static void
+_enm_mod_vpn_changed_cb(struct NM_Manager *nm)
+{
+   E_NM_Module_Context *ctxt = networkmanager_mod ?
+       networkmanager_mod->data : NULL;
+   E_NM_Instance *inst;
+   Eina_List *l;
+
+   if (!ctxt) return;
+   EINA_LIST_FOREACH(ctxt->instances, l, inst)
+     if (inst->popup) _enm_popup_update(nm, inst);
+}
+
+/* Emit e,vpn,active or e,vpn,inactive on every gadget instance based on
+ * the current active VPN count.  Also refreshes the gadget tooltip so the
+ * VPN name appears immediately after state changes. */
+static void
+_enm_vpn_emit_shield(E_NM_Module_Context *ctxt)
+{
+   if (!ctxt || !ctxt->nm) return;
+   unsigned int n = enm_vpn_active_count(ctxt->nm);
+   const char *sig = n > 0 ? "e,vpn,active" : "e,vpn,inactive";
+
+   DBG("VPN shield emit: active_count=%u -> signal='%s' (%u instances)",
+       n, sig, (unsigned int)eina_list_count(ctxt->instances));
+
+   E_NM_Instance *inst; Eina_List *l;
+   EINA_LIST_FOREACH(ctxt->instances, l, inst)
+     {
+        if (!inst->ui.gadget) continue;
+        edje_object_signal_emit(inst->ui.gadget, sig, "e");
+     }
+}
+
+static const char *
+_enm_vpn_reason_text(uint32_t reason)
+{
+   switch (reason)
+     {
+      case 0:  return _("Unknown reason.");
+      case 1:  return _("Disconnected by user.");
+      case 2:  return _("Device disconnected.");
+      case 3:  return _("Service stopped.");
+      case 4:  return _("IP configuration is invalid.");
+      case 5:  return _("Connection attempt timed out.");
+      case 6:  return _("Service start timeout.");
+      case 7:  return _("Service failed to start.");
+      case 8:  return _("No valid VPN secrets.");
+      case 9:  return _("Invalid VPN secrets.");
+      case 10: return _("Connection removed.");
+      default: return _("Connection failed.");
+     }
+}
+
+static void
+_enm_vpn_check_failures(struct NM_Manager *nm)
+{
+   struct NM_VPN_Connection *vc;
+   if (!nm) return;
+   EINA_INLIST_FOREACH(nm->vpn_connections, vc)
+     {
+        if (vc->vpn_state == NM_VPN_STATE_FAILED &&
+            vc->prev_state != NM_VPN_STATE_FAILED)
+          {
+             E_Notification_Notify n;
+             char body[256];
+             snprintf(body, sizeof(body), "%s: %s",
+                      vc->name ?: "VPN",
+                      _enm_vpn_reason_text(vc->fail_reason));
+             memset(&n, 0, sizeof(E_Notification_Notify));
+             n.app_name = "Enlightenment";
+             n.summary  = _("VPN connection failed");
+             n.body     = body;
+             n.timeout  = 5000;
+             e_notification_client_send(&n, NULL, NULL);
+          }
+     }
+}
+
+static void
+_enm_mod_vpn_active_changed_cb(struct NM_Manager *nm)
+{
+   E_NM_Module_Context *ctxt = networkmanager_mod ?
+       networkmanager_mod->data : NULL;
+   if (!ctxt) return;
+   _enm_vpn_check_failures(nm);
+   _enm_vpn_emit_shield(ctxt);
+   /* Refresh the gadget tooltip (built inside _enm_mod_manager_update_inst)
+    * so the "VPN: <name>" line tracks active-state changes. */
+   _enm_mod_manager_update(nm);
+   /* And refresh the popup VPN rows (state pill, IP, disconnect button). */
+   _enm_mod_vpn_changed_cb(nm);
+}
+
+/* --- deferred VPN-active-changed notification ------------------------------ */
+
+static void
+_enm_vpn_update_job_cb(void *data)
+{
+   struct NM_Manager *nm = data;
+   E_NM_Module_Context *ctxt = networkmanager_mod ?
+       networkmanager_mod->data : NULL;
+
+   if (!ctxt) return;
+   ctxt->vpn_update_job = NULL;   /* job has fired — clear the handle */
+   _enm_mod_vpn_active_changed_cb(nm);
+}
+
+/* Public: called from e_networkmanager_vpn.c instead of the direct callback.
+ * Multiple calls within the same D-Bus dispatch batch coalesce into one job. */
+void
+enm_vpn_active_changed_schedule(struct NM_Manager *nm)
+{
+   E_NM_Module_Context *ctxt = networkmanager_mod ?
+       networkmanager_mod->data : NULL;
+
+   if (!ctxt) return;
+   if (ctxt->vpn_update_job) return;   /* already queued — coalesce */
+   ctxt->vpn_update_job = ecore_job_add(_enm_vpn_update_job_cb, nm);
+}
+
 static const E_NM_Mod_Callbacks _enm_mod_cbs =
 {
-   .aps_changed    = _enm_mod_aps_changed,
-   .manager_update = _enm_mod_manager_update,
-   .manager_inout  = _enm_mod_manager_inout,
+   .aps_changed        = _enm_mod_aps_changed,
+   .manager_update     = _enm_mod_manager_update,
+   .manager_inout      = _enm_mod_manager_inout,
+   .vpn_changed        = _enm_mod_vpn_changed_cb,
+   .vpn_active_changed = _enm_mod_vpn_active_changed_cb,
 };
 
 /* --- network activity indicator ------------------------------------------- */
@@ -1638,10 +2468,21 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
 
    _enm_gadget_setup(inst);
 
-   if (ctxt->nm)
-     _enm_mod_manager_update_inst(ctxt, inst, ctxt->nm, ctxt->nm->state);
+   /* The VPN badge in the connman/main edje group is an IMAGE part that
+    * references elementary's i-shield-gold image set directly and is
+    * toggled by e,vpn,active / e,vpn,inactive signals.  No swallow needed
+    * here; the theme owns the asset and the geometry. */
 
+   /* Append the instance BEFORE the initial shield emit so the loop in
+    * _enm_vpn_emit_shield includes this new gadget. */
    ctxt->instances = eina_list_append(ctxt->instances, inst);
+
+   if (ctxt->nm)
+     {
+        _enm_mod_manager_update_inst(ctxt, inst, ctxt->nm, ctxt->nm->state);
+        /* Emit initial VPN shield state in case a VPN was already up */
+        _enm_vpn_emit_shield(ctxt);
+     }
 
    return inst->gcc;
 }
@@ -1857,6 +2698,7 @@ e_modapi_shutdown(E_Module *m)
    e_gadcon_provider_unregister(&_gc_class);
 
    E_FREE_FUNC(ctxt->popup_update_timer, ecore_timer_del);
+   E_FREE_FUNC(ctxt->vpn_update_job, ecore_job_del);
    _enm_traffic_timer_stop(ctxt);
    E_FREE_FUNC(ctxt->powersave_handler, ecore_event_handler_del);
    E_FREE(ctxt);

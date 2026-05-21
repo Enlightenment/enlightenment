@@ -30,17 +30,47 @@ typedef void (*E_NM_Agent_Secrets_Request_Cb)(void *data,
                                                const char *ssid);
 typedef void (*E_NM_Agent_Secrets_Cancel_Cb)(void *data,
                                               E_NM_Agent_Request *req);
+/* VPN secrets request callback.
+ *
+ * fields is a NULL-terminated array of secret-key names (also bounded by
+ * n_fields).  The array itself, the strings it points to, conn_name and
+ * service_type are owned by the data layer and are valid only for the
+ * duration of the callback — copy anything you need to keep before
+ * returning.  The req pointer remains valid until the UI calls
+ * e_nm_agent_reply_vpn_secrets() or e_nm_agent_reply_cancel(). */
+typedef void (*E_NM_Agent_VPN_Secrets_Request_Cb)(void *data,
+        E_NM_Agent_Request *req,
+        const char *conn_name,
+        const char *service_type,
+        const char *const *fields,
+        unsigned int n_fields);
 
 typedef struct _E_NM_Agent_Callbacks E_NM_Agent_Callbacks;
 struct _E_NM_Agent_Callbacks
 {
-   E_NM_Agent_Secrets_Request_Cb request;
-   E_NM_Agent_Secrets_Cancel_Cb  cancel;
+   E_NM_Agent_Secrets_Request_Cb     request;       /* wifi PSK */
+   E_NM_Agent_Secrets_Cancel_Cb      cancel;
+   E_NM_Agent_VPN_Secrets_Request_Cb vpn_request;
 };
 
 void e_nm_agent_callbacks_set(const E_NM_Agent_Callbacks *cbs, void *data);
 void e_nm_agent_reply_secrets(E_NM_Agent_Request *req, const char *psk);
 void e_nm_agent_reply_cancel(E_NM_Agent_Request *req);
+void e_nm_agent_reply_vpn_secrets(E_NM_Agent_Request *req,
+                                  const char *const *fields,
+                                  const char *const *values,
+                                  unsigned int n_fields);
+
+/*
+ * D-Bus name and interface constants shared between the main data layer
+ * and the VPN sub-module.
+ */
+#define NM_BUS_NAME  "org.freedesktop.NetworkManager"
+#define NM_IFACE_SCONN "org.freedesktop.NetworkManager.Settings.Connection"
+/* org.freedesktop.NetworkManager.Connection.Active — used both for the
+ * primary active connection probe in e_networkmanager.c and for binding
+ * the WireGuard active-state watcher in e_networkmanager_vpn.c. */
+#define NM_IFACE_ACTIVE_CONN "org.freedesktop.NetworkManager.Connection.Active"
 
 /*
  * NM D-Bus state values, matching org.freedesktop.NetworkManager.State
@@ -86,6 +116,54 @@ enum NM_AP_Security
    NM_AP_SEC_KEY_MGMT_PSK= 0x00000100,
    NM_AP_SEC_KEY_MGMT_802_1X = 0x00000200,
    NM_AP_SEC_KEY_MGMT_SAE    = 0x00000400,
+};
+
+enum NM_VPN_State
+{
+   NM_VPN_STATE_UNKNOWN      = 0,
+   NM_VPN_STATE_PREPARE      = 1,
+   NM_VPN_STATE_NEED_AUTH    = 2,
+   NM_VPN_STATE_CONNECT      = 3,
+   NM_VPN_STATE_IP_CONFIG    = 4,
+   NM_VPN_STATE_ACTIVATED    = 5,
+   NM_VPN_STATE_FAILED       = 6,
+   NM_VPN_STATE_DISCONNECTED = 7,
+};
+
+struct NM_VPN_Connection
+{
+   const char *path;               /* /org/freedesktop/NetworkManager/Settings/N (stringshare) */
+   EINA_INLIST;
+
+   char  *uuid;
+   char  *name;                    /* connection.id */
+   char  *conn_type;               /* "vpn" or "wireguard" */
+   char  *service_type;            /* plugin DBus name, NULL for wireguard */
+   Eina_Bool autoconnect;
+
+   /* Live state — populated only when an Active matches this saved connection. */
+   const char *active_path;        /* stringshare; NULL when inactive */
+   enum NM_VPN_State vpn_state;
+   enum NM_VPN_State prev_state;   /* state before the most recent transition */
+   uint32_t          fail_reason;  /* last failure reason code, 0 if none */
+   char *ip_address;               /* tunnel IPv4 (heap-allocated) */
+
+   /* Back-pointer to the owning manager — set after creation in
+    * _vpn_get_settings_cb.  Never NULL once initialised. */
+   struct NM_Manager     *nm;
+
+   /* D-Bus handles tied to the active state (NULL when inactive). */
+   Eldbus_Proxy          *active_proxy;
+   Eldbus_Object         *active_obj;
+   Eldbus_Signal_Handler *active_prop_handler;
+   Eldbus_Pending        *pending_get_props;
+
+   /* D-Bus handles for the active connection's Ip4Config object (NULL when
+    * the tunnel is not up or the IP has not been assigned yet). */
+   Eldbus_Proxy          *ip4_proxy;
+   Eldbus_Object         *ip4_obj;
+   Eldbus_Signal_Handler *ip4_prop_handler;
+   Eldbus_Pending        *pending_ip4_props;
 };
 
 struct NM_Access_Point
@@ -182,12 +260,23 @@ struct NM_Manager
    int           saved_conn_pending;    /* outstanding GetSettings calls */
    unsigned int  saved_conn_generation; /* increment to abort in-flight GetSettings */
 
+   Eina_Inlist *vpn_connections;        /* NM_VPN_Connection inlist */
+   int           vpn_pending;           /* outstanding VPN GetSettings calls */
+   unsigned int  vpn_generation;        /* increment to abort in-flight VPN callbacks */
+   Eldbus_Pending *vpn_list_pending;    /* in-flight ListConnections call, or NULL */
+   Eina_List     *vpn_pending_settings; /* Eldbus_Pending* per in-flight VPN GetSettings */
+   Eina_List     *vpn_pending_resolves; /* Eldbus_Pending* per in-flight active-path resolve (Properties.Get "Connection") */
+   Eina_List     *vpn_pending_active_paths; /* stringshare'd active paths captured at startup,
+                                             * re-reconciled after enm_vpn_enumerate completes */
+
    /* Long-lived Settings object/proxy for ConnectionRemoved signal subscription.
     * Created in _manager_new, freed in _manager_free. */
    Eldbus_Proxy          *settings_proxy;
    Eldbus_Object         *settings_obj;
    Eldbus_Signal_Handler *conn_removed_handler;
    Eldbus_Signal_Handler *conn_added_handler;
+
+   Eina_List     *vpn_pending_autoconn;  /* _autoconn_ctx* per in-flight nmcli connection modify */
 
    /* Generation counter incremented each time a new batch of active-connection
     * probes is started.  Each probe captures the generation at creation time
@@ -231,6 +320,8 @@ struct _E_NM_Mod_Callbacks
    void (*aps_changed)(struct NM_Manager *nm);
    void (*manager_update)(struct NM_Manager *nm);
    void (*manager_inout)(struct NM_Manager *nm);
+   void (*vpn_changed)(struct NM_Manager *nm);
+   void (*vpn_active_changed)(struct NM_Manager *nm);
 };
 
 void e_nm_module_callbacks_set(const E_NM_Mod_Callbacks *cbs);
@@ -240,9 +331,19 @@ const char *enm_state_to_str(enum NM_State state);
 const char *enm_device_type_to_str(enum NM_Device_Type type);
 const char *enm_ap_security_to_str(uint32_t wpa_flags, uint32_t rsn_flags);
 
+/* Maps an NM connection type + vpn.service-type to a short display label.
+ * conn_type:    "vpn" or "wireguard"
+ * service_type: required when conn_type == "vpn", ignored for wireguard.
+ *               e.g. "org.freedesktop.NetworkManager.openvpn"
+ * Returns a static string; never NULL.  ("VPN" is the catch-all fallback.) */
+const char *enm_vpn_type_label(const char *conn_type,
+                               const char *service_type);
+
 /* Saved connections */
 void enm_saved_connections_get(struct NM_Manager *nm);
 void enm_connection_delete(struct NM_Manager *nm, const char *connection_path);
+
+/* VPN data layer API: see e_networkmanager_vpn.h */
 
 /* Log */
 extern int _e_nm_log_dom;

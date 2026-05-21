@@ -1,22 +1,22 @@
 #include "e_mod_main.h"
+#include "e_networkmanager_vpn.h"
 
 /* -------------------------------------------------------------------------- */
 /* D-Bus interface constants                                                   */
 /* -------------------------------------------------------------------------- */
 
-#define NM_BUS_NAME    "org.freedesktop.NetworkManager"
 #define NM_OBJ_PATH    "/org/freedesktop/NetworkManager"
 
 #define NM_IFACE_MGR   "org.freedesktop.NetworkManager"
 #define NM_IFACE_DEV   "org.freedesktop.NetworkManager.Device"
 #define NM_IFACE_WIFI  "org.freedesktop.NetworkManager.Device.Wireless"
 #define NM_IFACE_AP    "org.freedesktop.NetworkManager.AccessPoint"
-#define NM_IFACE_ACONN "org.freedesktop.NetworkManager.Connection.Active"
+/* NM_IFACE_ACTIVE_CONN is defined in e_networkmanager.h (shared with VPN sub-module) */
 #define NM_IFACE_IP4   "org.freedesktop.NetworkManager.IP4Config"
 #define NM_IFACE_PROPS "org.freedesktop.DBus.Properties"
 #define NM_IFACE_AGENT_MGR "org.freedesktop.NetworkManager.AgentManager"
 #define NM_IFACE_SETTINGS  "org.freedesktop.NetworkManager.Settings"
-#define NM_IFACE_SCONN     "org.freedesktop.NetworkManager.Settings.Connection"
+/* NM_IFACE_SCONN is defined in e_networkmanager.h (shared with VPN sub-module) */
 #define NM_SETTINGS_PATH   "/org/freedesktop/NetworkManager/Settings"
 
 #define NM_CONNECTION_TIMEOUT (60 * 1000)
@@ -74,6 +74,28 @@ _notify_manager_inout(struct NM_Manager *nm)
 }
 
 /* -------------------------------------------------------------------------- */
+/* Internal accessors used by e_networkmanager_vpn.c                          */
+/* -------------------------------------------------------------------------- */
+
+_mod_cb_vpn_changed_t
+_mod_cbs_vpn_changed_get(void)
+{
+   return _mod_cbs ? _mod_cbs->vpn_changed : NULL;
+}
+
+_mod_cb_vpn_active_t
+_mod_cbs_vpn_active_changed_get(void)
+{
+   return _mod_cbs ? _mod_cbs->vpn_active_changed : NULL;
+}
+
+Eldbus_Connection *
+_enm_dbus_conn_get(void)
+{
+   return conn;
+}
+
+/* -------------------------------------------------------------------------- */
 /* Utility                                                                     */
 /* -------------------------------------------------------------------------- */
 
@@ -122,6 +144,33 @@ enm_ap_security_to_str(uint32_t wpa_flags, uint32_t rsn_flags)
    if (wpa_flags & NM_AP_SEC_PAIR_WEP40 ||
        wpa_flags & NM_AP_SEC_PAIR_WEP104)     return "wep";
    return "open";
+}
+
+const char *
+enm_vpn_type_label(const char *conn_type, const char *service_type)
+{
+   const char *prefix = "org.freedesktop.NetworkManager.";
+   const char *short_name;
+
+   if (conn_type && !strcmp(conn_type, "wireguard")) return "WireGuard";
+   if (!service_type) return "VPN";
+
+   /* Strip the org.freedesktop.NetworkManager. prefix if present. */
+   short_name = service_type;
+   if (!strncmp(service_type, prefix, strlen(prefix)))
+     short_name = service_type + strlen(prefix);
+
+   if (!strcmp(short_name, "openvpn"))     return "OpenVPN";
+   if (!strcmp(short_name, "openconnect")) return "OpenConnect";
+   if (!strcmp(short_name, "vpnc"))        return "VPNC";
+   if (!strcmp(short_name, "pptp"))        return "PPTP";
+   if (!strcmp(short_name, "l2tp"))        return "L2TP";
+   if (!strcmp(short_name, "libreswan"))   return "Libreswan";
+   if (!strcmp(short_name, "strongswan"))  return "strongSwan";
+   if (!strcmp(short_name, "fortisslvpn")) return "Fortinet";
+   if (!strcmp(short_name, "iodine"))      return "Iodine";
+   if (!strcmp(short_name, "sstp"))        return "SSTP";
+   return "VPN";
 }
 
 /* -------------------------------------------------------------------------- */
@@ -1319,7 +1368,7 @@ _manager_probe_active_conn(struct NM_Manager *nm,
 
    eldbus_proxy_call(probe->proxy, "GetAll",
                      _active_conn_probe_cb, probe,
-                     -1, "s", NM_IFACE_ACONN);
+                     -1, "s", NM_IFACE_ACTIVE_CONN);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -1329,6 +1378,143 @@ _manager_probe_active_conn(struct NM_Manager *nm,
 static void _manager_free(struct NM_Manager *nm);
 static struct NM_Manager *_manager_new(void);
 static void _settings_conn_removed_cb(void *data, const Eldbus_Message *msg);
+static void _enm_vpn_resolve_active(struct NM_Manager *nm,
+                                    const char *active_path);
+
+/* -------------------------------------------------------------------------- */
+/* VPN active connection reconciliation                                        */
+/* -------------------------------------------------------------------------- */
+
+/* Per-resolve context — one per in-flight Properties.Get("Connection") call.
+ * Tracked in nm->vpn_pending_resolves so _manager_free can cancel safely. */
+struct _enm_resolve_ctx
+{
+   struct NM_Manager *nm;
+   char              *active_path; /* heap copy — not stringshare */
+   Eldbus_Pending    *pending;     /* our slot in nm->vpn_pending_resolves */
+   Eldbus_Object     *obj;
+   Eldbus_Proxy      *proxy;
+};
+
+static void
+_enm_vpn_resolve_cb(void *data, const Eldbus_Message *msg,
+                    Eldbus_Pending *pending EINA_UNUSED)
+{
+   struct _enm_resolve_ctx *ctx = data;
+   Eldbus_Message_Iter *var;
+   const char *err_name, *err_msg, *settings_path;
+   struct NM_VPN_Connection *vc;
+
+   /* Remove ourselves from the tracking list FIRST — before any nm access —
+    * so that _manager_free's drain loop does not see a stale pointer. */
+   ctx->nm->vpn_pending_resolves =
+       eina_list_remove(ctx->nm->vpn_pending_resolves, ctx->pending);
+
+   if (eldbus_message_error_get(msg, &err_name, &err_msg))
+     {
+        DBG("VPN resolve Connection: %s %s", err_name ?: "", err_msg ?: "");
+        goto out;
+     }
+   if (!eldbus_message_arguments_get(msg, "v", &var)) goto out;
+   if (!eldbus_message_iter_arguments_get(var, "o", &settings_path)) goto out;
+
+   DBG("VPN resolve: active_path=%s -> settings_path=%s",
+       ctx->active_path ?: "?", settings_path ?: "?");
+
+   vc = enm_vpn_find_by_path(ctx->nm, settings_path);
+   if (vc)
+     {
+        DBG("VPN resolve: binding vc='%s' to active=%s",
+            vc->name ?: "?", ctx->active_path);
+        enm_vpn_active_bind(vc, ctx->active_path);
+     }
+   else
+     DBG("VPN resolve: no vc matches settings path %s", settings_path);
+
+out:
+   eldbus_proxy_unref(ctx->proxy);
+   eldbus_object_unref(ctx->obj);
+   free(ctx->active_path);
+   free(ctx);
+}
+
+static void
+_enm_vpn_resolve_active(struct NM_Manager *nm, const char *active_path)
+{
+   struct _enm_resolve_ctx *ctx;
+
+   if (!active_path || !strcmp(active_path, "/")) return;
+
+   /* If a vc is already bound to this active_path, no need to resolve again */
+   if (enm_vpn_find_by_active(nm, active_path)) return;
+
+   ctx = calloc(1, sizeof(*ctx));
+   if (!ctx) return;
+   ctx->nm          = nm;
+   ctx->active_path = strdup(active_path);
+   ctx->obj         = eldbus_object_get(conn, NM_BUS_NAME, active_path);
+   ctx->proxy       = eldbus_proxy_get(ctx->obj, NM_IFACE_PROPS);
+   if (!ctx->proxy)
+     {
+        eldbus_object_unref(ctx->obj);
+        free(ctx->active_path);
+        free(ctx);
+        return;
+     }
+
+   ctx->pending = eldbus_proxy_call(ctx->proxy, "Get",
+                                    _enm_vpn_resolve_cb, ctx, -1,
+                                    "ss",
+                                    "org.freedesktop.NetworkManager.Connection.Active",
+                                    "Connection");
+   if (!ctx->pending)
+     {
+        /* Call failed immediately — callback will not fire; free manually */
+        eldbus_proxy_unref(ctx->proxy);
+        eldbus_object_unref(ctx->obj);
+        free(ctx->active_path);
+        free(ctx);
+        return;
+     }
+   nm->vpn_pending_resolves =
+       eina_list_append(nm->vpn_pending_resolves, ctx->pending);
+}
+
+void
+_enm_vpn_reconcile_active(struct NM_Manager *nm,
+                           const char * const *active_paths,
+                           unsigned int n_active)
+{
+   struct NM_VPN_Connection *vc;
+   unsigned int i;
+   Eina_Bool any_unbound = EINA_FALSE;
+
+   /* Unbind any vc whose active_path is no longer in the new set. */
+   EINA_INLIST_FOREACH(nm->vpn_connections, vc)
+     {
+        Eina_Bool still_active = EINA_FALSE;
+        if (!vc->active_path) continue;
+        for (i = 0; i < n_active; i++)
+          if (!strcmp(vc->active_path, active_paths[i]))
+            { still_active = EINA_TRUE; break; }
+        if (!still_active)
+          {
+             enm_vpn_active_unbind(vc);
+             any_unbound = EINA_TRUE;
+          }
+     }
+
+   /* Notify the UI that VPN active state changed when at least one VPN was
+    * unbound.  Without this the popup and shield badge stay stale because
+    * _manager_prop_changed does NOT call _notify_manager_update when other
+    * connections are still active (n_active > 0 branch). */
+   if (any_unbound) enm_vpn_active_changed_schedule(nm);
+
+   /* For each active path, fire an async resolve to find and bind
+    * the matching saved VPN (if any). */
+   for (i = 0; i < n_active; i++)
+     _enm_vpn_resolve_active(nm, active_paths[i]);
+}
 
 static void
 _manager_prop_changed(void *data, const Eldbus_Message *msg)
@@ -1373,27 +1559,54 @@ _manager_prop_changed(void *data, const Eldbus_Message *msg)
           {
              Eldbus_Message_Iter *conn_array;
              const char *aconn_path;
+             /* Collect paths — iterator is single-pass; both the wifi probe
+              * and the VPN reconcile need to see every path. */
+             const char *active_paths[256];
+             unsigned int n_active = 0;
 
              if (!eldbus_message_iter_arguments_get(var, "ao", &conn_array))
                continue;
 
-             /* Advance generation so any in-flight probes from the previous
-              * batch are discarded in their callbacks.  Then clear the old
-              * watchers so we don't display a stale connection while the new
-              * probes are in flight. */
-             nm->probe_generation++;
-             _manager_active_conn_watch_free(nm);
-             _manager_ip4_watch_free(nm);
+             while (n_active < (sizeof(active_paths) / sizeof(active_paths[0])) &&
+                    eldbus_message_iter_get_and_next(conn_array, 'o', &aconn_path))
+               active_paths[n_active++] = aconn_path;
 
-             /* Try each active connection — _active_conn_probe_cb
-              * filters out bridge/vpn types and only adopts wifi/ethernet */
-             if (eldbus_message_iter_get_and_next(conn_array, 'o', &aconn_path))
+             /* If the connection we currently track is still in the new
+              * active set, only the VPN (or some other non-primary) is
+              * changing — leave the wifi/ethernet primary state alone so
+              * the popup's IP / security subtitle doesn't flap to "wpa2"
+              * for the few hundred ms it takes the re-probe to complete. */
+             {
+                Eina_Bool primary_still_active = EINA_FALSE;
+                unsigned int i;
+                if (nm->active_connection_path)
+                  {
+                     for (i = 0; i < n_active; i++)
+                       if (!strcmp(nm->active_connection_path, active_paths[i]))
+                         { primary_still_active = EINA_TRUE; break; }
+                  }
+
+                if (!primary_still_active)
+                  {
+                     /* Advance generation so any in-flight probes from the
+                      * previous batch are discarded.  Then clear the old
+                      * watchers so we don't display a stale connection
+                      * while the new probes are in flight. */
+                     nm->probe_generation++;
+                     _manager_active_conn_watch_free(nm);
+                     _manager_ip4_watch_free(nm);
+
+                     if (n_active > 0)
+                       for (i = 0; i < n_active; i++)
+                         _manager_probe_active_conn(nm, active_paths[i]);
+                  }
+             }
+
+             if (n_active > 0)
                {
-                  do
-                    {
-                       _manager_probe_active_conn(nm, aconn_path);
-                    }
-                  while (eldbus_message_iter_get_and_next(conn_array, 'o', &aconn_path));
+                  /* Reconcile VPN bindings against the new active set
+                   * unconditionally — it's the cheap part. */
+                  _enm_vpn_reconcile_active(nm, active_paths, n_active);
                }
              else
                {
@@ -1404,6 +1617,9 @@ _manager_prop_changed(void *data, const Eldbus_Message *msg)
                   nm->ip_address = NULL;
                   nm->active_conn_type = NM_DEVICE_TYPE_UNKNOWN;
                   _notify_manager_update(nm);
+
+                  /* Unbind all VPN active watchers */
+                  _enm_vpn_reconcile_active(nm, NULL, 0);
                }
           }
      }
@@ -1466,10 +1682,20 @@ _manager_get_props_cb(void *data, const Eldbus_Message *msg,
               * here — the device callbacks (_device_wifi_props_cb for WiFi,
               * _device_get_props_cb for Ethernet) derive all needed info from
               * Device.GetAll / Device.Wireless.GetAll which are already
-              * running in parallel. */
+              * running in parallel.
+              *
+              * Cache the active paths for VPN reconciliation: enm_vpn_enumerate
+              * is dispatched after this callback and populates vpn_connections
+              * asynchronously.  We store paths here so _vpn_get_settings_cb can
+              * re-run reconcile once the final GetSettings reply arrives. */
              while (eldbus_message_iter_get_and_next(conn_array, 'o', &aconn_path))
-               DBG("ActiveConnections (startup): path=%s — device probes pending",
-                   aconn_path);
+               {
+                  DBG("ActiveConnections (startup): cached path=%s",
+                      aconn_path);
+                  nm->vpn_pending_active_paths =
+                      eina_list_append(nm->vpn_pending_active_paths,
+                                       (void *)eina_stringshare_add(aconn_path));
+               }
           }
      }
 
@@ -1480,6 +1706,14 @@ _manager_get_props_cb(void *data, const Eldbus_Message *msg,
     * states are shown immediately.  Device callbacks will call
     * _notify_manager_update again once they have full type and AP info. */
    _notify_manager_update(nm);
+
+   /* Now that vpn_pending_active_paths is populated, kick off the VPN
+    * enumeration explicitly.  The wifi-device callback also calls
+    * enm_vpn_enumerate, but that races with this callback — we may
+    * complete the GetSettings chain before the cache is populated.
+    * Calling enumerate here guarantees the cache is non-empty when the
+    * terminal block of _vpn_get_settings_cb runs. */
+   enm_vpn_enumerate(nm);
 }
 
 static void
@@ -1831,25 +2065,56 @@ enm_connection_delete(struct NM_Manager *nm, const char *connection_path)
 }
 
 /* Called when NM removes a saved connection — refresh the hash so the
- * forget button disappears without a visible race window. */
+ * forget button disappears without a visible race window.  The signal
+ * carries the removed object path, so we surgically remove just that
+ * one entry from the VPN list instead of re-enumerating everything. */
 static void
-_settings_conn_removed_cb(void *data, const Eldbus_Message *msg EINA_UNUSED)
+_settings_conn_removed_cb(void *data, const Eldbus_Message *msg)
 {
    struct NM_Manager *nm = data;
+   const char *path = NULL;
+
    if (!nm) return;
-   INF("ConnectionRemoved signal: refreshing saved connections");
+
+   /* For wifi/eth the hash is keyed by SSID, not path — we still need to
+    * refresh saved_connections to drop the entry from the hash. */
    enm_saved_connections_get(nm);
+
+   if (eldbus_message_arguments_get(msg, "o", &path) && path)
+     {
+        INF("ConnectionRemoved signal for %s", path);
+        enm_vpn_remove_by_path(nm, path);
+     }
+   else
+     {
+        /* No path in the signal — fall back to a full re-enumerate. */
+        WRN("ConnectionRemoved without object path; full re-enumerate");
+        enm_vpn_enumerate(nm);
+     }
 }
 
-/* Called when NM adds a new connection (e.g. via AddAndActivateConnection) —
- * refresh the hash so the forget button appears for the newly saved network. */
+/* Called when NM adds a new connection (e.g. via AddAndActivateConnection
+ * or nmcli import).  The signal carries the added object path; fetch
+ * settings only for that path and append if it turns out to be VPN. */
 static void
-_settings_conn_added_cb(void *data, const Eldbus_Message *msg EINA_UNUSED)
+_settings_conn_added_cb(void *data, const Eldbus_Message *msg)
 {
    struct NM_Manager *nm = data;
+   const char *path = NULL;
+
    if (!nm) return;
-   INF("NewConnection signal: refreshing saved connections");
    enm_saved_connections_get(nm);
+
+   if (eldbus_message_arguments_get(msg, "o", &path) && path)
+     {
+        INF("NewConnection signal for %s", path);
+        enm_vpn_settings_fetch_one(nm, path);
+     }
+   else
+     {
+        WRN("NewConnection without object path; full re-enumerate");
+        enm_vpn_enumerate(nm);
+     }
 }
 
 static struct NM_Manager *
@@ -1930,6 +2195,54 @@ _manager_free(struct NM_Manager *nm)
         nm->devices = eina_inlist_remove(nm->devices, nm->devices);
         _device_free(dev);
      }
+
+   /* Explicitly cancel all in-flight VPN D-Bus calls BEFORE freeing nm.
+    * eldbus_pending_cancel() fires the callback synchronously (with an error
+    * reply) while nm is still alive, so the callbacks can safely decrement
+    * vpn_pending, remove their entries from vpn_pending_settings, and free
+    * their ctx without ever touching freed memory.
+    *
+    * Order matters:
+    *  1. vpn_list_pending — the ListConnections call that seeds GetSettings.
+    *  2. vpn_pending_settings — each per-entry GetSettings call.
+    * Each cancel synchronously fires its callback, which removes the entry
+    * from the list, so we drain by repeating until the list is empty. */
+   if (nm->vpn_list_pending)
+     {
+        /* _vpn_list_cb clears nm->vpn_list_pending as its first action. */
+        eldbus_pending_cancel(nm->vpn_list_pending);
+     }
+   while (nm->vpn_pending_settings)
+     {
+        Eldbus_Pending *p = nm->vpn_pending_settings->data;
+        /* _vpn_get_settings_cb removes p from the list in its out: block. */
+        eldbus_pending_cancel(p);
+     }
+
+   /* Discard any startup active paths that were not yet reconciled. */
+   if (nm->vpn_pending_active_paths)
+     {
+        const char *ap;
+        EINA_LIST_FREE(nm->vpn_pending_active_paths, ap)
+          eina_stringshare_del(ap);
+        nm->vpn_pending_active_paths = NULL;
+     }
+
+   /* Cancel any in-flight active-path resolve calls (Properties.Get for
+    * "Connection" property).  _enm_vpn_resolve_cb removes the entry from the
+    * list before any nm access, so we can safely drain. */
+   while (nm->vpn_pending_resolves)
+     {
+        Eldbus_Pending *p = nm->vpn_pending_resolves->data;
+        /* _enm_vpn_resolve_cb removes p from the list as its first action. */
+        eldbus_pending_cancel(p);
+     }
+
+   /* Cancel any in-flight nmcli autoconnect subprocesses.  Must be done
+    * before enm_vpn_clear so we don't UAF via enm_vpn_find_by_uuid. */
+   enm_vpn_autoconn_pending_cancel_all(nm);
+
+   enm_vpn_clear(nm);
 
    if (nm->saved_connections)
      {
@@ -2291,13 +2604,22 @@ struct _E_NM_Agent
 {
    Eldbus_Service_Interface *iface;
    Eldbus_Connection        *eldbus_conn;
-   E_NM_Agent_Request       *pending;   /* at most one outstanding request */
+   /* All outstanding GetSecrets requests, indexed implicitly by msg
+    * serial.  CancelGetSecrets matches a request by (conn_path,
+    * setting_name) and dispatches the UI cancel callback.  Dialogs are
+    * still single-instance — the UI cb path may either stack dialogs or
+    * queue requests internally — but the data layer must never silently
+    * drop a request, otherwise NM is left waiting forever. */
+   Eina_List                *pending;   /* E_NM_Agent_Request* */
 };
 
 struct _E_NM_Agent_Request
 {
    E_NM_Agent     *agent;
    Eldbus_Message *msg;                 /* ref held while request is live */
+   /* Identification used by CancelGetSecrets to find this request. */
+   char           *conn_path;
+   char           *setting_name;
 };
 
 static E_NM_Agent_Callbacks _agent_cbs;
@@ -2315,9 +2637,11 @@ static void
 _agent_request_free(E_NM_Agent_Request *req)
 {
    if (!req) return;
-   if (req->agent && req->agent->pending == req)
-     req->agent->pending = NULL;
+   if (req->agent)
+     req->agent->pending = eina_list_remove(req->agent->pending, req);
    if (req->msg) eldbus_message_unref(req->msg);
+   free(req->conn_path);
+   free(req->setting_name);
    free(req);
 }
 
@@ -2381,6 +2705,51 @@ e_nm_agent_reply_cancel(E_NM_Agent_Request *req)
    _agent_request_free(req);
 }
 
+void
+e_nm_agent_reply_vpn_secrets(E_NM_Agent_Request *req,
+                             const char *const *fields,
+                             const char *const *values,
+                             unsigned int n_fields)
+{
+   Eldbus_Message_Iter *iter, *outer, *inner_dict, *inner_array,
+                        *vpn_dict, *secrets_var, *secrets_array;
+   Eldbus_Message *reply;
+
+   if (!req) return;
+   if (!req->msg) { _agent_request_free(req); return; }
+
+   /* a{sa{sv}} → "vpn" → { "secrets": a{ss} } */
+   reply = eldbus_message_method_return_new(req->msg);
+   iter  = eldbus_message_iter_get(reply);
+   eldbus_message_iter_arguments_append(iter, "a{sa{sv}}", &outer);
+   eldbus_message_iter_arguments_append(outer, "{sa{sv}}", &inner_dict);
+   eldbus_message_iter_basic_append(inner_dict, 's', "vpn");
+   eldbus_message_iter_arguments_append(inner_dict, "a{sv}", &inner_array);
+
+   eldbus_message_iter_arguments_append(inner_array, "{sv}", &vpn_dict);
+   eldbus_message_iter_basic_append(vpn_dict, 's', "secrets");
+   secrets_var = eldbus_message_iter_container_new(vpn_dict, 'v', "a{ss}");
+   eldbus_message_iter_arguments_append(secrets_var, "a{ss}", &secrets_array);
+   for (unsigned int i = 0; i < n_fields; i++)
+     {
+        Eldbus_Message_Iter *kv;
+        eldbus_message_iter_arguments_append(secrets_array, "{ss}", &kv);
+        eldbus_message_iter_basic_append(kv, 's', fields[i] ?: "");
+        eldbus_message_iter_basic_append(kv, 's', values[i] ?: "");
+        eldbus_message_iter_container_close(secrets_array, kv);
+     }
+   eldbus_message_iter_container_close(secrets_var, secrets_array);
+   eldbus_message_iter_container_close(vpn_dict, secrets_var);
+   eldbus_message_iter_container_close(inner_array, vpn_dict);
+
+   eldbus_message_iter_container_close(inner_dict, inner_array);
+   eldbus_message_iter_container_close(outer, inner_dict);
+   eldbus_message_iter_container_close(iter, outer);
+
+   eldbus_connection_send(req->agent->eldbus_conn, reply, NULL, NULL, -1);
+   _agent_request_free(req);
+}
+
 static void
 _agent_ssid_extract(Eldbus_Message_Iter *conn_props, char *ssid, size_t max)
 {
@@ -2415,6 +2784,102 @@ _agent_ssid_extract(Eldbus_Message_Iter *conn_props, char *ssid, size_t max)
      }
 }
 
+/* Single-pass extraction of the VPN-relevant strings from a connection
+ * settings iterator.  Eldbus iterators are forward-only, so two sequential
+ * calls of a "find one key" helper on the same iter would silently skip
+ * fields if the second key happens to be in a section already iterated
+ * past.  This helper walks the dict exactly once and fills the out struct.
+ *
+ * conn_id  := connection.id  (strdup, caller-owned, may be NULL)
+ * svc_type := vpn.service-type (strdup, caller-owned, may be NULL) */
+struct _Agent_Vpn_Conn_Info
+{
+   char *conn_id;
+   char *svc_type;
+};
+
+static void
+_agent_vpn_conn_info_parse(Eldbus_Message_Iter *conn_props,
+                           struct _Agent_Vpn_Conn_Info *out)
+{
+   Eldbus_Message_Iter *conn_dict;
+
+   out->conn_id = NULL;
+   out->svc_type = NULL;
+
+   while (eldbus_message_iter_get_and_next(conn_props, 'e', &conn_dict))
+     {
+        Eldbus_Message_Iter *inner, *entry, *var;
+        const char *sect, *ekey;
+        Eina_Bool want_conn, want_vpn;
+
+        if (!eldbus_message_iter_arguments_get(conn_dict, "sa{sv}",
+                                               &sect, &inner)) continue;
+
+        want_conn = !strcmp(sect, "connection");
+        want_vpn  = !strcmp(sect, "vpn");
+        if (!want_conn && !want_vpn) continue;
+
+        while (eldbus_message_iter_get_and_next(inner, 'e', &entry))
+          {
+             const char *s;
+             if (!eldbus_message_iter_arguments_get(entry, "sv", &ekey, &var))
+               continue;
+             if (want_conn && !out->conn_id && !strcmp(ekey, "id"))
+               {
+                  if (eldbus_message_iter_arguments_get(var, "s", &s))
+                    out->conn_id = strdup(s);
+               }
+             else if (want_vpn && !out->svc_type &&
+                      !strcmp(ekey, "service-type"))
+               {
+                  if (eldbus_message_iter_arguments_get(var, "s", &s))
+                    out->svc_type = strdup(s);
+               }
+          }
+
+        if (out->conn_id && out->svc_type) return;
+     }
+}
+
+static char **
+_agent_hints_extract(Eldbus_Message_Iter *hints, unsigned int *n_out)
+{
+   char **arr = NULL;
+   unsigned int n = 0, cap = 0;
+   const char *s;
+   while (eldbus_message_iter_get_and_next(hints, 's', &s))
+     {
+        /* Always keep room for the trailing NULL sentinel. */
+        if (n + 1 >= cap)
+          {
+             unsigned int new_cap = cap ? cap * 2 : 4;
+             char **tmp = realloc(arr, sizeof(*arr) * new_cap);
+             if (!tmp)
+               {
+                  for (unsigned int i = 0; i < n; i++) free(arr[i]);
+                  free(arr);
+                  *n_out = 0;
+                  return NULL;
+               }
+             arr = tmp;
+             cap = new_cap;
+          }
+        arr[n++] = strdup(s);
+     }
+   if (arr) arr[n] = NULL;
+   *n_out = n;
+   return arr;
+}
+
+static void
+_agent_str_array_free(char **arr, unsigned int n)
+{
+   if (!arr) return;
+   for (unsigned int i = 0; i < n; i++) free(arr[i]);
+   free(arr);
+}
+
 static Eldbus_Message *
 _agent_get_secrets(const Eldbus_Service_Interface *iface,
                    const Eldbus_Message *msg)
@@ -2439,21 +2904,62 @@ _agent_get_secrets(const Eldbus_Service_Interface *iface,
    DBG("GetSecrets for %s setting=%s flags=%u",
        conn_path, setting_name, flags);
 
-   _agent_ssid_extract(conn_props, ssid, sizeof(ssid));
+   /* Only extract the SSID for wifi requests — _agent_ssid_extract walks
+    * conn_props with a forward-only iterator that we cannot reset, and the
+    * VPN branch needs to read its own keys from the same iterator below. */
+   if (!strcmp(setting_name, "802-11-wireless-security"))
+     _agent_ssid_extract(conn_props, ssid, sizeof(ssid));
 
-   /* Drop any previous outstanding request — one dialog at a time */
-   if (a->pending) _agent_request_free(a->pending);
-
+   /* Allocate a new request and append it to the pending list.  Dialogs
+    * remain single-instance at the UI layer (the cb path stacks or queues
+    * them as it sees fit) but the data layer must hold every in-flight
+    * request so that CancelGetSecrets can match by (conn_path,
+    * setting_name) and so that no D-Bus reply is silently dropped. */
    req = E_NEW(E_NM_Agent_Request, 1);
    req->agent = a;
    req->msg   = eldbus_message_ref((Eldbus_Message *)msg);
-   a->pending = req;
+   req->conn_path    = conn_path ? strdup(conn_path) : NULL;
+   req->setting_name = setting_name ? strdup(setting_name) : NULL;
+   a->pending = eina_list_append(a->pending, req);
 
-   if (_agent_cbs.request)
-     _agent_cbs.request(_agent_cb_data, req, ssid[0] ? ssid : NULL);
+   if (!strcmp(setting_name, "vpn"))
+     {
+        struct _Agent_Vpn_Conn_Info info;
+        unsigned int n_hints = 0;
+        char **hint_arr;
+
+        /* Single forward pass over the connection dict: both connection.id
+         * and vpn.service-type are collected in one walk to avoid the
+         * forward-only iterator skipping the second key. */
+        _agent_vpn_conn_info_parse(conn_props, &info);
+        hint_arr = _agent_hints_extract(hints, &n_hints);
+
+        if (_agent_cbs.vpn_request)
+          {
+             _agent_cbs.vpn_request(_agent_cb_data, req,
+                                    info.conn_id ?: "VPN", info.svc_type,
+                                    (const char *const *)hint_arr, n_hints);
+          }
+        else
+          {
+             WRN("No VPN SecretAgent UI callback; cancelling");
+             e_nm_agent_reply_cancel(req);
+          }
+
+        free(info.conn_id);
+        free(info.svc_type);
+        _agent_str_array_free(hint_arr, n_hints);
+     }
+   else if (!strcmp(setting_name, "802-11-wireless-security"))
+     {
+        if (_agent_cbs.request)
+          _agent_cbs.request(_agent_cb_data, req, ssid[0] ? ssid : NULL);
+        else
+          { WRN("No SecretAgent UI cb"); e_nm_agent_reply_cancel(req); }
+     }
    else
      {
-        WRN("No SecretAgent UI callback registered; cancelling request");
+        WRN("Unhandled secret setting %s; cancelling", setting_name);
         e_nm_agent_reply_cancel(req);
      }
 
@@ -2465,18 +2971,37 @@ _agent_cancel_get_secrets(const Eldbus_Service_Interface *iface,
                           const Eldbus_Message *msg)
 {
    E_NM_Agent *a;
+   const char *cancel_path = NULL, *cancel_setting = NULL;
+   Eina_List *l, *ln;
+   E_NM_Agent_Request *req;
 
    DBG("CancelGetSecrets");
 
-   a = eldbus_service_object_data_get(iface, AGENT_DATA_KEY);
-   if (a && a->pending)
+   if (!eldbus_message_arguments_get(msg, "os",
+                                     &cancel_path, &cancel_setting))
      {
-        E_NM_Agent_Request *req = a->pending;
+        WRN("CancelGetSecrets: cannot parse arguments");
+        return eldbus_message_method_return_new(msg);
+     }
+
+   a = eldbus_service_object_data_get(iface, AGENT_DATA_KEY);
+   if (!a) return eldbus_message_method_return_new(msg);
+
+   /* Match by (conn_path, setting_name) — there may be more than one
+    * pending request, and CancelGetSecrets targets a specific one. */
+   EINA_LIST_FOREACH_SAFE(a->pending, l, ln, req)
+     {
+        if (req->conn_path && cancel_path &&
+            strcmp(req->conn_path, cancel_path) != 0) continue;
+        if (req->setting_name && cancel_setting &&
+            strcmp(req->setting_name, cancel_setting) != 0) continue;
+
         /* NM is withdrawing — UI should dismiss the dialog silently; no
          * reply should be sent, NM is no longer waiting for one. */
         if (_agent_cbs.cancel)
           _agent_cbs.cancel(_agent_cb_data, req);
         _agent_request_free(req);
+        break;  /* one request per (path, setting) tuple */
      }
 
    return eldbus_message_method_return_new(msg);
@@ -2579,7 +3104,35 @@ static void
 _e_nm_agent_del(E_NM_Agent *a)
 {
    if (!a) return;
-   if (a->pending) _agent_request_free(a->pending);
+
+   /* Tell NM to drop us from its agent list.  Fire-and-forget — NM will
+    * also clean us up automatically when our bus name disappears, but
+    * being explicit avoids leaving a stale entry while the process is
+    * still alive (e.g. module unload + reload in the same session). */
+   if (a->eldbus_conn)
+     {
+        Eldbus_Object *obj =
+            eldbus_object_get(a->eldbus_conn, NM_BUS_NAME, NM_AGENT_MGR_PATH);
+        if (obj)
+          {
+             Eldbus_Proxy *proxy = eldbus_proxy_get(obj, NM_IFACE_AGENT_MGR);
+             if (proxy)
+               {
+                  eldbus_proxy_call(proxy, "Unregister",
+                                    NULL, NULL, -1, "");
+                  eldbus_proxy_unref(proxy);
+               }
+             eldbus_object_unref(obj);
+          }
+     }
+
+   /* Free all pending requests — no reply will be sent, but NM stops
+    * expecting one as soon as we drop the bus name / unregister. */
+   while (a->pending)
+     {
+        E_NM_Agent_Request *req = a->pending->data;
+        _agent_request_free(req);
+     }
    if (a->iface) eldbus_service_object_unregister(a->iface);
    free(a);
 }

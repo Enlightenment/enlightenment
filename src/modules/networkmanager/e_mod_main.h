@@ -37,13 +37,19 @@ struct E_NM_Instance
         struct
           {
              Evas_Object            *genlist;
-             Evas_Object            *ip_label;
              Elm_Genlist_Item_Class *itc_group;
              Elm_Genlist_Item_Class *itc_group_wifi;
+             Elm_Genlist_Item_Class *itc_group_vpn;   /* VPN section header */
              Elm_Genlist_Item_Class *itc_ap;
              Elm_Genlist_Item_Class *itc_eth;
+             Elm_Genlist_Item_Class *itc_vpn;         /* VPN connection row */
              Ecore_Timer            *deselect_timer;
              Elm_Object_Item        *deselect_item;
+             /* Section-header items, tracked across incremental updates so we
+              * can lazily create/delete them without touching surrounding rows. */
+             Elm_Object_Item        *group_eth;
+             Elm_Object_Item        *group_wifi;
+             Elm_Object_Item        *group_vpn;
           } popup;
      } ui;
 };
@@ -53,6 +59,7 @@ struct E_NM_Module_Context
    Eina_List          *instances;
    E_Config_Dialog    *conf_dialog;
    Ecore_Timer        *popup_update_timer;
+   Ecore_Job          *vpn_update_job;   /* deferred VPN-active-changed notify */
 
    struct NM_Manager  *nm;
 
