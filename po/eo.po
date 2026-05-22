@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: eo\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-01-23 21:51+0100\n"
-"PO-Revision-Date: 2014-08-08 12:10+0000\n"
+"PO-Revision-Date: 2026-05-22 14:37+0200\n"
 "Last-Translator: Eliovir <Unknown>\n"
 "Language-Team: Esperanto <kde-i18n-doc@kde.org>\n"
 "Language: eo\n"
@@ -4116,18 +4116,11 @@ msgid "Keep"
 msgstr "Teni"
 
 #: src/bin/e_module.c:692
-#, fuzzy
 msgid ""
 "The following modules are not standard ones for<ps/>Enlightenment and may "
 "cause bugs and crashes.<ps/>Please remove them before reporting any bugs.<ps/"
 "><ps/>The module list is as follows:<ps/><ps/>"
-msgstr ""
-"La sekvaj moduloj ne estas aprioraj moduloj de<br>Enlightenment kaj povas "
-"kaŭzi cimojn kaj kraŝoj.<br>Bonvole forigu ilin antaŭ raporto de iu ajn cimo."
-"<br><br>Jen la listo de moduloj:<br><br>\r\n"
-"The following modules are not standard ones for<br>Enlightenment and may "
-"cause bugs and crashes.<br>Please remove them before reporting any bugs."
-"<br><br>The module list is as follows:<br><br>"
+msgstr "La sekvaj moduloj ne estas aprioraj moduloj de<br>Enlightenment kaj povas kaŭzi cimojn kaj kraŝoj.<br>Bonvole forigu ilin antaŭ raporto de iu ajn cimo.<br><br>Jen la listo de moduloj:<br><br>"
 
 #: src/bin/e_module.c:704
 msgid "Unstable module tainting"
@@ -4204,13 +4197,12 @@ msgid "Shelf Autohide Error"
 msgstr "Eraro de aŭtomata kaŝo de breto"
 
 #: src/bin/e_shelf.c:945
-#, fuzzy
 msgid ""
 "Shelf autohiding will not work properly<ps/>with the current configuration; "
 "set your shelf to<ps/>\"Below Everything\" or disable autohiding."
 msgstr ""
-"Breta aŭtomata kaŝo ne funkcios korekte<br>\r\n"
-"kun la nunaj agordoj. Bonvole agordu vian breton<br>\r\n"
+"Breta aŭtomata kaŝo ne funkcios korekte<br>\n"
+"kun la nunaj agordoj. Bonvole agordu vian breton<br>\n"
 "al \"Malsupre ĉio\" aŭ malebligu aŭmatan kaŝon."
 
 #: src/bin/e_shelf.c:1133
