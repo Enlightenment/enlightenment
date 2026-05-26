@@ -100,6 +100,26 @@ enum NM_Device_Type
 };
 
 /*
+ * NM device states, matching org.freedesktop.NetworkManager.Device.State
+ */
+enum NM_Device_State
+{
+   NM_DEVICE_STATE_UNKNOWN       = 0,
+   NM_DEVICE_STATE_UNMANAGED     = 10,
+   NM_DEVICE_STATE_UNAVAILABLE   = 20,
+   NM_DEVICE_STATE_DISCONNECTED  = 30,
+   NM_DEVICE_STATE_PREPARE       = 40,
+   NM_DEVICE_STATE_CONFIG        = 50,
+   NM_DEVICE_STATE_NEED_AUTH     = 60,
+   NM_DEVICE_STATE_IP_CONFIG     = 70,
+   NM_DEVICE_STATE_IP_CHECK      = 80,
+   NM_DEVICE_STATE_SECONDARIES   = 90,
+   NM_DEVICE_STATE_ACTIVATED     = 100,
+   NM_DEVICE_STATE_DEACTIVATING  = 110,
+   NM_DEVICE_STATE_FAILED        = 120,
+};
+
+/*
  * AP security flags — these are bitmask values from NM's WpaFlags / RsnFlags
  */
 enum NM_AP_Security
@@ -182,6 +202,25 @@ struct NM_Access_Point
    uint32_t      frequency;
 };
 
+struct NM_Bluetooth_Connection
+{
+   const char *path;               /* /org/freedesktop/NetworkManager/Settings/N (stringshare) */
+   EINA_INLIST;
+
+   char *name;                     /* connection.id */
+   char *bdaddr;                   /* normalized XX:XX:XX:XX:XX:XX, or NULL */
+};
+
+struct NM_Wired_Connection
+{
+   const char *path;               /* /org/freedesktop/NetworkManager/Settings/N (stringshare) */
+   EINA_INLIST;
+
+   char *name;                     /* connection.id */
+   char *interface_name;           /* connection.interface-name, or NULL */
+   char *hw_address;               /* normalized XX:XX:XX:XX:XX:XX, or NULL */
+};
+
 struct NM_Device
 {
    const char   *path;
@@ -195,6 +234,7 @@ struct NM_Device
    Eldbus_Signal_Handler *ap_removed_handler;
 
    char              *interface;
+   char              *hw_address;
    enum NM_Device_Type type;
    uint32_t            state;
 
@@ -257,6 +297,8 @@ struct NM_Manager
 
    /* Saved WiFi connections: SSID (string) -> connection D-Bus path (stringshare) */
    Eina_Hash    *saved_connections;
+   Eina_Inlist  *bluetooth_connections; /* NM_Bluetooth_Connection inlist */
+   Eina_Inlist  *wired_connections;     /* NM_Wired_Connection inlist */
    int           saved_conn_pending;    /* outstanding GetSettings calls */
    unsigned int  saved_conn_generation; /* increment to abort in-flight GetSettings */
 
@@ -300,6 +342,11 @@ void e_nm_scan(struct NM_Manager *nm);
 void enm_ap_connect(struct NM_Manager *nm, struct NM_Device *dev,
                     struct NM_Access_Point *ap);
 void enm_ap_disconnect(struct NM_Manager *nm);
+void enm_disconnect_type(struct NM_Manager *nm, enum NM_Device_Type type);
+void enm_bluetooth_connect(struct NM_Manager *nm,
+                           struct NM_Device *dev,
+                           const char *connection_path);
+void enm_ethernet_connect(struct NM_Manager *nm, struct NM_Device *dev);
 void enm_wireless_enabled_set(struct NM_Manager *nm, Eina_Bool enabled);
 
 /* Find AP across all devices */
@@ -342,6 +389,10 @@ const char *enm_vpn_type_label(const char *conn_type,
 /* Saved connections */
 void enm_saved_connections_get(struct NM_Manager *nm);
 void enm_connection_delete(struct NM_Manager *nm, const char *connection_path);
+struct NM_Bluetooth_Connection *enm_bluetooth_connection_find(
+   struct NM_Manager *nm, const char *connection_path);
+struct NM_Device *enm_bluetooth_connection_device_find(
+   struct NM_Manager *nm, struct NM_Bluetooth_Connection *bc);
 
 /* VPN data layer API: see e_networkmanager_vpn.h */
 

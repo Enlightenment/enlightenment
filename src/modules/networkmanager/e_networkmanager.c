@@ -1,5 +1,6 @@
 #include "e_mod_main.h"
 #include "e_networkmanager_vpn.h"
+#include <ctype.h>
 
 /* -------------------------------------------------------------------------- */
 /* D-Bus interface constants                                                   */
@@ -378,6 +379,203 @@ static void _manager_watch_ip4(struct NM_Manager *nm,
                                const char *ip4config_path);
 static void _try_wifi_adopt(struct NM_Device *dev);
 static void _try_ethernet_adopt(struct NM_Device *dev);
+static void _try_bluetooth_adopt(struct NM_Device *dev);
+
+static char *
+_nm_bt_addr_normalize(const char *addr)
+{
+   char buf[18];
+   int i = 0, j = 0;
+
+   if (!addr) return NULL;
+
+   while (addr[i] && j < 17)
+     {
+        if (isxdigit((unsigned char)addr[i]))
+          {
+             buf[j++] = toupper((unsigned char)addr[i]);
+             if ((j % 3) == 2 && j < 17) buf[j++] = ':';
+          }
+        i++;
+     }
+
+   if (j != 17) return NULL;
+   buf[17] = '\0';
+   return strdup(buf);
+}
+
+static char *
+_nm_bt_addr_from_iter(Eldbus_Message_Iter *variant)
+{
+   Eldbus_Message_Iter *bytes;
+   unsigned char b;
+   char buf[18];
+   int i = 0;
+
+   if (!variant) return NULL;
+   if (!eldbus_message_iter_arguments_get(variant, "ay", &bytes))
+     return NULL;
+
+   while (eldbus_message_iter_get_and_next(bytes, 'y', &b))
+     {
+        if (i >= 6) break;
+        snprintf(buf + (i * 3), sizeof(buf) - (i * 3),
+                 (i < 5) ? "%02X:" : "%02X", b);
+        i++;
+     }
+
+   if (i != 6) return NULL;
+   buf[17] = '\0';
+   return strdup(buf);
+}
+
+static void
+_nm_wired_connection_free(struct NM_Wired_Connection *wc)
+{
+   if (!wc) return;
+   eina_stringshare_del(wc->path);
+   free(wc->name);
+   free(wc->interface_name);
+   free(wc->hw_address);
+   free(wc);
+}
+
+static void
+_nm_wired_connections_clear(struct NM_Manager *nm)
+{
+   struct NM_Wired_Connection *wc;
+
+   if (!nm) return;
+   while (nm->wired_connections)
+     {
+        wc = EINA_INLIST_CONTAINER_GET(nm->wired_connections,
+                                       struct NM_Wired_Connection);
+        nm->wired_connections =
+           eina_inlist_remove(nm->wired_connections,
+                              nm->wired_connections);
+        _nm_wired_connection_free(wc);
+     }
+}
+
+static struct NM_Wired_Connection *
+_nm_wired_connection_add(struct NM_Manager *nm, const char *path,
+                         const char *name, const char *interface_name,
+                         const char *hw_address)
+{
+   struct NM_Wired_Connection *wc;
+
+   wc = calloc(1, sizeof(*wc));
+   if (!wc) return NULL;
+
+   wc->path = eina_stringshare_add(path);
+   wc->name = name ? strdup(name) : NULL;
+   wc->interface_name = interface_name ? strdup(interface_name) : NULL;
+   wc->hw_address = hw_address ? strdup(hw_address) : NULL;
+   nm->wired_connections =
+      eina_inlist_append(nm->wired_connections, EINA_INLIST_GET(wc));
+   return wc;
+}
+
+static struct NM_Wired_Connection *
+_nm_wired_connection_find_for_device(struct NM_Manager *nm, struct NM_Device *dev)
+{
+   struct NM_Wired_Connection *wc, *iface_match = NULL, *fallback = NULL;
+
+   if (!nm || !dev) return NULL;
+
+   EINA_INLIST_FOREACH(nm->wired_connections, wc)
+     {
+        if (wc->hw_address && dev->hw_address &&
+            !strcmp(wc->hw_address, dev->hw_address))
+          return wc;
+
+        if (!iface_match && wc->interface_name && dev->interface &&
+            !strcmp(wc->interface_name, dev->interface))
+          iface_match = wc;
+
+        if (!fallback && !wc->hw_address && !wc->interface_name)
+          fallback = wc;
+     }
+
+   if (iface_match) return iface_match;
+   return fallback;
+}
+
+static void
+_nm_bluetooth_connection_free(struct NM_Bluetooth_Connection *bc)
+{
+   if (!bc) return;
+   eina_stringshare_del(bc->path);
+   free(bc->name);
+   free(bc->bdaddr);
+   free(bc);
+}
+
+static void
+_nm_bluetooth_connections_clear(struct NM_Manager *nm)
+{
+   struct NM_Bluetooth_Connection *bc;
+
+   if (!nm) return;
+   while (nm->bluetooth_connections)
+     {
+        bc = EINA_INLIST_CONTAINER_GET(nm->bluetooth_connections,
+                                       struct NM_Bluetooth_Connection);
+        nm->bluetooth_connections =
+           eina_inlist_remove(nm->bluetooth_connections,
+                              nm->bluetooth_connections);
+        _nm_bluetooth_connection_free(bc);
+     }
+}
+
+static struct NM_Bluetooth_Connection *
+_nm_bluetooth_connection_add(struct NM_Manager *nm, const char *path,
+                             const char *name, const char *bdaddr)
+{
+   struct NM_Bluetooth_Connection *bc;
+
+   bc = calloc(1, sizeof(*bc));
+   if (!bc) return NULL;
+
+   bc->path = eina_stringshare_add(path);
+   bc->name = name ? strdup(name) : NULL;
+   bc->bdaddr = bdaddr ? strdup(bdaddr) : NULL;
+   nm->bluetooth_connections =
+      eina_inlist_append(nm->bluetooth_connections, EINA_INLIST_GET(bc));
+   return bc;
+}
+
+struct NM_Bluetooth_Connection *
+enm_bluetooth_connection_find(struct NM_Manager *nm, const char *connection_path)
+{
+   struct NM_Bluetooth_Connection *bc;
+
+   if (!nm || !connection_path) return NULL;
+   EINA_INLIST_FOREACH(nm->bluetooth_connections, bc)
+     if (bc->path && !strcmp(bc->path, connection_path))
+       return bc;
+   return NULL;
+}
+
+struct NM_Device *
+enm_bluetooth_connection_device_find(struct NM_Manager *nm,
+                                     struct NM_Bluetooth_Connection *bc)
+{
+   struct NM_Device *dev, *fallback = NULL;
+
+   if (!nm || !bc) return NULL;
+
+   EINA_INLIST_FOREACH(nm->devices, dev)
+     {
+        if (dev->type != NM_DEVICE_TYPE_BLUETOOTH) continue;
+        if (!fallback && !bc->bdaddr) fallback = dev;
+        if (bc->bdaddr && dev->hw_address &&
+            !strcmp(bc->bdaddr, dev->hw_address))
+          return dev;
+     }
+
+   return fallback;
+}
 
 static void
 _device_get_aps_cb(void *data, const Eldbus_Message *msg,
@@ -544,6 +742,8 @@ _device_prop_changed(void *data, const Eldbus_Message *msg)
      {
         if (dev->type == NM_DEVICE_TYPE_ETHERNET)
           _try_ethernet_adopt(dev);
+        else if (dev->type == NM_DEVICE_TYPE_BLUETOOTH)
+          _try_bluetooth_adopt(dev);
         else if (dev->type == NM_DEVICE_TYPE_WIFI)
           {
              /* Re-issue WiFi GetAll only if one is not already pending.
@@ -644,6 +844,44 @@ _try_wifi_adopt(struct NM_Device *dev)
 
    _notify_manager_update(nm_manager);
    enm_saved_connections_get(nm_manager);
+}
+
+static void
+_try_bluetooth_adopt(struct NM_Device *dev)
+{
+   if (!nm_manager) return;
+   if (dev->state < 100 || !dev->active_conn_path) return;
+
+   if (nm_manager->active_connection_path) return;
+
+   DBG("Bluetooth device %s adopting connection %s (state=%u)",
+       dev->path, dev->active_conn_path, dev->state);
+
+   nm_manager->probe_generation++;
+   _manager_active_conn_watch_free(nm_manager);
+   _manager_ip4_watch_free(nm_manager);
+
+   eina_stringshare_replace(&nm_manager->active_connection_path,
+                            dev->active_conn_path);
+   nm_manager->active_conn_type = NM_DEVICE_TYPE_BLUETOOTH;
+   eina_stringshare_replace(&nm_manager->active_ap_path, NULL);
+
+   {
+      Eldbus_Object *aobj =
+         eldbus_object_get(conn, NM_BUS_NAME, dev->active_conn_path);
+      nm_manager->active_conn_obj = aobj;
+      nm_manager->active_conn_proxy = eldbus_proxy_get(aobj, NM_IFACE_PROPS);
+      nm_manager->active_conn_signal_handler =
+         eldbus_proxy_signal_handler_add(nm_manager->active_conn_proxy,
+                                         "PropertiesChanged",
+                                         _active_conn_prop_changed,
+                                         nm_manager);
+   }
+
+   if (dev->ip4_path)
+     _manager_watch_ip4(nm_manager, dev->ip4_path);
+
+   _notify_manager_update(nm_manager);
 }
 
 /* Handle PropertiesChanged on the Device.Wireless interface.
@@ -747,6 +985,18 @@ _device_get_props_cb(void *data, const Eldbus_Message *msg,
                   dev->interface = strdup(iface);
                }
           }
+        else if (!strcmp(key, "HwAddress"))
+          {
+             const char *addr;
+             char *norm;
+
+             if (eldbus_message_iter_arguments_get(var, "s", &addr))
+               {
+                  norm = _nm_bt_addr_normalize(addr);
+                  free(dev->hw_address);
+                  dev->hw_address = norm;
+               }
+          }
         else if (!strcmp(key, "DeviceType"))
           {
              uint32_t dtype;
@@ -828,6 +1078,10 @@ _device_get_props_cb(void *data, const Eldbus_Message *msg,
         /* Attempt adoption via the factored helper — it checks state>=100 and
          * active_conn_path internally, and handles the "first wins" guard. */
         _try_ethernet_adopt(dev);
+     }
+   else if (dev->type == NM_DEVICE_TYPE_BLUETOOTH)
+     {
+        _try_bluetooth_adopt(dev);
      }
 }
 
@@ -939,6 +1193,7 @@ _device_free(struct NM_Device *dev)
      }
 
    free(dev->interface);
+   free(dev->hw_address);
    free(dev->active_conn_path);
    free(dev->active_ap_path);
    free(dev->ip4_path);
@@ -1297,10 +1552,10 @@ _active_conn_probe_cb(void *data, const Eldbus_Message *msg,
    /* NM uses "/" as the null/none sentinel for object paths */
    if (ap_path && !strcmp(ap_path, "/")) ap_path = NULL;
 
-   /* Skip non-network types (bridge, vpn, etc.) — they don't have
-    * useful SpecificObject or signal strength info. */
+   /* Skip non-network types (bridge, vpn, etc.). */
    if (conn_type != NM_DEVICE_TYPE_WIFI &&
-       conn_type != NM_DEVICE_TYPE_ETHERNET)
+       conn_type != NM_DEVICE_TYPE_ETHERNET &&
+       conn_type != NM_DEVICE_TYPE_BLUETOOTH)
      {
         DBG("ActiveConn type=%s (%d) — skipping", type_str ?: "?", conn_type);
         _active_conn_probe_free(probe);
@@ -1818,7 +2073,14 @@ _saved_conn_settings_cb(void *data, const Eldbus_Message *msg,
    struct _Saved_Conn_Ctx *ctx = data;
    Eldbus_Message_Iter *settings, *dict_entry, *setting_dict, *variant;
    const char *setting_name, *key;
+   const char *conn_type = NULL;
+   const char *conn_name = NULL;
+   const char *conn_iface = NULL;
    char ssid_str[256];
+   char *bt_addr = NULL;
+   char *eth_addr = NULL;
+
+   ssid_str[0] = '\0';
 
    /* Bail out if the manager was freed or a new batch was started while
     * this D-Bus call was in flight — avoids writing to freed/stale state. */
@@ -1851,43 +2113,86 @@ _saved_conn_settings_cb(void *data, const Eldbus_Message *msg,
                                                &setting_name, &setting_dict))
           continue;
 
-        if (strcmp(setting_name, "802-11-wireless") != 0)
-          continue;
-
         while (eldbus_message_iter_get_and_next(setting_dict, 'e', &inner_entry))
           {
              if (!eldbus_message_iter_arguments_get(inner_entry, "sv",
                                                     &key, &variant))
                continue;
 
-             if (!strcmp(key, "ssid"))
+             if (!strcmp(setting_name, "connection"))
                {
-                  Eldbus_Message_Iter *ssid_iter;
-                  unsigned char byte;
-                  int i = 0;
-
-                  if (!eldbus_message_iter_arguments_get(variant, "ay", &ssid_iter))
-                    continue;
-
-                  while (eldbus_message_iter_get_and_next(ssid_iter, 'y', &byte)
-                         && i < (int)(sizeof(ssid_str) - 1))
-                    ssid_str[i++] = (char)byte;
-                  ssid_str[i] = '\0';
-
-                  if (i > 0 && ctx->nm->saved_connections)
+                  if (!strcmp(key, "type"))
+                    eldbus_message_iter_arguments_get(variant, "s", &conn_type);
+                  else if (!strcmp(key, "id"))
+                    eldbus_message_iter_arguments_get(variant, "s", &conn_name);
+                  else if (!strcmp(key, "interface-name"))
+                    eldbus_message_iter_arguments_get(variant, "s", &conn_iface);
+               }
+             else if (!strcmp(setting_name, "802-11-wireless"))
+               {
+                  if (!strcmp(key, "ssid"))
                     {
-                       /* Remove old entry first to avoid leaking stringshare */
-                       eina_hash_del_by_key(ctx->nm->saved_connections, ssid_str);
-                       eina_hash_add(ctx->nm->saved_connections, ssid_str,
-                                     eina_stringshare_add(ctx->path));
-                       INF("saved_conn: added '%s' -> %s", ssid_str, ctx->path);
+                       Eldbus_Message_Iter *ssid_iter;
+                       unsigned char byte;
+                       int i = 0;
+
+                       if (!eldbus_message_iter_arguments_get(variant, "ay", &ssid_iter))
+                         continue;
+
+                       while (eldbus_message_iter_get_and_next(ssid_iter, 'y', &byte)
+                              && i < (int)(sizeof(ssid_str) - 1))
+                         ssid_str[i++] = (char)byte;
+                       ssid_str[i] = '\0';
                     }
-                  goto done;
+               }
+             else if (!strcmp(setting_name, "bluetooth"))
+               {
+                  if (!strcmp(key, "bdaddr"))
+                    {
+                       free(bt_addr);
+                       bt_addr = _nm_bt_addr_from_iter(variant);
+                    }
+               }
+             else if (!strcmp(setting_name, "802-3-ethernet"))
+               {
+                  if (!strcmp(key, "mac-address"))
+                    {
+                       free(eth_addr);
+                       eth_addr = _nm_bt_addr_from_iter(variant);
+                    }
                }
           }
      }
 
+   if (conn_type && !strcmp(conn_type, "802-11-wireless") &&
+       ssid_str[0] && ctx->nm->saved_connections)
+     {
+        eina_hash_del_by_key(ctx->nm->saved_connections, ssid_str);
+        eina_hash_add(ctx->nm->saved_connections, ssid_str,
+                      eina_stringshare_add(ctx->path));
+        INF("saved_conn: added '%s' -> %s", ssid_str, ctx->path);
+     }
+   else if (conn_type && !strcmp(conn_type, "bluetooth"))
+     {
+        _nm_bluetooth_connection_add(ctx->nm, ctx->path,
+                                     conn_name ?: _("Bluetooth"),
+                                     bt_addr);
+        INF("saved_bt_conn: added '%s' (%s) -> %s",
+            conn_name ?: _("Bluetooth"), bt_addr ?: "?", ctx->path);
+     }
+   else if (conn_type && !strcmp(conn_type, "802-3-ethernet"))
+     {
+        _nm_wired_connection_add(ctx->nm, ctx->path,
+                                 conn_name ?: _("Wired"),
+                                 conn_iface, eth_addr);
+        INF("saved_eth_conn: added '%s' (%s/%s) -> %s",
+            conn_name ?: _("Wired"), conn_iface ?: "?",
+            eth_addr ?: "?", ctx->path);
+     }
+
 done:
+   free(bt_addr);
+   free(eth_addr);
    eldbus_proxy_unref(ctx->proxy);
    eldbus_object_unref(ctx->obj);
    eina_stringshare_del(ctx->path);
@@ -1998,6 +2303,8 @@ enm_saved_connections_get(struct NM_Manager *nm)
                                     _saved_connections_free_cb);
          if (old) eina_hash_free(old);
       }
+      _nm_bluetooth_connections_clear(nm);
+      _nm_wired_connections_clear(nm);
 
       sctx->nm = nm;
       sctx->generation = nm->saved_conn_generation;
@@ -2249,6 +2556,8 @@ _manager_free(struct NM_Manager *nm)
         eina_hash_free(nm->saved_connections);
         nm->saved_connections = NULL;
      }
+   _nm_bluetooth_connections_clear(nm);
+   _nm_wired_connections_clear(nm);
 
    free(nm->ip_address);
    /* active_ap_path and active_connection_path already freed+NULLed
@@ -2406,6 +2715,23 @@ _deactivate_cb(void *data EINA_UNUSED, const Eldbus_Message *msg,
      INF("DeactivateConnection succeeded");
 }
 
+static void
+_enm_connection_deactivate(struct NM_Manager *nm, const char *connection_path)
+{
+   EINA_SAFETY_ON_NULL_RETURN(nm);
+   EINA_SAFETY_ON_NULL_RETURN(connection_path);
+
+   if (!strcmp(connection_path, "/"))
+     {
+        WRN("Refusing to disconnect null connection path");
+        return;
+     }
+
+   eldbus_proxy_call(nm->proxy, "DeactivateConnection",
+                     _deactivate_cb, NULL, -1,
+                     "o", connection_path);
+}
+
 void
 enm_ap_disconnect(struct NM_Manager *nm)
 {
@@ -2418,9 +2744,110 @@ enm_ap_disconnect(struct NM_Manager *nm)
         return;
      }
 
-   eldbus_proxy_call(nm->proxy, "DeactivateConnection",
-                     _deactivate_cb, NULL, -1,
-                     "o", nm->active_connection_path);
+   _enm_connection_deactivate(nm, nm->active_connection_path);
+}
+
+void
+enm_disconnect_type(struct NM_Manager *nm, enum NM_Device_Type type)
+{
+   struct NM_Device *dev;
+   Eina_Bool disconnected = EINA_FALSE;
+
+   EINA_SAFETY_ON_NULL_RETURN(nm);
+
+   EINA_INLIST_FOREACH(nm->devices, dev)
+     {
+        if (dev->type != type) continue;
+        if (dev->state < 100) continue;
+        if (!dev->active_conn_path) continue;
+
+        INF("Disconnect %s connection on device %s (%s)",
+            enm_device_type_to_str(type),
+            dev->interface ?: dev->path,
+            dev->active_conn_path);
+        _enm_connection_deactivate(nm, dev->active_conn_path);
+        disconnected = EINA_TRUE;
+     }
+
+   if (disconnected) return;
+
+   if ((nm->active_conn_type == type) &&
+       nm->active_connection_path &&
+       strcmp(nm->active_connection_path, "/"))
+     {
+        INF("Disconnect primary %s connection %s",
+            enm_device_type_to_str(type),
+            nm->active_connection_path);
+        _enm_connection_deactivate(nm, nm->active_connection_path);
+     }
+}
+
+void
+enm_bluetooth_connect(struct NM_Manager *nm, struct NM_Device *dev,
+                      const char *connection_path)
+{
+   struct connection_cb_data *cd;
+
+   EINA_SAFETY_ON_NULL_RETURN(nm);
+   EINA_SAFETY_ON_NULL_RETURN(dev);
+   EINA_SAFETY_ON_NULL_RETURN(connection_path);
+
+   cd = calloc(1, sizeof(*cd));
+   EINA_SAFETY_ON_NULL_RETURN(cd);
+
+   cd->nm = nm;
+   cd->dev = dev;
+
+   INF("ActivateConnection: bluetooth profile %s on device %s",
+       connection_path, dev->path);
+   eldbus_proxy_call(nm->proxy, "ActivateConnection",
+                     _activate_cb, cd, NM_CONNECTION_TIMEOUT,
+                     "ooo", connection_path, dev->path, "/");
+}
+
+void
+enm_ethernet_connect(struct NM_Manager *nm, struct NM_Device *dev)
+{
+   struct connection_cb_data *cd;
+   struct NM_Wired_Connection *wc;
+
+   EINA_SAFETY_ON_NULL_RETURN(nm);
+   EINA_SAFETY_ON_NULL_RETURN(dev);
+
+   cd = calloc(1, sizeof(*cd));
+   EINA_SAFETY_ON_NULL_RETURN(cd);
+
+   cd->nm = nm;
+   cd->dev = dev;
+   wc = _nm_wired_connection_find_for_device(nm, dev);
+
+   if (wc && wc->path)
+     {
+        INF("ActivateConnection: ethernet profile %s on device %s",
+            wc->path, dev->path);
+        eldbus_proxy_call(nm->proxy, "ActivateConnection",
+                          _activate_cb, cd, NM_CONNECTION_TIMEOUT,
+                          "ooo", wc->path, dev->path, "/");
+        return;
+     }
+
+   {
+      Eldbus_Message *msg_call;
+      Eldbus_Message_Iter *iter, *empty_dict;
+
+      INF("AddAndActivateConnection: no saved ethernet profile for device %s",
+          dev->path);
+
+      msg_call = eldbus_proxy_method_call_new(nm->proxy,
+                                              "AddAndActivateConnection");
+      iter = eldbus_message_iter_get(msg_call);
+      eldbus_message_iter_arguments_append(iter, "a{sa{sv}}", &empty_dict);
+      eldbus_message_iter_container_close(iter, empty_dict);
+      eldbus_message_iter_basic_append(iter, 'o', dev->path);
+      eldbus_message_iter_basic_append(iter, 'o', "/");
+      eldbus_proxy_send(nm->proxy, msg_call, _add_activate_cb, cd,
+                        NM_CONNECTION_TIMEOUT);
+   }
 }
 
 void

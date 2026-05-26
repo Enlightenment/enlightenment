@@ -39,16 +39,19 @@ struct E_NM_Instance
              Evas_Object            *genlist;
              Elm_Genlist_Item_Class *itc_group;
              Elm_Genlist_Item_Class *itc_group_wifi;
+             Elm_Genlist_Item_Class *itc_bt;
              Elm_Genlist_Item_Class *itc_group_vpn;   /* VPN section header */
              Elm_Genlist_Item_Class *itc_ap;
              Elm_Genlist_Item_Class *itc_eth;
              Elm_Genlist_Item_Class *itc_vpn;         /* VPN connection row */
              Ecore_Timer            *deselect_timer;
              Elm_Object_Item        *deselect_item;
+             Eina_Bool               syncing_selection;
              /* Section-header items, tracked across incremental updates so we
               * can lazily create/delete them without touching surrounding rows. */
              Elm_Object_Item        *group_eth;
              Elm_Object_Item        *group_wifi;
+             Elm_Object_Item        *group_bt;
              Elm_Object_Item        *group_vpn;
           } popup;
      } ui;

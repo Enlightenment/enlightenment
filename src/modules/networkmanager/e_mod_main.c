@@ -131,9 +131,11 @@ enm_popup_del(E_NM_Instance *inst)
     * fresh in _enm_popup_update. */
    inst->ui.popup.group_eth = NULL;
    inst->ui.popup.group_wifi = NULL;
+   inst->ui.popup.group_bt = NULL;
    inst->ui.popup.group_vpn = NULL;
    E_FREE_FUNC(inst->ui.popup.itc_group, elm_genlist_item_class_free);
    E_FREE_FUNC(inst->ui.popup.itc_group_wifi, elm_genlist_item_class_free);
+   E_FREE_FUNC(inst->ui.popup.itc_bt, elm_genlist_item_class_free);
    E_FREE_FUNC(inst->ui.popup.itc_group_vpn, elm_genlist_item_class_free);
    E_FREE_FUNC(inst->ui.popup.itc_ap, elm_genlist_item_class_free);
    E_FREE_FUNC(inst->ui.popup.itc_eth, elm_genlist_item_class_free);
@@ -175,6 +177,10 @@ static Evas_Object *_enm_ap_end_new(struct NM_Manager *nm,
                                      Evas_Object *parent);
 static Evas_Object *_enm_eth_icon_new(struct NM_Device *dev,
                                        Evas_Object *parent);
+static Evas_Object *_enm_bt_icon_new(struct NM_Manager *nm,
+                                      struct NM_Bluetooth_Connection *bc,
+                                      struct NM_Device *dev,
+                                      Evas_Object *parent);
 
 /* Per-item data for genlist AP and ethernet rows */
 typedef struct _Enm_Item_Data
@@ -182,8 +188,10 @@ typedef struct _Enm_Item_Data
    struct NM_Manager      *nm;
    struct NM_Access_Point *ap;   /* NULL for ethernet */
    struct NM_Device       *dev;
+   struct NM_Bluetooth_Connection *bt;
    const char             *ap_path;   /* stringshare — AP D-Bus object path */
    const char             *ssid;      /* stringshare */
+   const char             *connection_path; /* stringshare — bluetooth settings path */
 } Enm_Item_Data;
 
 static void
@@ -192,6 +200,7 @@ _enm_item_data_free(Enm_Item_Data *id)
    if (!id) return;
    eina_stringshare_del(id->ap_path);
    eina_stringshare_del(id->ssid);
+   eina_stringshare_del(id->connection_path);
    free(id);
 }
 
@@ -317,6 +326,64 @@ _enm_itc_eth_content_get(void *data, Evas_Object *obj, const char *part)
         tbl = elm_table_add(obj);
 
         ic = _enm_eth_icon_new(id->dev, obj);
+        if (!ic)
+          {
+             evas_object_del(tbl);
+             return NULL;
+          }
+        evas_object_show(ic);
+        elm_table_pack(tbl, ic, 0, 0, 1, 1);
+
+        rect = evas_object_rectangle_add(evas_object_evas_get(obj));
+        evas_object_color_set(rect, 0, 0, 0, 0);
+        evas_object_size_hint_min_set(rect, ELM_SCALE_SIZE(32),
+                                      ELM_SCALE_SIZE(32));
+        elm_table_pack(tbl, rect, 0, 0, 1, 1);
+
+        return tbl;
+     }
+   return NULL;
+}
+
+static char *
+_enm_itc_bt_text_get(void *data, Evas_Object *obj EINA_UNUSED,
+                     const char *part)
+{
+   Enm_Item_Data *id = data;
+
+   if (!strcmp(part, "elm.text"))
+     return id->bt ? strdup(id->bt->name ?: _("Bluetooth")) : NULL;
+
+   if (!strcmp(part, "elm.text.sub"))
+     {
+        struct NM_Manager *nm = id->nm;
+
+        if (nm && id->bt && id->dev &&
+            nm->state >= NM_STATE_CONNECTED_LOCAL &&
+            nm->active_conn_type == NM_DEVICE_TYPE_BLUETOOTH &&
+            nm->ip_address)
+          return strdup(nm->ip_address);
+
+        return id->dev ? strdup(id->dev->interface ?: _("Bluetooth")) : NULL;
+     }
+
+   return NULL;
+}
+
+static Evas_Object *
+_enm_itc_bt_content_get(void *data, Evas_Object *obj, const char *part)
+{
+   Enm_Item_Data *id = data;
+
+   if (!id->bt) return NULL;
+
+   if (!strcmp(part, "elm.swallow.icon"))
+     {
+        Evas_Object *ic, *tbl, *rect;
+
+        tbl = elm_table_add(obj);
+
+        ic = _enm_bt_icon_new(id->nm, id->bt, id->dev, obj);
         if (!ic)
           {
              evas_object_del(tbl);
@@ -752,7 +819,43 @@ _enm_deselect_timer_cb(void *data)
    E_NM_Instance *inst = data;
 
    if (inst->ui.popup.deselect_item)
-     elm_genlist_item_selected_set(inst->ui.popup.deselect_item, EINA_FALSE);
+     {
+        Elm_Object_Item *it = inst->ui.popup.deselect_item;
+        Eina_Bool keep_selected = EINA_FALSE;
+        const Elm_Genlist_Item_Class *icl;
+
+        icl = elm_genlist_item_item_class_get(it);
+        if (icl == inst->ui.popup.itc_vpn)
+          {
+             struct NM_VPN_Connection *vc = elm_object_item_data_get(it);
+             keep_selected = !!(vc && vc->active_path);
+          }
+        else
+          {
+             Enm_Item_Data *id = elm_object_item_data_get(it);
+
+             if (id && id->nm)
+               {
+                  if (id->ap)
+                    keep_selected = _enm_ssid_is_active(id->nm, id->ap->ssid);
+                  else if (id->bt && id->dev)
+                    keep_selected =
+                       (id->dev->state >= NM_DEVICE_STATE_ACTIVATED) &&
+                       (id->nm->active_conn_type == NM_DEVICE_TYPE_BLUETOOTH) &&
+                       id->nm->active_connection_path &&
+                       id->dev->active_conn_path &&
+                       !strcmp(id->nm->active_connection_path,
+                               id->dev->active_conn_path);
+                  else if (id->dev)
+                    keep_selected =
+                       (id->dev->type == NM_DEVICE_TYPE_ETHERNET) &&
+                       (id->dev->state >= NM_DEVICE_STATE_ACTIVATED);
+               }
+          }
+
+        if (!keep_selected)
+          elm_genlist_item_selected_set(it, EINA_FALSE);
+     }
    inst->ui.popup.deselect_item = NULL;
    inst->ui.popup.deselect_timer = NULL;
    return ECORE_CALLBACK_CANCEL;
@@ -767,18 +870,20 @@ _enm_deselect_timer_schedule(E_NM_Instance *inst, Elm_Object_Item *it)
       ecore_timer_add(0.5, _enm_deselect_timer_cb, inst);
 }
 
-/* Activated smart callback — handles connect/disconnect on row tap */
+/* Genlist click smart callback — handles connect/disconnect on row tap */
 static void
-_enm_item_activated_cb(void *data, Evas_Object *obj EINA_UNUSED,
-                        void *event_info)
+_enm_item_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                     void *event_info)
 {
    E_NM_Instance *inst = data;
    Elm_Object_Item *it = event_info;
    Enm_Item_Data *id;
    struct NM_Manager *nm;
    struct NM_Device *dev;
+   Eina_Bool selected = elm_genlist_item_selected_get(it);
 
    if (!it) return;
+   if (inst->ui.popup.syncing_selection) return;
    /* VPN rows carry a struct NM_VPN_Connection*, not Enm_Item_Data*.
     * Dispatch them inline and bail before any cast-as-Enm_Item_Data. */
    if (elm_genlist_item_item_class_get(it) == inst->ui.popup.itc_vpn)
@@ -793,15 +898,15 @@ _enm_item_activated_cb(void *data, Evas_Object *obj EINA_UNUSED,
               * activates.  Mirrors the wifi/ethernet row-tap UX. */
              if (vc->active_path)
                {
-                  DBG("VPN row tapped (active): deactivating '%s'",
+                  INF("VPN row tapped (active): deactivating '%s'\n",
                       vc->name ?: "?");
-                  enm_vpn_deactivate(ctxt->nm, vc);
+                  if (!selected) enm_vpn_deactivate(ctxt->nm, vc);
                }
              else
                {
-                  DBG("VPN row tapped (inactive): activating '%s'",
+                  INF("VPN row tapped (inactive): activating '%s'",
                       vc->name ?: "?");
-                  enm_vpn_activate(ctxt->nm, vc);
+                  if (selected) enm_vpn_activate(ctxt->nm, vc);
                }
           }
         return;
@@ -814,14 +919,56 @@ _enm_item_activated_cb(void *data, Evas_Object *obj EINA_UNUSED,
    nm = inst->ctxt->nm;
    if (!nm) return;
 
-   /* Ethernet row: no connect action from list tap */
-   if (!id->ap) return;
+   if (id->bt)
+     {
+        if (!id->dev || !id->connection_path) return;
+
+        if (nm->active_conn_type == NM_DEVICE_TYPE_BLUETOOTH &&
+            id->dev->state >= NM_DEVICE_STATE_ACTIVATED)
+          {
+             INF("Disconnect bluetooth connection %s",
+                 id->bt->name ?: id->connection_path);
+             if (!selected) enm_ap_disconnect(nm);
+          }
+        else
+          {
+             enm_disconnect_type(nm, NM_DEVICE_TYPE_ETHERNET);
+             enm_disconnect_type(nm, NM_DEVICE_TYPE_WIFI);
+             INF("Connect bluetooth profile %s on device %s",
+                 id->bt->name ?: id->connection_path,
+                 id->dev->interface ?: id->dev->path);
+             if (selected) enm_bluetooth_connect(nm, id->dev, id->connection_path);
+          }
+        return;
+     }
+
+   if (!id->ap)
+     {
+        if (!id->dev || id->dev->type != NM_DEVICE_TYPE_ETHERNET) return;
+
+        if (id->dev->state >= NM_DEVICE_STATE_ACTIVATED &&
+            id->dev->active_conn_path)
+          {
+             INF("Disconnect ethernet device %s",
+                 id->dev->interface ?: id->dev->path);
+             if (!selected) enm_disconnect_type(nm, NM_DEVICE_TYPE_ETHERNET);
+          }
+        else
+          {
+             enm_disconnect_type(nm, NM_DEVICE_TYPE_BLUETOOTH);
+             enm_disconnect_type(nm, NM_DEVICE_TYPE_WIFI);
+             INF("Connect ethernet device %s",
+                 id->dev->interface ?: id->dev->path);
+             if (selected) enm_ethernet_connect(nm, id->dev);
+          }
+        return;
+     }
 
    /* If this AP's SSID is currently active, disconnect */
    if (nm->active_ap_path && _enm_ssid_is_active(nm, id->ap->ssid))
      {
         INF("Disconnect from %s", id->ap->ssid ?: id->ap_path);
-        enm_ap_disconnect(nm);
+        if (!selected) enm_ap_disconnect(nm);
         return;
      }
 
@@ -831,12 +978,14 @@ _enm_item_activated_cb(void *data, Evas_Object *obj EINA_UNUSED,
         struct NM_Access_Point *a;
         EINA_INLIST_FOREACH(dev->access_points, a)
           {
-             if (a == id->ap)
+            if (a == id->ap)
                {
+                  enm_disconnect_type(nm, NM_DEVICE_TYPE_ETHERNET);
+                  enm_disconnect_type(nm, NM_DEVICE_TYPE_BLUETOOTH);
                   INF("Connect to %s on device %s",
                       id->ap->ssid ?: id->ap_path,
                       dev->interface ?: dev->path);
-                  enm_ap_connect(nm, dev, id->ap);
+                  if (selected) enm_ap_connect(nm, dev, id->ap);
                   return;
                }
           }
@@ -1019,8 +1168,8 @@ _enm_eth_icon_new(struct NM_Device *dev, Evas_Object *parent)
    evas_object_size_hint_align_set(icon, EVAS_HINT_FILL, EVAS_HINT_FILL);
    ed = elm_layout_edje_get(icon);
 
-   /* NM device state 100 = activated → ONLINE(5), otherwise IDLE(1) */
-   state_val = (dev->state >= 100) ? 5 : 1;
+   /* NM device state >= activated → ONLINE(5), otherwise IDLE(1) */
+   state_val = (dev->state >= NM_DEVICE_STATE_ACTIVATED) ? 5 : 1;
 
    msg = malloc(sizeof(*msg) + sizeof(int));
    if (msg)
@@ -1028,6 +1177,41 @@ _enm_eth_icon_new(struct NM_Device *dev, Evas_Object *parent)
         msg->count = 2;
         msg->val[0] = state_val;
         msg->val[1] = 100; /* ethernet has no signal strength concept */
+        edje_object_message_send(ed, EDJE_MESSAGE_INT_SET, 1, msg);
+        free(msg);
+     }
+
+   return icon;
+}
+
+static Evas_Object *
+_enm_bt_icon_new(struct NM_Manager *nm, struct NM_Bluetooth_Connection *bc,
+                 struct NM_Device *dev, Evas_Object *parent)
+{
+   Edje_Message_Int_Set *msg;
+   Evas_Object *icon, *ed;
+   int state_val = 0;
+
+   icon = elm_layout_add(parent);
+   _enm_theme_layout_file_set(icon, "icon/bluetooth");
+   evas_object_size_hint_weight_set(icon, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(icon, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   ed = elm_layout_edje_get(icon);
+
+   if (nm && bc && dev &&
+       nm->state >= NM_STATE_CONNECTED_LOCAL &&
+       nm->active_conn_type == NM_DEVICE_TYPE_BLUETOOTH &&
+       dev->state >= NM_DEVICE_STATE_ACTIVATED)
+     state_val = 5;
+   else if (dev)
+     state_val = 1;
+
+   msg = malloc(sizeof(*msg) + sizeof(int));
+   if (msg)
+     {
+        msg->count = 2;
+        msg->val[0] = state_val;
+        msg->val[1] = 100;
         edje_object_message_send(ed, EDJE_MESSAGE_INT_SET, 1, msg);
         free(msg);
      }
@@ -1077,10 +1261,17 @@ _enm_ssid_is_active(struct NM_Manager *nm, const char *ssid)
 /* Build the desired list of entries.  Returns count; caller frees labels/paths. */
 struct _Popup_Entry
 {
+   enum {
+      ENM_ENTRY_ETHERNET,
+      ENM_ENTRY_WIFI,
+      ENM_ENTRY_BLUETOOTH
+   } kind;
    const char *label;   /* SSID or interface name — owned by AP/dev, do not free */
    const char *ap_path; /* stringshare AP path for wifi, NULL for ethernet */
+   const char *connection_path; /* stringshare settings path for bluetooth */
    struct NM_Access_Point *ap; /* NULL for ethernet */
    struct NM_Device       *dev; /* only for ethernet */
+   struct NM_Bluetooth_Connection *bt;
 };
 
 static int
@@ -1093,17 +1284,38 @@ _enm_popup_build_entries(struct NM_Manager *nm,
 
    if (!nm) return 0;
 
-   /* Ethernet entries first */
+   /* Ethernet entries first: prioritize active connections,
+    * then include available idle devices. */
    EINA_INLIST_FOREACH(nm->devices, dev)
      {
         if (dev->type != NM_DEVICE_TYPE_ETHERNET) continue;
-        if (dev->state < 100) continue;
+        if (dev->state < NM_DEVICE_STATE_ACTIVATED) continue;
         if (n >= max) break;
 
+        out[n].kind = ENM_ENTRY_ETHERNET;
         out[n].label = dev->interface ?: _("Wired");
         out[n].ap_path = NULL;
+        out[n].connection_path = NULL;
         out[n].ap = NULL;
         out[n].dev = dev;
+        out[n].bt = NULL;
+        n++;
+     }
+
+   EINA_INLIST_FOREACH(nm->devices, dev)
+     {
+        if (dev->type != NM_DEVICE_TYPE_ETHERNET) continue;
+        if (dev->state >= NM_DEVICE_STATE_ACTIVATED) continue;
+        if (dev->state < NM_DEVICE_STATE_UNAVAILABLE) continue;
+        if (n >= max) break;
+
+        out[n].kind = ENM_ENTRY_ETHERNET;
+        out[n].label = dev->interface ?: _("Wired");
+        out[n].ap_path = NULL;
+        out[n].connection_path = NULL;
+        out[n].ap = NULL;
+        out[n].dev = dev;
+        out[n].bt = NULL;
         n++;
      }
 
@@ -1129,15 +1341,41 @@ _enm_popup_build_entries(struct NM_Manager *nm,
              eina_hash_add(seen_ssids, ap->ssid, (void *)1);
 
              if (n >= max) break;
+             out[n].kind = ENM_ENTRY_WIFI;
              out[n].label = best->ssid;
              out[n].ap_path = best->path;
+             out[n].connection_path = NULL;
              out[n].ap = best;
              out[n].dev = NULL;
+             out[n].bt = NULL;
              n++;
           }
      }
 
    eina_hash_free(seen_ssids);
+
+   {
+      struct NM_Bluetooth_Connection *bc;
+
+      EINA_INLIST_FOREACH(nm->bluetooth_connections, bc)
+        {
+           struct NM_Device *bt_dev;
+
+           if (n >= max) break;
+           bt_dev = enm_bluetooth_connection_device_find(nm, bc);
+           if (!bt_dev) continue;
+
+           out[n].kind = ENM_ENTRY_BLUETOOTH;
+           out[n].label = bc->name ?: _("Bluetooth");
+           out[n].ap_path = NULL;
+           out[n].connection_path = bc->path;
+           out[n].ap = NULL;
+           out[n].dev = bt_dev;
+           out[n].bt = bc;
+           n++;
+        }
+   }
+
    return n;
 }
 
@@ -1151,6 +1389,82 @@ _enm_has_wifi_device(struct NM_Manager *nm)
    return EINA_FALSE;
 }
 
+static Eina_Bool
+_enm_has_bt_entries(struct NM_Manager *nm)
+{
+   struct NM_Bluetooth_Connection *bc;
+
+   if (!nm) return EINA_FALSE;
+   EINA_INLIST_FOREACH(nm->bluetooth_connections, bc)
+     if (enm_bluetooth_connection_device_find(nm, bc))
+       return EINA_TRUE;
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_enm_popup_item_should_be_selected(E_NM_Instance *inst,
+                                   Elm_Object_Item *it)
+{
+   const Elm_Genlist_Item_Class *icl;
+
+   if (!it) return EINA_FALSE;
+
+   icl = elm_genlist_item_item_class_get(it);
+   if (icl == inst->ui.popup.itc_vpn)
+     {
+        struct NM_VPN_Connection *vc = elm_object_item_data_get(it);
+        return !!(vc && vc->active_path);
+     }
+
+   if ((icl == inst->ui.popup.itc_group) ||
+       (icl == inst->ui.popup.itc_group_wifi) ||
+       (icl == inst->ui.popup.itc_group_vpn))
+     return EINA_FALSE;
+
+   {
+      Enm_Item_Data *id = elm_object_item_data_get(it);
+
+      if (!id || !id->nm) return EINA_FALSE;
+
+      if (id->ap)
+        return _enm_ssid_is_active(id->nm, id->ap->ssid);
+
+      if (id->bt && id->dev)
+        return (id->dev->state >= NM_DEVICE_STATE_ACTIVATED) &&
+           (id->nm->active_conn_type == NM_DEVICE_TYPE_BLUETOOTH) &&
+           id->nm->active_connection_path &&
+           id->dev->active_conn_path &&
+           !strcmp(id->nm->active_connection_path, id->dev->active_conn_path);
+
+      if (id->dev)
+        return (id->dev->type == NM_DEVICE_TYPE_ETHERNET) &&
+           (id->dev->state >= NM_DEVICE_STATE_ACTIVATED);
+   }
+
+   return EINA_FALSE;
+}
+
+static void
+_enm_popup_selection_sync(E_NM_Instance *inst)
+{
+   Elm_Object_Item *it, *next;
+
+   if (!inst || !inst->ui.popup.genlist) return;
+
+   inst->ui.popup.syncing_selection = EINA_TRUE;
+   for (it = elm_genlist_first_item_get(inst->ui.popup.genlist);
+        it; it = next)
+     {
+        Eina_Bool want_selected;
+
+        next = elm_genlist_item_next_get(it);
+        want_selected = _enm_popup_item_should_be_selected(inst, it);
+        if (elm_genlist_item_selected_get(it) != want_selected)
+          elm_genlist_item_selected_set(it, want_selected);
+     }
+   inst->ui.popup.syncing_selection = EINA_FALSE;
+}
+
 /* Drop a tracked group-header pointer if it matches.  Used in the orphan
  * cleanup pass so we don't leave stale Elm_Object_Item * pointers in
  * inst->ui.popup.group_{eth,wifi,vpn}. */
@@ -1159,6 +1473,7 @@ _enm_drop_group_if(E_NM_Instance *inst, Elm_Object_Item *it)
 {
    if (inst->ui.popup.group_eth == it)  inst->ui.popup.group_eth = NULL;
    if (inst->ui.popup.group_wifi == it) inst->ui.popup.group_wifi = NULL;
+   if (inst->ui.popup.group_bt == it)   inst->ui.popup.group_bt = NULL;
    if (inst->ui.popup.group_vpn == it)  inst->ui.popup.group_vpn = NULL;
 }
 
@@ -1185,8 +1500,8 @@ _enm_popup_update(struct NM_Manager *nm, E_NM_Instance *inst)
 {
    Evas_Object *gl = inst->ui.popup.genlist;
    struct _Popup_Entry desired[256];
-   int want_n, i, eth_count = 0, wifi_count = 0;
-   Eina_Hash *eth_idx, *ap_idx, *vpn_idx;
+   int want_n, i, eth_count = 0, wifi_count = 0, bt_count = 0;
+   Eina_Hash *eth_idx, *ap_idx, *bt_idx, *vpn_idx;
    Eina_List *orphans = NULL;
    Elm_Object_Item *it, *prev;
    Eina_Iterator *itr;
@@ -1207,8 +1522,9 @@ _enm_popup_update(struct NM_Manager *nm, E_NM_Instance *inst)
    want_n = _enm_popup_build_entries(nm, desired, 256);
    for (i = 0; i < want_n; i++)
      {
-        if (desired[i].ap) wifi_count++;
-        else               eth_count++;
+        if (desired[i].kind == ENM_ENTRY_WIFI) wifi_count++;
+        else if (desired[i].kind == ENM_ENTRY_BLUETOOTH) bt_count++;
+        else eth_count++;
      }
 
    /* ------------------------------------------------------------------
@@ -1217,6 +1533,7 @@ _enm_popup_update(struct NM_Manager *nm, E_NM_Instance *inst)
     * ------------------------------------------------------------------ */
    eth_idx = eina_hash_pointer_new(NULL);   /* key: NM_Device *      */
    ap_idx  = eina_hash_string_superfast_new(NULL); /* key: ssid stringshare */
+   bt_idx  = eina_hash_string_superfast_new(NULL); /* key: settings path */
    vpn_idx = eina_hash_string_superfast_new(NULL); /* key: vc->path        */
 
    it = elm_genlist_first_item_get(gl);
@@ -1233,6 +1550,12 @@ _enm_popup_update(struct NM_Manager *nm, E_NM_Instance *inst)
           {
              Enm_Item_Data *id = elm_object_item_data_get(it);
              if (id && id->ssid) eina_hash_add(ap_idx, id->ssid, it);
+          }
+        else if (icl == inst->ui.popup.itc_bt)
+          {
+             Enm_Item_Data *id = elm_object_item_data_get(it);
+             if (id && id->connection_path)
+               eina_hash_add(bt_idx, id->connection_path, it);
           }
         else if (icl == inst->ui.popup.itc_vpn)
           {
@@ -1268,7 +1591,7 @@ _enm_popup_update(struct NM_Manager *nm, E_NM_Instance *inst)
 
         for (i = 0; i < want_n; i++)
           {
-             if (desired[i].ap) continue;
+             if (desired[i].kind != ENM_ENTRY_ETHERNET) continue;
              it = eina_hash_find(eth_idx, &desired[i].dev);
              if (it)
                {
@@ -1329,7 +1652,7 @@ _enm_popup_update(struct NM_Manager *nm, E_NM_Instance *inst)
 
         for (i = 0; i < want_n; i++)
           {
-             if (!desired[i].ap) continue;
+             if (desired[i].kind != ENM_ENTRY_WIFI) continue;
              it = eina_hash_find(ap_idx, desired[i].label);
              if (it)
                {
@@ -1377,7 +1700,67 @@ _enm_popup_update(struct NM_Manager *nm, E_NM_Instance *inst)
      }
 
    /* ------------------------------------------------------------------
-    * Pass 4: sync VPN section.  Always present.
+    * Pass 4: sync bluetooth section.
+    * ------------------------------------------------------------------ */
+   if (bt_count > 0 || _enm_has_bt_entries(nm))
+     {
+        if (!inst->ui.popup.group_bt)
+          {
+             inst->ui.popup.group_bt = elm_genlist_item_append(
+                gl, inst->ui.popup.itc_group, (void *)_("Bluetooth"), NULL,
+                ELM_GENLIST_ITEM_GROUP, NULL, NULL);
+             elm_genlist_item_select_mode_set(inst->ui.popup.group_bt,
+                ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY);
+          }
+        prev = NULL;
+
+        for (i = 0; i < want_n; i++)
+          {
+             if (desired[i].kind != ENM_ENTRY_BLUETOOTH) continue;
+             it = eina_hash_find(bt_idx, desired[i].connection_path);
+             if (it)
+               {
+                  Enm_Item_Data *id = elm_object_item_data_get(it);
+                  if (id)
+                    {
+                       id->nm = nm;
+                       id->bt = desired[i].bt;
+                       id->dev = desired[i].dev;
+                    }
+                  elm_genlist_item_update(it);
+                  eina_hash_del(bt_idx, desired[i].connection_path, it);
+               }
+             else
+               {
+                  Enm_Item_Data *id = calloc(1, sizeof(*id));
+                  if (!id) continue;
+                  id->nm = nm;
+                  id->bt = desired[i].bt;
+                  id->dev = desired[i].dev;
+                  id->connection_path =
+                     eina_stringshare_add(desired[i].connection_path);
+                  if (!prev)
+                    it = elm_genlist_item_append(
+                       gl, inst->ui.popup.itc_bt, id,
+                       inst->ui.popup.group_bt,
+                       ELM_GENLIST_ITEM_NONE, NULL, NULL);
+                  else
+                    it = elm_genlist_item_insert_after(
+                       gl, inst->ui.popup.itc_bt, id,
+                       inst->ui.popup.group_bt, prev,
+                       ELM_GENLIST_ITEM_NONE, NULL, NULL);
+               }
+             prev = it;
+          }
+     }
+   else if (inst->ui.popup.group_bt)
+     {
+        elm_object_item_del(inst->ui.popup.group_bt);
+        inst->ui.popup.group_bt = NULL;
+     }
+
+   /* ------------------------------------------------------------------
+    * Pass 5: sync VPN section.  Always present.
     * ------------------------------------------------------------------ */
    {
       struct NM_VPN_Connection *vc;
@@ -1422,7 +1805,7 @@ _enm_popup_update(struct NM_Manager *nm, E_NM_Instance *inst)
    }
 
    /* ------------------------------------------------------------------
-    * Pass 5: any items left in the indexes are orphans — desired set
+    * Pass 6: any items left in the indexes are orphans — desired set
     * no longer contains them, so delete.  Their itc->func.del takes
     * care of freeing Enm_Item_Data; VPN rows have del=NULL because the
     * module owns NM_VPN_Connection lifetime.
@@ -1432,6 +1815,10 @@ _enm_popup_update(struct NM_Manager *nm, E_NM_Instance *inst)
    eina_iterator_free(itr);
 
    itr = eina_hash_iterator_data_new(ap_idx);
+   EINA_ITERATOR_FOREACH(itr, it) orphans = eina_list_append(orphans, it);
+   eina_iterator_free(itr);
+
+   itr = eina_hash_iterator_data_new(bt_idx);
    EINA_ITERATOR_FOREACH(itr, it) orphans = eina_list_append(orphans, it);
    eina_iterator_free(itr);
 
@@ -1452,8 +1839,11 @@ _enm_popup_update(struct NM_Manager *nm, E_NM_Instance *inst)
         elm_object_item_del(it);
      }
 
+   _enm_popup_selection_sync(inst);
+
    eina_hash_free(eth_idx);
    eina_hash_free(ap_idx);
+   eina_hash_free(bt_idx);
    eina_hash_free(vpn_idx);
 }
 
@@ -1523,6 +1913,8 @@ _enm_popup_new(E_NM_Instance *inst)
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_scroller_bounce_set(gl, EINA_FALSE, EINA_TRUE);
+   elm_genlist_multi_select_set(gl, EINA_TRUE);
+   elm_genlist_select_mode_set(gl, ELM_OBJECT_SELECT_MODE_ALWAYS);
    evas_object_data_set(gl, "instance", inst);
    inst->ui.popup.genlist = gl;
 
@@ -1562,6 +1954,14 @@ _enm_popup_new(E_NM_Instance *inst)
    inst->ui.popup.itc_eth = itc;
 
    itc = elm_genlist_item_class_new();
+   itc->item_style = "double_label";
+   itc->func.text_get = _enm_itc_bt_text_get;
+   itc->func.content_get = _enm_itc_bt_content_get;
+   itc->func.state_get = NULL;
+   itc->func.del = _enm_itc_item_del;
+   inst->ui.popup.itc_bt = itc;
+
+   itc = elm_genlist_item_class_new();
    itc->item_style = "group_index";
    itc->func.text_get = _enm_itc_group_vpn_text_get;
    itc->func.content_get = _enm_itc_group_vpn_content_get;
@@ -1577,9 +1977,10 @@ _enm_popup_new(E_NM_Instance *inst)
    itc->func.del = NULL;
    inst->ui.popup.itc_vpn = itc;
 
-   /* Selected signal for row tap → connect/disconnect (single-click) */
-   evas_object_smart_callback_add(gl, "selected", _enm_item_activated_cb,
-                                   inst);
+   /* Click signal for row tap -> connect/disconnect. Avoid using selection
+    * callbacks here so already-selected active rows still react to clicks. */
+   evas_object_smart_callback_add(gl, "selected", _enm_item_clicked_cb, inst);
+   evas_object_smart_callback_add(gl, "unselected", _enm_item_clicked_cb, inst);
 
    /* Right-click context menu for VPN rows: use genlist's per-item
     * "clicked,right" smart signal.  event_info is the Elm_Object_Item. */
@@ -1616,9 +2017,9 @@ _enm_popup_new(E_NM_Instance *inst)
 
    {
       Evas_Object *wrapper = _enm_widget_size_wrap(inst, box,
-                                                    10, 30,
-                                                    192, 240,
-                                                    360, 400);
+                                                    15, 35,
+                                                    240, 240,
+                                                    480, 600);
       evas_object_show(wrapper);
       e_gadcon_popup_content_set(inst->popup, wrapper);
    }
@@ -1728,8 +2129,12 @@ _enm_mod_manager_update_inst(E_NM_Module_Context *ctxt EINA_UNUSED,
    int theme_state;
 
    /* Determine connection technology type for gadget icon */
-   typestr = (nm && nm->active_conn_type == NM_DEVICE_TYPE_ETHERNET)
-     ? "ethernet" : "wifi";
+   if (nm && nm->active_conn_type == NM_DEVICE_TYPE_ETHERNET)
+     typestr = "ethernet";
+   else if (nm && nm->active_conn_type == NM_DEVICE_TYPE_BLUETOOTH)
+     typestr = "bluetooth";
+   else
+     typestr = "wifi";
 
    /* Resolve active AP for real signal strength */
    if (nm && nm->active_ap_path)
@@ -1766,13 +2171,34 @@ _enm_mod_manager_update_inst(E_NM_Module_Context *ctxt EINA_UNUSED,
         struct NM_Device *dev;
         EINA_INLIST_FOREACH(nm->devices, dev)
           {
-             if (dev->type == NM_DEVICE_TYPE_ETHERNET && dev->state >= 100)
+             if (dev->type == NM_DEVICE_TYPE_ETHERNET &&
+                 dev->state >= NM_DEVICE_STATE_ACTIVATED)
                {
                   edje_object_part_text_set(o, "e.text.label",
                                             dev->interface ?: _("Wired"));
                   break;
                }
           }
+     }
+   else if (nm && nm->active_conn_type == NM_DEVICE_TYPE_BLUETOOTH)
+     {
+        struct NM_Bluetooth_Connection *bc;
+        struct NM_Device *dev;
+        Eina_Bool found = EINA_FALSE;
+
+        EINA_INLIST_FOREACH(nm->bluetooth_connections, bc)
+          {
+             dev = enm_bluetooth_connection_device_find(nm, bc);
+             if (dev && dev->state >= NM_DEVICE_STATE_ACTIVATED)
+               {
+                  edje_object_part_text_set(o, "e.text.label",
+                                            bc->name ?: _("Bluetooth"));
+                  found = EINA_TRUE;
+                  break;
+               }
+          }
+        if (!found)
+          edje_object_part_text_set(o, "e.text.label", _("Bluetooth"));
      }
    else
      edje_object_part_text_set(o, "e.text.label", "");
@@ -1837,7 +2263,7 @@ _enm_mod_manager_update_inst(E_NM_Module_Context *ctxt EINA_UNUSED,
                 EINA_INLIST_FOREACH(nm->devices, tdev)
                   {
                      if (tdev->type == NM_DEVICE_TYPE_ETHERNET &&
-                         tdev->state >= 100)
+                        tdev->state >= NM_DEVICE_STATE_ACTIVATED)
                        {
                           eina_strbuf_append(tbuf,
                               tdev->interface ?: _("Wired"));
@@ -2057,12 +2483,13 @@ _enm_active_interface(struct NM_Manager *nm)
 
    if (!nm) return NULL;
 
-   /* WiFi: find first connected WiFi device (state >= 100 = activated) */
+   /* WiFi: find first connected WiFi device (activated state) */
    if (nm->active_conn_type == NM_DEVICE_TYPE_WIFI)
      {
         EINA_INLIST_FOREACH(nm->devices, dev)
           {
-             if (dev->type == NM_DEVICE_TYPE_WIFI && dev->state >= 100)
+             if (dev->type == NM_DEVICE_TYPE_WIFI &&
+                 dev->state >= NM_DEVICE_STATE_ACTIVATED)
                return dev->interface;
           }
      }
@@ -2072,7 +2499,18 @@ _enm_active_interface(struct NM_Manager *nm)
      {
         EINA_INLIST_FOREACH(nm->devices, dev)
           {
-             if (dev->type == NM_DEVICE_TYPE_ETHERNET && dev->state >= 100)
+             if (dev->type == NM_DEVICE_TYPE_ETHERNET &&
+                 dev->state >= NM_DEVICE_STATE_ACTIVATED)
+               return dev->interface;
+          }
+     }
+
+   if (nm->active_conn_type == NM_DEVICE_TYPE_BLUETOOTH)
+     {
+        EINA_INLIST_FOREACH(nm->devices, dev)
+          {
+             if (dev->type == NM_DEVICE_TYPE_BLUETOOTH &&
+                 dev->state >= NM_DEVICE_STATE_ACTIVATED)
                return dev->interface;
           }
      }
