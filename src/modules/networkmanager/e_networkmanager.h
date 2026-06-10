@@ -320,6 +320,7 @@ struct NM_Manager
 
    Eina_List     *vpn_pending_autoconn;  /* _autoconn_ctx* per in-flight nmcli connection modify */
 
+   Eina_List     *pending_probes; /* Pending struct _Active_Conn_Probe's */
    /* Generation counter incremented each time a new batch of active-connection
     * probes is started.  Each probe captures the generation at creation time
     * and discards its result in the callback if the generation has advanced,

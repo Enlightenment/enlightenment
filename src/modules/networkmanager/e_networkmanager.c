@@ -1507,6 +1507,15 @@ _active_conn_probe_cb(void *data, const Eldbus_Message *msg,
    const char *ap_path = NULL, *ip4path = NULL, *type_str = NULL;
    enum NM_Device_Type conn_type;
 
+   /* The manager was freed while we probed */
+   if (!nm)
+     {
+        _active_conn_probe_free(probe);
+        return;
+     }
+   /* Remove probes from the manager */
+   nm->pending_probes = eina_list_remove(nm->pending_probes, probe);
+
    /* Discard stale probes that were superseded by a newer batch */
    if (probe->generation != nm->probe_generation)
      {
@@ -1620,6 +1629,8 @@ _manager_probe_active_conn(struct NM_Manager *nm,
    probe->path = eina_stringshare_add(active_conn_path);
    probe->obj = eldbus_object_get(conn, NM_BUS_NAME, active_conn_path);
    probe->proxy = eldbus_proxy_get(probe->obj, NM_IFACE_PROPS);
+
+   nm->pending_probes = eina_list_append(nm->pending_probes, probe);
 
    eldbus_proxy_call(probe->proxy, "GetAll",
                      _active_conn_probe_cb, probe,
@@ -2480,8 +2491,15 @@ _manager_free(struct NM_Manager *nm)
 {
    struct NM_Device *dev;
    Eldbus_Object *obj;
+    struct _Active_Conn_Probe *probe;
 
    if (!nm) return;
+
+   /* Flag pending probes to not belong ti this manager */
+   EINA_LIST_FREE(nm->pending_probes, probe)
+     {
+        probe->nm = NULL;
+     }
 
    /* Invalidate in-flight saved-connection probes before freeing anything.
     * Both _saved_conn_list_cb and _saved_conn_settings_cb check this field
