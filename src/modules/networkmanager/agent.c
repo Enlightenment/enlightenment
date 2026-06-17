@@ -3,6 +3,7 @@
 #endif
 
 #include <stdbool.h>
+#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -39,6 +40,10 @@ struct _E_NM_Agent_Dialog
 };
 
 static E_NM_Agent_Dialog *_current_dialog = NULL;
+
+#define NM_SECRET_TAG_VPN_MSG                 "x-vpn-message:"
+#define NM_SECRET_TAG_DYNAMIC_CHALLENGE       "x-dynamic-challenge:"
+#define NM_SECRET_TAG_DYNAMIC_CHALLENGE_ECHO  "x-dynamic-challenge-echo:"
 
 /* -------------------------------------------------------------------------- */
 /* Dialog callbacks                                                            */
@@ -163,6 +168,108 @@ _show_password_cb(void *data, Evas_Object *obj, void *event EINA_UNUSED)
    elm_entry_password_set(entry, !elm_check_state_get(obj));
 }
 
+static Eina_Bool
+_vpn_field_is_password(const char *field)
+{
+   char lower[128];
+   size_t i;
+
+   if (!field) return EINA_TRUE;
+   if (!strncmp(field, NM_SECRET_TAG_DYNAMIC_CHALLENGE_ECHO,
+                strlen(NM_SECRET_TAG_DYNAMIC_CHALLENGE_ECHO)))
+     return EINA_FALSE;
+
+   for (i = 0; field[i] && i < sizeof(lower) - 1; i++)
+     lower[i] = (char)tolower((unsigned char)field[i]);
+   lower[i] = '\0';
+
+   if (strstr(lower, "password") || strstr(lower, "pass") ||
+       strstr(lower, "secret") || strstr(lower, "psk") ||
+       strstr(lower, "cookie"))
+     return EINA_TRUE;
+   return EINA_FALSE;
+}
+
+static const char *
+_vpn_field_label_get(const char *field)
+{
+   if (!field) return _("Secret");
+   if (!strncmp(field, NM_SECRET_TAG_DYNAMIC_CHALLENGE,
+                strlen(NM_SECRET_TAG_DYNAMIC_CHALLENGE)))
+     return field + strlen(NM_SECRET_TAG_DYNAMIC_CHALLENGE);
+   if (!strncmp(field, NM_SECRET_TAG_DYNAMIC_CHALLENGE_ECHO,
+                strlen(NM_SECRET_TAG_DYNAMIC_CHALLENGE_ECHO)))
+     return field + strlen(NM_SECRET_TAG_DYNAMIC_CHALLENGE_ECHO);
+   if (!strcmp(field, "username")) return _("Username");
+   if (!strcmp(field, "user-name")) return _("Username");
+   if (!strcmp(field, "password")) return _("Password");
+   if (!strcmp(field, "cert-pass")) return _("Certificate password");
+   if (!strcmp(field, "http-proxy-password")) return _("HTTP proxy password");
+   if (!strcmp(field, "Xauth password")) return _("Password");
+   if (!strcmp(field, "IPSec secret")) return _("Group password");
+   if (!strcmp(field, "xauthpassword")) return _("Password");
+   if (!strcmp(field, "pskvalue")) return _("Group password");
+   if (!strcmp(field, "gateway")) return _("Gateway URL");
+   if (!strcmp(field, "cookie")) return _("Cookie");
+   if (!strcmp(field, "gwcert")) return _("Gateway certificate hash");
+   if (!strcmp(field, "resolve")) return _("Gateway DNS resolution ('host:IP')");
+   if (!strncmp(field, NM_SECRET_TAG_VPN_MSG, strlen(NM_SECRET_TAG_VPN_MSG)))
+     return field + strlen(NM_SECRET_TAG_VPN_MSG);
+   return field;
+}
+
+static int
+_vpn_field_order_get(const char *field)
+{
+   if (!field) return 100;
+   if (!strcmp(field, "username") || !strcmp(field, "user-name"))
+     return 0;
+   if (!strcmp(field, "password"))
+     return 1;
+   if (strstr(field, "username") || strstr(field, "user-name"))
+     return 2;
+   if (_vpn_field_is_password(field))
+     return 3;
+   return 50;
+}
+
+static int
+_vpn_field_order_find(const char *const *fields, unsigned int n_fields,
+                      Eina_Bool *used)
+{
+   unsigned int best = n_fields;
+   int best_order = 0;
+
+   for (unsigned int i = 0; i < n_fields; i++)
+     {
+        int order;
+
+        if (used[i]) continue;
+        order = _vpn_field_order_get(fields[i]);
+        if ((best == n_fields) || (order < best_order))
+          {
+             best = i;
+             best_order = order;
+          }
+     }
+
+   return best == n_fields ? -1 : (int)best;
+}
+
+static void
+_field_column_min_width_set(Evas_Object *table, int col)
+{
+   Evas_Object *rect;
+
+   rect = evas_object_rectangle_add(evas_object_evas_get(table));
+   evas_object_color_set(rect, 0, 0, 0, 0);
+   evas_object_size_hint_min_set(rect, 300 * e_scale, 1);
+   evas_object_size_hint_weight_set(rect, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_align_set(rect, EVAS_HINT_FILL, 0.0);
+   elm_table_pack(table, rect, col, 0, 1, 1);
+   evas_object_show(rect);
+}
+
 /* -------------------------------------------------------------------------- */
 /* Dialog construction                                                         */
 /* -------------------------------------------------------------------------- */
@@ -171,7 +278,7 @@ static E_NM_Agent_Dialog *
 _dialog_new(E_NM_Agent_Request *req, const char *ssid)
 {
    E_NM_Agent_Dialog *ad;
-   Evas_Object *frame, *box, *entry, *check;
+   Evas_Object *frame, *table, *label, *entry, *check;
    E_Dialog    *dialog;
    char         header[128];
 
@@ -183,30 +290,36 @@ _dialog_new(E_NM_Agent_Request *req, const char *ssid)
    ad->req     = req;
    ad->is_vpn  = EINA_FALSE;
 
-   e_dialog_resizable_set(dialog, 1);
+   e_dialog_resizable_set(dialog, 0);
    e_dialog_title_set(dialog, _("WiFi Password Required"));
    e_dialog_border_icon_set(dialog, "dialog-password");
 
    e_dialog_button_add(dialog, _("Connect"), NULL, _dialog_ok_cb, ad);
    e_dialog_button_add(dialog, _("Cancel"),  NULL, _dialog_cancel_cb, ad);
 
-   /* Labelled frame containing the password row + show-password check */
    snprintf(header, sizeof(header),
             _("Password required for \"%s\":"), ssid ?: "network");
    frame = elm_frame_add(dialog->win);
    elm_object_text_set(frame, header);
-   evas_object_size_hint_weight_set(frame, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_weight_set(frame, EVAS_HINT_EXPAND, 0);
    evas_object_size_hint_align_set(frame, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
-   box = elm_box_add(frame);
-   elm_box_horizontal_set(box, EINA_FALSE);
-   elm_box_padding_set(box, 0, 4 * e_scale);
-   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_object_content_set(frame, box);
-   evas_object_show(box);
+   table = elm_table_add(frame);
+   elm_table_padding_set(table, 8 * e_scale, 4 * e_scale);
+   evas_object_size_hint_weight_set(table, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_align_set(table, EVAS_HINT_FILL, 0.0);
+   elm_object_content_set(frame, table);
+   evas_object_show(table);
+   _field_column_min_width_set(table, 1);
 
-   entry = elm_entry_add(box);
+   label = elm_label_add(table);
+   elm_object_text_set(label, _("Password"));
+   evas_object_size_hint_weight_set(label, 0, 0);
+   evas_object_size_hint_align_set(label, 1.0, 0.5);
+   elm_table_pack(table, label, 0, 0, 1, 1);
+   evas_object_show(label);
+
+   entry = elm_entry_add(table);
    elm_entry_single_line_set(entry, EINA_TRUE);
    elm_entry_scrollable_set(entry, EINA_TRUE);
    elm_entry_password_set(entry, EINA_TRUE);
@@ -214,21 +327,21 @@ _dialog_new(E_NM_Agent_Request *req, const char *ssid)
    evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, 0.5);
    evas_object_smart_callback_add(entry, "activated",
                                    _entry_activated_cb, ad);
-   elm_box_pack_end(box, entry);
+   elm_table_pack(table, entry, 1, 0, 1, 1);
    evas_object_show(entry);
    ad->psk_entry = entry;
 
-   check = elm_check_add(box);
+   check = elm_check_add(table);
    elm_object_text_set(check, _("Show password"));
    elm_check_state_set(check, EINA_FALSE);
-   evas_object_size_hint_align_set(check, 0.0, 0.5);
+   evas_object_size_hint_align_set(check, EVAS_HINT_FILL, 0.5);
    evas_object_smart_callback_add(check, "changed",
                                    _show_password_cb, entry);
-   elm_box_pack_end(box, check);
+   elm_table_pack(table, check, 1, 1, 1, 1);
    evas_object_show(check);
 
    evas_object_show(frame);
-   e_dialog_content_set(dialog, frame, 280, 100);
+   e_dialog_content_set(dialog, frame, 0, 0);
    e_dialog_show(dialog);
 
    evas_object_event_callback_add(dialog->bg_object, EVAS_CALLBACK_KEY_DOWN,
@@ -243,12 +356,14 @@ _dialog_new(E_NM_Agent_Request *req, const char *ssid)
 
 static E_NM_Agent_Dialog *
 _vpn_dialog_new(E_NM_Agent_Request *req, const char *conn_name,
-                const char *service_type,
+                const char *service_type, const char *message,
                 const char *const *fields, unsigned int n_fields)
 {
    E_NM_Agent_Dialog *ad;
-   Evas_Object *frame, *box;
+   Evas_Object *frame, *box, *table;
    E_Dialog *dialog;
+   Eina_Bool *used = NULL;
+   Evas_Coord minw = 260 * e_scale;
    char header[160];
 
    dialog = e_dialog_new(NULL, "E", "nm_secret_agent_vpn");
@@ -261,10 +376,28 @@ _vpn_dialog_new(E_NM_Agent_Request *req, const char *conn_name,
    ad->n_fields = n_fields;
    ad->field_names = calloc(n_fields ?: 1, sizeof(*ad->field_names));
    ad->field_entries = calloc(n_fields ?: 1, sizeof(*ad->field_entries));
-   for (unsigned int i = 0; i < n_fields; i++)
-     ad->field_names[i] = strdup(fields[i]);
+   used = calloc(n_fields ?: 1, sizeof(*used));
+   if (!ad->field_names || !ad->field_entries || !used)
+     {
+        free(ad->field_names);
+        free(ad->field_entries);
+        free(used);
+        free(ad);
+        e_object_del(E_OBJECT(dialog));
+        return NULL;
+     }
 
-   e_dialog_resizable_set(dialog, 1);
+   for (unsigned int row = 0; row < n_fields; row++)
+     {
+        int idx = _vpn_field_order_find(fields, n_fields, used);
+
+        if (idx < 0) break;
+        used[idx] = EINA_TRUE;
+        ad->field_names[row] = fields[idx] ? strdup(fields[idx]) : NULL;
+     }
+   free(used);
+
+   e_dialog_resizable_set(dialog, 0);
    e_dialog_title_set(dialog, _("VPN Authentication Required"));
    e_dialog_border_icon_set(dialog, "dialog-password");
    e_dialog_button_add(dialog, _("Connect"), NULL, _dialog_ok_cb, ad);
@@ -275,50 +408,63 @@ _vpn_dialog_new(E_NM_Agent_Request *req, const char *conn_name,
             enm_vpn_type_label(NULL, service_type));
    frame = elm_frame_add(dialog->win);
    elm_object_text_set(frame, header);
-   evas_object_size_hint_weight_set(frame, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_weight_set(frame, EVAS_HINT_EXPAND, 0);
    evas_object_size_hint_align_set(frame, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
    box = elm_box_add(frame);
    elm_box_horizontal_set(box, EINA_FALSE);
-   elm_box_padding_set(box, 0, 6 * e_scale);
-   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_padding_set(box, 0, 4 * e_scale);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_align_set(box, EVAS_HINT_FILL, 0.0);
    elm_object_content_set(frame, box);
    evas_object_show(box);
 
+   if (message && message[0])
+     {
+        Evas_Object *msg = elm_label_add(box);
+        elm_object_text_set(msg, message);
+        evas_object_size_hint_weight_set(msg, EVAS_HINT_EXPAND, 0);
+        evas_object_size_hint_align_set(msg, EVAS_HINT_FILL, 0.5);
+        elm_box_pack_end(box, msg);
+        evas_object_show(msg);
+     }
+
+   table = elm_table_add(box);
+   elm_table_padding_set(table, 8 * e_scale, 4 * e_scale);
+   evas_object_size_hint_weight_set(table, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_align_set(table, EVAS_HINT_FILL, 0.0);
+   elm_box_pack_end(box, table);
+   evas_object_show(table);
+   _field_column_min_width_set(table, 1);
+
    for (unsigned int i = 0; i < n_fields; i++)
      {
-        Evas_Object *row, *label, *entry;
-        row = elm_box_add(box);
-        elm_box_horizontal_set(row, EINA_TRUE);
-        elm_box_padding_set(row, 8 * e_scale, 0);
-        evas_object_size_hint_weight_set(row, EVAS_HINT_EXPAND, 0);
-        evas_object_size_hint_align_set(row, EVAS_HINT_FILL, 0.5);
-        evas_object_show(row);
+        Evas_Object *label, *entry;
+        const char *field = ad->field_names[i];
 
-        label = elm_label_add(row);
-        elm_object_text_set(label, fields[i]);
-        evas_object_size_hint_align_set(label, 0.0, 0.5);
-        elm_box_pack_end(row, label);
+        label = elm_label_add(table);
+        elm_object_text_set(label, _vpn_field_label_get(field));
+        evas_object_size_hint_weight_set(label, 0, 0);
+        evas_object_size_hint_align_set(label, 1.0, 0.5);
+        elm_table_pack(table, label, 0, i, 1, 1);
         evas_object_show(label);
 
-        entry = elm_entry_add(row);
+        entry = elm_entry_add(table);
         elm_entry_single_line_set(entry, EINA_TRUE);
         elm_entry_scrollable_set(entry, EINA_TRUE);
-        elm_entry_password_set(entry, EINA_TRUE);
+        elm_entry_password_set(entry, _vpn_field_is_password(field));
         evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, 0);
         evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, 0.5);
         evas_object_smart_callback_add(entry, "activated",
                                        _entry_activated_cb, ad);
-        elm_box_pack_end(row, entry);
+        elm_table_pack(table, entry, 1, i, 1, 1);
         evas_object_show(entry);
 
         ad->field_entries[i] = entry;
-        elm_box_pack_end(box, row);
      }
 
    evas_object_show(frame);
-   e_dialog_content_set(dialog, frame, 360, 60 + 32 * n_fields);
+   e_dialog_content_set(dialog, frame, minw, 0);
    e_dialog_show(dialog);
 
    evas_object_event_callback_add(dialog->bg_object, EVAS_CALLBACK_KEY_DOWN,
@@ -374,6 +520,7 @@ _agent_ui_cancel_cb(void *data EINA_UNUSED,
 static void
 _agent_ui_vpn_request_cb(void *data EINA_UNUSED, E_NM_Agent_Request *req,
                          const char *conn_name, const char *service_type,
+                         const char *message,
                          const char *const *fields, unsigned int n_fields)
 {
    if (_current_dialog)
@@ -383,6 +530,7 @@ _agent_ui_vpn_request_cb(void *data EINA_UNUSED, E_NM_Agent_Request *req,
         _current_dialog = NULL;
      }
    _current_dialog = _vpn_dialog_new(req, conn_name, service_type,
+                                     message,
                                      fields, n_fields);
    if (!_current_dialog) { e_nm_agent_reply_cancel(req); return; }
 }

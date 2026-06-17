@@ -42,6 +42,7 @@ typedef void (*E_NM_Agent_VPN_Secrets_Request_Cb)(void *data,
         E_NM_Agent_Request *req,
         const char *conn_name,
         const char *service_type,
+        const char *message,
         const char *const *fields,
         unsigned int n_fields);
 

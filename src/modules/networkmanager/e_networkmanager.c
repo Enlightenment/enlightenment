@@ -3044,6 +3044,13 @@ _e_nm_sys_resume_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EI
 #define NM_AGENT_MGR_PATH "/org/freedesktop/NetworkManager/AgentManager"
 #define NM_AGENT_ID       "org.enlightenment.NetworkManager"
 #define AGENT_DATA_KEY    "agent"
+#define NM_SECRET_AGENT_CAPABILITY_VPN_HINTS 0x1
+#define NM_SECRET_TAG_VPN_MSG                 "x-vpn-message:"
+#define NM_SECRET_TAG_DYNAMIC_CHALLENGE       "x-dynamic-challenge:"
+#define NM_SECRET_TAG_DYNAMIC_CHALLENGE_ECHO  "x-dynamic-challenge-echo:"
+#define NM_SETTING_SECRET_FLAG_AGENT_OWNED    0x1
+#define NM_SETTING_SECRET_FLAG_NOT_SAVED      0x2
+#define NM_SETTING_SECRET_FLAG_NOT_REQUIRED   0x4
 
 struct _E_NM_Agent
 {
@@ -3178,6 +3185,7 @@ e_nm_agent_reply_vpn_secrets(E_NM_Agent_Request *req,
    for (unsigned int i = 0; i < n_fields; i++)
      {
         Eldbus_Message_Iter *kv;
+       printf("NM: reply  hint [%s] [%s]\n", fields[i], values[i]);
         eldbus_message_iter_arguments_append(secrets_array, "{ss}", &kv);
         eldbus_message_iter_basic_append(kv, 's', fields[i] ?: "");
         eldbus_message_iter_basic_append(kv, 's', values[i] ?: "");
@@ -3241,7 +3249,57 @@ struct _Agent_Vpn_Conn_Info
 {
    char *conn_id;
    char *svc_type;
+   Eina_List *vpn_data; /* Agent_Vpn_Data_Item* */
 };
+
+typedef struct _Agent_Vpn_Data_Item
+{
+   char *key;
+   char *value;
+} Agent_Vpn_Data_Item;
+
+static void
+_agent_vpn_data_item_free(Agent_Vpn_Data_Item *item)
+{
+   if (!item) return;
+   free(item->key);
+   free(item->value);
+   free(item);
+}
+
+static void
+_agent_vpn_conn_info_clear(struct _Agent_Vpn_Conn_Info *info)
+{
+   Agent_Vpn_Data_Item *item;
+
+   if (!info) return;
+   free(info->conn_id);
+   free(info->svc_type);
+   EINA_LIST_FREE(info->vpn_data, item)
+     _agent_vpn_data_item_free(item);
+}
+
+static void
+_agent_vpn_data_parse(Eldbus_Message_Iter *data_iter,
+                      struct _Agent_Vpn_Conn_Info *out)
+{
+   Eldbus_Message_Iter *entry;
+
+   while (eldbus_message_iter_get_and_next(data_iter, 'e', &entry))
+     {
+        Agent_Vpn_Data_Item *item;
+        const char *key, *value;
+
+        if (!eldbus_message_iter_arguments_get(entry, "ss", &key, &value))
+          continue;
+
+        item = E_NEW(Agent_Vpn_Data_Item, 1);
+        if (!item) continue;
+        item->key = key ? strdup(key) : NULL;
+        item->value = value ? strdup(value) : NULL;
+        out->vpn_data = eina_list_append(out->vpn_data, item);
+     }
+}
 
 static void
 _agent_vpn_conn_info_parse(Eldbus_Message_Iter *conn_props,
@@ -3251,6 +3309,7 @@ _agent_vpn_conn_info_parse(Eldbus_Message_Iter *conn_props,
 
    out->conn_id = NULL;
    out->svc_type = NULL;
+   out->vpn_data = NULL;
 
    while (eldbus_message_iter_get_and_next(conn_props, 'e', &conn_dict))
      {
@@ -3281,48 +3340,212 @@ _agent_vpn_conn_info_parse(Eldbus_Message_Iter *conn_props,
                   if (eldbus_message_iter_arguments_get(var, "s", &s))
                     out->svc_type = strdup(s);
                }
-          }
-
-        if (out->conn_id && out->svc_type) return;
-     }
-}
-
-static char **
-_agent_hints_extract(Eldbus_Message_Iter *hints, unsigned int *n_out)
-{
-   char **arr = NULL;
-   unsigned int n = 0, cap = 0;
-   const char *s;
-   while (eldbus_message_iter_get_and_next(hints, 's', &s))
-     {
-        /* Always keep room for the trailing NULL sentinel. */
-        if (n + 1 >= cap)
-          {
-             unsigned int new_cap = cap ? cap * 2 : 4;
-             char **tmp = realloc(arr, sizeof(*arr) * new_cap);
-             if (!tmp)
+             else if (want_vpn && !strcmp(ekey, "data"))
                {
-                  for (unsigned int i = 0; i < n; i++) free(arr[i]);
-                  free(arr);
-                  *n_out = 0;
-                  return NULL;
+                  Eldbus_Message_Iter *data_iter;
+
+                  if (eldbus_message_iter_arguments_get(var, "a{ss}",
+                                                        &data_iter))
+                    _agent_vpn_data_parse(data_iter, out);
                }
-             arr = tmp;
-             cap = new_cap;
           }
-        arr[n++] = strdup(s);
+
+        if (out->conn_id && out->svc_type && out->vpn_data) return;
      }
-   if (arr) arr[n] = NULL;
-   *n_out = n;
-   return arr;
 }
+
+static const char *
+_agent_vpn_data_find(const struct _Agent_Vpn_Conn_Info *info,
+                     const char *key)
+{
+   Eina_List *l;
+   Agent_Vpn_Data_Item *item;
+
+   if (!info || !key) return NULL;
+   EINA_LIST_FOREACH(info->vpn_data, l, item)
+     {
+        if (item->key && !strcmp(item->key, key))
+          return item->value;
+     }
+   return NULL;
+}
+
+static Eina_Bool
+_agent_vpn_secret_flags_get(const struct _Agent_Vpn_Conn_Info *info,
+                            const char *secret_name,
+                            unsigned int *flags_out)
+{
+   char key[256];
+   const char *value;
+   char *end = NULL;
+   unsigned long flags;
+
+   if (!secret_name || !secret_name[0]) return EINA_FALSE;
+   snprintf(key, sizeof(key), "%s-flags", secret_name);
+   value = _agent_vpn_data_find(info, key);
+   if (!value) return EINA_FALSE;
+
+   flags = strtoul(value, &end, 10);
+   if (!end || *end) return EINA_FALSE;
+
+   if (flags_out) *flags_out = (unsigned int)flags;
+   return EINA_TRUE;
+}
+
+typedef struct _Agent_Vpn_Field_List
+{
+   char **items;
+   unsigned int len;
+   unsigned int cap;
+   char *message;
+} Agent_Vpn_Field_List;
 
 static void
-_agent_str_array_free(char **arr, unsigned int n)
+_agent_vpn_field_list_clear(Agent_Vpn_Field_List *list)
 {
-   if (!arr) return;
-   for (unsigned int i = 0; i < n; i++) free(arr[i]);
-   free(arr);
+   if (!list) return;
+   for (unsigned int i = 0; i < list->len; i++) free(list->items[i]);
+   free(list->items);
+   free(list->message);
+}
+
+static Eina_Bool
+_agent_vpn_field_list_contains(const Agent_Vpn_Field_List *list,
+                               const char *field)
+{
+   if (!list || !field) return EINA_FALSE;
+   for (unsigned int i = 0; i < list->len; i++)
+     if (list->items[i] && !strcmp(list->items[i], field))
+       return EINA_TRUE;
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_agent_vpn_field_list_add(Agent_Vpn_Field_List *list, const char *field)
+{
+   char **tmp;
+   unsigned int new_cap;
+
+   if (!field || !field[0]) return EINA_TRUE;
+   if (_agent_vpn_field_list_contains(list, field)) return EINA_TRUE;
+
+   if (list->len + 1 >= list->cap)
+     {
+        new_cap = list->cap ? list->cap * 2 : 4;
+        tmp = realloc(list->items, sizeof(*list->items) * new_cap);
+        if (!tmp) return EINA_FALSE;
+        list->items = tmp;
+        list->cap = new_cap;
+     }
+
+   list->items[list->len] = strdup(field);
+   if (!list->items[list->len]) return EINA_FALSE;
+   list->len++;
+   list->items[list->len] = NULL;
+   return EINA_TRUE;
+}
+
+static const struct
+{
+   const char *type;
+   const char *name;
+} _agent_vpn_default_secrets[] = {
+   { "pptp",        "password" },
+   { "iodine",      "password" },
+   { "ssh",         "password" },
+   { "l2tp",        "password" },
+   { "fortisslvpn", "password" },
+   { "openvpn",     "password" },
+   { "openvpn",     "cert-pass" },
+   { "openvpn",     "http-proxy-password" },
+   { "vpnc",        "Xauth password" },
+   { "vpnc",        "IPSec secret" },
+   { "openswan",    "xauthpassword" },
+   { "openswan",    "pskvalue" },
+   { "libreswan",   "xauthpassword" },
+   { "libreswan",   "pskvalue" },
+   { "strongswan",  "xauthpassword" },
+   { "strongswan",  "pskvalue" },
+   { "openconnect", "gateway" },
+   { "openconnect", "cookie" },
+   { "openconnect", "gwcert" },
+   { "openconnect", "resolve" },
+   { NULL, NULL }
+};
+
+static const char *
+_agent_vpn_service_short_name(const char *service_type)
+{
+   const char *p;
+
+   if (!service_type) return NULL;
+   p = strrchr(service_type, '.');
+   return p ? p + 1 : service_type;
+}
+
+static Eina_Bool
+_agent_vpn_fields_from_hints(Eldbus_Message_Iter *hints,
+                             Agent_Vpn_Field_List *fields,
+                             Eina_Bool *is_challenge)
+{
+   const char *s;
+
+  printf("NM: hints [%p]\n", hints);
+   if (is_challenge) *is_challenge = EINA_FALSE;
+
+   while (eldbus_message_iter_get_and_next(hints, 's', &s))
+     {
+       printf("NM: hint [%s]\n", s);
+        if (!s) continue;
+        if (!strncmp(s, NM_SECRET_TAG_VPN_MSG, strlen(NM_SECRET_TAG_VPN_MSG)))
+          {
+             free(fields->message);
+             fields->message = strdup(s + strlen(NM_SECRET_TAG_VPN_MSG));
+             if (!fields->message) return EINA_FALSE;
+             continue;
+          }
+        if (!strncmp(s, NM_SECRET_TAG_DYNAMIC_CHALLENGE,
+                     strlen(NM_SECRET_TAG_DYNAMIC_CHALLENGE)) ||
+            !strncmp(s, NM_SECRET_TAG_DYNAMIC_CHALLENGE_ECHO,
+                     strlen(NM_SECRET_TAG_DYNAMIC_CHALLENGE_ECHO)))
+          {
+             if (is_challenge) *is_challenge = EINA_TRUE;
+          }
+        if (!_agent_vpn_field_list_add(fields, s))
+          return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_agent_vpn_fields_add_defaults(const struct _Agent_Vpn_Conn_Info *info,
+                               Agent_Vpn_Field_List *fields)
+{
+   const char *short_name = _agent_vpn_service_short_name(info->svc_type);
+
+   if (!short_name) return EINA_TRUE;
+
+   for (unsigned int i = 0; _agent_vpn_default_secrets[i].type; i++)
+     {
+        unsigned int flags = 0;
+        const char *name = _agent_vpn_default_secrets[i].name;
+
+        if (strcmp(short_name, _agent_vpn_default_secrets[i].type))
+          continue;
+        if (!_agent_vpn_secret_flags_get(info, name, &flags))
+          continue;
+        if (flags & NM_SETTING_SECRET_FLAG_NOT_REQUIRED)
+          continue;
+        if (!(flags & (NM_SETTING_SECRET_FLAG_AGENT_OWNED |
+                       NM_SETTING_SECRET_FLAG_NOT_SAVED)))
+          continue;
+       printf("NM: hint def [%s]\n", name);
+        if (!_agent_vpn_field_list_add(fields, name))
+          return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
 }
 
 static Eldbus_Message *
@@ -3336,6 +3559,7 @@ _agent_get_secrets(const Eldbus_Service_Interface *iface,
    uint32_t flags;
    char ssid[64] = "";
 
+  printf("NM: _agent_get_secrets()...\n");
    a = eldbus_service_object_data_get(iface, AGENT_DATA_KEY);
 
    if (!eldbus_message_arguments_get(msg, "a{sa{sv}}osasu",
@@ -3345,6 +3569,7 @@ _agent_get_secrets(const Eldbus_Service_Interface *iface,
         WRN("GetSecrets: cannot parse arguments");
         return eldbus_message_method_return_new(msg);
      }
+  printf("NM: _agent_get_secrets() 2\n");
 
    DBG("GetSecrets for %s setting=%s flags=%u",
        conn_path, setting_name, flags);
@@ -3370,20 +3595,47 @@ _agent_get_secrets(const Eldbus_Service_Interface *iface,
    if (!strcmp(setting_name, "vpn"))
      {
         struct _Agent_Vpn_Conn_Info info;
-        unsigned int n_hints = 0;
-        char **hint_arr;
+        Agent_Vpn_Field_List fields = { 0 };
+        Eina_Bool is_challenge = EINA_FALSE;
 
+  printf("NM: _agent_get_secrets() vpn\n");
         /* Single forward pass over the connection dict: both connection.id
          * and vpn.service-type are collected in one walk to avoid the
-         * forward-only iterator skipping the second key. */
+         * forward-only iterator skipping the second key.  vpn.data is also
+         * collected because NM-style agents use it to inspect per-secret
+         * flags when hints are empty or incomplete. */
         _agent_vpn_conn_info_parse(conn_props, &info);
-        hint_arr = _agent_hints_extract(hints, &n_hints);
+
+        if (!_agent_vpn_fields_from_hints(hints, &fields, &is_challenge) ||
+            (!is_challenge &&
+             !_agent_vpn_fields_add_defaults(&info, &fields)))
+          {
+  printf("NM: _agent_get_secrets() clear 1\n");
+             WRN("GetSecrets: failed to build VPN secret request");
+             e_nm_agent_reply_cancel(req);
+             _agent_vpn_field_list_clear(&fields);
+             _agent_vpn_conn_info_clear(&info);
+             return NULL;
+          }
+
+        if (fields.len == 0)
+          {
+  printf("NM: _agent_get_secrets() fields.len == 0\n");
+             WRN("GetSecrets: no VPN secrets requested by hints or flags");
+             e_nm_agent_reply_cancel(req);
+             _agent_vpn_field_list_clear(&fields);
+             _agent_vpn_conn_info_clear(&info);
+             return NULL;
+          }
 
         if (_agent_cbs.vpn_request)
           {
+  printf("NM: _agent_get_secrets() _agent_cbs.vpn_request() [%s] [%p] %i\n", fields.message, fields.items, fields.len);
              _agent_cbs.vpn_request(_agent_cb_data, req,
                                     info.conn_id ?: "VPN", info.svc_type,
-                                    (const char *const *)hint_arr, n_hints);
+                                    fields.message,
+                                    (const char *const *)fields.items,
+                                    fields.len);
           }
         else
           {
@@ -3391,12 +3643,12 @@ _agent_get_secrets(const Eldbus_Service_Interface *iface,
              e_nm_agent_reply_cancel(req);
           }
 
-        free(info.conn_id);
-        free(info.svc_type);
-        _agent_str_array_free(hint_arr, n_hints);
+        _agent_vpn_field_list_clear(&fields);
+        _agent_vpn_conn_info_clear(&info);
      }
    else if (!strcmp(setting_name, "802-11-wireless-security"))
      {
+  printf("NM: _agent_get_secrets() wifi\n");
         if (_agent_cbs.request)
           _agent_cbs.request(_agent_cb_data, req, ssid[0] ? ssid : NULL);
         else
@@ -3404,6 +3656,7 @@ _agent_get_secrets(const Eldbus_Service_Interface *iface,
      }
    else
      {
+  printf("NM: _agent_get_secrets() cancel\n");
         WRN("Unhandled secret setting %s; cancelling", setting_name);
         e_nm_agent_reply_cancel(req);
      }
@@ -3537,8 +3790,10 @@ _e_nm_agent_new(Eldbus_Connection *eldbus_conn)
 
    obj   = eldbus_object_get(a->eldbus_conn, NM_BUS_NAME, NM_AGENT_MGR_PATH);
    proxy = eldbus_proxy_get(obj, NM_IFACE_AGENT_MGR);
-   eldbus_proxy_call(proxy, "Register", _agent_register_cb, NULL, -1,
-                     "s", NM_AGENT_ID);
+   eldbus_proxy_call(proxy, "RegisterWithCapabilities",
+                     _agent_register_cb, NULL, -1,
+                     "su", NM_AGENT_ID,
+                     (uint32_t)NM_SECRET_AGENT_CAPABILITY_VPN_HINTS);
    eldbus_proxy_unref(proxy);
    eldbus_object_unref(obj);
 
