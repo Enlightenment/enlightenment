@@ -160,6 +160,65 @@ _e_comp_x_focus_check(void)
 }
 
 static void
+_e_comp_x_hash_add(const unsigned int id, E_Client *ec)
+{
+  const int n = sizeof(sizeof(ec->inhash.entry) / sizeof(ec->inhash.entry[0]));
+  int i;
+
+  for (i = 0; i < n; i++)
+    {
+      if (ec->inhash.entry[i] == 0)
+        {
+          ec->inhash.entry[i] = id;
+          eina_hash_add(clients_win_hash, &id, ec);
+          return;
+        }
+    }
+  ERR("Ran out of client storage slots!");
+}
+
+static void
+_e_comp_x_hash_del(const unsigned int id, E_Client *ec)
+{
+  const int n = sizeof(sizeof(ec->inhash.entry) / sizeof(ec->inhash.entry[0]));
+  int i;
+
+  for (i = 0; i < n; i++)
+    {
+      if (ec->inhash.entry[i] == id)
+        {
+          ec->inhash.entry[i] = 0;
+          eina_hash_del_by_key(clients_win_hash, &id);
+          return;
+        }
+    }
+}
+
+
+E_API void
+e_comp_x_hash_clear(E_Client *ec)
+{
+  const int n = sizeof(sizeof(ec->inhash.entry) / sizeof(ec->inhash.entry[0]));
+  int i;
+
+  for (i = 0; i < n; i++)
+    {
+      if (ec->inhash.entry[i])
+        {
+          const unsigned int id = ec->inhash.entry[i];
+
+          ec->inhash.entry[i] = 0;
+          eina_hash_del_by_key(clients_win_hash, &id);
+        }
+    }
+}
+
+static E_Client *
+_e_comp_x_hash_find(const unsigned int id)
+{
+   return eina_hash_find(clients_win_hash, &id);
+}
+static void
 _e_comp_x_client_modal_setup(E_Client *ec)
 {
    E_Comp_X_Client_Data *pcd;
@@ -169,7 +228,8 @@ _e_comp_x_client_modal_setup(E_Client *ec)
    pcd = _e_comp_x_client_data_get(ec->parent);
    if (!pcd->lock_win)
      {
-        eina_hash_add(clients_win_hash, &pcd->lock_win, ec->parent);
+        _e_comp_x_hash_add(pcd->lock_win, ec->parent);
+//        eina_hash_add(clients_win_hash, &pcd->lock_win, ec->parent);
         pcd->lock_win = ecore_x_window_input_new(e_client_util_pwin_get(ec->parent), 0, 0, ec->parent->w, ec->parent->h);
         e_comp_ignore_win_add(E_PIXMAP_TYPE_X, pcd->lock_win);
         ecore_x_window_show(pcd->lock_win);
@@ -632,7 +692,8 @@ _e_comp_x_client_find_by_window(Ecore_X_Window win)
 {
    E_Client *ec;
 
-   ec = eina_hash_find(clients_win_hash, &win);
+   ec = _e_comp_x_hash_find(win);
+//   ec = eina_hash_find(clients_win_hash, &win);
    if (ec && e_object_is_del(E_OBJECT(ec))) ec = NULL;
    return ec;
 }
@@ -3567,7 +3628,8 @@ _e_comp_x_hook_client_pre_frame_assign(void *d EINA_UNUSED, E_Client *ec)
    e_comp_object_shape_input_update(ec->frame);
    EC_CHANGED(ec);
 
-   eina_hash_add(clients_win_hash, &pwin, ec);
+   _e_comp_x_hash_add(pwin, ec);
+//   eina_hash_add(clients_win_hash, &pwin, ec);
 
    if (ec->visible)
      {
@@ -5005,7 +5067,8 @@ _e_comp_x_hook_client_new(void *d EINA_UNUSED, E_Client *ec)
 
    ec->comp_data->first_damage = ec->internal;
 
-   eina_hash_add(clients_win_hash, &win, ec);
+   _e_comp_x_hash_add(win, ec);
+//   eina_hash_add(clients_win_hash, &win, ec);
    if (!ec->input_only)
      ec->comp_data->first_draw_delay = ecore_timer_loop_add(e_comp_config_get()->first_draw_delay, _e_comp_x_first_draw_delay_cb, ec);
 }
@@ -5187,7 +5250,10 @@ _e_comp_x_hook_client_del(void *d EINA_UNUSED, E_Client *ec)
      }
    ec->already_unparented = 1;
    if (cd)
-     eina_hash_del_by_key(clients_win_hash, &win);
+     {
+        _e_comp_x_hash_del(win, ec);
+//        eina_hash_del_by_key(clients_win_hash, &win);
+     }
    if (cd && cd->damage)
      {
         eina_hash_del(damages_hash, &cd->damage, ec);
@@ -5196,7 +5262,8 @@ _e_comp_x_hook_client_del(void *d EINA_UNUSED, E_Client *ec)
      }
    if (cd && cd->reparented)
      {
-        eina_hash_del_by_key(clients_win_hash, &pwin);
+        _e_comp_x_hash_del(pwin, ec);
+//        eina_hash_del_by_key(clients_win_hash, &pwin);
         e_pixmap_parent_window_set(e_comp_x_client_pixmap_get(ec), 0);
         ecore_x_window_free(pwin);
         eina_hash_add(dead_wins, &pwin, (void*)1);
@@ -5212,7 +5279,8 @@ _e_comp_x_hook_client_del(void *d EINA_UNUSED, E_Client *ec)
         pcd = _e_comp_x_client_data_get(ec->parent);
         if (pcd->lock_win)
           {
-             eina_hash_del_by_key(clients_win_hash, &pcd->lock_win);
+             _e_comp_x_hash_del(pcd->lock_win, ec);
+//             eina_hash_del_by_key(clients_win_hash, &pcd->lock_win);
              ecore_x_window_hide(pcd->lock_win);
              ecore_x_window_free(pcd->lock_win);
              pcd->lock_win = 0;
@@ -6338,9 +6406,12 @@ e_comp_x_xwayland_client_setup(E_Client *ec, E_Client *wc)
    if (wc->new_client)
      e_comp->new_clients++;
 
-   eina_hash_set(clients_win_hash, &win, wc);
+   _e_comp_x_hash_add(win, ec);
    if (pwin)
-     eina_hash_set(clients_win_hash, &pwin, wc);
+     _e_comp_x_hash_add(pwin, ec);
+//   eina_hash_set(clients_win_hash, &win, wc);
+//   if (pwin)
+//     eina_hash_set(clients_win_hash, &pwin, wc);
    wc->visible = 1;
    if (wc->ignored)
      e_client_unignore(wc);

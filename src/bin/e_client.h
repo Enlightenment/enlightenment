@@ -578,6 +578,10 @@ struct E_Client
       unsigned int  steam_game_id;
    } steam;
 
+   struct {
+     unsigned int entry[4]; // up to 4 entires in hashes - should only be one
+   } inhash;
+
    struct
    {
       unsigned char visible E_BITFIELD;
@@ -887,5 +891,9 @@ YOLO E_API void e_client_focus_stack_set(Eina_List *l);
 
 E_API void e_client_parent_set(E_Client *ec, E_Client *parent);
 E_API void e_client_transients_restack(E_Client *ec);
+
+E_API void e_comp_x_hash_clear(E_Client *ec);
+
+
 #include "e_client.x"
 #endif

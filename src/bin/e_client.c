@@ -464,6 +464,7 @@ e_client_revert_focus(E_Client *ec)
 static void
 _e_client_free(E_Client *ec)
 {
+   e_comp_x_hash_clear(ec);
    if (focused == ec)
      {
         focused = NULL;
