@@ -485,7 +485,7 @@ _clipboard_cb_event_selection(void *data EINA_UNUSED,
       ecore_timer_del(delay_sel_timer);
       delay_sel_timer = NULL;
     }
-  delay_sel_timer = ecore_timer_add(0.25, _cb_sel_change_delay, data);
+  delay_sel_timer = ecore_timer_add(1.0, _cb_sel_change_delay, data);
   mod.sel_type = ev->type;
   return EINA_TRUE;
 }
