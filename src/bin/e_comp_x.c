@@ -162,7 +162,7 @@ _e_comp_x_focus_check(void)
 static void
 _e_comp_x_hash_add(const unsigned int id, E_Client *ec)
 {
-  const int n = sizeof(sizeof(ec->inhash.entry) / sizeof(ec->inhash.entry[0]));
+  const int n = sizeof(ec->inhash.entry) / sizeof(ec->inhash.entry[0]);
   int i;
 
   for (i = 0; i < n; i++)
@@ -180,7 +180,7 @@ _e_comp_x_hash_add(const unsigned int id, E_Client *ec)
 static void
 _e_comp_x_hash_del(const unsigned int id, E_Client *ec)
 {
-  const int n = sizeof(sizeof(ec->inhash.entry) / sizeof(ec->inhash.entry[0]));
+  const int n = sizeof(ec->inhash.entry) / sizeof(ec->inhash.entry[0]);
   int i;
 
   for (i = 0; i < n; i++)
@@ -198,7 +198,7 @@ _e_comp_x_hash_del(const unsigned int id, E_Client *ec)
 E_API void
 e_comp_x_hash_clear(E_Client *ec)
 {
-  const int n = sizeof(sizeof(ec->inhash.entry) / sizeof(ec->inhash.entry[0]));
+  const int n = sizeof(ec->inhash.entry) / sizeof(ec->inhash.entry[0]);
   int i;
 
   for (i = 0; i < n; i++)
@@ -218,6 +218,7 @@ _e_comp_x_hash_find(const unsigned int id)
 {
    return eina_hash_find(clients_win_hash, &id);
 }
+
 static void
 _e_comp_x_client_modal_setup(E_Client *ec)
 {
