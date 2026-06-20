@@ -105,6 +105,7 @@ _smart_del(Evas_Object *obj)
 
   _sc_parent.del(obj);
   evas_object_smart_data_set(obj, NULL);
+  free(sd);
 }
 
 static void

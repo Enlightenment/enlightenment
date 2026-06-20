@@ -253,6 +253,7 @@ _smart_del(Evas_Object *obj)
    vidimg_release(sd->o_vid);
 
    _parent_sc.del(obj);
+   free(sd);
 }
 
 static void
