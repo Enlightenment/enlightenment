@@ -81,24 +81,8 @@ static void
 _smart_del(Evas_Object *obj)
 {
   ENTRY;
-  int i;
 
-  if (sd->o_vals)
-    {
-      for (i = 0; i < sd->num; i++) evas_object_del(sd->o_vals[i]);
-      free(sd->o_vals);
-      sd->o_vals = NULL;
-    }
-  if (sd->o_grid)
-    {
-      evas_object_del(sd->o_grid);
-      sd->o_grid = NULL;
-    }
-  if (sd->o_base)
-    {
-      evas_object_del(sd->o_base);
-      sd->o_base = NULL;
-    }
+  E_FREE(sd->o_vals);
   eina_stringshare_replace(&sd->colorspec, NULL);
   eina_stringshare_replace(&sd->colorspecdown, NULL);
   sd->o_smart = NULL;
