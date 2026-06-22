@@ -3,6 +3,7 @@
 #include "e_networkmanager.h"
 #include "e_networkmanager_vpn.h"
 #include "e_networkmanager_import.h"
+#include "e_networkmanager_vpn_username.h"
 
 E_Module *networkmanager_mod = NULL;
 E_NM_Config *networkmanager_config = NULL;
@@ -406,10 +407,16 @@ _enm_itc_bt_content_get(void *data, Evas_Object *obj, const char *part)
 /* ---- VPN item class callbacks --------------------------------------------- */
 
 static void
-_enm_vpn_import_done_cb(void *data EINA_UNUSED, Eina_Bool ok, const char *err)
+_enm_vpn_import_done_cb(void *data, Eina_Bool ok, const char *err,
+                        const char *conn_name)
 {
+   const char *type = data;  /* import VPN type ("openvpn", ...); may be NULL */
    E_Dialog *err_dlg;
-   if (ok) { INF("VPN import succeeded"); return; }
+   if (ok)
+     {
+        if (conn_name) enm_vpn_username_maybe_prompt(conn_name, type);
+        return;
+     }
 
    ERR("VPN import failed: %s", err ?: "(no output)");
 
@@ -452,11 +459,12 @@ _enm_vpn_fs_done_cb(void *data, Evas_Object *fs EINA_UNUSED, void *event)
      {
         _enm_vpn_import_done_cb(NULL, EINA_FALSE,
               _("Could not detect VPN type from file extension. "
-                "Use a .conf (WireGuard) or .ovpn (OpenVPN) file."));
+                "Use a .conf (WireGuard) or .ovpn (OpenVPN) file."),
+              NULL);
      }
    else
      {
-        enm_import_run(type, file, _enm_vpn_import_done_cb, NULL);
+        enm_import_run(type, file, _enm_vpn_import_done_cb, (void *)type);
      }
    e_object_del(E_OBJECT(dialog));
 }

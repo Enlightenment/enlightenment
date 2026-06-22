@@ -8,6 +8,8 @@ src = files(
   'e_networkmanager_vpn.h',
   'e_networkmanager_import.c',
   'e_networkmanager_import.h',
+  'e_networkmanager_vpn_username.c',
+  'e_networkmanager_vpn_username.h',
   'e_mod_main.h'
 )
 

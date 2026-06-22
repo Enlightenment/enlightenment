@@ -28,12 +28,17 @@ const char *enm_import_detect_type(const char *file_path);
  * stderr_text points into an internal buffer that is freed immediately
  * after the callback returns; copy it if you need to retain.
  *
+ * conn_name is the imported connection's name parsed from nmcli stdout
+ * (NULL on failure or when it cannot be parsed); it too is freed right
+ * after the callback returns.
+ *
  * data must remain valid until done_cb fires.  enm_import_run does not
  * return a cancellation handle, so the caller is responsible for
  * ensuring it does not deallocate data while a call is in flight.
  */
 typedef void (*Enm_Import_Done_Cb)(void *data, Eina_Bool ok,
-                                   const char *stderr_text);
+                                   const char *stderr_text,
+                                   const char *conn_name);
 
 /* Run nmcli connection import asynchronously.  done_cb is invoked exactly
  * once. */
