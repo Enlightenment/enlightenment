@@ -3185,7 +3185,6 @@ e_nm_agent_reply_vpn_secrets(E_NM_Agent_Request *req,
    for (unsigned int i = 0; i < n_fields; i++)
      {
         Eldbus_Message_Iter *kv;
-       printf("NM: reply  hint [%s] [%s]\n", fields[i], values[i]);
         eldbus_message_iter_arguments_append(secrets_array, "{ss}", &kv);
         eldbus_message_iter_basic_append(kv, 's', fields[i] ?: "");
         eldbus_message_iter_basic_append(kv, 's', values[i] ?: "");
@@ -3490,12 +3489,10 @@ _agent_vpn_fields_from_hints(Eldbus_Message_Iter *hints,
 {
    const char *s;
 
-  printf("NM: hints [%p]\n", hints);
    if (is_challenge) *is_challenge = EINA_FALSE;
 
    while (eldbus_message_iter_get_and_next(hints, 's', &s))
      {
-       printf("NM: hint [%s]\n", s);
         if (!s) continue;
         if (!strncmp(s, NM_SECRET_TAG_VPN_MSG, strlen(NM_SECRET_TAG_VPN_MSG)))
           {
@@ -3540,7 +3537,6 @@ _agent_vpn_fields_add_defaults(const struct _Agent_Vpn_Conn_Info *info,
         if (!(flags & (NM_SETTING_SECRET_FLAG_AGENT_OWNED |
                        NM_SETTING_SECRET_FLAG_NOT_SAVED)))
           continue;
-       printf("NM: hint def [%s]\n", name);
         if (!_agent_vpn_field_list_add(fields, name))
           return EINA_FALSE;
      }
@@ -3559,7 +3555,6 @@ _agent_get_secrets(const Eldbus_Service_Interface *iface,
    uint32_t flags;
    char ssid[64] = "";
 
-  printf("NM: _agent_get_secrets()...\n");
    a = eldbus_service_object_data_get(iface, AGENT_DATA_KEY);
 
    if (!eldbus_message_arguments_get(msg, "a{sa{sv}}osasu",
@@ -3569,7 +3564,6 @@ _agent_get_secrets(const Eldbus_Service_Interface *iface,
         WRN("GetSecrets: cannot parse arguments");
         return eldbus_message_method_return_new(msg);
      }
-  printf("NM: _agent_get_secrets() 2\n");
 
    DBG("GetSecrets for %s setting=%s flags=%u",
        conn_path, setting_name, flags);
@@ -3598,7 +3592,6 @@ _agent_get_secrets(const Eldbus_Service_Interface *iface,
         Agent_Vpn_Field_List fields = { 0 };
         Eina_Bool is_challenge = EINA_FALSE;
 
-  printf("NM: _agent_get_secrets() vpn\n");
         /* Single forward pass over the connection dict: both connection.id
          * and vpn.service-type are collected in one walk to avoid the
          * forward-only iterator skipping the second key.  vpn.data is also
@@ -3610,7 +3603,6 @@ _agent_get_secrets(const Eldbus_Service_Interface *iface,
             (!is_challenge &&
              !_agent_vpn_fields_add_defaults(&info, &fields)))
           {
-  printf("NM: _agent_get_secrets() clear 1\n");
              WRN("GetSecrets: failed to build VPN secret request");
              e_nm_agent_reply_cancel(req);
              _agent_vpn_field_list_clear(&fields);
@@ -3620,7 +3612,6 @@ _agent_get_secrets(const Eldbus_Service_Interface *iface,
 
         if (fields.len == 0)
           {
-  printf("NM: _agent_get_secrets() fields.len == 0\n");
              WRN("GetSecrets: no VPN secrets requested by hints or flags");
              e_nm_agent_reply_cancel(req);
              _agent_vpn_field_list_clear(&fields);
@@ -3630,7 +3621,6 @@ _agent_get_secrets(const Eldbus_Service_Interface *iface,
 
         if (_agent_cbs.vpn_request)
           {
-  printf("NM: _agent_get_secrets() _agent_cbs.vpn_request() [%s] [%p] %i\n", fields.message, fields.items, fields.len);
              _agent_cbs.vpn_request(_agent_cb_data, req,
                                     info.conn_id ?: "VPN", info.svc_type,
                                     fields.message,
@@ -3648,7 +3638,6 @@ _agent_get_secrets(const Eldbus_Service_Interface *iface,
      }
    else if (!strcmp(setting_name, "802-11-wireless-security"))
      {
-  printf("NM: _agent_get_secrets() wifi\n");
         if (_agent_cbs.request)
           _agent_cbs.request(_agent_cb_data, req, ssid[0] ? ssid : NULL);
         else
@@ -3656,7 +3645,6 @@ _agent_get_secrets(const Eldbus_Service_Interface *iface,
      }
    else
      {
-  printf("NM: _agent_get_secrets() cancel\n");
         WRN("Unhandled secret setting %s; cancelling", setting_name);
         e_nm_agent_reply_cancel(req);
      }

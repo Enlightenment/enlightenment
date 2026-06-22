@@ -64,8 +64,8 @@ _dialog_send_ok(E_NM_Agent_Dialog *ad)
      }
    else
      {
-        const char **values = calloc(ad->n_fields, sizeof(*values));
-        char **utf8 = calloc(ad->n_fields, sizeof(*utf8));
+        const char **values = calloc(ad->n_fields ?: 1, sizeof(*values));
+        char **utf8 = calloc(ad->n_fields ?: 1, sizeof(*utf8));
         if (!values || !utf8)
           {
              free(values); free(utf8);
