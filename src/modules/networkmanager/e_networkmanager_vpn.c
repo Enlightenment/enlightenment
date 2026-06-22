@@ -375,9 +375,16 @@ enm_vpn_remove_by_path(struct NM_Manager *nm, const char *path)
 {
    struct NM_VPN_Connection *vc;
 
+   Eina_Bool was_active;
+
    if (!nm || !path) return;
    vc = enm_vpn_find_by_path(nm, path);
    if (!vc) return;  /* not a VPN we tracked — nothing to do */
+
+   /* If an *active* VPN is deleted, removing it drops the active count, so the
+    * status shield must be re-emitted — otherwise the gadget keeps showing the
+    * secured icon for a connection that no longer exists. */
+   was_active = (vc->vpn_state == NM_VPN_STATE_ACTIVATED);
 
    nm->vpn_connections =
        eina_inlist_remove(nm->vpn_connections, EINA_INLIST_GET(vc));
@@ -387,6 +394,7 @@ enm_vpn_remove_by_path(struct NM_Manager *nm, const char *path)
       _mod_cb_vpn_changed_t cb = _mod_cbs_vpn_changed_get();
       if (cb) cb(nm);
    }
+   if (was_active) enm_vpn_active_changed_schedule(nm);
 }
 
 void
