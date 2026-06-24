@@ -2633,35 +2633,49 @@ _e_comp_x_e_client_obj_get(Evas_Object *o)
 static Eina_Bool
 _e_comp_x_mouse_in_fix_check_timer_cb(void *data EINA_UNUSED)
 {
-   E_Client *ec = NULL;
-   Eina_List *l, *in_list;
-   Evas_Object *o;
-   int x, y;
+  E_Client *ec = NULL;
+  Eina_List *l, *in_list = NULL;
+  Evas_Object *o;
+  int x, y;
 
-   mouse_in_fix_check_timer = NULL;
-   if (e_grabinput_key_win_get() || e_grabinput_mouse_win_get())
-     return EINA_FALSE;
-   ecore_evas_pointer_xy_get(e_comp->ee, &x, &y);
+  mouse_in_fix_check_timer = NULL;
+  if (e_grabinput_key_win_get() || e_grabinput_mouse_win_get())
+    return EINA_FALSE;
+  ecore_evas_pointer_xy_get(e_comp->ee, &x, &y);
 
-   in_list = evas_tree_objects_at_xy_get(e_comp->evas, NULL, x, y);
-   EINA_LIST_FOREACH(in_list, l, o)
-     {
-        ec = _e_comp_x_e_client_obj_get(o);
-        if (ec)
-          {
-             if ((!e_client_util_desk_visible
-                  (ec, e_desk_current_get(e_zone_current_get())))) continue;
-             break;
-          }
-     }
-   eina_list_free(in_list);
-   if (ec)
-     {
-        mouse_client = ec;
-        if (mouse_in_job) ecore_job_del(mouse_in_job);
-        mouse_in_job = ecore_job_add(_e_comp_x_mouse_in_job, NULL);
-     }
-   return EINA_FALSE;
+  o = evas_object_top_at_xy_get(e_comp->evas, x, y, EINA_FALSE, EINA_FALSE);
+  ec = _e_comp_x_e_client_obj_get(o);
+  if (ec)
+    {
+      if ((!e_client_util_desk_visible
+           (ec, e_desk_current_get(e_zone_current_get())))) ec = NULL;
+    }
+  if (!ec)
+    {
+      in_list = evas_tree_objects_at_xy_get(e_comp->evas, NULL, x, y);
+      EINA_LIST_FOREACH(in_list, l, o)
+        {
+          ec = _e_comp_x_e_client_obj_get(o);
+          if (ec)
+            {
+              if ((!e_client_util_desk_visible
+                   (ec, e_desk_current_get(e_zone_current_get()))))
+                {
+                  ec = NULL;
+                  continue;
+                }
+              break;
+            }
+        }
+      eina_list_free(in_list);
+    }
+  if (ec)
+    {
+      mouse_client = ec;
+      if (mouse_in_job) ecore_job_del(mouse_in_job);
+      mouse_in_job = ecore_job_add(_e_comp_x_mouse_in_job, NULL);
+    }
+  return EINA_FALSE;
 }
 
 static Eina_Bool
