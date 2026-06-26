@@ -71,7 +71,7 @@ register_item_cb(const Eldbus_Service_Interface *s_iface, const Eldbus_Message *
    if (svc[0] == '/') stupid = EINA_TRUE;
    else stupid = !!strncmp(svc, "org.", 4);
    if ((stupid) && (svc[0] == ':')) stupid = EINA_FALSE;
-   printf("SYSTRAY: [%s] stupid=%i\n", svc, (int)stupid);
+   L("SYSTRAY: [%s] stupid=%i", svc, (int)stupid);
 
    snprintf(buf, sizeof(buf), "%s/%s", stupid ? eldbus_message_sender_get(msg) : svc, stupid ? svc : "/StatusNotifierItem");
    service = eina_stringshare_add(buf);

@@ -7,7 +7,7 @@ e_modapi_init(E_Module *m)
 {
    int w = 1024, h = 768;
 
-   printf("LOAD Wl_Buffer MODULE\n");
+   L("LOAD Wl_Buffer MODULE");
 
    e_comp->ee = ecore_evas_buffer_new(w, h);
 

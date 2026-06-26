@@ -1,4 +1,5 @@
 #include "main.h"
+#include "l.h"
 
 void
 pal_save(Evas_Object *win)
@@ -57,7 +58,7 @@ elm_main(int argc, char **argv)
    elm_win_autodel_set(win, EINA_TRUE);
 
    o = evas_object_rectangle_add(evas_object_evas_get(win));
-   if (!evas_object_key_grab(o, "Escape", 0, 0, EINA_FALSE)) printf("Can't grab...\n");
+   if (!evas_object_key_grab(o, "Escape", 0, 0, EINA_FALSE)) L("Can't grab...");
    evas_object_event_callback_add(o, EVAS_CALLBACK_KEY_DOWN,
                                   _cb_key_down, win);
 

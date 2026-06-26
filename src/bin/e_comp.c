@@ -156,14 +156,14 @@ _e_comp_fullscreen_check(void)
 {
    E_Client *ec;
 
-//   printf("------------------------\n");
+//   L("------------------------");
    E_CLIENT_REVERSE_FOREACH(ec)
      {
         Evas_Object *o = ec->frame;
 
-//        printf("FSCK %p [%i %i %ix%i] [%s]\n",
-//               ec, ec->x, ec->y, ec->w, ec->h,
-//               e_client_util_name_get(ec));
+//        L("FSCK %p [%i %i %ix%i] [%s]",
+//          ec, ec->x, ec->y, ec->w, ec->h,
+//          e_client_util_name_get(ec));
         if (ec->ignored || ec->input_only || (!evas_object_visible_get(ec->frame)))
           continue;
         if (!e_comp_util_client_is_fullscreen(ec))
@@ -270,7 +270,7 @@ _e_comp_cb_nocomp_begin(void)
    e_comp_render_queue();
    e_comp_shape_queue_block(1);
    ecore_event_add(E_EVENT_COMPOSITOR_DISABLE, NULL, NULL, NULL);
-   printf("COMP: suspend\n");
+   L("COMP: suspend");
 }
 
 static void
@@ -280,7 +280,7 @@ _e_comp_cb_nocomp_end(void)
 
    if (!e_comp->nocomp) return;
 
-   printf("COMP: resume\n");
+   L("COMP: resume");
    INF("COMP RESUME!");
    //ecore_evas_manual_render_set(e_comp->ee, EINA_FALSE);
    ecore_evas_show(e_comp->ee);
@@ -875,7 +875,7 @@ _e_comp_shapes_update_comp_client_shape_comp_helper(E_Client *ec, Eina_Tiler *tb
           {
              x = rect->x, y = rect->y, w = rect->w, h = rect->h;
              x += ec->client.x, y += ec->client.y;
-//             printf("SHP: xxx sub %i %i    %ix%i\n", x, y, w, h);
+//             L("SHP: xxx sub %i %i    %ix%i", x, y, w, h);
              E_RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, e_comp->w, e_comp->h);
              if ((w < 1) || (h < 1)) continue;
    //#ifdef SHAPE_DEBUG not sure we can shape check these?
@@ -1022,7 +1022,7 @@ _e_comp_shapes_update_job(void *d EINA_UNUSED)
    if (shape_debug)
      {
         E_FREE_LIST(rl, free);
-        printf("\n");
+        L("%s", "");
      }
    free(exr);
    eina_iterator_free(ti);
@@ -1339,12 +1339,12 @@ e_comp_init(void)
              e_comp_config_get()->engine = E_COMP_ENGINE_SW;
            else
              {
-                fprintf(stderr,
+                L(
                         "ERROR: E_COMP_ENGINE value '%s' invalid.\n"
                         "Please use 'gl' or 'sw'.\n"
                         "Valid values below that request a type of acceleration:\n"
                         "  'gl' : OpenGL based acceleration.\n"
-                        "  'sw' : CPU based Software rendering.\n",
+                        "  'sw' : CPU based Software rendering.",
                         gl);
                 exit(101);
              }
@@ -1373,14 +1373,14 @@ e_comp_init(void)
              }
            else
              {
-                fprintf(stderr,
+                L(
                         "ERROR: E_WL_FORCE value '%s' invalid.\n"
                         "Please use 'buffer', 'drm', 'wl' or 'x11'\n"
                         "Valid values below that request a type of rendering output target:\n"
                         "  'buffer' : Invisible memory buffer. (Debugging/testing)\n"
                         "  'drm'    : DRM/KMS framebuffer. (You want this as a normal full-screen stand-alone Wayland compositor)\n"
                         "  'wl'     : Window as a Wayland application. (Compositor in a Window for debugging/development/testing)\n"
-                        "  'x11'    : Window as a X11 application. (Compositor in a Window for debugging/development/testing)\n",
+                        "  'x11'    : Window as a X11 application. (Compositor in a Window for debugging/development/testing)",
                         eng);
                 exit(101);
              }
@@ -1770,13 +1770,13 @@ e_comp_util_wins_print(void)
 
         ec = evas_object_data_get(o, "E_Client");
         evas_object_geometry_get(o, &x, &y, &w, &h);
-        fprintf(stderr, "LAYER %d  ", evas_object_layer_get(o));
+        L("LAYER %d  ", evas_object_layer_get(o));
         if (ec)
-          fprintf(stderr, "EC%s%s:  %p - '%s:%s' || %d,%d @ %dx%d\n",
+          L("EC%s%s:  %p - '%s:%s' || %d,%d @ %dx%d",
                   ec->override ? "O" : "", ec->focused ? "*" : "", ec,
                   e_client_util_name_get(ec) ?: ec->icccm.name, ec->icccm.class, x, y, w, h);
         else
-          fprintf(stderr, "OBJ: %p - %s || %d,%d @ %dx%d\n", o, evas_object_name_get(o), x, y, w, h);
+          L("OBJ: %p - %s || %d,%d @ %dx%d", o, evas_object_name_get(o), x, y, w, h);
         o = evas_object_below_get(o);
      }
    fputc('\n', stderr);

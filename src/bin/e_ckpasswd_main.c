@@ -16,6 +16,8 @@
 #include <Ecore.h>
 #include <Eldbus.h>
 
+#include "l.h"
+
 static uid_t uid = -1; // uid of person running me
 static gid_t gid = -1; // gid of person running me
 static char *user_name = NULL;
@@ -179,11 +181,11 @@ polkit_agent_response(void *data EINA_UNUSED, const Eldbus_Message *msg,
    ecore_main_loop_quit();
    if (eldbus_message_error_get(msg, &name, &text))
      {
-        fprintf(stderr, "AUTH: Could not respond to auth.\n %s:\n %s\n", name, text);
+        L("AUTH: Could not respond to auth.\n %s:\n %s", name, text);
         return;
      }
    polkit_auth_ok = 0;
-   fprintf(stderr, "AUTH: OK\n");
+   L("AUTH: OK");
 }
 
 int
@@ -200,7 +202,7 @@ polkit_auth(const char *cookie, unsigned int auth_uid)
    eldbus_init();
    c = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
 #define BARF(str) do { \
-   fprintf(stderr, "AUTH: POLKIT: %s\n", str); \
+   L("AUTH: POLKIT: %s", str); \
    return -1; \
 } while (0)
    if (!c) BARF("Cannot get session dbus");
@@ -269,18 +271,18 @@ main(int argc, char **argv)
         rd = read(0, pw, 3);
         if (rd != 3)
           {
-             fprintf(stderr, "AUTH: Error. Can't read passwd preable\n");
+             L("AUTH: Error. Can't read passwd preable");
              goto err;
           }
         if (!((pw[0] == 'p') && (pw[1] == 'w') && (pw[2] == ' ')))
           {
-             fprintf(stderr, "AUTH: Error. Preable is wrong\n");
+             L("AUTH: Error. Preable is wrong");
              goto err;
           }
         rd = read(0, pw, sizeof(pw) - 1);
         if (rd < 0)
           {
-             fprintf(stderr, "AUTH: Error. Can't read passwd on stdin\n");
+             L("AUTH: Error. Can't read passwd on stdin");
              goto err;
           }
         pw[rd] = 0;
@@ -303,14 +305,14 @@ main(int argc, char **argv)
              rd = read(0, pw + pos, 1);
              if (rd < 0)
                {
-                  fprintf(stderr, "AUTH: POLKIT: Error. Can't read polkit cookie on stdin\n");
+                  L("AUTH: POLKIT: Error. Can't read polkit cookie on stdin");
                   goto err;
                }
              if (pw[pos] == ' ')
                {
                   memcpy(polkit_cookie, pw, pos);
                   polkit_cookie[pos] = 0;
-                  fprintf(stderr, "AUTH: POLKIT: [%s]\n", polkit_cookie);
+                  L("AUTH: POLKIT: [%s]", polkit_cookie);
                   pos = 0;
                   break;
                }
@@ -319,7 +321,7 @@ main(int argc, char **argv)
                   pos++;
                   if (pos > 4000)
                     {
-                       fprintf(stderr, "AUTH: POLKIT: Error. Polkit cookie too long\n");
+                       L("AUTH: POLKIT: Error. Polkit cookie too long");
                        return -10;
                     }
                }
@@ -329,14 +331,14 @@ main(int argc, char **argv)
              rd = read(0, pw + pos, 1);
              if (rd < 0)
                {
-                  fprintf(stderr, "AUTH: Error. Can't read polkit uid on stdin\n");
+                  L("AUTH: Error. Can't read polkit uid on stdin");
                   goto err;
                }
              if (pw[pos] == ' ')
                {
                   pw[pos] = 0;
                   polkit_uid = atoi(pw);
-                  fprintf(stderr, "AUTH: UID: [%u]\n", polkit_uid);
+                  L("AUTH: UID: [%u]", polkit_uid);
                   break;
                }
              else
@@ -344,17 +346,17 @@ main(int argc, char **argv)
                   pos++;
                   if (pos > 4000)
                     {
-                       fprintf(stderr, "AUTH: Error. Polkit uid too long\n");
+                       L("AUTH: Error. Polkit uid too long");
                        return -11;
                     }
                }
           }
         // password
-        fprintf(stderr, "AUTH: readpass...\n");
+        L("AUTH: readpass...");
         rd = read(0, pw, sizeof(pw) - 1);
         if (rd < 0)
           {
-             fprintf(stderr, "AUTH: Error. Can't read passwd on stdin\n");
+             L("AUTH: Error. Can't read passwd on stdin");
              goto err;
           }
         pw[rd] = 0;
@@ -373,20 +375,20 @@ main(int argc, char **argv)
 
    if (_check_auth(polkit_mode ? polkit_uid : uid, pw) == 0)
      {
-        fprintf(stderr, "AUTH: Password OK\n");
+        L("AUTH: Password OK");
         if (polkit_mode == 1)
           {
              if (polkit_auth(polkit_cookie, polkit_uid) == 0)
                {
-                  fprintf(stderr, "AUTH: Polkit AuthenticationAgentResponse2 success\n");
+                  L("AUTH: Polkit AuthenticationAgentResponse2 success");
                   return 0;
                }
-             fprintf(stderr, "AUTH: Polkit AuthenticationAgentResponse2 failure\n");
+             L("AUTH: Polkit AuthenticationAgentResponse2 failure");
              return -2;
           }
         return 0;
      }
 err:
-   fprintf(stderr, "AUTH: Password auth fail\n");
+   L("AUTH: Password auth fail");
    return -1;
 }

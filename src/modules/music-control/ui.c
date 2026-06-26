@@ -98,9 +98,9 @@ _obj_meta_cover_set(E_Music_Control_Instance *inst, Evas_Object *obj, Evas_Objec
   Evas_Object *img;
 
   img = edje_object_part_swallow_get(obj, swallow);
-  printf("MUS: img=%p\n", img);
+  L("MUS: img=%p", img);
   if ((img) && (inst->ctxt->meta_cover_prev == inst->ctxt->meta_cover)) return;
-  printf("MUS: [%s] change %s -> %s\n", swallow, inst->ctxt->meta_cover_prev,
+  L("MUS: [%s] change %s -> %s", swallow, inst->ctxt->meta_cover_prev,
          inst->ctxt->meta_cover);
   if (img)
     {
@@ -127,10 +127,10 @@ _metadata_update(E_Music_Control_Instance * inst)
     }
   if (edje_object_part_exists(inst->gadget, "e.swallow.cover"))
     {
-      printf("MUS: swallow exists\n");
+      L("MUS: swallow exists");
       _obj_meta_cover_set(inst, inst->gadget, NULL, "e.swallow.cover");
     }
-  printf("MUS: store %s\n", inst->ctxt->meta_cover);
+  L("MUS: store %s", inst->ctxt->meta_cover);
   eina_stringshare_replace(&(inst->ctxt->meta_cover_prev),
                            inst->ctxt->meta_cover);
 }

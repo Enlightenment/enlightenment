@@ -16,12 +16,12 @@ _e_log_cb(const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, cons
    const char *color;
 
    color = eina_log_level_color_get(level);
-   fprintf(stdout,
-           "%s%s<" EINA_COLOR_RESET "%s%s>" EINA_COLOR_RESET "%s:%d" EINA_COLOR_RESET " ",
-           color, _names[level > EINA_LOG_LEVEL_DBG ? EINA_LOG_LEVEL_DBG : level],
+   fprintf(stderr,
+           "[%1.5f] %s%s<" EINA_COLOR_RESET "%s%s>" EINA_COLOR_RESET "%s:%d" EINA_COLOR_RESET " ",
+           ecore_time_get(), color, _names[level > EINA_LOG_LEVEL_DBG ? EINA_LOG_LEVEL_DBG : level],
            d->domain_str, color, file, line);
-   vfprintf(stdout, fmt, args);
-   putc('\n', stdout);
+   vfprintf(stderr, fmt, args);
+   putc('\n', stderr);
 }
 
 EINTERN int

@@ -269,7 +269,7 @@ skip:
           if ((ret == 1) && (FD_ISSET(_cpf_pipe_fd, &rfds)))
             {
               if (read(_cpf_pipe_fd, buf, 1) < 0)
-                fprintf(stderr, "%s: ERROR READING FROM FD\n", __func__);
+                L("%s: ERROR READING FROM FD", __func__);
             }
         }
     }
@@ -547,7 +547,7 @@ cpf_render_req(Cpf_Render_Type type, int w, int h)
       if (!r)
         {
           _renders_num--;
-          fprintf(stderr, "Out of memory for Cpf_Renders array\n");
+          L("Out of memory for Cpf_Renders array");
           goto done;
         }
       _renders = r;

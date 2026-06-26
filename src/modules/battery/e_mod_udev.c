@@ -68,7 +68,7 @@ _cb_poll_thread(void *data EINA_UNUSED, Ecore_Thread *thread)
     {
       if (ecore_pipe_wait(_poll_pipe, 1, 3600.0) < 1)
         { // timeout waiting for msg from main loop
-          printf("BAT: timeout waiting for mainloop poll message in udev thread\n");
+          L("BAT: timeout waiting for mainloop poll message in udev thread");
         }
       else
         { // poll bat data and send results back to mainloop

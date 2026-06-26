@@ -101,7 +101,7 @@ e_modapi_init(E_Module *m)
                   // if its an executable...
                   // XXX
                   // else...
-                  printf("%s\n", dlerror());
+                  L("%s", dlerror());
                }
           }
         free(file);

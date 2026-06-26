@@ -70,13 +70,13 @@ hints_dict_iter(void *data, const void *key, Eldbus_Message_Iter *var)
         n->icon.raw.data = malloc(sizeof(char) * n->icon.raw.data_size);
         EINA_SAFETY_ON_NULL_RETURN(n->icon.raw.data);
         memcpy(n->icon.raw.data, raw_data, sizeof(char) * n->icon.raw.data_size);
-        printf("NOT: image-data=%ix%i,a=%i\n", w, h, alpha);
+        L("NOT: image-data=%ix%i,a=%i", w, h, alpha);
      }
    else if (!strcmp(key, "image-path") || !strcmp(key, "image_path"))
      {
         eldbus_message_iter_arguments_get(var, "s", &n->icon.icon_path);
         n->icon.icon_path = eina_stringshare_add(n->icon.icon_path);
-        printf("NOT: image-path=[%s]\n", n->icon.icon_path);
+        L("NOT: image-path=[%s]", n->icon.icon_path);
         // path to image file
      }
    else if (!strcmp(key, "urgency"))
@@ -85,7 +85,7 @@ hints_dict_iter(void *data, const void *key, Eldbus_Message_Iter *var)
 
         eldbus_message_iter_arguments_get(var, "y", &urgency);
         if (urgency < 3) n->urgency = urgency;
-        printf("NOT: urgency=%i\n", n->urgency);
+        L("NOT: urgency=%i", n->urgency);
         // 0=low, 1=normal, 2=critical
      }
    else if (!strcmp(key, "category"))
@@ -93,7 +93,7 @@ hints_dict_iter(void *data, const void *key, Eldbus_Message_Iter *var)
         const char *val = NULL;
 
         eldbus_message_iter_arguments_get(var, "s", &val);
-        printf("NOT: category=[%s]\n", val);
+        L("NOT: category=[%s]", val);
         // "device"               A generic device-related notification that doesn't fit into any other category.
         // "device.added"         A device, such as a USB device, was added to the system.
         // "device.error"         A device had some kind of error.
@@ -121,7 +121,7 @@ hints_dict_iter(void *data, const void *key, Eldbus_Message_Iter *var)
         const char *val = NULL;
 
         eldbus_message_iter_arguments_get(var, "s", &val);
-        printf("NOT: desktop-entry=[%s]\n", val);
+        L("NOT: desktop-entry=[%s]", val);
         // if rage.desktop -> "rage"
         // if terminology.desktop -> "terminology"
         if (val) n->desktop_entry = eina_stringshare_add(val);
@@ -131,7 +131,7 @@ hints_dict_iter(void *data, const void *key, Eldbus_Message_Iter *var)
         Eina_Bool val = 0;
 
         eldbus_message_iter_arguments_get(var, "b", &val);
-        printf("NOT: icon-actions=%i\n", val);
+        L("NOT: icon-actions=%i", val);
         // 1 == interpret action identifier == named icon in icon naming standards
         n->icon_actions = val;
      }
@@ -140,7 +140,7 @@ hints_dict_iter(void *data, const void *key, Eldbus_Message_Iter *var)
         Eina_Bool val = 0;
 
         eldbus_message_iter_arguments_get(var, "b", &val);
-        printf("NOT: resident=%i\n", val);
+        L("NOT: resident=%i", val);
         // 1== remove  notification when action invoked - no timeout
         n->resident = val;
      }
@@ -149,7 +149,7 @@ hints_dict_iter(void *data, const void *key, Eldbus_Message_Iter *var)
         Eina_Bool val = 0;
 
         eldbus_message_iter_arguments_get(var, "b", &val);
-        printf("NOT: suppress-sound=%i\n", val);
+        L("NOT: suppress-sound=%i", val);
         // 1== remove  notification when action invoked - no timeout
         n->suppress_sound = val;
      }
@@ -158,7 +158,7 @@ hints_dict_iter(void *data, const void *key, Eldbus_Message_Iter *var)
         const char *val = NULL;
 
         eldbus_message_iter_arguments_get(var, "s", &val);
-        printf("NOT: sound-file=[%s]\n", val);
+        L("NOT: sound-file=[%s]", val);
         // path to sound file to play
         if (val) n->sound_file = eina_stringshare_add(val);
      }
@@ -167,7 +167,7 @@ hints_dict_iter(void *data, const void *key, Eldbus_Message_Iter *var)
         const char *val = NULL;
 
         eldbus_message_iter_arguments_get(var, "s", &val);
-        printf("NOT: sound-file=[%s]\n", val);
+        L("NOT: sound-file=[%s]", val);
         // sound naming spec to play
         // http://0pointer.de/public/sound-naming-spec.html
         if (val) n->sound_name = eina_stringshare_add(val);
@@ -177,7 +177,7 @@ hints_dict_iter(void *data, const void *key, Eldbus_Message_Iter *var)
         Eina_Bool val = 0;
 
         eldbus_message_iter_arguments_get(var, "b", &val);
-        printf("NOT: transient=%i\n", val);
+        L("NOT: transient=%i", val);
         n->transient = val;
      }
    else if (!strcmp(key, "x"))
@@ -185,7 +185,7 @@ hints_dict_iter(void *data, const void *key, Eldbus_Message_Iter *var)
         int val = 0;
 
         eldbus_message_iter_arguments_get(var, "i", &val);
-        printf("NOT: x=%i\n", val);
+        L("NOT: x=%i", val);
         n->x = val;
         n->have_xy = EINA_TRUE;
      }
@@ -194,7 +194,7 @@ hints_dict_iter(void *data, const void *key, Eldbus_Message_Iter *var)
         int val = 0;
 
         eldbus_message_iter_arguments_get(var, "i", &val);
-        printf("NOT: y=%i\n", val);
+        L("NOT: y=%i", val);
         n->y = val;
         n->have_xy = EINA_TRUE;
      }
@@ -344,7 +344,7 @@ _nedje_text_escape(const char *text)
                        o = evas_object_image_add(e_comp->evas);
                        evas_object_image_file_set(o, path, NULL);
                        evas_object_image_size_get(o, &w, &h);
-                       printf("NOT: imgpath=%s %ix%i\n", path, w, h);
+                       L("NOT: imgpath=%s %ix%i", path, w, h);
                        if ((w > 0) && (h > 0))
                          {
                             double neww = w, newh = h;
@@ -367,8 +367,7 @@ _nedje_text_escape(const char *text)
                             newh *= e_scale;
                             w = neww + 0.5;
                             h = newh + 0.5;
-                            eina_strbuf_append_printf
-                              (txt, "<item absize=%ix%i href=", w, h);
+                            eina_strbuf_append_printf(txt, "<item absize=%ix%i href=", w, h);
                             eina_strbuf_append_n(txt, text + 9, taglen - 9);
                             eina_strbuf_append(txt, "</item>");
                          }
@@ -381,7 +380,7 @@ _nedje_text_escape(const char *text)
      }
 
    ret = eina_strbuf_string_steal(txt);
-   printf("NOT: body -> [%s]\n", ret);
+   L("NOT: body -> [%s]", ret);
    eina_strbuf_free(txt);
    return ret;
 }
@@ -431,7 +430,7 @@ notify_cb(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Messag
           { // XXX: add actions to notification
              E_Notification_Notify_Action *actions;
 
-             printf("NOT: act=[%s] [%s]\n", txt, txt2);
+             L("NOT: act=[%s] [%s]", txt, txt2);
              num++;
              actions = realloc(n->actions, (num + 1) *
                                sizeof(E_Notification_Notify_Action));
@@ -767,7 +766,7 @@ e_notification_client_send(E_Notification_Notify *notify, E_Notification_Client_
 
    if (!n_data)
      {
-        fprintf(stderr, "UNHANDLED NOTIFICATION:\nSummary: %s\nBody: %s\n",
+        L("UNHANDLED NOTIFICATION:\nSummary: %s\nBody: %s",
                 notify->summary, notify->body);
         return notification_client_dbus_send(notify, cb, data);
      }

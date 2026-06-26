@@ -39,7 +39,7 @@ e_alert_show(void)
 {
    if (!e_nopause)
      {
-        fprintf(stderr, "PAUSE !\n");
+        L("PAUSE !");
         pause();
      }
 }

@@ -37,7 +37,7 @@ _devices_eval(void)
    unlock_count_prev = unlock_count;
    unlock_count = 0;
    unlock_do = 0;
-   printf("=== _devices_eval...\n");
+   L("=== _devices_eval...");
    EINA_LIST_FOREACH(devices, l, o)
      {
         if (o->paired)
@@ -48,10 +48,10 @@ _devices_eval(void)
              dev = _devices_config_find(o->address);
              if ((dev) && (adapter) && (adapter->powered))
                {
-                  printf("=== dev: %s|%s [%s]\n", dev->addr, o->address, o->name);
+                  L("=== dev: %s|%s [%s]", dev->addr, o->address, o->name);
                   if (dev->unlock)
                     {
-                       printf("=== unlock...\n");
+                       L("=== unlock...");
                        // if a device on our list needs an unlock, then
                        // add to our possible unlock counts needed
                        unlock_count++;
@@ -59,24 +59,24 @@ _devices_eval(void)
                        // if the device is connected then assume it unlocks
                        if (o->connected)
                          {
-                            printf("=== don't need ping1\n");
+                            L("=== don't need ping1");
                             unlock_do++;
                          }
                        else
 #endif
                          {
-                            printf("=== need ping2\n");
+                            L("=== need ping2");
                             need_ping = EINA_TRUE;
                             if (o->ping_ok) unlock_do++;
                          }
                     }
                }
-             printf("=== %s need_ping=%i conn=%i ping_ok=%i\n", o->address, need_ping, o->connected, o->ping_ok);
+             L("=== %s need_ping=%i conn=%i ping_ok=%i", o->address, need_ping, o->connected, o->ping_ok);
              if (need_ping) bz_obj_ping_begin(o);
              else bz_obj_ping_end(o);
           }
      }
-   printf("=================== unlock: %i/%i\n", unlock_do, unlock_count);
+   L("=================== unlock: %i/%i", unlock_do, unlock_count);
    if (unlock_count > 0)
      {
         if (unlock_do == 0)
@@ -84,9 +84,9 @@ _devices_eval(void)
              if (unlock_block)
                {
                   unlock_block = EINA_FALSE;
-                  printf("=== DESKLOCK UNBLOCK\n");
+                  L("=== DESKLOCK UNBLOCK");
                   e_desklock_unblock();
-                  printf("=== DESLOCK SHOW\n");
+                  L("=== DESLOCK SHOW");
                   e_desklock_show(EINA_FALSE);
                }
           }
@@ -95,7 +95,7 @@ _devices_eval(void)
              if (!unlock_block)
                {
                   unlock_block = EINA_TRUE;
-                  printf("=== DESKLOCK BLOCK\n");
+                  L("=== DESKLOCK BLOCK");
                   e_desklock_block();
                }
           }
@@ -108,7 +108,7 @@ _devices_eval(void)
                {
                   if (e_desklock_state_get())
                     {
-                       printf("=== DESKLOCK HIDE\n");
+                       L("=== DESKLOCK HIDE");
                        e_desklock_hide();
                     }
                }
@@ -116,7 +116,7 @@ _devices_eval(void)
         if (unlock_block)
           {
              unlock_block = EINA_FALSE;
-             printf("=== DESKLOCK UNBLOCK\n");
+             L("=== DESKLOCK UNBLOCK");
              e_desklock_unblock();
           }
      }
@@ -278,7 +278,7 @@ static void
 _cb_unlock_start(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Obj *o = data;
-   printf("BZ5: unlock start %s\n", o->address);
+   L("BZ5: unlock start %s", o->address);
    ebluez5_device_prop_unlock_set(o->address, EINA_TRUE);
    ebluez5_popup_device_change(o);
    _unflip(o, obj);
@@ -288,7 +288,7 @@ static void
 _cb_unlock_stop(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Obj *o = data;
-   printf("BZ5: unlock stop %s\n", o->address);
+   L("BZ5: unlock stop %s", o->address);
    ebluez5_device_prop_unlock_set(o->address, EINA_FALSE);
    ebluez5_popup_device_change(o);
    _unflip(o, obj);
@@ -895,7 +895,7 @@ _cb_adapter_add_delayed_setup(void *data)
                {
                   if (ad->powered)
                     {
-                       printf("==== BZ INIT REQ POWER ON %s\n", o->address);
+                       L("==== BZ INIT REQ POWER ON %s", o->address);
                        if (o->path)
                          {
                             const char *s = strrchr(o->path, '/');
@@ -906,7 +906,7 @@ _cb_adapter_add_delayed_setup(void *data)
                     }
                   else
                     {
-                       printf("==== BZ INIT REQ POWER OFF %s\n", o->address);
+                       L("==== BZ INIT REQ POWER OFF %s", o->address);
                        bz_obj_power_off(o);
                     }
                   if (ad->pairable) bz_obj_pairable(o);

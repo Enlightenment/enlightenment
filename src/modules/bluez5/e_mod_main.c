@@ -205,7 +205,7 @@ _cb_rfkill_unblock(void *datam EINA_UNUSED, const char *params)
 
    if (ret_code == 0) return;
 
-   printf("BZ: e_systtem rfkill-unblock err for [%s] ret=%i\n", buf, ret_code);
+   L("BZ: e_systtem rfkill-unblock err for [%s] ret=%i", buf, ret_code);
 
    e_util_dialog_show
      (_("Bluetooth rfkill run Error"),

@@ -219,7 +219,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
 {
    Instance *inst;
 
-   // fprintf(stderr, "SYSTRAY: init name=%s, id=%s, style=%s\n", name, id, style);
+   // L("SYSTRAY: init name=%s, id=%s, style=%s", name, id, style);
 
    if (!systray_mod)
      return NULL;
@@ -267,7 +267,7 @@ _gc_shutdown(E_Gadcon_Client *gcc)
 {
    Instance *inst = gcc->data;
 
-   // fprintf(stderr, "SYSTRAY: shutdown %p, inst=%p\n", gcc, inst);
+   // L("SYSTRAY: shutdown %p, inst=%p", gcc, inst);
 
    if (!inst)
      return;

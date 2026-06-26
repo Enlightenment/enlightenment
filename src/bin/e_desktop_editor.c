@@ -179,7 +179,7 @@ e_desktop_client_create(E_Client *ec)
         if (_e_util_icon_save(&(ec->netwm.icons[0]), path))
           desktop->icon = strdup(file);
         else
-          fprintf(stderr, "Could not save file from ARGB: %s\n", path);
+          L("Could not save file from ARGB: %s", path);
      }
 #endif
    return desktop;

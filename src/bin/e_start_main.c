@@ -44,6 +44,39 @@
 
 #include <Eina.h>
 
+#ifdef HAVE_CLOCK_GETTIME
+# include <time.h>
+#endif
+
+static double
+_tim(void)
+{
+#ifdef HAVE_CLOCK_GETTIME
+  struct timespec t;
+  clock_gettime(CLOCK_MONOTONIC, &t);
+  return (double)t.tv_sec + (((double)t.tv_nsec) / 1000000000.0);
+#else
+  struct timeval timev;
+
+  gettimeofday(&timev, NULL);
+  return (double)timev.tv_sec + (((double)timev.tv_usec) / 1000000.0);
+#endif
+}
+
+#define L(fmt, args...) \
+   do { \
+     fprintf(stderr, "[%1.5f] " fmt "\n", _tim(), ##args); \
+   } while (0)
+#define LF(f, fmt, args...) \
+   do { \
+     fprintf(f, "[%1.5f] " fmt "\n", _tim(), ##args); \
+   } while (0)
+#define LB(buf, size, fmt, args...) \
+   do { \
+     snprintf(buf, size, "[%1.5f] " fmt "\n", _tim(), ##args); \
+   } while (0)
+
+
 #define myasprintf(__b, __fmt, args...) do { \
    char __bb[sizeof(__fmt) + 1]; \
    int __cnt = snprintf(__bb, sizeof(__bb), __fmt, ##args); \
@@ -354,6 +387,7 @@ _e_start_stdout_err_redir(const char *home)
 {
    int logfd;
    char *logf = NULL, *logf_old = NULL;
+   char buf[1024];
 
    // rename old olg file
    myasprintf(&logf, "%s/.e-log.log", home);
@@ -361,8 +395,10 @@ _e_start_stdout_err_redir(const char *home)
    rename(logf, logf_old);
    // open new log file and move stdout/err to it
    logfd = open(logf, O_WRONLY | O_CREAT | O_TRUNC, 0600);
-   printf("Enlightenment: See logs in: %s\n", logf);
+   L("Enlightenment: See logs in: %s", logf);
    if (logfd < 0) return;
+   LB(buf, sizeof(buf), "====== LOG START =====");
+   write(logfd, buf, strlen(buf));
    dup2(logfd, 1); // stdout to file
    dup2(logfd, 2); // stderr to file
 }
@@ -379,6 +415,9 @@ _e_start_child(const char *home, char **args, Eina_Bool really_know, Eina_Bool t
 #endif
    _e_start_stdout_err_redir(home);
    if (trace) _e_ptrace_traceme(really_know);
+//   LB(buf, sizeof(buf), "====== EXEC ENLIGHTENMENT =====");
+//   write(1, logfd, buf, strlen(buf));
+   L("====== EXEC ENLIGHTENMENT =====");
    execv(args[0], args);
    // We failed, 0 means normal exit from E with no restart or crash so
    // let's exit
@@ -445,7 +484,7 @@ _e_call_gdb(int child, const char *home, char **backtrace_str)
               home);
    r = system(buf);
 
-   fprintf(stderr, "called gdb with '%s' = %i\n", buf, WEXITSTATUS(r));
+   L("called gdb with '%s' = %i", buf, WEXITSTATUS(r));
    return WEXITSTATUS(r);
 }
 
@@ -530,6 +569,7 @@ main(int argc, char **argv)
    Eina_Bool vgd = EINA_FALSE;
    unsigned int provided_eina_version, required_eina_version;
 
+   L("=========== Enlightenment_start ===============");
    unsetenv("NOTIFY_SOCKET");
 
    /* Setup USR1 to detach from the child process and let it get gdb by advanced users */
@@ -562,8 +602,8 @@ main(int argc, char **argv)
      (MIN_EFL_VERSION_MAJ * 1000 * 1000) +
      (MIN_EFL_VERSION_MIN * 1000) +
      (MIN_EFL_VERSION_MIC);
-   printf("Enlightenment: EFL Version Check: %u >= %u\n",
-          provided_eina_version, required_eina_version);
+   L("Enlightenment: EFL Version Check: %u >= %u",
+     provided_eina_version, required_eina_version);
    if (provided_eina_version < required_eina_version)
      {
         char *logf = NULL, *logf_old = NULL;
@@ -589,16 +629,16 @@ main(int argc, char **argv)
         for (i = 0; i < 2; i++)
           {
              if (fps[i])
-               fprintf(fps[i],
-                       "ERROR: EFL version provided is %i.%i.%i\n"
-                       "Enlightenment requires a minimum of %i.%i.%i\n"
-                       "Abort\n",
-                       eina_version->major,
-                       eina_version->minor,
-                       eina_version->micro,
-                       MIN_EFL_VERSION_MAJ,
-                       MIN_EFL_VERSION_MIN,
-                       MIN_EFL_VERSION_MIC);
+               LF(fps[i],
+                  "ERROR: EFL version provided is %i.%i.%i\n"
+                  "Enlightenment requires a minimum of %i.%i.%i\n"
+                  "Abort",
+                  eina_version->major,
+                  eina_version->minor,
+                  eina_version->micro,
+                  MIN_EFL_VERSION_MAJ,
+                  MIN_EFL_VERSION_MIN,
+                  MIN_EFL_VERSION_MIC);
           }
         if (outf) fclose(outf);
         exit(42); // exit 42 for this as life the universe and everything...

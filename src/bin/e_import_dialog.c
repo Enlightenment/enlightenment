@@ -182,7 +182,6 @@ e_import_dialog_show(Evas_Object *parent EINA_UNUSED, const char *dev, const cha
         fpath = "/";
      }
 
-   //printf("LAST: [%s] '%s' '%s'\n", buf, fdev, fpath);
    /* if we ever use the second param in _fsel_cb_ok() then we will have to create a second function
     * for this callback, but as of now it's okay
     */

@@ -92,9 +92,9 @@ cb_agent_authorize_service(const Eldbus_Service_Interface *iface EINA_UNUSED,
    Eldbus_Message *reply = eldbus_message_method_return_new(msg);
    const char *path = NULL, *uuid = NULL;
 
-   printf("Agent authorize service\n");
+   L("Agent authorize service");
    if (!eldbus_message_arguments_get(msg, "os", &path, &uuid)) return reply;
-   printf("  %s %s\n", path, uuid);
+   L("  %s %s", path, uuid);
    // if ok return this reply, or make it an error...
    // reply = eldbus_message_error_new(msg, "org.bluez.Error.Rejected", "");
    return reply;
@@ -163,7 +163,7 @@ cb_unregister(void *data EINA_UNUSED, const Eldbus_Message *msg,
    if (eldbus_message_error_get(msg, &name, &text))
      {
         // just debug for developers
-        printf("Could not unregister agent.\n %s:\n %s\n", name, text);
+        L("Could not unregister agent.\n %s:\n %s", name, text);
         return;
      }
 }

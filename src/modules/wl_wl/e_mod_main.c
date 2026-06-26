@@ -38,7 +38,7 @@ _cb_sync_done(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 E_API void *
 e_modapi_init(E_Module *m)
 {
-   printf("LOAD WL_WL MODULE\n");
+   L("LOAD WL_WL MODULE");
 
    if (e_comp_config_get()->engine == E_COMP_ENGINE_GL)
      {
@@ -57,7 +57,7 @@ e_modapi_init(E_Module *m)
           }
         else
           {
-             fprintf(stderr, "Could not create wayland canvas\n");
+             L("Could not create wayland canvas");
              return NULL;
           }
      }

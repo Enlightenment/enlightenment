@@ -11,12 +11,12 @@ e_modapi_init(E_Module *m)
    E_Screen *screen;
    int w, h;
 
-   printf("LOAD WL_FB MODULE\n");
+   L("LOAD WL_FB MODULE");
 
    /* try to init ecore_x */
    if (!ecore_fb_init(NULL))
      {
-        fprintf(stderr, "Could not initialize ecore_fb");
+        L("Could not initialize ecore_fb");
         return NULL;
      }
 

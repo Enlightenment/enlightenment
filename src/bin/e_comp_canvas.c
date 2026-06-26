@@ -32,7 +32,7 @@ _e_comp_canvas_cb_first_frame(void *data EINA_UNUSED, Evas *e, void *event_info 
       case 'A': abort();
       case 'E':
       case 'D': exit(101);
-      case 'T': fprintf(stderr, "Startup time: '%f' - '%f' = '%f'\n", now, e_first_frame_start_time, now - e_first_frame_start_time);
+      case 'T': L("Startup time: '%f' - '%f' = '%f'", now, e_first_frame_start_time, now - e_first_frame_start_time);
          break;
      }
 
@@ -776,27 +776,27 @@ e_comp_canvas_update(void)
      {
         zones = e_comp->zones;
         e_comp->zones = NULL;
-        printf("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
+        L("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
         EINA_LIST_FOREACH(screens, l, scr)
           {
              zone = NULL;
 
-             printf("@ match screens %p[%i] = %i %i %ix%i -- %i\n",
+             L("@ match screens %p[%i] = %i %i %ix%i -- %i",
                     scr, scr->escreen, scr->x, scr->y, scr->w, scr->h, scr->escreen);
              EINA_LIST_FOREACH(zones, ll, zone)
                {
                   if (zone->id == scr->escreen) break;
                   zone = NULL;
                }
-             printf("@ matches existing zone %p\n", zone);
+             L("@ matches existing zone %p", zone);
              if (zone)
                {
-                  printf("   move resize %i %i %ix%i -> %i %i %ix%i\n",
+                  L("   move resize %i %i %ix%i -> %i %i %ix%i",
                          zone->x, zone->y, zone->w, zone->h,
                          scr->x, scr->y, scr->w, scr->h);
                   changed |= e_zone_move_resize(zone, scr->x, scr->y, scr->w, scr->h);
                   if (changed)
-                    printf("@@@ FOUND ZONE %i %i [%p]\n", zone->num, zone->id, zone);
+                    L("@@@ FOUND ZONE %i %i [%p]", zone->num, zone->id, zone);
                   zones = eina_list_remove(zones, zone);
                   e_comp->zones = eina_list_append(e_comp->zones, zone);
                   zone->num = scr->screen;
@@ -811,11 +811,11 @@ e_comp_canvas_update(void)
                                     scr->x, scr->y, scr->w, scr->h);
                   if (scr->id) zone->randr2_id = strdup(scr->id);
                   e_desk_window_profile_update(zone);
-                  printf("@@@ NEW ZONE = %p\n", zone);
+                  L("@@@ NEW ZONE = %p", zone);
                   changed = EINA_TRUE;
                }
              if (changed)
-               printf("@@@ SCREENS: %i %i | %i %i %ix%i\n",
+               L("@@@ SCREENS: %i %i | %i %i %ix%i",
                       scr->screen, scr->escreen, scr->x, scr->y, scr->w, scr->h);
           }
         e_comp->zones = eina_list_sort(e_comp->zones, 0, _e_comp_canvas_cb_zone_sort);
@@ -823,7 +823,7 @@ e_comp_canvas_update(void)
           {
              E_Zone *spare_zone;
 
-             printf("@zones have been deleted....\n");
+             L("@zones have been deleted....");
              changed = EINA_TRUE;
              spare_zone = eina_list_data_get(e_comp->zones);
 
@@ -831,7 +831,7 @@ e_comp_canvas_update(void)
                {
                   E_Client *ec;
 
-                  printf("reassign all clients from deleted zone %p\n", zone);
+                  L("reassign all clients from deleted zone %p", zone);
                   E_CLIENT_FOREACH(ec)
                     {
                        if (ec->zone == zone)
@@ -862,9 +862,9 @@ e_comp_canvas_update(void)
                                    }
                               }
                             else
-                              printf("EEEK! should not be here - but no\n"
+                              L("EEEK! should not be here - but no\n"
                                      "spare zones exist to move this\n"
-                                     "window to!!! help!\n");
+                                     "window to!!! help!");
                             eina_stringshare_replace(&(ec->restore_zone_id), tmp);
                             if (tmp) eina_stringshare_del(tmp);
                          }

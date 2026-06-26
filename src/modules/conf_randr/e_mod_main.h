@@ -6,7 +6,7 @@
 
 # ifdef LOGFNS
 #  include <stdio.h>
-#  define LOGFN(fl, ln, fn) printf("-CONF-RANDR: %25s: %5i - %s\n", fl, ln, fn);
+#  define LOGFN(fl, ln, fn) L("-CONF-RANDR: %25s: %5i - %s", fl, ln, fn);
 # else
 #  define LOGFN(fl, ln, fn)
 # endif

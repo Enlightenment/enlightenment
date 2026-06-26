@@ -38,7 +38,7 @@ _import_edj_gen(E_Import_Config_Dialog *import)
 
    if (num == 100)
      {
-        printf("Couldn't come up with another filename for %s\n", buf);
+        L("Couldn't come up with another filename for %s", buf);
         return;
      }
    switch (import->method)

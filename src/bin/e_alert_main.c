@@ -5,6 +5,8 @@
 # include <Ecore_X.h>
 #endif
 
+#include "l.h"
+
 static int         ret = 0, sig = 0, exit_gdb = 0;
 static pid_t       pid;
 static Eina_Bool   tainted = EINA_FALSE;
@@ -241,7 +243,7 @@ main(int argc, char **argv)
         else if (i == 3) exit_gdb      = atoi(argv[i]);
         else if (i == 4) backtrace_str = argv[i];
      }
-   fprintf(stderr, "exit_gdb: %i\n", exit_gdb);
+   L("exit_gdb: %i", exit_gdb);
 
    s = getenv("E_TAINTED");
    if      (s && !strcmp(s, "NO")) tainted = EINA_FALSE;

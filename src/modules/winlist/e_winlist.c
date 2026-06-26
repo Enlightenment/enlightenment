@@ -857,8 +857,8 @@ _e_winlist_size_large_adjust(void)
    h1 = 0;
    h2 = maxh;
    h = (h1 + h2) / 2;
-//   t = ecore_time_get(); printf("WINLIST: start %1.5f\n", t - t0); t0 = t;
-//   printf("SZ:\n");
+//   t = ecore_time_get(); L("WINLIST: start %1.5f", t - t0); t0 = t;
+//   L("SZ:");
    for (;;)
      {
         prevh = h;
@@ -871,37 +871,37 @@ _e_winlist_size_large_adjust(void)
           }
         // pick midpoint in interval (bisect)
         else h = (h1 + h2) / 2;
-//        printf("SZ: %i [%i -> %i] expand=%i\n", h, h1, h2, expand);
+//        L("SZ: %i [%i -> %i] expand=%i", h, h1, h2, expand);
         _e_winlist_large_item_height_set(h);
         evas_smart_objects_calculate(evas_object_evas_get(_bg_object));
         evas_object_size_hint_min_get(_list_object, &mw, &mh);
         if (expand)
           {
-//             printf("SZ:  exp %ix%i > %ix%i || %i >= %i\n", mw, mh, maxw, maxh, h, maxh);
+//             L("SZ:  exp %ix%i > %ix%i || %i >= %i", mw, mh, maxw, maxh, h, maxh);
              if ((mw > maxw) || (mh > maxh) || (h >= maxh))
                {
                   h = prevh;
-//                  printf("SZ:    chose %i\n", h);
+//                  L("SZ:    chose %i", h);
                   _e_winlist_large_item_height_set(h);
-//                  t = ecore_time_get(); printf("WINLIST: grow %1.5f\n", t - t0); t0 = t;
+//                  t = ecore_time_get(); L("WINLIST: grow %1.5f", t - t0); t0 = t;
                   break;
                }
           }
         else
           {
-//             printf("SZ:  shrink %ix%i > %ix%i\n", mw, mh, maxw, maxh);
+//             L("SZ:  shrink %ix%i > %ix%i", mw, mh, maxw, maxh);
              if ((mw > maxw) || (mh > maxh)) h2 = h;
              else h1 = h;
              if ((h2 - h1) <= 1)
                {
-//                  printf("SZ:    switch to expand\n");
-//                  t = ecore_time_get(); printf("WINLIST: took shrink %1.5f\n", t - t0); t0 = t;
+//                  L("SZ:    switch to expand");
+//                  t = ecore_time_get(); L("WINLIST: took shrink %1.5f", t - t0); t0 = t;
                   expand = EINA_TRUE;
                   h = h1;
                }
           }
      }
-//   t = ecore_time_get(); printf("WINLIST: loop done %1.5f\n", t - t0); t0 = t;
+//   t = ecore_time_get(); L("WINLIST: loop done %1.5f", t - t0); t0 = t;
    evas_smart_objects_calculate(evas_object_evas_get(_bg_object));
    edje_object_part_swallow(_bg_object, "e.swallow.list", _list_object);
    edje_object_size_min_calc(_bg_object, &mw, &mh);
@@ -913,7 +913,7 @@ _e_winlist_size_large_adjust(void)
    evas_object_geometry_set(_winlist, -1, -1, 1, 1);
    evas_object_geometry_set(_winlist, x, y, w, h);
    evas_event_thaw(evas_object_evas_get(_list_object));
-//   t = ecore_time_get(); printf("WINLIST: done %1.5f\n", t - t0); t0 = t;
+//   t = ecore_time_get(); L("WINLIST: done %1.5f", t - t0); t0 = t;
 }
 
 static void

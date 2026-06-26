@@ -2,6 +2,7 @@
  * Build: gcc -DENM_VPN_USERNAME_TEST test_vpn_username.c -o /tmp/t && /tmp/t */
 #include <assert.h>
 #include <stdio.h>
+#include "l.h"
 
 #define ENM_VPN_USERNAME_TEST 1
 #include "e_networkmanager_vpn_username.c"
@@ -28,6 +29,6 @@ int main(void)
    assert(!enm_vpn_username_needed("wireguard", NULL, NULL));
    assert(!enm_vpn_username_needed(NULL, NULL, NULL));
 
-   printf("all enm_vpn_username_needed assertions passed\n");
+   L("all enm_vpn_username_needed assertions passed");
    return 0;
 }

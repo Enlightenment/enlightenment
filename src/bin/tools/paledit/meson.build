@@ -7,7 +7,7 @@ executable('enlightenment_paledit',
              'palsel.c',
              'undoredo.c'
            ],
-           include_directories: include_directories('.'),
+           include_directories: include_directories('.', '../..'),
            dependencies       : [ dep_elementary, deps ],
            install_dir        : dir_bin,
            install            : true

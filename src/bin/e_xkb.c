@@ -87,7 +87,7 @@ _xkb_new_keyboard(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA
 
    // skip just "xmodmap" changes
    if ((ev) && (ev->map_notify)) return ECORE_CALLBACK_PASS_ON;
-   printf("XKB: EV: _xkb_new_keyboard\n");
+   L("XKB: EV: _xkb_new_keyboard");
    //we have to restore our settings here
    e_xkb_reconfig();
    e_xkb_update(e_config->xkb.cur_group);
@@ -110,7 +110,7 @@ _xkb_new_state(void* data EINA_UNUSED, int type EINA_UNUSED, void *event)
 static Eina_Bool
 _xkb_keymap(void* data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
-   printf("XKB: EV: _xkb_keymap\n");
+   L("XKB: EV: _xkb_keymap");
    return ECORE_CALLBACK_PASS_ON;
 }
 #endif
@@ -141,7 +141,7 @@ e_xkb_init(E_Pixmap_Type comp_type)
      }
 #endif
    if (e_config->xkb.dont_touch_my_damn_keyboard) return 1;
-   printf("XKB: e_xkb_init\n");
+   L("XKB: e_xkb_init");
 
    _e_xkb_type_reconfig(comp_type);
 
@@ -181,7 +181,7 @@ _e_x_xkb_reconfig(void)
    Eina_Strbuf *buf;
 
    if (e_config->xkb.dont_touch_my_damn_keyboard) return;
-   printf("XKB: _e_x_xkb_reconfig\n");
+   L("XKB: _e_x_xkb_reconfig");
    if ((!e_config->xkb.used_layouts) && (!e_config->xkb.used_options) && (!e_config->xkb.default_model)) return;
    if (!getenv("DISPLAY")) return;
 
@@ -266,7 +266,7 @@ static void
 _e_x_xkb_update(int cur_group)
 {
    if (e_config->xkb.dont_touch_my_damn_keyboard) return;
-   printf("XKB: _e_x_xkb_update\n");
+   L("XKB: _e_x_xkb_update");
    if ((!e_config->xkb.used_layouts) && (!e_config->xkb.used_options) && (!e_config->xkb.default_model)) return;
    if (!getenv("DISPLAY")) return;
    if (cur_group != _e_xkb_cur_group)
@@ -365,7 +365,7 @@ _e_wl_xkb_reconfig(void)
 static void
 _e_xkb_type_reconfig(E_Pixmap_Type comp_type)
 {
-   printf("XKB: _e_xkb_type_reconfig\n");
+   L("XKB: _e_xkb_type_reconfig");
    if (comp_type == E_PIXMAP_TYPE_X)
      _e_x_xkb_reconfig();
    else if (comp_type == E_PIXMAP_TYPE_WL)
@@ -403,7 +403,7 @@ e_xkb_layout_next(void)
    E_Config_XKB_Layout *cl;
 
    if (e_config->xkb.dont_touch_my_damn_keyboard) return;
-   printf("XKB: e_xkb_layout_next\n");
+   L("XKB: e_xkb_layout_next");
    if (!e_config->xkb.used_layouts) return;
    l = eina_list_nth_list(e_config->xkb.used_layouts, e_config->xkb.cur_group);
    l = eina_list_next(l);
@@ -426,7 +426,7 @@ e_xkb_layout_prev(void)
    E_Config_XKB_Layout *cl;
 
    if (e_config->xkb.dont_touch_my_damn_keyboard) return;
-   printf("XKB: e_xkb_layout_prev\n");
+   L("XKB: e_xkb_layout_prev");
    if (!e_config->xkb.used_layouts) return;
    l = eina_list_nth_list(e_config->xkb.used_layouts, e_config->xkb.cur_group);
    l = eina_list_prev(l);
@@ -452,7 +452,7 @@ e_xkb_layout_get(void)
    unsigned int n = 0;
 
    if (e_config->xkb.dont_touch_my_damn_keyboard) return NULL;
-   printf("XKB: e_xkb_layout_get\n");
+   L("XKB: e_xkb_layout_get");
    if (e_config->xkb.current_layout) return e_config->xkb.current_layout;
    if (_e_xkb_cur_group >= 0)
      n = _e_xkb_cur_group;
@@ -468,7 +468,7 @@ e_xkb_layout_set(const E_Config_XKB_Layout *cl)
 
    EINA_SAFETY_ON_NULL_RETURN(cl);
    if (e_config->xkb.dont_touch_my_damn_keyboard) return;
-   printf("XKB: e_xkb_layout_set\n");
+   L("XKB: e_xkb_layout_set");
    if (e_config_xkb_layout_eq(e_config->xkb.current_layout, cl)) return;
    cl2 = e_config_xkb_layout_dup(e_config->xkb.current_layout);
    e_config_xkb_layout_free(e_config->xkb.current_layout);

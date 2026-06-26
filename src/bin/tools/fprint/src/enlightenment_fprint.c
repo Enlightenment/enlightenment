@@ -10,6 +10,7 @@
 #include <Ecore_Getopt.h>
 #include <Elementary.h>
 #include <Elementary_Cursor.h>
+#include "l.h"
 #include "eldbus_fprint_device.h"
 #include "eldbus_fprint_manager.h"
 
@@ -115,8 +116,8 @@ _enroll_prop_get(void *data EINA_UNUSED, Eldbus_Pending *pending EINA_UNUSED, co
 {
    if (error_info)
      {
-        printf("MESSAGE _enroll_prop_get: %s\n", error_info->message);
-        printf("ERROR _enroll_prop_get: %s\n", error_info->error);
+        L("MESSAGE _enroll_prop_get: %s", error_info->message);
+        L("ERROR _enroll_prop_get: %s", error_info->error);
         //TODO: display the error
      }
    else
@@ -133,8 +134,8 @@ _verify_start_cb(Eldbus_Proxy *proxy EINA_UNUSED, void *data, Eldbus_Pending *pe
 
    if (error)
      {
-        printf("MESSAGE _verify_start_cb: %s\n", error->message);
-        printf("ERROR _verify_start_cb: %s\n", error->error);
+        L("MESSAGE _verify_start_cb: %s", error->message);
+        L("ERROR _verify_start_cb: %s", error->error);
         //TODO: display the error
         popup = data;
         evas_object_del(popup);
@@ -149,8 +150,8 @@ _enroll_start_cb(Eldbus_Proxy *proxy EINA_UNUSED, void *data, Eldbus_Pending *pe
 
    if (error)
      {
-        printf("MESSAGE _enroll_start_cb: %s\n", error->message);
-        printf("ERROR _enroll_start_cb: %s\n", error->error);
+        L("MESSAGE _enroll_start_cb: %s", error->message);
+        L("ERROR _enroll_start_cb: %s", error->error);
         //TODO: display the error
         if (popup) evas_object_del(popup);
         popup = NULL;
@@ -312,8 +313,8 @@ delete_selected_finger(Eldbus_Proxy *proxy EINA_UNUSED, void *data, Eldbus_Pendi
 {
    if (error)
      {
-       printf("MESSAGE delete_selected_finger: %s\n", error->message);
-       printf("ERROR delete_selected_finger: %s\n", error->error);
+       L("MESSAGE delete_selected_finger: %s", error->message);
+       L("ERROR delete_selected_finger: %s", error->error);
     }
    else
      {
@@ -331,8 +332,8 @@ delete_all_finger(Eldbus_Proxy *prox EINA_UNUSED, void *data, Eldbus_Pending *pe
 {
    if (error)
      {
-       printf("MESSAGE delete_all_finger: %s\n", error->message);
-       printf("ERROR delete_all_finger: %s\n", error->error);
+       L("MESSAGE delete_all_finger: %s", error->message);
+       L("ERROR delete_all_finger: %s", error->error);
      }
    else
      {
@@ -475,7 +476,7 @@ fingerprint_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info E
 
    currentfinger = data;
 
-   printf("CURRENTFINGER: %s\n", currentfinger);
+   L("CURRENTFINGER: %s", currentfinger);
 
    fingername = _to_readable_fingername(data);
    snprintf(buf, sizeof(buf), "<color=white>%s</color>", fingername);
@@ -574,17 +575,17 @@ _finger_mode_select(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 
    selected_item = elm_list_selected_item_get(obj);
 
-   printf("FINGERNAME LIST FPRINT FINGERNAME1: %s\n", elm_object_item_text_get(selected_item));
+   L("FINGERNAME LIST FPRINT FINGERNAME1: %s", elm_object_item_text_get(selected_item));
 
    fingername = _to_fprint_fingername(elm_object_item_text_get(selected_item));
 
-   printf("FINGERNAME LIST FPRINT FINGERNAME: %s\n", fingername);
+   L("FINGERNAME LIST FPRINT FINGERNAME: %s", fingername);
 
    for (i = 0; i < eina_value_array_count(&array); i++)
      {
         eina_value_array_get(&array, i, &txt);
 
-        printf("\t%s:%s\n", txt, fingername);
+        L("\t%s:%s", txt, fingername);
 
         if (!strcmp(txt, fingername))
           {
@@ -732,7 +733,7 @@ _update_theme(void)
         evas_object_size_hint_max_set(icon, ELM_SCALE_SIZE(20), ELM_SCALE_SIZE(20));
         evas_object_show(icon);
 
-        printf("LEFT LIST ITEM:\n");
+        L("LEFT LIST ITEM:");
         found = 0;
         fingername = _to_fprint_fingername(list_item);
 
@@ -742,7 +743,7 @@ _update_theme(void)
 
              if (!strcmp(txt, fingername))
                {
-                  printf("LEFT LIST ITEM: %s\n",fingername);
+                  L("LEFT LIST ITEM: %s", fingername);
                   elm_list_item_append(left_list, fingername, icon, NULL, _finger_mode_select, right_list);
                   found = 1;
                }
@@ -763,7 +764,7 @@ _update_theme(void)
         evas_object_size_hint_max_set(icon, ELM_SCALE_SIZE(20), ELM_SCALE_SIZE(20));
         evas_object_show(icon);
 
-        printf("RIGHT LIST ITEM:\n");
+        L("RIGHT LIST ITEM:");
         found = 0;
         fingername = _to_fprint_fingername(list_item);
         for (i = 0; i < eina_value_array_count(&array); i++)
@@ -772,7 +773,7 @@ _update_theme(void)
 
              if (!strcmp(txt, fingername))
                {
-                  printf("RIGHT LIST ITEM: %s\n",fingername);
+                  L("RIGHT LIST ITEM: %s", fingername);
                   elm_list_item_append(right_list, fingername, icon, NULL, _finger_mode_select, left_list);
                   found = 1;
                }
@@ -817,24 +818,24 @@ static void
 get_devices(Eldbus_Proxy *proxy, void *data, Eldbus_Pending *pending, Eldbus_Error_Info *error, Eina_Value *args)
 {
    if (error)
-      printf("ERROR: %s\n", error->error);
+      L("ERROR: %s", error->error);
    if (error)
-   printf("MESSAGE: %s\n", error->message);
+   L("MESSAGE: %s", error->message);
 }*/
 
 static void
 get_default_device(Eldbus_Proxy *proxy EINA_UNUSED, void *data EINA_UNUSED, Eldbus_Pending *pending EINA_UNUSED, Eldbus_Error_Info *error, const char *device)
 {
-   printf("DEFAULT: %s\n", device);
+   L("DEFAULT: %s", device);
 
    if (device)
      default_device = strdup(device);
 
-   printf("DDEFAULT: %s\n", default_device);
+   L("DDEFAULT: %s", default_device);
    if (error)
-     printf("ERROR get_default_device: %s\n", error->error);
+     L("ERROR get_default_device: %s", error->error);
    if (error)
-     printf("MESSAGE get_default_device: %s\n", error->message);
+     L("MESSAGE get_default_device: %s", error->message);
 }
 
 static void
@@ -846,8 +847,8 @@ enrolled_fingers_cb(Eldbus_Proxy *proxy EINA_UNUSED, void *data EINA_UNUSED, Eld
    eina_value_flush(&array);
    if (error)
      {
-        printf("ERROR enrolled_fingers_cb: %s\n", error->error);
-        printf("MESSAGE enrolled_fingers_cb: %s\n", error->message);
+        L("ERROR enrolled_fingers_cb: %s", error->error);
+        L("MESSAGE enrolled_fingers_cb: %s", error->message);
      }
    else
      {
@@ -868,7 +869,7 @@ get_device_proberties(void *data, Eldbus_Pending *pending EINA_UNUSED, const cha
 
    if (value)
      {
-        printf("NAME: %s\n", value);
+        L("NAME: %s", value);
         snprintf(buf, sizeof(buf), "Device Name: <color=white>%s</color>", value);
         elm_object_text_set(lb, buf);
      }
@@ -885,7 +886,7 @@ get_device_type(void *data, Eldbus_Pending *pending EINA_UNUSED, const char *pro
    if (value)
      {
         device_type = strdup(value);
-        printf("Type: %s\n", device_type);
+        L("Type: %s", device_type);
         snprintf(buf, sizeof(buf), "Device Type: <color=white>%s</color>", device_type);
         elm_object_text_set(lb1, buf);
      }
@@ -906,8 +907,8 @@ claim_device(Eldbus_Proxy *proxy EINA_UNUSED, void *data EINA_UNUSED, Eldbus_Pen
 {
    if (error)
      {
-        printf("ERROR claim_device: %s\n", error->error);
-        printf("MESSAGE claim_device: %s\n", error->message);
+        L("ERROR claim_device: %s", error->error);
+        L("MESSAGE claim_device: %s", error->message);
 
         Evas_Object *notify, *bx, *bxv, *o;
 
@@ -942,8 +943,8 @@ _enroll_stopp_cb(Eldbus_Proxy *proxy EINA_UNUSED, void *data EINA_UNUSED, Eldbus
 {
    if (error)
      {
-        printf("MESSAGE _enroll_stopp_cb: %s\n", error->message);
-        printf("ERROR _enroll_stopp_cb: %s\n", error->error);
+        L("MESSAGE _enroll_stopp_cb: %s", error->message);
+        L("ERROR _enroll_stopp_cb: %s", error->error);
      }
 }
 
@@ -952,8 +953,8 @@ _verify_stopp_cb(Eldbus_Proxy *proxy EINA_UNUSED, void *data EINA_UNUSED, Eldbus
 {
    if (error)
      {
-        printf("MESSAGE _verify_stopp_cb: %s\n", error->message);
-        printf("ERROR _verify_stopp_cb: %s\n", error->error);
+        L("MESSAGE _verify_stopp_cb: %s", error->message);
+        L("ERROR _verify_stopp_cb: %s", error->error);
      }
 }
 
@@ -969,13 +970,13 @@ _verify_status(void *data EINA_UNUSED, const Eldbus_Message *msg)
    char buf[PATH_MAX];
    const char *status;
 
-   printf("C-FINGER VERFIY STATUS: %s\n", currentfinger);
+   L("C-FINGER VERFIY STATUS: %s", currentfinger);
 
    EINA_SAFETY_ON_TRUE_RETURN(eldbus_message_error_get(msg, NULL, NULL));
 
    if (!eldbus_message_arguments_get(msg, "s", &status))
      {
-        fprintf(stderr, "Error: could not get entry contents\n");
+        L("Error: could not get entry contents");
         return;
      }
 
@@ -1055,7 +1056,7 @@ _enroll_status(void *data EINA_UNUSED, const Eldbus_Message *msg)
 
    if (!eldbus_message_arguments_get(msg, "s", &status))
      {
-        fprintf(stderr, "Error: could not get entry contents\n");
+        L("Error: could not get entry contents");
         return;
      }
 
@@ -1081,7 +1082,7 @@ _enroll_status(void *data EINA_UNUSED, const Eldbus_Message *msg)
 
         const char *layout;
         elm_layout_file_get(ly_popup, NULL, &layout);
-        printf("LAYOUT %s\n", layout);
+        L("LAYOUT %s", layout);
 
         step++;
      }
@@ -1178,7 +1179,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
    if (!conn)
      {
-        fprintf(stderr, "Error: could not get system bus\n");
+        L("Error: could not get system bus");
         return EXIT_FAILURE;
      }
 
@@ -1191,7 +1192,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
    p1 = fprint_manager_get_default_device_call(new_proxy, get_default_device, NULL); 
    default_device = "/net/reactivated/Fprint/Device/0"; //FIXME wenn ich default_device über die funkion hole ist die variable nicht gefüllt für fprint_device_proxy_get //FIXME
-   printf("DEFAULT DEVICE %s\n\n", default_device);
+   L("DEFAULT DEVICE %s\n", default_device);
 
    new_proxy1 = fprint_device_proxy_get(conn, "net.reactivated.Fprint", default_device);
 
@@ -1205,7 +1206,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    fprint_device_list_enrolled_fingers_call(new_proxy1, enrolled_fingers_cb, NULL, "");
 
    fprint_device_num_enroll_stages_propget(new_proxy1, _enroll_prop_get, NULL); //NUM enroll states needed
-   printf("NUM enroll states: %i\n", enroll_num);
+   L("NUM enroll states: %i", enroll_num);
 
    // set app informations
    elm_app_info_set(elm_main, "enlightenment", "COPYING");

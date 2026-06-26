@@ -22,14 +22,14 @@ void
 ebluez5_agent_agent_release(void)
 {
    // just debugging
-   printf("BZ5 Agent Release\n");
+   L("BZ5 Agent Release");
 }
 
 void
 ebluez5_agent_agent_cancel(void)
 {
    // just debugging
-   printf("BZ5 Agent Cancel\n");
+   L("BZ5 Agent Cancel");
 }
 
 void

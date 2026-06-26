@@ -72,7 +72,7 @@ _e_test_resize(E_Win *win)
    Evas_Object *o;
 
    o = win->data;
-   printf("RESIZE %i %i\n", win->w, win->h);
+   L("RESIZE %i %i", win->w, win->h);
    evas_object_resize(o, win->w, win->h);
    evas_object_color_set(o, rand() & 0xff, rand() & 0xff, rand() & 0xff, 255);
 }
@@ -80,7 +80,7 @@ _e_test_resize(E_Win *win)
 static void
 _e_test_delete(E_Win *win)
 {
-   printf("DEL!\n");
+   L("DEL!");
    e_object_del(E_OBJECT(win));
 }
 
@@ -141,7 +141,7 @@ _e_test_dialog_del(void *obj)
    E_Dialog *dia;
 
    dia = obj;
-   printf("dialog delete hook!\n");
+   L("dialog delete hook!");
 }
 
 static void
@@ -365,7 +365,7 @@ _e_test_internal(void)
 static void
 _e_test_cb_e_smart_pan_changed_hook(void *data, Evas_Object *obj, void *event_info)
 {
-   printf("VAL: %3.3f\n", e_slider_value_get(obj));
+   L("VAL: %3.3f", e_slider_value_get(obj));
 }
 
 static void
@@ -463,7 +463,7 @@ _e_test_cb_favorites_selected(void *data, Evas_Object *obj, void *event_info)
    Eina_List *selected;
    E_Fm2_Icon_Info *ici;
 
-   printf("FAV SELECTED\n");
+   L("FAV SELECTED");
    selected = e_fm2_selected_list_get(obj);
    if (!selected) return;
    ici = eina_list_data_get(selected);
@@ -484,7 +484,7 @@ _e_test_cb_favorites_files_changed(void *data, Evas_Object *obj, void *event_inf
    const char *realpath;
    char *p1, *p2;
 
-   printf("FAV LIST CHANGE!\n");
+   L("FAV LIST CHANGE!");
    icons = e_fm2_all_list_get(obj);
    if (!icons) return;
    realpath = e_fm2_real_path_get(data);
@@ -512,7 +512,7 @@ done:
 static void
 _e_test_cb_selected(void *data, Evas_Object *obj, void *event_info)
 {
-   printf("SELECTED!\n");
+   L("SELECTED!");
 }
 
 static void
@@ -624,7 +624,7 @@ _e_test_cb_changed(void *data, Evas_Object *obj)
 static void
 _e_test_cb_selected(void *data, Evas_Object *obj)
 {
-   printf("SELECTED \"%s\"\n", e_widget_fsel_selection_path_get(obj));
+   L("SELECTED \"%s\"", e_widget_fsel_selection_path_get(obj));
    e_object_del(E_OBJECT(data));
 }
 
@@ -658,7 +658,7 @@ _e_test_internal(void)
 static void
 _e_test_cb_ok(E_Color_Dialog *dia, E_Color *color, void *data)
 {
-   printf("Current color: %d, %d, %d\n", color->r, color->g, color->b);
+   L("Current color: %d, %d, %d", color->r, color->g, color->b);
 }
 
 static void
@@ -890,7 +890,7 @@ _e_test_timer(void *data EINA_UNUSED)
 
    if (showhide & 0x1)
      {
-        printf("del menu\n");
+        L("del menu");
         e_menu_deactivate(m);
         e_object_del(E_OBJECT(m));
      }
@@ -898,7 +898,7 @@ _e_test_timer(void *data EINA_UNUSED)
      {
         int x, y;
         E_Zone *zone = e_zone_current_get();
-        printf("add menu\n");
+        L("add menu");
         m = e_int_menus_main_new();
         m->zone = zone;
         ecore_evas_pointer_xy_get(e_comp->ee, &x, &y);
@@ -906,7 +906,7 @@ _e_test_timer(void *data EINA_UNUSED)
                               E_MENU_POP_DIRECTION_DOWN, 0);
      }
    showhide++;
-   printf("%i\n", showhide);
+   L("%i", showhide);
    return EINA_TRUE;
 }
 

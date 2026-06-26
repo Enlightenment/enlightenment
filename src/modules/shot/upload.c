@@ -1,4 +1,5 @@
 #include <Elementary.h>
+#include "l.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -17,7 +18,7 @@ _upload_data_cb(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *event)
 
         memcpy(txt, ev->data, ev->size);
         txt[ev->size] = 0;
-        printf("R %s\n", txt);
+        L("R %s", txt);
         fflush(stdout);
      }
    return EINA_FALSE;
@@ -34,7 +35,7 @@ _upload_progress_cb(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *event
    current = ev->up.now;
    if (total > 0)
      {
-        printf("U %i\n", (int)((current * 1000) / total));
+        L("U %i", (int)((current * 1000) / total));
         fflush(stdout);
      }
    return EINA_FALSE;
@@ -46,8 +47,8 @@ _upload_complete_cb(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *event
    Ecore_Con_Event_Url_Complete *ev = event;
 
    if (ev->url_con != url_up) return EINA_TRUE;
-   if (ev->status != 200) printf("E %i\n", ev->status);
-   else printf("O\n");
+   if (ev->status != 200) L("E %i", ev->status);
+   else L("O");
    fflush(stdout);
    elm_exit();
    return EINA_FALSE;

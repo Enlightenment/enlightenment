@@ -123,10 +123,10 @@ _cb_verify_start(void *data EINA_UNUSED, const Eldbus_Message *m,
 {
    const char *name = NULL, *text = NULL;
 
-   printf("FP: verify start...\n");
+   L("FP: verify start...");
    if (eldbus_message_error_get(m, &name, &text))
      {
-        fprintf(stderr, "FP: Fprint err: %s %s\n", name, text);
+        L("FP: Fprint err: %s %s", name, text);
         return;
      }
 }
@@ -138,7 +138,7 @@ _cb_verify_stop(void *data EINA_UNUSED, const Eldbus_Message *m EINA_UNUSED,
    Eldbus_Message *m2;
    Eldbus_Message_Iter *iter;
 
-   printf("FP: verify stop.... finger_name=%s\n", finger_name ? finger_name : "NULL");
+   L("FP: verify stop.... finger_name=%s", finger_name ? finger_name : "NULL");
    if (!finger_name) finger_name = eina_stringshare_add("right-index-finger");
    m2 = eldbus_proxy_method_call_new(proxy_fprint_device, "VerifyStart");
    if (m2)
@@ -154,7 +154,7 @@ _verify_begin(void)
 {
    Eldbus_Message *m2;
 
-   printf("FP: verify begin...\n");
+   L("FP: verify begin...");
    m2 = eldbus_proxy_method_call_new(proxy_fprint_device, "VerifyStop");
    if (m2)
      {
@@ -170,14 +170,14 @@ _cb_verify(void *data EINA_UNUSED, const Eldbus_Message *m)
    const char *name = NULL, *text = NULL;
    E_Event_Auth_Fprint_Status *ev;
 
-   printf("FP: verify ...\n");
+   L("FP: verify ...");
    if (eldbus_message_error_get(m, &name, &text))
      {
-        fprintf(stderr, "FP: Fprint err: %s %s\n", name, text);
+        L("FP: Fprint err: %s %s", name, text);
         return;
      }
    if (!eldbus_message_arguments_get(m, "sb", &txt, &val)) return;
-   printf("FP:   verify = [%s] %i\n", txt, val);
+   L("FP:   verify = [%s] %i", txt, val);
    if (!txt) return;
 
    ev = calloc(1, sizeof(E_Event_Auth_Fprint_Status));
@@ -215,22 +215,22 @@ _cb_list_enrolled_fingers(void *data EINA_UNUSED, const Eldbus_Message *m,
    Eldbus_Message_Iter *array = NULL;
    const char *name = NULL, *text = NULL;
 
-   printf("FP: list fingers...\n");
+   L("FP: list fingers...");
    if (eldbus_message_error_get(m, &name, &text))
      {
-        fprintf(stderr, "FP: Fprint err: %s %s\n", name, text);
+        L("FP: Fprint err: %s %s", name, text);
         return;
      }
-   printf("FP: list fingers...\n");
+   L("FP: list fingers...");
    if (eldbus_message_arguments_get(m, "as", &array))
      {
         char *txt = NULL;
 
-        printf("FP:  ...\n");
+        L("FP:  ...");
         while (eldbus_message_iter_get_and_next(array, 's', &txt))
           {
              eina_stringshare_replace(&finger_name, txt);
-             printf("FP:  first finger is [%s]\n", txt);
+             L("FP:  first finger is [%s]", txt);
              if (finger_type != E_AUTH_FPRINT_TYPE_UNKNOWN)
                {
                   E_Event_Auth_Fprint_Available *ev = calloc(1, sizeof(E_Event_Auth_Fprint_Available));
@@ -257,14 +257,14 @@ _cb_claim(void *data EINA_UNUSED, const Eldbus_Message *m EINA_UNUSED,
    Eldbus_Message_Iter *iter;
    const char *name = NULL, *text = NULL;
 
-   printf("FP: claim\n");
+   L("FP: claim");
    if (eldbus_message_error_get(m, &name, &text))
      {
-        fprintf(stderr, "FP: Fprint err: %s %s\n", name, text);
+        L("FP: Fprint err: %s %s", name, text);
         return;
      }
    // ListEnrolledFingrs '$USER' -> "as"
-   printf("FP: claim ok\n");
+   L("FP: claim ok");
    m2 = eldbus_proxy_method_call_new(proxy, "ListEnrolledFingers");
    iter = eldbus_message_iter_get(m2);
    eldbus_message_iter_basic_append(iter, 's', user_name);
@@ -283,7 +283,7 @@ _cb_prop_entry(void *data EINA_UNUSED, const void *key, Eldbus_Message_Iter *var
           {
              if      (!strcmp(val, "press")) finger_type = E_AUTH_FPRINT_TYPE_PRESS;
              else if (!strcmp(val, "swipe")) finger_type = E_AUTH_FPRINT_TYPE_SWIPE;
-             printf("FP: type = %s\n", val);
+             L("FP: type = %s", val);
              if (finger_name)
                {
                   E_Event_Auth_Fprint_Available *ev =
@@ -320,27 +320,27 @@ _cb_get_default_device(void *data EINA_UNUSED, const Eldbus_Message *m,
    const char *dev = NULL;
    const char *name = NULL, *text = NULL;
 
-   printf("FP: get default device...\n");
+   L("FP: get default device...");
    if (eldbus_message_error_get(m, &name, &text))
      {
-        fprintf(stderr, "FP: Fprint err: %s %s\n", name, text);
+        L("FP: Fprint err: %s %s", name, text);
         return;
      }
    if (!eldbus_message_arguments_get(m, "o", &dev)) return;
-   printf("FP: dev = %s\n", dev);
+   L("FP: dev = %s", dev);
    obj = eldbus_object_get(conn, "net.reactivated.Fprint", dev);
    if (obj)
      {
         obj_fprint_device = obj;
 
-        printf("FP: 22 obj = %p\n", obj);
+        L("FP: 22 obj = %p", obj);
         proxy = eldbus_proxy_get(obj, "net.reactivated.Fprint.Device");
         if (proxy)
           {
              Eldbus_Message *m2;
              Eldbus_Message_Iter *iter;
 
-             printf("FP: 22 proxy = %p\n", proxy);
+             L("FP: 22 proxy = %p", proxy);
              proxy_fprint_device = proxy;
 
              eldbus_proxy_property_get_all(proxy, _cb_props, NULL);
@@ -362,19 +362,19 @@ e_auth_fprint_begin(const char *user)
    Eldbus_Object *obj;
    Eldbus_Proxy *proxy;
 
-   printf("FP: e_auth_fprint_begin\n");
+   L("FP: e_auth_fprint_begin");
    if (conn)
      {
         eina_stringshare_replace(&user_name, user);
         obj = eldbus_object_get(conn, "net.reactivated.Fprint",
                                 "/net/reactivated/Fprint/Manager");
-        printf("FP: obj=%p\n", obj);
+        L("FP: obj=%p", obj);
         if (obj)
           {
              obj_fprint = obj;
 
              proxy = eldbus_proxy_get(obj, "net.reactivated.Fprint.Manager");
-             printf("FP: proxy=%p\n", proxy);
+             L("FP: proxy=%p", proxy);
              if (proxy)
                {
                   Eldbus_Message *m;

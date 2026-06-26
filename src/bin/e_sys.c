@@ -74,7 +74,7 @@ E_API int E_EVENT_SYS_RESUME = -1;
 static Eina_Bool
 _e_sys_comp_done2_cb(void *data)
 {
-   printf("SSS: _e_sys_comp_done2_cb %p\n", data);
+   L("SSS: _e_sys_comp_done2_cb %p", data);
    e_sys_action_raw_do((E_Sys_Action)(long)data, NULL);
    return EINA_FALSE;
 }
@@ -315,14 +315,14 @@ _e_sys_comp_resume2(void *data EINA_UNUSED)
         _e_sys_phantom_wake_check_timer =
           ecore_timer_add(1.0, _e_sys_phantom_wake_check_cb, NULL);
      }
-   printf("SSS: sys resume2 @ %1.8f\n", ecore_time_get());
+   L("SSS: sys resume2 @ %1.8f", ecore_time_get());
    return EINA_FALSE;
 }
 
 static void
 _e_sys_comp_resume(void)
 {
-   printf("SSS: sys resume ... \n");
+   L("SSS: sys resume ... ");
    edje_thaw();
    ecore_evas_manual_render_set(e_comp->ee, EINA_FALSE);
    evas_damage_rectangle_add(e_comp->evas, 0, 0, e_comp->w, e_comp->h);
@@ -347,7 +347,7 @@ _e_sys_comp_resume(void)
    _e_sys_screensaver_unignore_timer =
      ecore_timer_add(0.3, _e_sys_screensaver_unignore_delay, NULL);
    ecore_timer_add(0.6, _e_sys_comp_resume2, NULL);
-   printf("SSS: sys resume @ %1.8f\n", ecore_time_get());
+   L("SSS: sys resume @ %1.8f", ecore_time_get());
 }
 
 static void
@@ -357,7 +357,7 @@ _e_sys_systemd_signal_prepare_shutdown(void *data EINA_UNUSED, const Eldbus_Mess
    Eina_Bool b = EINA_FALSE;
 
    if (!eldbus_message_arguments_get(msg, "b", &b)) return;
-   printf("SSS: systemd said to prepare for shutdown! bool=%i @%1.8f\n", (int)b, ecore_time_get());
+   L("SSS: systemd said to prepare for shutdown! bool=%i @%1.8f", (int)b, ecore_time_get());
    if (b)
      {
         if (!e_sys_on_the_way_out_get()) e_sys_action_do(E_SYS_LOGOUT, NULL);
@@ -373,7 +373,7 @@ _e_sys_systemd_signal_prepare_sleep(void *data EINA_UNUSED, const Eldbus_Message
    if (!eldbus_message_arguments_get(msg, "b", &b)) return;
    // b == 1 -> suspending
    // b == 0 -> resuming
-   printf("SSS: systemd said to prepare for sleep! bool=%i @%1.8f\n", (int)b, ecore_time_get());
+   L("SSS: systemd said to prepare for sleep! bool=%i @%1.8f", (int)b, ecore_time_get());
    if (b == EINA_FALSE)
      {
         if (_e_sys_suspended)
@@ -401,7 +401,7 @@ _e_sys_systemd_signal_prepare_sleep(void *data EINA_UNUSED, const Eldbus_Message
 static void
 _e_sys_systemd_signal_session_lock(void *data EINA_UNUSED, const Eldbus_Message *msg EINA_UNUSED)
 {
-   printf("SSS: systemd said to lock\n");
+   L("SSS: systemd said to lock");
    if (!e_desklock_state_get())
      {
         e_desklock_show(EINA_FALSE);
@@ -411,7 +411,7 @@ _e_sys_systemd_signal_session_lock(void *data EINA_UNUSED, const Eldbus_Message 
 static void
 _e_sys_systemd_signal_session_unlock(void *data EINA_UNUSED, const Eldbus_Message *msg EINA_UNUSED)
 {
-   printf("SSS: systemd said to unlock\n");
+   L("SSS: systemd said to unlock");
    if (e_desklock_state_get())
      {
         e_desklock_hide();
@@ -444,7 +444,7 @@ _e_sys_systemd_getsession_cb(void *data EINA_UNUSED, const Eldbus_Message *m, El
    if (eldbus_message_error_get(m, NULL, NULL)) return;
    if (!eldbus_message_arguments_get(m, "o", &path)) return;
 
-   printf("SSS: session path [%s]\n", path);
+   L("SSS: session path [%s]", path);
    conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
    obj = eldbus_object_get(conn, "org.freedesktop.login1", path);
    login1_session_proxy = eldbus_proxy_get(obj,
@@ -663,7 +663,7 @@ e_sys_action_do(E_Sys_Action a, char *param)
         break;
      }
 
-   printf("SSS: e_sys_ction_do ret=%i a=%i\n", ret, _e_sys_action_current);
+   L("SSS: e_sys_ction_do ret=%i a=%i", ret, _e_sys_action_current);
    if (ret) _e_sys_action_current = a;
    else _e_sys_action_current = E_SYS_NONE;
 
@@ -684,7 +684,7 @@ e_sys_action_raw_do(E_Sys_Action a, char *param)
 
    ret = _e_sys_action_do(a, param, EINA_TRUE);
 
-   printf("SSS: e_sys_ction_raw_do ret=%i a=%i\n", ret, _e_sys_action_current);
+   L("SSS: e_sys_ction_raw_do ret=%i a=%i", ret, _e_sys_action_current);
    if (ret) _e_sys_action_current = a;
    else _e_sys_action_current = E_SYS_NONE;
 
@@ -863,11 +863,11 @@ _e_sys_systemd_suspend_then_hibernate(void)
 static Eina_Bool
 _e_sys_resume_delay(void *d EINA_UNUSED)
 {
-   printf("SSS: hib check resume delay...\n");
+   L("SSS: hib check resume delay...");
    _e_sys_resume_delay_timer = NULL;
    if (_e_sys_suspended)
      {
-        printf("SSS: suspended to false\n");
+        L("SSS: suspended to false");
         _e_sys_suspended = EINA_FALSE;
         ecore_event_add(E_EVENT_SYS_RESUME, NULL, NULL, NULL);
         _e_sys_comp_resume();
@@ -880,10 +880,10 @@ _e_sys_susp_hib_check_timer_cb(void *data EINA_UNUSED)
 {
    double t = ecore_time_unix_get();
 
-   printf("SSS: hib check @%1.8f (unix %1.8f, delt %1.8f)\n", ecore_time_get(), t, t -  _e_sys_susp_hib_check_last_tick);
+   L("SSS: hib check @%1.8f (unix %1.8f, delt %1.8f)", ecore_time_get(), t, t -  _e_sys_susp_hib_check_last_tick);
    if ((t - _e_sys_susp_hib_check_last_tick) > 0.5)
      {
-        printf("SSS: hib check long gap\n");
+        L("SSS: hib check long gap");
         _e_sys_susp_hib_check_timer = NULL;
         if (_e_sys_resume_delay_timer)
           ecore_timer_del(_e_sys_resume_delay_timer);
@@ -903,7 +903,7 @@ _e_sys_susp_hib_check(void)
    _e_sys_susp_hib_check_last_tick = ecore_time_unix_get();
    _e_sys_susp_hib_check_timer =
      ecore_timer_loop_add(0.1, _e_sys_susp_hib_check_timer_cb, NULL);
-   printf("SSS: hib check begin @%1.8f (unix %1.8f)\n", ecore_time_get(), _e_sys_susp_hib_check_last_tick);
+   L("SSS: hib check begin @%1.8f (unix %1.8f)", ecore_time_get(), _e_sys_susp_hib_check_last_tick);
 }
 
 /* local subsystem functions */
@@ -1062,7 +1062,7 @@ after:
 static void
 _e_sys_logout_after(void)
 {
-   printf("SSS: sys action after %i\n", _e_sys_action_after);
+   L("SSS: sys action after %i", _e_sys_action_after);
    _e_sys_action_current = _e_sys_action_after;
    _e_sys_action_do(_e_sys_action_after, NULL, _e_sys_action_after_raw);
    _e_sys_action_after = E_SYS_NONE;
@@ -1334,16 +1334,16 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
           {
              if (raw)
                {
-                  printf("SSS: do actual halt...\n");
+                  L("SSS: do actual halt...");
                   _e_sys_begin_time = ecore_time_get();
                   if (systemd_works)
                     {
-                       printf("SSS: tell systemd to halt...\n");
+                       L("SSS: tell systemd to halt...");
                        _e_sys_systemd_poweroff();
                     }
                   else
                     {
-                       printf("SSS: tell e system service to halt...\n");
+                       L("SSS: tell e system service to halt...");
                        e_system_send("power-halt", NULL);
                     }
                   if (!_e_sys_halt_reboot_timer)
@@ -1353,7 +1353,7 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
                }
              else
                {
-                  printf("SSS: begin halt...\n");
+                  L("SSS: begin halt...");
                   ret = 0;
                   _e_sys_begin_time = ecore_time_get();
                   _e_sys_logout_begin(a, EINA_TRUE);
@@ -1370,16 +1370,16 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
           {
              if (raw)
                {
-                  printf("SSS: do actual reboot...\n");
+                  L("SSS: do actual reboot...");
                   _e_sys_begin_time = ecore_time_get();
                   if (systemd_works)
                     {
-                       printf("SSS: tell systemd to reboot...\n");
+                       L("SSS: tell systemd to reboot...");
                        _e_sys_systemd_reboot();
                     }
                   else
                     {
-                       printf("SSS: tell e system service to reboot...\n");
+                       L("SSS: tell e system service to reboot...");
                        e_system_send("power-reboot", NULL);
                     }
                   if (!_e_sys_halt_reboot_timer)
@@ -1389,7 +1389,7 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
                }
              else
                {
-                  printf("SSS: begin reboot...\n");
+                  L("SSS: begin reboot...");
                   ret = 0;
                   _e_sys_begin_time = ecore_time_get();
                   _e_sys_logout_begin(a, EINA_TRUE);

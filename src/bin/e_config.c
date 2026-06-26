@@ -134,7 +134,7 @@ _e_config_profile_name_get(Eet_File *ef)
              e_prefix_data_concat_static(buf, buf2);
              if (!ecore_file_is_dir(buf))
                {
-                  printf("CF: warning - profile [%s] dir does not exist in user or system dirs\n", s);
+                  L("CF: warning - profile [%s] dir does not exist in user or system dirs", s);
                   eina_stringshare_del(s);
                   s = NULL;
                }
@@ -169,7 +169,7 @@ _e_config_pending_file_find(const char *path)
              eina_hash_add(_e_config_pending_files, path, ef);
           }
         else
-          printf("CF: Error: file find %s - create new fail\n", path);
+          L("CF: Error: file find %s - create new fail", path);
      }
    eina_lock_release(&_e_config_pending_files_lock);
    return ef;
@@ -256,7 +256,7 @@ _e_config_pending_file_del(const char *path)
              break;
           }
         eet_close(ef);
-        if (!ok) printf("CF: Write Error: %s\n", erstr);
+        if (!ok) L("CF: Write Error: %s", erstr);
      }
    else
      eina_lock_release(&_e_config_pending_files_lock);
@@ -295,7 +295,7 @@ _e_config_save_thread_main(void *data EINA_UNUSED, Ecore_Thread *eth)
                                  ret = ecore_file_mv(bsrc, bdst);
                                  if (!ret)
                                    {
-                                      printf("CF: Error: Can't rename %s to %s\n", bsrc, bdst);
+                                      L("CF: Error: Can't rename %s to %s", bsrc, bdst);
                                       break;
                                    }
                               }
@@ -307,7 +307,7 @@ _e_config_save_thread_main(void *data EINA_UNUSED, Ecore_Thread *eth)
                          }
                     }
                   if (!ecore_file_mv(msg->path, msg->destpath))
-                    printf("CF: Error: Can't rename %s to %s\n", msg->path, msg->destpath);
+                    L("CF: Error: Can't rename %s to %s", msg->path, msg->destpath);
                   // open another tmp file now in a thread ready for writes next
                   // time. This can just dangle - no harm
                   _e_config_pending_file_find(msg->path);
@@ -1073,20 +1073,20 @@ e_config_init(void)
                   ef = eet_open(buf, EET_FILE_MODE_READ);
                   if (ef)
                     {
-                       printf("CF: warning - falling back to %s\n", buf);
+                       L("CF: warning - falling back to %s", buf);
                        _e_config_profile = _e_config_profile_name_get(ef);
                        eet_close(ef);
                        ef = NULL;
                        if (_e_config_profile) break;
-                       printf("CF: warning - fallback to %s can't read profile\n", buf);
+                       L("CF: warning - fallback to %s can't read profile", buf);
                     }
                   else if (ecore_file_exists(buf))
-                    printf("CF: warning - fallback to %s failing to open\n", buf);
+                    L("CF: warning - fallback to %s failing to open", buf);
                }
              if (!_e_config_profile)
                {
                   /* use system if no user profile config */
-                  printf("CF: fallback to system profile config file\n");
+                  L("CF: fallback to system profile config file");
                   e_prefix_data_concat_static(buf, "data/config/profile.cfg");
                   ef = eet_open(buf, EET_FILE_MODE_READ);
                }
@@ -1097,7 +1097,7 @@ e_config_init(void)
              eet_close(ef);
              ef = NULL;
              if (!_e_config_profile)
-               printf("CF: warning - can't read profile\n");
+               L("CF: warning - can't read profile");
           }
         if (!_e_config_profile)
           {
@@ -2219,16 +2219,16 @@ e_config_domain_load(const char *domain, E_Config_DD *edd)
         ef = eet_open(buf, EET_FILE_MODE_READ);
         if (ef)
           {
-             printf("CF: warning - falling back to %s\n", buf);
+             L("CF: warning - falling back to %s", buf);
              data = eet_data_read(ef, edd, "config");
              eet_close(ef);
              if (data) return data;
-             printf("CF: warning - fallback to %s can't read config\n", buf);
+             L("CF: warning - fallback to %s can't read config", buf);
           }
         else if (ecore_file_exists(buf))
-          printf("CF: warning - fallback to %s failing to open\n", buf);
+          L("CF: warning - fallback to %s failing to open", buf);
      }
-   printf("CF: fallback to system config config file for [%s]\n", domain);
+   L("CF: fallback to system config config file for [%s]", domain);
    return e_config_domain_system_load(domain, edd);
 }
 
@@ -2248,7 +2248,7 @@ e_config_domain_system_load(const char *domain, E_Config_DD *edd)
         eet_close(ef);
         return data;
      }
-   printf("CF: system config load for %s failed\n", buf);
+   L("CF: system config load for %s failed", buf);
 
    return data;
 }

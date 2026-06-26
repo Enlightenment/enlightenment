@@ -979,12 +979,12 @@ e_deskmirror_util_wins_print(Evas_Object *obj)
         if (m->ec)
           {
              if (m->ec->override)
-               fprintf(stderr, "MIRROR OVERRIDE: %p - %p%s\n", m->comp_object, m->ec, m->ec->input_only ? " INPUT" : "");
+               L("MIRROR OVERRIDE: %p - %p%s", m->comp_object, m->ec, m->ec->input_only ? " INPUT" : "");
              else
-               fprintf(stderr, "MIRROR EC:  %p - %p '%s:%s'\n", m->comp_object, m->ec, m->ec->icccm.name, m->ec->icccm.class);
+               L("MIRROR EC:  %p - %p '%s:%s'", m->comp_object, m->ec, m->ec->icccm.name, m->ec->icccm.class);
           }
         else
-          fprintf(stderr, "MIRROR OBJ: %p\n", m->comp_object);
+          L("MIRROR OBJ: %p", m->comp_object);
      }
 }
 

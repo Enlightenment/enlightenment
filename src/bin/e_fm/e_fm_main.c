@@ -47,6 +47,8 @@ void *alloca (size_t);
 
 #include "e_fm_main.h"
 
+#include "l.h"
+
 #define E_TYPEDEFS
 #include "e_config_data.h"
 #include "e_fm_op.h"
@@ -237,7 +239,7 @@ e_volume_mount(E_Volume *v)
        break;
 #endif
      default:
-       printf("raster can't mount disks by himself!\n");
+       L("raster can't mount disks by himself!");
        (void)v;
     }
 }
@@ -262,7 +264,7 @@ e_volume_unmount(E_Volume *v)
        break;
 #endif
      default:
-       printf("raster can't unmount disks by himself!\n");
+       L("raster can't unmount disks by himself!");
        (void)v;
     }
 }
@@ -286,7 +288,7 @@ e_volume_eject(E_Volume *v)
        break;
 #endif
      default:
-       printf("raster can't eject disks by himself!\n");
+       L("raster can't eject disks by himself!");
        (void)v;
     }
 }
@@ -307,7 +309,7 @@ e_volume_find(const char *udi)
         return _e_fm_main_eeze_volume_find(udi);
 #endif
       default:
-        printf("raster can't find disks by himself!\n");
+        L("raster can't find disks by himself!");
         (void)udi;
      }
    return NULL;
@@ -332,7 +334,7 @@ e_storage_del(const char *udi)
        break;
 #endif
      default:
-       printf("raster can't delete disks by himself!\n");
+       L("raster can't delete disks by himself!");
        (void)udi;
     }
 }
@@ -353,7 +355,7 @@ e_storage_find(const char *udi)
        return _e_fm_main_eeze_storage_find(udi);
 #endif
      default:
-       printf("raster can't find disks by himself!\n");
+       L("raster can't find disks by himself!");
        (void)udi;
     }
   return NULL;

@@ -1934,14 +1934,14 @@ _e_fwin_changed(void *data,
         snprintf(buf, sizeof(buf), "%s/.directory.desktop", e_fm2_real_path_get(page->fm_obj));
         ef = efreet_desktop_new(buf);
      }
-   //printf("EF=%p for %s\n", ef, buf);
+   //L("EF=%p for %s", ef, buf);
    if (ef)
      {
         fwin->wallpaper_file = _e_fwin_custom_file_path_eval(fwin, ef, fwin->wallpaper_file, "X-Enlightenment-Directory-Wallpaper");
         fwin->overlay_file = _e_fwin_custom_file_path_eval(fwin, ef, fwin->overlay_file, "X-Enlightenment-Directory-Overlay");
         fwin->scrollframe_file = _e_fwin_custom_file_path_eval(fwin, ef, fwin->scrollframe_file, "X-Enlightenment-Directory-Scrollframe");
         fwin->theme_file = _e_fwin_custom_file_path_eval(fwin, ef, fwin->theme_file, "X-Enlightenment-Directory-Theme");
-        //printf("fwin->wallpaper_file = %s\n", fwin->wallpaper_file);
+        //L("fwin->wallpaper_file = %s", fwin->wallpaper_file);
         if (need_free) efreet_desktop_free(ef);
      }
    else
@@ -2013,7 +2013,7 @@ _e_fwin_changed(void *data,
      }
    if (fwin->over_obj)
      {
-        //printf("over obj\n");
+        //L("over obj");
         evas_object_hide(fwin->over_obj);
         if (fwin->overlay_file)
           {
@@ -2701,7 +2701,7 @@ _e_fwin_file_open_dialog(E_Fwin_Page *page,
 
    apps = _e_fwin_suggested_apps_list_get(files, &mlist, &has_default);
 
-//   fprintf(stderr, "GOGOGOGOOGOGOG\n");
+//   L("GOGOGOGOOGOGOG");
    if (!always)
      {
         /* FIXME: well this is simplisitic - if only 1 mime type is being
@@ -2725,10 +2725,10 @@ _e_fwin_file_open_dialog(E_Fwin_Page *page,
              Eina_List *files_list = NULL;
 
              need_dia = 1;
-             //fprintf(stderr, "XXXXX %i %p\n", has_default, apps);
+             //L("XXXXX %i %p", has_default, apps);
              if ((has_default) && (apps)) desk = apps->data;
              else if (mlist) desk = e_exehist_mime_desktop_get(mlist->data);
-             //fprintf(stderr, "mlist = %p\n", mlist);
+             //L("mlist = %p", mlist);
              if (!getcwd(pcwd, sizeof(pcwd))) perror("getcwd");
              if (chdir(e_fm2_real_path_get(page->fm_obj)) < 0) perror("chdir");
 
@@ -3160,7 +3160,7 @@ _e_fwin_pan_scroll_update(E_Fwin_Page *page)
    msg->val[3] = page->fm_pan.max_y;
    msg->val[4] = page->fm_pan.w;
    msg->val[5] = page->fm_pan.h;
-//   printf("SEND MSG %i %i | %i %i | %ix%i\n",
+//   L("SEND MSG %i %i | %i %i | %ix%i",
 //	  page->fm_pan.x, page->fm_pan.y,
 //	  page->fm_pan.max_x, page->fm_pan.max_y,
 //	  page->fm_pan.w, page->fm_pan.h);

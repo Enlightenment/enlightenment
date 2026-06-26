@@ -1062,7 +1062,7 @@ _e_util_size_debug_free(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object
 
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    name = evas_object_name_get(obj);
-   fprintf(stderr, "FREE %s %d OBJ[%s%s%p]: (%d,%d) - %dx%d\n", evas_object_visible_get(obj) ? "VIS" : "HID", evas_object_layer_get(obj), name ?: "", name ? "|" : "", obj, x, y, w, h);
+   L("FREE %s %d OBJ[%s%s%p]: (%d,%d) - %dx%d", evas_object_visible_get(obj) ? "VIS" : "HID", evas_object_layer_get(obj), name ?: "", name ? "|" : "", obj, x, y, w, h);
 }
 
 static void
@@ -1073,7 +1073,7 @@ _e_util_size_debug_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object 
 
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    name = evas_object_name_get(obj);
-   fprintf(stderr, "DEL %s %d OBJ[%s%s%p]: (%d,%d) - %dx%d\n", evas_object_visible_get(obj) ? "VIS" : "HID", evas_object_layer_get(obj), name ?: "", name ? "|" : "", obj, x, y, w, h);
+   L("DEL %s %d OBJ[%s%s%p]: (%d,%d) - %dx%d", evas_object_visible_get(obj) ? "VIS" : "HID", evas_object_layer_get(obj), name ?: "", name ? "|" : "", obj, x, y, w, h);
 }
 
 static void
@@ -1084,7 +1084,7 @@ _e_util_size_debug_stack(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Objec
 
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    name = evas_object_name_get(obj);
-   fprintf(stderr, "RESTACK %s %d OBJ[%s%s%p]: (%d,%d) - %dx%d\n", evas_object_visible_get(obj) ? "VIS" : "HID", evas_object_layer_get(obj), name ?: "", name ? "|" : "", obj, x, y, w, h);
+   L("RESTACK %s %d OBJ[%s%s%p]: (%d,%d) - %dx%d", evas_object_visible_get(obj) ? "VIS" : "HID", evas_object_layer_get(obj), name ?: "", name ? "|" : "", obj, x, y, w, h);
 }
 
 E_API void
@@ -1095,7 +1095,7 @@ e_util_size_debug(Evas_Object *obj)
 
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    name = evas_object_name_get(obj);
-   fprintf(stderr, "%s %d OBJ[%s%s%p]: (%d,%d) - %dx%d\n", evas_object_visible_get(obj) ? "VIS" : "HID", evas_object_layer_get(obj), name ?: evas_object_type_get(obj), "|", obj, x, y, w, h);
+   L("%s %d OBJ[%s%s%p]: (%d,%d) - %dx%d", evas_object_visible_get(obj) ? "VIS" : "HID", evas_object_layer_get(obj), name ?: evas_object_type_get(obj), "|", obj, x, y, w, h);
 }
 
 static void
@@ -1453,12 +1453,12 @@ e_util_evas_objects_above_print(Evas_Object *o)
         l = evas_object_clipees_get(a);
         if (l)
           {
-             fprintf(stderr, "[%p] - %s(%s) %s :: CLIPPEES: ", a, evas_object_type_get(a), evas_object_name_get(a), evas_object_visible_get(a) ? "VISIBLE" : "HIDDEN");
+             L("[%p] - %s(%s) %s :: CLIPPEES: ", a, evas_object_type_get(a), evas_object_name_get(a), evas_object_visible_get(a) ? "VISIBLE" : "HIDDEN");
              EINA_LIST_FOREACH(l, ll, oo)
-               fprintf(stderr, "[%p] - %s(%s) %s", oo, evas_object_type_get(oo), evas_object_name_get(oo), ll->next ? "| " : "");
+               L("[%p] - %s(%s) %s", oo, evas_object_type_get(oo), evas_object_name_get(oo), ll->next ? "| " : "");
           }
         else
-          fprintf(stderr, "[%p] - %s(%s) %s\n", a, evas_object_type_get(a), evas_object_name_get(a), evas_object_visible_get(a) ? "VISIBLE" : "HIDDEN");
+          L("[%p] - %s(%s) %s", a, evas_object_type_get(a), evas_object_name_get(a), evas_object_visible_get(a) ? "VISIBLE" : "HIDDEN");
      }
 }
 
@@ -1476,20 +1476,20 @@ e_util_evas_objects_above_print_smart(Evas_Object *o)
         l = evas_object_clipees_get(a);
         if (l)
           {
-             fprintf(stderr, "[%p] - %s(%s) %s :: CLIPPEES: ", a, evas_object_type_get(a), evas_object_name_get(a), evas_object_visible_get(a) ? "VISIBLE" : "HIDDEN");
+             L("[%p] - %s(%s) %s :: CLIPPEES: ", a, evas_object_type_get(a), evas_object_name_get(a), evas_object_visible_get(a) ? "VISIBLE" : "HIDDEN");
              EINA_LIST_FOREACH(l, ll, oo)
-               fprintf(stderr, "[%p] - %s(%s) %s", oo, evas_object_type_get(oo), evas_object_name_get(oo), ll->next ? "| " : "");
-             fprintf(stderr, "\n");
+               L("[%p] - %s(%s) %s", oo, evas_object_type_get(oo), evas_object_name_get(oo), ll->next ? "| " : "");
+             L("%s", "");
           }
         else if (evas_object_smart_data_get(a))
           {
-             fprintf(stderr, "[%p] - %s(%s) %s :: SMART MEMBERS: ", a, evas_object_type_get(a), evas_object_name_get(a), evas_object_visible_get(a) ? "VISIBLE" : "HIDDEN");
+             L("[%p] - %s(%s) %s :: SMART MEMBERS: ", a, evas_object_type_get(a), evas_object_name_get(a), evas_object_visible_get(a) ? "VISIBLE" : "HIDDEN");
              EINA_LIST_FOREACH(evas_object_smart_members_get(a), l, oo)
-               fprintf(stderr, "[%p] - %s(%s) %s", oo, evas_object_type_get(oo), evas_object_name_get(oo), l->next ? "| " : "");
-             fprintf(stderr, "\n");
+               L("[%p] - %s(%s) %s", oo, evas_object_type_get(oo), evas_object_name_get(oo), l->next ? "| " : "");
+             L("%s", "");
           }
         else
-          fprintf(stderr, "[%p] - %s(%s) %s\n", a, evas_object_type_get(a), evas_object_name_get(a), evas_object_visible_get(a) ? "VISIBLE" : "HIDDEN");
+          L("[%p] - %s(%s) %s", a, evas_object_type_get(a), evas_object_name_get(a), evas_object_visible_get(a) ? "VISIBLE" : "HIDDEN");
      }
 }
 

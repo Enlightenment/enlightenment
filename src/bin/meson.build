@@ -307,6 +307,7 @@ hdr = [
   'e_grab_dialog.h',
   'e_graph.h',
   'e.h',
+  'l.h',
   'e_macros.h',
   'e_hints.h',
   'e_icon.h',

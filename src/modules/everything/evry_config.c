@@ -347,7 +347,7 @@ _plugin_config_cb(void *data, void *data2 EINA_UNUSED)
    Evry_Plugin *p = page->cur->plugin;
 
    if (!p) return;
-   printf(" %s\n", p->name);
+   L(" %s", p->name);
 
    e_configure_registry_call(p->config_path, NULL, p->name);
 }

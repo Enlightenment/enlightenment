@@ -287,7 +287,7 @@ _drm2_randr_create(void)
    outputs = ecore_drm2_outputs_get(dev);
    if (!outputs) return NULL;
 
-   printf("DRM2 RRR: ................. info get!\n");
+   L("DRM2 RRR: ................. info get!");
 
    r = E_NEW(E_Randr2, 1);
    if (!r) return NULL;
@@ -310,10 +310,10 @@ _drm2_randr_create(void)
         if (!s) continue;
 
         s->info.name = ecore_drm2_output_name_get(output);
-        printf("DRM2 RRR: .... out %s\n", s->info.name);
+        L("DRM2 RRR: .... out %s", s->info.name);
 
         s->info.connected = ecore_drm2_output_connected_get(output);
-        printf("DRM2 RRR: ...... connected %i\n", s->info.connected);
+        L("DRM2 RRR: ...... connected %i", s->info.connected);
 
         s->info.screen = ecore_drm2_output_model_get(output);
 
@@ -334,7 +334,7 @@ _drm2_randr_create(void)
         strcat(s->id, "/");
         if (s->info.edid) strcat(s->id, s->info.edid);
 
-        printf("DRM2 RRR: Created Screen: %s\n", s->id);
+        L("DRM2 RRR: Created Screen: %s", s->id);
 
         type = MIN(ecore_drm2_output_connector_type_get(output),
                    EINA_C_ARRAY_LENGTH(conn_types) - 1);
@@ -342,7 +342,7 @@ _drm2_randr_create(void)
         s->info.is_lid = ((type == DRM_MODE_CONNECTOR_LVDS) ||
                           (type == DRM_MODE_CONNECTOR_eDP));
         s->info.lid_closed = (s->info.is_lid && e_acpi_lid_is_closed());
-        printf("DRM2 RRR: ...... lid_closed = %i (%i && %i)\n",
+        L("DRM2 RRR: ...... lid_closed = %i (%i && %i)",
                s->info.lid_closed, s->info.is_lid, e_acpi_lid_is_closed());
 
         s->info.backlight = ecore_drm2_output_backlight_get(output);
@@ -422,7 +422,7 @@ _drm2_randr_create(void)
                   s->config.enabled =
                     ((s->config.mode.w != 0) && (s->config.mode.h != 0));
 
-                  printf("DRM2 RRR: '%s' %i %i %ix%i\n", s->info.name,
+                  L("DRM2 RRR: '%s' %i %i %ix%i", s->info.name,
                          s->config.geom.x, s->config.geom.y,
                          s->config.geom.w, s->config.geom.h);
                }
@@ -438,11 +438,11 @@ _drm2_randr_create(void)
                s->config.rotation = 270;
              else
                {
-                  printf("DRM2 RRR: caution - rotation flags empty - assume 0\n");
+                  L("DRM2 RRR: caution - rotation flags empty - assume 0");
                   s->config.rotation = 0;
                }
 
-            printf("DRM2 RRR: drm output rotation=%i\n", s->config.rotation);
+            L("DRM2 RRR: drm output rotation=%i", s->config.rotation);
 
              s->info.can_rot_0 = EINA_FALSE;
              s->info.can_rot_90 = EINA_FALSE;
@@ -559,7 +559,7 @@ _drm2_rotation_exists(Ecore_Drm2_Output *output, int rot)
    int rots;
 
    rots = ecore_drm2_output_supported_rotations_get(output);
-   printf("RRR: DRM2 ..... rots for %p rots=%x input=%x\n", output, rots, rot);
+   L("RRR: DRM2 ..... rots for %p rots=%x input=%x", output, rots, rot);
    // hack for ... broken drivers that don't say anything about rotations
    if (!(rots &
          (ECORE_DRM2_ROTATION_NORMAL | ECORE_DRM2_ROTATION_90 |
@@ -577,7 +577,7 @@ _drm2_rotation_exists(Ecore_Drm2_Output *output, int rot)
           return EINA_TRUE;
      }
 
-   printf("RRR: DRM2 ..... no rot matches!\n");
+   L("RRR: DRM2 ..... no rot matches!");
    return EINA_FALSE;
 }
 
@@ -603,7 +603,7 @@ _drm2_randr_apply(void)
 
    /* get screen size range */
    ecore_drm2_device_screen_size_range_get(dev, &minw, &minh, &maxw, &maxh);
-   printf("RRR: size range: %ix%i -> %ix%i\n", minw, minh, maxw, maxh);
+   L("RRR: size range: %ix%i -> %ix%i", minw, minh, maxw, maxh);
 
    crtcs = ecore_drm2_device_crtcs_get(dev, &num_crtcs);
    outputs = ecore_drm2_outputs_get(dev);
@@ -622,18 +622,18 @@ _drm2_randr_apply(void)
         /* decide which outputs gets which crtcs */
         EINA_LIST_FOREACH(e_randr2->screens, l, s)
           {
-             printf("RRR: find output for '%s'\n", s->info.name);
+             L("RRR: find output for '%s'", s->info.name);
 
              if (!s->config.configured)
                {
-                  printf("RRR: unconfigured screen: %s\n", s->info.name);
+                  L("RRR: unconfigured screen: %s", s->info.name);
                   continue;
                }
 
              out = _drm2_output_find(outputs, s->info.name);
              if (out)
                {
-                  printf("RRR:   enabled: %i\n", s->config.enabled);
+                  L("RRR:   enabled: %i", s->config.enabled);
                   if (s->config.enabled)
                     {
                        if (s->config.priority > top_priority)
@@ -643,13 +643,13 @@ _drm2_randr_apply(void)
                          {
                             if (!outconf[i])
                               {
-                                 printf("RRR:   crtc slot empty: %i\n", i);
+                                 L("RRR:   crtc slot empty: %i", i);
                                  if (ecore_drm2_output_possible_crtc_get(out, crtcs[i]))
                                    {
-                                      printf("RRR:     output is possible...\n");
+                                      L("RRR:     output is possible...");
                                       if (_drm2_rotation_exists(out, s->config.rotation))
                                         {
-                                           printf("RRR:       assign slot out: %p\n", out);
+                                           L("RRR:       assign slot out: %p", out);
                                            outconf[i] = out;
                                            screenconf[i] = s;
                                            break;
@@ -685,7 +685,7 @@ _drm2_randr_apply(void)
                        else if (screenconf[i]->config.rotation == 270)
                          orient = ECORE_DRM2_ROTATION_270;
 
-                       printf("RRR: crtc on: %i = '%s'     @ %i %i    - %ix%i orient %i mode %p out %p\n",
+                       L("RRR: crtc on: %i = '%s'     @ %i %i    - %ix%i orient %i mode %p out %p",
                               i, screenconf[i]->info.name,
                               screenconf[i]->config.geom.x,
                               screenconf[i]->config.geom.y,
@@ -744,7 +744,7 @@ _drm2_randr_apply(void)
                     }
                   else
                     {
-                       printf("RRR: crtc off: %i\n", i);
+                       L("RRR: crtc off: %i", i);
                        /* FIXME: Need new drm2 API to disable crtc...
                         * one which Does Not Take an Output as param */
                     }
@@ -765,7 +765,7 @@ _drm2_randr_apply(void)
         Evas_Object *o = evas_object_name_find(e, "__e_wl_watermark");
         if (o) evas_object_move(o, nw - 40 - 16, 16);
      }
-   printf("RRR: set vsize: %ix%i, rot=%i\n", nw, nh,
+   L("RRR: set vsize: %ix%i, rot=%i", nw, nh,
           ecore_evas_rotation_get(e_comp->ee));
    ecore_drm2_device_calibrate(dev, nw, nh);
    rot = ecore_evas_rotation_get(e_comp->ee);
@@ -946,12 +946,12 @@ e_modapi_init(E_Module *m)
 
    static Efl_Callback_Array_Item arr[2] = { { 0, _drm_device_del } };
 
-   printf("LOAD WL_DRM MODULE\n");
+   L("LOAD WL_DRM MODULE");
 
    /* try to init ecore_drm */
    /* if (!ecore_drm_init()) */
    /*   { */
-   /*      fprintf(stderr, "Could not initialize ecore_drm"); */
+   /*      L("Could not initialize ecore_drm"); */
    /*      return NULL; */
    /*   } */
 
@@ -974,7 +974,7 @@ e_modapi_init(E_Module *m)
           }
         else
           {
-             fprintf(stderr, "Could not create ecore_evas_drm canvas\n");
+             L("Could not create ecore_evas_drm canvas");
              return NULL;
           }
      }

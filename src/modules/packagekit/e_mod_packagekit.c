@@ -870,7 +870,7 @@ packagekit_update_packages(E_PackageKit_Module_Context *ctxt, const char *transa
    E_PackageKit_Package *pkg;
    Eina_List *l;
 
-   fprintf(stderr, "PKIT: UpdatePackages (t:%s)\n", transaction);
+   L("PKIT: UpdatePackages (t:%s)", transaction);
 
    obj = eldbus_object_get(ctxt->conn, "org.freedesktop.PackageKit", transaction);
    proxy = eldbus_proxy_get(obj, "org.freedesktop.PackageKit.Transaction");

@@ -134,38 +134,6 @@ e_fm2_device_storage_add(E_Storage *s)
 
    s->validated = EINA_TRUE;
    _e_stores = eina_list_append(_e_stores, s);
-/*
-   printf("STO+\n"
-          "  udi: %s\n"
-          "  bus: %s\n"
-          "  drive_type: %s\n"
-          "  model: %s\n"
-          "  vendor: %s\n"
-          "  serial: %s\n"
-          "  removable: %i\n"
-          "  media_available: %i\n"
-          "  media_size: %lli\n"
-          "  requires_eject: %i\n"
-          "  hotpluggable: %i\n"
-          "  media_check_enabled: %i\n"
-          "  icon.drive: %s\n"
-          "  icon.volume: %s\n\n"
-          ,
-          s->udi,
-          s->bus,
-          s->drive_type,
-          s->model,
-          s->vendor,
-          s->serial,
-          s->removable,
-          s->media_available,
-          s->media_size,
-          s->requires_eject,
-          s->hotpluggable,
-          s->media_check_enabled,
-          s->icon.drive,
-          s->icon.volume);
- */
    if ((s->removable == 0) &&
        (s->media_available == 0) &&
        (s->media_size == 0) &&
@@ -173,7 +141,7 @@ e_fm2_device_storage_add(E_Storage *s)
        (s->hotpluggable == 0) &&
        (s->media_check_enabled == 0))
      {
-//	printf("      Ignore this storage\n");
+// ignore this one
      }
    else
      {
@@ -193,7 +161,6 @@ e_fm2_device_storage_add(E_Storage *s)
 E_API void
 e_fm2_device_storage_del(E_Storage *s)
 {
-//   printf("STO- %s\n", s->udi);
    _e_stores = eina_list_remove(_e_stores, s);
    _e_fm_shared_device_storage_free(s);
 }
@@ -221,32 +188,6 @@ e_fm2_device_volume_add(E_Volume *v)
 
    v->validated = EINA_TRUE;
    _e_vols = eina_list_append(_e_vols, v);
-/*
-   printf("VOL+\n"
-          "  udi: %s\n"
-          "  uuid: %s\n"
-          "  fstype: %s\n"
-          "  size: %llu\n"
-          "  label: %s\n"
-          "  partition: %d\n"
-          "  partition_number: %d\n"
-          "  partition_label: %s\n"
-          "  mounted: %d\n"
-          "  mount_point: %s\n"
-          "  parent: %s\n"
-          ,
-          v->udi,
-          v->uuid,
-          v->fstype,
-          v->size,
-          v->label,
-          v->partition,
-          v->partition_number,
-          v->partition ? v->partition_label : "(not a partition)",
-          v->mounted,
-          v->mount_point,
-          v->parent);
- */
 /* Check mount point */
    if ((v->efm_mode == EFM_MODE_USING_HAL_MOUNT) &&
        ((!v->mount_point) || (!v->mount_point[0])))
@@ -290,7 +231,6 @@ e_fm2_device_volume_del(E_Volume *v)
 {
    E_Fm2_Mount *m;
 
-//   printf("VOL- %s\n", v->udi);
    _e_vols = eina_list_remove(_e_vols, v);
    _e_fm2_volume_erase(v);
    if (v->storage)
@@ -420,7 +360,6 @@ e_fm2_device_volume_mountpoint_get(E_Volume *v)
    if (!v) return NULL;
    if (v->mount_point)
      {
-        //	printf("GET MOUNTPOINT = %s\n", v->mount_point);
         return eina_stringshare_add(v->mount_point);
      }
    else if (v->efm_mode != EFM_MODE_USING_HAL_MOUNT)
@@ -437,7 +376,6 @@ e_fm2_device_volume_mountpoint_get(E_Volume *v)
         static int mount_count = 1;
         snprintf(buf, sizeof(buf) - 1, "/media/unknown-%i", mount_count++);
      }
-//   printf("GET MOUNTPOINT = %s\n", buf);
    return eina_stringshare_add(buf);
 }
 
@@ -460,7 +398,6 @@ e_fm2_device_mount_add(E_Volume *v,
      eina_stringshare_replace(&v->mount_point, mountpoint);
 
    E_LIST_FOREACH(v->mounts, _e_fm2_device_mount_ok);
-//   printf("MOUNT %s %s\n", v->udi, v->mount_point);
 }
 
 E_API void
@@ -539,7 +476,6 @@ e_fm2_device_mount(E_Volume *v,
 
    if (!v->mounted)
      {
-        //printf("BEGIN MOUNT %p '%s'\n", m, v->mount_point);
         v->auto_unmount = EINA_TRUE;
         _e_fm2_client_mount(v->udi, v->mount_point);
      }
@@ -587,7 +523,6 @@ e_fm2_device_unmount(E_Fm2_Mount *m)
 
    if (v->auto_unmount && v->mounted && !eina_list_count(v->mounts))
      {
-        //printf("BEGIN UNMOUNT %p '%s'\n", m, v->udi);
         _e_fm2_client_unmount(v->udi);
      }
 }
@@ -614,13 +549,11 @@ _e_fm2_device_mount_ok(E_Fm2_Mount *m)
    if (m->mount_ok)
      m->mount_ok(m->data);
    if (m->deleted) ecore_job_add((Ecore_Cb)e_fm2_device_unmount, m);
-   //printf("MOUNT OK '%s'\n", m->mount_point);
 }
 
 static void
 _e_fm2_device_mount_fail(E_Fm2_Mount *m)
 {
-   //printf("MOUNT FAIL '%s'\n", m->mount_point);
    m->mounted = EINA_FALSE;
    if (m->mount_point)
      {

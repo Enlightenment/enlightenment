@@ -982,7 +982,7 @@ _e_drag_update(Ecore_Window root, int x, int y, unsigned int action)
      top->cb.move(top->cb.data, top->active_type, &move_ev);
    return responsive;
 //   double t2 = ecore_time_get() - t1; ////
-//   printf("DND UPDATE %3.7f\n", t2); ////
+//   L("DND UPDATE %3.7f", t2); ////
 }
 
 static Eina_Bool
@@ -1408,7 +1408,7 @@ _e_dnd_cb_event_dnd_position(void *data EINA_UNUSED, int type EINA_UNUSED, void 
    if (!eina_hash_find(_drop_win_hash, &ev->win))
      {
 //	double t2 = ecore_time_get() - t1; ////
-//	printf("DND POS EV 1 %3.7f\n", t2); ////
+//	L("DND POS EV 1 %3.7f", t2); ////
         return ECORE_CALLBACK_PASS_ON;
      }
 
@@ -1428,7 +1428,7 @@ _e_dnd_cb_event_dnd_position(void *data EINA_UNUSED, int type EINA_UNUSED, void 
           ecore_x_dnd_send_status(1, 0, rect, ECORE_X_ATOM_XDND_ACTION_PRIVATE);
      }
 //   double t2 = ecore_time_get() - t1; ////
-//   printf("DND POS EV 2 %3.7f\n", t2); ////
+//   L("DND POS EV 2 %3.7f", t2); ////
    return ECORE_CALLBACK_PASS_ON;
 }
 

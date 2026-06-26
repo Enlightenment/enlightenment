@@ -865,7 +865,7 @@ _e_exec_cb_exit(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
         if (!inst) return ECORE_CALLBACK_PASS_ON;
         ev->exe = inst->exe;
      }
-//   if (ecore_exe_tag_get(ev->exe)) printf("  tag %s\n", ecore_exe_tag_get(ev->exe));
+//   if (ecore_exe_tag_get(ev->exe)) L("  tag %s", ecore_exe_tag_get(ev->exe));
    if (!(ecore_exe_tag_get(ev->exe) &&
          (!strcmp(ecore_exe_tag_get(ev->exe), "E/exec"))))
      return ECORE_CALLBACK_PASS_ON;

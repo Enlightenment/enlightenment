@@ -120,7 +120,7 @@ e_screensaver_force_update(void)
 
              if (e_dpms_actual != x_dpms)
                {
-                  printf("SCRSV: someone else messed with screen dpms!\n");
+                  L("SCRSV: someone else messed with screen dpms!");
                   ecore_x_dpms_enabled_set(e_config->screensaver_enable);
                }
              off = suspend = standby = e_screensaver_timeout_get(EINA_FALSE);
@@ -131,13 +131,13 @@ e_screensaver_force_update(void)
              if ((x_standby != standby) || (x_suspend != suspend) ||
                  (x_off != off))
                {
-                  printf("SCRSV: someone else messed with screen dpms timeouts!\n");
+                  L("SCRSV: someone else messed with screen dpms timeouts!");
                   ecore_x_dpms_timeouts_set(standby, suspend, off);
                }
           }
         if (timeout != x_timeout)
           {
-             printf("SCRSV: someone else messed with screen blanking!\n");
+             L("SCRSV: someone else messed with screen blanking!");
              ecore_x_screensaver_set(timeout,
                                      e_config->screensaver_interval,
                                      e_config->screensaver_blanking,

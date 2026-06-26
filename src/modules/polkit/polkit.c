@@ -170,7 +170,7 @@ cb_agent_begin_authentication(const Eldbus_Service_Interface *iface EINA_UNUSED,
           eldbus_message_iter_dict_iterate(dict, "sv", iterate_dict, ps);
         else
           {
-             printf("PK: Unhandled ident type.\n");
+             L("PK: Unhandled ident type.");
           }
      }
    ps2 = session_find(ps->cookie);

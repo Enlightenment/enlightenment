@@ -85,19 +85,19 @@ e_int_config_imc_import(E_Config_Dialog *parent)
    mask = 0;
    kg = evas_object_key_grab(o, "Tab", mask, ~mask, 0);
    if (!kg)
-     fprintf(stderr, "ERROR: unable to redirect \"Tab\" key events to object %p.\n", o);
+     L("ERROR: unable to redirect \"Tab\" key events to object %p.", o);
    mask = evas_key_modifier_mask_get(evas, "Shift");
    kg = evas_object_key_grab(o, "Tab", mask, ~mask, 0);
    if (!kg)
-     fprintf(stderr, "ERROR: unable to redirect \"Tab\" key events to object %p.\n", o);
+     L("ERROR: unable to redirect \"Tab\" key events to object %p.", o);
    mask = 0;
    kg = evas_object_key_grab(o, "Return", mask, ~mask, 0);
    if (!kg)
-     fprintf(stderr, "ERROR: unable to redirect \"Return\" key events to object %p.\n", o);
+     L("ERROR: unable to redirect \"Return\" key events to object %p.", o);
    mask = 0;
    kg = evas_object_key_grab(o, "KP_Enter", mask, ~mask, 0);
    if (!kg)
-     fprintf(stderr, "ERROR: unable to redirect \"KP_Enter\" key events to object %p.\n", o);
+     L("ERROR: unable to redirect \"KP_Enter\" key events to object %p.", o);
    evas_object_event_callback_add(o, EVAS_CALLBACK_KEY_DOWN,
                                   _imc_import_cb_key_down, import);
 

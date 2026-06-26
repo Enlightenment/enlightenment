@@ -1,4 +1,4 @@
-inc = include_directories('../../../../..')
+inc = include_directories('../../../../..', '../../..')
 deps = [
     dep_elementary
 ]

@@ -2646,7 +2646,7 @@ _enm_traffic_worker_heavy(void *data, Ecore_Thread *thread)
             char buf[1];
 
             if (read(w->pipe_fd, buf, 1) < 0)
-              fprintf(stderr, "%s: ERROR READING FROM FD\n", __func__);
+              L("%s: ERROR READING FROM FD", __func__);
             // our pipe fd was written to. we have been woken up by the
             // main loop so re-think thnigs.
             if (ecore_thread_check(thread)) break; // canceled thread

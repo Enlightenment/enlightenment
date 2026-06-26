@@ -16,7 +16,7 @@ cb_obj_prop_mandata(void *data, const void *key, Eldbus_Message_Iter *var)
    Obj *o = data;
    unsigned short *skey = key;
 
-   printf("    M KEY %x\n", (int)*skey);
+   L("    M KEY %x", (int)*skey);
 }
 */
 
@@ -38,7 +38,7 @@ cb_obj_prop_entry(void *data, const void *key, Eldbus_Message_Iter *var)
         if (eldbus_message_iter_arguments_get(var, "b", &val))
           {
              o->connected = val;
-             printf("BZ: change connected for %s to %i\n", o->address, o->connected);
+             L("BZ: change connected for %s to %i", o->address, o->connected);
           }
      }
    else if (!strcmp(skey, "Trusted"))
@@ -250,7 +250,7 @@ _obj_clear(Obj *o)
 #define ERR_PRINT(str) \
    do { const char *name, *text; \
       if (eldbus_message_error_get(msg, &name, &text)) { \
-         printf("Error: %s.\n %s:\n %s\n", str, name, text); \
+         L("Error: %s.\n %s:\n %s", str, name, text); \
          return; \
       } \
    } while(0)
@@ -433,7 +433,7 @@ _cb_power_again(void *data)
    Obj *o = data;
 
    o->power_retry_timer = NULL;
-   printf("Retry power on...");
+   L("Retry power on...");
    bz_obj_power_on(o);
    return EINA_FALSE;
 }
@@ -446,7 +446,7 @@ cb_power_on(void *data, const Eldbus_Message *msg EINA_UNUSED, Eldbus_Pending *p
 
    if (eldbus_message_error_get(msg, &name, &text))
      {
-        printf("Error: %s.\n %s:\n %s\n", "Power On", name, text);
+        L("Error: %s.\n %s:\n %s", "Power On", name, text);
         if (!strcmp(name, "org.bluez.Error.Busy"))
           {
              o->power_retry_timer = ecore_timer_add(0.5, _cb_power_again, o);
@@ -648,7 +648,7 @@ _cb_l2ping(void *data, const char *params)
                {
                   if (!o->ping_ok)
                     {
-                       printf("@@@PING SUCCEED\n");
+                       L("@@@PING SUCCEED");
                        o->ping_ok = EINA_TRUE;
                        if (o->fn_change) o->fn_change(o);
                     }
@@ -657,7 +657,7 @@ _cb_l2ping(void *data, const char *params)
                {
                   if (o->ping_ok)
                     {
-                       printf("@@@PING FAIL\n");
+                       L("@@@PING FAIL");
                        o->ping_ok = EINA_FALSE;
                        if (o->fn_change) o->fn_change(o);
                     }
@@ -688,7 +688,7 @@ ping_do(Obj *o)
    o->ping_busy = EINA_TRUE;
    e_system_handler_add("l2ping-ping", _cb_l2ping, o);
    e_system_send("l2ping-ping", "%s %i", o->address, timeout);
-   printf("@@@ run new ping %s %i\n", o->address, timeout);
+   L("@@@ run new ping %s %i", o->address, timeout);
 }
 
 static Eina_Bool cb_ping_timer(void *data);
@@ -699,7 +699,7 @@ ping_schedule(Obj *o)
    double timeout = ping_powersave_timeout_get() + 1.0;
 
    if (o->ping_timer) ecore_timer_del(o->ping_timer);
-   printf("@@@ new ping in %1.3f\n", timeout);
+   L("@@@ new ping in %1.3f", timeout);
    o->ping_timer = ecore_timer_add(timeout, cb_ping_timer, o);
 }
 
@@ -708,7 +708,7 @@ cb_ping_timer(void *data)
 {
    Obj *o = data;
 
-   printf("@@@ ping timer %s\n", o->address);
+   L("@@@ ping timer %s", o->address);
    o->ping_timer = NULL;
    o->ping_block = EINA_TRUE;
    if (o->ping_busy)
@@ -755,7 +755,7 @@ bz_obj_ping_end(Obj *o)
      }
    if (o->ping_ok)
      {
-        printf("@@@PING END %s\n", o->address);
+        L("@@@PING END %s", o->address);
         o->ping_ok = EINA_FALSE;
         if (o->fn_change) o->fn_change(o);
      }
@@ -934,7 +934,7 @@ cb_obj_add(void *data EINA_UNUSED, const Eldbus_Message *msg)
    const char *path = NULL;
 
    if (!eldbus_message_arguments_get(msg, "o", &path)) return;
-   printf("BZ: cb_obj_add [%s]\n", path);
+   L("BZ: cb_obj_add [%s]", path);
    if ((o = bz_obj_find(path)))
      {
        _reload_device_props(o);
@@ -954,15 +954,15 @@ cb_obj_del_prop(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending E
   if (_obj_del_inside == 0) return;
   if (eldbus_message_error_get(msg, NULL, NULL))
     { // prop get error - obj really gone
-      printf("BZ: cb_obj_del_prop for ... %p\n", o);
+      L("BZ: cb_obj_del_prop for ... %p", o);
       bz_obj_ref(o);
       if (o->fn_del) o->fn_del(o);
-      printf("BZ: cb_obj_del_prop %p unref1\n", o);
+      L("BZ: cb_obj_del_prop %p unref1", o);
       bz_obj_unref(o);
-      printf("BZ: cb_obj_del_prop %p really is gone\n", o);
+      L("BZ: cb_obj_del_prop %p really is gone", o);
       return;
     }
-  printf("BZ: cb_obj_del_prop %p not gone\n", o);
+  L("BZ: cb_obj_del_prop %p not gone", o);
   // we managed to get props ... the obj is not really gone
   o->bat_percent = -1;
 }
@@ -975,17 +975,17 @@ cb_obj_del(void *data EINA_UNUSED, const Eldbus_Message *msg)
 
    if (!eldbus_message_arguments_get(msg, "o", &path)) return;
    o = bz_obj_find(path);
-   printf("BZ: cb_obj_del [%s] found = %p\n", path, o);
+   L("BZ: cb_obj_del [%s] found = %p", path, o);
    if (o)
      { // check if a prop fetch errs or is ok to check its really gone
-        printf("BZ: cb_obj_del [%s] %p ref=%i\n", path, o, o->ref);
+        L("BZ: cb_obj_del [%s] %p ref=%i", path, o, o->ref);
         _obj_del_inside++;
         bz_obj_ref(o);
         eldbus_proxy_property_get_all(o->proxy, cb_obj_del_prop, o);
         bz_obj_unref(o);
         bz_obj_unref(o); // we want to delete this obj. the above kept it alive
         _obj_del_inside--;
-        printf("BZ: cb_obj_del [%s] %p DONE!\n", path, o);
+        L("BZ: cb_obj_del [%s] %p DONE!", path, o);
      }
 }
 
@@ -1009,7 +1009,7 @@ cb_getobj(void *data EINA_UNUSED, const Eldbus_Message *msg,
                {
                   return;
                }
-             printf("BZ: cb_getobj [%s]\n", path);
+             L("BZ: cb_getobj [%s]", path);
              if ((o = bz_obj_find(path)))
                {
                   _reload_device_props(o);
@@ -1032,7 +1032,7 @@ _obj_hash_free(Obj *o)
 void
 bz_obj_init(void)
 {
-   printf("BZ: bz_obj_init\n");
+   L("BZ: bz_obj_init");
    obj_table = eina_hash_string_superfast_new((void *)_obj_hash_free);
 
    objman_obj = eldbus_object_get(bz_conn, "org.bluez", "/");
@@ -1048,7 +1048,7 @@ bz_obj_init(void)
 void
 bz_obj_shutdown(void)
 {
-   printf("BZ: bz_obj_shutdown\n");
+   L("BZ: bz_obj_shutdown");
    eina_hash_free(obj_table);
    obj_table = NULL;
    if (pend_getobj)
@@ -1076,7 +1076,7 @@ bz_obj_shutdown(void)
         eldbus_object_unref(objman_obj);
         objman_obj = NULL;
      }
-   printf("BZ: bz_obj_shutdown done\n");
+   L("BZ: bz_obj_shutdown done");
 }
 
 void

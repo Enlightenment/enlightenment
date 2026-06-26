@@ -288,6 +288,11 @@ if get_option('mount-eeze') == true
   endif
 endif
 
+has_clock_gettime = cc.has_function('clock_gettime', prefix : '#include <time.h>')
+if has_clock_gettime == true
+  config_h.set('HAVE_CLOCK_GETTIME', '1')
+endif
+
 dep_rt               = cc.find_library('rt', required: false)
 dep_eina             = dependency('eina'            , required: true, version: efl_version)
 dep_eet              = dependency('eet'             , required: true)

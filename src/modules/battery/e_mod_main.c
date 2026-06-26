@@ -1198,17 +1198,17 @@ _battery_update(int full, int time_left, int time_full, Eina_Bool have_battery, 
           {
              double t;
 
-             printf("-------------------------------------- bat warn .. why below\n");
-             printf("have_battery = %i\n", (int)have_battery);
-             printf("have_power = %i\n", (int)have_power);
-             printf("full = %i\n", (int)full / 100);
-             printf("time_left = %i\n", (int)time_left);
-             printf("battery_config->alert = %i\n", (int)battery_config->alert);
-             printf("battery_config->alert_p = %i\n", (int)battery_config->alert_p);
+             L("-------------------------------------- bat warn .. why below");
+             L("have_battery = %i", (int)have_battery);
+             L("have_power = %i", (int)have_power);
+             L("full = %i", (int)full / 100);
+             L("time_left = %i", (int)time_left);
+             L("battery_config->alert = %i", (int)battery_config->alert);
+             L("battery_config->alert_p = %i", (int)battery_config->alert_p);
              t = ecore_time_get();
              if ((t - debounce_time) > 30.0)
                {
-                  printf("t-debounce = %3.3f\n", (t - debounce_time));
+                  L("t-debounce = %3.3f", (t - debounce_time));
                   debounce_time = t;
                   if (((t - init_time) > 5.0) && (full < 1500))
                     _battery_warning_popup(inst, time_left, (double)full / 10000.0);
@@ -1220,7 +1220,7 @@ _battery_update(int full, int time_left, int time_full, Eina_Bool have_battery, 
             (battery_config->suspend_below > 0) &&
             (full < battery_config->suspend_below / 100))
           {
-             printf("battery %i suspend below %i\n", full / 100, battery_config->suspend_below);
+             L("battery %i suspend below %i", full / 100, battery_config->suspend_below);
              if (battery_config->suspend_method == SUSPEND)
                e_sys_action_do(E_SYS_SUSPEND_MODE, NULL);
              else if (battery_config->suspend_method == HIBERNATE)

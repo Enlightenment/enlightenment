@@ -11,6 +11,7 @@
 #include <Ecore.h>
 
 #include "e_Efx.h"
+#include "l.h"
 
 #define DBG(...)            EINA_LOG_DOM_DBG(_e_efx_log_dom, __VA_ARGS__)
 #define INF(...)            EINA_LOG_DOM_INFO(_e_efx_log_dom, __VA_ARGS__)

@@ -274,7 +274,7 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
    e_config->scale.xapp_base_dpi = cfdata->xapp_base_dpi;
    e_config->scale.set_xapp_dpi = cfdata->set_xapp_dpi;
 
-   fprintf(stderr, "dpi: %i, custom: %i, min: %3.3f, max: %3.3f, sc: %3.3f: base: %i\n",
+   L("dpi: %i, custom: %i, min: %3.3f, max: %3.3f, sc: %3.3f: base: %i",
            e_config->scale.use_dpi, e_config->scale.use_custom,
            e_config->scale.min, e_config->scale.max, e_config->scale.factor,
            e_config->scale.base_dpi);

@@ -54,7 +54,7 @@ _backlight_mismatch_retry(Backlight_Device *bd)
        (bd->retries < SET_RETRIES) &&
        (_own_vt))
      { // try again
-        printf("RETRY backlight set as %1.2f != %1.2f (expected) try=%i\n",
+        L("RETRY backlight set as %1.2f != %1.2f (expected) try=%i",
                bd->val, bd->expected_val, bd->retries);
         bd->retries++;
         if (bd->retry_timer) ecore_timer_del(bd->retry_timer);
@@ -150,13 +150,13 @@ _backlight_devices_zone_device_find(E_Zone *zone)
    *sep = '\0';
    out = tmp;
    edid = sep + 1;
-//   printf("BL: FIND zone [%i]... has out [%s] edid [%s]\n", zone->num, out, edid);
+//   L("BL: FIND zone [%i]... has out [%s] edid [%s]", zone->num, out, edid);
    EINA_LIST_FOREACH(_devices, l, bd)
      {
-//        printf("BL:   bd->output = [%s]\n", bd->output);
+//        L("BL:   bd->output = [%s]", bd->output);
         if ((bd->output) && (!strcmp(out, bd->output)))
           {
-//            printf("BL:     bd->edid = [%s]\n", bd->edid);
+//            L("BL:     bd->edid = [%s]", bd->edid);
              if ((edid[0] && (!strcmp(edid, bd->edid))) || (!edid[0]))
                {
                   free(tmp);
@@ -165,7 +165,7 @@ _backlight_devices_zone_device_find(E_Zone *zone)
           }
      }
    free(tmp);
-//   printf("BL: not found\n");
+//   L("BL: not found");
    return NULL;
 }
 
@@ -246,7 +246,7 @@ _backlight_devices_device_set(Backlight_Device *bd, double val)
              Ecore_X_Randr_Output o = _backlight_devices_randr_output_get(e_comp->root, bd->output, bd->edid);
              if (o)
                {
-//                  fprintf(stderr, "BL: randr bklight %1.3f @ %1.3f\n", bd->val, ecore_time_get());
+//                  L("BL: randr bklight %1.3f @ %1.3f", bd->val, ecore_time_get());
                   ecore_x_randr_output_backlight_level_set(e_comp->root, o, bd->val);
                   ecore_event_add(E_EVENT_BACKLIGHT_CHANGE, NULL, NULL, NULL);
                }
@@ -258,7 +258,7 @@ _backlight_devices_device_set(Backlight_Device *bd, double val)
      {
         double fval;
 
-//        fprintf(stderr, "BL: ddc bklight %1.3f @ %1.3f\n", bd->val, ecore_time_get());
+//        L"BL: ddc bklight %1.3f @ %1.3f", bd->val, ecore_time_get());
         if (bd->ddc_max) fval = bd->val * (double)bd->ddc_max;
         else fval = bd->val * 100.0;
         if (e_config->backlight.ddc)
@@ -267,7 +267,7 @@ _backlight_devices_device_set(Backlight_Device *bd, double val)
      }
    else
      {
-//        fprintf(stderr, "BL: internal bklight %1.3f @ %1.3f\n", bd->val, ecore_time_get());
+//        L("BL: internal bklight %1.3f @ %1.3f", bd->val, ecore_time_get());
         e_system_send("bklight-set", "%s %i", bd->dev, (int)(bd->val * 1000.0));
         ecore_event_add(E_EVENT_BACKLIGHT_CHANGE, NULL, NULL, NULL);
      }
@@ -385,12 +385,12 @@ _backlight_devices_screen_edid_get(const char *edid)
    size_t len;
 
    if (!e_randr2) return NULL;
-//   printf("BL: ........... FIND!!!!!!!!!!!!!!! [%s]\n", edid);
+//   L("BL: ........... FIND!!!!!!!!!!!!!!! [%s]", edid);
    EINA_LIST_FOREACH(e_randr2->screens, l, sc)
      {
         id = sc->info.edid;
         if (!id) id = "";
-//        printf("BL: screen find [%s] == [%s] [%s]\n", edid, id, sc->info.name);
+//        L("BL: screen find [%s] == [%s] [%s]", edid, id, sc->info.name);
         if (!strncmp(id, edid, strlen(edid))) return sc;
      }
 //   return NULL;
@@ -409,10 +409,10 @@ _backlight_devices_screen_edid_get(const char *edid)
         {
           id = sc->info.edid;
           if (!id) id = "";
-//          printf("BL: screen fallback find [%s] in [%s]\n", tmpid, id);
+//          L("BL: screen fallback find [%s] in [%s]", tmpid, id);
           if (strstr(id, tmpid))
             {
-//              printf("BL:   falback found!\n");
+//              L("BL:   falback found!");
               free(tmpid);
               return sc;
             }
@@ -482,7 +482,7 @@ _backlight_devices_edid_register(const char *dev, const char *edid)
    E_Randr2_Screen *sc = _backlight_devices_screen_edid_get(edid);
    Backlight_Device *bd;
 
-//   printf("BL: edid reg [%s] [%s] - sc = %p\n", dev, edid, sc);
+//   L("BL: edid reg [%s] [%s] - sc = %p", dev, edid, sc);
    if (!sc) return;
    bd = _backlight_devices_edid_find(sc->info.edid);
    if (!bd)
@@ -510,7 +510,7 @@ _backlight_devices_edid_register(const char *dev, const char *edid)
      {
         if (!strcmp(bd->dev, "randr")) return; // randr devices win
      }
-//   printf("BL: edid reg ... replace [%s]\n", dev);
+//   L("BL: edid reg ... replace [%s]", dev);
    eina_stringshare_replace(&(bd->dev), dev);
 }
 
@@ -533,7 +533,7 @@ _backlight_system_list_cb(void *data EINA_UNUSED, const char *params)
                   flag = *p;
                   if (flag)
                     {
-                      printf("BL: add bl dev [%s]\n", dev);
+                      L("BL: add bl dev [%s]", dev);
                        bl_devs = eina_list_append
                          (bl_devs, eina_stringshare_add(dev));
                        if ((devnum == 0) || (flag == 'p') ||
@@ -582,12 +582,12 @@ _backlight_system_ddc_list_cb(void *data EINA_UNUSED, const char *params)
           {
              p += strlen(dev);
              snprintf(buf, sizeof(buf), "ddc:%s", dev);
-             printf("BL: add bl dev [%s]\n", buf);
+             L("BL: add bl dev [%s]", buf);
              bl_devs = eina_list_append
                (bl_devs, eina_stringshare_add(buf));
              _backlight_devices_edid_register(buf, dev);
              if (eina_hash_find(tmphash, dev))
-               printf("BL: DDC ERROR: You have multiple DDC screens with the same EDID [%s] - this will lead to weirdness.\n", dev);
+               L("BL: DDC ERROR: You have multiple DDC screens with the same EDID [%s] - this will lead to weirdness.", dev);
              eina_hash_add(tmphash, dev, dev);
              if (*p != ' ') break;
           }
@@ -616,7 +616,7 @@ _backlight_devices_probe(Eina_Bool initial)
              int i, num = 0;
              Eina_Bool found = EINA_FALSE;
 
-             printf("BL: add bl dev [%s]\n", "randr");
+             L("BL: add bl dev [%s]", "randr");
              bl_devs = eina_list_append(bl_devs, eina_stringshare_add("randr"));
              out = ecore_x_randr_window_outputs_get(root, &num);
              if ((out) && (num > 0))
@@ -728,7 +728,7 @@ _cb_handler_x_window_property(void *data EINA_UNUSED, int type EINA_UNUSED, void
                     {
                        if ((*val == 1) && (!_own_vt)) // have vt
                          {
-                            printf("BL: gained VT\n");
+                            L("BL: gained VT");
                             _own_vt = EINA_TRUE;
                             // we just go back to normal backlight if we gain
                             // the vt again
@@ -736,7 +736,7 @@ _cb_handler_x_window_property(void *data EINA_UNUSED, int type EINA_UNUSED, void
                          }
                        else if (_own_vt)
                          {
-                            printf("BL: lost VT\n");
+                            L("BL: lost VT");
                             _own_vt = EINA_FALSE;
                          }
                     }

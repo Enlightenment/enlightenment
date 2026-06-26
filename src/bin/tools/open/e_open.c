@@ -10,6 +10,8 @@
 #include <errno.h>
 #include <sys/wait.h>
 
+#include "l.h"
+
 # ifdef E_API
 #  undef E_API
 # endif
@@ -429,7 +431,7 @@ local_open(const char *path)
         return single_command_open("enlightenment_filemanager", &path, 1);
      }
 
-   fprintf(stderr, "ERROR: Could not get mime type for: %s\n", path);
+   L("ERROR: Could not get mime type for: %s", path);
    return NULL;
 }
 
@@ -441,12 +443,12 @@ protocol_open(const char *str)
 
    if (!uri)
      {
-        fprintf(stderr, "ERROR: Could not decode uri: %s\n", str);
+        L("ERROR: Could not decode uri: %s", str);
         return NULL;
      }
 
    if (!uri->protocol)
-     fprintf(stderr, "ERROR: Could not get protocol from uri: %s\n", str);
+     L("ERROR: Could not get protocol from uri: %s", str);
    else if (strcmp(uri->protocol, "file") == 0)
      ret = local_open(uri->path);
    else
@@ -537,14 +539,14 @@ main(int argc, char *argv[])
    args = ecore_getopt_parse(&options, values, argc, argv);
    if (args < 0)
      {
-        fputs("ERROR: Could not parse command line options.\n", stderr);
+        L("ERROR: Could not parse command line options");
         return EXIT_FAILURE;
      }
    if (quit_option) return EXIT_SUCCESS;
 
    if ((type == NULL) && (args == argc))
      {
-        fputs("ERROR: Missing file, directory or URL or --type.\n", stderr);
+        L("ERROR: Missing file, directory or URL or --type");
         return EXIT_FAILURE;
      }
 
@@ -573,7 +575,7 @@ main(int argc, char *argv[])
                }
              if (!itr->type)
                {
-                  fprintf(stderr, "ERROR: type not supported %s\n", type);
+                  L("ERROR: type not supported %s", type);
                   cmds = NULL;
                }
           }
@@ -598,9 +600,7 @@ main(int argc, char *argv[])
           {
              /* Question: should we execute them in parallel? */
              int r = system(*itr);
-             if (r < 0)
-               fprintf(stderr, "ERROR: %s executing %s\n", strerror(errno),
-                       *itr);
+             if (r < 0) L("ERROR: %s executing %s", strerror(errno), *itr);
              free(*itr);
              if (r > 0) /* Question: should we stop the loop on first faiure? */
                ret = r;

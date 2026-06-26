@@ -416,10 +416,10 @@ evry_hide(Evry_Window *win, int clear)
    Evry_Item *_it;
    int _cnt = eina_list_count(_refd);
    Eina_List *_l;
-   printf("__________________________");
+   L("__________________________");
    EINA_LIST_FOREACH (_refd, _l, _it)
-     printf("%d %s\n", _it->ref, _it->label);
-   printf("sum: %d", _cnt);
+     L("%d %s", _it->ref, _it->label);
+   L("sum: %d", _cnt);
 #endif
 }
 
@@ -518,7 +518,7 @@ evry_item_new(Evry_Item *it, Evry_Plugin *p, const char *label,
    _refd = eina_list_append(_refd, it);
 #endif
 #ifdef PRINT_REFS
-   printf("%d, %d\t new : %s\n", it->ref, _item_cnt, it->label);
+   L("%d, %d\t new : %s", it->ref, _item_cnt, it->label);
 #endif
    return it;
 }
@@ -531,7 +531,7 @@ evry_item_free(Evry_Item *it)
    it->ref--;
 
 #ifdef PRINT_REFS
-   printf("%d, %d\t unref: %s\n", it->ref, _item_cnt, it->label);
+   L("%d, %d\t unref: %s", it->ref, _item_cnt, it->label);
 #endif
 
    if (it->ref > 0) return;
@@ -558,7 +558,7 @@ evry_item_ref(Evry_Item *it)
 {
    it->ref++;
 #ifdef PRINT_REFS
-   printf("%d, %d\t ref : %s\n", it->ref, _item_cnt, it->label);
+   L("%d, %d\t ref : %s", it->ref, _item_cnt, it->label);
 #endif
 }
 

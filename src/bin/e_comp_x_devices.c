@@ -30,7 +30,7 @@ _handle_dev_prop(int dev_slot, const char *dev, const char *prop, Device_Flags d
         if ((val) && (size == 8) && (num == 1) && (cfval != val[0]))
           {
              val[0] = cfval;
-             printf("DEV: change [%s] [%s] -> %i\n", dev, prop, val[0]);
+             L("DEV: change [%s] [%s] -> %i", dev, prop, val[0]);
              ecore_x_input_device_property_set
                (dev_slot, prop, val, num, fmt, size);
           }
@@ -48,7 +48,7 @@ _handle_dev_prop(int dev_slot, const char *dev, const char *prop, Device_Flags d
         if ((val) && (size == 32) && (num == 1) && (fabs(cfval - val[0]) >= 0.01))
           {
              val[0] = cfval;
-             printf("DEV: change [%s] [%s] -> %1.3f\n", dev, prop, val[0]);
+             L("DEV: change [%s] [%s] -> %1.3f", dev, prop, val[0]);
              ecore_x_input_device_property_set
                (dev_slot, prop, val, num, fmt, size);
           }
@@ -64,7 +64,7 @@ _handle_dev_prop(int dev_slot, const char *dev, const char *prop, Device_Flags d
                  (e_config->touch_tap_to_click != val[0]))
                {
                   val[0] = e_config->touch_tap_to_click;
-                  printf("DEV: change [%s] [%s] -> %i\n", dev, prop, val[0]);
+                  L("DEV: change [%s] [%s] -> %i", dev, prop, val[0]);
                   ecore_x_input_device_property_set
                     (dev_slot, prop, val, num, fmt, size);
                }
@@ -86,7 +86,7 @@ _handle_dev_prop(int dev_slot, const char *dev, const char *prop, Device_Flags d
                  (e_config->touch_scrolling_horiz != val[0]))
                {
                   val[0] = e_config->touch_scrolling_horiz;
-                  printf("DEV: change [%s] [%s] -> %i\n", dev, prop, val[0]);
+                  L("DEV: change [%s] [%s] -> %i", dev, prop, val[0]);
                   ecore_x_input_device_property_set
                     (dev_slot, prop, val, num, fmt, size);
                }
@@ -116,7 +116,7 @@ _handle_dev_prop(int dev_slot, const char *dev, const char *prop, Device_Flags d
                          {
                             val[0] = cf_2finger;
                             val[1] = cf_edge;
-                            printf("DEV: change [%s] [%s] -> %i %i %i\n", dev, prop, val[0], val[1], val[2]);
+                            L("DEV: change [%s] [%s] -> %i %i %i", dev, prop, val[0], val[1], val[2]);
                             ecore_x_input_device_property_set
                               (dev_slot, prop, val, num, fmt, size);
                          }
@@ -138,7 +138,7 @@ _handle_dev_prop(int dev_slot, const char *dev, const char *prop, Device_Flags d
         if ((val) && (size == 8) && (num == 1) && (cfval != val[0]))
           {
              val[0] = cfval;
-             printf("DEV: change [%s] [%s] -> %i\n", dev, prop, val[0]);
+             L("DEV: change [%s] [%s] -> %i", dev, prop, val[0]);
              ecore_x_input_device_property_set
                (dev_slot, prop, val, num, fmt, size);
           }
@@ -161,7 +161,7 @@ _handle_dev_prop(int dev_slot, const char *dev, const char *prop, Device_Flags d
              // Does a little flip-flop for each variable
              val[0] = !cfval;
              val[1] =  cfval;
-             printf("DEV: change [%s] [%s] -> %i, %i\n", dev, prop, val[0], val[1]);
+             L("DEV: change [%s] [%s] -> %i, %i", dev, prop, val[0], val[1]);
              ecore_x_input_device_property_set
                (dev_slot, prop, val, num, fmt, size);
           }
@@ -176,7 +176,7 @@ _handle_dev_prop(int dev_slot, const char *dev, const char *prop, Device_Flags d
         if ((val) && (size == 8) && (num == 1) && (cfval != val[0]))
           {
              val[0] = cfval;
-             printf("DEV: change [%s] [%s] -> %i\n", dev, prop, val[0]);
+             L("DEV: change [%s] [%s] -> %i", dev, prop, val[0]);
              ecore_x_input_device_property_set
                (dev_slot, prop, val, num, fmt, size);
           }
@@ -199,7 +199,7 @@ _handle_dev_prop(int dev_slot, const char *dev, const char *prop, Device_Flags d
             (e_config->touch_emulate_middle_button && (val[0] != 50)))
           {
              val[0] = 50;
-             printf("DEV: change [%s] [%s] -> %i\n", dev, prop, val[0]);
+             L("DEV: change [%s] [%s] -> %i", dev, prop, val[0]);
              ecore_x_input_device_property_set
                (dev_slot, prop, val, num, fmt, size);
           }
@@ -223,7 +223,7 @@ _handle_dev_prop(int dev_slot, const char *dev, const char *prop, Device_Flags d
              val[0] = chval[0];
              val[1] = chval[1];
              val[2] = chval[2];
-             printf("DEV: change [%s] [%s] -> %1.3f %1.3f %1.3f %1.3f\n", dev, prop, val[1], val[1], val[2], val[3]);
+             L("DEV: change [%s] [%s] -> %1.3f %1.3f %1.3f %1.3f", dev, prop, val[1], val[1], val[2], val[3]);
              ecore_x_input_device_property_set
                (dev_slot, prop, val, num, fmt, size);
           }
@@ -261,7 +261,7 @@ _handle_dev_prop(int dev_slot, const char *dev, const char *prop, Device_Flags d
                {
                   for (i = 0; i < 7; i++) val[i] = notapval[i];
                }
-             printf("DEV: change [%s] [%s] -> %i %i %i %i %i %i %i\n", dev, prop, val[0], val[1], val[2], val[3], val[4], val[5], val[6]);
+             L("DEV: change [%s] [%s] -> %i %i %i %i %i %i %i", dev, prop, val[0], val[1], val[2], val[3], val[4], val[5], val[6]);
              ecore_x_input_device_property_set
                (dev_slot, prop, val, num, fmt, size);
           }
@@ -276,7 +276,7 @@ _handle_dev_prop(int dev_slot, const char *dev, const char *prop, Device_Flags d
             (e_config->touch_clickpad) != (val[0]))
           {
              val[0] = e_config->touch_clickpad;
-             printf("DEV: change [%s] [%s] -> %i\n", dev, prop, val[0]);
+             L("DEV: change [%s] [%s] -> %i", dev, prop, val[0]);
              ecore_x_input_device_property_set
                (dev_slot, prop, val, num, fmt, size);
           }
@@ -303,7 +303,7 @@ _handle_dev_prop(int dev_slot, const char *dev, const char *prop, Device_Flags d
                   val[0] = 0;
                   val[1] = 0;
                }
-             printf("DEV: change [%s] [%s] -> %i %i\n", dev, prop, val[0], val[1]);
+             L("DEV: change [%s] [%s] -> %i %i", dev, prop, val[0], val[1]);
              ecore_x_input_device_property_set
                (dev_slot, prop, val, num, fmt, size);
           }
@@ -330,7 +330,7 @@ _handle_dev_prop(int dev_slot, const char *dev, const char *prop, Device_Flags d
                   val[0] = 0;
                   val[1] = 0;
                }
-             printf("DEV: change [%s] [%s] -> %i %i\n", dev, prop, val[0], val[1]);
+             L("DEV: change [%s] [%s] -> %i %i", dev, prop, val[0], val[1]);
              ecore_x_input_device_property_set
                (dev_slot, prop, val, num, fmt, size);
           }
@@ -345,7 +345,7 @@ _handle_dev_prop(int dev_slot, const char *dev, const char *prop, Device_Flags d
             (e_config->touch_scrolling_circular != val[0]))
           {
              val[0] = e_config->touch_scrolling_circular;
-             printf("DEV: change [%s] [%s] -> %i\n", dev, prop, val[0]);
+             L("DEV: change [%s] [%s] -> %i", dev, prop, val[0]);
              ecore_x_input_device_property_set
                (dev_slot, prop, val, num, fmt, size);
           }
@@ -360,7 +360,7 @@ _handle_dev_prop(int dev_slot, const char *dev, const char *prop, Device_Flags d
             (e_config->touch_palm_detect) != (val[0]))
           {
              val[0] = e_config->touch_palm_detect;
-             printf("DEV: change [%s] [%s] -> %i\n", dev, prop, val[0]);
+             L("DEV: change [%s] [%s] -> %i", dev, prop, val[0]);
              ecore_x_input_device_property_set
                (dev_slot, prop, val, num, fmt, size);
           }
@@ -385,7 +385,7 @@ _handle_dev_prop(int dev_slot, const char *dev, const char *prop, Device_Flags d
                   if (val[0] < 0) val[0] = -val[0];
                   if (val[1] < 0) val[1] = -val[1];
                }
-             printf("DEV: change [%s] [%s] -> %i %i\n", dev, prop, val[0], val[1]);
+             L("DEV: change [%s] [%s] -> %i %i", dev, prop, val[0], val[1]);
              ecore_x_input_device_property_set
                (dev_slot, prop, val, num, fmt, size);
           }
@@ -406,7 +406,7 @@ _handle_dev_prop(int dev_slot, const char *dev, const char *prop, Device_Flags d
             (e_config->mouse_emulate_middle_button) != (val[0]))
           {
              val[0] = e_config->mouse_emulate_middle_button;
-             printf("DEV: change [%s] [%s] -> %i\n", dev, prop, val[0]);
+             L("DEV: change [%s] [%s] -> %i", dev, prop, val[0]);
              ecore_x_input_device_property_set
                (dev_slot, prop, val, num, fmt, size);
           }
@@ -420,7 +420,7 @@ _handle_dev_prop(int dev_slot, const char *dev, const char *prop, Device_Flags d
             (e_config->mouse_emulate_middle_button && (val[0] != 50)))
           {
              val[0] = 50;
-             printf("DEV: change [%s] [%s] -> %i\n", dev, prop, val[0]);
+             L("DEV: change [%s] [%s] -> %i", dev, prop, val[0]);
              ecore_x_input_device_property_set
                (dev_slot, prop, val, num, fmt, size);
           }
@@ -454,7 +454,7 @@ e_comp_x_devices_config_apply(Eina_Bool force)
      }
    eina_strbuf_free(sbuf);
    changed |= force;
-   printf("DEV: CHANGES ... have %i devices, changed=%i\n", num_devs, changed);
+   L("DEV: CHANGES ... have %i devices, changed=%i", num_devs, changed);
    if (!changed) return;
    for (i = 0; i < num_devs; i++)
      {
@@ -464,7 +464,7 @@ e_comp_x_devices_config_apply(Eina_Bool force)
         Device_Flags dev_flags = 0;
 
         name = ecore_x_input_device_name_get(i);
-//        printf("DEV: DEV=%i: [%s]\n", i, name);
+//        L("DEV: DEV=%i: [%s]", i, name);
         props = ecore_x_input_device_properties_list(i, &num_props);
         if (props)
           {
@@ -495,7 +495,7 @@ e_comp_x_devices_config_apply(Eina_Bool force)
 
              for (j = 0; j < num_props; j++)
                {
-//                  printf("DEV:   PROP=%i: [%s]\n", j, props[j]);
+//                  L("DEV:   PROP=%i: [%s]", j, props[j]);
                   if ((!driver_evdev) && (!strncmp(props[j], "Evdev ", 6)))
                     driver_evdev = EINA_TRUE;
                   else if ((!driver_libinput) && (!strncmp(props[j], "libinput ", 9)))

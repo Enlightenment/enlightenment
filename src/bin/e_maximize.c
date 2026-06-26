@@ -112,7 +112,7 @@ e_maximize_client_dock_fit(const E_Client *ec, int *x1, int *yy1, int *x2, int *
              break;
 
            case NONE:
-             printf("Crazy people. Dock isn't at the edge.\n");
+             L("Crazy people. Dock isn't at the edge.");
              break;
           }
      }

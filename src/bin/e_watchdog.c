@@ -37,7 +37,7 @@ _cb_watchdog_thread_pingpong(void *data EINA_UNUSED, Ecore_Thread *thread)
                {
                   char buf[PATH_MAX];
 
-                  printf("WD: Enlightenment main loop hung. No response to ping for 10sec\n");
+                  L("WD: Enlightenment main loop hung. No response to ping for 10sec");
                   if (!getenv("E_NO_WATCHDOG"))
                    {
                      // do hard-exit as cleanup isnt doable
@@ -45,13 +45,13 @@ _cb_watchdog_thread_pingpong(void *data EINA_UNUSED, Ecore_Thread *thread)
                      // if ~/.e/e/watchdog-crash then crash (segv)
                      if (ecore_file_exists(buf))
                        {
-                         printf("WD: Forcing a SEGV crash to get a backtracxe - see ~/.e-crashdump.txt\n");
+                         L("WD: Forcing a SEGV crash to get a backtracxe - see ~/.e-crashdump.txt");
                          kill(getpid(), SIGSEGV);
                        }
                      // otherwise just restart so user can march on
                      else
                        {
-                         printf("WD: Exiting E allowing it to be restarted to un-block\n");
+                         L("WD: Exiting E allowing it to be restarted to un-block");
                          _exit(121);
                        }
                    }
@@ -61,7 +61,7 @@ _cb_watchdog_thread_pingpong(void *data EINA_UNUSED, Ecore_Thread *thread)
           }
         else
           {
-             printf("WD: Watchdog response alloc fail!!!!\n");
+             L("WD: Watchdog response alloc fail!!!!");
              // XXX: alloc fail
              break;
           }

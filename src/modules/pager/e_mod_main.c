@@ -1678,7 +1678,7 @@ _pager_drop_cb_drop(void *data, const char *type, void *event_info)
                          {
                             if (pd2->desk == pd->desk)
                               {
-                                 printf("update pager desk %p\n", pd2);
+                                 L("update pager desk %p", pd2);
                                  e_deskmirror_update_force(pd2->o_layout);
                               }
                          }

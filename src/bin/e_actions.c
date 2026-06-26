@@ -2561,10 +2561,10 @@ _should_suspend_if_plugged_in(void)
 
 ACT_FN_GO(suspend_smart, EINA_UNUSED)
 {
-   printf("PWSV: swmart suspend\n");
+   L("PWSV: swmart suspend");
    if (!_have_lid_and_external_screens_on())
      {
-        printf("PWSV: no lid and ext screens\n");
+        L("PWSV: no lid and ext screens");
         if (_should_suspend_if_plugged_in())
           e_sys_action_do(E_SYS_SUSPEND_MODE, NULL);
         else
@@ -3163,24 +3163,24 @@ ACT_FN_GO(module_toggle, )
 {
    E_Module *m;
 
-   fprintf(stderr, "toggle\n");
+   L("toggle");
    if (!params) return;
-   fprintf(stderr, "'%s'\n", params);
+   L("'%s'", params);
    m = e_module_find(params);
-   fprintf(stderr, "m = %p\n", m);
+   L("m = %p", m);
    if (!m)
      {
         m = e_module_new(params);
         if (!m) return;
      }
-   fprintf(stderr, "currently %i\n", e_module_enabled_get(m));
+   L("currently %i", e_module_enabled_get(m));
    if (e_module_enabled_get(m)) e_module_disable(m);
    else e_module_enable(m);
 }
 
 ACT_FN_GO(screen_redo, EINA_UNUSED)
 {
-   printf("REDOOOOOOOOOOOOOOOOOOOOOOOOOOO\n");
+   L("REDOOOOOOOOOOOOOOOOOOOOOOOOOOO");
 #ifndef HAVE_WAYLAND_ONLY
    e_randr2_screeninfo_update();
    e_randr2_config_apply();

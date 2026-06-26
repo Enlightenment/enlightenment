@@ -828,7 +828,7 @@ e_kbd_dict_matches_lookup(E_Kbd_Dict *kd)
         kw = l->data;
         kw->accuracy -= d1;
         a = (kw->accuracy + 10) / 10;
-        printf("-> %s:   acc=%i, use=%i -> ", kw->word, a, kw->usage);
+        L("-> %s:   acc=%i, use=%i -> ", kw->word, a, kw->usage);
         tmp = kw->usage + 100;
         tmp *= (a * a);
         tmp /= 10000;
@@ -839,9 +839,9 @@ e_kbd_dict_matches_lookup(E_Kbd_Dict *kd)
         tmp *= (a * a);
         tmp /= 10000;
         kw->usage = tmp / 10000;
-        printf("%i\n", kw->usage);
+        L("%i", kw->usage);
      }
-   printf("====== searched: %i/%i\n", found, searched);
+   L("====== searched: %i/%i", found, searched);
    kd->matches.list = eina_list_sort(kd->matches.list,
                                      eina_list_count(kd->matches.list),
                                      _e_kbd_dict_matches_lookup_cb_sort);

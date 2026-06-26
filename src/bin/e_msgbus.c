@@ -191,7 +191,7 @@ _e_msgbus_screensaver_request_name_cb(void *data EINA_UNUSED,
 static void
 _e_msgbus_screensaver_inhibit_free(E_Msgbus_Data_Screensaver_Inhibit *inhibit)
 {
-   printf("INH: inhibit remove %i [%s] [%s] [%s]\n", inhibit->cookie, inhibit->application, inhibit->reason, inhibit->sender);
+   L("INH: inhibit remove %i [%s] [%s] [%s]", inhibit->cookie, inhibit->application, inhibit->reason, inhibit->sender);
    if (inhibit->application) eina_stringshare_del(inhibit->application);
    if (inhibit->reason) eina_stringshare_del(inhibit->reason);
    if (inhibit->sender)
@@ -216,7 +216,7 @@ _e_msgbus_screensaver_owner_change_cb(void *data EINA_UNUSED, const char *bus EI
    Eina_Bool removed = EINA_FALSE;
 
    if (!e_msgbus_data) return;
-   printf("INH: owner change... [%s] [%s] [%s]\n", bus, old_id, new_id);
+   L("INH: owner change... [%s] [%s] [%s]", bus, old_id, new_id);
    if ((new_id) && (!new_id[0]))
      {
         EINA_LIST_FOREACH(e_msgbus_data->screensaver_inhibits, l, inhibit)
@@ -271,7 +271,7 @@ _e_msgbus_screensaver_inhibit_cb(const Eldbus_Service_Interface *iface EINA_UNUS
                                                  _e_msgbus_screensaver_owner_change_cb,
                                                  NULL, EINA_FALSE);
         inhibit->cookie = cookie;
-        printf("INH: inhibit [%s] [%s] [%s] -> %i\n", inhibit->application, inhibit->reason, inhibit->sender, inhibit->cookie);
+        L("INH: inhibit [%s] [%s] [%s] -> %i", inhibit->application, inhibit->reason, inhibit->sender, inhibit->cookie);
         e_msgbus_data->screensaver_inhibits =
           eina_list_append(e_msgbus_data->screensaver_inhibits, inhibit);
         reply = eldbus_message_method_return_new(msg);
@@ -309,7 +309,7 @@ _e_msgbus_screensaver_getactive_cb(const Eldbus_Service_Interface *iface EINA_UN
    Eldbus_Message *reply = NULL;
 
    reply = eldbus_message_method_return_new(msg);
-   printf("INH: getactive = %i\n", e_screensaver_on_get());
+   L("INH: getactive = %i", e_screensaver_on_get());
    if (reply)
      eldbus_message_arguments_append(reply, "b", e_screensaver_on_get());
    return reply;

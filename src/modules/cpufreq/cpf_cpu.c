@@ -1,5 +1,7 @@
 #include "cpf_cpu.h"
 
+#include "l.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -17,7 +19,7 @@ _mem_alloc_result(Cpu_Perf *cp)
 {
   if (!cp->prev.counters || !cp->prev.freqinfo || !cp->cur.counters || !cp->cur.freqinfo)
     {
-      fprintf(stderr, "PANIC! Out of memory to alloc small data for cpu usage/freq\n");
+      L("PANIC! Out of memory to alloc small data for cpu usage/freq");
       abort();
     }
 }

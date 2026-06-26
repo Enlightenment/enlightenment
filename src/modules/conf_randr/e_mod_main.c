@@ -23,7 +23,7 @@ _cb_randr(void *data EINA_UNUSED, int type EINA_UNUSED, void *info EINA_UNUSED)
         if (!s->config.configured)
           {
              // XXX: we should put up a dialog asking to configure screen s
-             printf("RRR: New unconfigured screen on %s\n", s->info.name);
+             L("RRR: New unconfigured screen on %s", s->info.name);
           }
      }
    return EINA_TRUE;

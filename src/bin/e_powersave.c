@@ -103,7 +103,7 @@ e_powersave_mode_set(E_Powersave_Mode mode)
    else if (mode > e_config->powersave.max) mode = e_config->powersave.max;
 
    if (powersave_mode == mode) return;
-   printf("PWSAVE %i/%i\n", (int)mode, (int)E_POWERSAVE_MODE_FREEZE);
+   L("PWSAVE %i/%i", (int)mode, (int)E_POWERSAVE_MODE_FREEZE);
    powersave_mode = mode;
 
    if (powersave_force) return;
@@ -123,7 +123,7 @@ E_API void
 e_powersave_mode_force(E_Powersave_Mode mode)
 {
    if (mode == powersave_mode_force) return;
-   printf("PWSAVE FORCE %i/%i\n", (int)mode, (int)E_POWERSAVE_MODE_FREEZE);
+   L("PWSAVE FORCE %i/%i", (int)mode, (int)E_POWERSAVE_MODE_FREEZE);
    powersave_force = EINA_TRUE;
    powersave_mode_force = mode;
    _e_powersave_event_change_send(powersave_mode_force);
@@ -134,7 +134,7 @@ E_API void
 e_powersave_mode_unforce(void)
 {
    if (!powersave_force) return;
-   printf("PWSAVE UNFORCE\n");
+   L("PWSAVE UNFORCE");
    powersave_force = EINA_FALSE;
    if (powersave_mode_force != powersave_mode)
      {
@@ -148,7 +148,7 @@ E_API void
 e_powersave_mode_screen_set(E_Powersave_Mode mode)
 {
    if (mode == powersave_mode_screen) return;
-   printf("PWSAVE SCREEN SET %i/%i\n", (int)mode, (int)E_POWERSAVE_MODE_FREEZE);
+   L("PWSAVE SCREEN SET %i/%i", (int)mode, (int)E_POWERSAVE_MODE_FREEZE);
    powersave_screen = EINA_TRUE;
    powersave_mode_screen = mode;
    _e_powersave_event_change_send(powersave_mode_screen);
@@ -159,7 +159,7 @@ E_API void
 e_powersave_mode_screen_unset(void)
 {
    if (!powersave_screen) return;
-   printf("PWSAVE SCREEN UNSET\n");
+   L("PWSAVE SCREEN UNSET");
    powersave_screen = EINA_FALSE;
    powersave_mode_screen = E_POWERSAVE_MODE_NONE;
    _e_powersave_event_change_send(powersave_mode_screen);
@@ -243,7 +243,7 @@ e_powersave_sleeper_sleep(E_Powersave_Sleeper *sleeper, int poll_interval, Eina_
         if ((ret == 1) && (FD_ISSET(sleeper->fd, &rfds)))
           {
              if (read(sleeper->fd, buf, 1) < 0)
-               fprintf(stderr, "%s: ERROR READING FROM FD\n", __func__);
+               L("%s: ERROR READING FROM FD", __func__);
              if (buf[0] == 1) // was woken up by mainloop to do another poll
                return;
           }
@@ -255,21 +255,21 @@ e_powersave_sleeper_sleep(E_Powersave_Sleeper *sleeper, int poll_interval, Eina_
 E_API void
 e_powersave_defer_suspend(void)
 {
-   printf("PWSV: defer suspend on %1.3f\n", ecore_time_get());
+   L("PWSV: defer suspend on %1.3f", ecore_time_get());
    powersave_deferred_suspend = EINA_TRUE;
 }
 
 E_API void
 e_powersave_defer_hibernate(void)
 {
-   printf("PWSV: defer hibernate on\n");
+   L("PWSV: defer hibernate on");
    powersave_deferred_hibernate = EINA_TRUE;
 }
 
 E_API void
 e_powersave_defer_cancel(void)
 {
-   printf("PWSV: defer suspend/hibernate off %1.3f\n", ecore_time_get());
+   L("PWSV: defer suspend/hibernate off %1.3f", ecore_time_get());
    powersave_deferred_suspend = EINA_FALSE;
    powersave_deferred_hibernate = EINA_FALSE;
 }
@@ -366,10 +366,10 @@ _e_powersave_event_update_free(void *data EINA_UNUSED, void *event)
    else mode = powersave_mode;
    free(event);
 
-   printf("PWSV: update free... %i\n", mode);
+   L("PWSV: update free... %i", mode);
    if (mode > E_POWERSAVE_MODE_LOW)
      {
-        printf("PWSV: low pwr hib=%i sus=%i\n", powersave_deferred_hibernate, powersave_deferred_suspend);
+        L("PWSV: low pwr hib=%i sus=%i", powersave_deferred_hibernate, powersave_deferred_suspend);
         if (powersave_deferred_hibernate)
           e_sys_action_do(E_SYS_HIBERNATE, NULL);
         else if (powersave_deferred_suspend)
@@ -384,7 +384,7 @@ _e_powersave_event_change_send(E_Powersave_Mode mode)
 {
    E_Event_Powersave_Update *ev;
 
-   printf("PWSV: PWSV TO %i/%i\n", (int)mode, (int)E_POWERSAVE_MODE_FREEZE);
+   L("PWSV: PWSV TO %i/%i", (int)mode, (int)E_POWERSAVE_MODE_FREEZE);
    ev = E_NEW(E_Event_Powersave_Update, 1);
    ev->mode = mode;
    ecore_event_add(E_EVENT_POWERSAVE_UPDATE, ev, _e_powersave_event_update_free, NULL);

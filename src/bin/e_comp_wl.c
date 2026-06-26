@@ -2989,7 +2989,7 @@ e_comp_wl_init(void)
    /* try to init ecore_wayland */
    if (!ecore_wl2_init())
      {
-        fprintf(stderr, _("Enlightenment cannot initialize Wayland client connection.\n"));
+        L("Enlightenment cannot initialize Wayland client connection.");
         return EINA_FALSE;
      }
 
@@ -3004,7 +3004,7 @@ e_comp_wl_init(void)
    /* try to create a wayland compositor */
    if (!_e_comp_wl_compositor_create())
      {
-        fprintf(stderr, _("Enlightenment cannot create a Wayland Compositor.\n"));
+        L("Enlightenment cannot create a Wayland Compositor.");
         return EINA_FALSE;
      }
 

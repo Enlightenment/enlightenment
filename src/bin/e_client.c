@@ -2452,7 +2452,7 @@ _e_client_eval(E_Client *ec)
 
    if (ec->need_fullscreen)
      {
-//        printf("HINT: 0x%x need fullscreen\n", (int)e_client_util_win_get(ec));
+//        L("HINT: 0x%x need fullscreen", (int)e_client_util_win_get(ec));
         e_client_fullscreen(ec, e_config->fullscreen_policy);
         ec->need_fullscreen = 0;
      }
@@ -2748,7 +2748,7 @@ e_client_new(E_Pixmap *cp, int first_map, int internal)
    ec->resize_mode = E_POINTER_RESIZE_NONE;
    ec->layer = E_LAYER_CLIENT_NORMAL;
 
-   /* printf("##- ON MAP CLIENT 0x%x SIZE %ix%i %i:%i\n",
+   /* L("##- ON MAP CLIENT 0x%x SIZE %ix%i %i:%i",
     *     ec->win, ec->w, ec->h, att->x, att->y); */
 
    /* FIXME: if first_map is 1 then we should ignore the first hide event
@@ -2756,7 +2756,7 @@ e_client_new(E_Pixmap *cp, int first_map, int internal)
     * create a border for it */
    if (first_map)
      {
-        // printf("##- FIRST MAP\n");
+        // L("##- FIRST MAP");
         ec->re_manage = 1;
         // needed to be 1 for internal windw and on restart.
         // ec->ignore_first_unmap = 2;
@@ -3372,7 +3372,7 @@ e_client_res_change_geometry_restore(E_Client *ec)
         else
           {
              e_client_unfullscreen(ec);
-//             printf("HINT: 0x%x geometry restore fullscreen\n", (int)e_client_util_win_get(ec));
+//             L("HINT: 0x%x geometry restore fullscreen", (int)e_client_util_win_get(ec));
              e_client_fullscreen(ec, e_config->fullscreen_policy);
           }
      }
@@ -3857,7 +3857,7 @@ e_client_focused_set(E_Client *ec)
           }
         if (ec->unfullscreen_forced)
           {
-//             printf("HINT: 0x%x geometry focus set fullscreen\n", (int)e_client_util_win_get(ec));
+//             L("HINT: 0x%x geometry focus set fullscreen", (int)e_client_util_win_get(ec));
              e_client_fullscreen(ec, e_config->fullscreen_policy);
           }
      }
@@ -4537,7 +4537,7 @@ e_client_fullscreen(E_Client *ec, E_Fullscreen policy)
    if ((!e_config->allow_above_fullscreen) && (!ec->desk->visible)) return;
    ec->need_fullscreen = 1;
    if (ec->new_client) return;
-//   printf("HINT: 0x%x fullscreen\n", (int)e_client_util_win_get(ec));
+//   L("HINT: 0x%x fullscreen", (int)e_client_util_win_get(ec));
    if (e_comp->nocomp_ec && (ec->desk == e_comp->nocomp_ec->desk))
      {
         e_object_unref(E_OBJECT(e_comp->nocomp_ec));
@@ -4638,7 +4638,7 @@ e_client_unfullscreen(E_Client *ec)
    if ((ec->shaded) || (ec->shading)) return;
    if (!ec->fullscreen) return;
 
-//   printf("HINT: 0x%x unfullscreen\n", (int)e_client_util_win_get(ec));
+//   L("HINT: 0x%x unfullscreen", (int)e_client_util_win_get(ec));
    ec->pre_res_change.valid = 0;
    ec->fullscreen = 0;
    ec->unfullscreen_forced = 0;
@@ -4698,7 +4698,7 @@ e_client_iconify(E_Client *ec)
    if (!ec->zone) return;
    if (ec->shading || ec->iconic) return;
 
-//   printf("HINT: 0x%x iconify\n", (int)e_client_util_win_get(ec));
+//   L("HINT: 0x%x iconify", (int)e_client_util_win_get(ec));
    if (((ec->stack.prev || ec->stack.next)) && (!ec->stack.ignore))
      {
         Eina_List *l, *list = e_client_stack_list_prepare(ec);
@@ -4765,7 +4765,7 @@ e_client_uniconify(E_Client *ec)
    if (!ec->zone) return;
    if (ec->shading || (!ec->iconic)) return;
 
-//   printf("HINT: 0x%x un-iconify\n", (int)e_client_util_win_get(ec));
+//   L("HINT: 0x%x un-iconify", (int)e_client_util_win_get(ec));
    if ((ec->fullscreen) && (!e_config->allow_above_fullscreen))
      evas_object_layer_set(ec->frame, E_LAYER_CLIENT_FULLSCREEN);
    if (((ec->stack.prev || ec->stack.next)) && (!ec->stack.ignore))

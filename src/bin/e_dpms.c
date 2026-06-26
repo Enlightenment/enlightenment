@@ -43,19 +43,19 @@ e_dpms_update(void)
                {
                   ecore_x_dpms_enabled_set(enabled);
                   e_dpms_actual = enabled;
-                 if (_e_dpms_enabled) fprintf(stderr, "DPMS: on\n");
-                 else fprintf(stderr, "DPMS: off\n");
+                 if (_e_dpms_enabled) L("DPMS: on");
+                 else L("DPMS: off");
                }
              else
                {
                   ecore_x_dpms_enabled_set(0);
                   e_dpms_actual = EINA_FALSE;
-                 fprintf(stderr, "DPMS: off\n");
+                 L("DPMS: off");
                }
           }
 #endif
      }
-   else fprintf(stderr, "DPMS: unchanged (%s)\n", enabled ? "on" : "off");
+   else L("DPMS: unchanged (%s)", enabled ? "on" : "off");
    if (!enabled) return;
 
    if (e_config->screensaver_enable)

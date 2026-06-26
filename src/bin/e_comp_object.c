@@ -2558,7 +2558,7 @@ _e_comp_object_input_rect_update(E_Comp_Object *cw)
      {
         o = eina_array_data_get(cw->input_objs, i++);
         x = rect->x, y = rect->y, w = rect->w, h = rect->h;
-//       printf("SHP: yyy %i %i %ix%i\n", x, y, w, h);
+//       L("SHP: yyy %i %i %ix%i", x, y, w, h);
 
         E_RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0,
                              cw->ec->client.w, cw->ec->client.h);
@@ -3315,7 +3315,7 @@ e_comp_object_util_fullscreen(Evas_Object *obj)
 
    if (cw)
      {
-//        printf("HINT: 0x%x fullscreen copy object\n", (int)e_client_util_win_get(cw->ec));
+//        L("HINT: 0x%x fullscreen copy object", (int)e_client_util_win_get(cw->ec));
         e_client_fullscreen(cw->ec, E_FULLSCREEN_RESIZE);
      }
    else
@@ -3352,7 +3352,7 @@ e_comp_object_input_area_set(Evas_Object *obj, const Eina_Tiler *area)
    API_ENTRY;
 
    if ((!area) && (!cw->input_area)) return;
-//  printf("SHP: e_comp_object_input_area_set %p %p\n", obj, area);
+//  L("SHP: e_comp_object_input_area_set %p %p", obj, area);
    if (area && cw->input_area && eina_tiler_equal(area, cw->input_area)) return;
    _e_comp_input_objs_free(cw);
    if (cw->obj) evas_object_pass_events_set(cw->obj, 1);
@@ -3376,7 +3376,7 @@ e_comp_object_input_area_set(Evas_Object *obj, const Eina_Tiler *area)
      {
         Evas_Object *o = evas_object_rectangle_add(e_comp->evas);
         //e_util_size_debug_set(o, 1);
-//  printf("SHP: ZZZZZZZZZ add input rect to %p\n", obj);
+//  L("SHP: ZZZZZZZZZ add input rect to %p", obj);
         evas_object_name_set(o, "cw->input_rect");
         evas_object_color_set(o, 0, 0, 0, 0);
         evas_object_clip_set(o, cw->clip);
@@ -5029,14 +5029,14 @@ e_comp_object_shape_input_update(Evas_Object *obj)
           unsigned int i;
 
           evas_object_pass_events_set(cw->obj, EINA_FALSE);
-//          printf("SHP: XXXXX [%p] [%s]\n", cw->obj, evas_object_type_get(cw->obj));
+//          L("SHP: XXXXX [%p] [%s]", cw->obj, evas_object_type_get(cw->obj));
           for (i = 0; i < ec->shape_input_rects_num; i++)
             {
               rects[i].x = ec->shape_input_rects[i].x;
               rects[i].y = ec->shape_input_rects[i].y;
               rects[i].w = ec->shape_input_rects[i].w;
               rects[i].h = ec->shape_input_rects[i].h;
-//              printf("SHP: XXXXX %i %i %ix%i\n", rects[i].x, rects[i].y, rects[i].w, rects[i].h);
+//              L("SHP: XXXXX %i %i %ix%i", rects[i].x, rects[i].y, rects[i].w, rects[i].h);
             }
           rects[i].x = 0;
           rects[i].y = 0;
@@ -5048,7 +5048,7 @@ e_comp_object_shape_input_update(Evas_Object *obj)
     }
   else
     {
-//      printf("SHP: XXXXX [%p] [%s] RESET!!!!!\n", cw->obj, evas_object_type_get(cw->obj));
+//      L("SHP: XXXXX [%p] [%s] RESET!!!!!", cw->obj, evas_object_type_get(cw->obj));
       evas_object_pass_events_set(cw->obj, EINA_TRUE);
       evas_object_event_rects_set(cw->obj, NULL);
     }

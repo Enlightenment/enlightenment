@@ -721,14 +721,14 @@ tiling_window_tree_dump(Window_Tree *root, int level)
      return;
 
    for (i = 0; i < level; i++)
-     printf(" ");
+     L(" ");
 
    if (root->children)
-     printf("\\-");
+     L("\\-");
    else
-     printf("|-");
+     L("|-");
 
-   printf("%f (%p)\n", root->weight, root->client);
+   L("%f (%p)", root->weight, root->client);
 
    Window_Tree *itr;
 

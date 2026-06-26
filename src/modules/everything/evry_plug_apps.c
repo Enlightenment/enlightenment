@@ -469,7 +469,7 @@ _desktop_list_get(void)
              efreet_desktop_free(d);
              apps = eina_list_remove_list(apps, ll);
           }
-        //printf("%d %s\n", d->ref, d->name);
+        //L("%d %s", d->ref, d->name);
 
         efreet_desktop_free(d);
      }
@@ -1091,7 +1091,7 @@ _desktop_cache_update(void *data EINA_UNUSED, int type EINA_UNUSED, void *event 
 static void
 _dir_watcher(void *data  EINA_UNUSED, Ecore_File_Monitor *em, Ecore_File_Event event, const char *path  EINA_UNUSED)
 {
-   //printf("exebuf path changed\n");
+   //L("exebuf path changed");
    switch (event)
      {
       case ECORE_FILE_EVENT_DELETED_SELF:

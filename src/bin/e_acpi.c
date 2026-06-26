@@ -83,7 +83,7 @@ _cb_sys_acpi_event(void *data EINA_UNUSED, const char *params)
   int                          sig, status, i, done = 0;
   char                         device[1024], bus[1024], state[1024];
 
-  printf("ACPI: [%s]\n", params);
+  L("ACPI: [%s]", params);
   // parse out this acpi string into separate pieces
   if (sscanf(params, "%1023s %1023s %x %x", device, bus, &sig, &status) != 4)
     {
@@ -136,12 +136,12 @@ _cb_sys_acpi_event(void *data EINA_UNUSED, const char *params)
         {
         case E_ACPI_TYPE_LID:
           acpi_event->status = _e_acpi_lid_status_get(device, bus);
-          printf("PWSV: acpi event @%1.8f\n", ecore_time_get());
+          L("PWSV: acpi event @%1.8f", ecore_time_get());
           /* no change in lid state */
           if (lid_is_closed == (acpi_event->status == E_ACPI_LID_CLOSED))
             break;
           lid_is_closed = (acpi_event->status == E_ACPI_LID_CLOSED);
-          printf("PWSV: lid event for lid %i\n", lid_is_closed);
+          L("PWSV: lid event for lid %i", lid_is_closed);
           if (!e_randr2_cfg->ignore_acpi_events)
             e_randr2_screen_refresh_queue(EINA_TRUE);
           if (!lid_is_closed) e_powersave_defer_cancel();

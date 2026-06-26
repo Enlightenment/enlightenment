@@ -601,12 +601,12 @@ e_hints_window_state_set(E_Client *ec)
      {
         if (ec->netwm.state.hidden)
           {
-//             printf("HINT: 0x%x -> hidden on\n", (int)e_client_util_win_get(ec));
+//             L("HINT: 0x%x -> hidden on", (int)e_client_util_win_get(ec));
              state[num++] = ECORE_X_WINDOW_STATE_HIDDEN;
           }
         else
           {
-//             printf("HINT: 0x%x -> hidden off\n", (int)e_client_util_win_get(ec));
+//             L("HINT: 0x%x -> hidden off", (int)e_client_util_win_get(ec));
           }
      }
    if (ec->netwm.state.fullscreen)
@@ -943,17 +943,17 @@ e_hints_window_state_update(E_Client *ec, int state, int action)
         switch (action)
           {
            case ECORE_X_WINDOW_STATE_ACTION_REMOVE:
-//             printf("HINT: 0x%x -> fullscreen off\n", (int)e_client_util_win_get(ec));
+//             L("HINT: 0x%x -> fullscreen off", (int)e_client_util_win_get(ec));
              e_client_unfullscreen(ec);
              break;
 
            case ECORE_X_WINDOW_STATE_ACTION_ADD:
-//             printf("HINT: 0x%x -> fullscreen on\n", (int)e_client_util_win_get(ec));
+//             L("HINT: 0x%x -> fullscreen on", (int)e_client_util_win_get(ec));
              e_client_fullscreen(ec, e_config->fullscreen_policy);
              break;
 
            case ECORE_X_WINDOW_STATE_ACTION_TOGGLE:
-//             printf("HINT: 0x%x -> fullscreen toggle %s\n", (int)e_client_util_win_get(ec), ec->fullscreen ? "off" : "on");
+//             L("HINT: 0x%x -> fullscreen toggle %s", (int)e_client_util_win_get(ec), ec->fullscreen ? "off" : "on");
              if (ec->fullscreen)
                e_client_unfullscreen(ec);
              else
@@ -1096,7 +1096,7 @@ e_hints_window_state_get(E_Client *ec)
                   break;
 
                 case ECORE_X_WINDOW_STATE_FULLSCREEN:
-//                  printf("HINT: 0x%x -> fullscreen on (state get) (was %i)\n", (int)e_client_util_win_get(ec), (int)ec->fullscreen);
+//                  L("HINT: 0x%x -> fullscreen on (state get) (was %i)", (int)e_client_util_win_get(ec), (int)ec->fullscreen);
                   ec->netwm.state.fullscreen = 1;
                   break;
 
@@ -1277,21 +1277,21 @@ e_hints_window_visible_set(E_Client *ec)
        (!ec->frozen))
      {
         ec->icccm.state = ECORE_X_WINDOW_STATE_HINT_NORMAL;
-//        printf("HINT: 0x%x -> normal\n", (int)e_client_util_win_get(ec));
+//        L("HINT: 0x%x -> normal", (int)e_client_util_win_get(ec));
         ecore_x_icccm_state_set(e_client_util_win_get(ec), ECORE_X_WINDOW_STATE_HINT_NORMAL);
      }
    else if (ec->frozen)
      {
         if (ec->icccm.state != ECORE_X_WINDOW_STATE_HINT_WITHDRAWN)
           ec->icccm.state = ECORE_X_WINDOW_STATE_HINT_NORMAL;
-//        printf("HINT: 0x%x -> iconic0\n", (int)e_client_util_win_get(ec));
+//        L("HINT: 0x%x -> iconic0", (int)e_client_util_win_get(ec));
         ecore_x_icccm_state_set(e_client_util_win_get(ec), ECORE_X_WINDOW_STATE_HINT_NORMAL);
      }
    if (ec->netwm.state.hidden)
      {
         ec->netwm.update.state = 1;
         ec->netwm.state.hidden = 0;
-//        printf("HINT: 0x%x -> hidden 0 in visible_set in hints\n", (int)e_client_util_win_get(ec));
+//        L("HINT: 0x%x -> hidden 0 in visible_set in hints", (int)e_client_util_win_get(ec));
         EC_CHANGED(ec);
      }
    _e_hints_process_wakeup(ec);
@@ -1308,21 +1308,21 @@ e_hints_window_iconic_set(E_Client *ec)
    if (ec->icccm.state != ECORE_X_WINDOW_STATE_HINT_WITHDRAWN)
      {
         ec->icccm.state = ECORE_X_WINDOW_STATE_HINT_ICONIC;
-//        printf("HINT: 0x%x -> iconic1\n", (int)e_client_util_win_get(ec));
+//        L("HINT: 0x%x -> iconic1", (int)e_client_util_win_get(ec));
         ecore_x_icccm_state_set(e_client_util_win_get(ec), ECORE_X_WINDOW_STATE_HINT_ICONIC);
      }
    else if (ec->frozen)
      {
         if (ec->icccm.state != ECORE_X_WINDOW_STATE_HINT_WITHDRAWN)
           ec->icccm.state = ECORE_X_WINDOW_STATE_HINT_ICONIC;
-//        printf("HINT: 0x%x -> iconic2\n", (int)e_client_util_win_get(ec));
+//        L("HINT: 0x%x -> iconic2", (int)e_client_util_win_get(ec));
         ecore_x_icccm_state_set(e_client_util_win_get(ec), ECORE_X_WINDOW_STATE_HINT_ICONIC);
      }
    if (!ec->netwm.state.hidden)
      {
         ec->netwm.update.state = 1;
         ec->netwm.state.hidden = 1;
-//        printf("HINT: 0x%x -> hidden 1 in visible_set in iconic set\n", (int)e_client_util_win_get(ec));
+//        L("HINT: 0x%x -> hidden 1 in visible_set in iconic set", (int)e_client_util_win_get(ec));
         EC_CHANGED(ec);
      }
    _e_hints_process_wakeup(ec);
@@ -1339,7 +1339,7 @@ e_hints_window_hidden_set(E_Client *ec)
    if (ec->netwm.state.hidden)
      {
         ec->netwm.update.state = 1;
-//        printf("HINT: 0x%x -> hidden 0 in hidden_Set\n", (int)e_client_util_win_get(ec));
+//        L("HINT: 0x%x -> hidden 0 in hidden_Set", (int)e_client_util_win_get(ec));
         ec->netwm.state.hidden = 0;
         EC_CHANGED(ec);
      }

@@ -241,7 +241,7 @@ _e_mod_menu_populate_item(void *data, Eio_File *handler EINA_UNUSED, const Eina_
      }
 end:
    e_menu_item_submenu_pre_callback_set(mi, _e_mod_menu_populate, dev);
-   //fprintf(stderr, "PATH SET: %s\n", e_object_data_get(E_OBJECT(mi)));
+   //L("PATH SET: %s", e_object_data_get(E_OBJECT(mi)));
    e_object_free_attach_func_set(E_OBJECT(mi), _e_mod_menu_cleanup_cb);
    e_menu_item_callback_set(mi, _e_mod_menu_populate_cb, dev);
 }

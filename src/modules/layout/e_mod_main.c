@@ -21,7 +21,7 @@ static void
 _e_module_layout_cb_hook(void *data, E_Client *ec)
 {
    /* FIXME: make some modification based on policy */
-   printf("Window:\n"
+   L("Window:\n"
 	  "  Title:    [%s][%s]\n"
 	  "  Class:    %s::%s\n"
 	  "  Geometry: %ix%i+%i+%i\n"

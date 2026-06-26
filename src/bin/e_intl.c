@@ -180,7 +180,7 @@ e_intl_language_set(const char *lang)
      }
    if (!ok)
      {
-        fprintf(stderr, "The locale '%s' cannot be found on your "
+        L("The locale '%s' cannot be found on your "
                         "system. Please install this locale or try "
                         "something else.", _e_intl_language_alias);
         return;
@@ -213,7 +213,7 @@ e_intl_language_set(const char *lang)
              if ((!locale_parts) &&
                  (strcmp(_e_intl_language_alias, "C")))
                {
-                  fprintf(stderr,
+                  L(
                           "An error occurred setting your locale. \n\n"
 
                           "The locale you have chosen '%s' appears to \n"
@@ -222,20 +222,20 @@ e_intl_language_set(const char *lang)
                           "file in your 'messages' path which can resolve\n"
                           "this alias.\n\n"
 
-                          "Enlightenment will not be translated.\n",
+                          "Enlightenment will not be translated.",
                           _e_intl_language_alias);
                }
              else if ((locale_parts) && (locale_parts->lang) &&
                       (strcmp(locale_parts->lang, "en")))
                {
-                  fprintf(stderr,
+                  L(
                           "An error occurred setting your locale. \n\n"
 
                           "The translation files for the locale you \n"
                           "have chosen (%s) cannot be found in your \n"
                           "'messages' path. \n\n"
 
-                          "Enlightenment will not be translated.\n",
+                          "Enlightenment will not be translated.",
                           _e_intl_language_alias);
                }
              e_intl_locale_parts_free(locale_parts);

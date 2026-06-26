@@ -113,9 +113,9 @@ _e_pixmap_clear(E_Pixmap *cp, Eina_Bool cache)
 #ifndef HAVE_WAYLAND_ONLY
         if (cp->pixmap)
           {
-//             printf("PMAP: + win 0x%08x: free 0x%08x\n",
-//                    (int)_e_pixmap_win_get(cp),
-//                    (int)cp->pixmap);
+//             L("PMAP: + win 0x%08x: free 0x%08x",
+//               (int)_e_pixmap_win_get(cp),
+//               (int)cp->pixmap);
              ecore_x_pixmap_free(cp->pixmap);
              cp->pixmap = 0;
              ecore_x_e_comp_pixmap_set(_e_pixmap_win_get(cp), 0);
@@ -533,8 +533,8 @@ e_pixmap_refresh(E_Pixmap *cp)
 
    if (!cp->dirty)
      {
-//        printf("PMAP: + win 0x%08x: not dirty\n",
-//               (int)_e_pixmap_win_get(cp));
+//        L("PMAP: + win 0x%08x: not dirty",
+//          (int)_e_pixmap_win_get(cp));
         return EINA_TRUE;
      }
    switch (cp->type)
@@ -549,9 +549,9 @@ e_pixmap_refresh(E_Pixmap *cp)
            if (!cp->usable)
              {
                 cp->failures++;
-//                printf("PMAP: + win 0x%08x: not usable - failures = %i\n",
-//                       (int)_e_pixmap_win_get(cp),
-//                       cp->failures);
+//                L("PMAP: + win 0x%08x: not usable - failures = %i",
+//                  (int)_e_pixmap_win_get(cp),
+//                  cp->failures);
                 return EINA_FALSE;
              }
            pixmap =
@@ -572,19 +572,19 @@ e_pixmap_refresh(E_Pixmap *cp)
            success = (pw > 0) && (ph > 0);
            if (success)
              {
-//                printf("PMAP: + win 0x%08x: 0x%08x -> 0x%08x [%4i x %4i] -> [%4i x %4i]\n",
-//                       (int)_e_pixmap_win_get(cp),
-//                       (int)cp->pixmap,
-//                       (int)pixmap,
-//                       cp->w, cp->h,
-//                       pw, ph);
+//                L("PMAP: + win 0x%08x: 0x%08x -> 0x%08x [%4i x %4i] -> [%4i x %4i]",
+//                  (int)_e_pixmap_win_get(cp),
+//                  (int)cp->pixmap,
+//                  (int)pixmap,
+//                  cp->w, cp->h,
+//                  pw, ph);
                 if ((pw != cp->w) || (ph != cp->h))
                   {
                      if (cp->pixmap)
                        {
-//                          printf("PMAP: + win 0x%08x: free 0x%08x\n",
-//                                 (int)_e_pixmap_win_get(cp),
-//                                 (int)cp->pixmap);
+//                          L("PMAP: + win 0x%08x: free 0x%08x",
+//                            (int)_e_pixmap_win_get(cp),
+//                            (int)cp->pixmap);
                           ecore_x_pixmap_free(cp->pixmap);
                        }
                      cp->pixmap = pixmap;
@@ -595,17 +595,17 @@ e_pixmap_refresh(E_Pixmap *cp)
                   }
                 else
                   {
-//                     printf("PMAP: + win 0x%08x: free 0x%08x (size same)\n",
-//                            (int)_e_pixmap_win_get(cp),
-//                            (int)pixmap);
+//                     L("PMAP: + win 0x%08x: free 0x%08x (size same)",
+//                       (int)_e_pixmap_win_get(cp),
+//                       (int)pixmap);
                      ecore_x_pixmap_free(pixmap);
                   }
              }
            else
              {
-//                printf("PMAP: + win 0x%08x: free 0x%08x (no success)\n",
-//                       (int)_e_pixmap_win_get(cp),
-//                       (int)pixmap);
+//                L("PMAP: + win 0x%08x: free 0x%08x (no success)",
+//                  (int)_e_pixmap_win_get(cp),
+//                  (int)pixmap);
                 ecore_x_pixmap_free(pixmap);
              }
         }
@@ -829,7 +829,7 @@ _e_pixmap_scanout_handler(void *data, Evas_Native_Surface_Status status)
 {
    E_Comp_Wl_Buffer *buffer = data;
 
-   printf("EWL: %s, Status: %d\n", __FUNCTION__, status);
+   L("EWL: %s, Status: %d", __FUNCTION__, status);
 
    switch (status)
      {
@@ -986,7 +986,7 @@ e_pixmap_image_clear(E_Pixmap *cp, Eina_Bool cache)
              t = ecore_loop_time_get();
              EINA_LIST_FREE(free_list, cb)
                {
-//                  printf("E: frame request: %p [%ix%i] %1.5f @ %1.5f\n", cp, cp->w, cp->h, t, ecore_time_get());
+//                  L("E: frame request: %p [%ix%i] %1.5f @ %1.5f", cp, cp->w, cp->h, t, ecore_time_get());
                   wl_callback_send_done(cb, t * 1000);
                   wl_resource_destroy(cb);
                }
@@ -1276,9 +1276,8 @@ _e_pixmap_pre_render_pixmap_cb(const Eina_Hash *hash EINA_UNUSED, const void *ke
           e_pixmap_image_clear(p, 0);
           if (pixmap_old)
             {
-              printf("PMAP: + win 0x%08x: free 0x%08x\n",
-                     (int)_e_pixmap_win_get(p),
-                     (int)pixmap_old);
+              L("PMAP: + win 0x%08x: free 0x%08x",
+                (int)_e_pixmap_win_get(p), (int)pixmap_old);
               ecore_x_pixmap_free(pixmap_old);
             }
         }

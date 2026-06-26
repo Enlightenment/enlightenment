@@ -2,6 +2,7 @@
 #include <Eina.h>
 
 #include "config.h"
+#include "l.h"
 #include "emix.h"
 
 #ifdef HAVE_PULSE
@@ -67,7 +68,7 @@ emix_init(void)
 
    if (!eina_init())
      {
-        fprintf(stderr, "Could not init eina\n");
+        L("Could not init eina");
         return EINA_FALSE;
      }
 
@@ -527,5 +528,4 @@ emix_source_monitor(Emix_Source *source, Eina_Bool monitor)
    if (!ctx->loaded->ebackend_source_monitor_set) return;
    ctx->loaded->ebackend_source_monitor_set(source, monitor);
 }
-
 

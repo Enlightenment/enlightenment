@@ -358,7 +358,7 @@ _e_comp_x_print_win(Ecore_X_Window win)
 
    ecore_x_window_geometry_get(win, &x, &y, &w, &h);
    vis = ecore_x_window_visible_get(win);
-   fprintf(stderr, "%s 0x%x: %d,%d @ %dx%d\n", vis ? "VIS" : "HID", win, x, y, w, h);
+   L("%s 0x%x: %d,%d @ %dx%d", vis ? "VIS" : "HID", win, x, y, w, h);
 }
 
 static void
@@ -646,7 +646,7 @@ _e_comp_x_client_new_helper(E_Client *ec)
              ec->e.state.video = 1;
              ec->e.fetch.video_parent = 1;
              ec->e.fetch.video_position = 1;
-             fprintf(stderr, "We found a video window \\o/ %x\n", win);
+             L("We found a video window \\o/ %x", win);
           }
         free(atoms);
 
@@ -824,7 +824,7 @@ _e_comp_x_post_client_idler_cb(void *d EINA_UNUSED)
 
         if (ec->e.state.video)
           {
-             fprintf(stderr, "VIDEO %p: [%i, %i] [%i, %i]\n",
+             L("VIDEO %p: [%i, %i] [%i, %i]",
                      ec,
                      ec->e.state.video_parent_client->client.x +
                      ec->e.state.video_position.x,
@@ -1160,7 +1160,7 @@ _e_comp_x_client_hide(E_Client *ec)
 
    _e_comp_x_client_data_get(ec)->iconic =
      ec->iconic && (!e_comp_object_iconic_preview_visibility_check(ec->frame));
-//   printf("HINT: 0x%x set hidden because of client hide\n", (int)e_client_util_win_get(ec));
+//   L("HINT: 0x%x set hidden because of client hide", (int)e_client_util_win_get(ec));
    ec->netwm.state.hidden = 1;
    e_hints_window_state_set(ec);
    if (ec->unredirected_single || _e_comp_x_client_data_get(ec)->iconic)
@@ -1209,7 +1209,7 @@ _e_comp_x_client_show(E_Client *ec)
         ecore_x_window_show(_e_comp_x_client_window_get(ec));
         _e_comp_x_client_data_get(ec)->iconic = 0;
      }
-//   printf("HINT: 0x%x set not hidden because of client show\n", (int)e_client_util_win_get(ec));
+//   L("HINT: 0x%x set not hidden because of client show", (int)e_client_util_win_get(ec));
    ec->netwm.state.hidden = 0;
    e_hints_window_state_set(ec);
    if (!ec->override)
@@ -1358,7 +1358,7 @@ _e_comp_x_resize_request(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_E
         if (!e_comp_find_by_window(ev->win)) ecore_x_window_resize(ev->win, ev->w, ev->h);
         return ECORE_CALLBACK_PASS_ON;
      }
-//  printf("RESIZE REQ: 0x%08x %4ix%4i\n", ev->win, ev->w, ev->h);
+//  L("RESIZE REQ: 0x%08x %4ix%4i", ev->win, ev->w, ev->h);
    w = ev->w, h = ev->h;
    if (ec->zone && (e_config->geometry_auto_resize_limit == 1))
      {
@@ -1770,12 +1770,12 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
    int ox, oy, ow, oh;
    int x, y, w, h;
 
-//   printf("CONFIG REQ 0x%08x  %4i,%4i %4ix%4i b=%i [%c%c%c%c]\n",
-//          ev->win, ev->x, ev->y, ev->w, ev->h, ev->border,
-//          ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_X ? 'x' : ' ',
-//          ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_Y ? 'y' : ' ',
-//          ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_W ? 'w' : ' ',
-//          ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_H ? 'h' : ' ');
+//   L("CONFIG REQ 0x%08x  %4i,%4i %4ix%4i b=%i [%c%c%c%c]",
+//     ev->win, ev->x, ev->y, ev->w, ev->h, ev->border,
+//     ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_X ? 'x' : ' ',
+//     ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_Y ? 'y' : ' ',
+//     ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_W ? 'w' : ' ',
+//     ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_H ? 'h' : ' ');
    if (e_comp_find_by_window(ev->win)) return ECORE_CALLBACK_RENEW;
    ec = _e_comp_x_client_find_by_window(ev->win);
 
@@ -2199,7 +2199,7 @@ _e_comp_x_property(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_W
     */
    else if (ev->atom == ECORE_X_ATOM_NET_WM_SYNC_REQUEST_COUNTER)
      {
-        //printf("ECORE_X_ATOM_NET_WM_SYNC_REQUEST_COUNTER\n");
+        // L("ECORE_X_ATOM_NET_WM_SYNC_REQUEST_COUNTER");
      }
    else if (ev->atom == ECORE_X_ATOM_E_VIDEO_POSITION)
      {
@@ -2509,7 +2509,7 @@ _e_comp_x_mapping_change(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_E
    E_Client *ec;
 
    if (_e_comp_x_mapping_change_disabled) return ECORE_CALLBACK_RENEW;
-   printf("COMPX: _e_comp_x_mapping_change\n");
+   L("COMPX: _e_comp_x_mapping_change");
    e_comp_canvas_keys_ungrab();
    EINA_LIST_FOREACH(e_comp->clients, l, ec)
      {
@@ -3480,11 +3480,11 @@ _e_comp_x_hook_client_post_new_client(void *d EINA_UNUSED, E_Client *ec)
           {
             Ecore_X_Window pwin = e_client_util_pwin_get(ec);
 
-//            printf("SHP: shp merge 0x%x - set 0\n", pwin);
+//            L("SHP: shp merge 0x%x - set 0", pwin);
             ecore_x_window_shape_mask_set(pwin, 0);
             if ((ec->shaped_input) && (ec->shape_input_rects))
               {
-//                printf("SHP: set00: 0x%x %p %i\n", pwin, (Ecore_X_Rectangle*)ec->shape_input_rects, ec->shape_input_rects_num);
+//                L("SHP: set00: 0x%x %p %i", pwin, (Ecore_X_Rectangle*)ec->shape_input_rects, ec->shape_input_rects_num);
                 ecore_x_window_shape_input_rectangles_set(pwin, (Ecore_X_Rectangle*)ec->shape_input_rects, ec->shape_input_rects_num);
               }
             e_comp_object_shape_input_update(ec->frame);
@@ -3625,12 +3625,12 @@ _e_comp_x_hook_client_pre_frame_assign(void *d EINA_UNUSED, E_Client *ec)
    ec->border.changed = 1;
    if (!ec->shaped)
      {
-//       printf("SHP: not shaped zero 0x%x\n", pwin);
+//       L("SHP: not shaped zero 0x%x", pwin);
        ecore_x_window_shape_mask_set(pwin, 0);
      }
    if (ec->shaped_input)
      {
-//       printf("SHP: set0: 0x%x %p %i\n", pwin, (Ecore_X_Rectangle*)ec->shape_input_rects, ec->shape_input_rects_num);
+//       L("SHP: set0: 0x%x %p %i", pwin, (Ecore_X_Rectangle*)ec->shape_input_rects, ec->shape_input_rects_num);
        ecore_x_window_shape_input_rectangles_set(pwin, (Ecore_X_Rectangle*)ec->shape_input_rects, ec->shape_input_rects_num);
      }
    ec->changes.shape = 1;
@@ -4504,7 +4504,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                {
                   if (cd->reparented)
                     {
-//                       printf("SHP: rectangles set 0x%x %i\n", pwin, num);
+//                       L("SHP: rectangles set 0x%x %i", pwin, num);
                        ecore_x_window_shape_rectangles_set(pwin, rects, num);
                        if ((!ec->shaped) && (!ec->bordername))
                          {
@@ -4549,7 +4549,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
              _e_comp_x_client_shape_input_rectangle_set(ec);
              if ((!ec->shaped) && cd->reparented)
                {
-//                 printf("SHP: mask set 0x%x set 0\n", pwin);
+//                 L("SHP: mask set 0x%x set 0", pwin);
                  ecore_x_window_shape_mask_set(pwin, 0);
                }
           }
@@ -4600,12 +4600,12 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                     {
 //                      int ii;
 //
-//                      printf("SHP: set2: 0x%x %p %i\n", pwin, rects, num);
-//                      for (ii = 0; ii < num; ii++) printf("SHP:   %i %i   %ix%i\n",
-//                                                          rects[ii].x,
-//                                                          rects[ii].y,
-//                                                          rects[ii].width,
-//                                                          rects[ii].height);
+//                      L("SHP: set2: 0x%x %p %i", pwin, rects, num);
+//                      for (ii = 0; ii < num; ii++) L("SHP:   %i %i   %ix%i",
+//                                                     rects[ii].x,
+//                                                     rects[ii].y,
+//                                                     rects[ii].width,
+//                                                     rects[ii].height);
                       ecore_x_window_shape_input_rectangles_set(pwin, rects, num);
                     }
                   changed = EINA_TRUE;
@@ -4623,12 +4623,12 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                {
 //                 int ii;
 //
-//                 printf("SHP: set3: 0x%x %p %i\n", pwin, rects, num);
-//                 for (ii = 0; ii < num; ii++) printf("SHP:   %i %i   %ix%i\n",
-//                                                     rects[ii].x,
-//                                                     rects[ii].y,
-//                                                     rects[ii].width,
-//                                                     rects[ii].height);
+//                 L("SHP: set3: 0x%x %p %i", pwin, rects, num);
+//                 for (ii = 0; ii < num; ii++) L("SHP:   %i %i   %ix%i\n",
+//                                                rects[ii].x,
+//                                                rects[ii].y,
+//                                                rects[ii].width,
+//                                                rects[ii].height);
                  ecore_x_window_shape_input_rectangles_set(pwin, rects, num);
                }
              changed = EINA_TRUE;
@@ -4694,7 +4694,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
              tmp = _e_comp_x_client_find_by_window(ec->e.state.video_parent);
              if (tmp)
                {
-                  /* fprintf(stderr, "child added to parent \\o/\n"); */
+                  /* L("child added to parent \\o/"); */
                   ec->e.state.video_parent_client = tmp;
                   tmp->e.state.video_child = eina_list_append(tmp->e.state.video_child, ec);
                   if (ec->desk != tmp->desk)
@@ -4702,7 +4702,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                }
           }
 
-        /* fprintf(stderr, "new parent %x => %p\n", ec->e.state.video_parent, ec->e.state.video_parent_client); */
+        /* L("new parent %x => %p", ec->e.state.video_parent, ec->e.state.video_parent_client); */
 
         if (ec->e.state.video_parent_client) ec->e.fetch.video_parent = 0;
         rem_change = 1;
@@ -4721,7 +4721,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
         ec->x = ec->e.state.video_position.x;
         ec->y = ec->e.state.video_position.y;
 
-        fprintf(stderr, "internal position has been updated [%i, %i]\n", ec->e.state.video_position.x, ec->e.state.video_position.y);
+        L("internal position has been updated [%i, %i]", ec->e.state.video_position.x, ec->e.state.video_position.y);
      }
    if (ec->changes.prop || ec->netwm.update.state)
      {
@@ -4951,7 +4951,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
 
    if (ec->e.state.profile.set)
      {
-        printf("E: sent profile set req to 0x%x [%s]\n", win, ec->e.state.profile.set);
+        L("E: sent profile set req to 0x%x [%s]", win, ec->e.state.profile.set);
         ecore_x_e_window_profile_change_request_send(win,
                                                      ec->e.state.profile.set);
         eina_stringshare_replace(&ec->e.state.profile.wait, ec->e.state.profile.set);
@@ -4975,8 +4975,8 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
               */
              if (count >= 4)
                {
-//                  printf("GTK-FRM: get 0x%08x %i %i %i %i\n",
-//                         win, extents[0], extents[1], extents[2], extents[3]);
+//                  L("GTK-FRM: get 0x%08x %i %i %i %i",
+//                    win, extents[0], extents[1], extents[2], extents[3]);
                   _e_comp_x_frame_extents_adjust
                     (ec, extents[0], extents[1], extents[2], extents[3]);
                }
@@ -4984,7 +4984,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
           }
         else
           {
-//             printf("GTK-FRM: get fail\n");
+//             L("GTK-FRM: get fail");
              _e_comp_x_frame_extents_adjust(ec, 0, 0, 0, 0);
           }
         cd->fetch_gtk_frame_extents = 0;
@@ -6173,7 +6173,7 @@ e_comp_x_init(void)
    Eina_List *h = NULL;
    if (!ecore_x_init(NULL))
      {
-        fprintf(stderr, _("Enlightenment cannot initialize X Connection...\n"));
+        L("Enlightenment cannot initialize X Connection...");
         return EINA_FALSE;
      }
 

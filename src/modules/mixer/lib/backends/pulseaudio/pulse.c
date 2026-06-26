@@ -1496,7 +1496,7 @@ _pulse_connect(void *data)
    Context *c = data;
    Eina_Bool ret = ECORE_CALLBACK_DONE;
 
-   printf("PULSE CONN...\n");
+   L("PULSE CONN...");
    proplist = pa_proplist_new();
    pa_proplist_sets(proplist, PA_PROP_APPLICATION_NAME, "Efl Volume Control");
    pa_proplist_sets(proplist, PA_PROP_APPLICATION_ID,

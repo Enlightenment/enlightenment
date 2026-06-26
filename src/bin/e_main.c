@@ -7,12 +7,32 @@
 
 #define MAX_LEVEL 80
 
+#ifdef HAVE_CLOCK_GETTIME
+# include <time.h>
+#endif
+
+static double
+_tim(void)
+{
+#ifdef HAVE_CLOCK_GETTIME
+  struct timespec t;
+  clock_gettime(CLOCK_MONOTONIC, &t);
+  return (double)t.tv_sec + (((double)t.tv_nsec) / 1000000000.0);
+#else
+  struct timeval timev;
+
+  gettimeofday(&timev, NULL);
+  return (double)timev.tv_sec + (((double)timev.tv_usec) / 1000000.0);
+#endif
+}
+
+
 #define TS_DO
 #ifdef TS_DO
 # define TS(x)                                                    \
   {                                                               \
      t1 = ecore_time_unix_get();                                  \
-     printf("ESTART: %1.5f [%1.5f] - %s\n", t1 - t0, t1 - t2, x); \
+     fprintf(stderr, "[%1.5f] ESTART: %1.5f [%1.5f] - %s\n", _tim(), t1 - t0, t1 - t2, x); \
      t2 = t1;                                                     \
   }
 static double t0, t1, t2;
@@ -60,7 +80,7 @@ static double t0, t1, t2;
    __free_hook = old_free_hook;
    //   if ((p) && (p == magicfree))
    //     {
-   //	printf("CAUGHT!!!!! %p ...\n", p);
+   //	L("CAUGHT!!!!! %p ...", p);
    //	abort();
    //     }
    free(p);
@@ -208,7 +228,7 @@ _precache_thread(void *data, Eina_Thread thr EINA_UNUSED)
    unsigned int reads = 0;
 
 
-   printf("PRECACHE: BEGIN\n");
+   L("PRECACHE: BEGIN");
    EINA_LIST_FREE(precache_files, path)
      {
         double tt = ecore_time_get();
@@ -226,11 +246,11 @@ _precache_thread(void *data, Eina_Thread thr EINA_UNUSED)
                }
              fclose(f);
           }
-        printf("PRECACHE: [%1.5f] [%s] DONE\n", ecore_time_get() - tt, path);
+        L("PRECACHE: [%1.5f] [%s] DONE", ecore_time_get() - tt, path);
         free(path);
      }
-   printf("PRECACHE: TOTAL [%1.5f]\n", ecore_time_get() - t);
-   printf("PRECACHE: SUM=%08x, READS=%i\n", sum, reads);
+   L("PRECACHE: TOTAL [%1.5f]", ecore_time_get() - t);
+   L("PRECACHE: SUM=%08x, READS=%i", sum, reads);
    return NULL;
 }
 
@@ -313,7 +333,7 @@ main(int argc, char **argv)
 # define TS(x)                                                    \
   {                                                               \
      t1 = ecore_time_unix_get();                                  \
-     printf("ESTART: %1.5f [%1.5f] - %s\n", t1 - t0, t1 - t2, x); \
+     fprintf(stderr, "[%1.5f] ESTART: %1.5f [%1.5f] - %s\n", _tim(), t1 - t0, t1 - t2, x); \
      t2 = t1;                                                     \
   }
 #endif
@@ -687,7 +707,7 @@ main(int argc, char **argv)
           }
         eina_hash_foreach(files, _precache_file, &precache_files);
         eina_hash_free(files);
-        printf("PRECACHE: SPAWN\n");
+        L("PRECACHE: SPAWN");
         if (!eina_thread_create(&thr, EINA_THREAD_BACKGROUND, -1,
                                 _precache_thread, precache_files))
           {
@@ -1169,7 +1189,7 @@ e_main_ts(const char *str)
 {
    double ret;
    t1 = ecore_time_unix_get();
-   printf("ESTART: %1.5f [%1.5f] - %s\n", t1 - t0, t1 - t2, str);
+   fprintf(stderr, "[%1.5f] ESTART: %1.5f [%1.5f] - %s\n", _tim(), t1 - t0, t1 - t2, str);
    ret = t1 - t2;
    t2 = t1;
    return ret;
@@ -1181,7 +1201,7 @@ _e_main_shutdown(int errcode)
 {
    int i = 0;
 
-   printf("E: Begin Shutdown Procedure!\n");
+   L("E: Begin Shutdown Procedure!\n");
 
    if (_idle_before) ecore_idle_enterer_del(_idle_before);
    _idle_before = NULL;
@@ -1340,10 +1360,10 @@ _e_main_cb_x_fatal(void *data EINA_UNUSED)
 {
    if (ecore_x_io_error_display_still_there_get())
      {
-        fprintf(stderr, "X I/O Error but display is still there. Restart.\n");
+        L("X I/O Error but display is still there. Restart.");
         exit(122); // like watchdog - restart but due to bad things
      }
-   fprintf(stderr, "X I/O Error - fatal. Exiting.\n");
+   L("X I/O Error - fatal. Exiting.");
    exit(101);
 }
 

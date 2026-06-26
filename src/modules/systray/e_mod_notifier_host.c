@@ -83,7 +83,7 @@ image_load(const char *name, const char *path, uint32_t *imgdata, int w, int h, 
       ".jpg",
       NULL
    };
-   printf("SYSTRAY: load image name=[%s] path=[%s] imgdata=[%p] size=[%ix%i]\n", name, path, imgdata, w, h);
+   L("SYSTRAY: load image name=[%s] path=[%s] imgdata=[%p] size=[%ix%i]", name, path, imgdata, w, h);
    if (path && path[0] && name)
      {
         char buf[PATH_MAX];
@@ -106,7 +106,7 @@ image_load(const char *name, const char *path, uint32_t *imgdata, int w, int h, 
              snprintf(buf, sizeof(buf), "%s/%s", path, *theme);
              if (!ecore_file_is_dir(buf))
                {
-                  printf("SYSTRAY: icon theme dir [%s] does not exist\n", buf);
+                  L("SYSTRAY: icon theme dir [%s] does not exist", buf);
                   continue;
                }
              for (i = sizes; *i; i++)
@@ -118,19 +118,19 @@ image_load(const char *name, const char *path, uint32_t *imgdata, int w, int h, 
                        snprintf(buf, sizeof(buf), "%s/%s/%ux%u/status/%s%s", path, *theme, *i, *i, name, *ext);
                        if (ecore_file_exists(buf))
                          {
-                            printf("SYSTRAY: actually load [%s] size=%lli\n", buf, ecore_file_size(buf));
+                            L("SYSTRAY: actually load [%s] size=%lli", buf, ecore_file_size(buf));
                             e_icon_file_set(image, buf);
                             return;
                          }
-                       printf("SYSTRAY: image [%s] does not exist\n", buf);
+                       L("SYSTRAY: image [%s] does not exist", buf);
                        snprintf(buf, sizeof(buf), "%s/%s/%ux%u/apps/%s%s", path, *theme, *i, *i, name, *ext);
                        if (ecore_file_exists(buf))
                          {
-                            printf("SYSTRAY: actually load [%s] size=%lli\n", buf, ecore_file_size(buf));
+                            L("SYSTRAY: actually load [%s] size=%lli", buf, ecore_file_size(buf));
                             e_icon_file_set(image, buf);
                             return;
                          }
-                       printf("SYSTRAY: image [%s] does not exist\n", buf);
+                       L("SYSTRAY: image [%s] does not exist", buf);
                     }
                }
           }
@@ -139,23 +139,23 @@ image_load(const char *name, const char *path, uint32_t *imgdata, int w, int h, 
              snprintf(buf, sizeof(buf), "%s/%s%s", path, name, *ext);
              if (ecore_file_exists(buf))
                {
-                  printf("SYSTRAY: actually load [%s] size=%lli\n", buf, ecore_file_size(buf));
+                  L("SYSTRAY: actually load [%s] size=%lli", buf, ecore_file_size(buf));
                   e_icon_file_set(image, buf);
                   return;
                }
-             printf("SYSTRAY: image [%s] does not exist\n", buf);
+             L("SYSTRAY: image [%s] does not exist", buf);
           }
      }
    if (name && name[0] && e_util_icon_theme_set(image, name))
      {
-        printf("SYSTRAY: set icon theme %s\n", name);
+        L("SYSTRAY: set icon theme %s", name);
         return;
      }
    if (imgdata)
      {
         Evas_Object *o;
 
-        printf("SYSTRAY: set icon custom data %ix%i\n", w, h);
+        L("SYSTRAY: set icon custom data %ix%i", w, h);
         o = evas_object_image_filled_add(evas_object_evas_get(image));
         evas_object_image_alpha_set(o, 1);
         evas_object_image_size_set(o, w, h);
@@ -165,7 +165,7 @@ image_load(const char *name, const char *path, uint32_t *imgdata, int w, int h, 
    else
      {
         e_util_icon_theme_set(image, "dialog-error");
-        printf("SYSTRAY: icon requested just does not exist - error in client\n");
+        L("SYSTRAY: icon requested just does not exist - error in client");
      }
 }
 

@@ -113,7 +113,7 @@ _cb_preload(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUS
    Item *it = data;
 
    if (!it->frame) return;
-   printf("preload callback!!!!\n");
+   L("preload callback!!!!");
 
    edje_object_part_swallow(it->frame, "e.swallow.icon", it->image);
    /* evas_object_show(it->image); */

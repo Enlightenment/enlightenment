@@ -130,7 +130,7 @@ wizard_next(void)
         wizard_next();
         return;
      }
-   fprintf(stderr, "WIZARD PAGE: %s\n", curpage->name);
+   L("WIZARD PAGE: %s", curpage->name);
    wizard_button_next_enable_set(1);
    need_xdg_desktops = EINA_FALSE;
    need_xdg_icons = EINA_FALSE;

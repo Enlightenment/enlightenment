@@ -209,7 +209,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
 #ifdef CHECK_REFS
    Evry_Item *it;
    EINA_LIST_FREE (_refd, it)
-     printf("%d %s\n", it->ref, it->label);
+     L("%d %s", it->ref, it->label);
 #endif
 
    _mod_evry = NULL;

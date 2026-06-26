@@ -132,7 +132,7 @@ e_grabinput_release(Ecore_Window mouse_win, Ecore_Window key_win)
         grab_key_win = 0;
         if (focus_win != 0)
           {
-             /* fprintf(stderr, "release focus to %x\n", focus_win); */
+             /* L("release focus to %x", focus_win); */
              _e_grabinput_focus(focus_win, focus_method);
              focus_win = 0;
              focus_method = E_FOCUS_METHOD_NO_INPUT;
@@ -145,13 +145,13 @@ e_grabinput_focus(Ecore_Window win, E_Focus_Method method)
 {
    if (grab_key_win != 0)
      {
-        /* fprintf(stderr, "while grabbed focus changed to %x\n", win); */
+        /* L("while grabbed focus changed to %x", win); */
         focus_win = win;
         focus_method = method;
      }
    else
      {
-        /* fprintf(stderr, "focus to %x\n", win); */
+        /* L("focus to %x", win); */
         _e_grabinput_focus(win, method);
      }
 }
@@ -183,7 +183,7 @@ e_grabinput_mouse_win_get(void)
 static void
 _e_grabinput_focus_do(Ecore_Window win, E_Focus_Method method)
 {
-   /* fprintf(stderr, "focus to %x method %i\n", win, method); */
+   /* L("focus to %x method %i", win, method); */
    switch (method)
      {
       case E_FOCUS_METHOD_NO_INPUT:
@@ -223,7 +223,7 @@ _e_grabinput_focus(Ecore_Window win, E_Focus_Method method)
 {
    focus_fix_win = win;
    focus_fix_method = method;
-   /* fprintf(stderr, "foc do 1\n"); */
+   /* L("foc do 1"); */
    _e_grabinput_focus_do(win, method);
    last_focus_time = ecore_loop_time_get();
 }

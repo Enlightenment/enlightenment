@@ -2703,7 +2703,7 @@ _e_fm2_client_eject(const char *udi)
    data = alloca(size);
    strcpy(data, udi);
 
-   fprintf(stderr, "EJECT [%s]\n", udi); // udi == /dev/sdd1 :)
+   L("EJECT [%s]", udi); // udi == /dev/sdd1 :)
    return _e_fm_client_send_new(E_FM_OP_EJECT, data, size);
 }
 
@@ -2824,18 +2824,14 @@ e_fm2_client_data(Ecore_Ipc_Event_Client_Data *e)
         switch (e->minor)
           {
            case E_FM_OP_HELLO: /*hello*/
-//             printf("E_FM_OP_HELLO\n");
              break;
 
            case E_FM_OP_OK: /*req ok*/
-//             printf("E_FM_OP_OK\n");
              cl->req--;
              break;
 
            case E_FM_OP_FILE_ADD: /*file add*/
-//             printf("E_FM_OP_FILE_ADD\n");
            case E_FM_OP_FILE_CHANGE: /*file change*/
-//             printf("E_FM_OP_FILE_CHANGE\n");
            {
               E_Fm2_Finfo finf;
 
@@ -2867,7 +2863,6 @@ e_fm2_client_data(Ecore_Ipc_Event_Client_Data *e)
               if ((evdir) && (sd->id == e->ref_to) &&
                   ((!strcmp(evdir, "") || ((dir) && (!strcmp(dir, evdir))))))
                 {
-//                       printf(" ch/add response = %i\n", e->response);
                    free(evdir);
                    if (e->response == 0)    /*live changes*/
                      {
@@ -2954,9 +2949,7 @@ e_fm2_client_data(Ecore_Ipc_Event_Client_Data *e)
                    break;
                 }
               free(evdir);
-//                       printf(" ...\n");
               if ((sd->id != e->ref_to) || (path[0] != 0)) break;
-//                            printf(" end response = %i\n", e->response);
               if (e->response == 2)     /* end of scan */
                 {
                    sd->listing = EINA_FALSE;
@@ -2977,7 +2970,6 @@ e_fm2_client_data(Ecore_Ipc_Event_Client_Data *e)
            break;
 
            case E_FM_OP_FILE_DEL: /*file del*/
-//             printf("E_FM_OP_FILE_DEL\n");
              path = e->data;
              evdir = ecore_file_dir_get(path);
              if ((dir) && (evdir) && (sd->id == e->ref_to) && (!strcmp(dir, evdir)))
@@ -2989,7 +2981,6 @@ e_fm2_client_data(Ecore_Ipc_Event_Client_Data *e)
              break;
 
            case E_FM_OP_MONITOR_END: /*mon dir del*/
-//             printf("E_FM_OP_MONITOR_END\n");
              path = e->data;
              /* FIXME dir should not be null but can. fix segv
                 when mounting cdrom with udisk here
@@ -3255,7 +3246,6 @@ e_fm2_client_data(Ecore_Ipc_Event_Client_Data *e)
 #undef UP
          src = p;
          dst = p + strlen(src) + 1;
-         // printf("%s:%s(%d) Progress from slave #%d:\n\t%d%% done,\n\t%d seconds left,\n\t%zd done,\n\t%zd total,\n\tsrc = %s,\n\tdst = %s.\n", __FILE__, __FUNCTION__, __LINE__, e->ref, percent, seconds, done, total, src, dst);
 
          ere = e_fm2_op_registry_entry_get(e->ref);
          if (!ere) return;
@@ -3920,9 +3910,6 @@ _e_fm2_queue_process(Evas_Object *obj)
           }
         if ((ecore_time_get() - t) > 0.01) break;
      }
-//   printf("FM: SORT %1.3f (%i files) (%i queued, %i added) [%i iter]\n",
-//	  ecore_time_get() - tt, eina_list_count(sd->icons), queued,
-//	  added, sd->tmp.iter);
    sd->overlay_count = eina_list_count(sd->icons);
    snprintf(buf, sizeof(buf), P_("%u file", "%u files", sd->overlay_count), sd->overlay_count);
    edje_object_part_text_set(sd->overlay, "e.text.busy_label", buf);
@@ -5259,9 +5246,7 @@ _e_fm2_icon_desktop_load(E_Fm2_Icon *ic)
      return 0;
 
    desktop = efreet_desktop_new(buf);
-//   printf("efreet_desktop_new(%s) = %p\n", buf, desktop);
    if (!desktop) goto error;
-//   if (desktop->type != EFREET_DESKTOP_TYPE_LINK) goto error;
 
    ic->info.removable = EINA_FALSE;
    ic->info.removable_full = EINA_FALSE;

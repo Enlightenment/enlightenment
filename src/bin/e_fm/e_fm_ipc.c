@@ -34,6 +34,8 @@
 #include <Efreet.h>
 #include <Eet.h>
 
+#include <l.h>
+
 #include "e_fm_ipc.h"
 #define E_TYPEDEFS
 #include "e_fm_op.h"
@@ -550,7 +552,7 @@ _e_fm_ipc_cb_server_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *eve
 
       case E_FM_OP_MONITOR_END: /* monitor dir end */
       {
-//	     printf("End listing directory: %s\n", e->data);
+//	     L("End listing directory: %s", e->data);
          _e_fm_ipc_monitor_end(e->ref, e->data);
       }
       break;
@@ -638,7 +640,7 @@ _e_fm_ipc_cb_server_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *eve
               mountpoint = udi + strlen(udi) + 1;
               if (mountpoint[0])
                 eina_stringshare_replace(&v->mount_point, mountpoint);
-//             printf("REQ M %p (find from %s -> %s)\n", v, udi, mountpoint); fflush(stdout);
+//             L("REQ M %p (find from %s -> %s)", v, udi, mountpoint);
            }
          e_volume_mount(v);
       }
@@ -653,7 +655,7 @@ _e_fm_ipc_cb_server_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *eve
          v = e_volume_find(udi);
          if (v)
            {
-//		  printf("REQ UM\n"); fflush(stdout);
+//		  L("REQ UM");
               e_volume_unmount(v);
            }
       }
@@ -764,7 +766,7 @@ _e_fm_ipc_slave_run(E_Fm_Op_Type type, const char *args, int id)
 
    slave->id = id;
    slave->exe = ecore_exe_pipe_run(command, ECORE_EXE_PIPE_WRITE | ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_ERROR, slave);
-//   printf("EFM command: %s\n", command);
+//   L("EFM command: %s", command);
 
    free(command);
 
@@ -841,7 +843,7 @@ _e_fm_ipc_slave_data_cb(void *data, int type EINA_UNUSED, void *event)
 
         if (magic != E_FM_OP_MAGIC)
           {
-             printf("%s:%s(%d) Wrong magic number from slave #%d. ", __FILE__, __FUNCTION__, __LINE__, slave->id);
+             L("%s:%s(%d) Wrong magic number from slave #%d.", __FILE__, __FUNCTION__, __LINE__, slave->id);
              break;
           }
 
@@ -851,7 +853,7 @@ _e_fm_ipc_slave_data_cb(void *data, int type EINA_UNUSED, void *event)
         if (id == E_FM_OP_OVERWRITE)
           {
              _e_fm_ipc_client_send(slave->id, E_FM_OP_OVERWRITE, sdata, size);
-             printf("%s:%s(%d) Overwrite sent to client from slave #%d.\n", __FILE__, __FUNCTION__, __LINE__, slave->id);
+             L("%s:%s(%d) Overwrite sent to client from slave #%d.", __FILE__, __FUNCTION__, __LINE__, slave->id);
           }
         else if (id == E_FM_OP_ERROR)
           {
@@ -882,7 +884,7 @@ _e_fm_ipc_slave_error_cb(void *data, int type EINA_UNUSED, void *event)
    if (data) return ECORE_CALLBACK_PASS_ON; /* ipc handlers have NULL data */
    if (!eina_list_data_find(_e_fm_ipc_slaves, slave)) return ECORE_CALLBACK_PASS_ON;
 
-   printf("EFM: Data from STDERR of slave #%d: %.*s", slave->id, e->size, (char *)e->data);
+   L("EFM: Data from STDERR of slave #%d: %.*s", slave->id, e->size, (char *)e->data);
 
    return 1;
 }
@@ -1052,11 +1054,11 @@ _e_fm_ipc_file_add_mod(E_Dir *ed, const char *path, E_Fm_Op_Type op, int listing
           ed->recent_clean = ecore_timer_loop_add(DEF_MOD_BACKOFF, _e_fm_ipc_cb_recent_clean, ed);
         if (skip)
           {
-//	     printf("SKIP MOD %s %3.3f\n", path, t_now);
+//	       L("SKIP MOD %s %3.3f", path, t_now);
              return;
           }
      }
-//   printf("MOD %s %3.3f\n", path, ecore_time_unix_get());
+//   L("MOD %s %3.3f", path, ecore_time_unix_get());
    lnk = ecore_file_readlink(path);
    memset(&st, 0, sizeof(struct stat));
    if (stat((lnk && lnk[0]) ? lnk : path, &st) == -1)
@@ -1227,7 +1229,6 @@ _e_fm_ipc_reorder(const char *file, const char *dst, const char *relative, int a
 
    if (!file || !dst || !relative) return;
    if (after != 0 && after != 1 && after != 2) return;
-//   printf("%s:%s(%d) Reorder:\n\tfile = %s\n\tdst = %s\n\trelative = %s\n\tafter = %d\n", __FILE__, __FUNCTION__, __LINE__, file, dst, relative, after);
 
    snprintf(order, sizeof(order), "%s/.order", dst);
    if (ecore_file_exists(order))

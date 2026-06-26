@@ -1999,7 +1999,7 @@ _e_shelf_cb_mouse_out(void *data, int type, void *event)
         evas_object_geometry_get(es->o_event, &x, &y, &w, &h);
         if (!E_INSIDE(ev->x, ev->y, x, y, w, h))
           {
-             //fprintf(stderr, "EVENT: %d,%d %dx%d || MOUSE: %d,%d\n", x, y, w, h, ev->x, ev->y);
+//             L("EVENT: %d,%d %dx%d || MOUSE: %d,%d", x, y, w, h, ev->x, ev->y);
              e_shelf_toggle(es, 0);
           }
      }

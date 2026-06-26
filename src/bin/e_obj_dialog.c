@@ -65,7 +65,7 @@ e_obj_dialog_new(char *title, char *class_name, char *class_class)
    mask = 0;
    kg = evas_object_key_grab(o, "Escape", mask, ~mask, 0);
    if (!kg)
-     fprintf(stderr, "ERROR: unable to redirect \"Escape\" key events to object %p.\n", o);
+     L("ERROR: unable to redirect \"Escape\" key events to object %p.", o);
    evas_object_event_callback_add(o, EVAS_CALLBACK_KEY_DOWN,
                                   _key_down_cb, od);
 

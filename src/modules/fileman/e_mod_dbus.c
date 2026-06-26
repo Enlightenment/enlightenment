@@ -40,7 +40,7 @@ _e_fileman_dbus_daemon_object_init(E_Fileman_DBus_Daemon *d)
    d->iface = eldbus_service_interface_register(d->conn, E_FILEMAN_PATH, &desc);
    if (!d->iface)
      {
-        fprintf(stderr, "ERROR: cannot add object to %s\n", E_FILEMAN_PATH);
+        L("ERROR: cannot add object to %s", E_FILEMAN_PATH);
         return;
      }
 }
@@ -82,12 +82,12 @@ _e_fileman_dbus_daemon_open_directory_cb(const Eldbus_Service_Interface *iface E
 
    if (_e_fileman_dbus_call_rate_limit())
      {
-        fprintf(stderr, "EFM remote call rate limiting to avoid DOS attacks");
+        L("EFM remote call rate limiting to avoid DOS attacks");
         return eldbus_message_method_return_new(msg);
      }
    if (!eldbus_message_arguments_get(msg, "s", &directory))
      {
-        fprintf(stderr, "Error: getting arguments of OpenDirectory call.\n");
+        L("Error: getting arguments of OpenDirectory call.");
         return eldbus_message_method_return_new(msg);
      }
 
@@ -182,12 +182,12 @@ _e_fileman_dbus_daemon_open_file_cb(const Eldbus_Service_Interface *iface EINA_U
 
    if (_e_fileman_dbus_call_rate_limit())
      {
-        fprintf(stderr, "EFM remote call rate limiting to avoid DOS attacks");
+        L("EFM remote call rate limiting to avoid DOS attacks");
         return eldbus_message_method_return_new(msg);
      }
    if (!eldbus_message_arguments_get(msg, "s", &param_file))
      {
-        fprintf(stderr, "ERROR: getting arguments of OpenFile call.\n");
+        L("ERROR: getting arguments of OpenFile call.");
         return eldbus_message_method_return_new(msg);
      }
 
@@ -328,7 +328,7 @@ _e_fileman_dbus_daemon_new(void)
    return d;
 
 error:
-   fprintf(stderr, "ERROR: FILEMAN: failed to create daemon at %p\n", d);
+   L("ERROR: FILEMAN: failed to create daemon at %p", d);
    _e_fileman_dbus_daemon_free(d);
    return NULL;
 }

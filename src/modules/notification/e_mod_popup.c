@@ -47,13 +47,13 @@ _notification_popup_merge(E_Notification_Notify *n)
 
    if (!popup)
      {
-        /* printf("- no poup to merge\n"); */
+        /* L("- no poup to merge"); */
         return NULL;
      }
 
    if (n->summary && (n->summary != popup->notif->summary))
      {
-        /* printf("- summary doesn match, %s, %s\n", str1, str2); */
+        /* L("- summary doesn match, %s, %s", str1, str2); */
         return NULL;
      }
 
@@ -69,7 +69,7 @@ _notification_popup_merge(E_Notification_Notify *n)
         /* Hack to allow e to include markup */
         snprintf(body_final, len + 1, "%s<ps/>%s", popup->notif->body, n->body);
 
-        /* printf("set body %s\n", body_final); */
+        /* L("set body %s", body_final); */
 
         eina_stringshare_replace(&n->body, body_final);
 
@@ -285,7 +285,7 @@ _notification_theme_cb_anchor(Popup_Data *popup EINA_UNUSED,
                   if ((s) && (strlen(s) > 0) && (s[strlen(s) - 1] == '\''))
                     eina_strbuf_replace_last(buf, "'", "");
                }
-             printf("NOT: clicked=[%s]\n", eina_strbuf_string_get(buf));
+             L("NOT: clicked=[%s]", eina_strbuf_string_get(buf));
              e_util_open(eina_strbuf_string_get(buf), NULL);
              eina_strbuf_free(buf);
           }
@@ -302,7 +302,7 @@ _notification_theme_cb_action(Popup_Data *popup,
 
    if (action)
      {
-        printf("NOT: action=[%s]\n", action);
+        L("NOT: action=[%s]", action);
         e_notification_notify_action(popup->notif, action);
      }
 }
@@ -343,7 +343,7 @@ _cb_item_provider(void *data, Evas_Object *obj EINA_UNUSED, const char *part, co
 {
    Popup_Data *popup = data;
 
-   printf("NOT: PROVIDER.... [%s] item: [%s]\n", part, item);
+   L("NOT: PROVIDER.... [%s] item: [%s]", part, item);
 //   if (!strcmp(part, "notification.textblock.message"))
      {
         Evas_Object *o = e_icon_add(popup->e);
@@ -699,7 +699,7 @@ _notification_popup_refresh(Popup_Data *popup)
                 (Edje_Signal_Cb)_notification_theme_cb_action, popup);
              edje_object_size_min_calc(o, &w, &h);
              evas_object_size_hint_min_set(o, w, h);
-             printf("NOT: act %ix%i\n", w, h);
+             L("NOT: act %ix%i", w, h);
              elm_box_pack_end(popup->action_box, o);
              evas_object_show(o);
           }
@@ -707,7 +707,7 @@ _notification_popup_refresh(Popup_Data *popup)
         edje_message_signal_process();
         evas_smart_objects_calculate(popup->e);
         evas_object_size_hint_min_get(popup->action_box, &w, &h);
-        printf("NOT: actbox %ix%i\n", w, h);
+        L("NOT: actbox %ix%i", w, h);
         edje_object_part_swallow(popup->theme, "notification.swallow.actions", popup->action_box);
         edje_object_signal_emit(popup->theme, "e,state,actions,show", "e");
      }
@@ -715,7 +715,7 @@ _notification_popup_refresh(Popup_Data *popup)
    /* Compute the new size of the popup */
    edje_object_calc_force(popup->theme);
    edje_object_size_min_calc(popup->theme, &w, &h);
-   printf("NOT: min %ix%i\n", w, h);
+   L("NOT: min %ix%i", w, h);
    if ((zone = e_comp_object_util_zone_get(popup->win)))
      {
         w = MIN(w, zone->w / 2);
@@ -807,7 +807,7 @@ _notification_format_message(Popup_Data *popup)
    Evas_Object *o = popup->theme;
    Eina_Strbuf *buf = eina_strbuf_new();
 
-   printf("NOT: set message... [%s]\n", popup->notif->body);
+   L("NOT: set message... [%s]", popup->notif->body);
    edje_object_part_text_unescaped_set(o, "notification.text.title",
                                        popup->notif->summary);
    /* FIXME: Filter to only include allowed markup? */

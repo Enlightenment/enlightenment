@@ -12,11 +12,11 @@ e_modapi_init(E_Module *m)
    Ecore_X_Window root, win, win2;
    Eina_Bool managed = EINA_FALSE;
 
-   printf("LOAD WL_X11 MODULE\n");
+   L("LOAD WL_X11 MODULE");
 
    if (!ecore_x_init(NULL))
      {
-        fprintf(stderr, "X11 connect failed!\n");
+        L("X11 connect failed!");
         return NULL;
      }
    root = ecore_x_window_root_first_get();

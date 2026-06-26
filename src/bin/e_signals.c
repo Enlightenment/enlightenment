@@ -86,11 +86,11 @@ static void
 _e_siginfo(int sig, siginfo_t *info)
 {
   // dump more info ont he signal we trapped to stdout
-  printf("SIG: sig=%i\n", sig);
-  printf("SIG: info->signo=");
-#define NAME(_x) case _x: printf(# _x "\n"); break
-#define NUMX(_v) default: printf("0x%lx\n", (unsigned long)_v); break
-#define NUMI(_v) default: printf("%li\n", (long)_v); break
+  L("SIG: sig=%i", sig);
+  L("SIG: info->signo=");
+#define NAME(_x) case _x: L(# _x ""); break
+#define NUMX(_v) default: L("0x%lx", (unsigned long)_v); break
+#define NUMI(_v) default: L("%li", (long)_v); break
   switch(info->si_signo) {
     NAME(SIGSEGV);
     NAME(SIGILL);
@@ -99,7 +99,7 @@ _e_siginfo(int sig, siginfo_t *info)
     NAME(SIGABRT);
     NUMX(info->si_signo);
   }
-  printf("SIG: info->code=");
+  L("SIG: info->code=");
   switch(info->si_signo) {
    case SIGSEGV:
     switch(info->si_code) {
@@ -153,9 +153,9 @@ _e_siginfo(int sig, siginfo_t *info)
    case SIGFPE:
    case SIGBUS:
 # ifdef __linux__
-    printf("SIG: info->si_addr=%p\n", info->si_addr);
+    L("SIG: info->si_addr=%p", info->si_addr);
 # else
-    printf("SIG: info->si_addr=0x%08lx\n", (unsigned long)info->si_addr);
+    L("SIG: info->si_addr=0x%08lx", (unsigned long)info->si_addr);
 # endif
    default:
     break;

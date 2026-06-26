@@ -20,8 +20,7 @@ e_about_new(void)
    e_obj_dialog_obj_part_text_set(od, "e.text.label", _("Close"));
    e_obj_dialog_obj_part_text_set(od, "e.text.title", _("Enlightenment"));
    e_obj_dialog_obj_part_text_set(od, "e.text.version", VERSION);
-   snprintf
-     (buf, sizeof(buf), "%s%s",
+   snprintf(buf, sizeof(buf), "%s%s",
      _(
        "<title>Copyright &copy; 2000-2026, by the Enlightenment "
        "Development Team</><ps/>"

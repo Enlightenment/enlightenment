@@ -178,7 +178,7 @@ e_bt(void)
 
              for (j = 1; j < i; j++)
                putchar(' ');
-             printf("%s\n", messages[i]);
+             L("%s", messages[i]);
           }
         free(messages);
      }
@@ -295,7 +295,7 @@ e_object_error(E_Object *obj)
 #else
    if (!obj)
      {
-        fprintf(stderr, "ERROR: Object is NULL. Add break point at %s:%d\n",
+        L("ERROR: Object is NULL. Add break point at %s:%d",
                 __FILE__, __LINE__);
         return 1;
      }
@@ -421,7 +421,7 @@ e_object_delfn_del(E_Object *obj, E_Object_Delfn *dfn)
 
    E_OBJECT_CHECK(obj);
    EINA_LISt_FOREACH(obj->crumbs, l, key)
-     printf("CRUMB: %s\n", key);
+     L("CRUMB: %s", key);
    }
  */
 

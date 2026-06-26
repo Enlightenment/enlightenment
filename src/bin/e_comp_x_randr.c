@@ -317,7 +317,7 @@ static Eina_Bool
 _cb_screen_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_X_Event_Screen_Change *ev = event;
-   printf("RRR: CB screen change...\n");
+   L("RRR: CB screen change...");
    ecore_x_randr_config_timestamp_get(ev->root);
    ecore_x_randr_screen_current_size_get(ev->root, NULL, NULL, NULL, NULL);
    ecore_x_sync();
@@ -330,7 +330,7 @@ static Eina_Bool
 _cb_crtc_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_X_Event_Randr_Crtc_Change *ev = event;
-   printf("RRR: CB crtc change...\n");
+   L("RRR: CB crtc change...");
    ecore_x_randr_config_timestamp_get(ev->win);
    ecore_x_randr_screen_current_size_get(ev->win, NULL, NULL, NULL, NULL);
    ecore_x_sync();
@@ -343,7 +343,7 @@ static Eina_Bool
 _cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_X_Event_Randr_Output_Change *ev = event;
-   printf("RRR: CB output change...\n");
+   L("RRR: CB output change...");
    ecore_x_randr_config_timestamp_get(ev->win);
    ecore_x_randr_screen_current_size_get(ev->win, NULL, NULL, NULL, NULL);
    ecore_x_sync();
@@ -408,8 +408,8 @@ _mode_screen_find(Ecore_X_Window root, E_Randr2_Screen *s, Ecore_X_Randr_Output 
    double refresh;
 
    modes = ecore_x_randr_output_modes_get(root, out, &modes_num, &modes_pref);
-   if (!modes) printf("RRR: modes for '%s' FETCH FAILED!!!\n", s->info.name);
-   printf("RRR: modes for '%s' are %p [%i]\n", s->info.name, modes, modes_num);
+   if (!modes) L("RRR: modes for '%s' FETCH FAILED!!!", s->info.name);
+   L("RRR: modes for '%s' are %p [%i]", s->info.name, modes, modes_num);
    if (modes)
      {
         for (i = 0; i < modes_num; i++)
@@ -536,7 +536,7 @@ _e_comp_xrandr_cmd(void)
    crtcs = ecore_x_randr_crtcs_get(root, &crtcs_num);
    outputs = ecore_x_randr_outputs_get(root, &outputs_num);
 
-   printf("RRR: crtcs=%p outputs=%p\n", crtcs, outputs);
+   L("RRR: crtcs=%p outputs=%p", crtcs, outputs);
    if ((crtcs) && (outputs))
      {
         outconf = alloca(outputs_num * sizeof(Ecore_X_Randr_Output));
@@ -544,10 +544,10 @@ _e_comp_xrandr_cmd(void)
         memset(outconf, 0, outputs_num * sizeof(Ecore_X_Randr_Output));
         memset(screenconf, 0, outputs_num * sizeof(E_Randr2_Screen *));
 
-        printf("RRR: crtcs: ");
+        L("RRR: crtcs: ");
         for (i = 0; i < crtcs_num; i++)
-          printf(" %i", crtcs[i]);
-        printf("\n");
+          L(" %i", crtcs[i]);
+        L("%s", "");
         unused_crtcs = alloca(crtcs_num * sizeof(Ecore_X_Randr_Crtc));
         for (i = 0; i < crtcs_num; i++) unused_crtcs[i] = crtcs[i];
         unused_crtcs_num = crtcs_num;
@@ -561,13 +561,13 @@ _e_comp_xrandr_cmd(void)
         // decide which outputs get which crtcs
         EINA_LIST_FOREACH(e_randr2->screens, l, s)
           {
-             printf("RRR: find output for '%s'\n", s->info.name);
+             L("RRR: find output for '%s'", s->info.name);
              // XXX: find clones and set them as outputs in an array
              if ((s->config.configured) &&
                  (_output_name_find(root, s->info.name, outputs,
                                     outputs_num, &out)))
                {
-                  printf("RRR:   enabled: %i\n", s->config.enabled);
+                  L("RRR:   enabled: %i", s->config.enabled);
                   if (s->config.enabled)
                     {
                        if (s->config.priority > top_priority)
@@ -580,7 +580,7 @@ _e_comp_xrandr_cmd(void)
                                    ecore_x_randr_output_crtc_get(root,
                                                                  outputs[i]);
                                  info = NULL;
-                                 printf("RRR:     crtc slot empty: %i, crtc=%i, output=%i\n", i, crtc, outputs[i]);
+                                 L("RRR:     crtc slot empty: %i, crtc=%i, output=%i", i, crtc, outputs[i]);
                                  if (crtc)
                                    info = ecore_x_randr_crtc_info_get(root,
                                                                       crtc);
@@ -588,38 +588,38 @@ _e_comp_xrandr_cmd(void)
                                   {
                                     int poss_crtcs_num = 0;
                                     Ecore_X_Randr_Crtc *poss_crtcs = ecore_x_randr_output_possible_crtcs_get(root, outputs[i], &crtcs_num);
-                                    if (!poss_crtcs) printf("RRR:     no possible crtcs!!!\n");
+                                    if (!poss_crtcs) L("RRR:     no possible crtcs!!!");
                                     else
                                       {
-                                        printf("RRR:     possible crtc: ");
+                                        L("RRR:     possible crtc: ");
                                         for (j = 0; j < poss_crtcs_num; j++)
-                                          printf(" %i", poss_crtcs[j]);
-                                        printf("\n");
+                                          L(" %i", poss_crtcs[j]);
+                                        L("%s", "");
                                         free(poss_crtcs);
                                       }
                                     if (unused_crtcs_num > 0)
                                       {
                                         Ecore_X_Randr_Crtc new_crtc = unused_crtcs[0];
                                         _remove_unused_crtcs(new_crtc, unused_crtcs, &unused_crtcs_num);
-                                        printf("RRR:     assign crtc %i to output\n", new_crtc);
+                                        L("RRR:     assign crtc %i to output", new_crtc);
                                         ecore_x_randr_output_crtc_set(root, outputs[i], new_crtc);
                                         info = ecore_x_randr_crtc_info_get(root, new_crtc);
                                       }
                                     else
                                       {
-                                        printf("RRR:     no available crtcs for the output\n");
+                                        L("RRR:     no available crtcs for the output");
                                       }
                                   }
-                                 printf("RRR:     crtc info = %p\n", info);
+                                 L("RRR:     crtc info = %p", info);
                                  if (info)
                                    {
-                                      printf("RRR:     output exists=%i rot exists=%i\n",
+                                      L("RRR:     output exists=%i rot exists=%i",
                                              _output_exists(out, info), _rotation_exists(s->config.rotation, info));
                                       if (_output_exists(out, info) &&
                                           _rotation_exists(s->config.rotation,
                                                            info))
                                         {
-                                           printf("RRR:       assign slot out: %x\n", out);
+                                           L("RRR:       assign slot out: %x", out);
                                            outconf[i] = out;
                                            screenconf[i] = s;
                                         }
@@ -627,7 +627,7 @@ _e_comp_xrandr_cmd(void)
                                    }
                                  if (!screenconf[i])
                                    {
-                                      printf("RRR:       assign slot off\n");
+                                      L("RRR:       assign slot off");
                                       outconf[i] = 0;
                                       screenconf[i] = s;
                                    }
@@ -641,7 +641,7 @@ _e_comp_xrandr_cmd(void)
                          {
                             if (!screenconf[i])
                               {
-                                 printf("RRR:       assign slot off 2\n");
+                                 L("RRR:       assign slot off 2");
                                  outconf[i] = 0;
                                  screenconf[i] = s;
                                  break;
@@ -699,17 +699,17 @@ _e_comp_xrandr_cmd(void)
                     }
                   else
                     {
-                       printf("RRR: crtc off: %i\n", i);
+                       L("RRR: crtc off: %i", i);
                        eina_strbuf_append_printf(sb, "--off ");
                     }
                }
-             printf("RRR: XRANDR: %s\n", eina_strbuf_string_get(sb));
+             L("RRR: XRANDR: %s", eina_strbuf_string_get(sb));
              ecore_exe_run(eina_strbuf_string_get(sb), NULL);
              eina_strbuf_free(sb);
           }
         else
           {
-             printf("RRR: EERRRRRROOOORRRRRRR no outputs to configure!\n");
+             L("RRR: EERRRRRROOOORRRRRRR no outputs to configure!");
              ecore_timer_add(5.0, _cb_no_outputs_timer, NULL);
              ecore_x_root_screen_barriers_set(NULL, 0);
           }
@@ -744,9 +744,9 @@ _e_comp_xrandr_ecore_x(void)
      {
         int dww = 0, dhh = 0, dww2 = 0, dhh2 = 0;
         ecore_x_randr_screen_current_size_get(root, &dww, &dhh, &dww2, &dhh2);
-        printf("RRR: cur size: %ix%i\n", dww, dhh);
+        L("RRR: cur size: %ix%i", dww, dhh);
      }
-   printf("RRR: size range: %ix%i -> %ix%i\n", minw, minh, maxw, maxh);
+   L("RRR: size range: %ix%i -> %ix%i", minw, minh, maxw, maxh);
    if (nw > maxw) nw = maxw;
    if (nh > maxh) nh = maxh;
    if (nw < minw) nw = minw;
@@ -759,9 +759,9 @@ _e_comp_xrandr_ecore_x(void)
      {
         int dww = 0, dhh = 0, dww2 = 0, dhh2 = 0;
         ecore_x_randr_screen_current_size_get(root, &dww, &dhh, &dww2, &dhh2);
-        printf("RRR: cur size: %ix%i\n", dww, dhh);
+        L("RRR: cur size: %ix%i", dww, dhh);
      }
-   printf("RRR: set vsize: %ix%i\n", nw, nh);
+   L("RRR: set vsize: %ix%i", nw, nh);
 
    crtcs = ecore_x_randr_crtcs_get(root, &crtcs_num);
    outputs = ecore_x_randr_outputs_get(root, &outputs_num);
@@ -775,7 +775,7 @@ _e_comp_xrandr_ecore_x(void)
           ecore_x_randr_crtc_panning_area_set(root, crtcs[i], 0, 0, 0, 0);
      }
 
-   printf("RRR: crtcs=%p outputs=%p\n", crtcs, outputs);
+   L("RRR: crtcs=%p outputs=%p", crtcs, outputs);
    if ((crtcs) && (outputs))
      {
         int conf_num = (crtcs_num > outputs_num) ? crtcs_num : outputs_num;
@@ -787,13 +787,13 @@ _e_comp_xrandr_ecore_x(void)
         // decide which outputs get which crtcs
         EINA_LIST_FOREACH(e_randr2->screens, l, s)
           {
-             printf("RRR: find output for '%s'\n", s->info.name);
+             L("RRR: find output for '%s'", s->info.name);
              // XXX: find clones and set them as outputs in an array
              if ((s->config.configured) &&
                  (_output_name_find(root, s->info.name, outputs,
                                     outputs_num, &out)))
                {
-                  printf("RRR:   enabled: %i\n", s->config.enabled);
+                  L("RRR:   enabled: %i", s->config.enabled);
                   if (s->config.enabled)
                     {
                        if (s->config.priority > top_priority)
@@ -802,7 +802,7 @@ _e_comp_xrandr_ecore_x(void)
                          {
                             if (!outconf[i])
                               {
-                                 printf("RRR:     crtc slot empty: %i\n", i);
+                                 L("RRR:     crtc slot empty: %i", i);
                                  info = ecore_x_randr_crtc_info_get(root,
                                                                     crtcs[i]);
                                  if (info)
@@ -811,7 +811,7 @@ _e_comp_xrandr_ecore_x(void)
                                           _rotation_exists(s->config.rotation,
                                                            info))
                                         {
-                                           printf("RRR:       assign slot out: %x\n", out);
+                                           L("RRR:       assign slot out: %x", out);
                                            outconf[i] = out;
                                            screenconf[i] = s;
                                            ecore_x_randr_crtc_info_free(info);
@@ -855,7 +855,7 @@ _e_comp_xrandr_ecore_x(void)
                          orient = ECORE_X_RANDR_ORIENTATION_ROT_180;
                        else if (screenconf[i]->config.rotation == 270)
                          orient = ECORE_X_RANDR_ORIENTATION_ROT_270;
-                       printf("RRR: crtc on: %i = '%s'     @ %i %i    - %ix%i orient %i mode %x out %x\n",
+                       L("RRR: crtc on: %i = '%s'     @ %i %i    - %ix%i orient %i mode %x out %x",
                               i, screenconf[i]->info.name,
                               screenconf[i]->config.geom.x,
                               screenconf[i]->config.geom.y,
@@ -867,7 +867,7 @@ _e_comp_xrandr_ecore_x(void)
                               screenconf[i]->config.geom.x,
                               screenconf[i]->config.geom.y,
                               mode, orient))
-                         printf("RRR:   failed to set crtc!!!!!!\n");
+                         L("RRR:   failed to set crtc!!!!!!");
                        if (E_INSIDE(px, py,
                                     screenconf[i]->config.geom.x,
                                     screenconf[i]->config.geom.y,
@@ -894,7 +894,7 @@ _e_comp_xrandr_ecore_x(void)
                     }
                   else
                     {
-                       printf("RRR: crtc off: %i\n", i);
+                       L("RRR: crtc off: %i", i);
                        ecore_x_randr_crtc_settings_set
                          (root, crtcs[i], NULL, 0, 0, 0, 0,
                           ECORE_X_RANDR_ORIENTATION_ROT_0);
@@ -904,7 +904,7 @@ _e_comp_xrandr_ecore_x(void)
           }
         else
           {
-             printf("RRR: EERRRRRROOOORRRRRRR no outputs to configure!\n");
+             L("RRR: EERRRRRROOOORRRRRRR no outputs to configure!");
              ecore_timer_add(5.0, _cb_no_outputs_timer, NULL);
              ecore_x_root_screen_barriers_set(NULL, 0);
           }
@@ -922,7 +922,7 @@ _e_comp_xrandr_ecore_x(void)
    // shrink the virtual screen to match the new layout.
    // no panning areas are set yet (they're deferred to after resize)
    // so X should be able to shrink without BadMatch.
-   printf("RRR: set vsize2: %ix%i\n", nw, nh);
+   L("RRR: set vsize2: %ix%i", nw, nh);
    ecore_x_randr_screen_current_size_set(root, nw, nh, -1, -1);
    ecore_x_sync();
 
@@ -993,7 +993,7 @@ e_comp_x_randr_create(void)
    E_Randr2 *r = calloc(1, sizeof(E_Randr2));
    if (!r) return NULL;
 
-   printf("RRR: ................. info get!\n");
+   L("RRR: ................. info get!");
    // do this to force xrandr to update its content
    ecore_x_randr_screen_refresh(root);
    ecore_x_randr_config_timestamp_get(root);
@@ -1014,9 +1014,9 @@ e_comp_x_randr_create(void)
         E_Randr2_Screen *s = calloc(1, sizeof(E_Randr2_Screen));
         if (!s) continue;
 
-        printf("RRR: NEW SCREEN ...\n");
+        L("RRR: NEW SCREEN ...");
         s->info.name = _output_name_get(root, outputs[i]);
-        printf("RRR: .... out %s\n", s->info.name);
+        L("RRR: .... out %s", s->info.name);
         if (!s->info.name)
           {
              free(s);
@@ -1055,18 +1055,18 @@ e_comp_x_randr_create(void)
         s->info.lid_closed = s->info.is_lid && e_acpi_lid_is_closed();
         atom = ecore_x_randr_output_connector_type_get(root, outputs[i]);
         if (atom == atom_panel) s->info.is_lid = EINA_TRUE;
-        printf("RRR: ...... lid_closed = %i (%i && %i)\n", s->info.lid_closed, s->info.is_lid, e_acpi_lid_is_closed());
+        L("RRR: ...... lid_closed = %i (%i && %i)", s->info.lid_closed, s->info.is_lid, e_acpi_lid_is_closed());
         if (ecore_x_randr_output_connection_status_get(root, outputs[i]) ==
             ECORE_X_RANDR_CONNECTION_STATUS_CONNECTED)
           s->info.connected = EINA_TRUE;
-        printf("RRR: ...... connected %i\n", s->info.connected);
+        L("RRR: ...... connected %i", s->info.connected);
         if (ecore_x_randr_output_backlight_level_get(root, outputs[i]) >= 0.0)
           s->info.backlight = EINA_TRUE;
         ecore_x_randr_output_size_mm_get(root, outputs[i],
                                          &(s->info.size.w), &(s->info.size.h));
         modes = ecore_x_randr_output_modes_get(root, outputs[i],
                                                &modes_num, &modes_pref);
-        printf("RRR: ...... modes %p\n", modes);
+        L("RRR: ...... modes %p", modes);
         if (modes)
           {
              for (j = 0; j < modes_num; j++)
@@ -1161,7 +1161,7 @@ e_comp_x_randr_create(void)
                                    (double)(minfo->hTotal * minfo->vTotal);
                                  ecore_x_randr_mode_info_free(minfo);
                               }
-                            printf("RRR: '%s' %i %i %ix%i\n",
+                            L("RRR: '%s' %i %i %ix%i",
                                    s->info.name,
                                    s->config.geom.x, s->config.geom.y,
                                    s->config.geom.w, s->config.geom.h);

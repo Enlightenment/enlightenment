@@ -312,7 +312,7 @@ _ddc_probe(void)
                   d->edid[j * 2] = 0;
                   d->screen = i;
                   eina_lock_take(&_devices_lock);
-                  fprintf(stderr, "DDC: foumd [%s]\n", d->edid);
+                  L("DDC: foumd [%s]", d->edid);
                   _devices = eina_list_append(_devices, d);
                   eina_lock_release(&_devices_lock);
                   if (alert_backlight_reset)
@@ -517,12 +517,12 @@ _do_val_set(Ecore_Thread *th, const char *edid, int id, int val)
    if (ddc_func.ddca_set_non_table_vcp_value
        (ddc_dh[screen], id, (val >> 8) & 0xff, val & 0xff) == 0)
      {
-        fprintf(stderr, "DDC: set ok %s 0x%02x %i\n", edid, id, val);
+        L("DDC: set ok %s 0x%02x %i", edid, id, val);
         snprintf(buf, sizeof(buf), "%s %i %i ok", edid, id, val);
      }
    else
      {
-        fprintf(stderr, "DDC: set fail %s 0x%02x %i\n", edid, id, val);
+        L("DDC: set fail %s 0x%02x %i", edid, id, val);
 err:
         snprintf(buf, sizeof(buf), "%s %i %i err", edid, id, val);
      }
@@ -558,12 +558,12 @@ _do_val_get(Ecore_Thread *th, const char *edid, int id)
      {
         max = valrec.ml | valrec.mh << 8;
         val = valrec.sl | (valrec.sh << 8);
-        fprintf(stderr, "DDC: get ok %s 0x%02x val=%i max=%i\n", edid, id, val, max);
+        L("DDC: get ok %s 0x%02x val=%i max=%i", edid, id, val, max);
         snprintf(buf, sizeof(buf), "%s %i %i %i", edid, id, val, max);
      }
    else
      {
-        fprintf(stderr, "DDC: get fail %s 0x%02x\n", edid, id);
+        L("DDC: get fail %s 0x%02x", edid, id);
 err:
         snprintf(buf, sizeof(buf), "%s %i -1 -1", edid, id);
      }
@@ -612,7 +612,7 @@ _cb_worker(void *data EINA_UNUSED, Ecore_Thread *th)
                        usleep(10 * 1000);
                     }
                   if (i == 10)
-                    fprintf(stderr, "DDC: PROBE FAILED.\n");
+                    L("DDC: PROBE FAILED");
                }
              else if (!strcmp(r->req, "val-set"))
                {

@@ -15,6 +15,7 @@
  */
 
 #include "wkb-log.h"
+#include "l.h"
 
 int _wkb_log_domain = -1;
 static int _init_count = 0;
@@ -27,7 +28,7 @@ wkb_log_init(const char *domain)
 
    if (!eina_init())
      {
-        fprintf(stderr, "%s:%d - %s() Error initializing Eina\n", __FILE__, __LINE__, __FUNCTION__);
+        L("%s:%d - %s() Error initializing Eina", __FILE__, __LINE__, __FUNCTION__);
         return 0;
      }
 

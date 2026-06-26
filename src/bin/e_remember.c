@@ -112,7 +112,7 @@ e_remember_internal_save(void)
    E_Client *ec;
    E_Remember *rem;
 
-   //printf("internal save %d\n", restart);
+//   L("internal save %d", restart);
    if (!remembers)
      remembers = E_NEW(E_Remember_List, 1);
    else

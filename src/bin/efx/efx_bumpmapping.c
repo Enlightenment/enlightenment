@@ -175,7 +175,7 @@ e_efx_bumpmap(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
            free(ebd);
            return EINA_FALSE;
          }
-       printf("memcpy\n");
+       L("memcpy");
        memcpy(ebd->img_data, m, (w * h * sizeof(unsigned int)));
      }
 

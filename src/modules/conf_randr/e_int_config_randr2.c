@@ -391,7 +391,7 @@ _basic_screen_info_fill(E_Config_Dialog_Data *cfdata, E_Config_Randr2_Screen *cs
    // fill all the screen status info
    info_screen = s->info.screen;
    if ((cs->custom_label_screen) && (cs->custom_label_screen[0])) info_screen = cs->custom_label_screen;
-   printf("RRR: [%s] [%s]", s->info.name, info_screen);
+   L("RRR: [%s] [%s]", s->info.name, info_screen);
    elm_object_text_set(cfdata->name_obj, s->info.name);
    elm_object_text_set(cfdata->screen_obj, info_screen);
    elm_check_state_set(cfdata->lid_obj, s->info.is_lid);
@@ -608,8 +608,8 @@ _cb_rel_to_set(void *data, Evas_Object *obj, void *event)
              E_Config_Randr2_Screen *cs2 = _config_screen_n_find(cfdata, i);
              if (cs2)
                {
-                  printf("find cs = %p\n", cs2);
-                  printf("cs id = %s\n", cs2->id);
+                  L("find cs = %p", cs2);
+                  L("cs id = %s", cs2->id);
                }
              if (cs2 == cs) return;
              if (cs2)
@@ -617,9 +617,9 @@ _cb_rel_to_set(void *data, Evas_Object *obj, void *event)
                   E_Randr2_Screen *s = _screen_config_id_find(cs2->id);
                   if (s)
                     {
-                       printf("Set to %p [%s]\n", cs, cs->id);
-                       printf("find s = %p\n", s);
-                       printf("s id = %s\n", s->id);
+                       L("Set to %p [%s]", cs, cs->id);
+                       L("find s = %p", s);
+                       L("s id = %s", s->id);
                        elm_object_text_set(obj, s->info.name);
                        eina_stringshare_replace(&cs->rel_to, s->id);
                     }
@@ -786,7 +786,7 @@ _cb_enabled_changed(void *data, Evas_Object *obj, void *event EINA_UNUSED)
    E_Config_Randr2_Screen *cs = _config_screen_find(cfdata);
    if (!cs) return;
    cs->enabled = elm_check_state_get(obj);
-   printf("RR: enabled = %i\n", cs->enabled);
+   L("RR: enabled = %i", cs->enabled);
    e_config_dialog_changed_set(cfdata->cfd, EINA_TRUE);
 
    // for every rel_to that points to the disabled screen, set its rel_mode to point to "none"
@@ -815,7 +815,7 @@ _cb_label_screen_edited(void *data, Evas_Object *obj, void *event EINA_UNUSED)
    E_Config_Randr2_Screen *cs = _config_screen_find(cfdata);
    const char *str = elm_object_text_get(obj);
    if (!cs) return;
-   printf("RR: change screen [%s]\n", str);
+   L("RR: change screen [%s]", str);
    eina_stringshare_replace(&(cs->custom_label_screen), str);
    e_config_dialog_changed_set(cfdata->cfd, EINA_TRUE);
 }
@@ -827,7 +827,7 @@ _cb_ignore_disconnect_changed(void *data, Evas_Object *obj, void *event EINA_UNU
    E_Config_Randr2_Screen *cs = _config_screen_find(cfdata);
    if (!cs) return;
    cs->ignore_disconnect = elm_check_state_get(obj);
-   printf("RR: ignore_disconnect = %i\n", cs->ignore_disconnect);
+   L("RR: ignore_disconnect = %i", cs->ignore_disconnect);
    e_config_dialog_changed_set(cfdata->cfd, EINA_TRUE);
 }
 
@@ -1297,11 +1297,11 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
    e_randr2_cfg->default_policy = cfdata->policy;
    e_randr2_cfg->hotplug_response = cfdata->hotplug_response;
 
-   printf("APPLY....................\n");
+   L("APPLY....................");
    EINA_LIST_FOREACH(cfdata->screens, l, cs2)
      {
         if (!cs2->id) continue;
-        printf("APPLY .... %p\n", cs2);
+        L("APPLY .... %p", cs2);
         cs = _screen_config_randr_id_find(cs2->id);
         if (!cs)
           {
@@ -1311,7 +1311,7 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
           }
         if (cs->rel_to) eina_stringshare_del(cs->rel_to);
         cs->rel_to = NULL;
-        printf("APPLY %s .... rel to %s\n", cs->id, cs2->rel_to);
+        L("APPLY %s .... rel to %s", cs->id, cs2->rel_to);
         if (cs2->rel_to) cs->rel_to = eina_stringshare_add(cs2->rel_to);
         cs->rel_align = cs2->rel_align;
         if (cs2->enabled)
@@ -1330,7 +1330,7 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
         cs->profile = NULL;
         if (cs2->profile) cs->profile = eina_stringshare_add(cs2->profile);
         cs->scale_multiplier = cs2->scale_multiplier;
-        printf("APPLY %s .... rel mode %i\n", cs->id, cs->rel_mode);
+        L("APPLY %s .... rel mode %i", cs->id, cs->rel_mode);
         cs->enabled = cs2->enabled;
         cs->ignore_disconnect = cs2->ignore_disconnect;
      }

@@ -294,7 +294,7 @@ e_place_desk_region_smart(E_Desk *desk, Eina_List *skiplist, int x, int y, int w
 
    if ((w <= 0) || (h <= 0))
      {
-        printf("EEEK! trying to place 0x0 window!!!!\n");
+        L("EEEK! trying to place 0x0 window!!!!");
         return 1;
      }
 
@@ -425,7 +425,7 @@ done:
    if ((*ry + h) > zy + zh) *ry = zy + zh - h;
    if (*ry < zy) *ry = zy;
 
-//   printf("0 - PLACE %i %i | %ix%i\n", *rx, *ry, w, h);
+//   L("0 - PLACE %i %i | %ix%i", *rx, *ry, w, h);
 
    return 1;
 }

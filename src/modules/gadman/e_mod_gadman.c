@@ -307,7 +307,7 @@ gadman_gadget_place(E_Gadcon_Client *gcc, const E_Gadcon_Client_Class *cc, E_Con
 
    Man->gadgets[layer] = eina_list_append(Man->gadgets[layer], cf);
 
-   //printf("Place Gadget %s (style: %s id: %s) (gadcon: %s)\n", gcc->name, cf->style, cf->id, gc->name);
+   //L("Place Gadget %s (style: %s id: %s) (gadcon: %s)", gcc->name, cf->style, cf->id, gc->name);
 
    /* create frame */
    gcc->o_frame = edje_object_add(gc->evas);
@@ -1248,7 +1248,7 @@ _attach_menu(void *data EINA_UNUSED, E_Gadcon_Client *gcc, E_Menu *menu)
    E_Menu *mn;
    E_Menu_Item *mi;
 
-   //printf("Attach menu (gcc: %x id: %s) [%s]\n", gcc, gcc->cf->id, gcc->cf->style);
+   //L("Attach menu (gcc: %x id: %s) [%s]", gcc, gcc->cf->id, gcc->cf->style);
    if (!gcc) return;
 
    if (e_menu_item_nth(menu, 0))

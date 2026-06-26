@@ -842,11 +842,11 @@ _grab_key_down_cb(void *data,
    cfdata = data;
 
    if ((ev->keyname) && (ev->key) && (ev->compose))
-     printf("'%s' '%s' '%s'\n", ev->key, ev->key, ev->compose);
+     L("'%s' '%s' '%s'", ev->key, ev->key, ev->compose);
    else if ((ev->keyname) && (ev->key))
-     printf("'%s' '%s'\n", ev->keyname, ev->key);
+     L("'%s' '%s'", ev->keyname, ev->key);
    else
-     printf("unknown key!!!!\n");
+     L("unknown key!!!!");
    if (!e_util_strcmp(ev->key, "Control_L") || !e_util_strcmp(ev->key, "Control_R") ||
        !e_util_strcmp(ev->key, "Shift_L") || !e_util_strcmp(ev->key, "Shift_R") ||
        !e_util_strcmp(ev->key, "Alt_L") || !e_util_strcmp(ev->key, "Alt_R") ||
