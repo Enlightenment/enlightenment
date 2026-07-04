@@ -299,6 +299,51 @@ ACT_FN_GO(window_close, EINA_UNUSED)
 }
 
 /***************************************************************************/
+ACT_FN_GO(window_always_stack_top, EINA_UNUSED)
+{
+   E_Client *ec;
+   if ((!obj) || (obj->type != E_CLIENT_TYPE))
+     obj = E_OBJECT(e_client_focused_get());
+   if (!obj) return;
+   ec = (void *)obj;
+   if (!ec->lock_user_stacking)
+    {
+      if (ec->layer != E_LAYER_CLIENT_ABOVE)
+        evas_object_layer_set(ec->frame, E_LAYER_CLIENT_ABOVE);
+    }
+}
+
+/***************************************************************************/
+ACT_FN_GO(window_always_stack_below, EINA_UNUSED)
+{
+   E_Client *ec;
+   if ((!obj) || (obj->type != E_CLIENT_TYPE))
+     obj = E_OBJECT(e_client_focused_get());
+   if (!obj) return;
+   ec = (void *)obj;
+   if (!ec->lock_user_stacking)
+    {
+      if (ec->layer != E_LAYER_CLIENT_BELOW)
+        evas_object_layer_set(ec->frame, E_LAYER_CLIENT_BELOW);
+    }
+}
+
+/***************************************************************************/
+ACT_FN_GO(window_always_stack_normal, EINA_UNUSED)
+{
+   E_Client *ec;
+   if ((!obj) || (obj->type != E_CLIENT_TYPE))
+     obj = E_OBJECT(e_client_focused_get());
+   if (!obj) return;
+   ec = (void *)obj;
+   if (!ec->lock_user_stacking)
+    {
+      if (ec->layer != E_LAYER_CLIENT_NORMAL)
+        evas_object_layer_set(ec->frame, E_LAYER_CLIENT_NORMAL);
+    }
+}
+
+/***************************************************************************/
 static E_Dialog *kill_dialog = NULL;
 
 static void
@@ -3527,6 +3572,21 @@ e_actions_init(void)
    ACT_GO(window_lower);
    e_action_predef_name_set(N_("Window : Actions"), N_("Lower"),
                             "window_lower", NULL, NULL, 0);
+
+   /* window_always_stack_top */
+   ACT_GO(window_always_stack_top);
+   e_action_predef_name_set(N_("Window : Actions"), N_("Always Stack On Top"),
+                            "window_always_stack_top", NULL, NULL, 0);
+
+   /* window_always_stack_below */
+   ACT_GO(window_always_stack_below);
+   e_action_predef_name_set(N_("Window : Actions"), N_("Always Stack Below"),
+                            "window_always_stack_below", NULL, NULL, 0);
+
+   /* window_always_stack_below */
+   ACT_GO(window_always_stack_normal);
+   e_action_predef_name_set(N_("Window : Actions"), N_("Always Stack Normal"),
+                            "window_always_stack_normal", NULL, NULL, 0);
 
    /* window_close */
    ACT_GO(window_close);
