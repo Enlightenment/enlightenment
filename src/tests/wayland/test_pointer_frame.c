@@ -450,5 +450,27 @@ main(void)
      { _log_dump(); FAIL("a leave was left unterminated by a frame"); }
    printf("test-pointer-frame: leave is framed\n");
 
+   /* Touch with the pointer elsewhere: the leave above parked it at 5,5. */
+   _log_reset();
+   wl_test_touch_down(tester, 1, SX + (W / 2), SY + (H / 2));
+   if (tester_sync() < 0) FAIL("sync failed after off-pointer touch down");
+   wl_test_touch_up(tester, 1);
+   if (tester_sync() < 0) FAIL("sync failed after off-pointer touch up");
+   if (wl_display_roundtrip(disp) < 0) FAIL("roundtrip after off-pointer touch failed");
+
+   if (!_seen(EV_TOUCH_DOWN))
+     {
+        _log_dump();
+        FAIL("no wl_touch.down for a touch at (%d,%d), inside the surface at "
+             "(%d,%d) %dx%d, while the pointer sits at (5,5). Touch is not the "
+             "mouse: this must be delivered",
+             SX + W / 2, SY + H / 2, SX, SY, W, H);
+     }
+   if (!_closed_by(EV_TOUCH_DOWN, EV_TOUCH_FRAME))
+     { _log_dump(); FAIL("off-pointer touch down not framed"); }
+   if (!_seen(EV_TOUCH_UP))
+     { _log_dump(); FAIL("no wl_touch.up for the off-pointer touch"); }
+   printf("test-pointer-frame: touch works with the pointer elsewhere\n");
+
    return 0;
 }
