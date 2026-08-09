@@ -1330,9 +1330,14 @@ _e_xdg_shell_surface_cb_destroy(struct wl_resource *resource)
 static void
 _e_xdg_shell_surface_buffer_attach_error(E_Client *ec)
 {
-   wl_resource_post_error(ec->comp_data->surface,
-                               ZXDG_SURFACE_V6_ERROR_UNCONFIGURED_BUFFER,
-                               "buffer attached/committed before configure");
+   E_Shell_Data *shd = ec->comp_data->shell.data;
+
+   /* On the zxdg_surface_v6: the same code on wl_surface means invalid_offset. */
+   if ((!shd) || (!shd->surface)) return;
+
+   wl_resource_post_error(shd->surface,
+                          ZXDG_SURFACE_V6_ERROR_UNCONFIGURED_BUFFER,
+                          "buffer attached/committed before configure");
 }
 
 static void
