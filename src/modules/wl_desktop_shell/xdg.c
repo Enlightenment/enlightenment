@@ -1126,7 +1126,7 @@ _e_xdg_toplevel_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resou
 static void
 _e_xdg_toplevel_cb_parent_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *parent_resource)
 {
-   E_Client *ec;
+   E_Client *ec, *pc;
 
    if (!(ec = wl_resource_get_user_data(resource)))
      {
@@ -1135,6 +1135,18 @@ _e_xdg_toplevel_cb_parent_set(struct wl_client *client EINA_UNUSED, struct wl_re
         return;
      }
    if (e_object_is_del(E_OBJECT(ec))) return;
+
+   /* The parent may be neither ec nor one of its descendants: walking up
+    * from the parent must not reach ec. */
+   for (pc = parent_resource ? wl_resource_get_user_data(parent_resource) : NULL;
+        pc; pc = pc->parent)
+     {
+        if (pc != ec) continue;
+        wl_resource_post_error(resource, XDG_TOPLEVEL_ERROR_INVALID_PARENT,
+                               "xdg_toplevel@%u cannot be its own descendant",
+                               wl_resource_get_id(resource));
+        return;
+     }
 
    /* set this client as a transient for parent */
    e_shell_surface_parent_set(ec, parent_resource);
