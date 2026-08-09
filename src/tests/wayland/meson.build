@@ -54,6 +54,7 @@ wl_protocol_tests = [
   ['dialog-focus', 'test_dialog_focus.c'],
   ['buffer-release', 'test_buffer_release.c'],
   ['client-move', 'test_client_move.c'],
+  ['pointer-frame', 'test_pointer_frame.c'],
 ]
 
 tk_src = files('e_wl_testkit.c')

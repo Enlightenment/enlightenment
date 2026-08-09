@@ -188,6 +188,15 @@ _e_comp_wl_evas_cb_hide(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EIN
    e_object_unref(E_OBJECT(ec));
 }
 
+/* Clients may hold every pointer event until the frame that closes its
+ * group, so an unclosed group is never applied at all. */
+EINTERN void
+e_comp_wl_pointer_frame_send(struct wl_resource *res)
+{
+   if (wl_resource_get_version(res) >= WL_POINTER_FRAME_SINCE_VERSION)
+     wl_pointer_send_frame(res);
+}
+
 static void
 _e_comp_wl_mouse_in(E_Client *ec, Evas_Event_Mouse_In *ev)
 {
@@ -219,6 +228,7 @@ _e_comp_wl_mouse_in(E_Client *ec, Evas_Event_Mouse_In *ev)
         wl_pointer_send_enter(res, serial, ec->comp_data->surface,
                               wl_fixed_from_int(ev->canvas.x - ec->client.x),
                               wl_fixed_from_int(ev->canvas.y - ec->client.y));
+        e_comp_wl_pointer_frame_send(res);
         e_comp_wl_input_pointer_cursor_update(ptr);
      }
 }
@@ -276,6 +286,7 @@ _e_comp_wl_mouse_out(E_Client *ec)
         if (wl_resource_get_client(res) != wc) continue;
         ptr->entered = 0;
         wl_pointer_send_leave(res, serial, ec->comp_data->surface);
+        e_comp_wl_pointer_frame_send(res);
      }
 }
 
@@ -360,6 +371,7 @@ _e_comp_wl_send_mouse_move(E_Client *ec, int x, int y, unsigned int timestamp)
         wl_pointer_send_motion(res, timestamp,
                                wl_fixed_from_int(x - ec->client.x),
                                wl_fixed_from_int(y - ec->client.y));
+        e_comp_wl_pointer_frame_send(res);
      }
 }
 
@@ -450,7 +462,14 @@ _e_comp_wl_evas_cb_mouse_wheel(void *data, Evas *evas EINA_UNUSED, Evas_Object *
      {
         if (!e_comp_wl_input_pointer_check(res)) continue;
         if (wl_resource_get_client(res) != wc) continue;
+        /* Without axis_source a v5 client assumes a touchpad. */
+        if (wl_resource_get_version(res) >= WL_POINTER_AXIS_SOURCE_SINCE_VERSION)
+          {
+             wl_pointer_send_axis_source(res, WL_POINTER_AXIS_SOURCE_WHEEL);
+             wl_pointer_send_axis_discrete(res, axis, ev->z);
+          }
         wl_pointer_send_axis(res, ev->timestamp, axis, dir);
+        e_comp_wl_pointer_frame_send(res);
      }
 }
 
@@ -482,6 +501,7 @@ _e_comp_wl_evas_cb_multi_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *o
         if (!e_comp_wl_input_touch_check(res)) continue;
         wl_touch_send_down(res, serial, ev->timestamp,
                            ec->comp_data->surface, ev->device, x, y);
+        wl_touch_send_frame(res);
      }
 }
 
@@ -506,6 +526,7 @@ _e_comp_wl_evas_cb_multi_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
         if (wl_resource_get_client(res) != wc) continue;
         if (!e_comp_wl_input_touch_check(res)) continue;
         wl_touch_send_up(res, serial, ev->timestamp, ev->device);
+        wl_touch_send_frame(res);
      }
 }
 
@@ -532,6 +553,7 @@ _e_comp_wl_evas_cb_multi_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *o
         if (wl_resource_get_client(res) != wc) continue;
         if (!e_comp_wl_input_touch_check(res)) continue;
         wl_touch_send_motion(res, ev->timestamp, ev->device, x, y);
+        wl_touch_send_frame(res);
      }
 }
 
@@ -3727,6 +3749,7 @@ e_comp_wl_evas_handle_mouse_button(E_Client *ec, uint32_t timestamp, uint32_t bu
         if (wl_resource_get_client(res) != wc) continue;
         if (!e_comp_wl_input_pointer_check(res)) continue;
         wl_pointer_send_button(res, serial, timestamp, btn, state);
+        e_comp_wl_pointer_frame_send(res);
      }
    return EINA_TRUE;
 }

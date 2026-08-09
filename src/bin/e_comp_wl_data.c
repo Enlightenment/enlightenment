@@ -670,6 +670,7 @@ _e_comp_wl_data_device_cb_drag_start(struct wl_client *client, struct wl_resourc
         if (!e_comp_wl_input_pointer_check(res)) continue;
         if (wl_resource_get_client(res) != client) continue;
         wl_pointer_send_leave(res, serial, e_comp_wl->kbd.focus);
+        e_comp_wl_pointer_frame_send(res);
      }
 
    evas_pointer_canvas_xy_get(e_comp->evas, &x, &y);

@@ -678,7 +678,7 @@ static const WlcsExtensionDescriptor _extensions[] =
    { "wl_compositor", 4 },
    { "wl_subcompositor", 1 },
    { "wl_shm", 1 },
-   { "wl_seat", 4 },
+   { "wl_seat", 5 },
    { "wl_output", 2 },
    { "wl_data_device_manager", 3 },
    { "xdg_wm_base", 1 },

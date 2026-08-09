@@ -492,9 +492,8 @@ e_comp_wl_input_init(void)
    if (!e_comp_wl->seat.name)
      e_comp_wl->seat.name = "seat0";
 
-   /* create the global resource for input seat */
    e_comp_wl->seat.global =
-     wl_global_create(e_comp_wl->wl.disp, &wl_seat_interface, 4,
+     wl_global_create(e_comp_wl->wl.disp, &wl_seat_interface, 5,
                       e_comp->wl_comp_data, _e_comp_wl_input_cb_bind_seat);
    if (!e_comp_wl->seat.global)
      {
