@@ -1273,6 +1273,45 @@ _e_comp_wl_surface_state_attach(E_Client *ec, E_Comp_Wl_Surface_State *state)
    e_pixmap_refresh(ec->pixmap);
 }
 
+static Eina_Bool
+_e_comp_wl_surface_ancestor_unmapped(E_Client *ec)
+{
+   E_Comp_Wl_Subsurf_Data *sdata;
+
+   while ((ec->comp_data) && (sdata = ec->comp_data->sub.data) && (sdata->parent))
+     {
+        ec = sdata->parent;
+        if (!ec->comp_data) return EINA_FALSE;
+        if (!ec->comp_data->mapped) return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}
+
+/* An unmapped surface, and every sub-surface under it, lets input pass
+ * through to what lies below. Not evas_object_freeze_events_set(): evas
+ * still stops its hit test at a frozen object, so nothing below would get
+ * the input either. Sub-surfaces have frames of their own, so the state is
+ * pushed down the tree. */
+static void
+_e_comp_wl_surface_input_passthrough_update(E_Client *ec, Eina_Bool parent_unmapped)
+{
+   E_Client *subc;
+   Eina_List *l;
+   Eina_Bool unmapped;
+
+   if (!ec->comp_data) return;
+
+   unmapped = parent_unmapped || (!ec->comp_data->mapped);
+   evas_object_pass_events_set(ec->frame, unmapped);
+
+   EINA_LIST_FOREACH(ec->comp_data->sub.list, l, subc)
+     {
+        if (subc != ec)
+          _e_comp_wl_surface_input_passthrough_update(subc, unmapped);
+     }
+}
+
 static void
 _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
 {
@@ -1424,6 +1463,11 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
                   evas_object_hide(ec->frame);
                   ec->comp_data->mapped = 0;
                }
+             /* The hide may be deferred by a fade-out animation, during which
+              * the frame would still take input for an unmapped surface. */
+             if (!ec->comp_data->mapped)
+               _e_comp_wl_surface_input_passthrough_update(ec,
+                                                           _e_comp_wl_surface_ancestor_unmapped(ec));
           }
      }
    else
@@ -1446,6 +1490,8 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
                          evas_object_hide(ec->frame);
                     }
                }
+             _e_comp_wl_surface_input_passthrough_update(ec,
+                                                         _e_comp_wl_surface_ancestor_unmapped(ec));
           }
      }
 
