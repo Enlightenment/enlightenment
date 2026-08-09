@@ -3287,8 +3287,36 @@ e_comp_wl_buffer_get(struct wl_resource *resource)
    dmabuf = linux_dmabuf_buffer_get(resource);
    if (shmbuff)
      {
+        int stride, bpp;
+
         buffer->w = wl_shm_buffer_get_width(shmbuff);
         buffer->h = wl_shm_buffer_get_height(shmbuff);
+
+        /* libwayland only checks stride >= width, bytes against pixels, so
+         * a row can be shorter than the pixels evas will read from it. */
+        switch (wl_shm_buffer_get_format(shmbuff))
+          {
+           case WL_SHM_FORMAT_ARGB8888:
+           case WL_SHM_FORMAT_XRGB8888:
+             bpp = 4;
+             break;
+           default:
+             /* only the formats we advertise are checked */
+             bpp = 0;
+             break;
+          }
+
+        stride = wl_shm_buffer_get_stride(shmbuff);
+        if ((bpp) && ((stride / bpp) < buffer->w))
+          {
+             ERR("shm buffer stride %d is too small for %dx%d at %d bpp",
+                 stride, buffer->w, buffer->h, bpp);
+             wl_resource_post_error(resource, WL_SHM_ERROR_INVALID_STRIDE,
+                                    "stride %d cannot hold %d pixels at %d "
+                                    "bytes per pixel", stride, buffer->w, bpp);
+             free(buffer);
+             return NULL;
+          }
      }
    else if (dmabuf)
      {
