@@ -1708,6 +1708,39 @@ _e_comp_wl_surface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_re
    wl_resource_destroy(resource);
 }
 
+#ifdef E_TESTS
+/* wlcs attaches a buffer before the first xdg_surface.configure, which
+ * xdg-shell makes a client error, so about a third of its tests die at
+ * surface construction. Under E_TEST_ALLOW_UNCONFIGURED_BUFFER, stand in
+ * for the initial commit it omits: send the 0x0 configure that commit
+ * would have produced. A surface with no role still gets its error.
+ *
+ * Remove this once wlcs's surface builders (XdgStableSurfaceBuilder and
+ * the xdg v6 helpers in src/surface_builder.cpp and
+ * src/in_process_server.cpp) commit before attaching; still not the case
+ * in wlcs 1.8.2. */
+static Eina_Bool
+_e_comp_wl_test_allow_unconfigured_buffer(void)
+{
+   static int allow = -1;
+
+   if (allow < 0) allow = !!getenv("E_TEST_ALLOW_UNCONFIGURED_BUFFER");
+   return allow;
+}
+
+static Eina_Bool
+_e_comp_wl_test_stand_in_for_initial_commit(E_Client *ec)
+{
+   if (!_e_comp_wl_test_allow_unconfigured_buffer()) return EINA_FALSE;
+   if (!ec->comp_data->shell.surface) return EINA_FALSE;
+   if (!ec->comp_data->shell.configure_send) return EINA_FALSE;
+
+   ec->comp_data->need_xdg_configure = 0;
+   _e_comp_wl_configure_send(ec, 0, EINA_FALSE);
+   return EINA_TRUE;
+}
+#endif
+
 static void
 _e_comp_wl_surface_cb_attach(struct wl_client *client, struct wl_resource *resource, struct wl_resource *buffer_resource, int32_t sx, int32_t sy)
 {
@@ -1718,8 +1751,13 @@ _e_comp_wl_surface_cb_attach(struct wl_client *client, struct wl_resource *resou
    if (e_object_is_del(E_OBJECT(ec))) return;
    if (ec->comp_data->need_xdg_configure)
      {
-        ec->comp_data->shell.buffer_attach_error(ec);
-        return;
+#ifdef E_TESTS
+        if (!_e_comp_wl_test_stand_in_for_initial_commit(ec))
+#endif
+          {
+             ec->comp_data->shell.buffer_attach_error(ec);
+             return;
+          }
      }
 
    if (buffer_resource)

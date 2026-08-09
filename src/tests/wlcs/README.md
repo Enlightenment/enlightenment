@@ -71,3 +71,33 @@ catch the opposite, an entry declared lower than E speaks, which makes tests
 quietly exercise an older protocol. Raise an entry when E raises the version
 it advertises; `globals.expected` changes in the same commit and is the
 reminder.
+
+## The attach-before-configure relaxation
+
+The integration sets `E_TEST_ALLOW_UNCONFIGURED_BUFFER=1` in the compositor
+it launches; set `E_WLCS_STRICT=1` to turn that off.
+
+wlcs builds every test surface without the initial empty commit xdg-shell
+requires: `XdgStableSurfaceBuilder::build()` in
+[`src/surface_builder.cpp`](https://github.com/canonical/wlcs/blob/main/src/surface_builder.cpp)
+creates the `xdg_surface` and `xdg_toplevel` and attaches a buffer at once.
+[xdg-shell](https://gitlab.freedesktop.org/wayland/wayland-protocols/-/blob/main/stable/xdg-shell/xdg-shell.xml)
+makes that an error:
+
+> any attempts by a client to attach or manipulate a buffer prior to the first
+> `xdg_surface.configure` call must also be treated as errors
+
+E rejects it, so about 315 of the 1163 tests die at surface construction
+and never reach what they check. The relaxation stands in for the missing
+commit: it sends the 0x0 configure that commit would have produced. It only
+applies to a surface that already has a role, so
+`XdgSurfaceStableTest.attaching_buffer_to_unconfigured_xdg_surface_is_an_error`
+still sees its error. A client that follows the protocol never takes this
+path.
+
+It is compiled only with `-Dtests=true` (`E_TESTS`), so a release build
+cannot reach it whatever the environment says, and `run-nested.sh` does not
+enable it.
+
+Remove it, and this section, once wlcs's surface builders commit before
+attaching. That is still not the case in wlcs 1.8.2.

@@ -247,6 +247,10 @@ _server_start(WlcsDisplayServer *server)
          * forks in one go. */
         setpgid(0, 0);
 
+        /* See _e_comp_wl_test_allow_unconfigured_buffer(). */
+        if (!getenv("E_WLCS_STRICT"))
+          setenv("E_TEST_ALLOW_UNCONFIGURED_BUFFER", "1", 1);
+
         /* The compositor's own chatter would otherwise be interleaved with
          * the test report. Keep it unless someone asks for it. */
         if (!getenv("E_WLCS_VERBOSE"))

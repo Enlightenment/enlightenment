@@ -104,6 +104,9 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
+# E_TEST_ALLOW_UNCONFIGURED_BUFFER stays unset: these tests follow xdg-shell
+# and must not be able to hide behind the wlcs relaxation.
+#
 # A process group of its own, so the compositor and whatever it forks go down
 # together. A background job of a non-interactive shell is never a group
 # leader, so setsid does not fork and $! is the compositor's pid.

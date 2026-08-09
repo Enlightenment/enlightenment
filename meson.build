@@ -428,6 +428,10 @@ if config_h.has('HAVE_WAYLAND') == true
 	wayland = 'true'
 endif
 
+if get_option('tests') == true
+  config_h.set('E_TESTS', '1')
+endif
+
 configure_file(output       : 'config.h',
                configuration: config_h,
                install_dir  : dir_include_e)
