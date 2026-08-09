@@ -3391,7 +3391,10 @@ e_comp_wl_output_init(const char *id, const char *make, const char *model,
                            2, output, _e_comp_wl_cb_output_bind);
 
         output->resources = NULL;
-        output->scale = e_scale;
+        /* Not e_scale: wl_surface.set_buffer_scale is not honoured, so a
+         * client believing a scale of 2 attaches buffers we paint at
+         * twice the size. */
+        output->scale = 1;
 
         zone->output = output;
      }
