@@ -123,6 +123,10 @@ e_shell_surface_mouse_down_helper(E_Client *ec, E_Binding_Event_Mouse_Button *ev
           e_object_ref(E_OBJECT(ec->cur_mouse_action));
      }
 
+   /* Only once the grab is granted: a refused request keeps the pointer. */
+   if ((ec->moving) || (e_client_util_resizing_get(ec)))
+     e_comp_wl_pointer_focus_drop(ec);
+
    e_focus_event_mouse_down(ec);
 }
 

@@ -66,8 +66,9 @@ void tk_toplevel_painted(Tk_Toplevel *top, int *w, int *h);
 /* Unmap and destroy it, and settle. */
 void tk_toplevel_del(Tk_Toplevel *top);
 
-/* The wl_surface behind a toplevel, owned by the kit. */
+/* The wl_surface and xdg_toplevel behind a toplevel, owned by the kit. */
 struct wl_surface *tk_toplevel_surface(Tk_Toplevel *top);
+struct xdg_toplevel *tk_toplevel_xdg(Tk_Toplevel *top);
 
 /* The version the compositor advertised for a global, or 0 if none. */
 uint32_t tk_global_version(Tk *tk, const char *iface);
@@ -105,5 +106,8 @@ void tk_action_end(Tk *tk, unsigned int id, const char *name, const char *params
 /* Put the pointer somewhere, or move it by a delta. */
 void tk_pointer_warp(Tk *tk, int x, int y);
 void tk_pointer_move(Tk *tk, int dx, int dy);
+
+/* Press or release a linux/input.h BTN_* button. */
+void tk_pointer_button(Tk *tk, unsigned int button, int pressed);
 
 #endif

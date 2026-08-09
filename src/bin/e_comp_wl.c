@@ -224,6 +224,7 @@ _e_comp_wl_mouse_in(E_Client *ec, Evas_Event_Mouse_In *ev)
 
         if (!e_comp_wl_input_pointer_check(res)) continue;
         if (wl_resource_get_client(res) != wc) continue;
+        if (ptr->entered) continue;
         ptr->entered = 1;
         wl_pointer_send_enter(res, serial, ec->comp_data->surface,
                               wl_fixed_from_int(ev->canvas.x - ec->client.x),
@@ -252,13 +253,44 @@ _e_comp_wl_cb_ssd_mouse_in(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_e_comp_wl_mouse_out(E_Client *ec)
+_e_comp_wl_pointer_enter_at(E_Client *ec, Evas_Coord x, Evas_Coord y)
+{
+   Evas_Event_Mouse_In ev;
+
+   memset(&ev, 0, sizeof(ev));
+   ev.canvas.x = x;
+   ev.canvas.y = y;
+   _e_comp_wl_mouse_in(ec, &ev);
+}
+
+static void
+_e_comp_wl_pointer_leave_send(E_Client *ec)
 {
    struct wl_resource *res;
    struct wl_client *wc;
    Eina_List *l;
    uint32_t serial;
 
+   if (!ec->comp_data || !ec->comp_data->surface) return;
+   if (!eina_list_count(e_comp_wl->ptr.resources)) return;
+
+   wc = wl_resource_get_client(ec->comp_data->surface);
+   serial = wl_display_next_serial(e_comp_wl->wl.disp);
+   EINA_LIST_FOREACH(e_comp_wl->ptr.resources, l, res)
+     {
+        E_Comp_Wl_Pointer *ptr = wl_resource_get_user_data(res);
+        if (!e_comp_wl_input_pointer_check(res)) continue;
+        if (wl_resource_get_client(res) != wc) continue;
+        if (!ptr->entered) continue;
+        ptr->entered = 0;
+        wl_pointer_send_leave(res, serial, ec->comp_data->surface);
+        e_comp_wl_pointer_frame_send(res);
+     }
+}
+
+static void
+_e_comp_wl_mouse_out(E_Client *ec)
+{
    if ((ec == e_client_action_get()) && e_grabinput_mouse_win_get()) return;
    /* FIXME? this is a hack to just reset the cursor whenever we mouse out. not sure if accurate */
    {
@@ -275,19 +307,24 @@ _e_comp_wl_mouse_out(E_Client *ec)
         e_comp_wl_data_device_send_leave(ec);
         return;
      }
-   if (!eina_list_count(e_comp_wl->ptr.resources)) return;
 
-   wc = wl_resource_get_client(ec->comp_data->surface);
-   serial = wl_display_next_serial(e_comp_wl->wl.disp);
-   EINA_LIST_FOREACH(e_comp_wl->ptr.resources, l, res)
-     {
-        E_Comp_Wl_Pointer *ptr = wl_resource_get_user_data(res);
-        if (!e_comp_wl_input_pointer_check(res)) continue;
-        if (wl_resource_get_client(res) != wc) continue;
-        ptr->entered = 0;
-        wl_pointer_send_leave(res, serial, ec->comp_data->surface);
-        e_comp_wl_pointer_frame_send(res);
-     }
+   _e_comp_wl_pointer_leave_send(ec);
+}
+
+/* xdg_toplevel.move and .resize: the surface "will lose the focus of the
+ * device (wl_pointer, wl_touch, etc) used for the move". The evas event
+ * grabber does not make evas send a mouse-out until the pointer moves, and
+ * _e_comp_wl_mouse_out() refuses one for the client being moved. */
+E_API void
+e_comp_wl_pointer_focus_drop(E_Client *ec)
+{
+   if (!ec || e_object_is_del(E_OBJECT(ec))) return;
+   if (e_comp_wl->drag) return;
+   /* The pointer resources belong to the client, not to the surface, so a
+    * leave for one of its other surfaces would name the wrong one. */
+   if (e_comp_wl->ptr.ec != ec) return;
+   e_comp_wl->ptr.ec = NULL;
+   _e_comp_wl_pointer_leave_send(ec);
 }
 
 static void
@@ -363,6 +400,11 @@ _e_comp_wl_send_mouse_move(E_Client *ec, int x, int y, unsigned int timestamp)
         e_client_mouse_move(ec, &(Evas_Point){x, y});
      }
    /* end hacks */
+
+   /* A motion without an enter is a protocol error, and a grab ending with
+    * the pointer still can leave the client without one. */
+   if (e_comp_wl->ptr.ec != ec) _e_comp_wl_pointer_enter_at(ec, x, y);
+
    wc = wl_resource_get_client(ec->comp_data->surface);
    EINA_LIST_FOREACH(e_comp_wl->ptr.resources, l, res)
      {
@@ -1542,8 +1584,11 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
              /* The hide may be deferred by a fade-out animation, during which
               * the frame would still take input for an unmapped surface. */
              if (!ec->comp_data->mapped)
-               _e_comp_wl_surface_input_passthrough_update(ec,
-                                                           _e_comp_wl_surface_ancestor_unmapped(ec));
+               {
+                  _e_comp_wl_surface_input_passthrough_update(ec,
+                                                              _e_comp_wl_surface_ancestor_unmapped(ec));
+                  e_comp_wl_pointer_focus_drop(ec);
+               }
           }
      }
    else
@@ -1726,7 +1771,12 @@ _e_comp_wl_surface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_re
    E_Client *ec;
    DBG("Surface Cb Destroy: %d", wl_resource_get_id(resource));
    ec = wl_resource_get_user_data(resource);
-   if (ec && (!e_object_is_del(E_OBJECT(ec)))) ec->comp_data->surface = NULL;
+   if (ec && (!e_object_is_del(E_OBJECT(ec))))
+     {
+        /* While the surface can still be named in the leave. */
+        e_comp_wl_pointer_focus_drop(ec);
+        ec->comp_data->surface = NULL;
+     }
    wl_resource_destroy(resource);
 }
 
@@ -2835,6 +2885,55 @@ _e_comp_wl_client_cb_move_begin(void *data EINA_UNUSED, E_Client *ec EINA_UNUSED
    e_comp_wl->ptr.button_mask = 0;
 }
 
+/* Evas only works out what is under the pointer when it moves, and a move
+ * or resize ends with the window somewhere new and the pointer where it
+ * was. A motion to the same place makes it work it out again. Done inline:
+ * a reply the client is waiting for must not go out before it. */
+static void
+_e_comp_wl_pointer_focus_reeval(void)
+{
+   static Eina_Bool reevaluating = EINA_FALSE;
+   Evas_Coord x, y;
+
+   if ((!e_comp) || (!e_comp->evas)) return;
+
+   /* Delivering the motion can move something and land back here. */
+   if (reevaluating) return;
+   reevaluating = EINA_TRUE;
+
+   evas_pointer_canvas_xy_get(e_comp->evas, &x, &y);
+   evas_event_feed_mouse_move(e_comp->evas, x, y, 0, NULL);
+
+   reevaluating = EINA_FALSE;
+}
+
+/* The other half of e_comp_wl_pointer_focus_drop(). xdg-shell allows
+ * keeping the focus after the grab, but the cursor never left the window.
+ * Evas never saw the leave sent at the start of the grab, so it reports no
+ * mouse-in when nothing moved: enter directly. _e_comp_wl_mouse_in() skips
+ * a pointer that is still in. */
+static void
+_e_comp_wl_pointer_focus_restore(E_Client *ec)
+{
+   Evas_Coord x, y;
+
+   _e_comp_wl_pointer_focus_reeval();
+   if (e_comp_wl->drag) return;
+   if (e_object_is_del(E_OBJECT(ec))) return;
+   if ((!ec->comp_data) || (!ec->comp_data->surface)) return;
+
+   evas_pointer_canvas_xy_get(e_comp->evas, &x, &y);
+   if (!E_INSIDE(x, y, ec->x, ec->y, ec->w, ec->h)) return;
+   _e_comp_wl_pointer_enter_at(ec, x, y);
+}
+
+static void
+_e_comp_wl_client_cb_move_end(void *data EINA_UNUSED, E_Client *ec)
+{
+   if (e_client_has_xwindow(ec)) return;
+   _e_comp_wl_pointer_focus_restore(ec);
+}
+
 static void
 _e_comp_wl_client_cb_resize_begin(void *data EINA_UNUSED, E_Client *ec)
 {
@@ -2898,6 +2997,8 @@ _e_comp_wl_client_cb_resize_end(void *data EINA_UNUSED, E_Client *ec)
      }
 
    E_FREE_LIST(ec->pending_resize, free);
+
+   _e_comp_wl_pointer_focus_restore(ec);
 }
 
 static void
@@ -3222,6 +3323,8 @@ e_comp_wl_init(void)
 
    e_client_hook_add(E_CLIENT_HOOK_MOVE_BEGIN,
                      _e_comp_wl_client_cb_move_begin, NULL);
+   e_client_hook_add(E_CLIENT_HOOK_MOVE_END,
+                     _e_comp_wl_client_cb_move_end, NULL);
    e_client_hook_add(E_CLIENT_HOOK_RESIZE_BEGIN,
                      _e_comp_wl_client_cb_resize_begin, NULL);
    e_client_hook_add(E_CLIENT_HOOK_RESIZE_END,

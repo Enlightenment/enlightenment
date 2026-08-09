@@ -56,6 +56,7 @@ wl_protocol_tests = [
   ['client-move', 'test_client_move.c'],
   ['pointer-frame', 'test_pointer_frame.c'],
   ['surface-unmap', 'test_surface_unmap.c'],
+  ['pointer-focus', 'test_pointer_focus.c'],
 ]
 
 tk_src = files('e_wl_testkit.c')

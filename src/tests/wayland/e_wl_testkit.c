@@ -407,6 +407,12 @@ tk_toplevel_surface(Tk_Toplevel *top)
    return top->surface;
 }
 
+struct xdg_toplevel *
+tk_toplevel_xdg(Tk_Toplevel *top)
+{
+   return top->toplevel;
+}
+
 uint32_t
 tk_global_version(Tk *tk, const char *iface)
 {
@@ -536,5 +542,12 @@ void
 tk_pointer_move(Tk *tk, int dx, int dy)
 {
    wl_test_pointer_move(tk->tester, dx, dy);
+   tk_settle(tk);
+}
+
+void
+tk_pointer_button(Tk *tk, unsigned int button, int pressed)
+{
+   wl_test_pointer_button(tk->tester, button, pressed ? 1 : 0);
    tk_settle(tk);
 }
