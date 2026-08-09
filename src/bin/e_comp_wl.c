@@ -465,7 +465,8 @@ _e_comp_wl_evas_cb_multi_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *o
 
    if (e_object_is_del(E_OBJECT(ec))) return;
    if (!ec->comp_data->surface) return;
-   if (!ec->mouse.in) return;
+   /* No mouse.in gate: evas already hit-tested this touch against the
+    * frame and its input region, and without a mouse nothing sets it. */
 
    wc = wl_resource_get_client(ec->comp_data->surface);
    serial = wl_display_next_serial(e_comp_wl->wl.disp);
@@ -494,7 +495,6 @@ _e_comp_wl_evas_cb_multi_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
 
    if (e_object_is_del(E_OBJECT(ec))) return;
    if (!ec->comp_data->surface) return;
-   if (!ec->mouse.in) return;
 
    wc = wl_resource_get_client(ec->comp_data->surface);
    serial = wl_display_next_serial(e_comp_wl->wl.disp);
@@ -519,7 +519,6 @@ _e_comp_wl_evas_cb_multi_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *o
 
    if (e_object_is_del(E_OBJECT(ec))) return;
    if (!ec->comp_data->surface) return;
-   if (!ec->mouse.in) return;
 
    wc = wl_resource_get_client(ec->comp_data->surface);
 
