@@ -699,6 +699,8 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
    cdata->shell.data = e_shell_data_new(5);
    cdata->is_xdg_surface = EINA_TRUE;
 
+   e_comp_wl_grab_clients_dismiss();
+
    /* set toplevel client properties */
    ec->icccm.accepts_focus = 1;
    if (!ec->internal)

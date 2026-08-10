@@ -4032,22 +4032,38 @@ e_comp_wl_xwayland_client_queue(E_Client *ec)
    e_comp_wl->xwl_pending = eina_list_append(e_comp_wl->xwl_pending, ec);
 }
 
+/* grab_clients is prepended to, so this dismisses a nested menu from the
+ * leaf up, the order xdg-shell requires for popup_done. */
+static void
+_e_comp_wl_grab_clients_dismiss_all(void)
+{
+   E_Client *gec;
+   E_Comp_Wl_Grab_End_Cb grabcb;
+
+   EINA_LIST_FREE(grab_clients, gec)
+     {
+        grabcb = eina_list_data_get(grab_cbs);
+        if (grabcb) grabcb(gec);
+        grab_cbs = eina_list_remove_list(grab_cbs, grab_cbs);
+     }
+}
+
+E_API void
+e_comp_wl_grab_clients_dismiss(void)
+{
+   if (!grab_clients) return;
+   _e_comp_wl_grab_clients_dismiss_all();
+   e_bindings_disabled_set(0);
+}
+
 E_API void
 e_comp_wl_grab_client_add(E_Client *ec, E_Comp_Wl_Grab_End_Cb cb)
 {
-   E_Client *gec, *parent = e_client_util_top_parent_get(ec);
-   E_Comp_Wl_Grab_End_Cb grabcb;
+   E_Client *parent = e_client_util_top_parent_get(ec);
 
    if (grab_clients && (parent != e_client_util_top_parent_get(eina_list_data_get(grab_clients))))
-     {
-        /* dismiss grabs in order when grabbing from new toplevel */
-        EINA_LIST_FREE(grab_clients, gec)
-          {
-             grabcb = eina_list_data_get(grab_cbs);
-             if (grabcb) grabcb(gec);
-             grab_cbs = eina_list_remove_list(grab_cbs, grab_cbs);
-          }
-     }
+     /* dismiss grabs in order when grabbing from new toplevel */
+     _e_comp_wl_grab_clients_dismiss_all();
    grab_clients = eina_list_prepend(grab_clients, ec);
    grab_cbs = eina_list_prepend(grab_cbs, cb);
    ec->comp_data->grab = 1;

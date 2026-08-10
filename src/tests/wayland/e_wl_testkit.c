@@ -445,6 +445,12 @@ tk_toplevel_remap(Tk_Toplevel *top)
    tk_settle(top->tk);
 }
 
+struct xdg_wm_base *
+tk_wm_base(Tk *tk)
+{
+   return tk->wm_base;
+}
+
 uint32_t
 tk_global_version(Tk *tk, const char *iface)
 {

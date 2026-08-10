@@ -76,6 +76,10 @@ struct xdg_surface *tk_toplevel_xdg_surface(Tk_Toplevel *top);
  * requires: an empty commit, and a buffer in answer to the configure. */
 void tk_toplevel_remap(Tk_Toplevel *top);
 
+/* The kit's xdg_wm_base, which answers pings, for building surfaces the kit
+ * has no constructor for. */
+struct xdg_wm_base *tk_wm_base(Tk *tk);
+
 /* The version the compositor advertised for a global, or 0 if none. */
 uint32_t tk_global_version(Tk *tk, const char *iface);
 

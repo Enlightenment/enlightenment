@@ -430,6 +430,7 @@ E_API extern int E_EVENT_WAYLAND_GLOBAL_ADD;
 
 E_API void e_comp_wl_grab_client_add(E_Client *ec, E_Comp_Wl_Grab_End_Cb cb);
 E_API void e_comp_wl_grab_client_del(E_Client *ec, Eina_Bool dismiss);
+E_API void e_comp_wl_grab_clients_dismiss(void);
 E_API Eina_Bool e_comp_wl_client_is_grabbed(const E_Client *ec);
 E_API Eina_Bool e_comp_wl_grab_client_mouse_move(const Ecore_Event_Mouse_Move *ev);
 E_API Eina_Bool e_comp_wl_grab_client_mouse_button(const Ecore_Event_Mouse_Button *ev);

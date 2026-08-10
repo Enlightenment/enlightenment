@@ -1271,6 +1271,8 @@ _e_xdg_surface_cb_toplevel_get(struct wl_client *client EINA_UNUSED, struct wl_r
                                   &_e_xdg_toplevel_interface, ec,
                                   e_shell_surface_cb_destroy);
 
+   e_comp_wl_grab_clients_dismiss();
+
    e_object_ref(E_OBJECT(ec));
 
    cdata->shell.configure_send = _e_xdg_shell_surface_configure_send;

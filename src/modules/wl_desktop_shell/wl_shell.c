@@ -121,6 +121,8 @@ _wl_shell_surface_cb_toplevel_set(struct wl_client *client EINA_UNUSED, struct w
      }
    if (e_object_is_del(E_OBJECT(ec))) return;
 
+   e_comp_wl_grab_clients_dismiss();
+
    /* set toplevel client properties */
    ec->icccm.accepts_focus = 1;
    if (!ec->internal)
