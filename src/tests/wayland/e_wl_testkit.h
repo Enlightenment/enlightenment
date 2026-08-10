@@ -107,6 +107,15 @@ void tk_action_end(Tk *tk, unsigned int id, const char *name, const char *params
 void tk_pointer_warp(Tk *tk, int x, int y);
 void tk_pointer_move(Tk *tk, int dx, int dy);
 
+/* A bare wl_surface, and a fresh buffer of this size attached, damaged and
+ * committed to one. */
+struct wl_surface *tk_surface_new(Tk *tk);
+void tk_surface_paint(Tk *tk, struct wl_surface *surface, int w, int h);
+
+/* Where the compositor has a surface, in compositor coordinates. */
+void tk_surface_geometry(Tk *tk, struct wl_surface *surface,
+                         int *x, int *y, int *w, int *h);
+
 /* Press or release a linux/input.h BTN_* button. */
 void tk_pointer_button(Tk *tk, unsigned int button, int pressed);
 

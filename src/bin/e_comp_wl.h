@@ -101,6 +101,14 @@ struct _E_Comp_Wl_Subsurf_Data
    E_Comp_Wl_Surface_State cached;
 
    Eina_Bool synchronized;
+
+   /* set_position is parent state: requested here, latched into position
+    * by the parent's commit, applied with the parent's state. */
+   struct
+     {
+        int x, y;
+        Eina_Bool set;
+     } pending_position;
 };
 
 typedef struct E_Comp_Wl_Extension_Data

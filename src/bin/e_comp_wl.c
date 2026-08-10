@@ -1970,6 +1970,31 @@ _e_comp_wl_surface_cb_input_region_set(struct wl_client *client EINA_UNUSED, str
      }
 }
 
+/* A subsurface position is the parent's double-buffered state, so the
+ * parent's own commit latches it. A commit higher up walks down through
+ * this surface and must only apply what this surface has committed. */
+static void
+_e_comp_wl_subsurface_positions_latch(E_Client *ec)
+{
+   E_Client *subc;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(ec->comp_data->sub.list, l, subc)
+     {
+        E_Comp_Wl_Subsurf_Data *sdata;
+
+        if (ec == subc) continue;
+        if (!subc->comp_data) continue;
+        if (!(sdata = subc->comp_data->sub.data)) continue;
+        if (!sdata->pending_position.set) continue;
+
+        sdata->position.x = sdata->pending_position.x;
+        sdata->position.y = sdata->pending_position.y;
+        sdata->position.set = EINA_TRUE;
+        sdata->pending_position.set = EINA_FALSE;
+     }
+}
+
 static void
 _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
@@ -1978,6 +2003,8 @@ _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_res
 
    if (!(ec = wl_resource_get_user_data(resource))) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
+
+   _e_comp_wl_subsurface_positions_latch(ec);
 
    if (e_comp_wl_subsurface_commit(ec)) return;
 
@@ -2440,9 +2467,9 @@ _e_comp_wl_subsurface_cb_position_set(struct wl_client *client EINA_UNUSED, stru
 
    if (!(sdata = ec->comp_data->sub.data)) return;
 
-   sdata->position.x = x;
-   sdata->position.y = y;
-   sdata->position.set = EINA_TRUE;
+   sdata->pending_position.x = x;
+   sdata->pending_position.y = y;
+   sdata->pending_position.set = EINA_TRUE;
 }
 
 static void

@@ -45,6 +45,10 @@ struct _Tk
    int client_count;
    int done_count;
 
+   struct wl_surface *info_surface;
+   int info_x, info_y, info_w, info_h;
+   int info_known;
+
    int configured;
 };
 
@@ -59,8 +63,15 @@ _surface_info(void *data, struct wl_test *t, struct wl_surface *s,
               int32_t x, int32_t y, int32_t w, int32_t h,
               uint32_t vis, uint32_t foc)
 {
-   (void)data; (void)t; (void)s; (void)x; (void)y; (void)w; (void)h;
-   (void)vis; (void)foc;
+   Tk *tk = data;
+
+   (void)t; (void)vis; (void)foc;
+   if (s != tk->info_surface) return;
+   tk->info_x = x;
+   tk->info_y = y;
+   tk->info_w = w;
+   tk->info_h = h;
+   tk->info_known = 1;
 }
 
 static void
@@ -550,4 +561,40 @@ tk_pointer_button(Tk *tk, unsigned int button, int pressed)
 {
    wl_test_pointer_button(tk->tester, button, pressed ? 1 : 0);
    tk_settle(tk);
+}
+
+struct wl_surface *
+tk_surface_new(Tk *tk)
+{
+   struct wl_surface *surface = wl_compositor_create_surface(tk->compositor);
+
+   if (!surface) tk_fail(tk, "cannot create a surface");
+   return surface;
+}
+
+void
+tk_surface_paint(Tk *tk, struct wl_surface *surface, int w, int h)
+{
+   struct wl_buffer *buffer = _buffer_make(tk, w, h);
+
+   if (!buffer) tk_fail(tk, "cannot make a %dx%d buffer", w, h);
+   wl_surface_attach(surface, buffer, 0, 0);
+   wl_surface_damage(surface, 0, 0, w, h);
+   wl_surface_commit(surface);
+}
+
+void
+tk_surface_geometry(Tk *tk, struct wl_surface *surface,
+                    int *x, int *y, int *w, int *h)
+{
+   tk->info_surface = surface;
+   tk->info_known = 0;
+   wl_test_get_surface_info(tk->tester, surface);
+   tk_sync(tk);
+   tk->info_surface = NULL;
+   if (!tk->info_known) tk_fail(tk, "the compositor does not know a surface");
+   if (x) *x = tk->info_x;
+   if (y) *y = tk->info_y;
+   if (w) *w = tk->info_w;
+   if (h) *h = tk->info_h;
 }
