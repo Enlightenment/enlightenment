@@ -695,31 +695,18 @@ _apply_positioner_x(int x, Positioner *p, Eina_Bool invert)
         grav = p->gravity;
      }
 
-   switch (an)
-     {
-      case ZXDG_POSITIONER_V6_ANCHOR_LEFT:
-        x += p->anchor_rect.x;
-        break;
-      case ZXDG_POSITIONER_V6_ANCHOR_RIGHT:
-        x += p->anchor_rect.x + p->anchor_rect.w;
-        break;
-      default:
-        x += p->anchor_rect.x + (p->anchor_rect.w / 2);
-        break;
-     }
+   /* v6 anchor and gravity are bitmasks: a corner is top|left. */
+   if (an & ZXDG_POSITIONER_V6_ANCHOR_LEFT)
+     x += p->anchor_rect.x;
+   else if (an & ZXDG_POSITIONER_V6_ANCHOR_RIGHT)
+     x += p->anchor_rect.x + p->anchor_rect.w;
+   else
+     x += p->anchor_rect.x + (p->anchor_rect.w / 2);
 
-   switch (grav)
-     {
-      case ZXDG_POSITIONER_V6_GRAVITY_LEFT:
-        x -= p->size.w;
-        break;
-      case ZXDG_POSITIONER_V6_GRAVITY_RIGHT:
-        x = x;
-        break;
-      default:
-        x -= p->size.w / 2;
-        break;
-     }
+   if (grav & ZXDG_POSITIONER_V6_GRAVITY_LEFT)
+     x -= p->size.w;
+   else if (!(grav & ZXDG_POSITIONER_V6_GRAVITY_RIGHT))
+     x -= p->size.w / 2;
 
    return x;
 }
@@ -747,30 +734,17 @@ _apply_positioner_y(int y, Positioner *p, Eina_Bool invert)
         grav = p->gravity;
      }
 
-   switch (an)
-     {
-      case ZXDG_POSITIONER_V6_ANCHOR_TOP:
-        y += p->anchor_rect.y;
-        break;
-      case ZXDG_POSITIONER_V6_ANCHOR_BOTTOM:
-        y += p->anchor_rect.y + p->anchor_rect.h;
-        break;
-      default:
-        y += p->anchor_rect.y + (p->anchor_rect.h / 2);
-        break;
-     }
+   if (an & ZXDG_POSITIONER_V6_ANCHOR_TOP)
+     y += p->anchor_rect.y;
+   else if (an & ZXDG_POSITIONER_V6_ANCHOR_BOTTOM)
+     y += p->anchor_rect.y + p->anchor_rect.h;
+   else
+     y += p->anchor_rect.y + (p->anchor_rect.h / 2);
 
-   switch (grav)
-     {
-      case ZXDG_POSITIONER_V6_GRAVITY_TOP:
-        y -= p->size.h;
-        break;
-      case ZXDG_POSITIONER_V6_GRAVITY_BOTTOM:
-        y = y;
-        break;
-      default:
-        y -= (p->size.h / 2);
-     }
+   if (grav & ZXDG_POSITIONER_V6_GRAVITY_TOP)
+     y -= p->size.h;
+   else if (!(grav & ZXDG_POSITIONER_V6_GRAVITY_BOTTOM))
+     y -= p->size.h / 2;
 
    return y;
 }
