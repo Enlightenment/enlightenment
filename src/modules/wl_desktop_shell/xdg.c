@@ -84,11 +84,95 @@ _e_xdg_positioner_set_anchor_rect(struct wl_client *wl_client EINA_UNUSED, struc
    EINA_RECTANGLE_SET(&p->anchor_rect, x, y, w, h);
 }
 
+/* In stable xdg-shell, anchor and gravity are sequential enums (none=0,
+ * top=1, bottom=2, left=3, right=4, top_left=5, ...), not the bitmasks
+ * zxdg_positioner_v6 used, so they cannot be tested with &.
+ * constraint_adjustment is a real bitfield. */
+static Eina_Bool
+_anchor_is_left(enum xdg_positioner_anchor a)
+{
+   return (a == XDG_POSITIONER_ANCHOR_LEFT) ||
+          (a == XDG_POSITIONER_ANCHOR_TOP_LEFT) ||
+          (a == XDG_POSITIONER_ANCHOR_BOTTOM_LEFT);
+}
+
+static Eina_Bool
+_anchor_is_right(enum xdg_positioner_anchor a)
+{
+   return (a == XDG_POSITIONER_ANCHOR_RIGHT) ||
+          (a == XDG_POSITIONER_ANCHOR_TOP_RIGHT) ||
+          (a == XDG_POSITIONER_ANCHOR_BOTTOM_RIGHT);
+}
+
+static Eina_Bool
+_anchor_is_top(enum xdg_positioner_anchor a)
+{
+   return (a == XDG_POSITIONER_ANCHOR_TOP) ||
+          (a == XDG_POSITIONER_ANCHOR_TOP_LEFT) ||
+          (a == XDG_POSITIONER_ANCHOR_TOP_RIGHT);
+}
+
+static Eina_Bool
+_anchor_is_bottom(enum xdg_positioner_anchor a)
+{
+   return (a == XDG_POSITIONER_ANCHOR_BOTTOM) ||
+          (a == XDG_POSITIONER_ANCHOR_BOTTOM_LEFT) ||
+          (a == XDG_POSITIONER_ANCHOR_BOTTOM_RIGHT);
+}
+
+/* Mirror one axis and keep the other half of a corner: flipping x on
+ * top_left gives top_right. */
+static enum xdg_positioner_anchor
+_anchor_flip_x(enum xdg_positioner_anchor a)
+{
+   switch (a)
+     {
+      case XDG_POSITIONER_ANCHOR_LEFT:         return XDG_POSITIONER_ANCHOR_RIGHT;
+      case XDG_POSITIONER_ANCHOR_RIGHT:        return XDG_POSITIONER_ANCHOR_LEFT;
+      case XDG_POSITIONER_ANCHOR_TOP_LEFT:     return XDG_POSITIONER_ANCHOR_TOP_RIGHT;
+      case XDG_POSITIONER_ANCHOR_TOP_RIGHT:    return XDG_POSITIONER_ANCHOR_TOP_LEFT;
+      case XDG_POSITIONER_ANCHOR_BOTTOM_LEFT:  return XDG_POSITIONER_ANCHOR_BOTTOM_RIGHT;
+      case XDG_POSITIONER_ANCHOR_BOTTOM_RIGHT: return XDG_POSITIONER_ANCHOR_BOTTOM_LEFT;
+      default:                                 return a;  /* none, top, bottom */
+     }
+}
+
+static enum xdg_positioner_anchor
+_anchor_flip_y(enum xdg_positioner_anchor a)
+{
+   switch (a)
+     {
+      case XDG_POSITIONER_ANCHOR_TOP:          return XDG_POSITIONER_ANCHOR_BOTTOM;
+      case XDG_POSITIONER_ANCHOR_BOTTOM:       return XDG_POSITIONER_ANCHOR_TOP;
+      case XDG_POSITIONER_ANCHOR_TOP_LEFT:     return XDG_POSITIONER_ANCHOR_BOTTOM_LEFT;
+      case XDG_POSITIONER_ANCHOR_BOTTOM_LEFT:  return XDG_POSITIONER_ANCHOR_TOP_LEFT;
+      case XDG_POSITIONER_ANCHOR_TOP_RIGHT:    return XDG_POSITIONER_ANCHOR_BOTTOM_RIGHT;
+      case XDG_POSITIONER_ANCHOR_BOTTOM_RIGHT: return XDG_POSITIONER_ANCHOR_TOP_RIGHT;
+      default:                                 return a;  /* none, left, right */
+     }
+}
+
+/* The gravity enum has the same values as the anchor one. */
+#define _gravity_is_left(g)   _anchor_is_left((enum xdg_positioner_anchor)(g))
+#define _gravity_is_right(g)  _anchor_is_right((enum xdg_positioner_anchor)(g))
+#define _gravity_is_top(g)    _anchor_is_top((enum xdg_positioner_anchor)(g))
+#define _gravity_is_bottom(g) _anchor_is_bottom((enum xdg_positioner_anchor)(g))
+#define _gravity_flip_x(g) \
+  ((enum xdg_positioner_gravity)_anchor_flip_x((enum xdg_positioner_anchor)(g)))
+#define _gravity_flip_y(g) \
+  ((enum xdg_positioner_gravity)_anchor_flip_y((enum xdg_positioner_anchor)(g)))
+
 static void
 _e_xdg_positioner_set_anchor(struct wl_client *wl_client EINA_UNUSED, struct wl_resource *resource, enum xdg_positioner_anchor anchor)
 {
    Positioner *p = wl_resource_get_user_data(resource);
 
+   if (anchor > XDG_POSITIONER_ANCHOR_BOTTOM_RIGHT)
+     {
+        wl_resource_post_error(resource, XDG_POSITIONER_ERROR_INVALID_INPUT,
+                               "anchor %u is not a value of the anchor enum", anchor);
+        return;
+     }
    p->anchor = anchor;
 }
 
@@ -97,14 +181,13 @@ _e_xdg_positioner_set_gravity(struct wl_client *wl_client EINA_UNUSED, struct wl
 {
    Positioner *p = wl_resource_get_user_data(resource);
 
-   if ((gravity & (XDG_POSITIONER_GRAVITY_TOP | XDG_POSITIONER_GRAVITY_BOTTOM)) ==
-       (XDG_POSITIONER_GRAVITY_TOP | XDG_POSITIONER_GRAVITY_BOTTOM))
-     wl_resource_post_error(resource, XDG_POSITIONER_ERROR_INVALID_INPUT, "Invalid gravity values passed");
-   else if ((gravity & (XDG_POSITIONER_GRAVITY_LEFT | XDG_POSITIONER_GRAVITY_RIGHT)) ==
-       (XDG_POSITIONER_GRAVITY_LEFT | XDG_POSITIONER_GRAVITY_RIGHT))
-     wl_resource_post_error(resource, XDG_POSITIONER_ERROR_INVALID_INPUT, "Invalid gravity values passed");
-   else
-     p->gravity = gravity;
+   if (gravity > XDG_POSITIONER_GRAVITY_BOTTOM_RIGHT)
+     {
+        wl_resource_post_error(resource, XDG_POSITIONER_ERROR_INVALID_INPUT,
+                               "gravity %u is not a value of the gravity enum", gravity);
+        return;
+     }
+   p->gravity = gravity;
 }
 
 static void
@@ -698,14 +781,8 @@ _apply_positioner_x(int x, Positioner *p, Eina_Bool invert)
 
    if (invert)
      {
-        if (p->anchor == XDG_POSITIONER_ANCHOR_LEFT)
-          an = XDG_POSITIONER_ANCHOR_RIGHT;
-        else if (p->anchor == XDG_POSITIONER_ANCHOR_RIGHT)
-          an = XDG_POSITIONER_ANCHOR_LEFT;
-        if (p->gravity == XDG_POSITIONER_GRAVITY_LEFT)
-          grav |= XDG_POSITIONER_GRAVITY_RIGHT;
-        else if (p->gravity == XDG_POSITIONER_GRAVITY_RIGHT)
-          grav |= XDG_POSITIONER_GRAVITY_LEFT;
+        an = _anchor_flip_x(p->anchor);
+        grav = _gravity_flip_x(p->gravity);
      }
    else
      {
@@ -758,14 +835,8 @@ _apply_positioner_y(int y, Positioner *p, Eina_Bool invert)
 
    if (invert)
      {
-        if (p->anchor == XDG_POSITIONER_ANCHOR_TOP)
-          an = XDG_POSITIONER_ANCHOR_BOTTOM;
-        else if (p->anchor == XDG_POSITIONER_ANCHOR_BOTTOM)
-          an = XDG_POSITIONER_ANCHOR_TOP;
-        if (p->gravity == XDG_POSITIONER_GRAVITY_TOP)
-          grav |= XDG_POSITIONER_GRAVITY_BOTTOM;
-        else if (p->gravity == XDG_POSITIONER_GRAVITY_BOTTOM)
-          grav |= XDG_POSITIONER_GRAVITY_TOP;
+        an = _anchor_flip_y(p->anchor);
+        grav = _gravity_flip_y(p->gravity);
      }
    else
      {
@@ -817,14 +888,14 @@ _apply_positioner_slide(E_Client *ec, Positioner *p, int zx, int zy, int zw, int
      {
         int sx = ec->x;
 
-        if (p->gravity & XDG_POSITIONER_GRAVITY_LEFT)
+        if (_gravity_is_left(p->gravity))
           {
              if (ec->x + ec->w > zx + zw)
                sx = MAX(zx + zw - ec->w, ec->parent->x + p->anchor_rect.x - ec->w);
              else if (ec->x < zx)
                sx = MIN(zx, ec->parent->x + p->anchor_rect.x + p->anchor_rect.w);
           }
-        else if (p->gravity & XDG_POSITIONER_GRAVITY_RIGHT)
+        else if (_gravity_is_right(p->gravity))
           {
              if (ec->x < zx)
                sx = MIN(zx, ec->parent->x + p->anchor_rect.x + p->anchor_rect.w);
@@ -840,14 +911,14 @@ _apply_positioner_slide(E_Client *ec, Positioner *p, int zx, int zy, int zw, int
      {
         int sy = ec->y;
 
-        if (p->gravity & XDG_POSITIONER_GRAVITY_TOP)
+        if (_gravity_is_top(p->gravity))
           {
              if (ec->y + ec->h > zy + zh)
                sy = MAX(zy + zh - ec->h, ec->parent->y + p->anchor_rect.y - ec->h);
              else if (ec->y < zy)
                sy = MIN(zy, ec->parent->y + p->anchor_rect.y + p->anchor_rect.h);
           }
-        else if (p->gravity & XDG_POSITIONER_GRAVITY_BOTTOM)
+        else if (_gravity_is_bottom(p->gravity))
           {
              if (ec->y < zy)
                sy = MIN(zy, ec->parent->y + p->anchor_rect.y + p->anchor_rect.h);
