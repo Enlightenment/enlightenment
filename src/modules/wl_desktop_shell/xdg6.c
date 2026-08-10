@@ -188,6 +188,13 @@ _e_xdg_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_
         return;
      }
    if (e_object_is_del(E_OBJECT(ec))) return;
+   if (e_client_util_is_popup(ec))
+     {
+        /* A popup's size comes from its positioner, not its buffer. */
+        e_comp_object_frame_wh_unadjust(ec->frame, ec->w, ec->h, &w, &h);
+        e_client_util_move_resize_without_frame(ec, x, y, w, h);
+        return;
+     }
    if (ec->placed)
      e_client_util_move_resize_without_frame(ec, x, y, w, h);
    else
@@ -860,11 +867,14 @@ _apply_positioner(E_Client *ec, Positioner *p)
 
    if (!CONSTRAINED(ec, ec->x, ec->y)) return;
 
+   /* Resize shrinks the popup to the part that fits in the zone. */
    if ((p->constrain & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_RESIZE_X) &&
        (!E_CONTAINS(zx, zy, zw, zh, ec->x, zy, ec->w, 1)))
      {
+        int r = ec->x + ec->w;
+
         if (ec->x < zx) ec->x = zx;
-        ec->w = zx + zw - ec->x;
+        ec->w = MIN(r, zx + zw) - ec->x;
         e_client_resize_limit(ec, &ec->w, &ec->h);
         ec->changes.size = 1;
         if (!CONSTRAINED(ec, ec->x, ec->y)) return;
@@ -872,8 +882,10 @@ _apply_positioner(E_Client *ec, Positioner *p)
    if ((p->constrain & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_RESIZE_Y) &&
        (!E_CONTAINS(zx, zy, zw, zh, zx, ec->y, 1, ec->h)))
      {
+        int b = ec->y + ec->h;
+
         if (ec->y < zy) ec->y = zy;
-        ec->h = zy + zh - ec->y;
+        ec->h = MIN(b, zy + zh) - ec->y;
         e_client_resize_limit(ec, &ec->w, &ec->h);
         ec->changes.size = 1;
      }
