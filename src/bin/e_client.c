@@ -2483,7 +2483,11 @@ e_client_idler_before(void)
              ec->changes.visible = !evas_object_visible_get(ec->frame);
           }
 
+        /* Not a popup menu: it was placed against the screen edge on
+         * purpose, and an xdg_popup's constraint_adjustment says what we may
+         * change - recentring on the parent is not one of those. */
         if ((!ec->new_client) && (!e_client_util_ignored_get(ec)) &&
+            (ec->netwm.type != E_WINDOW_TYPE_POPUP_MENU) &&
             (!E_INSIDE(ec->x, ec->y, 0, 0, e_comp->w - 5, e_comp->h - 5)) &&
             (!E_INSIDE(ec->x, ec->y, 0 - ec->w + 5, 0 - ec->h + 5, e_comp->w - 5, e_comp->h - 5))
             )
