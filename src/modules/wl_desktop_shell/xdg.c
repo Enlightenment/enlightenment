@@ -339,6 +339,11 @@ _e_xdg_shell_surface_map(struct wl_resource *resource)
          * respective parents... */
         /* if (e_client_util_is_popup(ec)) */
         /*   e_client_raise_latest_set(ec); */
+
+        /* xdg_popup.grab gives the popup the keyboard; the request comes
+         * before the first commit, so focus it once it maps. */
+        if (ec->comp_data->grab)
+          evas_object_focus_set(ec->frame, 1);
      }
 }
 

@@ -595,7 +595,8 @@ _e_comp_wl_evas_cb_focus_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
    _e_comp_wl_client_priority_raise(ec);
 
    wc = wl_resource_get_client(ec->comp_data->surface);
-   if (ec->comp_data->is_xdg_surface)
+   /* A popup holding an xdg_popup.grab keeps the keyboard itself. */
+   if (ec->comp_data->is_xdg_surface && (!ec->comp_data->grab))
      {
         /* We only send kbd focus to xdg top levels */
         while (ec->parent)
