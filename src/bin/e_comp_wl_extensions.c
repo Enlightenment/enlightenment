@@ -40,9 +40,79 @@ typedef struct Constraint
    Eina_Bool lock E_BITFIELD; // if not lock, confine
    Eina_Bool persistent E_BITFIELD;
    Eina_Bool active E_BITFIELD;
+   Eina_Bool dead E_BITFIELD; // oneshot, already deactivated once
 } Constraint;
 
 static Eina_List *active_constraints;
+
+static Eina_Bool _inside_tiler(Eina_Tiler *r, Eina_Bool active, int x, int y,
+                               int px, int py, int *ax, int *ay);
+
+/* A constraint can become active without the pointer moving: a client
+ * usually locks a pointer that already sits where it wants it. Evaluated
+ * on creation, on commit and on focus in, as well as on motion. */
+static void
+_constraints_activate(E_Client *ec)
+{
+   Eina_List *l;
+   Constraint *c;
+   int px, py;
+
+   if ((!ec) || (!ec->comp_data) || (!ec->frame)) return;
+   if (ec != e_client_focused_get()) return;
+   evas_pointer_canvas_xy_get(e_comp->evas, &px, &py);
+   if (!e_comp_object_coords_inside_input_area(ec->frame, px, py)) return;
+
+   EINA_LIST_FOREACH(ec->comp_data->constraints, l, c)
+     {
+        int ax = 0, ay = 0;
+
+        if (c->active || c->dead) continue;
+        if (!_inside_tiler(c->region, EINA_FALSE, px - ec->client.x, py - ec->client.y,
+              px - ec->client.x, py - ec->client.y, &ax, &ay))
+          continue;
+        c->active = 1;
+        active_constraints = eina_list_append(active_constraints, c);
+        if (c->lock)
+          zwp_locked_pointer_v1_send_locked(c->res);
+        else
+          zwp_confined_pointer_v1_send_confined(c->res);
+     }
+}
+
+/* A constraint deactivates when its surface loses focus, and a oneshot
+ * one never reactivates after that. */
+static void
+_constraints_deactivate(E_Client *ec)
+{
+   Eina_List *l;
+   Constraint *c;
+
+   if ((!ec) || (!ec->comp_data)) return;
+   EINA_LIST_FOREACH(ec->comp_data->constraints, l, c)
+     {
+        if (!c->active) continue;
+        c->active = 0;
+        if (!c->persistent) c->dead = 1;
+        active_constraints = eina_list_remove(active_constraints, c);
+        if (c->lock)
+          zwp_locked_pointer_v1_send_unlocked(c->res);
+        else
+          zwp_confined_pointer_v1_send_unconfined(c->res);
+     }
+}
+
+static void
+_e_comp_wl_extensions_client_focus_set(void *d EINA_UNUSED, E_Client *ec)
+{
+   _constraints_activate(ec);
+}
+
+static void
+_e_comp_wl_extensions_client_focus_unset(void *d EINA_UNUSED, E_Client *ec)
+{
+   _constraints_deactivate(ec);
+}
 
 static void
 _e_comp_wl_extensions_client_move_begin(void *d EINA_UNUSED, E_Client *ec)
@@ -494,15 +564,20 @@ _e_comp_wl_zwp_pointer_constraints_v1_lock_pointer(struct wl_client *client, str
 
    c = do_constraint(&zwp_locked_pointer_v1_interface, &_e_comp_wl_locked_pointer_v1_interface,
      client, resource, id, surface, pointer, region, lifetime);
-   if (c)
-     c->lock = 1;
+   if (!c) return;
+   c->lock = 1;
+   _constraints_activate(c->ec);
 }
 
 static void
 _e_comp_wl_zwp_pointer_constraints_v1_confine_pointer(struct wl_client *client, struct wl_resource *resource, uint32_t id, struct wl_resource *surface, struct wl_resource *pointer, struct wl_resource *region, uint32_t lifetime)
 {
-   do_constraint(&zwp_confined_pointer_v1_interface, &_e_comp_wl_confined_pointer_v1_interface,
+   Constraint *c;
+
+   c = do_constraint(&zwp_confined_pointer_v1_interface, &_e_comp_wl_confined_pointer_v1_interface,
      client, resource, id, surface, pointer, region, lifetime);
+   if (c)
+     _constraints_activate(c->ec);
 }
 
 /////////////////////////////////////////////////////////
@@ -1021,6 +1096,9 @@ e_comp_wl_extensions_init(void)
    e_client_hook_add(E_CLIENT_HOOK_MOVE_BEGIN, _e_comp_wl_extensions_client_move_begin, NULL);
    e_client_hook_add(E_CLIENT_HOOK_MOVE_END, _e_comp_wl_extensions_client_move_end, NULL);
 
+   e_client_hook_add(E_CLIENT_HOOK_FOCUS_SET, _e_comp_wl_extensions_client_focus_set, NULL);
+   e_client_hook_add(E_CLIENT_HOOK_FOCUS_UNSET, _e_comp_wl_extensions_client_focus_unset, NULL);
+
    act = e_action_add("key_route");
    act->func.go_key = _e_comp_wl_action_route_act_key_route_go;
    act->func.end_key = _e_comp_wl_action_route_act_key_route_go_end;
@@ -1079,6 +1157,8 @@ e_comp_wl_extension_pointer_constraints_commit(E_Client *ec)
              c->pending_xy = NULL;
           }
      }
+   /* a newly committed region can be what makes a constraint eligible */
+   _constraints_activate(ec);
 }
 
 static Eina_Bool
@@ -1211,7 +1291,7 @@ e_comp_wl_extension_pointer_constraints_update(E_Client *ec, int x, int y)
         int ax = px - ec->client.x, ay = py - ec->client.y;
         Eina_Bool inside_region = _inside_tiler(c->region, c->active, x - ec->client.x, y - ec->client.y,
           px - ec->client.x, py - ec->client.y, &ax, &ay);
-        if ((!c->active) && inside && inside_region)
+        if ((!c->active) && (!c->dead) && inside && inside_region)
           {
              c->active = 1;
              active_constraints = eina_list_append(active_constraints, c);
