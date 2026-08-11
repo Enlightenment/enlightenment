@@ -724,6 +724,20 @@ _e_comp_wl_evas_cb_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
                            ec->client.y + sec->comp_data->sub.data->position.y);
      }
    _e_comp_wl_surface_outputs_update(ec);
+
+   /* The pointer is now somewhere else in the surface. Feeding evas the
+    * unchanged canvas position would not tell the client: evas drops a
+    * mouse move that does not move. During an interactive move the pointer
+    * drives the surface and nothing changes. */
+   if ((ec->mouse.in) && (ec->comp_data->surface) &&
+       (!e_client_action_get()) && (!e_client_util_ignored_get(ec)))
+     {
+        Evas_Coord px, py;
+
+        evas_pointer_canvas_xy_get(e_comp->evas, &px, &py);
+        _e_comp_wl_send_mouse_move(ec, px, py,
+                                   (unsigned int)lround(ecore_loop_time_get() * 1000));
+     }
 }
 
 static void
