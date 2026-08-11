@@ -2307,15 +2307,20 @@ _e_comp_wl_subsurface_cb_place_above(struct wl_client *client EINA_UNUSED, struc
    /* try to get the client from the sibling resource */
    if (!(ecs = wl_resource_get_user_data(sibling_resource))) return;
 
-   if (!ecs->comp_data->sub.data) return;
-
    if (!(parent = ec->comp_data->sub.data->parent)) return;
+
+   /* The reference may be a sibling or the parent itself. */
+   if ((ecs != parent) && (!ecs->comp_data->sub.data)) return;
 
    parent->comp_data->sub.list =
      eina_list_remove(parent->comp_data->sub.list, ec);
 
-   parent->comp_data->sub.list =
-     eina_list_append_relative(parent->comp_data->sub.list, ec, ecs);
+   if (ecs == parent)
+     parent->comp_data->sub.list =
+       eina_list_prepend(parent->comp_data->sub.list, ec);
+   else
+     parent->comp_data->sub.list =
+       eina_list_append_relative(parent->comp_data->sub.list, ec, ecs);
 
    parent->comp_data->sub.restack_target = parent;
 }
@@ -2336,9 +2341,12 @@ _e_comp_wl_subsurface_cb_place_below(struct wl_client *client EINA_UNUSED, struc
    /* try to get the client from the sibling resource */
    if (!(ecs = wl_resource_get_user_data(sibling_resource))) return;
 
-   if (!ecs->comp_data->sub.data) return;
-
    if (!(parent = ec->comp_data->sub.data->parent)) return;
+
+   /* Legal, but sub.list cannot express "below the parent" yet. */
+   if (ecs == parent) return;
+
+   if (!ecs->comp_data->sub.data) return;
 
    parent->comp_data->sub.list =
      eina_list_remove(parent->comp_data->sub.list, ec);
