@@ -673,18 +673,12 @@ _e_comp_wl_evas_cb_focus_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
    _e_comp_wl_keyboard_leave(ec);
 }
 
+/* Apply sub.list, which runs bottom to top, to the canvas. */
 static void
-_e_comp_wl_evas_cb_restack(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_e_comp_wl_subsurface_stack_sync(E_Client *ec)
 {
-   E_Client *sec, *ec = data;
+   E_Client *sec;
    Eina_List *l, *ll;
-
-   if (e_object_is_del(E_OBJECT(ec))) return;
-   if (e_client_has_xwindow(ec)) return;
-
-   /* only restack to enforce shell spec if config would otherwise not force restack */
-   if (!e_config->transient.raise)
-     e_client_transients_restack(ec);
 
    if (!ec->comp_data->sub.list) return;
    EINA_LIST_FOREACH(ec->comp_data->sub.list, l, sec)
@@ -698,6 +692,21 @@ _e_comp_wl_evas_cb_restack(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
         if (nsec)
           evas_object_stack_below(nsec->frame, sec->frame);
      }
+}
+
+static void
+_e_comp_wl_evas_cb_restack(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Client *ec = data;
+
+   if (e_object_is_del(E_OBJECT(ec))) return;
+   if (e_client_has_xwindow(ec)) return;
+
+   /* only restack to enforce shell spec if config would otherwise not force restack */
+   if (!e_config->transient.raise)
+     e_client_transients_restack(ec);
+
+   _e_comp_wl_subsurface_stack_sync(ec);
 }
 
 static void
@@ -1634,6 +1643,14 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
      }
    ec->comp_data->in_commit = 0;
 
+   /* place_above/place_below are double-buffered: they take effect when
+    * the parent's state is applied. */
+   if (ec->comp_data->sub.restack_target == ec)
+     {
+        ec->comp_data->sub.restack_target = NULL;
+        _e_comp_wl_subsurface_stack_sync(ec);
+     }
+
    _e_comp_wl_surface_outputs_update(ec);
 }
 
@@ -2442,8 +2459,9 @@ _e_comp_wl_subsurface_create(E_Client *ec, E_Client *epc, uint32_t id, struct wl
    ec->comp_data->sub.data = sdata;
    if (epc)
      {
+        /* A new sub-surface is the top-most of its siblings. */
         evas_object_layer_set(ec->frame, evas_object_layer_get(epc->frame));
-        evas_object_stack_above(ec->frame, epc->frame);
+        _e_comp_wl_subsurface_stack_sync(epc);
      }
 
    return EINA_TRUE;
