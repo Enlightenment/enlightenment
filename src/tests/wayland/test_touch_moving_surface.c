@@ -1,6 +1,11 @@
-/* A finger that stays still while the surface under it moves is now over
+/* Touch points and the surface under them.
+ *
+ * A finger that stays still while the surface under it moves is now over
  * a different part of the surface, and only the compositor knows: it has
- * to send a wl_touch.motion with the new surface-local position. */
+ * to send a wl_touch.motion with the new surface-local position.
+ *
+ * A finger still down on a surface the client destroys has to be lifted:
+ * nothing else will ever end that touch. */
 #include <stdio.h>
 #include <string.h>
 
@@ -15,7 +20,7 @@
 
 typedef struct
 {
-   int downs, motions;
+   int downs, ups, motions;
    double x, y;
 } Touch_Watch;
 
@@ -32,9 +37,12 @@ _down(void *data, struct wl_touch *t, uint32_t serial, uint32_t time,
 }
 
 static void
-_up(void *d, struct wl_touch *t, uint32_t serial, uint32_t time, int32_t id)
+_up(void *data, struct wl_touch *t, uint32_t serial, uint32_t time, int32_t id)
 {
-   (void)d; (void)t; (void)serial; (void)time; (void)id;
+   Touch_Watch *w = data;
+
+   (void)t; (void)serial; (void)time; (void)id;
+   w->ups++;
 }
 
 static void
@@ -82,6 +90,7 @@ int
 main(void)
 {
    Tk *tk;
+   Tk_Toplevel *top;
    Tk_Client *c;
    Touch_Watch w;
    struct wl_seat *seat;
@@ -95,7 +104,7 @@ main(void)
    touch = wl_seat_get_touch(seat);
    wl_touch_add_listener(touch, &_touch_listener, &w);
 
-   tk_toplevel_new(tk, APP_ID, PROG, 300, 200);
+   top = tk_toplevel_new(tk, APP_ID, PROG, 300, 200);
    c = tk_expect(tk, APP_ID);
 
    tk_touch_down(tk, 1, c->x + TX, c->y + TY);
@@ -111,6 +120,17 @@ main(void)
                  "moved window", w.x, w.y, TX - DX, TY - DY);
 
    tk_touch_up(tk, 1);
+   if (w.ups != 1) tk_fail(tk, "lifting the finger sent %d ups", w.ups);
+
+   c = tk_expect(tk, APP_ID);
+   tk_touch_down(tk, 2, c->x + TX, c->y + TY);
+   if (w.downs != 2) tk_fail(tk, "the second touch down did not arrive");
+   tk_toplevel_del(top);
+   if (w.ups != 2)
+     tk_fail(tk, "the surface under a finger was destroyed and the touch was "
+                 "never ended");
+   tk_touch_up(tk, 2);
+
    printf(PROG ": ok\n");
    tk_disconnect(tk);
    return 0;

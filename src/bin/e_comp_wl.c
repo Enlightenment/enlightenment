@@ -566,15 +566,39 @@ _e_comp_wl_touch_point_del(int device)
    free(tp);
 }
 
+/* Lift every finger still down on ec. The up names the client by its
+ * surface; once that is gone there is nobody to tell. */
 static void
 _e_comp_wl_touch_points_drop(E_Client *ec)
 {
    E_Comp_Wl_Touch_Point *tp;
    Eina_List *l, *ll;
+   struct wl_client *wc = NULL;
+
+   if (ec->comp_data && ec->comp_data->surface)
+     wc = wl_resource_get_client(ec->comp_data->surface);
 
    EINA_LIST_FOREACH_SAFE(_touch_points, l, ll, tp)
      {
         if (tp->ec != ec) continue;
+
+        if (wc)
+          {
+             struct wl_resource *res;
+             Eina_List *rl;
+             uint32_t serial;
+
+             serial = wl_display_next_serial(e_comp_wl->wl.disp);
+             EINA_LIST_FOREACH(e_comp_wl->touch.resources, rl, res)
+               {
+                  if (wl_resource_get_client(res) != wc) continue;
+                  if (!e_comp_wl_input_touch_check(res)) continue;
+                  wl_touch_send_up(res, serial,
+                                   (unsigned int)lround(ecore_loop_time_get() * 1000),
+                                   tp->device);
+                  wl_touch_send_frame(res);
+               }
+          }
         _touch_points = eina_list_remove_list(_touch_points, l);
         free(tp);
      }
@@ -1881,8 +1905,9 @@ _e_comp_wl_surface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_re
    ec = wl_resource_get_user_data(resource);
    if (ec && (!e_object_is_del(E_OBJECT(ec))))
      {
-        /* While the surface can still be named in the leave. */
+        /* While the surface can still be named in the leave and the up. */
         e_comp_wl_pointer_focus_drop(ec);
+        _e_comp_wl_touch_points_drop(ec);
         ec->comp_data->surface = NULL;
      }
    wl_resource_destroy(resource);
