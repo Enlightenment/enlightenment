@@ -1317,18 +1317,24 @@ e_comp_wl_extension_pointer_unconstrain(E_Client *ec)
 
    if (ec)
      {
-        /* deleting client */
+        /* deleting client: only its own constraints go */
         EINA_LIST_FREE(ec->comp_data->constraints, c)
           {
-             c->active = EINA_FALSE;
-             if (c->lock)
-               zwp_locked_pointer_v1_send_unlocked(c->res);
-             else
-               zwp_confined_pointer_v1_send_unconfined(c->res);
-             active_constraints = eina_list_remove(active_constraints, c);
+             if (c->active)
+               {
+                  c->active = EINA_FALSE;
+                  if (c->lock)
+                    zwp_locked_pointer_v1_send_unlocked(c->res);
+                  else
+                    zwp_confined_pointer_v1_send_unconfined(c->res);
+                  active_constraints = eina_list_remove(active_constraints, c);
+               }
              c->ec = NULL;
           }
+        return;
      }
+
+   /* no client: an input grab is being taken, everything is dropped */
    EINA_LIST_FREE(active_constraints, c)
      {
         c->active = EINA_FALSE;
