@@ -125,4 +125,8 @@ void tk_surface_geometry(Tk *tk, struct wl_surface *surface,
 /* Press or release a linux/input.h BTN_* button. */
 void tk_pointer_button(Tk *tk, unsigned int button, int pressed);
 
+/* Put a finger down at a compositor position, or lift it. */
+void tk_touch_down(Tk *tk, int id, int x, int y);
+void tk_touch_up(Tk *tk, int id);
+
 #endif

@@ -619,3 +619,17 @@ tk_surface_geometry(Tk *tk, struct wl_surface *surface,
    if (w) *w = tk->info_w;
    if (h) *h = tk->info_h;
 }
+
+void
+tk_touch_down(Tk *tk, int id, int x, int y)
+{
+   wl_test_touch_down(tk->tester, id, x, y);
+   tk_settle(tk);
+}
+
+void
+tk_touch_up(Tk *tk, int id)
+{
+   wl_test_touch_up(tk->tester, id);
+   tk_settle(tk);
+}

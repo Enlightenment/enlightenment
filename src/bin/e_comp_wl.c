@@ -515,6 +515,71 @@ _e_comp_wl_evas_cb_mouse_wheel(void *data, Evas *evas EINA_UNUSED, Evas_Object *
      }
 }
 
+/* Fingers currently down, per device, and the client told about each, so
+ * a surface moving under a still finger can be told where it now is. */
+typedef struct
+{
+   E_Client *ec;
+   int device;
+   Evas_Coord x, y;
+} E_Comp_Wl_Touch_Point;
+
+static Eina_List *_touch_points = NULL;
+
+static E_Comp_Wl_Touch_Point *
+_e_comp_wl_touch_point_find(int device)
+{
+   E_Comp_Wl_Touch_Point *tp;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(_touch_points, l, tp)
+     if (tp->device == device) return tp;
+
+   return NULL;
+}
+
+static void
+_e_comp_wl_touch_point_update(E_Client *ec, int device, Evas_Coord x, Evas_Coord y)
+{
+   E_Comp_Wl_Touch_Point *tp;
+
+   if (!(tp = _e_comp_wl_touch_point_find(device)))
+     {
+        tp = E_NEW(E_Comp_Wl_Touch_Point, 1);
+        if (!tp) return;
+        tp->device = device;
+        _touch_points =
+          eina_list_append(_touch_points, tp);
+     }
+   tp->ec = ec;
+   tp->x = x;
+   tp->y = y;
+}
+
+static void
+_e_comp_wl_touch_point_del(int device)
+{
+   E_Comp_Wl_Touch_Point *tp;
+
+   if (!(tp = _e_comp_wl_touch_point_find(device))) return;
+   _touch_points = eina_list_remove(_touch_points, tp);
+   free(tp);
+}
+
+static void
+_e_comp_wl_touch_points_drop(E_Client *ec)
+{
+   E_Comp_Wl_Touch_Point *tp;
+   Eina_List *l, *ll;
+
+   EINA_LIST_FOREACH_SAFE(_touch_points, l, ll, tp)
+     {
+        if (tp->ec != ec) continue;
+        _touch_points = eina_list_remove_list(_touch_points, l);
+        free(tp);
+     }
+}
+
 static void
 _e_comp_wl_evas_cb_multi_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
@@ -545,6 +610,8 @@ _e_comp_wl_evas_cb_multi_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *o
                            ec->comp_data->surface, ev->device, x, y);
         wl_touch_send_frame(res);
      }
+
+   _e_comp_wl_touch_point_update(ec, ev->device, ev->canvas.x, ev->canvas.y);
 }
 
 static void
@@ -570,6 +637,8 @@ _e_comp_wl_evas_cb_multi_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
         wl_touch_send_up(res, serial, ev->timestamp, ev->device);
         wl_touch_send_frame(res);
      }
+
+   _e_comp_wl_touch_point_del(ev->device);
 }
 
 static void
@@ -597,6 +666,8 @@ _e_comp_wl_evas_cb_multi_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *o
         wl_touch_send_motion(res, ev->timestamp, ev->device, x, y);
         wl_touch_send_frame(res);
      }
+
+   _e_comp_wl_touch_point_update(ec, ev->device, ev->cur.canvas.x, ev->cur.canvas.y);
 }
 
 static void
@@ -805,6 +876,36 @@ _e_comp_wl_evas_cb_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
         evas_pointer_canvas_xy_get(e_comp->evas, &px, &py);
         _e_comp_wl_send_mouse_move(ec, px, py,
                                    (unsigned int)lround(ecore_loop_time_get() * 1000));
+     }
+
+   /* Same for fingers down on the surface: they did not move with it. */
+   if (_touch_points && ec->comp_data->surface &&
+       (!e_client_util_ignored_get(ec)))
+     {
+        E_Comp_Wl_Touch_Point *tp;
+        struct wl_resource *res;
+        Eina_List *ll;
+        struct wl_client *wc;
+
+        wc = wl_resource_get_client(ec->comp_data->surface);
+        EINA_LIST_FOREACH(_touch_points, ll, tp)
+          {
+             Eina_List *rl;
+
+             if (tp->ec != ec) continue;
+
+             EINA_LIST_FOREACH(e_comp_wl->touch.resources, rl, res)
+               {
+                  if (wl_resource_get_client(res) != wc) continue;
+                  if (!e_comp_wl_input_touch_check(res)) continue;
+                  wl_touch_send_motion(res,
+                                       (unsigned int)lround(ecore_loop_time_get() * 1000),
+                                       tp->device,
+                                       wl_fixed_from_int(tp->x - ec->client.x),
+                                       wl_fixed_from_int(tp->y - ec->client.y));
+                  wl_touch_send_frame(res);
+               }
+          }
      }
 }
 
@@ -2799,6 +2900,7 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
    if (ec == e_comp_wl->wl.client_ec)
      e_comp_wl->wl.client_ec = NULL;
    e_comp_wl_extension_pointer_unconstrain(ec);
+   _e_comp_wl_touch_points_drop(ec);
 
    /* remove sub list */
    EINA_LIST_FREE(ec->comp_data->sub.list, subc)
