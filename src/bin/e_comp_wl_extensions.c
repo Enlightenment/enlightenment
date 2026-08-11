@@ -35,18 +35,22 @@ typedef struct Constraint
    struct wl_resource *surface;
    Eina_Tiler *region;
    Eina_Tiler *pending;
+   Eina_Tiler *implicit; // stands in for a null region, i.e. the whole surface
    Evas_Point *pending_xy;
    Evas_Point *pointer_xy;
+   int iw, ih; // surface size `implicit` was built for
    Eina_Bool lock E_BITFIELD; // if not lock, confine
    Eina_Bool persistent E_BITFIELD;
    Eina_Bool active E_BITFIELD;
    Eina_Bool dead E_BITFIELD; // oneshot, already deactivated once
+   Eina_Bool pending_region E_BITFIELD; // set_region since the last commit
 } Constraint;
 
 static Eina_List *active_constraints;
 
 static Eina_Bool _inside_tiler(Eina_Tiler *r, Eina_Bool active, int x, int y,
                                int px, int py, int *ax, int *ay);
+static Eina_Tiler *_constraint_region_get(Constraint *c);
 
 /* A constraint can become active without the pointer moving: a client
  * usually locks a pointer that already sits where it wants it. Evaluated
@@ -68,7 +72,7 @@ _constraints_activate(E_Client *ec)
         int ax = 0, ay = 0;
 
         if (c->active || c->dead) continue;
-        if (!_inside_tiler(c->region, EINA_FALSE, px - ec->client.x, py - ec->client.y,
+        if (!_inside_tiler(_constraint_region_get(c), EINA_FALSE, px - ec->client.x, py - ec->client.y,
               px - ec->client.x, py - ec->client.y, &ax, &ay))
           continue;
         c->active = 1;
@@ -449,6 +453,7 @@ _constraint_destroy(struct wl_resource *resource)
      }
    eina_tiler_free(c->pending);
    eina_tiler_free(c->region);
+   eina_tiler_free(c->implicit);
    free(c->pointer_xy);
    free(c->pending_xy);
    free(c);
@@ -469,18 +474,41 @@ _constraint_set_region(struct wl_resource *resource, struct wl_resource *region)
    Eina_Tiler *r = NULL;
 
    if (region) r = wl_resource_get_user_data(region);
-   else E_FREE_FUNC(c->pending, eina_tiler_free);
 
-   if (c->pending)
-     eina_tiler_clear(c->pending);
-   else
+   E_FREE_FUNC(c->pending, eina_tiler_free);
+   if (r)
      {
         c->pending = eina_tiler_new(65535, 65535);
         eina_tiler_tile_size_set(c->pending, 1, 1);
+        eina_tiler_union(c->pending, r);
      }
-   if (r)
-     eina_tiler_union(c->pending, r);
+   /* A null region means the whole surface: a value, so it needs a flag of
+    * its own rather than an empty tiler. */
+   c->pending_region = 1;
    _constraint_set_pending(c);
+}
+
+/* A null region is the whole surface; see zwp_pointer_constraints_v1. */
+static Eina_Tiler *
+_constraint_region_get(Constraint *c)
+{
+   Eina_Rectangle r;
+
+   if (c->region) return c->region;
+   if (!c->ec) return NULL;
+   if (c->implicit)
+     {
+        if ((c->iw == c->ec->client.w) && (c->ih == c->ec->client.h))
+          return c->implicit;
+        eina_tiler_free(c->implicit);
+     }
+   c->iw = c->ec->client.w;
+   c->ih = c->ec->client.h;
+   c->implicit = eina_tiler_new(65535, 65535);
+   eina_tiler_tile_size_set(c->implicit, 1, 1);
+   EINA_RECTANGLE_SET(&r, 0, 0, c->iw, c->ih);
+   eina_tiler_rect_add(c->implicit, &r);
+   return c->implicit;
 }
 
 static void
@@ -1143,11 +1171,12 @@ e_comp_wl_extension_pointer_constraints_commit(E_Client *ec)
    if ((!ec) || (!ec->comp_data)) return;
    EINA_LIST_FOREACH(ec->comp_data->constraints, l, c)
      {
-        if (c->pending)
+        if (c->pending_region)
           {
              eina_tiler_free(c->region);
              c->region = c->pending;
              c->pending = NULL;
+             c->pending_region = 0;
           }
         if (c->pending_xy)
           {
@@ -1289,7 +1318,7 @@ e_comp_wl_extension_pointer_constraints_update(E_Client *ec, int x, int y)
    EINA_LIST_FOREACH_SAFE(ec->comp_data->constraints, l, ll, c)
      {
         int ax = px - ec->client.x, ay = py - ec->client.y;
-        Eina_Bool inside_region = _inside_tiler(c->region, c->active, x - ec->client.x, y - ec->client.y,
+        Eina_Bool inside_region = _inside_tiler(_constraint_region_get(c), c->active, x - ec->client.x, y - ec->client.y,
           px - ec->client.x, py - ec->client.y, &ax, &ay);
         if ((!c->active) && (!c->dead) && inside && inside_region)
           {
