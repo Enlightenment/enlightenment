@@ -58,6 +58,7 @@ wl_protocol_tests = [
   ['surface-unmap', 'test_surface_unmap.c'],
   ['pointer-focus', 'test_pointer_focus.c'],
   ['subsurface-position', 'test_subsurface_position.c'],
+  ['window-geometry', 'test_window_geometry.c'],
 ]
 
 tk_src = files('e_wl_testkit.c')

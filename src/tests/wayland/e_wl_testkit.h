@@ -66,9 +66,15 @@ void tk_toplevel_painted(Tk_Toplevel *top, int *w, int *h);
 /* Unmap and destroy it, and settle. */
 void tk_toplevel_del(Tk_Toplevel *top);
 
-/* The wl_surface and xdg_toplevel behind a toplevel, owned by the kit. */
+/* The wl_surface, xdg_toplevel and xdg_surface behind a toplevel, owned by
+ * the kit. */
 struct wl_surface *tk_toplevel_surface(Tk_Toplevel *top);
 struct xdg_toplevel *tk_toplevel_xdg(Tk_Toplevel *top);
+struct xdg_surface *tk_toplevel_xdg_surface(Tk_Toplevel *top);
+
+/* Unmap by committing a null buffer, then map again the way xdg-shell
+ * requires: an empty commit, and a buffer in answer to the configure. */
+void tk_toplevel_remap(Tk_Toplevel *top);
 
 /* The version the compositor advertised for a global, or 0 if none. */
 uint32_t tk_global_version(Tk *tk, const char *iface);

@@ -377,6 +377,7 @@ struct _E_Comp_Wl_Client_Data
    Eina_Bool maximize_anims_disabled E_BITFIELD;
    Eina_Bool ssd_mouse_in E_BITFIELD;
    Eina_Bool need_center E_BITFIELD;
+   Eina_Bool geometry_placed E_BITFIELD;
 };
 
 struct _E_Comp_Wl_Output

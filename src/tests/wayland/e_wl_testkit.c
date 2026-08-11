@@ -424,6 +424,27 @@ tk_toplevel_xdg(Tk_Toplevel *top)
    return top->toplevel;
 }
 
+struct xdg_surface *
+tk_toplevel_xdg_surface(Tk_Toplevel *top)
+{
+   return top->xdg_surface;
+}
+
+void
+tk_toplevel_remap(Tk_Toplevel *top)
+{
+   int configures = top->configures;
+
+   wl_surface_attach(top->surface, NULL, 0, 0);
+   wl_surface_commit(top->surface);
+   tk_settle(top->tk);
+   wl_surface_commit(top->surface);
+   while (top->configures == configures)
+     if (wl_display_dispatch(top->tk->disp) < 0)
+       tk_fail(top->tk, "disconnected waiting for the configure of a remap");
+   tk_settle(top->tk);
+}
+
 uint32_t
 tk_global_version(Tk *tk, const char *iface)
 {

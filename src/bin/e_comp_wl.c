@@ -1537,8 +1537,15 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
         else
           {
              x = ec->client.x, y = ec->client.y;
-             if (first)
-               x -= ec->comp_data->shell.window.x, y -= ec->comp_data->shell.window.y;
+             /* `first` means no usable pixmap, which is also true after
+              * the client unmapped by attaching NULL: the offset is taken
+              * off once, not on every remap. */
+             if (first && (!ec->comp_data->geometry_placed))
+               {
+                  x -= ec->comp_data->shell.window.x;
+                  y -= ec->comp_data->shell.window.y;
+                  ec->comp_data->geometry_placed = 1;
+               }
           }
 
         if ((!ec->comp_data->buffer_commit) && e_client_has_xwindow(ec))
