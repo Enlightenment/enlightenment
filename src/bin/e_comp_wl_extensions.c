@@ -1296,6 +1296,10 @@ _inside_tiler(Eina_Tiler *r, Eina_Bool active, int x, int y, int px, int py, int
              else
                *ax = lround(((double)(x - px) / (y - py)) * (*ay - y)) + x;
           }
+        /* Only one axis is solved for above; on a diagonal the other can
+         * land past the far edge. */
+        *ax = E_CLAMP(*ax, prect.x, prect.x + prect.w - 1);
+        *ay = E_CLAMP(*ay, prect.y, prect.y + prect.h - 1);
      }
 
    return ret;
