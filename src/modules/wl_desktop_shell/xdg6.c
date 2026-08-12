@@ -1352,25 +1352,25 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
         return;
      }
    if (e_object_is_del(E_OBJECT(ec))) return;
-   if (e_pixmap_usable_get(ec->pixmap))
+   cdata = ec->comp_data;
+
+   /* Both errors belong to zxdg_shell_v6: the request is what is wrong. */
+   if (cdata->sub.data || cdata->shell.data || cdata->shell.surface)
      {
-        wl_resource_post_error(surface_resource,
-                               ZXDG_SURFACE_V6_ERROR_UNCONFIGURED_BUFFER,
-                               "buffer attached/committed before configure");
+        wl_resource_post_error(resource, ZXDG_SHELL_V6_ERROR_ROLE,
+                               "wl_surface already has a role");
+        return;
+     }
+   if (e_pixmap_usable_get(ec->pixmap) || cdata->pending.buffer)
+     {
+        wl_resource_post_error(resource,
+                               ZXDG_SHELL_V6_ERROR_INVALID_SURFACE_STATE,
+                               "wl_surface has a buffer attached or committed");
         return;
      }
 
    ec->netwm.ping = 1;
-   cdata = ec->comp_data;
 
-   /* check for existing shell surface */
-   if (cdata->shell.data)
-     {
-        wl_resource_post_error(surface_resource,
-                               WL_DISPLAY_ERROR_INVALID_OBJECT,
-                               "Client already has XDG shell surface");
-        return;
-     }
    shd = cdata->shell.data = e_shell_data_new(6);
    shd->width = shd->height = -1;
 
@@ -1395,6 +1395,9 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
    cdata->shell.ping = _e_xdg_shell_surface_ping;
    cdata->shell.buffer_attach_error = _e_xdg_shell_surface_buffer_attach_error;
    cdata->is_xdg_surface = EINA_TRUE;
+   /* A buffer before the first configure is an error from the moment the
+    * xdg_surface exists, not from when it gets a role. */
+   cdata->need_xdg_configure = 1;
 
    if (!ec->internal)
      e_client_ping(ec);
