@@ -778,6 +778,7 @@ _e_module_whitelist_check(void)
          "wl_wl",
          "wl_drm",
          "wl_shell",
+         "wl_test",
          "wl_desktop_shell",
          "xkbswitch",
          "music-control",

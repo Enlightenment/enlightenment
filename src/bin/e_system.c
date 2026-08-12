@@ -118,6 +118,9 @@ _cb_dialog_timer(void *data)
 static void
 _system_spawn_error(int exit_code)
 {
+#ifdef E_TESTS
+   if (getenv("E_TEST_NO_DIALOGS")) return;
+#endif
    if (_error_dialog_timer) ecore_timer_del(_error_dialog_timer);
    _error_dialog_timer = ecore_timer_add(5.0, _cb_dialog_timer,
                                          (void *)(long)exit_code);

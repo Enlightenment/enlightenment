@@ -47,6 +47,7 @@ wl_protocol_tests = [
   ['xdg-defunct-surfaces', 'test_xdg_defunct.c'],
   ['client-list', 'test_client_list.c'],
   ['client-action', 'test_client_action.c'],
+  ['no-dialogs', 'test_no_dialogs.c'],
 ]
 
 tk_src = files('e_wl_testkit.c')

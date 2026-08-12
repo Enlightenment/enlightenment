@@ -393,6 +393,17 @@ e_util_dialog_internal(const char *title, const char *txt)
 {
    E_Dialog *dia;
 
+#ifdef E_TESTS
+   /* A dialog in a test session takes the focus off the window under test.
+    * Its message goes to the log instead, which run-nested.sh prints when a
+    * test fails. */
+   if (getenv("E_TEST_NO_DIALOGS"))
+     {
+        ERR("E_TEST_NO_DIALOGS: suppressed dialog: '%s': %s", title, txt);
+        return NULL;
+     }
+#endif
+
    dia = e_dialog_new(NULL, "E", "_error_dialog");
    if (!dia) return NULL;
    e_dialog_title_set(dia, title);
