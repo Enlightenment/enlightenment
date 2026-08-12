@@ -4,6 +4,9 @@
 
 #include "xdg-shell-server-protocol.h"
 
+/* Every object is created at the version xdg_wm_base was bound at. */
+#define XDG_WM_BASE_SERVER_VERSION 2
+
 typedef enum
 {
    STATE_MAXIMIZED = (1 << 0),
@@ -243,7 +246,8 @@ _e_xdg_shell_cb_positioner_create(struct wl_client *client, struct wl_resource *
    Positioner *p;
 
    v = wl_resource_get_user_data(resource);
-   res = wl_resource_create(client, &xdg_positioner_interface, 1, id);
+   res = wl_resource_create(client, &xdg_positioner_interface,
+                            wl_resource_get_version(resource), id);
    p = E_NEW(Positioner, 1);
    p->v = v;
    p->res = res;
@@ -387,6 +391,24 @@ _e_xdg_surface_state_add(struct wl_resource *resource, struct wl_array *states, 
     wl_resource_post_no_memory(resource);
 }
 
+/* An edge is tiled when it is up against something, so the client draws
+ * no shadow or rounded corner there. E_MAXIMIZE_LEFT and RIGHT include
+ * both direction bits, so test for them before the plain axes. */
+static void
+_e_xdg_surface_tiled_states_add(struct wl_resource *resource, struct wl_array *states, E_Maximize dir)
+{
+   if ((dir == E_MAXIMIZE_LEFT) || (dir == E_MAXIMIZE_HORIZONTAL))
+     _e_xdg_surface_state_add(resource, states, XDG_TOPLEVEL_STATE_TILED_LEFT);
+   if ((dir == E_MAXIMIZE_RIGHT) || (dir == E_MAXIMIZE_HORIZONTAL))
+     _e_xdg_surface_state_add(resource, states, XDG_TOPLEVEL_STATE_TILED_RIGHT);
+   if ((dir == E_MAXIMIZE_LEFT) || (dir == E_MAXIMIZE_RIGHT) ||
+       (dir == E_MAXIMIZE_VERTICAL))
+     {
+        _e_xdg_surface_state_add(resource, states, XDG_TOPLEVEL_STATE_TILED_TOP);
+        _e_xdg_surface_state_add(resource, states, XDG_TOPLEVEL_STATE_TILED_BOTTOM);
+     }
+}
+
 static void
 _xdg_shell_surface_send_configure(struct wl_resource *resource, Eina_Bool fullscreen, Eina_Bool maximized, uint32_t edges, int32_t width, int32_t height)
 {
@@ -454,7 +476,20 @@ _xdg_shell_surface_send_configure(struct wl_resource *resource, Eina_Bool fullsc
    if (fullscreen)
      _e_xdg_surface_state_add(resource, &states, XDG_TOPLEVEL_STATE_FULLSCREEN);
    else if (maximized)
-     _e_xdg_surface_state_add(resource, &states, XDG_TOPLEVEL_STATE_MAXIMIZED);
+     {
+        E_Maximize dir = ec->maximized & E_MAXIMIZE_DIRECTION;
+
+        /* A half-screen snap or a one-axis maximize is not maximized: a
+         * client told so lays itself out for the whole work area. Before
+         * v2 there is no other word for it. The configure can also go out
+         * before ec->maximized is set, and then it is a plain maximize. */
+        if (!dir) dir = E_MAXIMIZE_BOTH;
+        if ((dir == E_MAXIMIZE_BOTH) ||
+            (wl_resource_get_version(resource) < XDG_TOPLEVEL_STATE_TILED_LEFT_SINCE_VERSION))
+          _e_xdg_surface_state_add(resource, &states, XDG_TOPLEVEL_STATE_MAXIMIZED);
+        else
+          _e_xdg_surface_tiled_states_add(resource, &states, dir);
+     }
    if (edges)
      _e_xdg_surface_state_add(resource, &states, XDG_TOPLEVEL_STATE_RESIZING);
    if (activated)
@@ -1094,7 +1129,8 @@ _e_xdg_surface_cb_popup_get(struct wl_client *client, struct wl_resource *resour
 
    /* try to create a shell surface */
    if (!(cdata->shell.surface =
-         wl_resource_create(client, &xdg_popup_interface, 1, id)))
+         wl_resource_create(client, &xdg_popup_interface,
+                            wl_resource_get_version(resource), id)))
      {
         ERR("Could not create xdg shell surface");
         wl_resource_post_no_memory(resource);
@@ -1408,7 +1444,8 @@ _e_xdg_surface_cb_toplevel_get(struct wl_client *client EINA_UNUSED, struct wl_r
      }
 
    if (!(cdata->shell.surface =
-         wl_resource_create(client, &xdg_toplevel_interface, 1, id)))
+         wl_resource_create(client, &xdg_toplevel_interface,
+                            wl_resource_get_version(resource), id)))
      {
         ERR("Could not create xdg shell surface");
         wl_resource_post_no_memory(resource);
@@ -1530,7 +1567,8 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
 
    /* try to create a shell surface */
    if (!(shd->surface =
-         wl_resource_create(client, &xdg_surface_interface, 1, id)))
+         wl_resource_create(client, &xdg_surface_interface,
+                            wl_resource_get_version(resource), id)))
      {
         ERR("Could not create xdg shell surface");
         wl_resource_post_no_memory(surface_resource);
@@ -1674,7 +1712,8 @@ EINTERN Eina_Bool
 e_xdg_shell_init(void)
 {
    /* try to create global xdg_shell interface */
-   if (!wl_global_create(e_comp_wl->wl.disp, &xdg_wm_base_interface, 1,
+   if (!wl_global_create(e_comp_wl->wl.disp, &xdg_wm_base_interface,
+                         XDG_WM_BASE_SERVER_VERSION,
                          NULL, _e_xdg_shell_cb_bind))
      {
         ERR("Could not create xdg_shell global");

@@ -18,6 +18,7 @@ struct _Tk_Toplevel
    struct xdg_toplevel *toplevel;
    int w, h;
    int pending_w, pending_h;
+   unsigned int pending_states, states;
    int configures;
 };
 
@@ -149,6 +150,7 @@ _xdg_surface_configure(void *data, struct xdg_surface *s, uint32_t serial)
 
    if (top->pending_w > 0) top->w = top->pending_w;
    if (top->pending_h > 0) top->h = top->pending_h;
+   top->states = top->pending_states;
 
    buffer = _buffer_make(top->tk, top->w, top->h);
    if (!buffer) tk_fail(top->tk, "cannot make a %dx%d buffer", top->w, top->h);
@@ -170,10 +172,14 @@ _toplevel_configure(void *data, struct xdg_toplevel *t, int32_t w, int32_t h,
                     struct wl_array *states)
 {
    Tk_Toplevel *top = data;
+   uint32_t *st;
 
-   (void)t; (void)states;
+   (void)t;
    top->pending_w = w;
    top->pending_h = h;
+   top->pending_states = 0;
+   wl_array_for_each(st, states)
+     if (*st < 32) top->pending_states |= 1u << *st;
 }
 
 static void
@@ -209,7 +215,9 @@ _global_add(void *data, struct wl_registry *reg, uint32_t id,
    else if (!strcmp(iface, "wl_shm"))
      tk->shm = wl_registry_bind(reg, id, &wl_shm_interface, 1);
    else if (!strcmp(iface, "xdg_wm_base"))
-     tk->wm_base = wl_registry_bind(reg, id, &xdg_wm_base_interface, 1);
+     tk->wm_base = wl_registry_bind(reg, id, &xdg_wm_base_interface,
+                                    version < TK_XDG_WM_BASE_VERSION ?
+                                    version : TK_XDG_WM_BASE_VERSION);
    else if (!strcmp(iface, "wl_test"))
      {
         tk->tester_version = version;
@@ -492,6 +500,12 @@ tk_toplevel_configured(Tk_Toplevel *top, int *w, int *h, int *count)
    if (w) *w = top->pending_w;
    if (h) *h = top->pending_h;
    if (count) *count = top->configures;
+}
+
+unsigned int
+tk_toplevel_states(Tk_Toplevel *top)
+{
+   return top->states;
 }
 
 void

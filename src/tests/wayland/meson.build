@@ -62,6 +62,7 @@ wl_protocol_tests = [
   ['touch-moving-surface', 'test_touch_moving_surface.c'],
   ['pointer-axis120', 'test_pointer_axis120.c'],
   ['popup-dismiss', 'test_popup_dismiss.c'],
+  ['xdg-tiled', 'test_xdg_tiled.c'],
 ]
 
 tk_src = files('e_wl_testkit.c')

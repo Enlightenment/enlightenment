@@ -681,7 +681,7 @@ static const WlcsExtensionDescriptor _extensions[] =
    { "wl_seat", 5 },
    { "wl_output", 2 },
    { "wl_data_device_manager", 3 },
-   { "xdg_wm_base", 1 },
+   { "xdg_wm_base", 2 },
    { "zxdg_shell_v6", 1 },
    { "wl_shell", 1 },
 };

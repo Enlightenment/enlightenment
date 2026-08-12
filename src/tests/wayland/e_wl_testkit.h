@@ -12,6 +12,7 @@
 #define TK_MAX_CLIENTS 64
 #define TK_MAX_GLOBALS 64
 #define TK_WL_TEST_VERSION 4
+#define TK_XDG_WM_BASE_VERSION 2
 
 /* Mirrors wl_test.client_info. */
 typedef struct
@@ -58,6 +59,10 @@ void tk_toplevel_configured(Tk_Toplevel *top, int *w, int *h, int *count);
 /* Commit a new buffer of this size, without waiting for anything. The kit
  * destroys a buffer as soon as it is released, as real clients do. */
 void tk_toplevel_paint(Tk_Toplevel *top, int w, int h);
+
+/* The xdg_toplevel states of the last configure answered, as a mask of
+ * 1 << XDG_TOPLEVEL_STATE_*. */
+unsigned int tk_toplevel_states(Tk_Toplevel *top);
 
 /* The size this toplevel last painted at. Not always the last configure:
  * E ends an interactive resize with a 0x0 "you choose" configure. */
