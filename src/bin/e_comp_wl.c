@@ -111,13 +111,15 @@ _e_comp_wl_surface_outputs_update(E_Client *ec)
      }
 }
 
+/* A non-zero size in a configure tells the client how big to be; 0x0 lets
+ * it choose. Only impose one when E is driving the geometry. */
 static void
-_e_comp_wl_configure_send(E_Client *ec, Eina_Bool edges)
+_e_comp_wl_configure_send(E_Client *ec, Eina_Bool edges, Eina_Bool impose_size)
 {
    int w = 0, h = 0;
 
    if (e_object_is_del(E_OBJECT(ec))) return;
-   if (ec->changes.size || e_pixmap_usable_get(ec->pixmap))
+   if (impose_size && (ec->changes.size || e_pixmap_usable_get(ec->pixmap)))
      {
         if (e_comp_object_frame_exists(ec->frame))
           w = ec->client.w, h = ec->client.h;
@@ -767,7 +769,7 @@ _e_comp_wl_evas_cb_unmaximize_pre(void *data, Evas_Object *obj EINA_UNUSED, void
              *ecw = w, *ech = h;
           }
         ec->maximized = 0;
-        _e_comp_wl_configure_send(ec, 0);
+        _e_comp_wl_configure_send(ec, 0, EINA_TRUE);
         if ((!e_config->window_maximize_animate) || ec->maximize_anims_disabled)
           *ecw = ew, *ech = eh;
         ec->maximized = pmax;
@@ -805,7 +807,7 @@ _e_comp_wl_evas_cb_maximize_pre(void *data, Evas_Object *obj EINA_UNUSED, void *
              *ecw = w, *ech = h;
           }
         ec->maximized = *max;
-        _e_comp_wl_configure_send(ec, 0);
+        _e_comp_wl_configure_send(ec, 0, EINA_TRUE);
         if ((!e_config->window_maximize_animate) || ec->maximize_anims_disabled)
           *ecw = ew, *ech = eh;
         ec->maximized = pmax;
@@ -872,7 +874,7 @@ _e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event 
                                             x, y);
      }
    else
-     _e_comp_wl_configure_send(ec, 1);
+     _e_comp_wl_configure_send(ec, 1, EINA_TRUE);
 }
 
 static void
@@ -885,7 +887,7 @@ _e_comp_wl_evas_cb_state_update(void *data, Evas_Object *obj EINA_UNUSED, void *
    /* check for wayland pixmap */
 
    if (ec->comp_data->shell.configure_send)
-     _e_comp_wl_configure_send(ec, 0);
+     _e_comp_wl_configure_send(ec, 0, EINA_TRUE);
 }
 
 static void
@@ -1575,7 +1577,7 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
           }
      }
    else if (ec->comp_data->need_xdg_configure && ec->comp_data->shell.surface && !ec->iconic)
-     _e_comp_wl_configure_send(ec, 0);
+     _e_comp_wl_configure_send(ec, 0, EINA_FALSE);
 
    state->sx = 0;
    state->sy = 0;
@@ -2708,7 +2710,7 @@ _e_comp_wl_client_cb_focus_set(void *data EINA_UNUSED, E_Client *ec)
    if (ec->comp_data->shell.configure_send)
      {
         if (ec->comp_data->shell.surface)
-          _e_comp_wl_configure_send(ec, 1);
+          _e_comp_wl_configure_send(ec, 1, EINA_FALSE);
      }
 
    //if ((ec->icccm.take_focus) && (ec->icccm.accepts_focus))
@@ -2732,7 +2734,7 @@ _e_comp_wl_client_cb_focus_unset(void *data EINA_UNUSED, E_Client *ec)
    if (ec->comp_data->shell.configure_send)
      {
         if (ec->comp_data->shell.surface)
-          _e_comp_wl_configure_send(ec, 1);
+          _e_comp_wl_configure_send(ec, 1, EINA_FALSE);
      }
 
    if (e_comp_wl->kbd.focus == ec->comp_data->surface)
