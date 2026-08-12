@@ -12,7 +12,7 @@
 #define TK_MAX_CLIENTS 64
 #define TK_MAX_GLOBALS 64
 #define TK_WL_TEST_VERSION 4
-#define TK_XDG_WM_BASE_VERSION 2
+#define TK_XDG_WM_BASE_VERSION 3
 
 /* Mirrors wl_test.client_info. */
 typedef struct

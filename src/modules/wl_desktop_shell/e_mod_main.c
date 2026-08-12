@@ -193,6 +193,7 @@ E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    e_input_panel_shutdown();
+   e_xdg_shell_shutdown();
    eina_hash_free(shell_resources);
    eina_hash_free(xdg_shell_resources);
    E_FREE_LIST(hooks, e_client_hook_del);

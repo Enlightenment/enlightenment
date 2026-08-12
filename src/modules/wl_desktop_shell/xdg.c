@@ -5,7 +5,7 @@
 #include "xdg-shell-server-protocol.h"
 
 /* Every object is created at the version xdg_wm_base was bound at. */
-#define XDG_WM_BASE_SERVER_VERSION 2
+#define XDG_WM_BASE_SERVER_VERSION 3
 
 typedef enum
 {
@@ -38,8 +38,16 @@ typedef struct Positioner
    enum xdg_positioner_gravity gravity;
    enum xdg_positioner_constraint_adjustment constrain;
    Evas_Coord_Point offset;
+   Eina_Bool reactive;
 } Positioner;
 
+/* E_Client -> a copy of the Positioner that placed it. A client may destroy
+ * the positioner as soon as get_popup returns, and a reactive popup has to
+ * be placed again later. */
+static Eina_Hash *xdg_popup_positioners;
+static Ecore_Event_Handler *xdg_popup_move_handler;
+
+static void _apply_positioner(E_Client *ec, Positioner *p);
 
 static void
 _e_xdg_shell_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
@@ -211,6 +219,26 @@ _e_xdg_positioner_set_offset(struct wl_client *client EINA_UNUSED, struct wl_res
 }
 
 static void
+_e_xdg_positioner_set_reactive(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   Positioner *p = wl_resource_get_user_data(resource);
+
+   p->reactive = EINA_TRUE;
+}
+
+/* A popup is placed against the parent's current geometry, not against
+ * the one a pending configure will give it, so these two are not used. */
+static void
+_e_xdg_positioner_set_parent_size(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, int32_t w EINA_UNUSED, int32_t h EINA_UNUSED)
+{
+}
+
+static void
+_e_xdg_positioner_set_parent_configure(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, uint32_t serial EINA_UNUSED)
+{
+}
+
+static void
 _e_xdg_positioner_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
    wl_resource_destroy(resource);
@@ -225,6 +253,9 @@ static const struct xdg_positioner_interface _e_xdg_positioner_interface =
    .set_gravity = _e_xdg_positioner_set_gravity,
    .set_constraint_adjustment = _e_xdg_positioner_set_constraint_adjustment,
    .set_offset = _e_xdg_positioner_set_offset,
+   .set_reactive = _e_xdg_positioner_set_reactive,
+   .set_parent_size = _e_xdg_positioner_set_parent_size,
+   .set_parent_configure = _e_xdg_positioner_set_parent_configure,
 };
 
 static void
@@ -587,9 +618,85 @@ _e_xdg_popup_cb_grab(struct wl_client *client EINA_UNUSED, struct wl_resource *r
    e_comp_wl_grab_client_add(ec, _e_xdg_popup_grab_dismiss);
 }
 
+static void
+_xdg_popup_positioner_remember(E_Client *ec, Positioner *p)
+{
+   Positioner *copy;
+
+   if (!p->reactive)
+     {
+        if (xdg_popup_positioners)
+          eina_hash_del_by_key(xdg_popup_positioners, &ec);
+        return;
+     }
+   if (!xdg_popup_positioners)
+     xdg_popup_positioners = eina_hash_pointer_new(free);
+   copy = malloc(sizeof(*copy));
+   if (!copy) return;
+   memcpy(copy, p, sizeof(*copy));
+   copy->res = NULL;
+   copy->v = NULL;
+   eina_hash_set(xdg_popup_positioners, &ec, copy);
+}
+
+static void
+_xdg_popup_positioner_forget(E_Client *ec)
+{
+   if (xdg_popup_positioners) eina_hash_del_by_key(xdg_popup_positioners, &ec);
+}
+
+/* _apply_positioner writes ec->x and ec->y, which places a popup that is
+ * not mapped yet. A mapped one has to be moved. */
+static void
+_xdg_popup_place(E_Client *ec, Positioner *p)
+{
+   int ox = ec->x, oy = ec->y, nx, ny;
+
+   _apply_positioner(ec, p);
+   nx = ec->x;
+   ny = ec->y;
+   ec->client.x = nx;
+   ec->client.y = ny;
+   if (!ec->comp_data->mapped) return;
+
+   ec->x = ox;
+   ec->y = oy;
+   e_client_util_move_without_frame(ec, nx, ny);
+}
+
+static void
+_e_xdg_popup_cb_reposition(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *positioner_resource, uint32_t token)
+{
+   E_Client *ec;
+   Positioner *p;
+
+   ec = wl_resource_get_user_data(resource);
+   if ((!ec) || e_object_is_del(E_OBJECT(ec)))
+     {
+        wl_resource_post_error(resource, WL_DISPLAY_ERROR_INVALID_OBJECT,
+                               "No Client For Shell Surface");
+        return;
+     }
+   p = wl_resource_get_user_data(positioner_resource);
+   if ((!p) || (!p->size.w) || (p->anchor_rect.w < 0))
+     {
+        wl_resource_post_error(resource, XDG_WM_BASE_ERROR_INVALID_POSITIONER,
+                               "invalid positioner");
+        return;
+     }
+   if (!ec->parent) return;
+
+   _xdg_popup_positioner_remember(ec, p);
+   _xdg_popup_place(ec, p);
+
+   xdg_popup_send_repositioned(resource, token);
+   _e_xdg_shell_surface_configure_send(ec->comp_data->shell.surface, 0, 0, 0);
+}
+
 static const struct xdg_popup_interface _e_xdg_popup_interface = {
    _e_xdg_popup_cb_destroy,
    _e_xdg_popup_cb_grab,
+   _e_xdg_popup_cb_reposition,
 };
 
 static void
@@ -1167,6 +1274,7 @@ _e_xdg_surface_cb_popup_get(struct wl_client *client, struct wl_resource *resour
    /* set this client as a transient for parent */
    if (parent_resource) e_shell_surface_parent_set(ec, parent_resource);
 
+   _xdg_popup_positioner_remember(ec, p);
    _apply_positioner(ec, p);
    ec->client.x = ec->x;
    ec->client.y = ec->y;
@@ -1711,7 +1819,35 @@ _e_xdg_shell_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t 
 static void
 _xdg_client_hook_del(void *d EINA_UNUSED, E_Client *ec)
 {
+   _xdg_popup_positioner_forget(ec);
    _xdg_client_destroy(ec, 1);
+}
+
+/* Any move of the parent, not only an interactive one. No repositioned
+ * event: that answers a reposition request. */
+static Eina_Bool
+_xdg_popup_reactive_parent_moved(void *d EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   E_Event_Client *ev = event;
+   const Eina_List *l;
+   E_Client *child;
+
+   if (!xdg_popup_positioners) return ECORE_CALLBACK_RENEW;
+   if (e_object_is_del(E_OBJECT(ev->ec))) return ECORE_CALLBACK_RENEW;
+   EINA_LIST_FOREACH(ev->ec->transients, l, child)
+     {
+        Positioner *p;
+
+        if (e_object_is_del(E_OBJECT(child))) continue;
+        if (!e_client_util_is_popup(child)) continue;
+        if (!child->comp_data->shell.surface) continue;
+        p = eina_hash_find(xdg_popup_positioners, &child);
+        if ((!p) || (!p->reactive)) continue;
+
+        _xdg_popup_place(child, p);
+        _e_xdg_shell_surface_configure_send(child->comp_data->shell.surface, 0, 0, 0);
+     }
+   return ECORE_CALLBACK_RENEW;
 }
 
 EINTERN Eina_Bool
@@ -1726,5 +1862,15 @@ e_xdg_shell_init(void)
         return EINA_FALSE;
      }
    hooks = eina_list_append(hooks, e_client_hook_add(E_CLIENT_HOOK_DEL, _xdg_client_hook_del, NULL));
+   xdg_popup_move_handler =
+     ecore_event_handler_add(E_EVENT_CLIENT_MOVE,
+                             _xdg_popup_reactive_parent_moved, NULL);
    return EINA_TRUE;
+}
+
+EINTERN void
+e_xdg_shell_shutdown(void)
+{
+   E_FREE_FUNC(xdg_popup_move_handler, ecore_event_handler_del);
+   E_FREE_FUNC(xdg_popup_positioners, eina_hash_free);
 }
