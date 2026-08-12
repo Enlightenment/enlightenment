@@ -19,6 +19,8 @@ struct _Tk_Toplevel
    int w, h;
    int pending_w, pending_h;
    unsigned int pending_states, states;
+   int bounds_w, bounds_h;
+   unsigned int wm_capabilities;
    int configures;
 };
 
@@ -188,10 +190,36 @@ _toplevel_close(void *data, struct xdg_toplevel *t)
    (void)data; (void)t;
 }
 
+static void
+_toplevel_configure_bounds(void *data, struct xdg_toplevel *t, int32_t w,
+                           int32_t h)
+{
+   Tk_Toplevel *top = data;
+
+   (void)t;
+   top->bounds_w = w;
+   top->bounds_h = h;
+}
+
+static void
+_toplevel_wm_capabilities(void *data, struct xdg_toplevel *t,
+                          struct wl_array *caps)
+{
+   Tk_Toplevel *top = data;
+   uint32_t *c;
+
+   (void)t;
+   top->wm_capabilities = 0;
+   wl_array_for_each(c, caps)
+     if (*c < 32) top->wm_capabilities |= 1u << *c;
+}
+
 static const struct xdg_toplevel_listener _toplevel_listener =
 {
    _toplevel_configure,
-   _toplevel_close
+   _toplevel_close,
+   _toplevel_configure_bounds,
+   _toplevel_wm_capabilities
 };
 
 static void
@@ -506,6 +534,19 @@ unsigned int
 tk_toplevel_states(Tk_Toplevel *top)
 {
    return top->states;
+}
+
+void
+tk_toplevel_bounds(Tk_Toplevel *top, int *w, int *h)
+{
+   if (w) *w = top->bounds_w;
+   if (h) *h = top->bounds_h;
+}
+
+unsigned int
+tk_toplevel_wm_capabilities(Tk_Toplevel *top)
+{
+   return top->wm_capabilities;
 }
 
 void

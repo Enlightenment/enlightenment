@@ -64,6 +64,7 @@ wl_protocol_tests = [
   ['popup-dismiss', 'test_popup_dismiss.c'],
   ['xdg-tiled', 'test_xdg_tiled.c'],
   ['popup-reposition', 'test_popup_reposition.c'],
+  ['xdg-toplevel-v6', 'test_xdg_toplevel_v6.c'],
 ]
 
 tk_src = files('e_wl_testkit.c')

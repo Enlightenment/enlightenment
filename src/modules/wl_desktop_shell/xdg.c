@@ -5,7 +5,7 @@
 #include "xdg-shell-server-protocol.h"
 
 /* Every object is created at the version xdg_wm_base was bound at. */
-#define XDG_WM_BASE_SERVER_VERSION 3
+#define XDG_WM_BASE_SERVER_VERSION 6
 
 typedef enum
 {
@@ -442,6 +442,42 @@ _e_xdg_surface_tiled_states_add(struct wl_resource *resource, struct wl_array *s
      }
 }
 
+/* Sent once, when the role is taken, which is before the first configure. */
+static void
+_e_xdg_toplevel_wm_capabilities_send(struct wl_resource *resource)
+{
+   struct wl_array caps;
+   uint32_t *c;
+
+   if (wl_resource_get_version(resource) < XDG_TOPLEVEL_WM_CAPABILITIES_SINCE_VERSION)
+     return;
+
+   wl_array_init(&caps);
+   c = wl_array_add(&caps, sizeof(*c) * 4);
+   if (c)
+     {
+        c[0] = XDG_TOPLEVEL_WM_CAPABILITIES_WINDOW_MENU;
+        c[1] = XDG_TOPLEVEL_WM_CAPABILITIES_MAXIMIZE;
+        c[2] = XDG_TOPLEVEL_WM_CAPABILITIES_FULLSCREEN;
+        c[3] = XDG_TOPLEVEL_WM_CAPABILITIES_MINIMIZE;
+        xdg_toplevel_send_wm_capabilities(resource, &caps);
+     }
+   wl_array_release(&caps);
+}
+
+static void
+_e_xdg_toplevel_configure_bounds_send(struct wl_resource *resource, E_Client *ec)
+{
+   int zw, zh;
+
+   if (wl_resource_get_version(resource) < XDG_TOPLEVEL_CONFIGURE_BOUNDS_SINCE_VERSION)
+     return;
+   if (!ec->zone) return;
+
+   e_zone_useful_geometry_get(ec->zone, NULL, NULL, &zw, &zh);
+   xdg_toplevel_send_configure_bounds(resource, zw, zh);
+}
+
 static void
 _xdg_shell_surface_send_configure(struct wl_resource *resource, Eina_Bool fullscreen, Eina_Bool maximized, uint32_t edges, int32_t width, int32_t height)
 {
@@ -531,7 +567,13 @@ _xdg_shell_surface_send_configure(struct wl_resource *resource, Eina_Bool fullsc
      _e_xdg_surface_state_add(resource, &states, XDG_TOPLEVEL_STATE_RESIZING);
    if (activated)
      _e_xdg_surface_state_add(resource, &states, XDG_TOPLEVEL_STATE_ACTIVATED);
+   /* Suspended lets the client stop drawing altogether, so it is only
+    * said when E is sure nothing shows the window: when it is iconic. */
+   if (ec->iconic &&
+       (wl_resource_get_version(resource) >= XDG_TOPLEVEL_STATE_SUSPENDED_SINCE_VERSION))
+     _e_xdg_surface_state_add(resource, &states, XDG_TOPLEVEL_STATE_SUSPENDED);
 
+   _e_xdg_toplevel_configure_bounds_send(resource, ec);
    serial = wl_display_next_serial(e_comp_wl->wl.disp);
    xdg_toplevel_send_configure(resource, width, height, &states);
    {
@@ -1569,6 +1611,8 @@ _e_xdg_surface_cb_toplevel_get(struct wl_client *client EINA_UNUSED, struct wl_r
    wl_resource_set_implementation(cdata->shell.surface,
                                   &_e_xdg_toplevel_interface, ec,
                                   e_shell_surface_cb_destroy);
+
+   _e_xdg_toplevel_wm_capabilities_send(cdata->shell.surface);
 
    /* When the role is taken, not on map: a client may take as long as it
     * likes to answer the first configure, and the menu would keep the

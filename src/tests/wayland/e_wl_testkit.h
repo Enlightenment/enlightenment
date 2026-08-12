@@ -12,7 +12,7 @@
 #define TK_MAX_CLIENTS 64
 #define TK_MAX_GLOBALS 64
 #define TK_WL_TEST_VERSION 4
-#define TK_XDG_WM_BASE_VERSION 3
+#define TK_XDG_WM_BASE_VERSION 6
 
 /* Mirrors wl_test.client_info. */
 typedef struct
@@ -63,6 +63,11 @@ void tk_toplevel_paint(Tk_Toplevel *top, int w, int h);
 /* The xdg_toplevel states of the last configure answered, as a mask of
  * 1 << XDG_TOPLEVEL_STATE_*. */
 unsigned int tk_toplevel_states(Tk_Toplevel *top);
+
+/* The last xdg_toplevel.configure_bounds, 0x0 if none, and the
+ * wm_capabilities as a mask of 1 << XDG_TOPLEVEL_WM_CAPABILITIES_*. */
+void tk_toplevel_bounds(Tk_Toplevel *top, int *w, int *h);
+unsigned int tk_toplevel_wm_capabilities(Tk_Toplevel *top);
 
 /* The size this toplevel last painted at. Not always the last configure:
  * E ends an interactive resize with a 0x0 "you choose" configure. */
