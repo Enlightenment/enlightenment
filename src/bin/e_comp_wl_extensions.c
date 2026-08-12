@@ -1367,10 +1367,12 @@ e_comp_wl_extension_pointer_unconstrain(E_Client *ec)
         return;
      }
 
-   /* no client: an input grab is being taken, everything is dropped */
+   /* no client: an input grab is being taken, everything is dropped. A
+    * oneshot constraint never reactivates once deactivated. */
    EINA_LIST_FREE(active_constraints, c)
      {
         c->active = EINA_FALSE;
+        if (!c->persistent) c->dead = 1;
         if (c->lock)
           zwp_locked_pointer_v1_send_unlocked(c->res);
         else
