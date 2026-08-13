@@ -56,6 +56,10 @@ e_modapi_init(E_Module *m)
      }
    if (!e_comp_canvas_init(w, h)) return NULL;
 
+   /* As in wl_buffer and wl_wl: there is no e_randr2 screen behind an
+    * ecore_evas window, so the randr path never creates the output. */
+   e_comp_wl_output_init(NULL, NULL, NULL, 0, 0, w, h, 0, 0, 0, 0, 0, 0);
+
    e_comp_wl_input_pointer_enabled_set(EINA_TRUE);
    e_comp_wl_input_keyboard_enabled_set(EINA_TRUE);
    e_comp_wl_input_touch_enabled_set(EINA_TRUE);
