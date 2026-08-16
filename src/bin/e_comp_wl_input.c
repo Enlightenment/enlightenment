@@ -328,7 +328,8 @@ _e_comp_wl_input_cb_bind_seat(struct wl_client *client, void *data EINA_UNUSED, 
                                   _e_comp_wl_input_cb_unbind_seat);
 
    wl_seat_send_capabilities(res, _e_comp_wl_input_seat_caps());
-   if (e_comp_wl->seat.version >= WL_SEAT_NAME_SINCE_VERSION)
+   /* This client's version: seat.version is whoever bound last. */
+   if (version >= WL_SEAT_NAME_SINCE_VERSION)
      wl_seat_send_name(res, e_comp_wl->seat.name);
 }
 
@@ -492,8 +493,12 @@ e_comp_wl_input_init(void)
    if (!e_comp_wl->seat.name)
      e_comp_wl->seat.name = "seat0";
 
+   /* Version 8 for wl_pointer.axis_value120. v6 adds wl_touch.shape and
+    * orientation, which are optional and not sent: Evas reports a touch as
+    * a point. v7 lets a client map the keymap privately, which is safe
+    * because every wl_keyboard gets a keymap file of its own. */
    e_comp_wl->seat.global =
-     wl_global_create(e_comp_wl->wl.disp, &wl_seat_interface, 5,
+     wl_global_create(e_comp_wl->wl.disp, &wl_seat_interface, 8,
                       e_comp->wl_comp_data, _e_comp_wl_input_cb_bind_seat);
    if (!e_comp_wl->seat.global)
      {

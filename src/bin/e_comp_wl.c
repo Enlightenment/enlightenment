@@ -486,6 +486,8 @@ _e_comp_wl_evas_cb_mouse_wheel(void *data, Evas *evas EINA_UNUSED, Evas_Object *
    if (e_object_is_del(E_OBJECT(ec))) return;
    if (ec->ignored) return;
    if (!ec->mouse.in) return;
+   /* wayland.xml forbids an axis_value120 of zero. */
+   if (!ev->z) return;
 
    if (ev->direction == 0)
      axis = WL_POINTER_AXIS_VERTICAL_SCROLL;
@@ -508,9 +510,15 @@ _e_comp_wl_evas_cb_mouse_wheel(void *data, Evas *evas EINA_UNUSED, Evas_Object *
         if (wl_resource_get_version(res) >= WL_POINTER_AXIS_SOURCE_SINCE_VERSION)
           {
              wl_pointer_send_axis_source(res, WL_POINTER_AXIS_SOURCE_WHEEL);
-             wl_pointer_send_axis_discrete(res, axis, ev->z);
+             /* value120 replaces axis_discrete from version 8 on. Evas
+              * reports whole clicks, so it is always a multiple of 120. */
+             if (wl_resource_get_version(res) >= WL_POINTER_AXIS_VALUE120_SINCE_VERSION)
+               wl_pointer_send_axis_value120(res, axis, ev->z * 120);
+             else
+               wl_pointer_send_axis_discrete(res, axis, ev->z);
           }
         wl_pointer_send_axis(res, ev->timestamp, axis, dir);
+        /* No axis_stop: it ends a finger scroll, and a wheel has none. */
         e_comp_wl_pointer_frame_send(res);
      }
 }

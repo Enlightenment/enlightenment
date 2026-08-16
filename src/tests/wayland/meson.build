@@ -60,6 +60,7 @@ wl_protocol_tests = [
   ['subsurface-position', 'test_subsurface_position.c'],
   ['window-geometry', 'test_window_geometry.c'],
   ['touch-moving-surface', 'test_touch_moving_surface.c'],
+  ['pointer-axis120', 'test_pointer_axis120.c'],
 ]
 
 tk_src = files('e_wl_testkit.c')
