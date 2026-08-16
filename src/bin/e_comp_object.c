@@ -1109,7 +1109,7 @@ _e_comp_intercept_resize(void *data, Evas_Object *obj, int w, int h)
 {
    E_Comp_Object *cw = data;
    int pw = 0, ph = 0, fw, fh, iw, ih, prev_w, prev_h, x, y;
-
+   Eina_Bool frame_leads;
 
    if ((w < 1) || (h < 1)) return;
    /* if frame_object does not exist, client_inset indicates CSD.
@@ -1234,17 +1234,24 @@ _e_comp_intercept_resize(void *data, Evas_Object *obj, int w, int h)
      }
    prev_w = cw->w, prev_h = cw->h;
    e_comp_object_frame_wh_adjust(obj, 0, 0, &fw, &fh);
+   /* During an interactive resize of a wayland client the frame leads and
+    * the buffer catches up a commit later: do not clamp the frame to the old
+    * buffer, but still tell the client through "client_resize". */
+   frame_leads = e_client_util_resizing_get(cw->ec) && (!e_client_has_xwindow(cw->ec));
    /* check shading and clamp to pixmap size for regular clients */
    if ((!cw->ec->shading) && (!cw->ec->shaded) && (!cw->ec->input_only) && (!cw->ec->override) &&
        (((w - fw != pw) || (h - fh != ph))))
      {
         //INF("CALLBACK: REQ(%dx%d) != CUR(%dx%d)", w - fw, h - fh, pw, ph);
         evas_object_smart_callback_call(obj, "client_resize", NULL);
-        /* flip for CSD */
-        if (cw->frame_object || cw->ec->input_only)
-          e_comp_object_frame_wh_adjust(obj, pw, ph, &w, &h);
-        else
-          w = pw, h = ph;
+        if (!frame_leads)
+          {
+             /* flip for CSD */
+             if (cw->frame_object || cw->ec->input_only)
+               e_comp_object_frame_wh_adjust(obj, pw, ph, &w, &h);
+             else
+               w = pw, h = ph;
+          }
         if ((cw->w == w) && (cw->h == h))
           {
              /* going to be a noop resize which won't trigger smart resize */
