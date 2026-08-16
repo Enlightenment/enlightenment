@@ -27,6 +27,7 @@ foreach p: [
   '@0@/stable/xdg-shell/xdg-shell.xml'.format(dir_wayland_protocols),
   '@0@/unstable/xdg-shell/xdg-shell-unstable-v6.xml'.format(dir_wayland_protocols),
   '@0@/unstable/xdg-foreign/xdg-foreign-unstable-v1.xml'.format(dir_wayland_protocols),
+  '@0@/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml'.format(dir_wayland_protocols),
 ]
   test_proto_src += gen_scanner_client.process(p)
   test_proto_src += gen_scanner_impl.process(p)
@@ -66,6 +67,7 @@ wl_protocol_tests = [
   ['popup-reposition', 'test_popup_reposition.c'],
   ['xdg-toplevel-v6', 'test_xdg_toplevel_v6.c'],
   ['maximize-restore', 'test_maximize_restore.c'],
+  ['xdg-decoration', 'test_xdg_decoration.c'],
 ]
 
 tk_src = files('e_wl_testkit.c')

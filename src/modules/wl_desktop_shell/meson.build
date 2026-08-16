@@ -14,6 +14,7 @@ else
     '@0@/unstable/xdg-shell/xdg-shell-unstable-v6.xml'.format(dir_wayland_protocols),
     '@0@/stable/xdg-shell/xdg-shell.xml'.format(dir_wayland_protocols),
     '@0@/unstable/input-method/input-method-unstable-v1.xml'.format(dir_wayland_protocols),
+    '@0@/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml'.format(dir_wayland_protocols),
   ]
     src += gen_scanner_server.process(p)
     src += gen_scanner_impl.process(p)

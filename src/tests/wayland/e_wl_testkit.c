@@ -1,6 +1,7 @@
 /* The test clients do not include config.h, which is where the rest of the
  * tree gets _GNU_SOURCE, and memfd_create needs it. */
 #define _GNU_SOURCE 1
+#include <errno.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -502,6 +503,20 @@ tk_toplevel_remap(Tk_Toplevel *top)
      if (wl_display_dispatch(top->tk->disp) < 0)
        tk_fail(top->tk, "disconnected waiting for the configure of a remap");
    tk_settle(top->tk);
+}
+
+int
+tk_protocol_error(Tk *tk, const struct wl_interface **iface)
+{
+   const struct wl_interface *i = NULL;
+   uint32_t id;
+   int code;
+
+   wl_display_roundtrip(tk->disp);
+   if (wl_display_get_error(tk->disp) != EPROTO) return -1;
+   code = wl_display_get_protocol_error(tk->disp, &i, &id);
+   if (iface) *iface = i;
+   return code;
 }
 
 struct xdg_wm_base *

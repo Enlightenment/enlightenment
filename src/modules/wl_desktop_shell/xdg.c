@@ -3,6 +3,7 @@
 #include "e_mod_main.h"
 
 #include "xdg-shell-server-protocol.h"
+#include "xdg-decoration-unstable-v1-server-protocol.h"
 
 /* Every object is created at the version xdg_wm_base was bound at. */
 #define XDG_WM_BASE_SERVER_VERSION 6
@@ -1894,6 +1895,209 @@ _xdg_popup_reactive_parent_moved(void *d EINA_UNUSED, int type EINA_UNUSED, void
    return ECORE_CALLBACK_RENEW;
 }
 
+/* zxdg_decoration_manager_v1. It extends xdg_toplevel, so it lives where
+ * that interface is linked. The mode is written into ec->borderless, E's
+ * own switch for the same question. Errors are posted on the manager,
+ * where wlcs looks for them. */
+
+typedef struct _E_Xdg_Decoration
+{
+   struct wl_resource *resource; //zxdg_toplevel_decoration_v1
+   /* Destroying a manager leaves its decorations, so this is watched and
+    * may be NULL. */
+   struct wl_resource *manager;
+   struct wl_listener manager_destroy;
+   struct wl_resource *toplevel; //xdg_toplevel, NULL once that has gone
+   struct wl_listener toplevel_destroy;
+} E_Xdg_Decoration;
+
+static Eina_Hash *xdg_decorations; //xdg_toplevel resource -> E_Xdg_Decoration
+
+static void
+_e_xdg_toplevel_decoration_configure(E_Xdg_Decoration *deco, uint32_t mode)
+{
+   E_Client *ec;
+
+   zxdg_toplevel_decoration_v1_send_configure(deco->resource, mode);
+
+   if (!deco->toplevel) return;
+   ec = wl_resource_get_user_data(deco->toplevel);
+   if ((!ec) || e_object_is_del(E_OBJECT(ec))) return;
+
+   ec->borderless = (mode == ZXDG_TOPLEVEL_DECORATION_V1_MODE_CLIENT_SIDE);
+   ec->border.changed = 1;
+   EC_CHANGED(ec);
+
+   /* The client acks the mode with xdg_surface.ack_configure. */
+   if (ec->comp_data->shell.surface)
+     _e_xdg_shell_surface_configure_send(ec->comp_data->shell.surface, 0, 0, 0);
+}
+
+static void
+_e_xdg_toplevel_decoration_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   wl_resource_destroy(resource);
+}
+
+static void
+_e_xdg_toplevel_decoration_cb_mode_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, uint32_t mode)
+{
+   E_Xdg_Decoration *deco;
+
+   if (!(deco = wl_resource_get_user_data(resource))) return;
+   if ((mode != ZXDG_TOPLEVEL_DECORATION_V1_MODE_CLIENT_SIDE) &&
+       (mode != ZXDG_TOPLEVEL_DECORATION_V1_MODE_SERVER_SIDE))
+     mode = ZXDG_TOPLEVEL_DECORATION_V1_MODE_SERVER_SIDE;
+
+   _e_xdg_toplevel_decoration_configure(deco, mode);
+}
+
+static void
+_e_xdg_toplevel_decoration_cb_mode_unset(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   E_Xdg_Decoration *deco;
+
+   if (!(deco = wl_resource_get_user_data(resource))) return;
+   _e_xdg_toplevel_decoration_configure(deco,
+     ZXDG_TOPLEVEL_DECORATION_V1_MODE_SERVER_SIDE);
+}
+
+static const struct zxdg_toplevel_decoration_v1_interface _e_xdg_toplevel_decoration_interface =
+{
+   _e_xdg_toplevel_decoration_cb_destroy,
+   _e_xdg_toplevel_decoration_cb_mode_set,
+   _e_xdg_toplevel_decoration_cb_mode_unset,
+};
+
+static void
+_e_xdg_toplevel_decoration_cb_toplevel_destroy(struct wl_listener *listener, void *data EINA_UNUSED)
+{
+   E_Xdg_Decoration *deco;
+
+   deco = container_of(listener, E_Xdg_Decoration, toplevel_destroy);
+
+   eina_hash_del_by_key(xdg_decorations, &deco->toplevel);
+   deco->toplevel = NULL;
+
+   wl_resource_post_error(deco->manager ?: deco->resource,
+                          ZXDG_TOPLEVEL_DECORATION_V1_ERROR_ORPHANED,
+                          "xdg_toplevel destroyed before its decoration");
+}
+
+static void
+_e_xdg_toplevel_decoration_cb_manager_destroy(struct wl_listener *listener, void *data EINA_UNUSED)
+{
+   E_Xdg_Decoration *deco;
+
+   deco = container_of(listener, E_Xdg_Decoration, manager_destroy);
+   deco->manager = NULL;
+}
+
+/* called by wl_resource_destroy */
+static void
+_e_xdg_toplevel_decoration_cb_resource_destroy(struct wl_resource *resource)
+{
+   E_Xdg_Decoration *deco;
+
+   if (!(deco = wl_resource_get_user_data(resource))) return;
+
+   if (deco->toplevel)
+     {
+        wl_list_remove(&deco->toplevel_destroy.link);
+        eina_hash_del_by_key(xdg_decorations, &deco->toplevel);
+     }
+   if (deco->manager) wl_list_remove(&deco->manager_destroy.link);
+
+   free(deco);
+}
+
+static void
+_e_xdg_decoration_manager_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   wl_resource_destroy(resource);
+}
+
+static void
+_e_xdg_decoration_manager_cb_toplevel_decoration_get(struct wl_client *client, struct wl_resource *resource, uint32_t id, struct wl_resource *toplevel_resource)
+{
+   E_Xdg_Decoration *deco;
+   E_Client *ec;
+
+   if (eina_hash_find(xdg_decorations, &toplevel_resource))
+     {
+        wl_resource_post_error(resource,
+                               ZXDG_TOPLEVEL_DECORATION_V1_ERROR_ALREADY_CONSTRUCTED,
+                               "xdg_toplevel already has a decoration");
+        return;
+     }
+
+   ec = wl_resource_get_user_data(toplevel_resource);
+   if ((ec) && (!e_object_is_del(E_OBJECT(ec))) && e_pixmap_usable_get(ec->pixmap))
+     {
+        wl_resource_post_error(resource,
+                               ZXDG_TOPLEVEL_DECORATION_V1_ERROR_UNCONFIGURED_BUFFER,
+                               "xdg_toplevel already has a buffer");
+        return;
+     }
+
+   deco = E_NEW(E_Xdg_Decoration, 1);
+   if (!deco)
+     {
+        wl_resource_post_no_memory(resource);
+        return;
+     }
+
+   deco->resource =
+     wl_resource_create(client, &zxdg_toplevel_decoration_v1_interface,
+                        wl_resource_get_version(resource), id);
+   if (!deco->resource)
+     {
+        free(deco);
+        wl_resource_post_no_memory(resource);
+        return;
+     }
+
+   deco->manager = resource;
+   deco->manager_destroy.notify = _e_xdg_toplevel_decoration_cb_manager_destroy;
+   wl_resource_add_destroy_listener(resource, &deco->manager_destroy);
+
+   deco->toplevel = toplevel_resource;
+   deco->toplevel_destroy.notify = _e_xdg_toplevel_decoration_cb_toplevel_destroy;
+   wl_resource_add_destroy_listener(toplevel_resource, &deco->toplevel_destroy);
+   eina_hash_add(xdg_decorations, &toplevel_resource, deco);
+
+   wl_resource_set_implementation(deco->resource,
+                                  &_e_xdg_toplevel_decoration_interface, deco,
+                                  _e_xdg_toplevel_decoration_cb_resource_destroy);
+
+   /* E has a theme to draw borders with, so unasked it draws them. */
+   _e_xdg_toplevel_decoration_configure(deco,
+     ZXDG_TOPLEVEL_DECORATION_V1_MODE_SERVER_SIDE);
+}
+
+static const struct zxdg_decoration_manager_v1_interface _e_xdg_decoration_manager_interface =
+{
+   _e_xdg_decoration_manager_cb_destroy,
+   _e_xdg_decoration_manager_cb_toplevel_decoration_get,
+};
+
+static void
+_e_xdg_decoration_manager_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t version, uint32_t id)
+{
+   struct wl_resource *res;
+
+   res = wl_resource_create(client, &zxdg_decoration_manager_v1_interface,
+                            version, id);
+   if (!res)
+     {
+        wl_client_post_no_memory(client);
+        return;
+     }
+
+   wl_resource_set_implementation(res, &_e_xdg_decoration_manager_interface,
+                                  NULL, NULL);
+}
+
 EINTERN Eina_Bool
 e_xdg_shell_init(void)
 {
@@ -1905,6 +2109,14 @@ e_xdg_shell_init(void)
         ERR("Could not create xdg_shell global");
         return EINA_FALSE;
      }
+   if (!wl_global_create(e_comp_wl->wl.disp,
+                         &zxdg_decoration_manager_v1_interface, 1,
+                         NULL, _e_xdg_decoration_manager_cb_bind))
+     {
+        ERR("Could not create zxdg_decoration_manager_v1 global");
+        return EINA_FALSE;
+     }
+   xdg_decorations = eina_hash_pointer_new(NULL);
    hooks = eina_list_append(hooks, e_client_hook_add(E_CLIENT_HOOK_DEL, _xdg_client_hook_del, NULL));
    xdg_popup_move_handler =
      ecore_event_handler_add(E_EVENT_CLIENT_MOVE,
@@ -1917,4 +2129,5 @@ e_xdg_shell_shutdown(void)
 {
    E_FREE_FUNC(xdg_popup_move_handler, ecore_event_handler_del);
    E_FREE_FUNC(xdg_popup_positioners, eina_hash_free);
+   E_FREE_FUNC(xdg_decorations, eina_hash_free);
 }

@@ -96,6 +96,11 @@ struct xdg_surface *tk_toplevel_xdg_surface(Tk_Toplevel *top);
  * requires: an empty commit, and a buffer in answer to the configure. */
 void tk_toplevel_remap(Tk_Toplevel *top);
 
+/* Round-trip, and return the code of the protocol error that ended the
+ * connection, or -1 if there was none. The connection is unusable after an
+ * error: only tk_disconnect it. */
+int tk_protocol_error(Tk *tk, const struct wl_interface **iface);
+
 /* The kit's xdg_wm_base, which answers pings, for building surfaces the kit
  * has no constructor for. */
 struct xdg_wm_base *tk_wm_base(Tk *tk);
