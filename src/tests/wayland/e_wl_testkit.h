@@ -70,4 +70,7 @@ Tk_Client *tk_find(Tk *tk, const char *app_id);
 /* Like tk_find, but a miss is a failure rather than a NULL to check. */
 Tk_Client *tk_expect(Tk *tk, const char *app_id);
 
+/* Run one of E's own actions on a window. Empty or NULL params means none. */
+void tk_action(Tk *tk, unsigned int id, const char *name, const char *params);
+
 #endif

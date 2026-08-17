@@ -45,6 +45,10 @@
     <enum name="error">
       <entry name="invalid_touch_id" value="0"
              summary="a touch id was zero or negative"/>
+      <entry name="unknown_client" value="1" since="3"
+             summary="no window has that id"/>
+      <entry name="unknown_action" value="2" since="3"
+             summary="no such action is registered"/>
     </enum>
 
     <request name="destroy" type="destructor">
@@ -257,5 +261,24 @@
     <event name="clients_done" since="3">
       <description summary="end of a get_clients reply"/>
     </event>
+
+    <request name="client_action" since="3">
+      <description summary="run one of E's own actions on a window">
+        Runs a registered action, such as window_maximized_toggle or
+        window_iconic_toggle, through the entry point a key or mouse
+        binding uses. The wltest profile has almost no bindings, and one
+        request covers every action.
+
+        An empty params string means no parameters, which E's actions tell
+        apart from an empty parameter.
+
+        Posts unknown_client if no window has that id, and unknown_action
+        if no action by that name is registered: a silent no-op would let
+        a test with a typo pass.
+      </description>
+      <arg name="id" type="uint"/>
+      <arg name="name" type="string"/>
+      <arg name="params" type="string"/>
+    </request>
   </interface>
 </protocol>

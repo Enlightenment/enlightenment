@@ -427,3 +427,10 @@ tk_expect(Tk *tk, const char *app_id)
    if (!c) tk_fail(tk, "no window with app_id '%s'", app_id);
    return c;
 }
+
+void
+tk_action(Tk *tk, unsigned int id, const char *name, const char *params)
+{
+   wl_test_client_action(tk->tester, id, name, params ?: "");
+   tk_settle(tk);
+}

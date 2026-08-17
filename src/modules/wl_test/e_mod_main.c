@@ -186,6 +186,46 @@ _wl_test_cb_get_clients(struct wl_client *client EINA_UNUSED, struct wl_resource
    wl_test_send_clients_done(resource);
 }
 
+static E_Client *
+_wl_test_client_by_id(struct wl_resource *resource, uint32_t id)
+{
+   E_Client *ec;
+
+   if (id)
+     {
+        E_CLIENT_FOREACH(ec)
+          {
+             if (e_object_is_del(E_OBJECT(ec))) continue;
+             if (_wl_test_client_id(ec) == id) return ec;
+          }
+     }
+
+   wl_resource_post_error(resource, WL_TEST_ERROR_UNKNOWN_CLIENT,
+                          "no window with id %u", id);
+   return NULL;
+}
+
+static void
+_wl_test_cb_client_action(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, uint32_t id, const char *name, const char *params)
+{
+   E_Client *ec;
+   E_Action *act;
+
+   ec = _wl_test_client_by_id(resource, id);
+   if (!ec) return;
+
+   act = e_action_find(name);
+   if ((!act) || (!act->func.go))
+     {
+        wl_resource_post_error(resource, WL_TEST_ERROR_UNKNOWN_ACTION,
+                               "no action named '%s'", name ?: "");
+        return;
+     }
+
+   /* Actions tell NULL params, which selects their default, from "". */
+   act->func.go(E_OBJECT(ec), (params && params[0]) ? params : NULL);
+}
+
 static void
 _wl_test_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
@@ -526,6 +566,7 @@ static const struct wl_test_interface _wl_test_implementation =
    _wl_test_cb_sync,
    _wl_test_cb_pointer_move,
    _wl_test_cb_get_clients,
+   _wl_test_cb_client_action,
 };
 
 static void
