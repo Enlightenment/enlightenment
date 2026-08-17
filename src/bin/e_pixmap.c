@@ -79,6 +79,9 @@ _e_pixmap_cb_deferred_buffer_destroy(struct wl_listener *listener, void *data EI
    buffer->discarding_pixmap->free_buffers =
      eina_list_remove(buffer->discarding_pixmap->free_buffers, buffer);
    buffer->discarding_pixmap = NULL;
+   /* The listener lives in the buffer being destroyed. */
+   wl_list_remove(&buffer->deferred_destroy_listener.link);
+   buffer->deferred_destroy_listener.notify = NULL;
 }
 
 static void
@@ -197,12 +200,18 @@ _e_pixmap_wl_buffers_free(E_Pixmap *cp)
 {
    E_Comp_Wl_Buffer *b;
 
+   /* The end of the deferral: release directly, the wrapper could defer
+    * again. The release can free b, so touch b before it. */
    EINA_LIST_FREE(cp->free_buffers, b)
      {
-        wl_list_remove(&b->deferred_destroy_listener.link);
-        b->deferred_destroy_listener.notify = NULL;
-        _e_pixmap_wayland_buffer_release(cp, b);
+        if (b->deferred_destroy_listener.notify)
+          {
+             wl_list_remove(&b->deferred_destroy_listener.link);
+             b->deferred_destroy_listener.notify = NULL;
+          }
         b->discarding_pixmap = NULL;
+        if (b->busy == 1) cp->busy_list = eina_list_remove(cp->busy_list, b);
+        _e_pixmap_wl_resource_release(b);
      }
 }
 
@@ -264,10 +273,18 @@ _e_pixmap_free(E_Pixmap *cp)
       case E_PIXMAP_TYPE_WL:
 #ifdef HAVE_WAYLAND
         _e_pixmap_wayland_image_clear(cp);
+        /* Deferred buffers point back at this pixmap. */
+        _e_pixmap_wl_buffers_free(cp);
         if (cp->buffer_destroy_listener.notify)
           {
              wl_list_remove(&cp->buffer_destroy_listener.link);
              cp->buffer_destroy_listener.notify = NULL;
+          }
+        /* _e_pixmap_wayland_image_clear() can return before unlinking it. */
+        if (cp->held_buffer_destroy_listener.notify)
+          {
+             wl_list_remove(&cp->held_buffer_destroy_listener.link);
+             cp->held_buffer_destroy_listener.notify = NULL;
           }
 #endif
         break;
