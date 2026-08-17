@@ -32,6 +32,12 @@ static struct wl_listener _client_created_listener;
 static Eina_List *_clients = NULL;
 static unsigned int _next_serial = 0;
 
+/* Window ids are assigned on first mention, as the module may be loaded
+ * after windows exist. They are never reused, and 0 means no window. */
+static Eina_Hash *_client_ids = NULL;
+static unsigned int _next_client_id = 0;
+static E_Client_Hook *_client_del_hook = NULL;
+
 /* Pending sync requests, drained from an ecore job so that one main loop
  * iteration has run before sync_done goes out. */
 static Eina_List *_pending_syncs = NULL;
@@ -96,6 +102,88 @@ _wl_test_ec_get(struct wl_resource *surface)
    if (!ec) return NULL;
    if (e_object_is_del(E_OBJECT(ec))) return NULL;
    return ec;
+}
+
+static unsigned int
+_wl_test_client_id(E_Client *ec)
+{
+   unsigned int id;
+
+   if (!ec) return 0;
+   id = (unsigned int)(uintptr_t)eina_hash_find(_client_ids, &ec);
+   if (id) return id;
+
+   id = ++_next_client_id;
+   eina_hash_add(_client_ids, &ec, (void *)(uintptr_t)id);
+   return id;
+}
+
+static void
+_wl_test_cb_client_del(void *data EINA_UNUSED, E_Client *ec)
+{
+   eina_hash_del_by_key(_client_ids, &ec);
+}
+
+static unsigned int
+_wl_test_client_states(E_Client *ec)
+{
+   unsigned int states = 0;
+
+   if (ec->focused) states |= WL_TEST_CLIENT_STATE_FOCUSED;
+   /* Not ec->visible: an internal window whose canvas could not be created
+    * keeps it set with nothing on screen. */
+   if (ec->frame && evas_object_visible_get(ec->frame))
+     states |= WL_TEST_CLIENT_STATE_VISIBLE;
+   if (ec->iconic) states |= WL_TEST_CLIENT_STATE_ICONIFIED;
+   if (ec->maximized & E_MAXIMIZE_HORIZONTAL)
+     states |= WL_TEST_CLIENT_STATE_MAXIMIZED_H;
+   if (ec->maximized & E_MAXIMIZE_VERTICAL)
+     states |= WL_TEST_CLIENT_STATE_MAXIMIZED_V;
+   if (ec->fullscreen) states |= WL_TEST_CLIENT_STATE_FULLSCREEN;
+   if (ec->sticky) states |= WL_TEST_CLIENT_STATE_STICKY;
+   if (ec->shaded) states |= WL_TEST_CLIENT_STATE_SHADED;
+   if (ec->internal) states |= WL_TEST_CLIENT_STATE_INTERNAL;
+
+   return states;
+}
+
+static void
+_wl_test_send_client_info(struct wl_resource *resource, E_Client *ec)
+{
+   unsigned int output = 0;
+   Eina_List *l;
+   E_Zone *zone;
+   int i = 0;
+
+   EINA_LIST_FOREACH(e_comp->zones, l, zone)
+     {
+        if (zone == ec->zone) { output = i; break; }
+        i++;
+     }
+
+   wl_test_send_client_info(resource,
+                            _wl_test_client_id(ec),
+                            ec->netwm.pid,
+                            ec->icccm.title ?: "",
+                            ec->icccm.class ?: "",
+                            _wl_test_client_id(ec->parent),
+                            ec->x, ec->y, ec->w, ec->h,
+                            _wl_test_client_states(ec),
+                            output);
+}
+
+static void
+_wl_test_cb_get_clients(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   E_Client *ec;
+
+   E_CLIENT_FOREACH(ec)
+     {
+        if (e_object_is_del(E_OBJECT(ec))) continue;
+        _wl_test_send_client_info(resource, ec);
+     }
+
+   wl_test_send_clients_done(resource);
 }
 
 static void
@@ -437,6 +525,7 @@ static const struct wl_test_interface _wl_test_implementation =
    _wl_test_cb_key,
    _wl_test_cb_sync,
    _wl_test_cb_pointer_move,
+   _wl_test_cb_get_clients,
 };
 
 static void
@@ -470,13 +559,17 @@ e_modapi_init(E_Module *m)
         return NULL;
      }
 
-   _wl_test_global = wl_global_create(e_comp_wl->wl.disp, &wl_test_interface, 2,
+   _wl_test_global = wl_global_create(e_comp_wl->wl.disp, &wl_test_interface, 3,
                                      NULL, _wl_test_cb_bind);
    if (!_wl_test_global)
      {
         ERR("wl_test: could not create global");
         return NULL;
      }
+
+   _client_ids = eina_hash_pointer_new(NULL);
+   _client_del_hook = e_client_hook_add(E_CLIENT_HOOK_DEL,
+                                        _wl_test_cb_client_del, NULL);
 
    _client_created_listener.notify = _wl_test_cb_client_created;
    wl_display_add_client_created_listener(e_comp_wl->wl.disp,
@@ -517,6 +610,8 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
         wl_list_remove(&tc->destroy.link);
         free(tc);
      }
+   E_FREE_FUNC(_client_del_hook, e_client_hook_del);
+   E_FREE_FUNC(_client_ids, eina_hash_free);
 
    return 1;
 }

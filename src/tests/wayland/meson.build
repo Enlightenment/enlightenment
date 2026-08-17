@@ -45,11 +45,14 @@ test('wl-globals',
 wl_protocol_tests = [
   ['test-module', 'test_wl_test.c'],
   ['xdg-defunct-surfaces', 'test_xdg_defunct.c'],
+  ['client-list', 'test_client_list.c'],
 ]
+
+tk_src = files('e_wl_testkit.c')
 
 foreach t: wl_protocol_tests
   exe = executable('test_wl_' + t[0].underscorify(),
-    [t[1], test_proto_src],
+    [t[1], tk_src, test_proto_src],
     dependencies: [dependency('wayland-client')],
   )
   test('wl-' + t[0],

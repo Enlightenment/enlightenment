@@ -23,7 +23,7 @@
     DEALINGS IN THE SOFTWARE.
   </copyright>
 
-  <interface name="wl_test" version="2">
+  <interface name="wl_test" version="3">
     <description summary="private interface for the compositor test suite">
       A back door into the compositor for its own test suite. It exposes
       internal state and synthesises input, so it is only built with
@@ -206,5 +206,56 @@
       <arg name="dx" type="int"/>
       <arg name="dy" type="int"/>
     </request>
+
+    <enum name="client_state" bitfield="true" since="3">
+      <description summary="what the compositor believes about a window"/>
+      <entry name="focused"     value="0x001"/>
+      <entry name="visible"     value="0x002"/>
+      <entry name="iconified"   value="0x004"/>
+      <entry name="maximized_h" value="0x008"/>
+      <entry name="maximized_v" value="0x010"/>
+      <entry name="fullscreen"  value="0x020"/>
+      <entry name="sticky"      value="0x040"/>
+      <entry name="shaded"      value="0x080"/>
+      <entry name="internal"    value="0x100" summary="one of E's own windows"/>
+    </enum>
+
+    <request name="get_clients" since="3">
+      <description summary="enumerate every window the compositor knows about">
+        The requests above name a surface by its wl_surface object, which
+        only works on the connection that owns it. A test driving a program
+        it started, such as a browser, owns none of its windows, so the
+        compositor names them instead: a window id is assigned by the
+        compositor, stable for the life of the window and never reused.
+
+        Answered with a client_info per window, then clients_done.
+      </description>
+    </request>
+
+    <event name="client_info" since="3">
+      <description summary="the compositor's own view of one window">
+        Geometry is the frame in compositor coordinates. title and app_id
+        are empty strings when the client has not set them.
+
+        pid is the process that opened the connection, which for a program
+        that re-execs, as browsers do, is not necessarily the one the test
+        started: match on app_id and treat pid as a cross-check.
+      </description>
+      <arg name="id" type="uint"/>
+      <arg name="pid" type="int"/>
+      <arg name="title" type="string"/>
+      <arg name="app_id" type="string"/>
+      <arg name="parent" type="uint" summary="id of the parent window, or 0"/>
+      <arg name="x" type="int"/>
+      <arg name="y" type="int"/>
+      <arg name="w" type="int"/>
+      <arg name="h" type="int"/>
+      <arg name="states" type="uint" enum="client_state"/>
+      <arg name="output" type="uint" summary="0-based zone index"/>
+    </event>
+
+    <event name="clients_done" since="3">
+      <description summary="end of a get_clients reply"/>
+    </event>
   </interface>
 </protocol>
