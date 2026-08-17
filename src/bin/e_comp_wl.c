@@ -964,6 +964,8 @@ _e_comp_wl_evas_cb_unmaximize_pre(void *data, Evas_Object *obj EINA_UNUSED, void
              e_client_unmaximize_geometry_get(ec, *max, NULL, NULL, &w, &h);
              if (ec->internal)
                e_comp_object_frame_wh_unadjust(ec->frame, w, h, &w, &h);
+             else if (ec->comp_data->unmax_w && ec->comp_data->unmax_h)
+               w = ec->comp_data->unmax_w, h = ec->comp_data->unmax_h;
              ew = *ecw, eh = *ech;
              *ecw = w, *ech = h;
           }
@@ -992,6 +994,8 @@ _e_comp_wl_evas_cb_maximize_pre(void *data, Evas_Object *obj EINA_UNUSED, void *
         int w, h, ew = 0, eh = 0, *ecw, *ech;
         unsigned int pmax = ec->maximized;
         ec->comp_data->max = *max;
+        if (!(ec->maximized & E_MAXIMIZE_TYPE))
+          ec->comp_data->unmax_w = ec->w, ec->comp_data->unmax_h = ec->h;
         if (ec->internal)
           ecw = &ec->client.w, ech = &ec->client.h;
         else

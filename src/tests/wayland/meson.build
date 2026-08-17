@@ -65,6 +65,7 @@ wl_protocol_tests = [
   ['xdg-tiled', 'test_xdg_tiled.c'],
   ['popup-reposition', 'test_popup_reposition.c'],
   ['xdg-toplevel-v6', 'test_xdg_toplevel_v6.c'],
+  ['maximize-restore', 'test_maximize_restore.c'],
 ]
 
 tk_src = files('e_wl_testkit.c')

@@ -378,6 +378,11 @@ struct _E_Comp_Wl_Client_Data
    Eina_Bool ssd_mouse_in E_BITFIELD;
    Eina_Bool need_center E_BITFIELD;
    Eina_Bool geometry_placed E_BITFIELD;
+   /* ec->w and ec->h before E maximized the window, zero until it has.
+    * ec->saved is the surface, which for a client that draws its own
+    * shadow is larger than the window, and the shadow is not there while
+    * it is maximized to subtract back. */
+   int unmax_w, unmax_h;
 };
 
 struct _E_Comp_Wl_Output

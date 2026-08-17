@@ -18,6 +18,7 @@ struct _Tk_Toplevel
    struct xdg_toplevel *toplevel;
    int w, h;
    int pending_w, pending_h;
+   int shadow;
    unsigned int pending_states, states;
    int bounds_w, bounds_h;
    unsigned int wm_capabilities;
@@ -147,6 +148,7 @@ _xdg_surface_configure(void *data, struct xdg_surface *s, uint32_t serial)
 {
    Tk_Toplevel *top = data;
    struct wl_buffer *buffer;
+   int sw, sh;
 
    xdg_surface_ack_configure(s, serial);
 
@@ -154,11 +156,16 @@ _xdg_surface_configure(void *data, struct xdg_surface *s, uint32_t serial)
    if (top->pending_h > 0) top->h = top->pending_h;
    top->states = top->pending_states;
 
-   buffer = _buffer_make(top->tk, top->w, top->h);
-   if (!buffer) tk_fail(top->tk, "cannot make a %dx%d buffer", top->w, top->h);
+   sw = top->w + (2 * top->shadow);
+   sh = top->h + (2 * top->shadow);
+   buffer = _buffer_make(top->tk, sw, sh);
+   if (!buffer) tk_fail(top->tk, "cannot make a %dx%d buffer", sw, sh);
 
+   if (top->shadow)
+     xdg_surface_set_window_geometry(top->xdg_surface, top->shadow,
+                                     top->shadow, top->w, top->h);
    wl_surface_attach(top->surface, buffer, 0, 0);
-   wl_surface_damage(top->surface, 0, 0, top->w, top->h);
+   wl_surface_damage(top->surface, 0, 0, sw, sh);
    wl_surface_commit(top->surface);
 
    top->configures++;
@@ -381,7 +388,7 @@ tk_fail(Tk *tk, const char *fmt, ...)
 
 static Tk_Toplevel *
 _toplevel_make(Tk *tk, const char *app_id, const char *title, int w, int h,
-               Tk_Toplevel *parent)
+               int shadow, Tk_Toplevel *parent)
 {
    Tk_Toplevel *top;
 
@@ -390,6 +397,7 @@ _toplevel_make(Tk *tk, const char *app_id, const char *title, int w, int h,
    top->tk = tk;
    top->w = w;
    top->h = h;
+   top->shadow = shadow;
 
    top->surface = wl_compositor_create_surface(tk->compositor);
    top->xdg_surface = xdg_wm_base_get_xdg_surface(tk->wm_base, top->surface);
@@ -412,14 +420,21 @@ _toplevel_make(Tk *tk, const char *app_id, const char *title, int w, int h,
 Tk_Toplevel *
 tk_toplevel_new(Tk *tk, const char *app_id, const char *title, int w, int h)
 {
-   return _toplevel_make(tk, app_id, title, w, h, NULL);
+   return _toplevel_make(tk, app_id, title, w, h, 0, NULL);
+}
+
+Tk_Toplevel *
+tk_toplevel_new_shadowed(Tk *tk, const char *app_id, const char *title,
+                         int w, int h, int shadow)
+{
+   return _toplevel_make(tk, app_id, title, w, h, shadow, NULL);
 }
 
 Tk_Toplevel *
 tk_toplevel_new_child(Tk *tk, const char *app_id, const char *title,
                       int w, int h, Tk_Toplevel *parent)
 {
-   return _toplevel_make(tk, app_id, title, w, h, parent);
+   return _toplevel_make(tk, app_id, title, w, h, 0, parent);
 }
 
 void
@@ -434,6 +449,14 @@ tk_toplevel_paint(Tk_Toplevel *top, int w, int h)
    wl_surface_attach(top->surface, buffer, 0, 0);
    wl_surface_damage(top->surface, 0, 0, w, h);
    wl_surface_commit(top->surface);
+}
+
+void
+tk_toplevel_maximize(Tk_Toplevel *top, int on)
+{
+   if (on) xdg_toplevel_set_maximized(top->toplevel);
+   else xdg_toplevel_unset_maximized(top->toplevel);
+   tk_settle(top->tk);
 }
 
 void

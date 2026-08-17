@@ -52,6 +52,16 @@ Tk_Toplevel *tk_toplevel_new_child(Tk *tk, const char *app_id,
                                    const char *title, int w, int h,
                                    Tk_Toplevel *parent);
 
+/* A toplevel that draws a shadow: its surface is larger than its window
+ * geometry by this much on every side, and it says so with
+ * xdg_surface.set_window_geometry, as client-side decorations do. */
+Tk_Toplevel *tk_toplevel_new_shadowed(Tk *tk, const char *app_id,
+                                      const char *title, int w, int h,
+                                      int shadow);
+
+/* Ask to be maximized or restored, as the client. */
+void tk_toplevel_maximize(Tk_Toplevel *top, int on);
+
 /* The size the compositor last asked this toplevel to be, and the number of
  * configures it has answered. */
 void tk_toplevel_configured(Tk_Toplevel *top, int *w, int *h, int *count);
