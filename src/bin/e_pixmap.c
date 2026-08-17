@@ -229,12 +229,9 @@ _e_pixmap_wayland_image_clear(E_Pixmap *cp)
      {
         E_Comp_Wl_Buffer *buffer;
 
+        /* The release path sends wl_buffer.release when busy reaches 0. */
         EINA_LIST_FREE(cp->busy_list, buffer)
-          {
-             buffer->busy--;
-             if (buffer->dmabuf_buffer)
-               linux_dmabuf_buffer_unref(buffer->dmabuf_buffer);
-          }
+          _e_pixmap_wl_resource_release(buffer);
      }
 
    if (!cp->held_buffer) return;
