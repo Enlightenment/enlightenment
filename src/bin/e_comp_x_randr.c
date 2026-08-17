@@ -1277,6 +1277,11 @@ e_comp_x_randr_canvas_new(Ecore_Window parent, int w, int h)
         elm_config_all_flush();
         elm_config_save();
      }
+   /* The check at the top asks whether EFL could do GL, not whether this
+    * canvas does, and the fallback that corrects it is skipped when
+    * e_comp->ee already exists. */
+   e_comp_gl_set(!!e_comp->gl);
+
    if (ret)
      e_comp->grab_cb = _e_comp_x_randr_grab_cb;
    return ret;
