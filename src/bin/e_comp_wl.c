@@ -1255,6 +1255,10 @@ _e_comp_wl_surface_state_cb_buffer_destroy(struct wl_listener *listener, void *d
    state =
      container_of(listener, E_Comp_Wl_Surface_State, buffer_destroy_listener);
    state->buffer = NULL;
+   /* The signal list is freed with the buffer: unlink, and re-init so a
+    * later removal is harmless. */
+   wl_list_remove(&state->buffer_destroy_listener.link);
+   wl_list_init(&state->buffer_destroy_listener.link);
 }
 
 static void

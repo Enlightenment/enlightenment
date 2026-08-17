@@ -91,6 +91,9 @@ _e_pixmap_cb_buffer_destroy(struct wl_listener *listener, void *data EINA_UNUSED
 
    cp = container_of(listener, E_Pixmap, buffer_destroy_listener);
    cp->buffer = NULL;
+   /* The signal list is freed with the buffer. */
+   wl_list_remove(&cp->buffer_destroy_listener.link);
+   wl_list_init(&cp->buffer_destroy_listener.link);
    cp->buffer_destroy_listener.notify = NULL;
 }
 
@@ -101,6 +104,8 @@ _e_pixmap_cb_held_buffer_destroy(struct wl_listener *listener, void *data EINA_U
 
    cp = container_of(listener, E_Pixmap, held_buffer_destroy_listener);
    cp->held_buffer = NULL;
+   wl_list_remove(&cp->held_buffer_destroy_listener.link);
+   wl_list_init(&cp->held_buffer_destroy_listener.link);
    cp->held_buffer_destroy_listener.notify = NULL;
 }
 #endif
