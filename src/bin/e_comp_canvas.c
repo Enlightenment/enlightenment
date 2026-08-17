@@ -126,6 +126,7 @@ _e_comp_canvas_render_post(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *ev
      }
 
    e_comp->rendering = EINA_FALSE;
+   e_pixmap_render_done();
 
    if (_e_comp_post_render_job) ecore_job_del(_e_comp_post_render_job);
    _e_comp_post_render_job = ecore_job_add(_e_comp_canvas_render_post_job, NULL);

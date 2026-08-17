@@ -55,6 +55,10 @@ Tk_Toplevel *tk_toplevel_new_child(Tk *tk, const char *app_id,
  * configures it has answered. */
 void tk_toplevel_configured(Tk_Toplevel *top, int *w, int *h, int *count);
 
+/* Commit a new buffer of this size, without waiting for anything. The kit
+ * destroys a buffer as soon as it is released, as real clients do. */
+void tk_toplevel_paint(Tk_Toplevel *top, int w, int h);
+
 /* Unmap and destroy it, and settle. */
 void tk_toplevel_del(Tk_Toplevel *top);
 

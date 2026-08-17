@@ -32,6 +32,7 @@ E_API void e_pixmap_dirty(E_Pixmap *cp);
 E_API Eina_Bool e_pixmap_refresh(E_Pixmap *cp);
 E_API Eina_Bool e_pixmap_size_changed(E_Pixmap *cp, int w, int h);
 E_API Eina_Bool e_pixmap_size_get(E_Pixmap *cp, int *w, int *h);
+EINTERN void e_pixmap_render_done(void);
 E_API void e_pixmap_client_set(E_Pixmap *cp, E_Client *ec);
 E_API E_Client *e_pixmap_client_get(E_Pixmap *cp);
 E_API E_Pixmap *e_pixmap_find(E_Pixmap_Type type, ...);

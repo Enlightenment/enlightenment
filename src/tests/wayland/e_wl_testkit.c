@@ -376,6 +376,20 @@ tk_toplevel_new_child(Tk *tk, const char *app_id, const char *title,
 }
 
 void
+tk_toplevel_paint(Tk_Toplevel *top, int w, int h)
+{
+   struct wl_buffer *buffer;
+
+   buffer = _buffer_make(top->tk, w, h);
+   if (!buffer) tk_fail(top->tk, "cannot make a %dx%d buffer", w, h);
+   top->w = w;
+   top->h = h;
+   wl_surface_attach(top->surface, buffer, 0, 0);
+   wl_surface_damage(top->surface, 0, 0, w, h);
+   wl_surface_commit(top->surface);
+}
+
+void
 tk_toplevel_del(Tk_Toplevel *top)
 {
    Tk *tk = top->tk;

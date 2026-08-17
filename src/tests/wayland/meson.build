@@ -52,6 +52,7 @@ wl_protocol_tests = [
   ['xdg-foreign', 'test_xdg_foreign.c'],
   ['seat-capabilities', 'test_seat_capabilities.c'],
   ['dialog-focus', 'test_dialog_focus.c'],
+  ['buffer-release', 'test_buffer_release.c'],
 ]
 
 tk_src = files('e_wl_testkit.c')

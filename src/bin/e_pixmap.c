@@ -21,6 +21,9 @@
 
 static Eina_Hash *pixmaps[2] = {NULL};
 static Eina_Hash *aliases[2] = {NULL};
+#ifdef HAVE_WAYLAND
+static Eina_List *_render_held_pools = NULL;
+#endif
 
 struct _E_Pixmap
 {
@@ -52,7 +55,6 @@ struct _E_Pixmap
    struct wl_listener held_buffer_destroy_listener;
    void *data;
    Eina_Rectangle opaque;
-   Eina_List *free_buffers;
    Eina_List *busy_list;
 #endif
 
@@ -69,20 +71,6 @@ _e_pixmap_win_get(E_Pixmap *cp)
 }
 
 #ifdef HAVE_WAYLAND
-
-static void
-_e_pixmap_cb_deferred_buffer_destroy(struct wl_listener *listener, void *data EINA_UNUSED)
-{
-   E_Comp_Wl_Buffer *buffer;
-
-   buffer = container_of(listener, E_Comp_Wl_Buffer, deferred_destroy_listener);
-   buffer->discarding_pixmap->free_buffers =
-     eina_list_remove(buffer->discarding_pixmap->free_buffers, buffer);
-   buffer->discarding_pixmap = NULL;
-   /* The listener lives in the buffer being destroyed. */
-   wl_list_remove(&buffer->deferred_destroy_listener.link);
-   buffer->deferred_destroy_listener.notify = NULL;
-}
 
 static void
 _e_pixmap_cb_buffer_destroy(struct wl_listener *listener, void *data EINA_UNUSED)
@@ -159,9 +147,18 @@ _e_pixmap_wl_resource_release(E_Comp_Wl_Buffer *buffer)
      linux_dmabuf_buffer_unref(buffer->dmabuf_buffer);
    if (buffer->busy) return;
 
+   /* A client may destroy a buffer as soon as it is released, which drops
+    * the last reference to its shm pool and unmaps the memory. A render in
+    * flight may still be reading it from a worker thread, so keep the pool
+    * until the render is over. Holding the release instead would starve a
+    * client that is not rendered again of its buffers. */
    if (buffer->pool)
      {
-        wl_shm_pool_unref(buffer->pool);
+        if (e_comp->rendering)
+          _render_held_pools = eina_list_append(_render_held_pools,
+                                                buffer->pool);
+        else
+          wl_shm_pool_unref(buffer->pool);
         buffer->pool = NULL;
      }
 
@@ -179,45 +176,9 @@ _e_pixmap_wayland_buffer_release(E_Pixmap *cp, E_Comp_Wl_Buffer *buffer)
 {
    if (!buffer) return;
 
-   if (e_comp->rendering)
-     {
-        if (buffer->discarding_pixmap) return;
-
-        buffer->discarding_pixmap = cp;
-        buffer->deferred_destroy_listener.notify =
-          _e_pixmap_cb_deferred_buffer_destroy;
-        wl_signal_add(&buffer->destroy_signal,
-                      &buffer->deferred_destroy_listener);
-        cp->free_buffers = eina_list_append(cp->free_buffers, buffer);
-        return;
-     }
-
    if (buffer->busy == 1)
-     {
-        // we are at busy 1 abut about to go to 0 below, so remove now
-        cp->busy_list = eina_list_remove(cp->busy_list, buffer);
-     }
+     cp->busy_list = eina_list_remove(cp->busy_list, buffer);
    _e_pixmap_wl_resource_release(buffer);
-}
-
-static void
-_e_pixmap_wl_buffers_free(E_Pixmap *cp)
-{
-   E_Comp_Wl_Buffer *b;
-
-   /* The end of the deferral: release directly, the wrapper could defer
-    * again. The release can free b, so touch b before it. */
-   EINA_LIST_FREE(cp->free_buffers, b)
-     {
-        if (b->deferred_destroy_listener.notify)
-          {
-             wl_list_remove(&b->deferred_destroy_listener.link);
-             b->deferred_destroy_listener.notify = NULL;
-          }
-        b->discarding_pixmap = NULL;
-        if (b->busy == 1) cp->busy_list = eina_list_remove(cp->busy_list, b);
-        _e_pixmap_wl_resource_release(b);
-     }
 }
 
 static void
@@ -249,6 +210,17 @@ _e_pixmap_wayland_image_clear(E_Pixmap *cp)
 }
 #endif
 
+EINTERN void
+e_pixmap_render_done(void)
+{
+#ifdef HAVE_WAYLAND
+   struct wl_shm_pool *pool;
+
+   EINA_LIST_FREE(_render_held_pools, pool)
+     wl_shm_pool_unref(pool);
+#endif
+}
+
 static void
 _e_pixmap_free(E_Pixmap *cp)
 {
@@ -275,8 +247,6 @@ _e_pixmap_free(E_Pixmap *cp)
       case E_PIXMAP_TYPE_WL:
 #ifdef HAVE_WAYLAND
         _e_pixmap_wayland_image_clear(cp);
-        /* Deferred buffers point back at this pixmap. */
-        _e_pixmap_wl_buffers_free(cp);
         if (cp->buffer_destroy_listener.notify)
           {
              wl_list_remove(&cp->buffer_destroy_listener.link);
@@ -780,18 +750,8 @@ e_pixmap_resource_set(E_Pixmap *cp, void *resource)
 #ifdef HAVE_WAYLAND
    if (cp->buffer == resource) return;
 
-   if (cp->buffer)
-     {
-        if (resource)
-          {
-        if (cp->buffer->busy == 1)
-          {
-             // about to go to busy 0, so remove from list
-             cp->busy_list = eina_list_remove(cp->busy_list, cp->buffer);
-          }
-        _e_pixmap_wl_resource_release(cp->buffer);
-          }
-     }
+   if (cp->buffer && resource)
+     _e_pixmap_wayland_buffer_release(cp, cp->buffer);
 
    if (cp->buffer_destroy_listener.notify)
      {
@@ -985,7 +945,6 @@ e_pixmap_image_clear(E_Pixmap *cp, Eina_Bool cache)
         break;
       case E_PIXMAP_TYPE_WL:
 #ifdef HAVE_WAYLAND
-        _e_pixmap_wl_buffers_free(cp);
         if (cache)
           {
              E_Comp_Wl_Client_Data *cd;
