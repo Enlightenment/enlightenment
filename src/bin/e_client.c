@@ -917,6 +917,9 @@ _e_client_moveinfo_gather(E_Client *ec, const char *source)
      {
         ec->moveinfo.down.mx = ec->mouse.current.mx;
         ec->moveinfo.down.my = ec->mouse.current.my;
+        /* With a button, the size comes from mouse.last_down[] instead. */
+        ec->moveinfo.down.w = ec->w;
+        ec->moveinfo.down.h = ec->h;
      }
 }
 
@@ -4961,6 +4964,11 @@ e_client_act_move_begin(E_Client *ec, E_Binding_Event_Mouse_Button *ev)
         snprintf(source, sizeof(source) - 1, "mouse,down,%i", ev->button);
         _e_client_moveinfo_gather(ec, source);
      }
+   else
+     {
+        /* No button (a key or signal binding): start from the pointer. */
+        _e_client_moveinfo_gather(ec, "no,button");
+     }
    if (!_e_client_move_begin(ec))
      return;
 
@@ -4995,6 +5003,11 @@ e_client_act_resize_begin(E_Client *ec, E_Binding_Event_Mouse_Button *ev)
 
         snprintf(source, sizeof(source) - 1, "mouse,down,%i", ev->button);
         _e_client_moveinfo_gather(ec, source);
+     }
+   else
+     {
+        /* No button (a key or signal binding): start from the pointer. */
+        _e_client_moveinfo_gather(ec, "no,button");
      }
    if ((ec->mouse.current.mx > (ec->x + ec->w / 5)) &&
        (ec->mouse.current.mx < (ec->x + ec->w * 4 / 5)))
