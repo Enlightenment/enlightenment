@@ -53,6 +53,7 @@ wl_protocol_tests = [
   ['seat-capabilities', 'test_seat_capabilities.c'],
   ['dialog-focus', 'test_dialog_focus.c'],
   ['buffer-release', 'test_buffer_release.c'],
+  ['client-move', 'test_client_move.c'],
 ]
 
 tk_src = files('e_wl_testkit.c')

@@ -451,6 +451,13 @@ tk_toplevel_configured(Tk_Toplevel *top, int *w, int *h, int *count)
 }
 
 void
+tk_toplevel_painted(Tk_Toplevel *top, int *w, int *h)
+{
+   if (w) *w = top->w;
+   if (h) *h = top->h;
+}
+
+void
 tk_settle(Tk *tk)
 {
    tk_sync(tk);
@@ -508,5 +515,26 @@ void
 tk_action(Tk *tk, unsigned int id, const char *name, const char *params)
 {
    wl_test_client_action(tk->tester, id, name, params ?: "");
+   tk_settle(tk);
+}
+
+void
+tk_action_end(Tk *tk, unsigned int id, const char *name, const char *params)
+{
+   wl_test_client_action_end(tk->tester, id, name, params ?: "");
+   tk_settle(tk);
+}
+
+void
+tk_pointer_warp(Tk *tk, int x, int y)
+{
+   wl_test_pointer_warp(tk->tester, x, y);
+   tk_settle(tk);
+}
+
+void
+tk_pointer_move(Tk *tk, int dx, int dy)
+{
+   wl_test_pointer_move(tk->tester, dx, dy);
    tk_settle(tk);
 }

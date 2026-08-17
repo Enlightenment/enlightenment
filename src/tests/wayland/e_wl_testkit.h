@@ -11,7 +11,7 @@
 
 #define TK_MAX_CLIENTS 64
 #define TK_MAX_GLOBALS 64
-#define TK_WL_TEST_VERSION 3
+#define TK_WL_TEST_VERSION 4
 
 /* Mirrors wl_test.client_info. */
 typedef struct
@@ -59,6 +59,10 @@ void tk_toplevel_configured(Tk_Toplevel *top, int *w, int *h, int *count);
  * destroys a buffer as soon as it is released, as real clients do. */
 void tk_toplevel_paint(Tk_Toplevel *top, int w, int h);
 
+/* The size this toplevel last painted at. Not always the last configure:
+ * E ends an interactive resize with a 0x0 "you choose" configure. */
+void tk_toplevel_painted(Tk_Toplevel *top, int *w, int *h);
+
 /* Unmap and destroy it, and settle. */
 void tk_toplevel_del(Tk_Toplevel *top);
 
@@ -94,5 +98,12 @@ Tk_Client *tk_expect(Tk *tk, const char *app_id);
 
 /* Run one of E's own actions on a window. Empty or NULL params means none. */
 void tk_action(Tk *tk, unsigned int id, const char *name, const char *params);
+
+/* Finish an action that took a grab, as a binding does on release. */
+void tk_action_end(Tk *tk, unsigned int id, const char *name, const char *params);
+
+/* Put the pointer somewhere, or move it by a delta. */
+void tk_pointer_warp(Tk *tk, int x, int y);
+void tk_pointer_move(Tk *tk, int dx, int dy);
 
 #endif

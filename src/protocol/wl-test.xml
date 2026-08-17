@@ -23,7 +23,7 @@
     DEALINGS IN THE SOFTWARE.
   </copyright>
 
-  <interface name="wl_test" version="3">
+  <interface name="wl_test" version="4">
     <description summary="private interface for the compositor test suite">
       A back door into the compositor for its own test suite. It exposes
       internal state and synthesises input, so it is only built with
@@ -275,6 +275,20 @@
         Posts unknown_client if no window has that id, and unknown_action
         if no action by that name is registered: a silent no-op would let
         a test with a typo pass.
+      </description>
+      <arg name="id" type="uint"/>
+      <arg name="name" type="string"/>
+      <arg name="params" type="string"/>
+    </request>
+
+    <request name="client_action_end" since="4">
+      <description summary="finish an action that holds a grab">
+        Runs the second half of an action, which a binding runs on button
+        release. window_move and window_resize take a grab that only that
+        half ends; between the two, pointer_move drives the grab as a
+        user's drag would.
+
+        Posts unknown_action if the action has no second half.
       </description>
       <arg name="id" type="uint"/>
       <arg name="name" type="string"/>

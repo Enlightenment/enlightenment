@@ -227,6 +227,27 @@ _wl_test_cb_client_action(struct wl_client *client EINA_UNUSED, struct wl_resour
 }
 
 static void
+_wl_test_cb_client_action_end(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, uint32_t id, const char *name, const char *params)
+{
+   E_Client *ec;
+   E_Action *act;
+
+   ec = _wl_test_client_by_id(resource, id);
+   if (!ec) return;
+
+   act = e_action_find(name);
+   if ((!act) || (!act->func.end))
+     {
+        wl_resource_post_error(resource, WL_TEST_ERROR_UNKNOWN_ACTION,
+                               "no action named '%s' with a second half",
+                               name ?: "");
+        return;
+     }
+
+   act->func.end(E_OBJECT(ec), (params && params[0]) ? params : NULL);
+}
+
+static void
 _wl_test_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
    wl_resource_destroy(resource);
@@ -567,6 +588,7 @@ static const struct wl_test_interface _wl_test_implementation =
    _wl_test_cb_pointer_move,
    _wl_test_cb_get_clients,
    _wl_test_cb_client_action,
+   _wl_test_cb_client_action_end,
 };
 
 static void
@@ -600,7 +622,7 @@ e_modapi_init(E_Module *m)
         return NULL;
      }
 
-   _wl_test_global = wl_global_create(e_comp_wl->wl.disp, &wl_test_interface, 3,
+   _wl_test_global = wl_global_create(e_comp_wl->wl.disp, &wl_test_interface, 4,
                                      NULL, _wl_test_cb_bind);
    if (!_wl_test_global)
      {
