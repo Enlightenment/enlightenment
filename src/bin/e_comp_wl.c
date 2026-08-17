@@ -826,6 +826,11 @@ _e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event 
    if ((ec->shading) || (ec->shaded)) return;
    if (!ec->comp_data->shell.configure_send) return;
    if (ec->comp_data->maximizing) return;
+
+   /* Applying the client's own commit: echoing its size back as a
+    * configure would countermand one still in flight, e.g. a maximise. */
+   if (ec->comp_data->in_commit) return;
+
    if (e_client_util_resizing_get(ec) && e_comp_wl->resize.edges)
      {
         int x, y;
@@ -883,6 +888,10 @@ _e_comp_wl_evas_cb_state_update(void *data, Evas_Object *obj EINA_UNUSED, void *
    E_Client *ec = data;
 
    if (e_object_is_del(E_OBJECT(ec))) return;
+
+   /* Same as the resize callback: e_client_maximize() lands here during
+    * the commit that acked the maximise, before the client has resized. */
+   if (ec->comp_data->in_commit) return;
 
    /* check for wayland pixmap */
 
