@@ -24,6 +24,10 @@ struct E_Shell_Data
    uint32_t edges;
    int32_t width;
    int32_t height;
+   /* window geometry before maximize: ec->saved is the surface size,
+    * which includes a client-side shadow */
+   int32_t unmax_w;
+   int32_t unmax_h;
    Eina_List *pending;
    struct wl_resource *surface;
    void *shell;

@@ -646,6 +646,7 @@ static void
 _e_xdg_toplevel_cb_maximized_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
    E_Client *ec;
+   E_Shell_Data *shd;
    int w, h;
 
    /* get the client for this resource */
@@ -680,6 +681,14 @@ _e_xdg_toplevel_cb_maximized_set(struct wl_client *client EINA_UNUSED, struct wl
                }
           }
      }
+   shd = ec->comp_data->shell.data;
+   if ((shd) && (ec->comp_data->shell.window.w > 0) &&
+       (ec->comp_data->shell.window.h > 0))
+     {
+        shd->unmax_w = ec->comp_data->shell.window.w;
+        shd->unmax_h = ec->comp_data->shell.window.h;
+     }
+
    _xdg_shell_surface_send_configure(resource, ec->fullscreen, 1, 0, w, h);
 }
 
@@ -707,8 +716,12 @@ _e_xdg_toplevel_cb_maximized_unset(struct wl_client *client EINA_UNUSED, struct 
      }
    else
      {
+        E_Shell_Data *shd = ec->comp_data->shell.data;
+
         if (e_config->window_maximize_animate && (!ec->maximize_anims_disabled))
           w = ec->w, h = ec->h;
+        else if ((shd) && (shd->unmax_w) && (shd->unmax_h))
+          w = shd->unmax_w, h = shd->unmax_h;
         else
           w = ec->saved.w, h = ec->saved.h;
      }
