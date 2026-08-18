@@ -333,6 +333,10 @@ _e_comp_wl_zxdg_imported_v1_set_parent_of(struct wl_client *client EINA_UNUSED, 
    Imported *im = wl_resource_get_user_data(resource);
    E_Client *ec = NULL;
 
+   /* NULL once a failed import was answered with 'destroyed': the client
+    * may not have read that event yet. */
+   if (!im) return;
+
    if (surface_resource) ec = wl_resource_get_user_data(surface_resource);
 
    if (ec && ((ec->netwm.type != E_WINDOW_TYPE_NORMAL) || (!ec->comp_data->is_xdg_surface)))
