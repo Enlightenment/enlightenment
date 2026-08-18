@@ -397,12 +397,14 @@ _e_xdg_surface_state_add(struct wl_resource *resource, struct wl_array *states, 
 static void
 _e_xdg_surface_tiled_states_add(struct wl_resource *resource, struct wl_array *states, E_Maximize dir)
 {
-   if ((dir == E_MAXIMIZE_LEFT) || (dir == E_MAXIMIZE_HORIZONTAL))
+   if ((dir == E_MAXIMIZE_LEFT) || (dir == E_MAXIMIZE_HORIZONTAL) ||
+       (dir == E_MAXIMIZE_BOTH))
      _e_xdg_surface_state_add(resource, states, XDG_TOPLEVEL_STATE_TILED_LEFT);
-   if ((dir == E_MAXIMIZE_RIGHT) || (dir == E_MAXIMIZE_HORIZONTAL))
+   if ((dir == E_MAXIMIZE_RIGHT) || (dir == E_MAXIMIZE_HORIZONTAL) ||
+       (dir == E_MAXIMIZE_BOTH))
      _e_xdg_surface_state_add(resource, states, XDG_TOPLEVEL_STATE_TILED_RIGHT);
    if ((dir == E_MAXIMIZE_LEFT) || (dir == E_MAXIMIZE_RIGHT) ||
-       (dir == E_MAXIMIZE_VERTICAL))
+       (dir == E_MAXIMIZE_VERTICAL) || (dir == E_MAXIMIZE_BOTH))
      {
         _e_xdg_surface_state_add(resource, states, XDG_TOPLEVEL_STATE_TILED_TOP);
         _e_xdg_surface_state_add(resource, states, XDG_TOPLEVEL_STATE_TILED_BOTTOM);
@@ -487,7 +489,11 @@ _xdg_shell_surface_send_configure(struct wl_resource *resource, Eina_Bool fullsc
         if ((dir == E_MAXIMIZE_BOTH) ||
             (wl_resource_get_version(resource) < XDG_TOPLEVEL_STATE_TILED_LEFT_SINCE_VERSION))
           _e_xdg_surface_state_add(resource, &states, XDG_TOPLEVEL_STATE_MAXIMIZED);
-        else
+        /* A maximized window is against all four edges too. A client that
+         * draws its own shadow uses them to drop it: Chromium told only
+         * maximized keeps its shadow insets, and on restore takes them out
+         * of the size it is given, shrinking by 32px each cycle. */
+        if (wl_resource_get_version(resource) >= XDG_TOPLEVEL_STATE_TILED_LEFT_SINCE_VERSION)
           _e_xdg_surface_tiled_states_add(resource, &states, dir);
      }
    if (edges)

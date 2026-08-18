@@ -1,8 +1,9 @@
 /* Which xdg_toplevel states a maximized window is told.
  *
  * A window snapped to half the screen, or stretched along one axis, is not
- * maximized: from version 2 it hears which edges are tiled instead. A client
- * bound at version 1 has no word for that and still hears maximized. */
+ * maximized: from version 2 it hears which edges are tiled instead. A
+ * maximized window hears maximized and all four edges. A client bound at
+ * version 1 has no word for edges and hears maximized. */
 #include <stdio.h>
 #include <string.h>
 
@@ -133,9 +134,8 @@ main(void)
    _toggle(tk, id, "default horizontal");
 
    _toggle(tk, id, "default both");
-   if (!(tk_toplevel_states(top) & S(MAXIMIZED)))
-     tk_fail(tk, "a window maximized both ways is not told maximized "
-                 "(states 0x%x)", tk_toplevel_states(top));
+   _expect(tk, "default both", tk_toplevel_states(top), SHAPE,
+           "a maximized window");
    _toggle(tk, id, "default both");
    tk_toplevel_del(top);
 
