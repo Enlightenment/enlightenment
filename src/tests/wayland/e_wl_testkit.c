@@ -33,6 +33,14 @@ struct _Tk
    struct wl_test *tester;
    uint32_t tester_version;
 
+   struct
+     {
+        char iface[64];
+        uint32_t name;
+        uint32_t version;
+     } globals[TK_MAX_GLOBALS];
+   int global_count;
+
    Tk_Client clients[TK_MAX_CLIENTS];
    int client_count;
    int done_count;
@@ -174,6 +182,15 @@ _global_add(void *data, struct wl_registry *reg, uint32_t id,
             const char *iface, uint32_t version)
 {
    Tk *tk = data;
+
+   if (tk->global_count < TK_MAX_GLOBALS)
+     {
+        snprintf(tk->globals[tk->global_count].iface,
+                 sizeof(tk->globals[tk->global_count].iface), "%s", iface);
+        tk->globals[tk->global_count].name = id;
+        tk->globals[tk->global_count].version = version;
+        tk->global_count++;
+     }
 
    if (!strcmp(iface, "wl_compositor"))
      tk->compositor = wl_registry_bind(reg, id, &wl_compositor_interface,
@@ -353,6 +370,36 @@ tk_toplevel_del(Tk_Toplevel *top)
    wl_surface_destroy(top->surface);
    free(top);
    tk_settle(tk);
+}
+
+struct wl_surface *
+tk_toplevel_surface(Tk_Toplevel *top)
+{
+   return top->surface;
+}
+
+uint32_t
+tk_global_version(Tk *tk, const char *iface)
+{
+   int i;
+
+   for (i = 0; i < tk->global_count; i++)
+     if (!strcmp(tk->globals[i].iface, iface)) return tk->globals[i].version;
+   return 0;
+}
+
+void *
+tk_bind(Tk *tk, const struct wl_interface *iface, uint32_t version)
+{
+   int i;
+
+   for (i = 0; i < tk->global_count; i++)
+     {
+        if (strcmp(tk->globals[i].iface, iface->name)) continue;
+        return wl_registry_bind(tk->registry, tk->globals[i].name, iface,
+                                version);
+     }
+   return NULL;
 }
 
 void

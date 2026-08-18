@@ -10,6 +10,7 @@
 #include "xdg-shell-client-protocol.h"
 
 #define TK_MAX_CLIENTS 64
+#define TK_MAX_GLOBALS 64
 #define TK_WL_TEST_VERSION 3
 
 /* Mirrors wl_test.client_info. */
@@ -50,6 +51,17 @@ void tk_toplevel_configured(Tk_Toplevel *top, int *w, int *h, int *count);
 
 /* Unmap and destroy it, and settle. */
 void tk_toplevel_del(Tk_Toplevel *top);
+
+/* The wl_surface behind a toplevel, owned by the kit. */
+struct wl_surface *tk_toplevel_surface(Tk_Toplevel *top);
+
+/* The version the compositor advertised for a global, or 0 if none. */
+uint32_t tk_global_version(Tk *tk, const char *iface);
+
+/* Bind a global the kit does not know about, at exactly this version, or
+ * return NULL if it is not advertised. It does not clamp to what is
+ * offered: check tk_global_version first when the version matters. */
+void *tk_bind(Tk *tk, const struct wl_interface *iface, uint32_t version);
 
 /* Round-trip through the compositor's own main loop, so effects E applies from
  * a job or an idler have landed. */

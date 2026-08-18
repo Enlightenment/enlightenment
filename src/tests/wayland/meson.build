@@ -26,6 +26,7 @@ foreach p: [
   '../../protocol/wl-test.xml',
   '@0@/stable/xdg-shell/xdg-shell.xml'.format(dir_wayland_protocols),
   '@0@/unstable/xdg-shell/xdg-shell-unstable-v6.xml'.format(dir_wayland_protocols),
+  '@0@/unstable/xdg-foreign/xdg-foreign-unstable-v1.xml'.format(dir_wayland_protocols),
 ]
   test_proto_src += gen_scanner_client.process(p)
   test_proto_src += gen_scanner_impl.process(p)
@@ -48,6 +49,7 @@ wl_protocol_tests = [
   ['client-list', 'test_client_list.c'],
   ['client-action', 'test_client_action.c'],
   ['no-dialogs', 'test_no_dialogs.c'],
+  ['xdg-foreign', 'test_xdg_foreign.c'],
 ]
 
 tk_src = files('e_wl_testkit.c')
