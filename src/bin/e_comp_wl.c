@@ -597,8 +597,10 @@ _e_comp_wl_evas_cb_focus_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
    _e_comp_wl_client_priority_raise(ec);
 
    wc = wl_resource_get_client(ec->comp_data->surface);
-   /* A popup holding an xdg_popup.grab keeps the keyboard itself. */
-   if (ec->comp_data->is_xdg_surface && (!ec->comp_data->grab))
+   /* A popup holding an xdg_popup.grab keeps the keyboard itself, and a
+    * child toplevel (a dialog) is not a popup. */
+   if (ec->comp_data->is_xdg_surface && e_client_util_is_popup(ec) &&
+       (!ec->comp_data->grab))
      {
         /* We only send kbd focus to xdg top levels */
         while (ec->parent)
@@ -634,7 +636,7 @@ _e_comp_wl_keyboard_leave(E_Client *ec)
    if (!eina_list_count(e_comp_wl->kbd.resources)) return;
    if (!ec->comp_data) return;
 
-   if (ec->comp_data->is_xdg_surface)
+   if (ec->comp_data->is_xdg_surface && e_client_util_is_popup(ec))
      {
         /* If we left an xdg popup to enter some other (sub)surface
          * of the same top level, we don't need to do anything.
