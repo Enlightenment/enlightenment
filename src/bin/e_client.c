@@ -5700,6 +5700,10 @@ e_client_is_stacking(const E_Client *ec)
 E_API Eina_Bool
 e_client_has_xwindow(const E_Client *ec)
 {
+   /* Callers pass e_comp_wl->drag_client and e_comp_wl->ptr.ec, which are
+    * routinely NULL. */
+   if (!ec) return EINA_FALSE;
+
 #ifdef HAVE_WAYLAND_ONLY
    (void)ec;
    return EINA_FALSE;
