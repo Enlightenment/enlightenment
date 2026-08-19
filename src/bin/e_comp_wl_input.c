@@ -19,11 +19,12 @@ static struct xkb_context *cached_context;
 static struct xkb_keymap *cached_keymap;
 static xkb_layout_index_t choosen_group;
 
-static void
-_e_comp_wl_input_update_seat_caps(void)
+/* what every bound seat resource was last told; -1 so the first call sends */
+static int _seat_caps_sent = -1;
+
+static enum wl_seat_capability
+_e_comp_wl_input_seat_caps(void)
 {
-   Eina_List *l;
-   struct wl_resource *res;
    enum wl_seat_capability caps = 0;
 
    if (e_comp_wl->ptr.enabled)
@@ -32,6 +33,21 @@ _e_comp_wl_input_update_seat_caps(void)
      caps |= WL_SEAT_CAPABILITY_KEYBOARD;
    if (e_comp_wl->touch.enabled)
      caps |= WL_SEAT_CAPABILITY_TOUCH;
+
+   return caps;
+}
+
+/* wl_seat.capabilities is only sent when the seat gains or loses a device:
+ * a client may create a new wl_pointer each time it arrives. */
+static void
+_e_comp_wl_input_update_seat_caps(void)
+{
+   Eina_List *l;
+   struct wl_resource *res;
+   enum wl_seat_capability caps = _e_comp_wl_input_seat_caps();
+
+   if ((int)caps == _seat_caps_sent) return;
+   _seat_caps_sent = (int)caps;
 
    EINA_LIST_FOREACH(e_comp_wl->seat.resources, l, res)
      wl_seat_send_capabilities(res, caps);
@@ -311,7 +327,7 @@ _e_comp_wl_input_cb_bind_seat(struct wl_client *client, void *data EINA_UNUSED, 
                                   e_comp->wl_comp_data,
                                   _e_comp_wl_input_cb_unbind_seat);
 
-   _e_comp_wl_input_update_seat_caps();
+   wl_seat_send_capabilities(res, _e_comp_wl_input_seat_caps());
    if (e_comp_wl->seat.version >= WL_SEAT_NAME_SINCE_VERSION)
      wl_seat_send_name(res, e_comp_wl->seat.name);
 }
