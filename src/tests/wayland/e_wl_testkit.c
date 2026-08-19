@@ -332,8 +332,9 @@ tk_fail(Tk *tk, const char *fmt, ...)
    exit(1);
 }
 
-Tk_Toplevel *
-tk_toplevel_new(Tk *tk, const char *app_id, const char *title, int w, int h)
+static Tk_Toplevel *
+_toplevel_make(Tk *tk, const char *app_id, const char *title, int w, int h,
+               Tk_Toplevel *parent)
 {
    Tk_Toplevel *top;
 
@@ -350,6 +351,7 @@ tk_toplevel_new(Tk *tk, const char *app_id, const char *title, int w, int h)
    xdg_toplevel_add_listener(top->toplevel, &_toplevel_listener, top);
    if (title) xdg_toplevel_set_title(top->toplevel, title);
    if (app_id) xdg_toplevel_set_app_id(top->toplevel, app_id);
+   if (parent) xdg_toplevel_set_parent(top->toplevel, parent->toplevel);
 
    wl_surface_commit(top->surface);
    while (top->configures < 1)
@@ -358,6 +360,19 @@ tk_toplevel_new(Tk *tk, const char *app_id, const char *title, int w, int h)
 
    tk_settle(tk);
    return top;
+}
+
+Tk_Toplevel *
+tk_toplevel_new(Tk *tk, const char *app_id, const char *title, int w, int h)
+{
+   return _toplevel_make(tk, app_id, title, w, h, NULL);
+}
+
+Tk_Toplevel *
+tk_toplevel_new_child(Tk *tk, const char *app_id, const char *title,
+                      int w, int h, Tk_Toplevel *parent)
+{
+   return _toplevel_make(tk, app_id, title, w, h, parent);
 }
 
 void

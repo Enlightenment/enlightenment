@@ -51,6 +51,7 @@ wl_protocol_tests = [
   ['no-dialogs', 'test_no_dialogs.c'],
   ['xdg-foreign', 'test_xdg_foreign.c'],
   ['seat-capabilities', 'test_seat_capabilities.c'],
+  ['dialog-focus', 'test_dialog_focus.c'],
 ]
 
 tk_src = files('e_wl_testkit.c')

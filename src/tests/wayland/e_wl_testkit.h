@@ -45,6 +45,12 @@ void tk_fail(Tk *tk, const char *fmt, ...) __attribute__((noreturn, format(print
 Tk_Toplevel *tk_toplevel_new(Tk *tk, const char *app_id, const char *title,
                              int w, int h);
 
+/* A toplevel with a parent, set before its first commit: a dialog, not a
+ * popup. */
+Tk_Toplevel *tk_toplevel_new_child(Tk *tk, const char *app_id,
+                                   const char *title, int w, int h,
+                                   Tk_Toplevel *parent);
+
 /* The size the compositor last asked this toplevel to be, and the number of
  * configures it has answered. */
 void tk_toplevel_configured(Tk_Toplevel *top, int *w, int *h, int *count);
