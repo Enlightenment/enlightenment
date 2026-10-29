@@ -792,6 +792,15 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas EINA_UNUSED, E_Config_Dialog_Data
                        cs2 = e_randr2_config_screen_find(s, e_randr2_cfg);
                        if ((cs2) && (cs2->custom_label_screen) && (cs2->custom_label_screen[0]))
                          cs->custom_label_screen = eina_stringshare_add(cs2->custom_label_screen);
+                       // a mode kept only for this session (set from outside
+                       // E) is not Screen Setup's to save: show the saved one
+                       if ((cs2) && (e_randr2_screen_session_mode_has(s)))
+                         {
+                            cs->mode_refresh = cs2->mode_refresh;
+                            cs->mode_w = cs2->mode_w;
+                            cs->mode_h = cs2->mode_h;
+                            cs->rotation = cs2->rotation;
+                         }
                     }
                   cs->scale_multiplier = s->config.scale_multiplier;
                   cfdata->screens = eina_list_append(cfdata->screens, cs);
