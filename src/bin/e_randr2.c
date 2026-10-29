@@ -1,6 +1,23 @@
 #include "e.h"
 
 #define E_RANDR_CONFIG_VERSION 3
+// how long after one of our own applies nothing is taken for an external
+// change (on top of hotplug_response), see _apply_guard_until
+#define APPLY_GUARD_SECONDS 3.0
+// how many times a possible echo of our own apply is looked at again
+#define DEFER_MAX 10
+
+// session-only record of a mode set from outside E (see
+// _config_adopt_external()). it is applied on top of the saved config but
+// never stored in it, so it is gone when E restarts.
+typedef struct
+{
+   char  *id;
+   int    w, h;
+   double refresh;
+   int    rotation;
+} Mode_Override;
+
 
 /////////////////////////////////////////////////////////////////////////
 static Eina_Bool               _screen_closed(E_Randr2_Screen *s);
@@ -9,6 +26,7 @@ static void                    _cb_delay_init_save(void *data);
 static Eina_Bool               _cb_delay_timer(void *data);
 static Eina_Bool               _cb_fade_animator(void *data);
 static void                    _animated_apply(void);
+static void                    _overrides_clear(void);
 static void                    _do_apply(void);
 static void                    _info_free(E_Randr2 *r);
 static E_Config_Randr2        *_config_load(void);
@@ -19,6 +37,7 @@ static void                    _config_apply(E_Randr2 *r, E_Config_Randr2 *cfg);
 static int                     _config_screen_match_count(E_Randr2 *r, E_Config_Randr2 *cfg);
 static char                   *_screens_fingerprint(E_Randr2 *r);
 static Eina_Bool               _screens_differ(E_Randr2 *r1, E_Randr2 *r2);
+static Eina_Bool               _screens_external_change(E_Randr2 *r1, E_Randr2 *r2);
 static Eina_Bool               _cb_screen_change_delay(void *data);
 static E_Randr2_Screen        *_screen_output_find(const char *out);
 static E_Randr2_Screen        *_screen_id_find(const char *id);
@@ -132,6 +151,7 @@ e_randr2_shutdown(void)
    if (!initted) return 0;
    initted = EINA_FALSE;
    _animated_apply_abort();
+   _overrides_clear();
    // nuke any screen config delay handler
    if (_screen_delay_timer) ecore_timer_del(_screen_delay_timer);
    _screen_delay_timer = NULL;
@@ -168,6 +188,9 @@ e_randr2_config_save(void)
 E_API void
 e_randr2_config_apply(void)
 {
+   // an apply asked for from outside the hotplug handling (Screen Setup
+   // etc.) means the saved config rules again
+   _overrides_clear();
    _animated_apply();
 }
 
@@ -219,6 +242,9 @@ static double _start_time = 0.0;
 static Ecore_Animator *_fade_animator = NULL;
 static Ecore_Timer *_apply_delay = NULL;
 Eina_Bool _applying = EINA_FALSE;
+// nothing is adopted as an external change until this time (ecore_time_get)
+static double _apply_guard_until = 0.0;
+static int _defer_count = 0;
 static int _target_from = 0;
 static int _target_to = 0;
 static Evas_Object *_fade_obj = NULL;
@@ -335,6 +361,11 @@ _do_apply(void)
    _screen_config_eval();
    L("RRR: really apply config...");
    e_comp->screen->apply();
+   // events caused by this apply keep arriving for a while (debounce,
+   // async xrandr command): don't take them for an external change
+   _apply_guard_until = ecore_time_get() + APPLY_GUARD_SECONDS +
+     (((e_randr2_cfg) && (e_randr2_cfg->hotplug_response > 0.2)) ?
+      e_randr2_cfg->hotplug_response : 1.0);
    // only update canvas/zones if compositor is initialized. during
    // e_randr2_init(), _do_apply() is called before e_comp->ee/evas exist,
    // so e_comp_canvas_update() would create broken zones with NULL evas
@@ -551,9 +582,47 @@ _config_update(E_Randr2 *r, E_Config_Randr2 *cfg, Eina_Bool update_only)
    return ret;
 }
 
+static Eina_List *_overrides = NULL;
+
+static Mode_Override *
+_override_find(const char *id)
+{
+   Eina_List *l;
+   Mode_Override *ov;
+
+   if (!id) return NULL;
+   EINA_LIST_FOREACH(_overrides, l, ov)
+     {
+        if (!strcmp(ov->id, id)) return ov;
+     }
+   return NULL;
+}
+
+static void
+_override_del(Mode_Override *ov)
+{
+   _overrides = eina_list_remove(_overrides, ov);
+   free(ov->id);
+   free(ov);
+}
+
+static void
+_overrides_clear(void)
+{
+   Mode_Override *ov;
+
+   EINA_LIST_FREE(_overrides, ov)
+     {
+        free(ov->id);
+        free(ov);
+     }
+}
+
 static void
 _config_really_apply(E_Randr2_Screen *s, E_Config_Randr2_Screen *cs)
 {
+   Mode_Override *ov;
+
    if (cs)
      {
         s->config.enabled = EINA_TRUE;
@@ -571,6 +640,15 @@ _config_really_apply(E_Randr2_Screen *s, E_Config_Randr2_Screen *cs)
         s->config.relative.align = cs->rel_align;
         s->config.scale_multiplier = cs->scale_multiplier;
         s->config.ignore_disconnect = cs->ignore_disconnect;
+        ov = _override_find(s->id);
+        if (ov)
+          {
+             L("RRR: session mode override for '%s'", s->info.name);
+             s->config.mode.w = ov->w;
+             s->config.mode.h = ov->h;
+             s->config.mode.refresh = ov->refresh;
+             s->config.rotation = ov->rotation;
+          }
         L("RRR: really apply '%s' ignore discon %i", s->info.name, s->config.ignore_disconnect);
      }
    else
@@ -822,6 +900,201 @@ _screens_differ(E_Randr2 *r1, E_Randr2 *r2)
    return changed;
 }
 
+static Eina_Bool
+_fullscreen_client_present(void)
+{
+   E_Client *ec;
+
+   E_CLIENT_FOREACH(ec)
+     {
+        // only what the user can see: not iconified, on a visible desk
+        if ((ec->fullscreen) && (!ec->iconic) &&
+            ((ec->sticky) || ((ec->desk) && (ec->desk->visible))))
+          return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_screen_live(E_Randr2_Screen *s)
+{
+   return (s->id) && (s->info.connected) && (!_screen_closed(s));
+}
+
+// true if the mode, refresh or rotation of s (new state) differs from
+// the saved config cs
+static Eina_Bool
+_screen_differs_from_config(E_Randr2_Screen *s, E_Config_Randr2_Screen *cs)
+{
+   return (cs->mode_w != s->config.mode.w) ||
+          (cs->mode_h != s->config.mode.h) ||
+          (fabs(cs->mode_refresh - s->config.mode.refresh) > 0.5) ||
+          (cs->rotation != s->config.rotation);
+}
+
+// true if s (new state) differs from ss (what E had). keep the fields in
+// step with the screen comparison in _screens_differ()
+static Eina_Bool
+_screen_differs_from_old(E_Randr2_Screen *s, E_Randr2_Screen *ss)
+{
+   return (s->config.geom.x != ss->config.geom.x) ||
+          (s->config.geom.y != ss->config.geom.y) ||
+          (s->config.geom.w != ss->config.geom.w) ||
+          (s->config.geom.h != ss->config.geom.h) ||
+          (s->config.mode.w != ss->config.mode.w) ||
+          (s->config.mode.h != ss->config.mode.h) ||
+          (fabs(s->config.mode.refresh - ss->config.mode.refresh) > 0.5) ||
+          (s->config.rotation != ss->config.rotation);
+}
+
+/*
+ * Returns true if r2 (fresh from the driver) differs from r1 (what E
+ * believes) because something outside E (xrandr, a remote desktop
+ * server...) changed the mode, refresh or rotation of outputs E already
+ * knows, to something the saved config would not have produced.
+ * Plug/unplug, lid, enable/disable and purely positional changes are not
+ * external changes for this purpose and keep their normal handling.
+ */
+static Eina_Bool
+_screens_external_change(E_Randr2 *r1, E_Randr2 *r2)
+{
+   char *f1, *f2;
+   Eina_List *l;
+   E_Randr2_Screen *s, *ss;
+   E_Config_Randr2_Screen *cs;
+   Eina_Bool external = EINA_FALSE, same;
+   int enabled = 0;
+
+   f1 = _screens_fingerprint(r1);
+   f2 = _screens_fingerprint(r2);
+   same = (f1) && (f2) && (!strcmp(f1, f2));
+   free(f1);
+   free(f2);
+   if (!same) return EINA_FALSE;
+   // the same screens must be live on both sides (checked both ways)
+   EINA_LIST_FOREACH(r2->screens, l, s)
+     {
+        if (!s->id) continue;
+        ss = _randr_screen_find(r1, s);
+        if ((!ss) || (s->info.lid_closed != ss->info.lid_closed) ||
+            (_screen_live(s) != _screen_live(ss)))
+          return EINA_FALSE;
+     }
+   EINA_LIST_FOREACH(r1->screens, l, ss)
+     {
+        if ((_screen_live(ss)) && (!_randr_screen_find(r2, ss)))
+          return EINA_FALSE;
+     }
+   EINA_LIST_FOREACH(r2->screens, l, s)
+     {
+        if (!_screen_live(s)) continue;
+        ss = _randr_screen_find(r1, s);
+        // never adopt turning a screen on or off
+        if ((!!s->config.enabled) != (!!ss->config.enabled)) return EINA_FALSE;
+        if (!s->config.enabled) continue;
+        enabled++;
+        if (!_screen_differs_from_old(s, ss)) continue;
+        cs = e_randr2_config_screen_find(s, e_randr2_cfg);
+        if ((!cs) || (!cs->enabled)) return EINA_FALSE;
+        // changed, but not in mode/refresh/rotation (just moved): that is
+        // not ours to keep, and must not ride along with a mode change
+        if (!_screen_differs_from_config(s, cs)) return EINA_FALSE;
+        external = EINA_TRUE;
+     }
+   // never adopt a state with nothing enabled
+   if (!enabled) return EINA_FALSE;
+   return external;
+}
+
+// remember the new mode/refresh/rotation of the screens that changed for
+// this session only. the saved config and the relative placement are
+// left alone.
+static void
+_config_adopt_external(E_Randr2 *r1, E_Randr2 *r2)
+{
+   Eina_List *l;
+   E_Randr2_Screen *s, *ss;
+   E_Config_Randr2_Screen *cs;
+   Mode_Override *ov;
+
+   EINA_LIST_FOREACH(r2->screens, l, s)
+     {
+        if (!_screen_live(s)) continue;
+        ss = _randr_screen_find(r1, s);
+        cs = e_randr2_config_screen_find(s, e_randr2_cfg);
+        if ((!ss) || (!cs) || (!_screen_differs_from_old(s, ss)) ||
+            (!_screen_differs_from_config(s, cs)))
+          continue;
+        L("RRR: adopting '%s' for this session: %ix%i@%1.2f rot=%i (saved %ix%i@%1.2f rot=%i)",
+          s->info.name, s->config.mode.w, s->config.mode.h,
+          s->config.mode.refresh, s->config.rotation,
+          cs->mode_w, cs->mode_h, cs->mode_refresh, cs->rotation);
+        ov = _override_find(s->id);
+        if (!ov)
+          {
+             ov = calloc(1, sizeof(Mode_Override));
+             if (!ov) continue;
+             ov->id = strdup(s->id);
+             if (!ov->id)
+               {
+                  free(ov);
+                  continue;
+               }
+             _overrides = eina_list_append(_overrides, ov);
+          }
+        ov->w = s->config.mode.w;
+        ov->h = s->config.mode.h;
+        ov->refresh = s->config.mode.refresh;
+        ov->rotation = s->config.rotation;
+     }
+}
+
+static E_Randr2_Screen *
+_screen_find_by_id(E_Randr2 *r, const char *id)
+{
+   Eina_List *l;
+   E_Randr2_Screen *s;
+
+   EINA_LIST_FOREACH(r->screens, l, s)
+     {
+        if ((s->id) && (!strcmp(s->id, id))) return s;
+     }
+   return NULL;
+}
+
+// a session mode is an external mode adopted for this session only, never saved
+E_API Eina_Bool
+e_randr2_screen_session_mode_has(E_Randr2_Screen *s)
+{
+   return (s) && (_override_find(s->id));
+}
+
+// forget overrides of screens that are not live on both sides (hotplug).
+// like the saved config, an EDID-less output has the same id after an
+// unplug and replug, so one inside a single debounce window keeps its
+// override. also forget those that are back at the saved mode.
+static void
+_overrides_prune(E_Randr2 *r1, E_Randr2 *r2)
+{
+   Eina_List *l, *ll;
+   Mode_Override *ov;
+   E_Randr2_Screen *s, *ss;
+   E_Config_Randr2_Screen *cs;
+
+   EINA_LIST_FOREACH_SAFE(_overrides, l, ll, ov)
+     {
+        s = _screen_find_by_id(r2, ov->id);
+        ss = _screen_find_by_id(r1, ov->id);
+        cs = s ? e_randr2_config_screen_find(s, e_randr2_cfg) : NULL;
+        if ((!s) || (!ss) || (!cs) || (!_screen_live(s)) || (!_screen_live(ss)) ||
+            (!_screen_differs_from_config(s, cs)))
+          {
+             L("RRR: dropping session mode of '%s'", ov->id);
+             _override_del(ov);
+          }
+     }
+}
+
 /*
 static Eina_Bool
 _cb_deferred_suspend_screen_change(void *data EINA_UNUSED)
@@ -856,7 +1129,8 @@ _cb_deferred_suspend_screen_change(void *data EINA_UNUSED)
 static Eina_Bool
 _cb_screen_change_delay(void *data EINA_UNUSED)
 {
-   Eina_Bool change = EINA_FALSE;
+   Eina_Bool change = EINA_FALSE, differ = EINA_FALSE, defer = EINA_FALSE;
+   Eina_Bool policy_changed = EINA_FALSE;
    _screen_delay_timer = NULL;
    L("RRR: ... %i %i", event_screen, event_ignore);
    // if we had a screen plug/unplug etc. event and we shouldn't ignore it...
@@ -875,16 +1149,43 @@ _cb_screen_change_delay(void *data EINA_UNUSED)
         if (rtemp)
           {
              if (e_randr2) _randr_screen_props_copyover(e_randr2, rtemp);
-             if (_screens_differ(e_randr2, rtemp)) change = EINA_TRUE;
+             differ = _screens_differ(e_randr2, rtemp);
+             // a screen new to the saved config (default policy) takes the
+             // normal path, never the adoption one
              if (e_randr2_cfg->default_policy != E_RANDR2_POLICY_NONE)
                {
                   if (_config_update(rtemp, e_randr2_cfg, 1))
                     {
+                       policy_changed = EINA_TRUE;
                        e_randr2_config_save();
                        if (e_randr2_cfg->default_policy != E_RANDR2_POLICY_ASK)
                          change = EINA_TRUE;
                     }
                }
+             _overrides_prune(e_randr2, rtemp);
+             // (adoption is only done on X11. comp_type is set by the time
+             // this timer runs, unlike during e_randr2_init())
+             if ((!policy_changed) && (e_comp->comp_type == E_PIXMAP_TYPE_X) &&
+                 (_screens_external_change(e_randr2, rtemp)))
+               {
+                  // same monitors, but someone else (xrandr, remote
+                  // desktop...) changed their mode: keep it for this
+                  // session instead of reverting it
+                  if (_fullscreen_client_present())
+                    L("RRR: fullscreen client present, not adopting external change");
+                  else if ((_applying) || (ecore_time_get() < _apply_guard_until))
+                    {
+                       // may be the echo of our own apply: look again later
+                       if (_defer_count < DEFER_MAX) defer = EINA_TRUE;
+                       else L("RRR: looked %i times, not adopting external change", _defer_count);
+                    }
+                  else
+                    {
+                       _config_adopt_external(e_randr2, rtemp);
+                       differ = EINA_FALSE;
+                    }
+               }
+             if (differ) change = EINA_TRUE;
              EINA_LIST_FOREACH(rtemp->screens, l, s)
                {
                   L("RRR: scr: %s lid=%i conn=%i", s->id, s->info.is_lid, s->info.connected);
@@ -924,6 +1225,20 @@ _cb_screen_change_delay(void *data EINA_UNUSED)
              L("RRR: lids=%i closed=%i ext=%i prev_ext=%i", lid_screens, close_lid_screens, external_screens, prev_external_screens);
              _info_free(rtemp);
           }
+        if (defer)
+          {
+             double t = _apply_guard_until - ecore_time_get();
+
+             // keep event_screen set and look at it again when our own
+             // apply is certainly over
+             if (_applying) t = 1.0;
+             if (t < 0.5) t = 0.5;
+             L("RRR: possible echo of our own apply, look again in %1.1fs", t);
+             _defer_count++;
+             _screen_delay_timer = ecore_timer_loop_add(t, _cb_screen_change_delay, NULL);
+             return EINA_FALSE;
+          }
+        _defer_count = 0;
         L("RRR: change = %i", change);
         // we plugged or unplugged some monitor - re-apply config so
         // known screens can be configured
@@ -959,7 +1274,7 @@ _cb_screen_change_delay(void *data EINA_UNUSED)
                   e_screensaver_deactivate();
                }
              if (change)
-               e_randr2_config_apply();
+               _animated_apply();
           }
         if (change)
           {
@@ -1534,6 +1849,9 @@ e_randr2_screen_refresh_queue(Eina_Bool lid_event)
      {
         double t = 1.0;
 
+        // a new event with nothing pending starts a new evaluation (the
+        // deferral re-arm does not come through here)
+        _defer_count = 0;
         if ((e_randr2_cfg) && (e_randr2_cfg->hotplug_response > 0.2))
           t = e_randr2_cfg->hotplug_response;
         _screen_delay_timer = ecore_timer_loop_add(t, _cb_screen_change_delay, NULL);
