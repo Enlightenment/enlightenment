@@ -632,6 +632,20 @@ null_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUS
      _store_error(ctxt, error_msg);
 }
 
+static void
+_set_interactive_hint(E_PackageKit_Module_Context *ctxt, Eldbus_Proxy *proxy)
+{
+   Eldbus_Message *msg;
+   Eldbus_Message_Iter *iter, *hints;
+
+   msg = eldbus_proxy_method_call_new(proxy, "SetHints");
+   iter = eldbus_message_iter_get(msg);
+   eldbus_message_iter_arguments_append(iter, "as", &hints);
+   eldbus_message_iter_arguments_append(hints, "s", "interactive=true");
+   eldbus_message_iter_container_close(iter, hints);
+   eldbus_proxy_send(proxy, msg, null_cb, ctxt, -1);
+}
+
 
 /* RefreshCache(in'b'force) */
 static void
@@ -686,6 +700,7 @@ packagekit_refresh_cache(E_PackageKit_Module_Context *ctxt, const char *transact
 
    obj = eldbus_object_get(ctxt->conn, "org.freedesktop.PackageKit", transaction);
    proxy = eldbus_proxy_get(obj, "org.freedesktop.PackageKit.Transaction");
+   _set_interactive_hint(ctxt, proxy);
    pending = eldbus_proxy_call(proxy, "RefreshCache", null_cb, ctxt, -1, "b", 1);
    if (!pending)
      {
@@ -874,6 +889,7 @@ packagekit_update_packages(E_PackageKit_Module_Context *ctxt, const char *transa
 
    obj = eldbus_object_get(ctxt->conn, "org.freedesktop.PackageKit", transaction);
    proxy = eldbus_proxy_get(obj, "org.freedesktop.PackageKit.Transaction");
+   _set_interactive_hint(ctxt, proxy);
    msg = eldbus_proxy_method_call_new(proxy, "UpdatePackages");
    iter = eldbus_message_iter_get(msg);
    eldbus_message_iter_arguments_append(iter, "tas",
