@@ -322,7 +322,8 @@ _e_sys_comp_resume2(void *data EINA_UNUSED)
 static void
 _e_sys_comp_resume(void)
 {
-   L("SSS: sys resume ... ");
+   L("SSS: sys resume ... unforce pwsv mode");
+   e_powersave_mode_unforce();
    edje_thaw();
    ecore_evas_manual_render_set(e_comp->ee, EINA_FALSE);
    evas_damage_rectangle_add(e_comp->evas, 0, 0, e_comp->w, e_comp->h);
@@ -1190,10 +1191,13 @@ _e_sys_cb_acpi_event(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 static Eina_Bool
 _e_sys_suspend_delay(void *data EINA_UNUSED)
 {
+   L("SSS: _e_sys_suspend_delay()...");
    _e_sys_suspend_delay_timer = NULL;
    _e_sys_begin_time = ecore_time_get();
    if (e_config->suspend_connected_standby == 0)
      {
+        L("SSS: force freeze before normal suspend");
+        e_powersave_mode_force(E_POWERSAVE_MODE_FREEZE);
         if (systemd_works) _e_sys_systemd_suspend();
         else
           {
@@ -1209,6 +1213,7 @@ _e_sys_suspend_delay(void *data EINA_UNUSED)
           ecore_event_handler_add(E_EVENT_ACPI,
                                   _e_sys_cb_acpi_event,
                                   NULL);
+        L("SSS: force freeze before connected standby");
         e_powersave_mode_force(E_POWERSAVE_MODE_FREEZE);
         // XXX: need some system way of forcing the system into a very low
         // power level with as many devices suspended as possible. below is
@@ -1406,6 +1411,7 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
              _e_sys_phantom_wake_check_timer = NULL;
              if (raw)
                {
+                  e_powersave_mode_force(E_POWERSAVE_MODE_EXTREME);
                   _e_sys_suspended = EINA_TRUE;
                   if (e_config->desklock_on_suspend)
                   // XXX: this desklock - ensure its instant
