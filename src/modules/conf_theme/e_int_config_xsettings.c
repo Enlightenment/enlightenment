@@ -167,15 +167,16 @@ _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
         elm_config_save();
      }
    else */
-   if (//cfdata->match_e17_icon_theme &&
-       !!strcmp("_Elementary_Icon_Theme", elm_config_icon_theme_get()))
-     {
-        elm_config_icon_theme_set("_Elementary_Icon_Theme");
-        elm_config_all_flush();
-        elm_config_save();
-     }
+//   if (//cfdata->match_e17_icon_theme &&
+//       !!strcmp("_Elementary_Icon_Theme", elm_config_icon_theme_get()))
+   if (cfdata->icon_overrides && e_config->icon_theme)
+     elm_config_icon_theme_set(e_config->icon_theme);
+   else
+     elm_config_icon_theme_set("_Elementary_Icon_Theme");
+   elm_config_all_flush();
+   elm_config_save();
+
    e_util_env_set("E_ICON_THEME", e_config->icon_theme);
-   if (e_config->icon_theme) elm_config_icon_theme_set(e_config->icon_theme);
 
    ev = E_NEW(E_Event_Config_Icon_Theme, 1);
    if (ev)
