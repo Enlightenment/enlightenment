@@ -1182,6 +1182,10 @@ e_comp_x_randr_create(void)
           }
         zone = e_zone_for_id_get(s->id);
         if (zone && !zone->output) zone->output = s;
+
+        if ((s->info.is_lid) && (s->info.modes))
+          s->info.connected = EINA_TRUE;
+
         r->screens = eina_list_append(r->screens, s);
      }
 
