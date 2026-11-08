@@ -2481,10 +2481,14 @@ _enm_connection_state_update(E_NM_Module_Context *ctxt, enum NM_State state)
    E_FREE_FUNC(ctxt->connection_timer, ecore_timer_del);
 
    /* A brief excursion back to the last reported state needs no callback. */
-   if ((ctxt->connected == connected) && (ctxt->online == online)) return;
-
-   /* Wait for two seconds without a connectivity change before reporting. */
-   ctxt->connection_timer = ecore_timer_add(2.0, _enm_connection_timer_cb, ctxt);
+   if (ctxt->connected == connected)
+     {
+        /* We are online - no need to check more */
+        if (ctxt->online == online) return;
+        /* Wait for two seconds without a connectivity change before reporting. */
+        ctxt->connection_timer = ecore_timer_add
+          (2.0, _enm_connection_timer_cb, ctxt);
+     }
 }
 
 static void
