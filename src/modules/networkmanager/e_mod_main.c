@@ -2464,6 +2464,7 @@ static void
 _enm_connection_state_update(E_NM_Module_Context *ctxt, enum NM_State state)
 {
    Eina_Bool connected, online;
+   const char *str = "unknown";
 
    connected = (state == NM_STATE_CONNECTED_LOCAL) ||
                (state == NM_STATE_CONNECTED_SITE) ||
@@ -2480,15 +2481,23 @@ _enm_connection_state_update(E_NM_Module_Context *ctxt, enum NM_State state)
    enm_online_check_state_set(ctxt->online_check, connected, online);
    E_FREE_FUNC(ctxt->connection_timer, ecore_timer_del);
 
+   if      (state == NM_STATE_CONNECTED_LOCAL) str = "LOCAL";
+   else if (state == NM_STATE_CONNECTED_SITE) str = "SITE";
+   else if (state == NM_STATE_CONNECTED_GLOBAL) str = "GLOBAL";
+   L("NM: state=%s, online=%i", str, online);
+
    /* A brief excursion back to the last reported state needs no callback. */
-   if (ctxt->connected == connected)
+//   if (ctxt->connected == connected)
+   if (ctxt->connected)
      {
         /* We are online - no need to check more */
-        if (ctxt->online == online) return;
-        /* Wait for two seconds without a connectivity change before reporting. */
-        ctxt->connection_timer = ecore_timer_add
-          (2.0, _enm_connection_timer_cb, ctxt);
+//        if (ctxt->online == online) return;
+        if (ctxt->online) return;
      }
+   /* Wait for two seconds without a connectivity change before reporting. */
+   if (state == NM_STATE_CONNECTED_SITE)
+     ctxt->connection_timer = ecore_timer_add
+       (2.0, _enm_connection_timer_cb, ctxt);
 }
 
 static void
