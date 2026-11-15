@@ -18,4 +18,5 @@ e_test_compositor = join_paths(meson.current_build_dir(), 'e-test-compositor')
 
 if get_option('wl') == true
   subdir('wayland')
+  subdir('wlcs')
 endif
