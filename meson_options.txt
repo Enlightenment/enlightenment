@@ -330,3 +330,7 @@ option('clipboard',
 	type: 'boolean',
 	value: true,
 	description: 'enable clipboard module: (default=true)')
+option('tests',
+	type: 'boolean',
+	value: false,
+	description: 'build the test suites: (default=false)')

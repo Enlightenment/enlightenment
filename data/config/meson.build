@@ -18,3 +18,9 @@ custom_target('profile.src',
 subdir('default')
 subdir('standard')
 subdir('tiling')
+
+# Profile used by the Wayland test suite; only worth installing when the
+# tests are built.
+if get_option('tests') == true
+  subdir('wltest')
+endif
