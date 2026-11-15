@@ -90,7 +90,9 @@ foreach m: mods
 
   opt = '-'.join(m.split('_'))
 
-  if get_option(opt) == true
+  # wl_test has no option of its own: it is gated on -Dtests in its own
+  # meson.build, so it always goes through subdir() to make that decision.
+  if opt == 'wl-test' or get_option(opt) == true
     subdir(m)
   else
     disable = true
