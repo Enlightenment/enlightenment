@@ -5,7 +5,7 @@
 #
 # Environment:
 #   E_TEST_BACKEND   buffer (default) | x11 | wl, passed on as E_WL_FORCE
-#   E_TEST_MODULE    module(s) to force-load, see E_MODULE_FORCE_LOAD
+#   E_TEST_MODULE    module(s) to force-load (default: wl_test)
 #
 # E is not relocatable from its build directory: modules are renamed to
 # module.so on install and looked up under <libdir>/enlightenment/modules,
@@ -83,7 +83,7 @@ exec env \
     E_DATA_DIR="$STAGE@DATA_DIR@" \
     E_LOCALE_DIR="$STAGE@LOCALE_DIR@" \
     E_WL_FORCE="${E_TEST_BACKEND:-buffer}" \
-    E_MODULE_FORCE_LOAD="${E_TEST_MODULE:-}" \
+    E_MODULE_FORCE_LOAD="${E_TEST_MODULE:-wl_test}" \
     E_CONF_PROFILE=wltest \
     E_CONF_PROFILE_NOSAVE=1 \
     "$STAGE@BIN_DIR@/enlightenment"

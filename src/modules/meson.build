@@ -70,6 +70,8 @@ mods = [
   'wl_text_input',
   'wl_desktop_shell',
   'wl_weekeyboard',
+# test-only back door; its own meson.build disables it unless -Dtests=true
+  'wl_test',
 ### XXX: disabled for now
 #  'wl_fb'
   'pants',

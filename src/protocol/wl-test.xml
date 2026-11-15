@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<protocol name="wl_test">
+
+  <copyright>
+    Copyright (C) 2026 Enlightenment contributors
+
+    Permission is hereby granted, free of charge, to any person obtaining a
+    copy of this software and associated documentation files (the "Software"),
+    to deal in the Software without restriction, including without limitation
+    the rights to use, copy, modify, merge, publish, distribute, sublicense,
+    and/or sell copies of the Software, and to permit persons to whom the
+    Software is furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in
+    all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+    THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+    DEALINGS IN THE SOFTWARE.
+  </copyright>
+
+  <interface name="wl_test" version="1">
+    <description summary="private interface for the compositor test suite">
+      A back door into the compositor for its own test suite. It exposes
+      internal state and synthesises input, so it is only built with
+      -Dtests=true.
+
+      Enlightenment is a single large main() rather than a library, so tests
+      cannot construct a compositor per case and reach into it the way KWin's
+      or Weston's suites do. A test-only module is the equivalent: it is
+      dlopen'd into E's own process and can see everything, and this protocol
+      is how an out-of-process test asks it questions.
+
+      Do not add anything here that a test could get from a public protocol.
+      The point of this interface is the state the wire does not carry - what
+      E *believes* - so that a test can assert the compositor's own view
+      agrees with what it told the client. That is the bug class black-box
+      protocol testing cannot see.
+    </description>
+
+    <enum name="error">
+      <entry name="invalid_touch_id" value="0"
+             summary="a touch id was zero or negative"/>
+    </enum>
+
+    <request name="destroy" type="destructor">
+      <description summary="release the test interface"/>
+    </request>
+
+    <request name="get_client_serial">
+      <description summary="ask which connection this is">
+        The compositor numbers client connections in the order they arrive,
+        starting at 1. A test harness that opens the sockets itself can use
+        the serial to name a surface belonging to a *different* client, which
+        is what wlcs's position_window_absolute needs: it is handed a
+        client-side wl_surface pointer from another connection and has to ask
+        the compositor to move it.
+
+        Assigned server-side from a client_created listener, so the ordering
+        is the compositor's own and not something the caller has to infer.
+      </description>
+    </request>
+
+    <event name="client_serial">
+      <description summary="reply to get_client_serial"/>
+      <arg name="serial" type="uint" summary="1-based connection order"/>
+    </event>
+
+    <request name="get_surface_info">
+      <description summary="ask what the compositor believes about a surface">
+        Answered with a surface_info event, or surface_unknown if there is no
+        E_Client behind the surface.
+
+        E makes the E_Client in wl_compositor.create_surface rather than at
+        the first commit, so a surface is known immediately. surface_unknown
+        means it is being torn down, not that it is merely uncommitted.
+      </description>
+      <arg name="surface" type="object" interface="wl_surface"/>
+    </request>
+
+    <event name="surface_info">
+      <description summary="the compositor's own view of a surface">
+        Frame geometry in compositor coordinates, i.e. what E would use to
+        paint it, not what the client last requested.
+      </description>
+      <arg name="surface" type="object" interface="wl_surface"/>
+      <arg name="x" type="int"/>
+      <arg name="y" type="int"/>
+      <arg name="w" type="int"/>
+      <arg name="h" type="int"/>
+      <arg name="visible" type="uint" summary="non-zero if E considers it visible"/>
+      <arg name="focused" type="uint" summary="non-zero if it holds the focus"/>
+    </event>
+
+    <!-- Deliberately no buffer_scale here. set_buffer_scale is an empty stub
+         and E stores nothing, so the module would have to invent a value -
+         which is worse than no value, because a test asserting on it would
+         be asserting on the module rather than on the compositor. -->
+
+    <event name="surface_unknown">
+      <description summary="the surface has no E_Client"/>
+      <arg name="surface" type="object" interface="wl_surface"/>
+    </event>
+
+    <request name="move_surface">
+      <description summary="place a surface in compositor coordinates">
+        Moves the frame, so the coordinates match those reported by
+        surface_info.
+      </description>
+      <arg name="surface" type="object" interface="wl_surface"/>
+      <arg name="x" type="int"/>
+      <arg name="y" type="int"/>
+    </request>
+
+    <request name="zone_add">
+      <description summary="add a zone, i.e. a second monitor">
+        The headless backend has exactly one zone, so anything multi-monitor -
+        xdg-output logical geometry, per-output surface tracking, wl_output
+        name uniqueness - is untestable without this.
+      </description>
+      <arg name="x" type="int"/>
+      <arg name="y" type="int"/>
+      <arg name="w" type="int"/>
+      <arg name="h" type="int"/>
+    </request>
+
+    <request name="pointer_warp">
+      <description summary="place the pointer in compositor coordinates"/>
+      <arg name="x" type="int"/>
+      <arg name="y" type="int"/>
+    </request>
+
+    <request name="pointer_button">
+      <description summary="press or release a pointer button">
+        Button numbers are the linux/input.h BTN_* codes the seat already
+        speaks.
+      </description>
+      <arg name="button" type="uint"/>
+      <arg name="pressed" type="uint"/>
+    </request>
+
+    <request name="pointer_axis">
+      <description summary="scroll">
+        Direction 0 is vertical, 1 is horizontal, matching wl_pointer.axis.
+      </description>
+      <arg name="direction" type="uint"/>
+      <arg name="steps" type="int" summary="detents; negative scrolls back"/>
+    </request>
+
+    <request name="touch_down">
+      <description summary="put a touch point down">
+        The id is the wl_touch id the client will see, and must be positive:
+        E carries touch as evas multi-touch, where device 0 is the pointer.
+        A zero or negative id is an invalid_touch_id error.
+      </description>
+      <arg name="id" type="int"/>
+      <arg name="x" type="int"/>
+      <arg name="y" type="int"/>
+    </request>
+
+    <request name="touch_move">
+      <description summary="move a touch point"/>
+      <arg name="id" type="int"/>
+      <arg name="x" type="int"/>
+      <arg name="y" type="int"/>
+    </request>
+
+    <request name="touch_up">
+      <description summary="lift a touch point"/>
+      <arg name="id" type="int"/>
+    </request>
+
+    <request name="key">
+      <description summary="press or release a key by keysym name">
+        Named rather than by keycode so a test does not have to reproduce the
+        active keymap.
+      </description>
+      <arg name="keyname" type="string"/>
+      <arg name="pressed" type="uint"/>
+    </request>
+
+    <request name="sync">
+      <description summary="round-trip through the compositor's own event loop">
+        wl_display.sync only proves the compositor read the requests. This
+        additionally lets one main loop iteration run, so effects that E
+        applies from a job or an idler - which is most of them - have landed
+        before the done event arrives.
+      </description>
+    </request>
+
+    <event name="sync_done">
+      <description summary="reply to sync"/>
+    </event>
+  </interface>
+</protocol>

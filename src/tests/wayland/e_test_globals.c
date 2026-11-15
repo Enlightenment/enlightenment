@@ -28,6 +28,10 @@ static void
 _global_add(void *data UNUSED, struct wl_registry *reg UNUSED,
             uint32_t id UNUSED, const char *iface, uint32_t version)
 {
+   /* The test module is not part of E's protocol surface; listing it would
+    * make globals.expected describe the harness rather than the compositor. */
+   if (!strcmp(iface, "wl_test")) return;
+
    if (globals_count == globals_alloc)
      {
         globals_alloc = globals_alloc ? globals_alloc * 2 : 32;

@@ -333,4 +333,4 @@ option('clipboard',
 option('tests',
 	type: 'boolean',
 	value: false,
-	description: 'build the test suites: (default=false)')
+	description: 'build the test suites and the wl_test module they load: (default=false)')

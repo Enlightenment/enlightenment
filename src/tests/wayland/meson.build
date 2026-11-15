@@ -19,6 +19,17 @@ e_test_globals = executable('e_test_globals',
   dependencies: [dependency('wayland-client')],
 )
 
+# Client-side bindings for the private test protocol and for xdg-shell, which
+# a test needs to map a surface before the compositor has an E_Client for it.
+test_proto_src = []
+foreach p: [
+  '../../protocol/wl-test.xml',
+  '@0@/stable/xdg-shell/xdg-shell.xml'.format(dir_wayland_protocols),
+]
+  test_proto_src += gen_scanner_client.process(p)
+  test_proto_src += gen_scanner_impl.process(p)
+endforeach
+
 # The golden-globals test. Cheap, and the one test every protocol branch has
 # to touch: it makes E's advertised protocol surface a reviewable file.
 test('wl-globals',
@@ -27,3 +38,22 @@ test('wl-globals',
   env: wl_test_env,
   timeout: 120,
 )
+
+# Protocol tests. Each is a plain wayland-client program that exits non-zero
+# with an explanatory message; run-nested.sh supplies the compositor.
+wl_protocol_tests = [
+  ['test-module', 'test_wl_test.c'],
+]
+
+foreach t: wl_protocol_tests
+  exe = executable('test_wl_' + t[0].underscorify(),
+    [t[1], test_proto_src],
+    dependencies: [dependency('wayland-client')],
+  )
+  test('wl-' + t[0],
+    find_program('run-nested.sh'),
+    args: [exe],
+    env: wl_test_env,
+    timeout: 120,
+  )
+endforeach
