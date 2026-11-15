@@ -1770,9 +1770,50 @@ _e_main_modules_load_after(void *d EINA_UNUSED, int type EINA_UNUSED, void *ev E
    return ECORE_CALLBACK_RENEW;
 }
 
+/* E_MODULE_FORCE_LOAD=name[,name...] - load modules the configuration does
+ * not list, by name or by absolute path to a .so.
+ *
+ * For development and testing: it lets a harness pull a module straight out
+ * of an uninstalled build tree without editing the profile, in the same
+ * spirit as the E_WL_FORCE and E_COMP_ENGINE overrides. Distinct from
+ * E_MODULE_LOAD below, which is the crash-recovery hand-off.
+ */
+static void
+_e_main_modules_force_load(void)
+{
+   const char *env;
+   char *dup, *name, *next;
+
+   env = getenv("E_MODULE_FORCE_LOAD");
+   if ((!env) || (!env[0])) return;
+
+   dup = strdup(env);
+   if (!dup) return;
+
+   for (name = dup; name; name = next)
+     {
+        E_Module *m;
+
+        next = strchr(name, ',');
+        if (next) *next++ = 0;
+        while (*name == ' ') name++;
+        if (!*name) continue;
+
+        m = e_module_new(name);
+        if (m && e_module_enable(m))
+          INF("Force-loaded module: %s", name);
+        else
+          ERR("Could not force-load module: %s", name);
+     }
+
+   free(dup);
+}
+
 static void
 _e_main_modules_load(Eina_Bool safe_mode)
 {
+   _e_main_modules_force_load();
+
    if (!safe_mode)
      e_module_all_load();
    else
