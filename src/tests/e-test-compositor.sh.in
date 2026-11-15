@@ -1,0 +1,89 @@
+#!/bin/sh
+# Start the Enlightenment of this build tree as a throwaway compositor.
+#
+#   e-test-compositor <private-runtime-dir>
+#
+# Environment:
+#   E_TEST_BACKEND   buffer (default) | x11 | wl, passed on as E_WL_FORCE
+#   E_TEST_MODULE    module(s) to force-load, see E_MODULE_FORCE_LOAD
+#
+# E is not relocatable from its build directory: modules are renamed to
+# module.so on install and looked up under <libdir>/enlightenment/modules,
+# and the config profiles and themes only exist in their installed form. So
+# the build is staged with 'meson install --destdir' into the build tree, and
+# E is started from there. That stage is refreshed whenever ninja has run
+# since it was made, so what runs is always what was just built - never the
+# copy installed on the system.
+
+set -eu
+
+if [ $# -ne 1 ]; then
+    echo "usage: $0 <private-runtime-dir>" >&2
+    exit 2
+fi
+
+RUNDIR=$1
+BUILD_ROOT='@BUILD_ROOT@'
+STAGE='@BUILD_ROOT@/test-root'
+
+# Parallel tests all come through here, and only one of them may install.
+# 'meson install' does not rebuild (--no-rebuild): 'meson test' has already
+# run ninja, and .ninja_log is touched whenever ninja did anything, which
+# makes it the cheap answer to "is the stage older than the build".
+stage_build() {
+    lock="$STAGE.lock"
+    stamp="$STAGE/.stamp"
+    log="$STAGE.log"
+
+    i=0
+    until mkdir "$lock" 2>/dev/null; do
+        i=$((i + 1))
+        if [ $i -ge 1200 ]; then
+            echo "e-test-compositor: $lock held for 2 minutes;" \
+                 "remove it if no test is running" >&2
+            exit 1
+        fi
+        sleep 0.1
+    done
+    trap 'rmdir "$lock"' EXIT
+
+    if [ ! -f "$stamp" ] || [ "$BUILD_ROOT/.ninja_log" -nt "$stamp" ]; then
+        rm -rf "$STAGE"
+        if ! meson install -C "$BUILD_ROOT" --no-rebuild \
+                 --destdir "$STAGE" >"$log" 2>&1; then
+            echo "e-test-compositor: staging the build failed:" >&2
+            cat "$log" >&2
+            exit 1
+        fi
+        touch "$stamp"
+    fi
+
+    rmdir "$lock"
+    trap - EXIT
+}
+
+stage_build
+
+# eina_prefix reads E_BIN_DIR and friends before deriving them from E_PREFIX,
+# and a live Enlightenment session exports all of them. Pin every one, or a
+# test started from inside a session runs against the session's data.
+#
+# DISPLAY is dropped for the buffer backend: it needs no X server, and an
+# inherited one only lets E find the developer's real screens.
+if [ "${E_TEST_BACKEND:-buffer}" = "buffer" ]; then
+    unset DISPLAY
+fi
+
+exec env \
+    XDG_RUNTIME_DIR="$RUNDIR" \
+    HOME="$RUNDIR" \
+    E_PREFIX="$STAGE@PREFIX@" \
+    E_BIN_DIR="$STAGE@BIN_DIR@" \
+    E_LIB_DIR="$STAGE@LIB_DIR@" \
+    E_DATA_DIR="$STAGE@DATA_DIR@" \
+    E_LOCALE_DIR="$STAGE@LOCALE_DIR@" \
+    E_WL_FORCE="${E_TEST_BACKEND:-buffer}" \
+    E_MODULE_FORCE_LOAD="${E_TEST_MODULE:-}" \
+    E_CONF_PROFILE=wltest \
+    E_CONF_PROFILE_NOSAVE=1 \
+    "$STAGE@BIN_DIR@/enlightenment"

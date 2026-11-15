@@ -399,6 +399,10 @@ subdir('src/bin')
 
 subdir('src/modules')
 
+if get_option('tests') == true
+  subdir('src/tests')
+endif
+
 
 subdir('data/backgrounds')
 subdir('data/config')
