@@ -20,6 +20,7 @@ typedef struct Pending_State
 
 typedef struct vF_Shell_Data
 {
+   struct wl_resource *resource;
    Eina_List *surfaces;
    Eina_List *positioners;
 } vF_Shell_Data;
@@ -457,6 +458,25 @@ static const struct xdg_popup_interface _e_xdg_popup_interface = {
 static void
 _e_xdg_surface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
+   E_Client *ec = wl_resource_get_user_data(resource);
+   E_Shell_Data *shd;
+
+   /* The role object has to be destroyed first, and the error belongs to the
+    * shell, not to the surface being destroyed. It is checked here rather
+    * than in the resource destructor, which also runs when a client
+    * disconnects and its objects go in no particular order. */
+   if ((ec) && (!e_object_is_del(E_OBJECT(ec))) && (ec->comp_data) &&
+       (ec->comp_data->shell.surface))
+     {
+        shd = ec->comp_data->shell.data;
+        if ((shd) && (shd->shell))
+          {
+             wl_resource_post_error(((vF_Shell_Data *)shd->shell)->resource,
+                                    XDG_WM_BASE_ERROR_DEFUNCT_SURFACES,
+                                    "xdg_surface destroyed before its role object");
+             return;
+          }
+     }
    wl_resource_destroy(resource);
 }
 
@@ -1324,10 +1344,7 @@ _e_xdg_shell_surface_cb_destroy(struct wl_resource *resource)
    if (e_object_is_del(E_OBJECT(ec))) return;
 
    if (ec->comp_data->shell.surface)
-     {
-        wl_resource_post_error(resource, XDG_WM_BASE_ERROR_DEFUNCT_SURFACES, "shell surface destroyed before role surfaces");
-        e_shell_surface_cb_destroy(ec->comp_data->shell.surface);
-     }
+     e_shell_surface_cb_destroy(ec->comp_data->shell.surface);
 
    shd = ec->comp_data->shell.data;
    if (shd)
@@ -1503,8 +1520,15 @@ _e_xdg_shell_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t 
         return;
      }
 
-   eina_hash_set(xdg_shell_resources, &client, res);
    v = E_NEW(vF_Shell_Data, 1);
+   if (!v)
+     {
+        wl_resource_destroy(res);
+        wl_client_post_no_memory(client);
+        return;
+     }
+   eina_hash_set(xdg_shell_resources, &client, res);
+   v->resource = res;
    wl_resource_set_user_data(res, v);
    wl_resource_set_implementation(res, &_e_xdg_shell_interface,
                                   v, _e_xdg_shell_cb_unbind);

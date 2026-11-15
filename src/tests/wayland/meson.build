@@ -19,12 +19,13 @@ e_test_globals = executable('e_test_globals',
   dependencies: [dependency('wayland-client')],
 )
 
-# Client-side bindings for the private test protocol and for xdg-shell, which
-# a test needs to map a surface before the compositor has an E_Client for it.
+# Client-side bindings for the private test protocol and for both xdg-shell
+# versions E speaks.
 test_proto_src = []
 foreach p: [
   '../../protocol/wl-test.xml',
   '@0@/stable/xdg-shell/xdg-shell.xml'.format(dir_wayland_protocols),
+  '@0@/unstable/xdg-shell/xdg-shell-unstable-v6.xml'.format(dir_wayland_protocols),
 ]
   test_proto_src += gen_scanner_client.process(p)
   test_proto_src += gen_scanner_impl.process(p)
@@ -43,6 +44,7 @@ test('wl-globals',
 # with an explanatory message; run-nested.sh supplies the compositor.
 wl_protocol_tests = [
   ['test-module', 'test_wl_test.c'],
+  ['xdg-defunct-surfaces', 'test_xdg_defunct.c'],
 ]
 
 foreach t: wl_protocol_tests
