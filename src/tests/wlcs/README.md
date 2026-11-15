@@ -36,7 +36,7 @@ obvious from the error:
 
 ```sh
 git clone https://github.com/canonical/wlcs && cd wlcs
-git checkout v1.7.0
+git checkout v1.8.1
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release \
       -DWLCS_BUILD_ASAN=False -DWLCS_BUILD_TSAN=False -DWLCS_BUILD_UBSAN=False \
       -DBoost_INCLUDE_DIR=/path/to/boost/include \
@@ -44,10 +44,12 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Release \
 cmake --build build -j
 ```
 
-* **v1.7.0, not HEAD.** wlcs 1.8.2 uses `std::format`, which needs GCC 13.
-  v1.7.0 builds with GCC 12 and its `wlcs/*.h` are byte-identical to 1.1.0's -
-  same `WLCS_DISPLAY_SERVER_VERSION` (3) and `WLCS_SERVER_INTEGRATION_VERSION`
-  (1) - so the integration needs no change for either.
+* **v1.8.1, not HEAD.** HEAD (1.8.2) uses `std::format`, which needs GCC 13.
+  The v1.8.1 tag does not, and builds with GCC 12.
+* **1.8.1 needs no integration change.** It raises
+  `WLCS_DISPLAY_SERVER_VERSION` to 4 for an optional `create_keyboard` hook;
+  `e_wlcs.c` declares 3, which is still supported. Its `wl_keyboard` tests
+  are skipped until the hook is implemented.
 * **Boost headers.** wlcs needs only `boost/throw_exception.hpp` and
   `boost/exception/info.hpp`, both header-only. Some distributions, Arch among
   them, ship these in `boost` rather than `boost-libs`.
