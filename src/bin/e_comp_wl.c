@@ -3244,7 +3244,7 @@ _e_comp_wl_output_get(Eina_List *outputs, const char *id)
 
    EINA_LIST_FOREACH(outputs, l, output)
      {
-       if (!strcmp(output->id, id))
+       if (eina_streq(output->id, id))
          return output;
      }
 
