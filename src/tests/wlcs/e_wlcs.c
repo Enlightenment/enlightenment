@@ -109,7 +109,7 @@ _registry_global(void *data, struct wl_registry *reg, uint32_t id,
    struct wl_test **out = data;
 
    if ((!strcmp(iface, "wl_test")) && (!*out))
-     *out = wl_registry_bind(reg, id, &wl_test_interface, 1);
+     *out = wl_registry_bind(reg, id, &wl_test_interface, 2);
 }
 
 static void
@@ -552,12 +552,10 @@ _pointer_move_relative(WlcsPointer *pointer, wl_fixed_t dx, wl_fixed_t dy)
 {
    E_Pointer *p = (E_Pointer *)pointer;
 
-   /* The compositor only takes absolute positions, so the current location is
-    * tracked here. */
    p->x += wl_fixed_to_int(dx);
    p->y += wl_fixed_to_int(dy);
    if (!p->server->ctrl_test) return;
-   wl_test_pointer_warp(p->server->ctrl_test, p->x, p->y);
+   wl_test_pointer_move(p->server->ctrl_test, wl_fixed_to_int(dx), wl_fixed_to_int(dy));
    _ctrl_sync(p->server);
 }
 

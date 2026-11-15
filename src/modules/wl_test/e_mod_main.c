@@ -256,12 +256,27 @@ _input_cb_mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 }
 
 static void
-_wl_test_cb_pointer_warp(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, int32_t x, int32_t y)
+_pointer_motion(int x, int y)
 {
    _posted_x = x;
    _posted_y = y;
    _posted_pending = EINA_TRUE;
    _input_move_post(0, x, y);
+}
+
+static void
+_wl_test_cb_pointer_warp(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, int32_t x, int32_t y)
+{
+   _pointer_motion(x, y);
+}
+
+static void
+_wl_test_cb_pointer_move(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, int32_t dx, int32_t dy)
+{
+   int px, py;
+
+   _pointer_xy_get(&px, &py);
+   _pointer_motion(px + dx, py + dy);
 }
 
 static void
@@ -421,6 +436,7 @@ static const struct wl_test_interface _wl_test_implementation =
    _wl_test_cb_touch_up,
    _wl_test_cb_key,
    _wl_test_cb_sync,
+   _wl_test_cb_pointer_move,
 };
 
 static void
@@ -454,7 +470,7 @@ e_modapi_init(E_Module *m)
         return NULL;
      }
 
-   _wl_test_global = wl_global_create(e_comp_wl->wl.disp, &wl_test_interface, 1,
+   _wl_test_global = wl_global_create(e_comp_wl->wl.disp, &wl_test_interface, 2,
                                      NULL, _wl_test_cb_bind);
    if (!_wl_test_global)
      {
@@ -466,8 +482,10 @@ e_modapi_init(E_Module *m)
    wl_display_add_client_created_listener(e_comp_wl->wl.disp,
                                           &_client_created_listener);
 
-   E_LIST_HANDLER_APPEND(_input_handlers, ECORE_EVENT_MOUSE_MOVE,
-                         _input_cb_mouse_move, NULL);
+   /* Before E's own handler, which cancels a motion a pointer constraint
+    * swallowed: this one must still see it to clear the posted position. */
+   E_LIST_HANDLER_APPEND_PRE(_input_handlers, ECORE_EVENT_MOUSE_MOVE,
+                             _input_cb_mouse_move, NULL);
 
    INF("wl_test: test interface active - this build is not for production");
 

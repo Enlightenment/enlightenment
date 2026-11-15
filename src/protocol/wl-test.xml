@@ -23,7 +23,7 @@
     DEALINGS IN THE SOFTWARE.
   </copyright>
 
-  <interface name="wl_test" version="1">
+  <interface name="wl_test" version="2">
     <description summary="private interface for the compositor test suite">
       A back door into the compositor for its own test suite. It exposes
       internal state and synthesises input, so it is only built with
@@ -195,5 +195,16 @@
     <event name="sync_done">
       <description summary="reply to sync"/>
     </event>
+
+    <request name="pointer_move" since="2">
+      <description summary="move the pointer by a delta">
+        Move the pointer by a delta, as a pointing device does, and let
+        the compositor decide where it lands. Unlike pointer_warp, this
+        stays correct once a pointer constraint has held the pointer
+        somewhere the caller did not ask for.
+      </description>
+      <arg name="dx" type="int"/>
+      <arg name="dy" type="int"/>
+    </request>
   </interface>
 </protocol>
