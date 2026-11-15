@@ -21,7 +21,11 @@ e_modapi_init(E_Module *m)
    elm_config_accel_preference_override_set(EINA_TRUE);
    ecore_evas_data_set(e_comp->ee, "comp", e_comp);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(!e_comp_wl_init(), NULL);
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(!e_comp_canvas_init(1024, 768), NULL);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(!e_comp_canvas_init(w, h), NULL);
+
+   /* The randr path that creates outputs on other backends never runs
+    * behind an ecore_evas_buffer, so the output is made here, as wl_wl does. */
+   e_comp_wl_output_init(NULL, NULL, NULL, 0, 0, w, h, 0, 0, 0, 0, 0, 0);
 
    ecore_event_evas_init();
    ecore_evas_input_event_register(e_comp->ee);
