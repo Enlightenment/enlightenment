@@ -2516,9 +2516,7 @@ _enm_mod_manager_update(struct NM_Manager *nm)
 
    /* Start or stop traffic monitor based on connection state */
    if (nm->state >= NM_STATE_CONNECTED_LOCAL)
-     {
-        _enm_traffic_timer_start(ctxt);
-     }
+     _enm_traffic_timer_start(ctxt);
    else
      _enm_traffic_timer_stop(ctxt);
 }
