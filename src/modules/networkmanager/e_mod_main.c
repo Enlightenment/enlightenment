@@ -2263,9 +2263,10 @@ _enm_mod_manager_update_inst(E_NM_Module_Context *ctxt EINA_UNUSED,
    else
      strength = active_ap ? active_ap->strength : 0;
 
-   L("NM: gadget_update: state=%d type=%s ap=%s strength=%d active_ap=%p",
-     state, typestr, nm ? (nm->active_ap_path ?: "(null)") : "no-nm",
-     strength, active_ap);
+// This log is too noisy - but keep in case needed in future
+//   L("NM: gadget_update: state=%d type=%s ap=%s strength=%d active_ap=%p",
+//     state, typestr, nm ? (nm->active_ap_path ?: "(null)") : "no-nm",
+//     strength, active_ap);
    theme_state = _enm_state_to_connman(state);
 
    msg = malloc(sizeof(*msg) + sizeof(int));
