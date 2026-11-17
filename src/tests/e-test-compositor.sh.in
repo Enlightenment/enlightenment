@@ -68,6 +68,9 @@ stage_build
 # and a live Enlightenment session exports all of them. Pin every one, or a
 # test started from inside a session runs against the session's data.
 #
+# E_START is what enlightenment_start sets, and E refuses to run without it.
+# Inside a session it is inherited, which is why its absence went unnoticed.
+#
 # DISPLAY is dropped for the buffer backend: it needs no X server, and an
 # inherited one only lets E find the developer's real screens.
 if [ "${E_TEST_BACKEND:-buffer}" = "buffer" ]; then
@@ -75,6 +78,7 @@ if [ "${E_TEST_BACKEND:-buffer}" = "buffer" ]; then
 fi
 
 exec env \
+    E_START=e-test-compositor \
     XDG_RUNTIME_DIR="$RUNDIR" \
     HOME="$RUNDIR" \
     E_PREFIX="$STAGE@PREFIX@" \
