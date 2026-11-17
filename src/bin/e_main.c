@@ -254,6 +254,18 @@ _precache_thread(void *data, Eina_Thread thr EINA_UNUSED)
    return NULL;
 }
 
+/* The splash covers every zone and takes the pointer until startup ends,
+ * which can be seconds after a test client has connected. */
+static Eina_Bool
+_e_main_test_no_splash(void)
+{
+#ifdef E_TESTS
+   return !!getenv("E_TEST_NO_SPLASH");
+#else
+   return EINA_FALSE;
+#endif
+}
+
 /* externally accessible functions */
 int
 main(int argc, char **argv)
@@ -871,7 +883,7 @@ main(int argc, char **argv)
      }
    TS("E_Splash Init Done");
    _e_main_shutdown_push(e_init_shutdown);
-   if (!after_restart)
+   if ((!after_restart) && (!_e_main_test_no_splash()))
      {
         TS("E_Splash Show");
         e_init_show();

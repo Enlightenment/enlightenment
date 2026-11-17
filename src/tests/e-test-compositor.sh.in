@@ -91,4 +91,5 @@ exec env \
     E_CONF_PROFILE=wltest \
     E_CONF_PROFILE_NOSAVE=1 \
     E_TEST_NO_DIALOGS=1 \
+    E_TEST_NO_SPLASH=1 \
     "$STAGE@BIN_DIR@/enlightenment"
