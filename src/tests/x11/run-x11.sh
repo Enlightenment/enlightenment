@@ -74,8 +74,6 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
-# A display number nobody else is on. :0-:9 are real sessions.
-X_DISPLAY=":$((70 + $$ % 20))"
 # Heads are E's fake Xinerama screens side by side on one wide Xvfb screen:
 # Xvfb does not join several -screen into one root window.
 SCREEN=${E_TEST_SCREEN:-1024x768x24}
@@ -92,21 +90,28 @@ if [ "$HEADS" -gt 1 ]; then
         i=$((i + 1))
     done
 fi
-Xvfb "$X_DISPLAY" -screen 0 "$((HEADS * HEAD_W))x${HEAD_H}x${DEPTH}" \
-    >"$RUNDIR/xvfb.log" 2>&1 &
+# Xvfb picks a free display itself and writes its number to -displayfd
+# once it accepts connections: tests run in parallel, and a number chosen
+# here could be one another run's Xvfb already holds.
+Xvfb -displayfd 3 -screen 0 "$((HEADS * HEAD_W))x${HEAD_H}x${DEPTH}" \
+    3>"$RUNDIR/display" >"$RUNDIR/xvfb.log" 2>&1 &
 X_PID=$!
 
 i=0
 while [ $i -lt 200 ]; do
-    [ -S "/tmp/.X11-unix/X${X_DISPLAY#:}" ] && break
+    [ -s "$RUNDIR/display" ] && break
+    if ! kill -0 "$X_PID" 2>/dev/null; then
+        break
+    fi
     i=$((i + 1))
     sleep 0.05
 done
-if [ ! -S "/tmp/.X11-unix/X${X_DISPLAY#:}" ]; then
-    echo "run-x11.sh: Xvfb never came up on $X_DISPLAY" >&2
+if [ ! -s "$RUNDIR/display" ]; then
+    echo "run-x11.sh: Xvfb never came up" >&2
     cat "$RUNDIR/xvfb.log" >&2 || :
     exit 1
 fi
+X_DISPLAY=":$(cat "$RUNDIR/display")"
 
 DISPLAY="$X_DISPLAY" E_TEST_BACKEND=xwm E_TEST_ARGS="$E_ARGS" \
     sh "$COMPOSITOR" "$RUNDIR" >"$E_LOG" 2>&1 &
