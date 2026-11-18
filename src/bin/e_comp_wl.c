@@ -1036,25 +1036,10 @@ _e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event 
 
    if (e_client_util_resizing_get(ec) && e_comp_wl->resize.edges)
      {
-        int x, y, dmx, dmy;
+        int x, y;
 
-        /* button is 0 for a resize that did not start from a press. */
-        if ((ec->moveinfo.down.button >= 1) && (ec->moveinfo.down.button <= 3))
-          {
-             int b = ec->moveinfo.down.button - 1;
-
-             x = ec->mouse.last_down[b].w;
-             y = ec->mouse.last_down[b].h;
-             dmx = ec->mouse.last_down[b].mx;
-             dmy = ec->mouse.last_down[b].my;
-          }
-        else
-          {
-             x = ec->moveinfo.down.w;
-             y = ec->moveinfo.down.h;
-             dmx = ec->moveinfo.down.mx;
-             dmy = ec->moveinfo.down.my;
-          }
+        x = ec->mouse.last_down[ec->moveinfo.down.button - 1].w;
+        y = ec->mouse.last_down[ec->moveinfo.down.button - 1].h;
         if (e_comp_object_frame_exists(ec->frame))
           e_comp_object_frame_wh_unadjust(ec->frame, x, y, &x, &y);
 
@@ -1063,12 +1048,13 @@ _e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event 
            case E_POINTER_RESIZE_TL:
            case E_POINTER_RESIZE_L:
            case E_POINTER_RESIZE_BL:
-             x += dmx - ec->mouse.current.mx;
+             x += ec->mouse.last_down[ec->moveinfo.down.button - 1].mx -
+               ec->mouse.current.mx;
              break;
            case E_POINTER_RESIZE_TR:
            case E_POINTER_RESIZE_R:
            case E_POINTER_RESIZE_BR:
-             x += ec->mouse.current.mx - dmx;
+             x += ec->mouse.current.mx - ec->mouse.last_down[ec->moveinfo.down.button - 1].mx;
              break;
            default:
              break;;
@@ -1078,12 +1064,13 @@ _e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event 
            case E_POINTER_RESIZE_TL:
            case E_POINTER_RESIZE_T:
            case E_POINTER_RESIZE_TR:
-             y += dmy - ec->mouse.current.my;
+             y += ec->mouse.last_down[ec->moveinfo.down.button - 1].my -
+               ec->mouse.current.my;
              break;
            case E_POINTER_RESIZE_BL:
            case E_POINTER_RESIZE_B:
            case E_POINTER_RESIZE_BR:
-             y += ec->mouse.current.my - dmy;
+             y += ec->mouse.current.my - ec->mouse.last_down[ec->moveinfo.down.button - 1].my;
              break;
            default:
              break;
