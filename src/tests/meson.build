@@ -20,3 +20,5 @@ if get_option('wl') == true
   subdir('wayland')
   subdir('wlcs')
 endif
+
+subdir('x11')

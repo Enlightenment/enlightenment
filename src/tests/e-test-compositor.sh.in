@@ -4,8 +4,10 @@
 #   e-test-compositor <private-runtime-dir>
 #
 # Environment:
-#   E_TEST_BACKEND   buffer (default) | x11 | wl, passed on as E_WL_FORCE
+#   E_TEST_BACKEND   buffer (default) | x11 | wl, passed on as E_WL_FORCE;
+#                    or xwm, for E as an X11 window manager on $DISPLAY
 #   E_TEST_MODULE    module(s) to force-load (default: wl_test)
+#   E_TEST_ARGS      extra command line arguments for enlightenment
 #
 # E is not relocatable from its build directory: modules are renamed to
 # module.so on install and looked up under <libdir>/enlightenment/modules,
@@ -77,6 +79,16 @@ if [ "${E_TEST_BACKEND:-buffer}" = "buffer" ]; then
     unset DISPLAY
 fi
 
+# xwm is E as an X11 window manager rather than a Wayland compositor. It
+# takes no E_WL_FORCE, and no wl_test either, which is a Wayland module.
+if [ "${E_TEST_BACKEND:-buffer}" = "xwm" ]; then
+    unset E_WL_FORCE E_MODULE_FORCE_LOAD
+    set --
+else
+    set -- E_WL_FORCE="${E_TEST_BACKEND:-buffer}" \
+           E_MODULE_FORCE_LOAD="${E_TEST_MODULE:-wl_test}"
+fi
+
 exec env \
     E_START=e-test-compositor \
     XDG_RUNTIME_DIR="$RUNDIR" \
@@ -86,10 +98,9 @@ exec env \
     E_LIB_DIR="$STAGE@LIB_DIR@" \
     E_DATA_DIR="$STAGE@DATA_DIR@" \
     E_LOCALE_DIR="$STAGE@LOCALE_DIR@" \
-    E_WL_FORCE="${E_TEST_BACKEND:-buffer}" \
-    E_MODULE_FORCE_LOAD="${E_TEST_MODULE:-wl_test}" \
+    "$@" \
     E_CONF_PROFILE=wltest \
     E_CONF_PROFILE_NOSAVE=1 \
     E_TEST_NO_DIALOGS=1 \
     E_TEST_NO_SPLASH=1 \
-    "$STAGE@BIN_DIR@/enlightenment"
+    "$STAGE@BIN_DIR@/enlightenment" ${E_TEST_ARGS:-}
