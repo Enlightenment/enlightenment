@@ -897,6 +897,9 @@ _e_client_move_mouse_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev
    return ECORE_CALLBACK_DONE;
 }
 
+/* Where a drag starts from. With a button, the press recorded it in
+ * mouse.last_down[button - 1]. Without one, it starts from where the
+ * window and the pointer are now. */
 static void
 _e_client_moveinfo_gather(E_Client *ec, const char *source)
 {
@@ -917,6 +920,10 @@ _e_client_moveinfo_gather(E_Client *ec, const char *source)
      {
         ec->moveinfo.down.mx = ec->mouse.current.mx;
         ec->moveinfo.down.my = ec->mouse.current.my;
+        ec->moveinfo.down.x = ec->x;
+        ec->moveinfo.down.y = ec->y;
+        ec->moveinfo.down.w = ec->w;
+        ec->moveinfo.down.h = ec->h;
      }
 }
 
@@ -4950,17 +4957,15 @@ e_client_act_resize_keyboard(E_Client *ec)
 E_API void
 e_client_act_move_begin(E_Client *ec, E_Binding_Event_Mouse_Button *ev)
 {
+   char source[256] = "";
+
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
    if (!ec->zone) return;
    if (e_client_util_resizing_get(ec) || (ec->moving)) return;
    if (ev)
-     {
-        char source[256];
-
-        snprintf(source, sizeof(source) - 1, "mouse,down,%i", ev->button);
-        _e_client_moveinfo_gather(ec, source);
-     }
+     snprintf(source, sizeof(source), "mouse,down,%i", ev->button);
+   _e_client_moveinfo_gather(ec, source);
    if (!_e_client_move_begin(ec))
      return;
 
@@ -4984,18 +4989,16 @@ e_client_act_move_end(E_Client *ec, E_Binding_Event_Mouse_Button *ev EINA_UNUSED
 E_API void
 e_client_act_resize_begin(E_Client *ec, E_Binding_Event_Mouse_Button *ev)
 {
+   char source[256] = "";
+
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
    if (!ec->zone) return;
    if (ec->lock_user_size || ec->shaded || ec->shading) return;
    if (e_client_util_resizing_get(ec) || (ec->moving)) return;
    if (ev)
-     {
-        char source[256];
-
-        snprintf(source, sizeof(source) - 1, "mouse,down,%i", ev->button);
-        _e_client_moveinfo_gather(ec, source);
-     }
+     snprintf(source, sizeof(source), "mouse,down,%i", ev->button);
+   _e_client_moveinfo_gather(ec, source);
    if ((ec->mouse.current.mx > (ec->x + ec->w / 5)) &&
        (ec->mouse.current.mx < (ec->x + ec->w * 4 / 5)))
      {

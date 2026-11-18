@@ -837,6 +837,9 @@ E_API void e_client_comp_hidden_set(E_Client *ec, Eina_Bool hidden);
 E_API Eina_Bool e_client_border_set(E_Client *ec, const char *name);
 E_API void e_client_act_move_keyboard(E_Client *ec);
 E_API void e_client_act_resize_keyboard(E_Client *ec);
+/* ev is the press that starts the drag, its button's mouse.last_down[]
+ * already recorded; without it, the drag starts from where the window and
+ * the pointer are now. */
 E_API void e_client_act_move_begin(E_Client *ec, E_Binding_Event_Mouse_Button *ev);
 E_API void e_client_act_move_end(E_Client *ec, E_Binding_Event_Mouse_Button *ev EINA_UNUSED);
 E_API void e_client_act_resize_begin(E_Client *ec, E_Binding_Event_Mouse_Button *ev);

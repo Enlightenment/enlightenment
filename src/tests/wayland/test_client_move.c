@@ -44,6 +44,11 @@ main(void)
              c->x, c->y, x0, y0);
 
 
+   /* Away from 0,0 first: a drag that loses where the window started
+    * falls back to 0,0, and would look right from there. */
+   tk_action(tk, id, "window_move_by", "100 80");
+   c = tk_expect(tk, APP_ID);
+
    /* The pointer has to be over the window before the grab starts: a move
     * grab drags by the delta from where the pointer was when it began. */
    tk_pointer_warp(tk, c->x + (c->w / 2), c->y + (c->h / 2));
@@ -52,14 +57,15 @@ main(void)
    tk_action_end(tk, id, "window_move", NULL);
 
    c = tk_expect(tk, APP_ID);
-   if ((c->x != x0 + 60) || (c->y != y0 + 45))
-     tk_fail(tk, "a 60,45 drag put the window at +%d+%d, expected +%d+%d",
-             c->x, c->y, x0 + 60, y0 + 45);
+   if ((c->x != x0 + 160) || (c->y != y0 + 125))
+     tk_fail(tk, "a 60,45 drag from +%d+%d put the window at +%d+%d, "
+                 "expected +%d+%d", x0 + 100, y0 + 80, c->x, c->y,
+             x0 + 160, y0 + 125);
    if ((c->w != w0) || (c->h != h0))
      tk_fail(tk, "dragging resized the window to %dx%d, was %dx%d",
              c->w, c->h, w0, h0);
 
-   tk_action(tk, id, "window_move_by", "-60 -45");
+   tk_action(tk, id, "window_move_by", "-160 -125");
    c = tk_expect(tk, APP_ID);
    if ((c->x != x0) || (c->y != y0))
      tk_fail(tk, "moving back after the drag put the window at +%d+%d, "

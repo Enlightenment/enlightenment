@@ -3062,6 +3062,7 @@ _e_comp_x_desktop_change(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_E
 static Eina_Bool
 _e_comp_x_move_resize_request(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Window_Move_Resize_Request *ev)
 {
+   E_Binding_Event_Mouse_Button down = { 0 };
    E_Client *ec;
 
    ec = _e_comp_x_client_find_by_window(ev->win);
@@ -3093,6 +3094,11 @@ _e_comp_x_move_resize_request(void *data EINA_UNUSED, int type EINA_UNUSED, Ecor
    ec->moveinfo.down.button = ev->button;
    ec->moveinfo.down.mx = ev->x;
    ec->moveinfo.down.my = ev->y;
+   /* The drag starts from the press recorded above, not from the pointer
+    * as the action finds it. */
+   down.button = ev->button;
+   down.canvas.x = ev->x;
+   down.canvas.y = ev->y;
 
    if (!ec->lock_user_stacking)
      evas_object_raise(ec->frame);
@@ -3102,13 +3108,14 @@ _e_comp_x_move_resize_request(void *data EINA_UNUSED, int type EINA_UNUSED, Ecor
         ec->cur_mouse_action = e_action_find("window_move");
         if (ec->cur_mouse_action)
           {
-             if ((!ec->cur_mouse_action->func.end_mouse) &&
-                 (!ec->cur_mouse_action->func.end))
+             if ((!ec->cur_mouse_action->func.go_mouse) ||
+                 ((!ec->cur_mouse_action->func.end_mouse) &&
+                  (!ec->cur_mouse_action->func.end)))
                ec->cur_mouse_action = NULL;
              if (ec->cur_mouse_action)
                {
                   e_object_ref(E_OBJECT(ec->cur_mouse_action));
-                  ec->cur_mouse_action->func.go(E_OBJECT(ec), NULL);
+                  ec->cur_mouse_action->func.go_mouse(E_OBJECT(ec), NULL, &down);
                }
           }
         return ECORE_CALLBACK_PASS_ON;
@@ -3117,13 +3124,14 @@ _e_comp_x_move_resize_request(void *data EINA_UNUSED, int type EINA_UNUSED, Ecor
    ec->cur_mouse_action = e_action_find("window_resize");
    if (ec->cur_mouse_action)
      {
-        if ((!ec->cur_mouse_action->func.end_mouse) &&
-            (!ec->cur_mouse_action->func.end))
+        if ((!ec->cur_mouse_action->func.go_mouse) ||
+            ((!ec->cur_mouse_action->func.end_mouse) &&
+             (!ec->cur_mouse_action->func.end)))
           ec->cur_mouse_action = NULL;
      }
    if (!ec->cur_mouse_action) return ECORE_CALLBACK_RENEW;
    e_object_ref(E_OBJECT(ec->cur_mouse_action));
-   ec->cur_mouse_action->func.go(E_OBJECT(ec), NULL);
+   ec->cur_mouse_action->func.go_mouse(E_OBJECT(ec), NULL, &down);
 
    if (ev->direction != E_POINTER_RESIZE_NONE)
      {
