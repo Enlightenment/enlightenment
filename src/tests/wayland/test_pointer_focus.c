@@ -134,6 +134,9 @@ _grab(Tk *tk, Ptr_Watch *w, struct wl_seat *seat, Tk_Toplevel *top,
    if (w->leaves != leaves + 1)
      tk_fail(tk, "%s: the grab did not take the pointer focus (%d leaves)",
              what, w->leaves - leaves);
+   if (w->in || (w->enters != enters))
+     tk_fail(tk, "%s: entered during the grab, with the pointer still",
+             what);
 
    tk_pointer_button(tk, BTN_LEFT, 0);
    tk_settle(tk);

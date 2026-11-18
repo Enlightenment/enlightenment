@@ -197,6 +197,17 @@ e_comp_wl_pointer_frame_send(struct wl_resource *res)
      wl_pointer_send_frame(res);
 }
 
+/* The move grabber is a smart member of the frame of the client being
+ * moved, so while it is up evas has the pointer in that frame wherever it
+ * is, and showing it crosses the pointer out of the client and back in
+ * with nothing moving. That client's pointer focus is left to
+ * e_comp_wl_pointer_focus_drop() and _e_comp_wl_pointer_focus_restore(). */
+static Eina_Bool
+_e_comp_wl_crossing_ignored(const E_Client *ec)
+{
+   return ec->moving;
+}
+
 static void
 _e_comp_wl_mouse_in(E_Client *ec, Evas_Event_Mouse_In *ev)
 {
@@ -206,6 +217,7 @@ _e_comp_wl_mouse_in(E_Client *ec, Evas_Event_Mouse_In *ev)
    uint32_t serial;
 
    if (e_object_is_del(E_OBJECT(ec))) return;
+   if (_e_comp_wl_crossing_ignored(ec)) return;
 
    if (!ec->comp_data->surface) return;
 
@@ -291,6 +303,7 @@ _e_comp_wl_pointer_leave_send(E_Client *ec)
 static void
 _e_comp_wl_mouse_out(E_Client *ec)
 {
+   if (_e_comp_wl_crossing_ignored(ec)) return;
    if ((ec == e_client_action_get()) && e_grabinput_mouse_win_get()) return;
    /* FIXME? this is a hack to just reset the cursor whenever we mouse out. not sure if accurate */
    {
@@ -312,9 +325,9 @@ _e_comp_wl_mouse_out(E_Client *ec)
 }
 
 /* xdg_toplevel.move and .resize: the surface "will lose the focus of the
- * device (wl_pointer, wl_touch, etc) used for the move". The evas event
- * grabber does not make evas send a mouse-out until the pointer moves, and
- * _e_comp_wl_mouse_out() refuses one for the client being moved. */
+ * device (wl_pointer, wl_touch, etc) used for the move". No resize grab
+ * makes evas send a mouse-out, and the crossings evas reports for a client
+ * being moved are ignored. */
 E_API void
 e_comp_wl_pointer_focus_drop(E_Client *ec)
 {
