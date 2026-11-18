@@ -15,20 +15,26 @@ if dep_x11.found() and dep_xtst.found()
   x11_test_env = environment()
   x11_test_env.set('E_TEST_COMPOSITOR', e_test_compositor)
 
-  test_csd_move = executable('test_x11_csd_move', 'test_csd_move.c',
-                             dependencies: [dep_x11, dep_xtst])
+  x11_tests = [
+    ['x11-csd-move', executable('test_x11_csd_move', 'test_csd_move.c',
+                                dependencies: [dep_x11, dep_xtst])],
+    ['x11-csd-resize', executable('test_x11_csd_resize', 'test_csd_resize.c',
+                                  dependencies: [dep_x11, dep_xtst])],
+  ]
 
   # Two heads as well: a window on the right-hand screen is far from 0,0,
   # which is where a drag that lost its starting point puts it.
-  foreach heads: ['1', '2']
-    env = x11_test_env
-    env.set('E_TEST_HEADS', heads)
-    test(heads == '1' ? 'x11-csd-move' : 'x11-csd-move-2heads',
-      files('run-x11.sh'),
-      args: [test_csd_move],
-      env: env,
-      suite: 'x11',
-      timeout: 120,
-    )
+  foreach t: x11_tests
+    foreach heads: ['1', '2']
+      env = x11_test_env
+      env.set('E_TEST_HEADS', heads)
+      test(heads == '1' ? t[0] : t[0] + '-2heads',
+        files('run-x11.sh'),
+        args: [t[1]],
+        env: env,
+        suite: 'x11',
+        timeout: 120,
+      )
+    endforeach
   endforeach
 endif
