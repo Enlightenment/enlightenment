@@ -57,6 +57,14 @@ cleanup() {
         wait "$E_PID" 2>/dev/null || :
     fi
     [ -n "$X_PID" ] && { kill "$X_PID" 2>/dev/null || :; }
+    # E and the client start helpers of their own, efreet's cache builders
+    # among them, which outlive them and would write into the temp dir
+    # after it is gone, putting it back.
+    for p in /proc/[0-9]*; do
+        if tr '\0' '\n' <"$p/environ" 2>/dev/null | grep -qx "HOME=$RUNDIR"; then
+            kill "${p#/proc/}" 2>/dev/null || :
+        fi
+    done
     if [ "${E_TEST_KEEP:-0}" = "1" ]; then
         echo "run-x11.sh: kept $RUNDIR (compositor log: $E_LOG)" >&2
     else
