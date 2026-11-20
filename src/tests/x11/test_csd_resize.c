@@ -1,7 +1,7 @@
-/* Resize a client-side-decorated window with _NET_WM_MOVERESIZE, the way
- * GTK starts a resize from the shadow around its window, from the
- * bottom-right corner and from the top-left one. The dragged corner must
- * follow the pointer and the opposite corner must stay where it was. */
+/* Resize a window that draws its own decorations, as it does from the
+ * border of its frame, from the bottom-right corner and from the top-left
+ * one. The dragged corner must follow the pointer and the opposite corner
+ * must stay where it was. */
 #include "x11_testkit.h"
 
 #define W 300
@@ -10,15 +10,15 @@
 #define DY 40
 
 static void
-corner_drag(Display *dpy, Window win, int direction, const char *corner)
+corner_drag(Evas_Object *win, Elm_Win_Move_Resize_Mode mode,
+            const char *corner)
 {
    int x0, y0, w0, h0, x1, y1, w1, h1, px, py, ex, ey, ew, eh;
 
-   xtk_geometry_get(dpy, win, &x0, &y0, &w0, &h0);
-   if (direction == NET_WM_MOVERESIZE_SIZE_TOPLEFT)
+   xtk_geometry_get(win, &x0, &y0, &w0, &h0);
+   if (mode == (ELM_WIN_MOVE_RESIZE_TOP | ELM_WIN_MOVE_RESIZE_LEFT))
      {
-        px = x0 + 2;
-        py = y0 + 2;
+        xtk_content_point(win, 2, 2, &px, &py);
         ex = x0 + DX;
         ey = y0 + DY;
         ew = w0 - DX;
@@ -26,21 +26,19 @@ corner_drag(Display *dpy, Window win, int direction, const char *corner)
      }
    else
      {
-        px = x0 + w0 - 2;
-        py = y0 + h0 - 2;
+        xtk_content_point(win, -2, -2, &px, &py);
         ex = x0;
         ey = y0;
         ew = w0 + DX;
         eh = h0 + DY;
      }
 
-   xtk_pointer_move_to(dpy, px, py);
-   xtk_settle(dpy);
-   xtk_csd_drag_begin(dpy, win, px, py, direction);
-   xtk_pointer_drag(dpy, px, py, DX, DY);
-   xtk_settle(dpy);
-   xtk_csd_drag_end(dpy);
-   xtk_geometry_get(dpy, win, &x1, &y1, &w1, &h1);
+   xtk_pointer_move_to(px, py);
+   xtk_csd_resize_begin(mode);
+   xtk_pointer_drag(px, py, DX, DY);
+   xtk_settle(0.3);
+   xtk_csd_drag_end();
+   xtk_geometry_get(win, &x1, &y1, &w1, &h1);
 
    if ((x1 != ex) || (y1 != ey) || (w1 != ew) || (h1 != eh))
      xtk_fail("a %d,%d drag of the %s corner made %dx%d+%d+%d into "
@@ -51,23 +49,24 @@ corner_drag(Display *dpy, Window win, int direction, const char *corner)
 }
 
 int
-main(void)
+main(int argc, char **argv)
 {
-   Display *dpy;
-   Window win;
+   Evas_Object *win;
+   int sw, sh;
 
-   dpy = xtk_connect("test-x11-csd-resize");
+   xtk_init(argc, argv, "test-x11-csd-resize");
 
    /* Bottom right, which is the right-hand screen with two heads: a drag
     * that loses its starting point falls back to 0,0 and has to show. */
-   win = xtk_csd_window_new(dpy,
-                            DisplayWidth(dpy, DefaultScreen(dpy)) - W - 200,
-                            DisplayHeight(dpy, DefaultScreen(dpy)) - H - 200,
-                            W, H, "csd resize under test");
+   ecore_x_screen_size_get(ecore_x_default_screen_get(), &sw, &sh);
+   win = xtk_csd_window_new(sw - W - 250, sh - H - 250, W, H,
+                            "csd resize under test");
 
-   corner_drag(dpy, win, NET_WM_MOVERESIZE_SIZE_BOTTOMRIGHT, "bottom-right");
-   corner_drag(dpy, win, NET_WM_MOVERESIZE_SIZE_TOPLEFT, "top-left");
+   corner_drag(win, ELM_WIN_MOVE_RESIZE_BOTTOM | ELM_WIN_MOVE_RESIZE_RIGHT,
+               "bottom-right");
+   corner_drag(win, ELM_WIN_MOVE_RESIZE_TOP | ELM_WIN_MOVE_RESIZE_LEFT,
+               "top-left");
 
-   XCloseDisplay(dpy);
+   xtk_shutdown(win);
    return 0;
 }

@@ -8,18 +8,18 @@
 # Xvfb is not something a build machine has to have: run-x11.sh exits 77
 # without it, and meson reports a skip.
 
-dep_x11 = dependency('x11', required: false)
-dep_xtst = dependency('xtst', required: false)
-
-if dep_x11.found() and dep_xtst.found()
+# The windows under test are elementary ones, drawing their own decorations
+# on X11, and ecore_x drives the pointer. Not in a Wayland-only build.
+if not config_h.has('HAVE_WAYLAND_ONLY')
   x11_test_env = environment()
   x11_test_env.set('E_TEST_COMPOSITOR', e_test_compositor)
 
+  x11_test_deps = [dep_elementary, dep_ecore_x]
   x11_tests = [
     ['x11-csd-move', executable('test_x11_csd_move', 'test_csd_move.c',
-                                dependencies: [dep_x11, dep_xtst])],
+                                dependencies: x11_test_deps)],
     ['x11-csd-resize', executable('test_x11_csd_resize', 'test_csd_resize.c',
-                                  dependencies: [dep_x11, dep_xtst])],
+                                  dependencies: x11_test_deps)],
   ]
 
   # Two heads as well: a window on the right-hand screen is far from 0,0,

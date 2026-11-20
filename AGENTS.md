@@ -99,9 +99,12 @@ protects nothing.
   `wl_protocol_tests` in that directory's `meson.build`. When it needs
   something from E that the protocol does not give, extend `wl-test.xml`:
   append new requests at the end and bump its version.
-* An X11 test is a plain Xlib program in `src/tests/x11/`, using XTest for
-  input. Do what the real client does: a GTK header bar sends
-  `_NET_WM_MOVERESIZE` after a button press, so the test does too.
+* An X11 test is an EFL program in `src/tests/x11/`, built on
+  `x11_testkit.h`: elementary windows and ecore_x, not Xlib. Do what the
+  real client does: an elementary window draws its own decorations on X11
+  with `EFL_WIN_FRAME_MODE=on` and sends `_NET_WM_MOVERESIZE` from a press
+  on them, as a GTK header bar does. `ecore_x_test_fake_mouse_*()` drive
+  the pointer.
 * Test the behaviour, not the implementation: a test that has to be
   rewritten every time the code is refactored protects nothing.
 * A test that waits on a timer flakes. Wait for an event or a state where
