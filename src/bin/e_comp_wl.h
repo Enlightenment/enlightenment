@@ -419,6 +419,9 @@ EINTERN void e_comp_wl_surface_destroy(struct wl_resource *resource);
 EINTERN Eina_Bool e_comp_wl_surface_commit(E_Client *ec);
 EINTERN Eina_Bool e_comp_wl_subsurface_commit(E_Client *ec);
 E_API E_Comp_Wl_Buffer *e_comp_wl_buffer_get(struct wl_resource *resource);
+EINTERN void e_comp_wl_shm_guard_add(struct wl_shm_pool *pool, E_Comp_Wl_Buffer *buffer);
+EINTERN void e_comp_wl_shm_guard_del(struct wl_shm_pool *pool);
+EINTERN void e_comp_wl_shm_faults_post(void);
 
 E_API struct wl_signal e_comp_wl_surface_create_signal_get(void);
 E_API double e_comp_wl_idle_time_get(void);

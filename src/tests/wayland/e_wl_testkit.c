@@ -560,6 +560,12 @@ tk_sync(Tk *tk)
      }
 }
 
+struct wl_display *
+tk_display(Tk *tk)
+{
+   return tk->disp;
+}
+
 void
 tk_toplevel_configured(Tk_Toplevel *top, int *w, int *h, int *count)
 {

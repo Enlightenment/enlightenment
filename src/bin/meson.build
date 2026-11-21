@@ -423,6 +423,7 @@ if config_h.has('HAVE_WAYLAND') == true
     'e_comp_wl.c',
     'e_comp_wl_extensions.c',
     'e_comp_wl_extensions_tizen.c',
+    'e_comp_wl_shm.c',
     wayland_proto_c,
     wayland_proto_h
   ]

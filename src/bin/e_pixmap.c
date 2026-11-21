@@ -140,6 +140,13 @@ _e_pixmap_image_clear_x(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
 
 #ifdef HAVE_WAYLAND
 static void
+_e_pixmap_shm_pool_unref(struct wl_shm_pool *pool)
+{
+   e_comp_wl_shm_guard_del(pool);
+   wl_shm_pool_unref(pool);
+}
+
+static void
 _e_pixmap_wl_resource_release(E_Comp_Wl_Buffer *buffer)
 {
    buffer->busy--;
@@ -158,7 +165,7 @@ _e_pixmap_wl_resource_release(E_Comp_Wl_Buffer *buffer)
           _render_held_pools = eina_list_append(_render_held_pools,
                                                 buffer->pool);
         else
-          wl_shm_pool_unref(buffer->pool);
+          _e_pixmap_shm_pool_unref(buffer->pool);
         buffer->pool = NULL;
      }
 
@@ -216,8 +223,9 @@ e_pixmap_render_done(void)
 #ifdef HAVE_WAYLAND
    struct wl_shm_pool *pool;
 
+   e_comp_wl_shm_faults_post();
    EINA_LIST_FREE(_render_held_pools, pool)
-     wl_shm_pool_unref(pool);
+     _e_pixmap_shm_pool_unref(pool);
 #endif
 }
 
@@ -1023,6 +1031,7 @@ e_pixmap_image_refresh(E_Pixmap *cp)
 
            cp->held_buffer->pool =
              wl_shm_buffer_ref_pool(cp->held_buffer->shm_buffer);
+           e_comp_wl_shm_guard_add(cp->held_buffer->pool, cp->held_buffer);
            cp->held_buffer->busy++;
            cp->data = wl_shm_buffer_get_data(cp->buffer->shm_buffer);
            cp->held_buffer_destroy_listener.notify =

@@ -117,6 +117,10 @@ void *tk_bind(Tk *tk, const struct wl_interface *iface, uint32_t version);
  * a job or an idler have landed. */
 void tk_sync(Tk *tk);
 
+/* For a test that has to dispatch on its own, waiting for an event the kit
+ * does not track. */
+struct wl_display *tk_display(Tk *tk);
+
 /* Sync until a change that needs the client's answer has landed: one round
  * trip carries the configure out and the commit back, one more lets the
  * compositor apply it. */

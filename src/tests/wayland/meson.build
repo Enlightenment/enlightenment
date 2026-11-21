@@ -68,6 +68,7 @@ wl_protocol_tests = [
   ['xdg-toplevel-v6', 'test_xdg_toplevel_v6.c'],
   ['maximize-restore', 'test_maximize_restore.c'],
   ['xdg-decoration', 'test_xdg_decoration.c'],
+  ['shm-truncate', 'test_shm_truncate.c'],
 ]
 
 tk_src = files('e_wl_testkit.c')
