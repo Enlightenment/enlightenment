@@ -810,6 +810,13 @@ _e_comp_object_done_defer(void *data, Evas_Object *obj EINA_UNUSED, const char *
    /* hide only after animation finishes to guarantee a full run of the animation */
    if (cw->defer_hide && ((!strcmp(emission, "e,action,hide,done")) || (!strcmp(emission, "e,action,done"))))
      evas_object_hide(cw->smart_obj);
+   else if (cw->defer_hide && (!strcmp(emission, "e,action,show,done")))
+     {
+        /* An iconify during the show animation only put the hide off, and
+         * the hide animation never started: start it now. */
+        cw->defer_hide = 0;
+        evas_object_hide(cw->smart_obj);
+     }
    else if (!cw->deleted)
      {
         e_comp_shape_queue();

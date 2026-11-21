@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <unistd.h>
 #include <sys/mman.h>
 
@@ -652,6 +653,33 @@ tk_expect(Tk *tk, const char *app_id)
 
    if (!c) tk_fail(tk, "no window with app_id '%s'", app_id);
    return c;
+}
+
+static double
+_tk_now(void)
+{
+   struct timespec ts;
+
+   clock_gettime(CLOCK_MONOTONIC, &ts);
+   return ts.tv_sec + (ts.tv_nsec / 1e9);
+}
+
+Tk_Client *
+tk_wait_states(Tk *tk, const char *app_id, unsigned int mask,
+               unsigned int want, const char *what)
+{
+   double deadline = _tk_now() + TK_WAIT_SECONDS;
+   Tk_Client *c;
+
+   for (;;)
+     {
+        c = tk_expect(tk, app_id);
+        if ((c->states & mask) == want) return c;
+        if (_tk_now() > deadline) break;
+        tk_sync(tk);
+     }
+   tk_fail(tk, "%s: states still 0x%x after %ds, waiting for 0x%x in 0x%x",
+           what, c->states, TK_WAIT_SECONDS, want, mask);
 }
 
 void

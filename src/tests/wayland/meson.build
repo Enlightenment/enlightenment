@@ -43,7 +43,8 @@ test('wl-globals',
 )
 
 # Protocol tests. Each is a plain wayland-client program that exits non-zero
-# with an explanatory message; run-nested.sh supplies the compositor.
+# with an explanatory message; run-nested.sh supplies the compositor. A
+# third element adds to the environment the compositor runs in.
 wl_protocol_tests = [
   ['test-module', 'test_wl_test.c'],
   ['xdg-defunct-surfaces', 'test_xdg_defunct.c'],
@@ -69,6 +70,8 @@ wl_protocol_tests = [
   ['maximize-restore', 'test_maximize_restore.c'],
   ['xdg-decoration', 'test_xdg_decoration.c'],
   ['shm-truncate', 'test_shm_truncate.c'],
+  ['client-iconify', 'test_client_iconify.c',
+   {'ELM_TRANSITION_DURATION_FACTOR': '4'}],
 ]
 
 tk_src = files('e_wl_testkit.c')
@@ -78,10 +81,17 @@ foreach t: wl_protocol_tests
     [t[1], tk_src, test_proto_src],
     dependencies: [dependency('wayland-client')],
   )
+  env = wl_test_env
+  if t.length() > 2
+    env = environment({'E_TEST_COMPOSITOR': e_test_compositor})
+    foreach k, v: t[2]
+      env.set(k, v)
+    endforeach
+  endif
   test('wl-' + t[0],
     find_program('run-nested.sh'),
     args: [exe],
-    env: wl_test_env,
+    env: env,
     timeout: 120,
   )
 endforeach
