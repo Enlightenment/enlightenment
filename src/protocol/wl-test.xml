@@ -23,7 +23,7 @@
     DEALINGS IN THE SOFTWARE.
   </copyright>
 
-  <interface name="wl_test" version="4">
+  <interface name="wl_test" version="5">
     <description summary="private interface for the compositor test suite">
       A back door into the compositor for its own test suite. It exposes
       internal state and synthesises input, so it is only built with
@@ -293,6 +293,18 @@
       <arg name="id" type="uint"/>
       <arg name="name" type="string"/>
       <arg name="params" type="string"/>
+    </request>
+
+    <request name="output_configure" since="5">
+      <description summary="reconfigure the output of a zone made by zone_add">
+        Reaches E the way a monitor change does, so that a test can see what
+        a client that already bound the output is told about it.
+      </description>
+      <arg name="zone" type="uint" summary="index of a zone from zone_add"/>
+      <arg name="x" type="int"/>
+      <arg name="y" type="int"/>
+      <arg name="w" type="int"/>
+      <arg name="h" type="int"/>
     </request>
   </interface>
 </protocol>

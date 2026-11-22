@@ -313,6 +313,16 @@ _wl_test_cb_zone_add(struct wl_client *client EINA_UNUSED, struct wl_resource *r
      ERR("wl_test: could not create wl_output for zone %d", num);
 }
 
+static void
+_wl_test_cb_output_configure(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, uint32_t zone, int32_t x, int32_t y, int32_t w, int32_t h)
+{
+   char id[32];
+
+   snprintf(id, sizeof(id), "e-test-%u", zone);
+   if (!e_comp_wl_output_init(id, NULL, NULL, x, y, w, h, 0, 0, 0, 0, 0, zone))
+     ERR("wl_test: could not configure wl_output of zone %u", zone);
+}
+
 /* Input is posted as ecore events, the way a backend delivers it, rather than
  * fed to evas directly. Wayland clients are reached through evas callbacks
  * on their frame, but a good part of E listens on the ecore side of the same
@@ -589,6 +599,7 @@ static const struct wl_test_interface _wl_test_implementation =
    _wl_test_cb_get_clients,
    _wl_test_cb_client_action,
    _wl_test_cb_client_action_end,
+   _wl_test_cb_output_configure,
 };
 
 static void
@@ -622,7 +633,7 @@ e_modapi_init(E_Module *m)
         return NULL;
      }
 
-   _wl_test_global = wl_global_create(e_comp_wl->wl.disp, &wl_test_interface, 4,
+   _wl_test_global = wl_global_create(e_comp_wl->wl.disp, &wl_test_interface, 5,
                                      NULL, _wl_test_cb_bind);
    if (!_wl_test_global)
      {
