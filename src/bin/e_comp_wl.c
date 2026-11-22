@@ -3573,6 +3573,7 @@ e_comp_wl_shutdown(void)
         if (output->id) eina_stringshare_del(output->id);
         if (output->make) eina_stringshare_del(output->make);
         if (output->model) eina_stringshare_del(output->model);
+        eina_list_free(output->xdg_outputs);
         eina_stringshare_del(output->name);
         eina_stringshare_del(output->description);
         free(output);
@@ -3876,6 +3877,9 @@ e_comp_wl_output_init(const char *id, const char *make, const char *model,
 
    if (output->scale <= 0)
      output->scale = e_scale;
+
+   /* Before wl_output.done, which closes the update for xdg_output too. */
+   e_comp_wl_extension_xdg_output_update(output);
 
    /* if we have bound resources, send updates */
    EINA_LIST_FOREACH(output->resources, l2, resource)

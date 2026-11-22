@@ -3,12 +3,23 @@
 #include <stdio.h>
 #include <string.h>
 #include "e_wl_testkit.h"
+#include "xdg-output-unstable-v1-client-protocol.h"
 
 #define MAX_OUTPUTS 4
 
 typedef struct
 {
+   struct zxdg_output_v1 *xdg;
+   char name[64];
+   int x, y, w, h;
+   int names, descriptions, dones;
+} Xdg_Output;
+
+typedef struct
+{
    struct wl_output *output;
+   Xdg_Output *xdg;
+   int xdg_w_at_done;
    uint32_t global;
    char name[64];
    char description[128];
@@ -21,6 +32,8 @@ static Tk *tk;
 static Output outputs[MAX_OUTPUTS];
 static int output_count = 0;
 static Output old_client;
+static Xdg_Output xdg_outputs[MAX_OUTPUTS];
+static Xdg_Output xdg_v2;
 
 static void
 _geometry(void *data, struct wl_output *o __attribute__((unused)), int32_t x, int32_t y,
@@ -51,6 +64,7 @@ _done(void *data, struct wl_output *o __attribute__((unused)))
    Output *out = data;
 
    out->dones++;
+   if (out->xdg) out->xdg_w_at_done = out->xdg->w;
 }
 
 static void
@@ -83,6 +97,76 @@ static const struct wl_output_listener _output_listener =
 {
    _geometry, _mode, _done, _scale, _name, _description
 };
+
+static void
+_xdg_position(void *data, struct zxdg_output_v1 *o __attribute__((unused)), int32_t x, int32_t y)
+{
+   Xdg_Output *xo = data;
+
+   xo->x = x;
+   xo->y = y;
+}
+
+static void
+_xdg_size(void *data, struct zxdg_output_v1 *o __attribute__((unused)), int32_t w, int32_t h)
+{
+   Xdg_Output *xo = data;
+
+   xo->w = w;
+   xo->h = h;
+}
+
+static void
+_xdg_done(void *data, struct zxdg_output_v1 *o __attribute__((unused)))
+{
+   Xdg_Output *xo = data;
+
+   xo->dones++;
+}
+
+static void
+_xdg_name(void *data, struct zxdg_output_v1 *o __attribute__((unused)), const char *name)
+{
+   Xdg_Output *xo = data;
+
+   snprintf(xo->name, sizeof(xo->name), "%s", name);
+   xo->names++;
+}
+
+static void
+_xdg_description(void *data, struct zxdg_output_v1 *o __attribute__((unused)),
+                 const char *description __attribute__((unused)))
+{
+   Xdg_Output *xo = data;
+
+   xo->descriptions++;
+}
+
+static const struct zxdg_output_v1_listener _xdg_output_listener =
+{
+   _xdg_position, _xdg_size, _xdg_done, _xdg_name, _xdg_description
+};
+
+static void
+_xdg_output_get(struct zxdg_output_manager_v1 *manager, Output *out, Xdg_Output *xo)
+{
+   xo->xdg = zxdg_output_manager_v1_get_xdg_output(manager, out->output);
+   zxdg_output_v1_add_listener(xo->xdg, &_xdg_output_listener, xo);
+}
+
+static void
+_check_xdg(const Output *out, const Xdg_Output *xo)
+{
+   if ((xo->x != out->x) || (xo->y != out->y) ||
+       (xo->w != out->w) || (xo->h != out->h))
+     tk_fail(tk, "%s: logical %d,%d %dx%d, output %d,%d %dx%d", out->name,
+             xo->x, xo->y, xo->w, xo->h, out->x, out->y, out->w, out->h);
+   if (xo->names != 1) tk_fail(tk, "xdg_output name sent %d times", xo->names);
+   if (xo->descriptions != 1)
+     tk_fail(tk, "xdg_output description sent %d times", xo->descriptions);
+   if (strcmp(xo->name, out->name))
+     tk_fail(tk, "xdg_output is named %s, wl_output %s", xo->name, out->name);
+}
 
 static void
 _global(void *data __attribute__((unused)), struct wl_registry *reg, uint32_t id,
@@ -136,6 +220,7 @@ main(void)
 {
    struct wl_registry *reg;
    struct wl_test *tester;
+   struct zxdg_output_manager_v1 *manager, *manager_v2;
    int dones;
 
    tk = tk_connect("test-output");
@@ -166,6 +251,21 @@ main(void)
      tk_fail(tk, "a version 2 object was sent name or description");
    if (old_client.dones != 1) tk_fail(tk, "version 2 object got no done");
 
+   manager = tk_bind(tk, &zxdg_output_manager_v1_interface, 3);
+   manager_v2 = tk_bind(tk, &zxdg_output_manager_v1_interface, 2);
+   if ((!manager) || (!manager_v2)) tk_fail(tk, "no zxdg_output_manager_v1");
+   _xdg_output_get(manager, &outputs[0], &xdg_outputs[0]);
+   _xdg_output_get(manager, &outputs[1], &xdg_outputs[1]);
+   _xdg_output_get(manager_v2, &outputs[1], &xdg_v2);
+   outputs[1].xdg = &xdg_outputs[1];
+   _settle();
+   _check_xdg(&outputs[0], &xdg_outputs[0]);
+   _check_xdg(&outputs[1], &xdg_outputs[1]);
+   _check_xdg(&outputs[1], &xdg_v2);
+   if (xdg_outputs[1].dones)
+     tk_fail(tk, "xdg_output.done sent to a version 3 object");
+   if (xdg_v2.dones != 1) tk_fail(tk, "version 2 xdg_output got no done");
+
    dones = outputs[1].dones;
    wl_test_output_configure(tester, 1, 1100, 20, 640, 480);
    _settle();
@@ -184,6 +284,24 @@ main(void)
              outputs[1].descriptions);
    if (old_client.w != 640) tk_fail(tk, "version 2 object missed the change");
    if (old_client.names) tk_fail(tk, "version 2 object was sent a name");
+
+   _check_xdg(&outputs[1], &xdg_outputs[1]);
+   _check_xdg(&outputs[1], &xdg_v2);
+   if (outputs[1].xdg_w_at_done != 640)
+     tk_fail(tk, "wl_output.done came before the new logical size");
+   if (xdg_outputs[1].dones)
+     tk_fail(tk, "xdg_output.done sent to a version 3 object");
+   if (xdg_v2.dones != 2)
+     tk_fail(tk, "version 2 xdg_output got %d done events", xdg_v2.dones);
+
+   zxdg_output_v1_destroy(xdg_outputs[0].xdg);
+   zxdg_output_v1_destroy(xdg_outputs[1].xdg);
+   zxdg_output_v1_destroy(xdg_v2.xdg);
+   zxdg_output_manager_v1_destroy(manager);
+   zxdg_output_manager_v1_destroy(manager_v2);
+   _settle();
+   wl_test_output_configure(tester, 1, 1200, 0, 640, 480);
+   _settle();
 
    wl_output_release(outputs[0].output);
    wl_output_release(outputs[1].output);

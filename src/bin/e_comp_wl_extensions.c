@@ -7,6 +7,7 @@
 #include "relative-pointer-unstable-v1-server-protocol.h"
 #include "pointer-constraints-unstable-v1-server-protocol.h"
 #include "action_route-server-protocol.h"
+#include "xdg-output-unstable-v1-server-protocol.h"
 
 /* mutter uses 32, seems reasonable */
 #define HANDLE_LEN 32
@@ -1002,6 +1003,94 @@ e_comp_wl_extension_action_route_interface_get(int *version)
    return &_e_action_route_interface;
 }
 
+static void
+_e_zxdg_output_v1_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   wl_resource_destroy(resource);
+}
+
+static const struct zxdg_output_v1_interface _e_zxdg_output_v1_interface =
+{
+   _e_zxdg_output_v1_cb_destroy,
+};
+
+static void
+_e_zxdg_output_v1_cb_unbind(struct wl_resource *resource)
+{
+   E_Comp_Wl_Output *output = wl_resource_get_user_data(resource);
+
+   output->xdg_outputs = eina_list_remove(output->xdg_outputs, resource);
+}
+
+/* The logical rectangle is in the units of wl_surface coordinates. E's canvas
+ * is in physical pixels and every output has the scale wl_output reports, so
+ * mixed-DPI layouts are not handled: zones are not placed in logical space. */
+static void
+_e_zxdg_output_v1_geometry_send(E_Comp_Wl_Output *output, struct wl_resource *resource)
+{
+   int scale = output->scale;
+
+   if (scale < 1) scale = 1;
+   zxdg_output_v1_send_logical_position(resource, output->x / scale, output->y / scale);
+   zxdg_output_v1_send_logical_size(resource, output->w / scale, output->h / scale);
+}
+
+EINTERN void
+e_comp_wl_extension_xdg_output_update(E_Comp_Wl_Output *output)
+{
+   struct wl_resource *resource;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(output->xdg_outputs, l, resource)
+     {
+        _e_zxdg_output_v1_geometry_send(output, resource);
+        if (wl_resource_get_version(resource) < 3)
+          zxdg_output_v1_send_done(resource);
+     }
+}
+
+static void
+_e_zxdg_output_manager_v1_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   wl_resource_destroy(resource);
+}
+
+static void
+_e_zxdg_output_manager_v1_cb_xdg_output_get(struct wl_client *client, struct wl_resource *resource, uint32_t id, struct wl_resource *output_resource)
+{
+   E_Comp_Wl_Output *output = wl_resource_get_user_data(output_resource);
+   struct wl_resource *res;
+   uint32_t version = wl_resource_get_version(resource);
+
+   res = wl_resource_create(client, &zxdg_output_v1_interface, version, id);
+   if (!res)
+     {
+        wl_client_post_no_memory(client);
+        return;
+     }
+   wl_resource_set_implementation(res, &_e_zxdg_output_v1_interface, output,
+                                  _e_zxdg_output_v1_cb_unbind);
+   output->xdg_outputs = eina_list_append(output->xdg_outputs, res);
+
+   _e_zxdg_output_v1_geometry_send(output, res);
+   if (version >= ZXDG_OUTPUT_V1_NAME_SINCE_VERSION)
+     zxdg_output_v1_send_name(res, output->name);
+   if (version >= ZXDG_OUTPUT_V1_DESCRIPTION_SINCE_VERSION)
+     zxdg_output_v1_send_description(res, output->description);
+
+   /* From version 3, wl_output.done replaces xdg_output.done. */
+   if (version < 3)
+     zxdg_output_v1_send_done(res);
+   else if (wl_resource_get_version(output_resource) >= WL_OUTPUT_DONE_SINCE_VERSION)
+     wl_output_send_done(output_resource);
+}
+
+static const struct zxdg_output_manager_v1_interface _e_zxdg_output_manager_v1_interface =
+{
+   _e_zxdg_output_manager_v1_cb_destroy,
+   _e_zxdg_output_manager_v1_cb_xdg_output_get,
+};
+
 #define GLOBAL_BIND_CB(NAME, IFACE, ...) \
 static void \
 _e_comp_wl_##NAME##_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t version, uint32_t id) \
@@ -1024,6 +1113,7 @@ GLOBAL_BIND_CB(zxdg_exporter_v1, zxdg_exporter_v1_interface)
 GLOBAL_BIND_CB(zxdg_importer_v1, zxdg_importer_v1_interface)
 GLOBAL_BIND_CB(zwp_relative_pointer_manager_v1, zwp_relative_pointer_manager_v1_interface)
 GLOBAL_BIND_CB(zwp_pointer_constraints_v1, zwp_pointer_constraints_v1_interface)
+GLOBAL_BIND_CB(zxdg_output_manager_v1, zxdg_output_manager_v1_interface)
 GLOBAL_BIND_CB(action_route, action_route_interface,
      e_binding_key_list_cb = _action_route_key_list_cb;
      key_bindings = eina_hash_string_superfast_new(NULL);
@@ -1122,6 +1212,7 @@ e_comp_wl_extensions_init(void)
    GLOBAL_CREATE_OR_RETURN(zwp_pointer_constraints_v1, zwp_pointer_constraints_v1_interface, 1);
    e_comp_wl->extensions->zwp_pointer_constraints_v1.constraints = eina_hash_pointer_new(NULL);
    GLOBAL_CREATE_OR_RETURN(action_route, action_route_interface, 1);
+   GLOBAL_CREATE_OR_RETURN(zxdg_output_manager_v1, zxdg_output_manager_v1_interface, 3);
 
    ecore_event_handler_add(ECORE_WL2_EVENT_SYNC_DONE, _dmabuf_add, NULL);
 

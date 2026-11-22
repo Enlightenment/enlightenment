@@ -14,4 +14,5 @@ zwp_relative_pointer_manager_v1	1
 zxdg_decoration_manager_v1	1
 zxdg_exporter_v1	1
 zxdg_importer_v1	1
+zxdg_output_manager_v1	3
 zxdg_shell_v6	1

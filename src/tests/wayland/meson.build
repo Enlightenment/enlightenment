@@ -28,6 +28,7 @@ foreach p: [
   '@0@/unstable/xdg-shell/xdg-shell-unstable-v6.xml'.format(dir_wayland_protocols),
   '@0@/unstable/xdg-foreign/xdg-foreign-unstable-v1.xml'.format(dir_wayland_protocols),
   '@0@/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml'.format(dir_wayland_protocols),
+  '@0@/unstable/xdg-output/xdg-output-unstable-v1.xml'.format(dir_wayland_protocols),
 ]
   test_proto_src += gen_scanner_client.process(p)
   test_proto_src += gen_scanner_impl.process(p)

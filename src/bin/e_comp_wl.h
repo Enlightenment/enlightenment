@@ -146,6 +146,10 @@ typedef struct E_Comp_Wl_Extension_Data
      {
         struct wl_global *global;
      } efl_aux_hints;
+   struct
+     {
+        struct wl_global *global;
+     } zxdg_output_manager_v1;
 } E_Comp_Wl_Extension_Data;
 
 struct _E_Comp_Wl_Data
@@ -389,6 +393,7 @@ struct _E_Comp_Wl_Output
 {
    struct wl_global *global;
    Eina_List *resources;
+   Eina_List *xdg_outputs;
    const char *id, *make, *model;
    const char *name, *description;
    int x, y, w, h;
@@ -444,6 +449,7 @@ E_API Eina_Bool e_comp_wl_client_is_grabbed(const E_Client *ec);
 E_API Eina_Bool e_comp_wl_grab_client_mouse_move(const Ecore_Event_Mouse_Move *ev);
 E_API Eina_Bool e_comp_wl_grab_client_mouse_button(const Ecore_Event_Mouse_Button *ev);
 
+EINTERN void e_comp_wl_extension_xdg_output_update(E_Comp_Wl_Output *output);
 E_API void e_comp_wl_extension_relative_motion_event(uint64_t time_usec, double dx, double dy, double dx_unaccel, double dy_unaccel);
 E_API void e_comp_wl_extension_pointer_constraints_commit(E_Client *ec);
 E_API Eina_Bool e_comp_wl_extension_pointer_constraints_update(E_Client *ec, int x, int y);
