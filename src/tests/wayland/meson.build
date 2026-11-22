@@ -70,6 +70,7 @@ wl_protocol_tests = [
   ['maximize-restore', 'test_maximize_restore.c'],
   ['xdg-decoration', 'test_xdg_decoration.c'],
   ['shm-truncate', 'test_shm_truncate.c'],
+  ['output', 'test_output.c'],
   ['client-iconify', 'test_client_iconify.c',
    {'ELM_TRANSITION_DURATION_FACTOR': '4'}],
 ]

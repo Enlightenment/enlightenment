@@ -390,6 +390,7 @@ struct _E_Comp_Wl_Output
    struct wl_global *global;
    Eina_List *resources;
    const char *id, *make, *model;
+   const char *name, *description;
    int x, y, w, h;
    int phys_width, phys_height;
    unsigned int refresh;

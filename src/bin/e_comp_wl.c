@@ -3198,6 +3198,37 @@ _e_comp_wl_cb_output_unbind(struct wl_resource *resource)
 }
 
 static void
+_e_comp_wl_output_cb_release(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   wl_resource_destroy(resource);
+}
+
+static const struct wl_output_interface _e_comp_wl_output_interface =
+{
+   _e_comp_wl_output_cb_release
+};
+
+static void
+_e_comp_wl_output_state_send(E_Comp_Wl_Output *output, struct wl_resource *resource)
+{
+   uint32_t version = wl_resource_get_version(resource);
+
+   wl_output_send_geometry(resource, output->x, output->y,
+                           output->phys_width, output->phys_height,
+                           output->subpixel, output->make ?: "",
+                           output->model ?: "", output->transform);
+
+   if (version >= WL_OUTPUT_SCALE_SINCE_VERSION)
+     wl_output_send_scale(resource, output->scale);
+
+   /* 3 == preferred + current */
+   wl_output_send_mode(resource, 3, output->w, output->h, output->refresh);
+
+   if (version >= WL_OUTPUT_DONE_SINCE_VERSION)
+     wl_output_send_done(resource);
+}
+
+static void
 _e_comp_wl_cb_output_bind(struct wl_client *client, void *data, uint32_t version, uint32_t id)
 {
    E_Comp_Wl_Output *output;
@@ -3218,23 +3249,17 @@ _e_comp_wl_cb_output_bind(struct wl_client *client, void *data, uint32_t version
 
    output->resources = eina_list_append(output->resources, resource);
 
-   wl_resource_set_implementation(resource, NULL, output,
-                                  _e_comp_wl_cb_output_unbind);
-   wl_resource_set_user_data(resource, output);
+   wl_resource_set_implementation(resource, &_e_comp_wl_output_interface,
+                                  output, _e_comp_wl_cb_output_unbind);
 
-   wl_output_send_geometry(resource, output->x, output->y,
-                           output->phys_width, output->phys_height,
-                           output->subpixel, output->make ?: "",
-                           output->model ?: "", output->transform);
-
-   if (version >= WL_OUTPUT_SCALE_SINCE_VERSION)
-     wl_output_send_scale(resource, output->scale);
-
-   /* 3 == preferred + current */
-   wl_output_send_mode(resource, 3, output->w, output->h, output->refresh);
-
-   if (version >= WL_OUTPUT_DONE_SINCE_VERSION)
-     wl_output_send_done(resource);
+   /* wl_output.name goes out once per object, so never from the state
+    * that a reconfigure sends again. */
+   if (version >= WL_OUTPUT_NAME_SINCE_VERSION)
+     {
+        wl_output_send_name(resource, output->name);
+        wl_output_send_description(resource, output->description);
+     }
+   _e_comp_wl_output_state_send(output, resource);
 }
 
 static Eina_Bool
@@ -3548,6 +3573,8 @@ e_comp_wl_shutdown(void)
         if (output->id) eina_stringshare_del(output->id);
         if (output->make) eina_stringshare_del(output->make);
         if (output->model) eina_stringshare_del(output->model);
+        eina_stringshare_del(output->name);
+        eina_stringshare_del(output->description);
         free(output);
      }
 
@@ -3744,6 +3771,34 @@ _e_comp_wl_output_get(Eina_List *outputs, const char *id)
    return NULL;
 }
 
+/* wl_output.name is unique among outputs. A randr id is
+ * "<connector>/<edid>", and only the connector is what a user knows the
+ * output by. Backends with no randr pass no id. */
+static const char *
+_e_comp_wl_output_name_new(const char *id)
+{
+   static unsigned int unnamed = 0;
+   const char *slash;
+   char buf[32];
+
+   if (!id)
+     {
+        snprintf(buf, sizeof(buf), "WL-%u", ++unnamed);
+        return eina_stringshare_add(buf);
+     }
+   slash = strchr(id, '/');
+   if (slash) return eina_stringshare_add_length(id, slash - id);
+   return eina_stringshare_add(id);
+}
+
+static const char *
+_e_comp_wl_output_description_new(const E_Comp_Wl_Output *output)
+{
+   if (output->make && output->model)
+     return eina_stringshare_printf("%s %s", output->make, output->model);
+   return eina_stringshare_add(output->model ?: output->name);
+}
+
 /**
  * Initializes information about one display output.
  *
@@ -3790,12 +3845,14 @@ e_comp_wl_output_init(const char *id, const char *make, const char *model,
         if (id) output->id = eina_stringshare_add(id);
         if (make) output->make = eina_stringshare_add(make);
         if (model) output->model = eina_stringshare_add(model);
+        output->name = _e_comp_wl_output_name_new(id);
+        output->description = _e_comp_wl_output_description_new(output);
 
         e_comp_wl->outputs = eina_list_append(e_comp_wl->outputs, output);
 
         output->global =
           wl_global_create(e_comp_wl->wl.disp, &wl_output_interface,
-                           2, output, _e_comp_wl_cb_output_bind);
+                           4, output, _e_comp_wl_cb_output_bind);
 
         output->resources = NULL;
         /* Not e_scale: wl_surface.set_buffer_scale is not honoured, so a
@@ -3822,24 +3879,7 @@ e_comp_wl_output_init(const char *id, const char *make, const char *model,
 
    /* if we have bound resources, send updates */
    EINA_LIST_FOREACH(output->resources, l2, resource)
-     {
-        wl_output_send_geometry(resource,
-                                output->x, output->y,
-                                output->phys_width,
-                                output->phys_height,
-                                output->subpixel,
-                                output->make ?: "", output->model ?: "",
-                                output->transform);
-
-        if (wl_resource_get_version(resource) >= WL_OUTPUT_SCALE_SINCE_VERSION)
-          wl_output_send_scale(resource, output->scale);
-
-        /* 3 == preferred + current */
-        wl_output_send_mode(resource, 3, output->w, output->h, output->refresh);
-
-        if (wl_resource_get_version(resource) >= WL_OUTPUT_DONE_SINCE_VERSION)
-          wl_output_send_done(resource);
-     }
+     _e_comp_wl_output_state_send(output, resource);
 
    return EINA_TRUE;
 }
