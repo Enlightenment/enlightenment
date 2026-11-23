@@ -143,6 +143,7 @@ _wl_test_client_states(E_Client *ec)
    if (ec->sticky) states |= WL_TEST_CLIENT_STATE_STICKY;
    if (ec->shaded) states |= WL_TEST_CLIENT_STATE_SHADED;
    if (ec->internal) states |= WL_TEST_CLIENT_STATE_INTERNAL;
+   if (ec->urgent) states |= WL_TEST_CLIENT_STATE_URGENT;
 
    return states;
 }
@@ -633,7 +634,7 @@ e_modapi_init(E_Module *m)
         return NULL;
      }
 
-   _wl_test_global = wl_global_create(e_comp_wl->wl.disp, &wl_test_interface, 5,
+   _wl_test_global = wl_global_create(e_comp_wl->wl.disp, &wl_test_interface, 6,
                                      NULL, _wl_test_cb_bind);
    if (!_wl_test_global)
      {

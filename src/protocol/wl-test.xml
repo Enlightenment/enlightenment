@@ -23,7 +23,7 @@
     DEALINGS IN THE SOFTWARE.
   </copyright>
 
-  <interface name="wl_test" version="5">
+  <interface name="wl_test" version="6">
     <description summary="private interface for the compositor test suite">
       A back door into the compositor for its own test suite. It exposes
       internal state and synthesises input, so it is only built with
@@ -222,6 +222,8 @@
       <entry name="sticky"      value="0x040"/>
       <entry name="shaded"      value="0x080"/>
       <entry name="internal"    value="0x100" summary="one of E's own windows"/>
+      <entry name="urgent"      value="0x200" since="6"
+             summary="it asked for the user's attention"/>
     </enum>
 
     <request name="get_clients" since="3">
