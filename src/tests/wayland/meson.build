@@ -29,6 +29,7 @@ foreach p: [
   '@0@/unstable/xdg-foreign/xdg-foreign-unstable-v1.xml'.format(dir_wayland_protocols),
   '@0@/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml'.format(dir_wayland_protocols),
   '@0@/unstable/xdg-output/xdg-output-unstable-v1.xml'.format(dir_wayland_protocols),
+  '@0@/staging/xdg-activation/xdg-activation-v1.xml'.format(dir_wayland_protocols),
 ]
   test_proto_src += gen_scanner_client.process(p)
   test_proto_src += gen_scanner_impl.process(p)
@@ -72,6 +73,9 @@ wl_protocol_tests = [
   ['xdg-decoration', 'test_xdg_decoration.c'],
   ['shm-truncate', 'test_shm_truncate.c'],
   ['output', 'test_output.c'],
+  ['activation', 'test_activation.c'],
+  ['activation-expiry', 'test_activation.c',
+   {'E_TEST_ACTIVATION_TOKEN_LIFETIME': '1'}],
   ['client-iconify', 'test_client_iconify.c',
    {'ELM_TRANSITION_DURATION_FACTOR': '4'}],
 ]

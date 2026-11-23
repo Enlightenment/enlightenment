@@ -150,6 +150,10 @@ typedef struct E_Comp_Wl_Extension_Data
      {
         struct wl_global *global;
      } zxdg_output_manager_v1;
+   struct
+     {
+        struct wl_global *global;
+     } xdg_activation_v1;
 } E_Comp_Wl_Extension_Data;
 
 struct _E_Comp_Wl_Data

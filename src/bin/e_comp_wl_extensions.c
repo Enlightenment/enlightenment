@@ -8,6 +8,7 @@
 #include "pointer-constraints-unstable-v1-server-protocol.h"
 #include "action_route-server-protocol.h"
 #include "xdg-output-unstable-v1-server-protocol.h"
+#include "xdg-activation-v1-server-protocol.h"
 
 /* mutter uses 32, seems reasonable */
 #define HANDLE_LEN 32
@@ -1091,6 +1092,200 @@ static const struct zxdg_output_manager_v1_interface _e_zxdg_output_manager_v1_i
    _e_zxdg_output_manager_v1_cb_xdg_output_get,
 };
 
+/* A token is what lets one client give the focus to another, so it only
+ * carries that right if its maker held the focus when asking for it. Any other
+ * token can only mark the window urgent. A token is good once, for a limited
+ * time, and the table is bounded because a client can ask for any number. */
+#define ACTIVATION_TOKENS_MAX 32
+#define ACTIVATION_TOKEN_LIFETIME 30.0
+
+typedef struct Activation_Token
+{
+   char token[37]; /* uuid_unparse writes 36 + NUL */
+   double expires;
+   Eina_Bool may_focus E_BITFIELD;
+} Activation_Token;
+
+static Eina_List *xdg_activation_tokens;
+
+/* User data of a token object once committed: the string it produced outlives
+ * the object, so the two share nothing else. */
+static char xdg_activation_committed;
+
+static double
+_e_xdg_activation_token_lifetime(void)
+{
+#ifdef E_TESTS
+   const char *lifetime = getenv("E_TEST_ACTIVATION_TOKEN_LIFETIME");
+
+   if (lifetime) return atof(lifetime);
+#endif
+   return ACTIVATION_TOKEN_LIFETIME;
+}
+
+static Eina_Bool
+_e_xdg_activation_token_unused_check(struct wl_resource *resource)
+{
+   if (!wl_resource_get_user_data(resource)) return EINA_TRUE;
+   wl_resource_post_error(resource, XDG_ACTIVATION_TOKEN_V1_ERROR_ALREADY_USED,
+                          "token has already been committed");
+   return EINA_FALSE;
+}
+
+static void
+_e_xdg_activation_token_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   wl_resource_destroy(resource);
+}
+
+static void
+_e_xdg_activation_token_cb_set_serial(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, uint32_t serial EINA_UNUSED, struct wl_resource *seat EINA_UNUSED)
+{
+   _e_xdg_activation_token_unused_check(resource);
+}
+
+static void
+_e_xdg_activation_token_cb_set_app_id(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, const char *app_id EINA_UNUSED)
+{
+   _e_xdg_activation_token_unused_check(resource);
+}
+
+static void
+_e_xdg_activation_token_cb_set_surface(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *surface EINA_UNUSED)
+{
+   _e_xdg_activation_token_unused_check(resource);
+}
+
+static void
+_e_xdg_activation_token_cb_commit(struct wl_client *client, struct wl_resource *resource)
+{
+   Activation_Token *t;
+   E_Client *focused;
+   uuid_t u;
+
+   if (!_e_xdg_activation_token_unused_check(resource)) return;
+
+   t = E_NEW(Activation_Token, 1);
+   uuid_generate(u);
+   uuid_unparse_lower(u, t->token);
+   t->expires = ecore_loop_time_get() + _e_xdg_activation_token_lifetime();
+   focused = e_client_focused_get();
+   t->may_focus = focused && focused->comp_data && focused->comp_data->surface &&
+     (wl_resource_get_client(focused->comp_data->surface) == client);
+
+   xdg_activation_tokens = eina_list_append(xdg_activation_tokens, t);
+   if (eina_list_count(xdg_activation_tokens) > ACTIVATION_TOKENS_MAX)
+     {
+        free(eina_list_data_get(xdg_activation_tokens));
+        xdg_activation_tokens = eina_list_remove_list(xdg_activation_tokens,
+                                                      xdg_activation_tokens);
+     }
+
+   wl_resource_set_user_data(resource, &xdg_activation_committed);
+   xdg_activation_token_v1_send_done(resource, t->token);
+}
+
+/* Named: destroy comes last in this interface. */
+static const struct xdg_activation_token_v1_interface _e_xdg_activation_token_v1_interface =
+{
+   .set_serial = _e_xdg_activation_token_cb_set_serial,
+   .set_app_id = _e_xdg_activation_token_cb_set_app_id,
+   .set_surface = _e_xdg_activation_token_cb_set_surface,
+   .commit = _e_xdg_activation_token_cb_commit,
+   .destroy = _e_xdg_activation_token_cb_destroy,
+};
+
+static void
+_e_xdg_activation_v1_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   wl_resource_destroy(resource);
+}
+
+static void
+_e_xdg_activation_v1_cb_get_activation_token(struct wl_client *client, struct wl_resource *resource, uint32_t id)
+{
+   struct wl_resource *res;
+
+   res = wl_resource_create(client, &xdg_activation_token_v1_interface,
+                            wl_resource_get_version(resource), id);
+   if (!res)
+     {
+        wl_client_post_no_memory(client);
+        return;
+     }
+   wl_resource_set_implementation(res, &_e_xdg_activation_token_v1_interface,
+                                  NULL, NULL);
+}
+
+/* Removes the token from the table and hands it to the caller, dropping the
+ * expired ones met on the way. */
+static Activation_Token *
+_e_xdg_activation_token_take(const char *token)
+{
+   Activation_Token *t;
+   Eina_List *l, *ll;
+   double now = ecore_loop_time_get();
+
+   EINA_LIST_FOREACH_SAFE(xdg_activation_tokens, l, ll, t)
+     {
+        if (t->expires <= now)
+          {
+             xdg_activation_tokens = eina_list_remove_list(xdg_activation_tokens, l);
+             free(t);
+          }
+        else if (!strcmp(t->token, token))
+          {
+             xdg_activation_tokens = eina_list_remove_list(xdg_activation_tokens, l);
+             return t;
+          }
+     }
+   return NULL;
+}
+
+/* Follows the policy _NET_ACTIVE_WINDOW follows on X11. */
+static void
+_e_xdg_activation_client_activate(E_Client *ec, Eina_Bool may_focus)
+{
+   int policy = e_config->window_activehint_policy;
+
+   if (policy == E_ACTIVEHINT_POLICY_IGNORE) return;
+   if ((!may_focus) || (policy == E_ACTIVEHINT_POLICY_ANIMATE) ||
+       e_client_action_get() || e_comp->nocomp ||
+       ((policy == E_ACTIVEHINT_POLICY_ACTIVATE_EXCLUDE) && (!ec->desk->visible)))
+     e_client_urgent_set(ec, 1);
+   else if (ec->focused)
+     evas_object_raise(ec->frame);
+   else
+     e_client_activate(ec, EINA_TRUE);
+}
+
+static void
+_e_xdg_activation_v1_cb_activate(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, const char *token, struct wl_resource *surface)
+{
+   Activation_Token *t;
+   Eina_Bool may_focus;
+   E_Client *ec;
+
+   /* The protocol lets a compositor ignore an unknown token. */
+   if (!(t = _e_xdg_activation_token_take(token))) return;
+   may_focus = t->may_focus;
+   free(t);
+
+   ec = wl_resource_get_user_data(surface);
+   if ((!ec) || e_object_is_del(E_OBJECT(ec))) return;
+   if ((!ec->comp_data->mapped) || (!ec->comp_data->shell.surface) ||
+       e_client_util_is_popup(ec))
+     return;
+   _e_xdg_activation_client_activate(ec, may_focus);
+}
+
+static const struct xdg_activation_v1_interface _e_xdg_activation_v1_interface =
+{
+   .destroy = _e_xdg_activation_v1_cb_destroy,
+   .get_activation_token = _e_xdg_activation_v1_cb_get_activation_token,
+   .activate = _e_xdg_activation_v1_cb_activate,
+};
+
 #define GLOBAL_BIND_CB(NAME, IFACE, ...) \
 static void \
 _e_comp_wl_##NAME##_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t version, uint32_t id) \
@@ -1114,6 +1309,7 @@ GLOBAL_BIND_CB(zxdg_importer_v1, zxdg_importer_v1_interface)
 GLOBAL_BIND_CB(zwp_relative_pointer_manager_v1, zwp_relative_pointer_manager_v1_interface)
 GLOBAL_BIND_CB(zwp_pointer_constraints_v1, zwp_pointer_constraints_v1_interface)
 GLOBAL_BIND_CB(zxdg_output_manager_v1, zxdg_output_manager_v1_interface)
+GLOBAL_BIND_CB(xdg_activation_v1, xdg_activation_v1_interface)
 GLOBAL_BIND_CB(action_route, action_route_interface,
      e_binding_key_list_cb = _action_route_key_list_cb;
      key_bindings = eina_hash_string_superfast_new(NULL);
@@ -1213,6 +1409,7 @@ e_comp_wl_extensions_init(void)
    e_comp_wl->extensions->zwp_pointer_constraints_v1.constraints = eina_hash_pointer_new(NULL);
    GLOBAL_CREATE_OR_RETURN(action_route, action_route_interface, 1);
    GLOBAL_CREATE_OR_RETURN(zxdg_output_manager_v1, zxdg_output_manager_v1_interface, 3);
+   GLOBAL_CREATE_OR_RETURN(xdg_activation_v1, xdg_activation_v1_interface, 1);
 
    ecore_event_handler_add(ECORE_WL2_EVENT_SYNC_DONE, _dmabuf_add, NULL);
 
