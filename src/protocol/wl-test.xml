@@ -23,7 +23,7 @@
     DEALINGS IN THE SOFTWARE.
   </copyright>
 
-  <interface name="wl_test" version="6">
+  <interface name="wl_test" version="7">
     <description summary="private interface for the compositor test suite">
       A back door into the compositor for its own test suite. It exposes
       internal state and synthesises input, so it is only built with
@@ -308,5 +308,25 @@
       <arg name="w" type="int"/>
       <arg name="h" type="int"/>
     </request>
+
+    <request name="screensaver_configure" since="7">
+      <description summary="turn the screensaver on or off">
+        Turn the screensaver on with this timeout in seconds, or off with 0,
+        and start counting idle time from now. The test profile has it off.
+        Dimming is turned off, so that reaching the timeout turns the
+        screensaver on.
+      </description>
+      <arg name="timeout" type="uint"/>
+    </request>
+
+    <request name="get_screensaver" since="7">
+      <description summary="ask whether the screensaver is on">
+        Answered with a screensaver event.
+      </description>
+    </request>
+
+    <event name="screensaver" since="7">
+      <arg name="on" type="uint"/>
+    </event>
   </interface>
 </protocol>

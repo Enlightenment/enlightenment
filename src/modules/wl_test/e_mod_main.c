@@ -324,6 +324,21 @@ _wl_test_cb_output_configure(struct wl_client *client EINA_UNUSED, struct wl_res
      ERR("wl_test: could not configure wl_output of zone %u", zone);
 }
 
+static void
+_wl_test_cb_screensaver_configure(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, uint32_t timeout)
+{
+   e_config->screensaver_enable = !!timeout;
+   e_config->screensaver_timeout = timeout;
+   e_config->backlight.idle_dim = 0;
+   e_comp_wl_notidle();
+}
+
+static void
+_wl_test_cb_get_screensaver(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   wl_test_send_screensaver(resource, e_screensaver_on_get());
+}
+
 /* Input is posted as ecore events, the way a backend delivers it, rather than
  * fed to evas directly. Wayland clients are reached through evas callbacks
  * on their frame, but a good part of E listens on the ecore side of the same
@@ -601,6 +616,8 @@ static const struct wl_test_interface _wl_test_implementation =
    _wl_test_cb_client_action,
    _wl_test_cb_client_action_end,
    _wl_test_cb_output_configure,
+   _wl_test_cb_screensaver_configure,
+   _wl_test_cb_get_screensaver,
 };
 
 static void
@@ -634,7 +651,7 @@ e_modapi_init(E_Module *m)
         return NULL;
      }
 
-   _wl_test_global = wl_global_create(e_comp_wl->wl.disp, &wl_test_interface, 6,
+   _wl_test_global = wl_global_create(e_comp_wl->wl.disp, &wl_test_interface, 7,
                                      NULL, _wl_test_cb_bind);
    if (!_wl_test_global)
      {
