@@ -26,6 +26,7 @@
 #define EXECUTIVE_MODE_ENABLED
 #define E_COMP_WL
 #include "e.h"
+#include "primary-selection-unstable-v1-server-protocol.h"
 
 #if defined(__clang__)
 # pragma clang diagnostic ignored "-Wunused-parameter"
@@ -1100,12 +1101,307 @@ e_comp_wl_data_device_send_offer(E_Client *ec)
    return offer_res;
 }
 
+/* zwp_primary_selection_device_manager_v1, the middle click paste buffer.
+ *
+ * A device's user data is the source it was last told about, so that a
+ * client only hears about a change: the selection is offered to the client
+ * with the keyboard focus, and every other device holds NULL, as the
+ * protocol requires across focus changes. Unlike the clipboard, the contents
+ * are not saved: as with X11's PRIMARY, the selection dies with its owner. */
+
+static struct wl_client *
+_e_comp_wl_primary_selection_focus_client_get(void)
+{
+   if ((!e_comp_wl->kbd.enabled) || (!e_comp_wl->kbd.focus)) return NULL;
+   return wl_resource_get_client(e_comp_wl->kbd.focus);
+}
+
+static void
+_e_comp_wl_primary_selection_offer_cb_receive(struct wl_client *client, struct wl_resource *resource, const char *mime_type, int32_t fd)
+{
+   E_Comp_Wl_Data_Offer *offer = wl_resource_get_user_data(resource);
+
+   /* An offer stops being valid when its client loses the focus, and a
+    * client in the background must not read what the user selects next. */
+   if ((offer->source) &&
+       (offer->source == e_comp_wl->primary_selection.source) &&
+       (client == _e_comp_wl_primary_selection_focus_client_get()))
+     offer->source->send(offer->source, mime_type, fd);
+   else
+     close(fd);
+}
+
+static void
+_e_comp_wl_primary_selection_offer_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   wl_resource_destroy(resource);
+}
+
+static const struct zwp_primary_selection_offer_v1_interface _e_primary_selection_offer_interface =
+{
+   _e_comp_wl_primary_selection_offer_cb_receive,
+   _e_comp_wl_primary_selection_offer_cb_destroy,
+};
+
+static void
+_e_comp_wl_primary_selection_offer_cb_resource_destroy(struct wl_resource *resource)
+{
+   E_Comp_Wl_Data_Offer *offer = wl_resource_get_user_data(resource);
+
+   if (offer->source)
+     wl_list_remove(&offer->source_destroy_listener.link);
+   free(offer);
+}
+
+static void
+_e_comp_wl_primary_selection_offer_cb_source_destroy(struct wl_listener *listener, void *data EINA_UNUSED)
+{
+   E_Comp_Wl_Data_Offer *offer;
+
+   offer = container_of(listener, E_Comp_Wl_Data_Offer, source_destroy_listener);
+   wl_list_remove(&offer->source_destroy_listener.link);
+   offer->source = NULL;
+}
+
+static void
+_e_comp_wl_primary_selection_source_send_send(E_Comp_Wl_Data_Source *source, const char *mime_type, int32_t fd)
+{
+   zwp_primary_selection_source_v1_send_send(source->resource, mime_type, fd);
+   close(fd);
+}
+
+static void
+_e_comp_wl_primary_selection_source_cancelled_send(E_Comp_Wl_Data_Source *source)
+{
+   zwp_primary_selection_source_v1_send_cancelled(source->resource);
+}
+
+static const struct zwp_primary_selection_source_v1_interface _e_primary_selection_source_interface =
+{
+   _e_comp_wl_data_source_cb_offer,
+   _e_comp_wl_data_source_cb_destroy,
+};
+
+static struct wl_resource *
+_e_comp_wl_primary_selection_offer_create(E_Comp_Wl_Data_Source *source, struct wl_resource *device)
+{
+   E_Comp_Wl_Data_Offer *offer;
+   Eina_Array_Iterator it;
+   unsigned int i;
+   char *t;
+
+   offer = E_NEW(E_Comp_Wl_Data_Offer, 1);
+   if (!offer)
+     {
+        wl_client_post_no_memory(wl_resource_get_client(device));
+        return NULL;
+     }
+
+   offer->resource =
+     wl_resource_create(wl_resource_get_client(device),
+                        &zwp_primary_selection_offer_v1_interface,
+                        wl_resource_get_version(device), 0);
+   if (!offer->resource)
+     {
+        free(offer);
+        wl_client_post_no_memory(wl_resource_get_client(device));
+        return NULL;
+     }
+
+   wl_resource_set_implementation(offer->resource,
+                                  &_e_primary_selection_offer_interface, offer,
+                                  _e_comp_wl_primary_selection_offer_cb_resource_destroy);
+   offer->source = source;
+   offer->source_destroy_listener.notify =
+     _e_comp_wl_primary_selection_offer_cb_source_destroy;
+   wl_signal_add(&source->destroy_signal, &offer->source_destroy_listener);
+
+   zwp_primary_selection_device_v1_send_data_offer(device, offer->resource);
+   if (source->mime_types)
+     EINA_ARRAY_ITER_NEXT(source->mime_types, i, t, it)
+       zwp_primary_selection_offer_v1_send_offer(offer->resource, t);
+
+   return offer->resource;
+}
+
+EINTERN void
+e_comp_wl_data_primary_selection_update(void)
+{
+   E_Comp_Wl_Data_Source *wanted;
+   struct wl_client *focus;
+   struct wl_resource *device, *offer;
+   Eina_List *l;
+
+   focus = _e_comp_wl_primary_selection_focus_client_get();
+   EINA_LIST_FOREACH(e_comp_wl->primary_selection.devices, l, device)
+     {
+        wanted = NULL;
+        if (wl_resource_get_client(device) == focus)
+          wanted = e_comp_wl->primary_selection.source;
+        if (wl_resource_get_user_data(device) == wanted) continue;
+
+        wl_resource_set_user_data(device, wanted);
+        offer = NULL;
+        if (wanted)
+          offer = _e_comp_wl_primary_selection_offer_create(wanted, device);
+        zwp_primary_selection_device_v1_send_selection(device, offer);
+     }
+}
+
+static void
+_e_comp_wl_primary_selection_cb_source_destroy(struct wl_listener *listener EINA_UNUSED, void *data EINA_UNUSED)
+{
+   wl_list_remove(&e_comp_wl->primary_selection.source_destroy_listener.link);
+   e_comp_wl->primary_selection.source = NULL;
+   e_comp_wl_data_primary_selection_update();
+}
+
+static void
+_e_comp_wl_primary_selection_set(E_Comp_Wl_Data_Source *source)
+{
+   E_Comp_Wl_Data_Source *prev = e_comp_wl->primary_selection.source;
+
+   if (prev == source) return;
+
+   if (prev)
+     {
+        wl_list_remove(&e_comp_wl->primary_selection.source_destroy_listener.link);
+        prev->cancelled(prev);
+     }
+
+   e_comp_wl->primary_selection.source = source;
+   if (source)
+     {
+        e_comp_wl->primary_selection.source_destroy_listener.notify =
+          _e_comp_wl_primary_selection_cb_source_destroy;
+        wl_signal_add(&source->destroy_signal,
+                      &e_comp_wl->primary_selection.source_destroy_listener);
+     }
+
+   e_comp_wl_data_primary_selection_update();
+}
+
+/* The serial is not checked: E does not keep the serials of past input
+ * events. */
+static void
+_e_comp_wl_primary_selection_device_cb_selection_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, struct wl_resource *source_resource, uint32_t serial EINA_UNUSED)
+{
+   E_Comp_Wl_Data_Source *source = NULL;
+
+   if (source_resource)
+     source = wl_resource_get_user_data(source_resource);
+   _e_comp_wl_primary_selection_set(source);
+}
+
+static void
+_e_comp_wl_primary_selection_device_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   wl_resource_destroy(resource);
+}
+
+static const struct zwp_primary_selection_device_v1_interface _e_primary_selection_device_interface =
+{
+   _e_comp_wl_primary_selection_device_cb_selection_set,
+   _e_comp_wl_primary_selection_device_cb_destroy,
+};
+
+static void
+_e_comp_wl_primary_selection_device_cb_unbind(struct wl_resource *resource)
+{
+   e_comp_wl->primary_selection.devices =
+     eina_list_remove(e_comp_wl->primary_selection.devices, resource);
+}
+
+static void
+_e_comp_wl_primary_selection_manager_cb_source_create(struct wl_client *client, struct wl_resource *resource, uint32_t id)
+{
+   E_Comp_Wl_Data_Source *source;
+
+   source = E_NEW(E_Comp_Wl_Data_Source, 1);
+   if (!source)
+     {
+        wl_resource_post_no_memory(resource);
+        return;
+     }
+
+   wl_signal_init(&source->destroy_signal);
+   source->send = _e_comp_wl_primary_selection_source_send_send;
+   source->cancelled = _e_comp_wl_primary_selection_source_cancelled_send;
+
+   source->resource =
+     wl_resource_create(client, &zwp_primary_selection_source_v1_interface,
+                        wl_resource_get_version(resource), id);
+   if (!source->resource)
+     {
+        free(source);
+        wl_resource_post_no_memory(resource);
+        return;
+     }
+
+   wl_resource_set_implementation(source->resource,
+                                  &_e_primary_selection_source_interface, source,
+                                  _e_comp_wl_data_source_cb_resource_destroy);
+}
+
+static void
+_e_comp_wl_primary_selection_manager_cb_device_get(struct wl_client *client, struct wl_resource *resource, uint32_t id, struct wl_resource *seat_resource EINA_UNUSED)
+{
+   struct wl_resource *device;
+
+   device = wl_resource_create(client, &zwp_primary_selection_device_v1_interface,
+                               wl_resource_get_version(resource), id);
+   if (!device)
+     {
+        wl_resource_post_no_memory(resource);
+        return;
+     }
+
+   wl_resource_set_implementation(device, &_e_primary_selection_device_interface,
+                                  NULL, _e_comp_wl_primary_selection_device_cb_unbind);
+   e_comp_wl->primary_selection.devices =
+     eina_list_append(e_comp_wl->primary_selection.devices, device);
+   e_comp_wl_data_primary_selection_update();
+}
+
+static void
+_e_comp_wl_primary_selection_manager_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   wl_resource_destroy(resource);
+}
+
+static const struct zwp_primary_selection_device_manager_v1_interface _e_primary_selection_manager_interface =
+{
+   _e_comp_wl_primary_selection_manager_cb_source_create,
+   _e_comp_wl_primary_selection_manager_cb_device_get,
+   _e_comp_wl_primary_selection_manager_cb_destroy,
+};
+
+static void
+_e_comp_wl_primary_selection_cb_bind_manager(struct wl_client *client, void *data EINA_UNUSED, uint32_t version, uint32_t id)
+{
+   struct wl_resource *res;
+
+   res = wl_resource_create(client,
+                            &zwp_primary_selection_device_manager_v1_interface,
+                            version, id);
+   if (!res)
+     {
+        wl_client_post_no_memory(client);
+        return;
+     }
+
+   wl_resource_set_implementation(res, &_e_primary_selection_manager_interface,
+                                  NULL, NULL);
+}
+
 E_API void
 e_comp_wl_data_device_keyboard_focus_set(void)
 {
    struct wl_resource *data_device_res, *offer_res = NULL, *focus;
    E_Comp_Wl_Data_Source *source;
    E_Client *focused;
+
+   e_comp_wl_data_primary_selection_update();
 
    if (!e_comp_wl->kbd.enabled)
      {
@@ -1172,6 +1468,13 @@ e_comp_wl_data_manager_init(void)
    _e_comp_wl_clipboard_create();
    e_comp_wl->mgr.data_resources = eina_hash_pointer_new(NULL);
 
+   e_comp_wl->primary_selection.global =
+     wl_global_create(e_comp_wl->wl.disp,
+                      &zwp_primary_selection_device_manager_v1_interface, 1,
+                      NULL, _e_comp_wl_primary_selection_cb_bind_manager);
+   if (!e_comp_wl->primary_selection.global)
+     ERR("Could not create global for primary selection device manager");
+
    return EINA_TRUE;
 }
 
@@ -1183,6 +1486,8 @@ e_comp_wl_data_manager_shutdown(void)
 
    wl_list_remove(&e_comp_wl->clipboard.listener.link);
    E_FREE_FUNC(e_comp_wl->mgr.data_resources, eina_hash_free);
+   e_comp_wl->primary_selection.devices =
+     eina_list_free(e_comp_wl->primary_selection.devices);
 }
 
 E_API struct wl_resource *

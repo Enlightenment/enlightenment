@@ -269,6 +269,14 @@ struct _E_Comp_Wl_Data
 
    struct
      {
+        struct wl_global *global;
+        Eina_List *devices;
+        struct _E_Comp_Wl_Data_Source *source;
+        struct wl_listener source_destroy_listener;
+     } primary_selection;
+
+   struct
+     {
         struct wl_resource *resource;
         uint32_t edges;
      } resize;

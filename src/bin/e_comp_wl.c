@@ -3063,6 +3063,7 @@ _e_comp_wl_client_cb_focus_unset(void *data EINA_UNUSED, E_Client *ec)
 
    if (e_comp_wl->kbd.focus == ec->comp_data->surface)
      e_comp_wl->kbd.focus = NULL;
+   e_comp_wl_data_primary_selection_update();
 }
 
 static void
