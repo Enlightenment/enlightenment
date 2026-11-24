@@ -30,6 +30,7 @@ foreach p: [
   '@0@/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml'.format(dir_wayland_protocols),
   '@0@/unstable/xdg-output/xdg-output-unstable-v1.xml'.format(dir_wayland_protocols),
   '@0@/staging/xdg-activation/xdg-activation-v1.xml'.format(dir_wayland_protocols),
+  '@0@/unstable/idle-inhibit/idle-inhibit-unstable-v1.xml'.format(dir_wayland_protocols),
   '@0@/unstable/primary-selection/primary-selection-unstable-v1.xml'.format(dir_wayland_protocols),
 ]
   test_proto_src += gen_scanner_client.process(p)
@@ -78,6 +79,7 @@ wl_protocol_tests = [
   ['activation-expiry', 'test_activation.c',
    {'E_TEST_ACTIVATION_TOKEN_LIFETIME': '1'}],
   ['primary-selection', 'test_primary_selection.c'],
+  ['idle-inhibit', 'test_idle_inhibit.c'],
   ['client-iconify', 'test_client_iconify.c',
    {'ELM_TRANSITION_DURATION_FACTOR': '4'}],
 ]

@@ -8,6 +8,7 @@ protos = [
   '@0@/unstable/pointer-constraints/pointer-constraints-unstable-v1.xml'.format(dir_wayland_protocols),
   '@0@/unstable/xdg-output/xdg-output-unstable-v1.xml'.format(dir_wayland_protocols),
   '@0@/staging/xdg-activation/xdg-activation-v1.xml'.format(dir_wayland_protocols),
+  '@0@/unstable/idle-inhibit/idle-inhibit-unstable-v1.xml'.format(dir_wayland_protocols),
   '@0@/unstable/primary-selection/primary-selection-unstable-v1.xml'.format(dir_wayland_protocols),
 ]
 

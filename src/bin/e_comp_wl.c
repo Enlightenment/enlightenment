@@ -4245,6 +4245,13 @@ _e_comp_wl_screensaver_idle_cb(void *data EINA_UNUSED)
 {
    screensaver_idle_timer = NULL;
    if (e_screensaver_ignore_get()) return EINA_FALSE;
+   /* Whether an inhibitor's surface is visible can change at any time
+    * without input, so it is looked at when the timeout is reached. */
+   if (e_comp_wl_extension_idle_inhibited())
+     {
+        e_comp_wl_notidle();
+        return EINA_FALSE;
+     }
    if (!saver_on)
      {
         saver_on = EINA_TRUE;

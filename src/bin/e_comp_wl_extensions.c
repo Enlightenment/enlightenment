@@ -9,6 +9,7 @@
 #include "action_route-server-protocol.h"
 #include "xdg-output-unstable-v1-server-protocol.h"
 #include "xdg-activation-v1-server-protocol.h"
+#include "idle-inhibit-unstable-v1-server-protocol.h"
 
 /* mutter uses 32, seems reasonable */
 #define HANDLE_LEN 32
@@ -1286,6 +1287,107 @@ static const struct xdg_activation_v1_interface _e_xdg_activation_v1_interface =
    .activate = _e_xdg_activation_v1_cb_activate,
 };
 
+typedef struct Idle_Inhibitor
+{
+   struct wl_resource *surface;
+   struct wl_listener surface_destroy;
+} Idle_Inhibitor;
+
+static Eina_List *idle_inhibitors;
+
+/* The protocol honours an inhibitor only while its surface is visible.
+ * Occlusion by other windows is not taken into account. */
+EINTERN Eina_Bool
+e_comp_wl_extension_idle_inhibited(void)
+{
+   Idle_Inhibitor *inhibitor;
+   E_Client *ec;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(idle_inhibitors, l, inhibitor)
+     {
+        if (!inhibitor->surface) continue;
+        ec = wl_resource_get_user_data(inhibitor->surface);
+        if ((!ec) || (e_object_is_del(E_OBJECT(ec)))) continue;
+        if (evas_object_visible_get(ec->frame)) return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+static void
+_e_zwp_idle_inhibitor_v1_cb_surface_destroy(struct wl_listener *listener, void *data EINA_UNUSED)
+{
+   Idle_Inhibitor *inhibitor = container_of(listener, Idle_Inhibitor, surface_destroy);
+
+   wl_list_remove(&inhibitor->surface_destroy.link);
+   inhibitor->surface = NULL;
+}
+
+static void
+_e_zwp_idle_inhibitor_v1_cb_resource_destroy(struct wl_resource *resource)
+{
+   Idle_Inhibitor *inhibitor = wl_resource_get_user_data(resource);
+
+   if (inhibitor->surface)
+     wl_list_remove(&inhibitor->surface_destroy.link);
+   idle_inhibitors = eina_list_remove(idle_inhibitors, inhibitor);
+   free(inhibitor);
+}
+
+static void
+_e_zwp_idle_inhibitor_v1_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   wl_resource_destroy(resource);
+}
+
+static const struct zwp_idle_inhibitor_v1_interface _e_zwp_idle_inhibitor_v1_interface =
+{
+   _e_zwp_idle_inhibitor_v1_cb_destroy,
+};
+
+static void
+_e_zwp_idle_inhibit_manager_v1_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   wl_resource_destroy(resource);
+}
+
+static void
+_e_zwp_idle_inhibit_manager_v1_cb_create_inhibitor(struct wl_client *client, struct wl_resource *resource, uint32_t id, struct wl_resource *surface)
+{
+   Idle_Inhibitor *inhibitor;
+   struct wl_resource *res;
+
+   inhibitor = E_NEW(Idle_Inhibitor, 1);
+   if (!inhibitor)
+     {
+        wl_client_post_no_memory(client);
+        return;
+     }
+
+   res = wl_resource_create(client, &zwp_idle_inhibitor_v1_interface,
+                            wl_resource_get_version(resource), id);
+   if (!res)
+     {
+        free(inhibitor);
+        wl_client_post_no_memory(client);
+        return;
+     }
+
+   inhibitor->surface = surface;
+   inhibitor->surface_destroy.notify = _e_zwp_idle_inhibitor_v1_cb_surface_destroy;
+   wl_resource_add_destroy_listener(surface, &inhibitor->surface_destroy);
+   idle_inhibitors = eina_list_append(idle_inhibitors, inhibitor);
+   wl_resource_set_implementation(res, &_e_zwp_idle_inhibitor_v1_interface,
+                                  inhibitor,
+                                  _e_zwp_idle_inhibitor_v1_cb_resource_destroy);
+}
+
+static const struct zwp_idle_inhibit_manager_v1_interface _e_zwp_idle_inhibit_manager_v1_interface =
+{
+   _e_zwp_idle_inhibit_manager_v1_cb_destroy,
+   _e_zwp_idle_inhibit_manager_v1_cb_create_inhibitor,
+};
+
 #define GLOBAL_BIND_CB(NAME, IFACE, ...) \
 static void \
 _e_comp_wl_##NAME##_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t version, uint32_t id) \
@@ -1310,6 +1412,7 @@ GLOBAL_BIND_CB(zwp_relative_pointer_manager_v1, zwp_relative_pointer_manager_v1_
 GLOBAL_BIND_CB(zwp_pointer_constraints_v1, zwp_pointer_constraints_v1_interface)
 GLOBAL_BIND_CB(zxdg_output_manager_v1, zxdg_output_manager_v1_interface)
 GLOBAL_BIND_CB(xdg_activation_v1, xdg_activation_v1_interface)
+GLOBAL_BIND_CB(zwp_idle_inhibit_manager_v1, zwp_idle_inhibit_manager_v1_interface)
 GLOBAL_BIND_CB(action_route, action_route_interface,
      e_binding_key_list_cb = _action_route_key_list_cb;
      key_bindings = eina_hash_string_superfast_new(NULL);
@@ -1410,6 +1513,7 @@ e_comp_wl_extensions_init(void)
    GLOBAL_CREATE_OR_RETURN(action_route, action_route_interface, 1);
    GLOBAL_CREATE_OR_RETURN(zxdg_output_manager_v1, zxdg_output_manager_v1_interface, 3);
    GLOBAL_CREATE_OR_RETURN(xdg_activation_v1, xdg_activation_v1_interface, 1);
+   GLOBAL_CREATE_OR_RETURN(zwp_idle_inhibit_manager_v1, zwp_idle_inhibit_manager_v1_interface, 1);
 
    ecore_event_handler_add(ECORE_WL2_EVENT_SYNC_DONE, _dmabuf_add, NULL);
 

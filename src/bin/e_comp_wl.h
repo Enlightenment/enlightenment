@@ -154,6 +154,10 @@ typedef struct E_Comp_Wl_Extension_Data
      {
         struct wl_global *global;
      } xdg_activation_v1;
+   struct
+     {
+        struct wl_global *global;
+     } zwp_idle_inhibit_manager_v1;
 } E_Comp_Wl_Extension_Data;
 
 struct _E_Comp_Wl_Data
@@ -462,6 +466,7 @@ E_API Eina_Bool e_comp_wl_grab_client_mouse_move(const Ecore_Event_Mouse_Move *e
 E_API Eina_Bool e_comp_wl_grab_client_mouse_button(const Ecore_Event_Mouse_Button *ev);
 
 EINTERN void e_comp_wl_extension_xdg_output_update(E_Comp_Wl_Output *output);
+EINTERN Eina_Bool e_comp_wl_extension_idle_inhibited(void);
 E_API void e_comp_wl_extension_relative_motion_event(uint64_t time_usec, double dx, double dy, double dx_unaccel, double dy_unaccel);
 E_API void e_comp_wl_extension_pointer_constraints_commit(E_Client *ec);
 E_API Eina_Bool e_comp_wl_extension_pointer_constraints_update(E_Client *ec, int x, int y);
