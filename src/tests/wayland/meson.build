@@ -109,3 +109,22 @@ foreach t: wl_protocol_tests
     timeout: 120,
   )
 endforeach
+
+# X clients of the compositor's own Xwayland, so the xwayland module is
+# loaded as well, and the client speaks X through ecore_x. One program, run
+# once per scenario.
+if get_option('xwayland') and not config_h.has('HAVE_WAYLAND_ONLY')
+  test_xwayland = executable('test_wl_xwayland',
+    ['test_xwayland.c', tk_src, test_proto_src],
+    dependencies: [dependency('wayland-client'), dep_ecore_x],
+  )
+  foreach scenario: ['close', 'restore', 'early-map']
+    test('wl-xwayland-' + scenario,
+      run_nested,
+      args: [test_xwayland, scenario],
+      env: environment({'E_TEST_COMPOSITOR': e_test_compositor,
+                        'E_TEST_MODULE': 'wl_test,xwayland'}),
+      timeout: 120,
+    )
+  endforeach
+endif

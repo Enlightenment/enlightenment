@@ -538,6 +538,16 @@ e_comp_wl_client_xwayland_setup(E_Client *ec, E_Comp_X_Client_Data *cd, E_Pixmap
    if (e_comp_wl->xwl_pending)
      e_comp_wl->xwl_pending = eina_list_remove(e_comp_wl->xwl_pending, ec);
 }
+
+/* The X window of ec has moved to the client of a newer wl_surface: ec no
+ * longer owns its E_Comp_X_Client_Data nor its X pixmap reference. */
+static inline void
+e_comp_wl_client_xwayland_release(E_Client *ec)
+{
+   ((E_Comp_Wl_Client_Data*)ec->comp_data)->xwayland_data = NULL;
+   ((E_Comp_Wl_Client_Data*)ec->comp_data)->xwayland_pixmap = NULL;
+   e_comp_wl_client_xwayland_setup(ec, NULL, NULL);
+}
 #  endif
 # endif
 #endif

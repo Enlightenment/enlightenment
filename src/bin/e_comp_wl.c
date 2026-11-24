@@ -2329,10 +2329,14 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
 #ifndef HAVE_WAYLAND_ONLY
    EINA_LIST_FOREACH(e_comp_wl->xwl_pending, l, wc)
      {
-        if (!e_pixmap_is_x(wc->pixmap)) continue;
-        if (wl_resource_get_id(res) !=
-            ((E_Comp_X_Client_Data*)wc->comp_data)->surface_id) continue;
-        // wc, ec is correct! first arg should be the x client, 2nd wl one
+        E_Comp_X_Client_Data *xcd;
+
+        if (e_pixmap_is_x(wc->pixmap))
+          xcd = (E_Comp_X_Client_Data*)wc->comp_data;
+        else
+          xcd = e_comp_wl_client_xwayland_data(wc);
+        if (wl_resource_get_id(res) != xcd->surface_id) continue;
+        // wc, ec is correct! first arg holds the x window, 2nd is the new wl one
         e_comp_x_xwayland_client_setup(wc, ec);
         break;
      }

@@ -2465,7 +2465,7 @@ _e_comp_x_message(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Cl
           }
         else
           {
-             ec->comp_data->surface_id = ev->data.l[0];
+             _e_comp_x_client_data_get(ec)->surface_id = ev->data.l[0];
              e_comp_wl_xwayland_client_queue(ec);
           }
      }
@@ -5157,9 +5157,8 @@ _e_comp_x_hook_client_del(void *d EINA_UNUSED, E_Client *ec)
 #ifdef HAVE_WAYLAND
    if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
      {
-        if (e_pixmap_is_x(ec->pixmap))
-          e_comp_wl_client_xwayland_setup(ec, NULL, NULL);
-        else
+        e_comp_wl_client_xwayland_setup(ec, NULL, NULL);
+        if (!e_pixmap_is_x(ec->pixmap))
           {
              e_pixmap_alias(NULL, E_PIXMAP_TYPE_X, win);
              free(cd);
@@ -6237,13 +6236,24 @@ e_comp_x_xwayland_client_setup(E_Client *ec, E_Client *wc)
 
    win = e_client_util_win_get(ec);
    pwin = e_client_util_pwin_get(ec);
-   cd = ec->comp_data;
-   e_comp_wl_client_xwayland_setup(wc, cd, e_pixmap_ref(ec->pixmap));
-   eina_hash_del(damages_hash, &cd->damage, ec);
-   ecore_x_damage_free(cd->damage);
+   cd = _e_comp_x_client_data_get(ec);
+   if (e_pixmap_is_x(ec->pixmap))
+     {
+        e_comp_wl_client_xwayland_setup(wc, cd, e_pixmap_ref(ec->pixmap));
+        ec->comp_data = NULL;
+     }
+   else
+     {
+        e_comp_wl_client_xwayland_setup(wc, cd, e_comp_x_client_pixmap_get(ec));
+        e_comp_wl_client_xwayland_release(ec);
+     }
+   if (cd->damage)
+     {
+        eina_hash_del(damages_hash, &cd->damage, ec);
+        ecore_x_damage_free(cd->damage);
+        cd->damage = 0;
+     }
    E_FREE_FUNC(cd->first_draw_delay, ecore_timer_del);
-   cd->damage = 0;
-   ec->comp_data = NULL;
    cd->evas_init = 0;
    _e_comp_x_client_evas_init(wc);
    if (!e_comp_object_frame_exists(ec->frame))
@@ -6265,13 +6275,22 @@ e_comp_x_xwayland_client_setup(E_Client *ec, E_Client *wc)
    memcpy(&wc->icccm, &ec->icccm, sizeof(ec->icccm));
    memcpy(&wc->netwm, &ec->netwm, sizeof(ec->netwm));
    memcpy(&wc->e, &ec->e, sizeof(ec->e));
+   /* The strings and lists in them belong to wc now: freeing ec, below,
+    * must not release them. */
+   memset(&ec->icccm, 0, sizeof(ec->icccm));
+   memset(&ec->netwm, 0, sizeof(ec->netwm));
+   memset(&ec->e, 0, sizeof(ec->e));
    wc->new_client = !wc->override;
    if (wc->new_client)
      e_comp->new_clients++;
 
-   _e_comp_x_hash_add(win, ec);
+   _e_comp_x_hash_del(win, ec);
+   _e_comp_x_hash_add(win, wc);
    if (pwin)
-     _e_comp_x_hash_add(pwin, ec);
+     {
+        _e_comp_x_hash_del(pwin, ec);
+        _e_comp_x_hash_add(pwin, wc);
+     }
 //   eina_hash_set(clients_win_hash, &win, wc);
 //   if (pwin)
 //     eina_hash_set(clients_win_hash, &pwin, wc);
@@ -6290,7 +6309,7 @@ e_comp_x_xwayland_client_setup(E_Client *ec, E_Client *wc)
    evas_object_layer_set(wc->frame, evas_object_layer_get(ec->frame));
    evas_object_geometry_set(wc->frame, ec->x, ec->y, ec->w, ec->h);
    evas_object_show(wc->frame);
-   e_pixmap_alias(wc->pixmap, E_PIXMAP_TYPE_X, e_pixmap_window_get(ec->pixmap));
+   e_pixmap_alias(wc->pixmap, E_PIXMAP_TYPE_X, win);
    e_object_del(E_OBJECT(ec));
    e_hints_window_visible_set(wc);
    _e_comp_x_client_stack(wc);

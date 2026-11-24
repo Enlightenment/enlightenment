@@ -11,6 +11,9 @@
 #   E_TEST_KEEP      set to 1 to keep the temp dir and print E's log path
 #   WAYLAND_DEBUG    passed through to the client
 #
+# The client gets E_TEST_PID, the compositor's pid: Xwayland's lock file names
+# it, and that is how a test finds the X display of its own compositor.
+#
 # Exits with the client's exit status, or 1 if the compositor never came up.
 #
 # The compositor gets a private XDG_RUNTIME_DIR, so it owns the only socket
@@ -140,7 +143,7 @@ if [ -z "$SOCKET" ]; then
 fi
 
 set +e
-XDG_RUNTIME_DIR="$RUNDIR" WAYLAND_DISPLAY="$SOCKET" "$@"
+XDG_RUNTIME_DIR="$RUNDIR" WAYLAND_DISPLAY="$SOCKET" E_TEST_PID="$E_PID" "$@"
 client_status=$?
 set -e
 
