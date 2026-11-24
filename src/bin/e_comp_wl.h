@@ -127,6 +127,14 @@ typedef struct E_Comp_Wl_Extension_Data
      {
         struct wl_global *global;
      } zxdg_importer_v1;
+   struct
+     {
+        struct wl_global *global;
+     } zxdg_exporter_v2;
+   struct
+     {
+        struct wl_global *global;
+     } zxdg_importer_v2;
    /* end xdg-foreign */
    struct
      {

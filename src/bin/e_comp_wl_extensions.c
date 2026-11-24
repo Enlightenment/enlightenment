@@ -4,6 +4,7 @@
 #include <uuid.h>
 #include "session-recovery-server-protocol.h"
 #include "xdg-foreign-unstable-v1-server-protocol.h"
+#include "xdg-foreign-unstable-v2-server-protocol.h"
 #include "relative-pointer-unstable-v1-server-protocol.h"
 #include "pointer-constraints-unstable-v1-server-protocol.h"
 #include "action_route-server-protocol.h"
@@ -28,6 +29,7 @@ typedef struct Imported
    E_Client *ec;
    struct wl_resource *res;
    Exported *ex;
+   Eina_Bool v2 E_BITFIELD;
 } Imported;
 
 typedef struct Constraint
@@ -213,13 +215,20 @@ static void _imported_v1_del(Imported *im);
 static void _exported_del(void *data, Evas *e, Evas_Object *obj, void *event_info);
 
 static void
+_e_comp_wl_zxdg_imported_destroyed_send(Imported *im)
+{
+   if (im->v2) zxdg_imported_v2_send_destroyed(im->res);
+   else zxdg_imported_v1_send_destroyed(im->res);
+}
+
+static void
 _exported_v1_del(Exported *ex)
 {
    while (ex->imported)
      {
         Imported *im = eina_list_data_get(ex->imported);
 
-        zxdg_imported_v1_send_destroyed(im->res);
+        _e_comp_wl_zxdg_imported_destroyed_send(im);
         _imported_v1_del(im);
      }
    evas_object_event_callback_del(ex->ec->frame, EVAS_CALLBACK_DEL, _exported_del);
@@ -253,8 +262,16 @@ static const struct zxdg_exported_v1_interface _e_zxdg_exported_v1_interface =
    _e_comp_wl_zxdg_exported_v1_destroy,
 };
 
+static const struct zxdg_exported_v2_interface _e_zxdg_exported_v2_interface =
+{
+   _e_comp_wl_zxdg_exported_v1_destroy,
+};
+
+/* v2 is v1 with renamed requests and interfaces, and errors of its own.
+ * Both share one handle namespace: a handle is an opaque string, and a
+ * window exported with one version can be imported with the other. */
 static void
-_e_comp_wl_zxdg_exporter_v1_export(struct wl_client *client, struct wl_resource *resource, uint32_t id, struct wl_resource *surface)
+_e_comp_wl_zxdg_export(struct wl_client *client, struct wl_resource *resource, uint32_t id, struct wl_resource *surface, Eina_Bool v2)
 {
    E_Client *ec = wl_resource_get_user_data(surface);
    Exported *ex;
@@ -264,11 +281,25 @@ _e_comp_wl_zxdg_exporter_v1_export(struct wl_client *client, struct wl_resource 
         wl_resource_post_error(resource, WL_DISPLAY_ERROR_INVALID_OBJECT, "invalid role for exported surface");
         return;
      }
+   if ((v2) && (e_client_util_is_popup(ec)))
+     {
+        wl_resource_post_error(resource, ZXDG_EXPORTER_V2_ERROR_INVALID_SURFACE,
+                               "surface is not an xdg_toplevel");
+        return;
+     }
 
    ex = E_NEW(Exported, 1);
    ex->ec = ec;
-   ex->res = wl_resource_create(client, &zxdg_exported_v1_interface, wl_resource_get_version(resource), id);
-   wl_resource_set_implementation(ex->res, &_e_zxdg_exported_v1_interface, ex, _e_zxdg_exported_v1_del);
+   if (v2)
+     {
+        ex->res = wl_resource_create(client, &zxdg_exported_v2_interface, wl_resource_get_version(resource), id);
+        wl_resource_set_implementation(ex->res, &_e_zxdg_exported_v2_interface, ex, _e_zxdg_exported_v1_del);
+     }
+   else
+     {
+        ex->res = wl_resource_create(client, &zxdg_exported_v1_interface, wl_resource_get_version(resource), id);
+        wl_resource_set_implementation(ex->res, &_e_zxdg_exported_v1_interface, ex, _e_zxdg_exported_v1_del);
+     }
    evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_DEL, _exported_del, ex);
 
    do
@@ -283,7 +314,20 @@ _e_comp_wl_zxdg_exporter_v1_export(struct wl_client *client, struct wl_resource 
      } while (eina_hash_find(e_comp_wl->extensions->zxdg_exporter_v1.surfaces, ex->handle));
    eina_hash_add(e_comp_wl->extensions->zxdg_exporter_v1.surfaces, ex->handle, ex);
 
-   zxdg_exported_v1_send_handle(ex->res, ex->handle);
+   if (v2) zxdg_exported_v2_send_handle(ex->res, ex->handle);
+   else zxdg_exported_v1_send_handle(ex->res, ex->handle);
+}
+
+static void
+_e_comp_wl_zxdg_exporter_v1_export(struct wl_client *client, struct wl_resource *resource, uint32_t id, struct wl_resource *surface)
+{
+   _e_comp_wl_zxdg_export(client, resource, id, surface, EINA_FALSE);
+}
+
+static void
+_e_comp_wl_zxdg_exporter_v2_export_toplevel(struct wl_client *client, struct wl_resource *resource, uint32_t id, struct wl_resource *surface)
+{
+   _e_comp_wl_zxdg_export(client, resource, id, surface, EINA_TRUE);
 }
 
 
@@ -369,20 +413,35 @@ static const struct zxdg_imported_v1_interface _e_zxdg_imported_v1_interface =
    _e_comp_wl_zxdg_imported_v1_set_parent_of,
 };
 
+static const struct zxdg_imported_v2_interface _e_zxdg_imported_v2_interface =
+{
+   _e_comp_wl_zxdg_imported_v1_destroy,
+   _e_comp_wl_zxdg_imported_v1_set_parent_of,
+};
+
 static void
-_e_comp_wl_zxdg_importer_v1_import(struct wl_client *client, struct wl_resource *resource, uint32_t id, const char *handle)
+_e_comp_wl_zxdg_import(struct wl_client *client, struct wl_resource *resource, uint32_t id, const char *handle, Eina_Bool v2)
 {
    Imported *im;
    Exported *ex;
 
    im = E_NEW(Imported, 1);
-   im->res = wl_resource_create(client, &zxdg_imported_v1_interface, wl_resource_get_version(resource), id);
-   wl_resource_set_implementation(im->res, &_e_zxdg_imported_v1_interface, NULL, _e_zxdg_imported_v1_del);
+   im->v2 = v2;
+   if (v2)
+     {
+        im->res = wl_resource_create(client, &zxdg_imported_v2_interface, wl_resource_get_version(resource), id);
+        wl_resource_set_implementation(im->res, &_e_zxdg_imported_v2_interface, NULL, _e_zxdg_imported_v1_del);
+     }
+   else
+     {
+        im->res = wl_resource_create(client, &zxdg_imported_v1_interface, wl_resource_get_version(resource), id);
+        wl_resource_set_implementation(im->res, &_e_zxdg_imported_v1_interface, NULL, _e_zxdg_imported_v1_del);
+     }
 
    ex = eina_hash_find(e_comp_wl->extensions->zxdg_exporter_v1.surfaces, handle);
    if ((!ex) || (!ex->ec->netwm.type))
      {
-        zxdg_imported_v1_send_destroyed(im->res);
+        _e_comp_wl_zxdg_imported_destroyed_send(im);
         free(im);
         return;
      }
@@ -390,6 +449,18 @@ _e_comp_wl_zxdg_importer_v1_import(struct wl_client *client, struct wl_resource 
    im->ex = ex;
    wl_resource_set_user_data(im->res, im);
    ex->imported = eina_list_append(ex->imported, im);
+}
+
+static void
+_e_comp_wl_zxdg_importer_v1_import(struct wl_client *client, struct wl_resource *resource, uint32_t id, const char *handle)
+{
+   _e_comp_wl_zxdg_import(client, resource, id, handle, EINA_FALSE);
+}
+
+static void
+_e_comp_wl_zxdg_importer_v2_import_toplevel(struct wl_client *client, struct wl_resource *resource, uint32_t id, const char *handle)
+{
+   _e_comp_wl_zxdg_import(client, resource, id, handle, EINA_TRUE);
 }
 
 /////////////////////////////////////////////////////////
@@ -979,6 +1050,18 @@ static const struct zxdg_importer_v1_interface _e_zxdg_importer_v1_interface =
    _e_comp_wl_zxdg_importer_v1_import,
 };
 
+static const struct zxdg_exporter_v2_interface _e_zxdg_exporter_v2_interface =
+{
+   _e_comp_wl_zxdg_exporter_v1_exporter_destroy,
+   _e_comp_wl_zxdg_exporter_v2_export_toplevel,
+};
+
+static const struct zxdg_importer_v2_interface _e_zxdg_importer_v2_interface =
+{
+   _e_comp_wl_zxdg_importer_v1_importer_destroy,
+   _e_comp_wl_zxdg_importer_v2_import_toplevel,
+};
+
 static const struct zwp_relative_pointer_manager_v1_interface _e_zwp_relative_pointer_manager_v1_interface =
 {
    _e_comp_wl_zwp_relative_pointer_manager_v1_destroy,
@@ -1408,6 +1491,8 @@ _e_comp_wl_##NAME##_cb_bind(struct wl_client *client, void *data EINA_UNUSED, ui
 GLOBAL_BIND_CB(session_recovery, zwp_e_session_recovery_interface)
 GLOBAL_BIND_CB(zxdg_exporter_v1, zxdg_exporter_v1_interface)
 GLOBAL_BIND_CB(zxdg_importer_v1, zxdg_importer_v1_interface)
+GLOBAL_BIND_CB(zxdg_exporter_v2, zxdg_exporter_v2_interface)
+GLOBAL_BIND_CB(zxdg_importer_v2, zxdg_importer_v2_interface)
 GLOBAL_BIND_CB(zwp_relative_pointer_manager_v1, zwp_relative_pointer_manager_v1_interface)
 GLOBAL_BIND_CB(zwp_pointer_constraints_v1, zwp_pointer_constraints_v1_interface)
 GLOBAL_BIND_CB(zxdg_output_manager_v1, zxdg_output_manager_v1_interface)
@@ -1507,6 +1592,8 @@ e_comp_wl_extensions_init(void)
    GLOBAL_CREATE_OR_RETURN(zxdg_exporter_v1, zxdg_exporter_v1_interface, 1);
    e_comp_wl->extensions->zxdg_exporter_v1.surfaces = eina_hash_string_superfast_new(NULL);
    GLOBAL_CREATE_OR_RETURN(zxdg_importer_v1, zxdg_importer_v1_interface, 1);
+   GLOBAL_CREATE_OR_RETURN(zxdg_exporter_v2, zxdg_exporter_v2_interface, 1);
+   GLOBAL_CREATE_OR_RETURN(zxdg_importer_v2, zxdg_importer_v2_interface, 1);
    GLOBAL_CREATE_OR_RETURN(zwp_relative_pointer_manager_v1, zwp_relative_pointer_manager_v1_interface, 1);
    GLOBAL_CREATE_OR_RETURN(zwp_pointer_constraints_v1, zwp_pointer_constraints_v1_interface, 1);
    e_comp_wl->extensions->zwp_pointer_constraints_v1.constraints = eina_hash_pointer_new(NULL);

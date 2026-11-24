@@ -4,6 +4,7 @@ protos = [
   '../../protocol/efl-aux-hints.xml',
   '../../protocol/action_route.xml',
   '@0@/unstable/xdg-foreign/xdg-foreign-unstable-v1.xml'.format(dir_wayland_protocols),
+  '@0@/unstable/xdg-foreign/xdg-foreign-unstable-v2.xml'.format(dir_wayland_protocols),
   '@0@/unstable/relative-pointer/relative-pointer-unstable-v1.xml'.format(dir_wayland_protocols),
   '@0@/unstable/pointer-constraints/pointer-constraints-unstable-v1.xml'.format(dir_wayland_protocols),
   '@0@/unstable/xdg-output/xdg-output-unstable-v1.xml'.format(dir_wayland_protocols),
