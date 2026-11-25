@@ -173,6 +173,8 @@ e_modapi_init(E_Module *m)
 
    have_shell = e_xdg_shell_v6_init() | e_xdg_shell_init();
    if (!have_shell) return NULL;
+   if (!e_xdg_toplevel_drag_init())
+     ERR("Could not create global for xdg_toplevel_drag_manager_v1");
 
 #ifdef HAVE_WL_TEXT_INPUT
    if (!e_input_panel_init())

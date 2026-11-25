@@ -360,6 +360,69 @@ data_source_set_actions(struct wl_client *client,
    source->actions_set = 1;
 }
 
+/* The carried window passes pointer events while it follows the pointer:
+ * the protocol keeps it out of the choice of the drop target, which is
+ * whatever window is under the pointer. */
+static void
+_e_comp_wl_data_source_toplevel_release(E_Comp_Wl_Data_Source *source)
+{
+   E_Client *ec = source->toplevel;
+
+   if (!ec) return;
+   source->toplevel = NULL;
+   if ((!e_object_is_del(E_OBJECT(ec))) && (ec->comp_data->mapped))
+     evas_object_pass_events_set(ec->frame, EINA_FALSE);
+   e_object_unref(E_OBJECT(ec));
+}
+
+/* An unmapped window is detached, as the protocol says. */
+static void
+_e_comp_wl_data_source_toplevel_carry(E_Comp_Wl_Data_Source *source)
+{
+   E_Client *ec = source->toplevel;
+   int x, y;
+
+   if (!ec) return;
+   if ((e_object_is_del(E_OBJECT(ec))) || (!ec->comp_data->mapped))
+     {
+        _e_comp_wl_data_source_toplevel_release(source);
+        return;
+     }
+   evas_object_pass_events_set(ec->frame, EINA_TRUE);
+   evas_pointer_canvas_xy_get(e_comp->evas, &x, &y);
+   /* The offset is relative to the window geometry, which is inside the
+    * surface that e_client_util_move_without_frame() places. */
+   e_client_util_move_without_frame(ec, x - source->toplevel_x - ec->comp_data->shell.window.x,
+                                    y - source->toplevel_y - ec->comp_data->shell.window.y);
+}
+
+static void
+_e_comp_wl_data_device_cb_drag_move(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   if (e_comp_wl->drag_source)
+     _e_comp_wl_data_source_toplevel_carry(e_comp_wl->drag_source);
+}
+
+E_API void
+e_comp_wl_data_source_toplevel_set(E_Comp_Wl_Data_Source *source, E_Client *ec, int x, int y)
+{
+   EINA_SAFETY_ON_NULL_RETURN(source);
+   if (source->toplevel != ec)
+     {
+        _e_comp_wl_data_source_toplevel_release(source);
+        source->toplevel = ec;
+        if (ec)
+          {
+             e_object_ref(E_OBJECT(ec));
+             evas_object_raise(ec->frame);
+          }
+     }
+   source->toplevel_x = x;
+   source->toplevel_y = y;
+   if (e_comp_wl->drag_source == source)
+     _e_comp_wl_data_source_toplevel_carry(source);
+}
+
 /* called by wl_resource_destroy */
 static void
 _e_comp_wl_data_source_cb_resource_destroy(struct wl_resource *resource)
@@ -371,6 +434,7 @@ _e_comp_wl_data_source_cb_resource_destroy(struct wl_resource *resource)
 
    wl_signal_emit(&source->destroy_signal, source);
 
+   _e_comp_wl_data_source_toplevel_release(source);
    _mime_types_free(source);
 
    if (e_comp_wl->drag_source == source)
@@ -564,6 +628,7 @@ _e_comp_wl_data_device_drag_finished(E_Drag *drag, int dropped)
    if (e_comp_wl->drag != drag) return;
    e_comp_wl->drag = NULL;
    e_comp_wl->drag_client = NULL;
+   if (data_source) _e_comp_wl_data_source_toplevel_release(data_source);
    e_screensaver_inhibit_toggle(0);
    if (dropped) return;
 #ifndef HAVE_WAYLAND_ONLY
@@ -684,6 +749,9 @@ _e_comp_wl_data_device_cb_drag_start(struct wl_client *client, struct wl_resourc
    if (ec)
      e_drag_object_set(e_comp_wl->drag, ec->frame);
    e_drag_start(e_comp_wl->drag, x, y);
+   evas_object_event_callback_add(e_comp_wl->drag->comp_object, EVAS_CALLBACK_MOVE,
+                                  _e_comp_wl_data_device_cb_drag_move, NULL);
+   _e_comp_wl_data_source_toplevel_carry(source);
 #ifndef HAVE_WAYLAND_ONLY
    if (e_comp_util_has_xwayland())
      {
@@ -712,6 +780,13 @@ _e_comp_wl_data_device_cb_selection_set(struct wl_client *client EINA_UNUSED, st
         wl_resource_post_error(source_resource,
                                WL_DATA_SOURCE_ERROR_INVALID_SOURCE,
                                "cannot set drag-and-drop source as selection");
+        return;
+     }
+   if (source->dnd_only)
+     {
+        wl_resource_post_error(source_resource,
+                               WL_DATA_SOURCE_ERROR_INVALID_SOURCE,
+                               "cannot set the source of an xdg_toplevel_drag as selection");
         return;
      }
 

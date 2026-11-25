@@ -7,6 +7,7 @@ else
     'wl_shell.c',
     'xdg6.c',
     'xdg.c',
+    'xdg_toplevel_drag.c',
     'e_mod_main.h'
    )
 
@@ -15,6 +16,7 @@ else
     '@0@/stable/xdg-shell/xdg-shell.xml'.format(dir_wayland_protocols),
     '@0@/unstable/input-method/input-method-unstable-v1.xml'.format(dir_wayland_protocols),
     '@0@/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml'.format(dir_wayland_protocols),
+    '@0@/staging/xdg-toplevel-drag/xdg-toplevel-drag-v1.xml'.format(dir_wayland_protocols),
   ]
     src += gen_scanner_server.process(p)
     src += gen_scanner_impl.process(p)

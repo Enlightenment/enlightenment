@@ -52,9 +52,15 @@ struct _E_Comp_Wl_Data_Source
    enum wl_data_device_manager_dnd_action current_dnd_action;
    enum wl_data_device_manager_dnd_action compositor_action;
    uint32_t serial;
+   /* xdg_toplevel_drag_v1: the window carried with this drag, holding a
+    * reference, and where it sits relative to the pointer. */
+   E_Client *toplevel;
+   int toplevel_x, toplevel_y;
 
    Eina_Bool accepted E_BITFIELD;
    Eina_Bool actions_set E_BITFIELD;
+   /* An xdg_toplevel_drag_v1 was made from it: never a selection. */
+   Eina_Bool dnd_only E_BITFIELD;
 };
 
 struct _E_Comp_Wl_Data_Offer
@@ -94,6 +100,9 @@ EINTERN void e_comp_wl_data_primary_selection_update(void);
 EINTERN Eina_Bool e_comp_wl_data_manager_init(void);
 EINTERN void e_comp_wl_data_manager_shutdown(void);
 E_API struct wl_resource *e_comp_wl_data_find_for_client(struct wl_client *client);
+/* For wl_desktop_shell, which implements xdg_toplevel_drag_v1 because it
+ * owns xdg_toplevel. A NULL ec detaches. */
+E_API void e_comp_wl_data_source_toplevel_set(E_Comp_Wl_Data_Source *source, E_Client *ec, int x, int y);
 E_API E_Comp_Wl_Data_Source *e_comp_wl_data_manager_source_create(struct wl_client *client, struct wl_resource *resource, uint32_t id);
 E_API void e_comp_wl_clipboard_source_unref(E_Comp_Wl_Clipboard_Source *source);
 E_API E_Comp_Wl_Clipboard_Source *e_comp_wl_clipboard_source_create(const char *mime_type, uint32_t serial, int fd);
