@@ -23,7 +23,7 @@
     DEALINGS IN THE SOFTWARE.
   </copyright>
 
-  <interface name="wl_test" version="7">
+  <interface name="wl_test" version="8">
     <description summary="private interface for the compositor test suite">
       A back door into the compositor for its own test suite. It exposes
       internal state and synthesises input, so it is only built with
@@ -328,5 +328,23 @@
     <event name="screensaver" since="7">
       <arg name="on" type="uint"/>
     </event>
+
+    <request name="key_modified" since="8">
+      <description summary="press or release a key with modifiers held">
+        Like key, with the modifiers held, so that a test can reach E's
+        key bindings. The modifiers are pressed before the key and
+        released after it.
+      </description>
+      <arg name="keyname" type="string"/>
+      <arg name="modifiers" type="uint" enum="modifier"/>
+      <arg name="pressed" type="uint"/>
+    </request>
+
+    <enum name="modifier" bitfield="true" since="8">
+      <entry name="shift" value="0x1"/>
+      <entry name="ctrl" value="0x2"/>
+      <entry name="alt" value="0x4"/>
+      <entry name="win" value="0x8"/>
+    </enum>
   </interface>
 </protocol>

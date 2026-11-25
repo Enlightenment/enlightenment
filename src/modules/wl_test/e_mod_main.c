@@ -333,6 +333,13 @@ _wl_test_cb_screensaver_configure(struct wl_client *client EINA_UNUSED, struct w
    e_comp_wl_notidle();
 }
 
+/* The modifier enum has the values of ECORE_EVENT_MODIFIER_*. */
+static void
+_wl_test_cb_key_modified(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, const char *keyname, uint32_t modifiers, uint32_t pressed)
+{
+   e_comp_wl_input_keyboard_event_generate(keyname, modifiers, !pressed);
+}
+
 static void
 _wl_test_cb_get_screensaver(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
@@ -618,6 +625,7 @@ static const struct wl_test_interface _wl_test_implementation =
    _wl_test_cb_output_configure,
    _wl_test_cb_screensaver_configure,
    _wl_test_cb_get_screensaver,
+   _wl_test_cb_key_modified,
 };
 
 static void
@@ -651,7 +659,7 @@ e_modapi_init(E_Module *m)
         return NULL;
      }
 
-   _wl_test_global = wl_global_create(e_comp_wl->wl.disp, &wl_test_interface, 7,
+   _wl_test_global = wl_global_create(e_comp_wl->wl.disp, &wl_test_interface, 8,
                                      NULL, _wl_test_cb_bind);
    if (!_wl_test_global)
      {
