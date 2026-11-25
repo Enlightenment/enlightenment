@@ -31,6 +31,7 @@ foreach p: [
   '@0@/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml'.format(dir_wayland_protocols),
   '@0@/unstable/xdg-output/xdg-output-unstable-v1.xml'.format(dir_wayland_protocols),
   '@0@/staging/xdg-activation/xdg-activation-v1.xml'.format(dir_wayland_protocols),
+  '@0@/stable/presentation-time/presentation-time.xml'.format(dir_wayland_protocols),
   '@0@/unstable/idle-inhibit/idle-inhibit-unstable-v1.xml'.format(dir_wayland_protocols),
   '@0@/unstable/primary-selection/primary-selection-unstable-v1.xml'.format(dir_wayland_protocols),
 ]
@@ -58,6 +59,7 @@ wl_protocol_tests = [
   ['no-dialogs', 'test_no_dialogs.c'],
   ['xdg-foreign', 'test_xdg_foreign.c'],
   ['xdg-foreign-v2', 'test_xdg_foreign_v2.c'],
+  ['presentation-time', 'test_presentation_time.c'],
   ['seat-capabilities', 'test_seat_capabilities.c'],
   ['dialog-focus', 'test_dialog_focus.c'],
   ['buffer-release', 'test_buffer_release.c'],

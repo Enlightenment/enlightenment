@@ -7,6 +7,7 @@ wl_seat	8
 wl_shell	1
 wl_shm	>=1
 wl_subcompositor	1
+wp_presentation	1
 xdg_activation_v1	1
 xdg_wm_base	6
 zwp_e_session_recovery	1

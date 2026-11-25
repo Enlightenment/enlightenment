@@ -81,6 +81,7 @@ struct _E_Comp_Wl_Surface_State
    E_Comp_Wl_Buffer *buffer;
    struct wl_listener buffer_destroy_listener;
    Eina_List *damages, *frames;
+   Eina_List *presentation_feedbacks;
    Eina_Tiler *input, *opaque;
    Eina_Bool new_attach E_BITFIELD;
    Eina_Bool has_data E_BITFIELD;
@@ -166,6 +167,10 @@ typedef struct E_Comp_Wl_Extension_Data
      {
         struct wl_global *global;
      } zwp_idle_inhibit_manager_v1;
+   struct
+     {
+        struct wl_global *global;
+     } wp_presentation;
 } E_Comp_Wl_Extension_Data;
 
 struct _E_Comp_Wl_Data
@@ -366,6 +371,11 @@ struct _E_Comp_Wl_Client_Data
    E_Comp_Wl_Surface_State pending;
 
    Eina_List *frames;
+   /* wp_presentation_feedback of the committed content, which is waiting
+    * for a render. Set late when content was committed after a render
+    * whose post_render has not run yet. */
+   Eina_List *presentation_feedbacks;
+   Eina_Bool presentation_late E_BITFIELD;
    Eina_List *constraints;
 
    struct
@@ -474,6 +484,12 @@ E_API Eina_Bool e_comp_wl_grab_client_mouse_move(const Ecore_Event_Mouse_Move *e
 E_API Eina_Bool e_comp_wl_grab_client_mouse_button(const Ecore_Event_Mouse_Button *ev);
 
 EINTERN void e_comp_wl_extension_xdg_output_update(E_Comp_Wl_Output *output);
+/* Each wp_presentation_feedback ends with exactly one of presented or
+ * discarded. These take the list, leave it empty and destroy the
+ * resources. */
+EINTERN void e_comp_wl_presentation_feedback_present(E_Client *ec);
+EINTERN void e_comp_wl_presentation_feedback_discard(Eina_List **feedbacks);
+EINTERN void e_comp_wl_presentation_feedback_commit(E_Client *ec, Eina_List **feedbacks);
 EINTERN Eina_Bool e_comp_wl_extension_idle_inhibited(void);
 E_API void e_comp_wl_extension_relative_motion_event(uint64_t time_usec, double dx, double dy, double dx_unaccel, double dy_unaccel);
 E_API void e_comp_wl_extension_pointer_constraints_commit(E_Client *ec);

@@ -11,6 +11,7 @@
 #include "xdg-output-unstable-v1-server-protocol.h"
 #include "xdg-activation-v1-server-protocol.h"
 #include "idle-inhibit-unstable-v1-server-protocol.h"
+#include "presentation-time-server-protocol.h"
 
 /* mutter uses 32, seems reasonable */
 #define HANDLE_LEN 32
@@ -1471,6 +1472,116 @@ static const struct zwp_idle_inhibit_manager_v1_interface _e_zwp_idle_inhibit_ma
    _e_zwp_idle_inhibit_manager_v1_cb_create_inhibitor,
 };
 
+static void
+_e_wp_presentation_feedback_cb_resource_destroy(struct wl_resource *resource)
+{
+   E_Client *ec = wl_resource_get_user_data(resource);
+   E_Comp_Wl_Client_Data *cd;
+
+   if (e_object_is_del(E_OBJECT(ec))) return;
+   cd = ec->comp_data;
+   cd->presentation_feedbacks = eina_list_remove(cd->presentation_feedbacks, resource);
+   cd->pending.presentation_feedbacks =
+     eina_list_remove(cd->pending.presentation_feedbacks, resource);
+   if (cd->sub.data)
+     cd->sub.data->cached.presentation_feedbacks =
+       eina_list_remove(cd->sub.data->cached.presentation_feedbacks, resource);
+}
+
+/* The time is read from the clock named at bind, when the render that
+ * drew the content is done. E has no vblank or hardware completion to
+ * report, so refresh, seq and flags are 0, which the protocol defines as
+ * unknown. */
+EINTERN void
+e_comp_wl_presentation_feedback_present(E_Client *ec)
+{
+   E_Comp_Wl_Output *output = NULL;
+   struct wl_resource *res, *output_res;
+   struct timespec ts;
+   Eina_List *feedbacks, *l;
+   uint64_t sec;
+
+   feedbacks = ec->comp_data->presentation_feedbacks;
+   if (!feedbacks) return;
+   ec->comp_data->presentation_feedbacks = NULL;
+
+   if (ec->zone) output = ec->zone->output;
+   clock_gettime(CLOCK_MONOTONIC, &ts);
+   sec = ts.tv_sec;
+   EINA_LIST_FREE(feedbacks, res)
+     {
+        if (output)
+          EINA_LIST_FOREACH(output->resources, l, output_res)
+            if (wl_resource_get_client(output_res) == wl_resource_get_client(res))
+              wp_presentation_feedback_send_sync_output(res, output_res);
+        wp_presentation_feedback_send_presented(res, sec >> 32, sec & 0xffffffff,
+                                                ts.tv_nsec, 0, 0, 0, 0);
+        wl_resource_destroy(res);
+     }
+}
+
+EINTERN void
+e_comp_wl_presentation_feedback_discard(Eina_List **feedbacks)
+{
+   struct wl_resource *res;
+   Eina_List *list = *feedbacks;
+
+   *feedbacks = NULL;
+   EINA_LIST_FREE(list, res)
+     {
+        wp_presentation_feedback_send_discarded(res);
+        wl_resource_destroy(res);
+     }
+}
+
+/* New content replaces the committed content. If that was drawn by a
+ * render whose post_render has not run yet, it was presented; otherwise
+ * it never reached the screen. */
+EINTERN void
+e_comp_wl_presentation_feedback_commit(E_Client *ec, Eina_List **feedbacks)
+{
+   E_Comp_Wl_Client_Data *cd = ec->comp_data;
+
+   if ((ec->on_post_updates) && (!cd->presentation_late))
+     e_comp_wl_presentation_feedback_present(ec);
+   else
+     e_comp_wl_presentation_feedback_discard(&cd->presentation_feedbacks);
+   if (ec->on_post_updates) cd->presentation_late = EINA_TRUE;
+   cd->presentation_feedbacks = *feedbacks;
+   *feedbacks = NULL;
+}
+
+static void
+_e_wp_presentation_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   wl_resource_destroy(resource);
+}
+
+static void
+_e_wp_presentation_cb_feedback(struct wl_client *client, struct wl_resource *resource, struct wl_resource *surface, uint32_t id)
+{
+   E_Client *ec = wl_resource_get_user_data(surface);
+   struct wl_resource *res;
+
+   res = wl_resource_create(client, &wp_presentation_feedback_interface,
+                            wl_resource_get_version(resource), id);
+   if (!res)
+     {
+        wl_resource_post_no_memory(resource);
+        return;
+     }
+   wl_resource_set_implementation(res, NULL, ec,
+                                  _e_wp_presentation_feedback_cb_resource_destroy);
+   ec->comp_data->pending.presentation_feedbacks =
+     eina_list_append(ec->comp_data->pending.presentation_feedbacks, res);
+}
+
+static const struct wp_presentation_interface _e_wp_presentation_interface =
+{
+   _e_wp_presentation_cb_destroy,
+   _e_wp_presentation_cb_feedback,
+};
+
 #define GLOBAL_BIND_CB(NAME, IFACE, ...) \
 static void \
 _e_comp_wl_##NAME##_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t version, uint32_t id) \
@@ -1498,6 +1609,9 @@ GLOBAL_BIND_CB(zwp_pointer_constraints_v1, zwp_pointer_constraints_v1_interface)
 GLOBAL_BIND_CB(zxdg_output_manager_v1, zxdg_output_manager_v1_interface)
 GLOBAL_BIND_CB(xdg_activation_v1, xdg_activation_v1_interface)
 GLOBAL_BIND_CB(zwp_idle_inhibit_manager_v1, zwp_idle_inhibit_manager_v1_interface)
+GLOBAL_BIND_CB(wp_presentation, wp_presentation_interface,
+     wp_presentation_send_clock_id(res, CLOCK_MONOTONIC);
+)
 GLOBAL_BIND_CB(action_route, action_route_interface,
      e_binding_key_list_cb = _action_route_key_list_cb;
      key_bindings = eina_hash_string_superfast_new(NULL);
@@ -1601,6 +1715,7 @@ e_comp_wl_extensions_init(void)
    GLOBAL_CREATE_OR_RETURN(zxdg_output_manager_v1, zxdg_output_manager_v1_interface, 3);
    GLOBAL_CREATE_OR_RETURN(xdg_activation_v1, xdg_activation_v1_interface, 1);
    GLOBAL_CREATE_OR_RETURN(zwp_idle_inhibit_manager_v1, zwp_idle_inhibit_manager_v1_interface, 1);
+   GLOBAL_CREATE_OR_RETURN(wp_presentation, wp_presentation_interface, 1);
 
    ecore_event_handler_add(ECORE_WL2_EVENT_SYNC_DONE, _dmabuf_add, NULL);
 
