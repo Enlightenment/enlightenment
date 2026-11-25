@@ -1,5 +1,8 @@
 #include "e.h"
 #include "evry_api.h"
+#include <unistd.h>
+#include <limits.h>
+#include <stdlib.h>
 // TODO - show error when input not parseable
 
 typedef struct _Plugin Plugin;
@@ -21,10 +24,54 @@ static Ecore_Event_Handler *action_handler = NULL;
 static Ecore_Exe *exe = NULL;
 static Eina_List *history = NULL;
 static Eina_List *handlers = NULL;
-static int error = 0;
 static Eina_Bool active = EINA_FALSE;
 static char _module_icon[] = "accessories-calculator";
 static Evry_Item *cur_item = NULL;
+
+/* Debounce: rather than killing and respawning a process on every
+ * single keystroke, wait for a short pause in typing before actually
+ * running the calculator. Cuts down on wasted process spawns during
+ * fast typing (most of which would just get killed by the next
+ * keystroke anyway). */
+#define CALC_DEBOUNCE 0.15
+static Ecore_Timer *fetch_timer = NULL;
+static char pending_input[1024];
+
+/* Detected once at module init: use qalc (more featureful - unit
+ * conversions, etc.) when it's installed, otherwise fall back to bc,
+ * which is assumed to always be available. */
+static Eina_Bool _have_qalc = EINA_FALSE;
+
+/* Look for `name` as an executable file in $PATH. */
+static Eina_Bool
+_binary_exists(const char *name)
+{
+   const char *path = getenv("PATH");
+   char candidate[PATH_MAX];
+   const char *p, *colon;
+
+   if (!path) return EINA_FALSE;
+
+   for (p = path; p && *p; p = colon ? colon + 1 : NULL)
+     {
+        size_t len;
+
+        colon = strchr(p, ':');
+        len = colon ? (size_t)(colon - p) : strlen(p);
+
+        if (len && (len + strlen(name) + 2) < sizeof(candidate))
+          {
+             memcpy(candidate, p, len);
+             candidate[len] = '/';
+             strcpy(candidate + len + 1, name);
+
+             if (access(candidate, X_OK) == 0)
+               return EINA_TRUE;
+          }
+     }
+
+   return EINA_FALSE;
+}
 
 static Evry_Plugin *
 _begin(Evry_Plugin *plugin, const Evry_Item *item EINA_UNUSED)
@@ -36,14 +83,10 @@ _begin(Evry_Plugin *plugin, const Evry_Item *item EINA_UNUSED)
 
    EVRY_PLUGIN_INSTANCE(p, plugin)
 
-   active = EINA_TRUE;
-
-   return EVRY_PLUGIN(p);
-}
-
-static int
-_run_bc(Plugin *p)
-{
+   /* Both qalc and bc are now run fresh (one-shot) for every query
+    * rather than as a single long-lived pipe, so the event handlers
+    * are registered once for the lifetime of this plugin instance
+    * instead of once per spawned process. */
    handlers = eina_list_append
        (handlers, ecore_event_handler_add
          (ECORE_EXE_EVENT_DATA, _cb_data, p));
@@ -54,12 +97,55 @@ _run_bc(Plugin *p)
        (handlers, ecore_event_handler_add
          (ECORE_EXE_EVENT_DEL, _cb_del, p));
 
-   exe = ecore_exe_pipe_run("bc -l",
+   active = EINA_TRUE;
+
+   return EVRY_PLUGIN(p);
+}
+
+/* Quote `input` as a single POSIX shell word and write the result
+ * (including surrounding quotes) into `out`. This is needed because
+ * ecore_exe_pipe_run() executes its argument through a shell, and the
+ * expression typed by the user must never be interpreted by it. */
+static void
+_shell_quote(const char *input, char *out, size_t outlen)
+{
+   size_t i, o = 0;
+
+   if (outlen < 3)
+     {
+        if (outlen) out[0] = '\0';
+        return;
+     }
+
+   out[o++] = '\'';
+
+   for (i = 0; input[i] && (o + 5) < outlen; i++)
+     {
+        if (input[i] == '\'')
+          {
+             /* close quote, escaped literal quote, reopen quote */
+             out[o++] = '\'';
+             out[o++] = '\\';
+             out[o++] = '\'';
+             out[o++] = '\'';
+          }
+        else
+          out[o++] = input[i];
+     }
+
+   out[o++] = '\'';
+   out[o] = '\0';
+}
+
+static int
+_run_calc(Plugin *p EINA_UNUSED, const char *cmd)
+{
+   exe = ecore_exe_pipe_run(cmd,
                             ECORE_EXE_PIPE_READ |
                             ECORE_EXE_PIPE_READ_LINE_BUFFERED |
-                            ECORE_EXE_PIPE_WRITE |
                             ECORE_EXE_PIPE_ERROR |
-                            ECORE_EXE_PIPE_ERROR_LINE_BUFFERED,
+                            ECORE_EXE_PIPE_ERROR_LINE_BUFFERED |
+                            ECORE_EXE_USE_SH,
                             NULL);
    return !!exe;
 }
@@ -91,6 +177,12 @@ _finish(Evry_Plugin *plugin)
 
    EINA_LIST_FREE (handlers, h)
      ecore_event_handler_del(h);
+
+   if (fetch_timer)
+     {
+        ecore_timer_del(fetch_timer);
+        fetch_timer = NULL;
+     }
 
    if (exe)
      {
@@ -146,17 +238,64 @@ _cb_action_performed(EINA_UNUSED void *data, EINA_UNUSED int type, void *event)
    return ECORE_CALLBACK_PASS_ON;
 }
 
+static Eina_Bool
+_cb_fetch_timer(void *data)
+{
+   Plugin *p = data;
+   char expr[1024];
+   char quoted[1200];
+   char buf[1400];
+
+   fetch_timer = NULL;
+
+   /* This supersedes whatever the calculator was still computing for
+    * an earlier, now-stale, partial expression. */
+   if (exe)
+     {
+        ecore_exe_terminate(exe);
+        ecore_exe_free(exe);
+        exe = NULL;
+     }
+
+   /* qalc treats an empty expression as a request to start its
+    * interactive mode and prints a "> " prompt, which would end up as
+    * the result. Nothing to calculate yet, so don't spawn anything. */
+   if (!*pending_input)
+     return ECORE_CALLBACK_CANCEL;
+
+   if (_have_qalc)
+     {
+        /* -t  : terse output - just the result, nothing else
+         * +u8 : allow unicode in output (×, ², √, ...) */
+        _shell_quote(pending_input, quoted, sizeof(quoted));
+        snprintf(buf, sizeof(buf), "qalc -t +u8 %s", quoted);
+     }
+   else
+     {
+        /* bc has no notion of terse/default precision, so keep the
+         * original scale=3 default unless the user set their own. */
+        if (!strncmp(pending_input, "scale=", 6))
+          snprintf(expr, sizeof(expr), "%s", pending_input);
+        else
+          snprintf(expr, sizeof(expr), "scale=3;%s", pending_input);
+
+        _shell_quote(expr, quoted, sizeof(quoted));
+        snprintf(buf, sizeof(buf), "printf '%%s\\n' %s | bc -l", quoted);
+     }
+
+   _run_calc(p, buf);
+
+   return ECORE_CALLBACK_CANCEL;
+}
+
 static int
 _fetch(Evry_Plugin *plugin, const char *input)
 {
    GET_PLUGIN(p, plugin);
 
-   char buf[1024];
    Evry_Item *it;
 
    if (!input) return 0;
-
-   if (!exe && !_run_bc(p)) return 0;
 
    if (!cur_item)
      {
@@ -178,20 +317,10 @@ _fetch(Evry_Plugin *plugin, const char *input)
           }
      }
 
-   if (!strncmp(input, "scale=", 6))
-     snprintf(buf, 1024, "%s\n", input);
-   else
-     snprintf(buf, 1024, "scale=3;%s\n", input);
+   snprintf(pending_input, sizeof(pending_input), "%s", input);
 
-   ecore_exe_send(exe, buf, strlen(buf));
-
-   /* XXX after error we get no response for first input ?! - send a
-      second time...*/
-   if (error)
-     {
-        ecore_exe_send(exe, buf, strlen(buf));
-        error = 0;
-     }
+   if (fetch_timer) ecore_timer_del(fetch_timer);
+   fetch_timer = ecore_timer_add(CALC_DEBOUNCE, _cb_fetch_timer, p);
 
    return EVRY_PLUGIN_HAS_ITEMS(p);
 }
@@ -234,7 +363,6 @@ _cb_error(void *data, int type EINA_UNUSED, void *event)
 
    p->items = eina_list_remove(p->items, cur_item);
    EVRY_PLUGIN_UPDATE(p, EVRY_UPDATE_ADD);
-   error = 1;
 
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -261,6 +389,8 @@ _plugins_init(const Evry_API *_api)
 
    action_handler = evry->event_handler_add(EVRY_EVENT_ACTION_PERFORMED,
                                             _cb_action_performed, NULL);
+
+   _have_qalc = _binary_exists("qalc");
 
    _plug = EVRY_PLUGIN_BASE(N_("Calculator"), _module_icon, EVRY_TYPE_TEXT,
                             _begin, _finish, _fetch);
