@@ -2977,6 +2977,8 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
    if (ec == e_comp_wl->wl.client_ec)
      e_comp_wl->wl.client_ec = NULL;
    e_comp_wl_extension_pointer_unconstrain(ec);
+   if (ec->comp_data->shortcuts_inhibitor)
+     wl_resource_set_user_data(ec->comp_data->shortcuts_inhibitor, NULL);
    _e_comp_wl_touch_points_drop(ec);
 
    /* remove sub list */

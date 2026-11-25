@@ -171,6 +171,10 @@ typedef struct E_Comp_Wl_Extension_Data
      {
         struct wl_global *global;
      } wp_presentation;
+   struct
+     {
+        struct wl_global *global;
+     } zwp_keyboard_shortcuts_inhibit_manager_v1;
 } E_Comp_Wl_Extension_Data;
 
 struct _E_Comp_Wl_Data
@@ -377,6 +381,10 @@ struct _E_Comp_Wl_Client_Data
    Eina_List *presentation_feedbacks;
    Eina_Bool presentation_late E_BITFIELD;
    Eina_List *constraints;
+   /* The zwp_keyboard_shortcuts_inhibitor_v1 of this surface, and whether
+    * the user turned it off with the shortcuts_inhibit_toggle action. */
+   struct wl_resource *shortcuts_inhibitor;
+   Eina_Bool shortcuts_inhibitor_off E_BITFIELD;
 
    struct
      {
@@ -487,6 +495,7 @@ EINTERN void e_comp_wl_extension_xdg_output_update(E_Comp_Wl_Output *output);
 /* Each wp_presentation_feedback ends with exactly one of presented or
  * discarded. These take the list, leave it empty and destroy the
  * resources. */
+EINTERN Eina_Bool e_comp_wl_shortcuts_inhibited(E_Binding_Context ctxt, Ecore_Event_Key *ev);
 EINTERN void e_comp_wl_presentation_feedback_present(E_Client *ec);
 EINTERN void e_comp_wl_presentation_feedback_discard(Eina_List **feedbacks);
 EINTERN void e_comp_wl_presentation_feedback_commit(E_Client *ec, Eina_List **feedbacks);

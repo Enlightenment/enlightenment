@@ -14,6 +14,13 @@ group "E_Config_Bindings" struct {
     group "E_Config_Binding_Key" struct {
       value "context" int: 9;
       value "modifiers" int: 8;
+      value "key" string: "Escape";
+      value "action" string: "shortcuts_inhibit_toggle";
+      value "any_mod" uchar: 0;
+    }
+    group "E_Config_Binding_Key" struct {
+      value "context" int: 9;
+      value "modifiers" int: 8;
       value "key" string: "i";
       value "action" string: "window_maximized_toggle";
       value "any_mod" uchar: 0;

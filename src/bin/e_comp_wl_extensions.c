@@ -12,6 +12,7 @@
 #include "xdg-activation-v1-server-protocol.h"
 #include "idle-inhibit-unstable-v1-server-protocol.h"
 #include "presentation-time-server-protocol.h"
+#include "keyboard-shortcuts-inhibit-unstable-v1-server-protocol.h"
 
 /* mutter uses 32, seems reasonable */
 #define HANDLE_LEN 32
@@ -112,10 +113,14 @@ _constraints_deactivate(E_Client *ec)
      }
 }
 
+/* active is sent each time an inhibitor comes into force. Losing the
+ * focus ends it without an inactive event, as the protocol says. */
 static void
 _e_comp_wl_extensions_client_focus_set(void *d EINA_UNUSED, E_Client *ec)
 {
    _constraints_activate(ec);
+   if ((ec->comp_data->shortcuts_inhibitor) && (!ec->comp_data->shortcuts_inhibitor_off))
+     zwp_keyboard_shortcuts_inhibitor_v1_send_active(ec->comp_data->shortcuts_inhibitor);
 }
 
 static void
@@ -1582,6 +1587,101 @@ static const struct wp_presentation_interface _e_wp_presentation_interface =
    _e_wp_presentation_cb_feedback,
 };
 
+static E_Action *shortcuts_inhibit_toggle_action;
+
+/* The toggle binding always reaches E, so that the user can take the
+ * keys back from a client that will not let go. */
+EINTERN Eina_Bool
+e_comp_wl_shortcuts_inhibited(E_Binding_Context ctxt, Ecore_Event_Key *ev)
+{
+   E_Client *ec = e_client_focused_get();
+
+   if ((!ec) || (e_object_is_del(E_OBJECT(ec)))) return EINA_FALSE;
+   if ((!ec->comp_data->shortcuts_inhibitor) || (ec->comp_data->shortcuts_inhibitor_off))
+     return EINA_FALSE;
+   return e_bindings_key_event_find(ctxt, ev, NULL) != shortcuts_inhibit_toggle_action;
+}
+
+static void
+_e_comp_wl_shortcuts_inhibit_toggle_go(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
+{
+   E_Client *ec = e_client_focused_get();
+   struct wl_resource *res;
+
+   if ((!ec) || (e_object_is_del(E_OBJECT(ec)))) return;
+   res = ec->comp_data->shortcuts_inhibitor;
+   if (!res) return;
+   ec->comp_data->shortcuts_inhibitor_off = !ec->comp_data->shortcuts_inhibitor_off;
+   if (ec->comp_data->shortcuts_inhibitor_off)
+     zwp_keyboard_shortcuts_inhibitor_v1_send_inactive(res);
+   else
+     zwp_keyboard_shortcuts_inhibitor_v1_send_active(res);
+}
+
+static void
+_e_zwp_keyboard_shortcuts_inhibitor_v1_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   wl_resource_destroy(resource);
+}
+
+static const struct zwp_keyboard_shortcuts_inhibitor_v1_interface _e_zwp_keyboard_shortcuts_inhibitor_v1_interface =
+{
+   _e_zwp_keyboard_shortcuts_inhibitor_v1_cb_destroy,
+};
+
+static void
+_e_zwp_keyboard_shortcuts_inhibitor_v1_cb_resource_destroy(struct wl_resource *resource)
+{
+   E_Client *ec = wl_resource_get_user_data(resource);
+
+   if (!ec) return;
+   ec->comp_data->shortcuts_inhibitor = NULL;
+   ec->comp_data->shortcuts_inhibitor_off = EINA_FALSE;
+}
+
+static void
+_e_zwp_keyboard_shortcuts_inhibit_manager_v1_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   wl_resource_destroy(resource);
+}
+
+/* E has a single seat, so the seat argument is not needed. */
+static void
+_e_zwp_keyboard_shortcuts_inhibit_manager_v1_cb_inhibit_shortcuts(struct wl_client *client, struct wl_resource *resource, uint32_t id, struct wl_resource *surface, struct wl_resource *seat EINA_UNUSED)
+{
+   E_Client *ec = wl_resource_get_user_data(surface);
+   struct wl_resource *res;
+
+   if ((ec) && (ec->comp_data->shortcuts_inhibitor))
+     {
+        wl_resource_post_error(resource,
+                               ZWP_KEYBOARD_SHORTCUTS_INHIBIT_MANAGER_V1_ERROR_ALREADY_INHIBITED,
+                               "shortcuts are already inhibited for this surface");
+        return;
+     }
+
+   res = wl_resource_create(client, &zwp_keyboard_shortcuts_inhibitor_v1_interface,
+                            wl_resource_get_version(resource), id);
+   if (!res)
+     {
+        wl_resource_post_no_memory(resource);
+        return;
+     }
+   wl_resource_set_implementation(res, &_e_zwp_keyboard_shortcuts_inhibitor_v1_interface, ec,
+                                  _e_zwp_keyboard_shortcuts_inhibitor_v1_cb_resource_destroy);
+   /* Inert when the surface's window is already gone. */
+   if (!ec) return;
+   ec->comp_data->shortcuts_inhibitor = res;
+   if (ec == e_client_focused_get())
+     zwp_keyboard_shortcuts_inhibitor_v1_send_active(res);
+}
+
+static const struct zwp_keyboard_shortcuts_inhibit_manager_v1_interface _e_zwp_keyboard_shortcuts_inhibit_manager_v1_interface =
+{
+   _e_zwp_keyboard_shortcuts_inhibit_manager_v1_cb_destroy,
+   _e_zwp_keyboard_shortcuts_inhibit_manager_v1_cb_inhibit_shortcuts,
+};
+
 #define GLOBAL_BIND_CB(NAME, IFACE, ...) \
 static void \
 _e_comp_wl_##NAME##_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t version, uint32_t id) \
@@ -1609,6 +1709,7 @@ GLOBAL_BIND_CB(zwp_pointer_constraints_v1, zwp_pointer_constraints_v1_interface)
 GLOBAL_BIND_CB(zxdg_output_manager_v1, zxdg_output_manager_v1_interface)
 GLOBAL_BIND_CB(xdg_activation_v1, xdg_activation_v1_interface)
 GLOBAL_BIND_CB(zwp_idle_inhibit_manager_v1, zwp_idle_inhibit_manager_v1_interface)
+GLOBAL_BIND_CB(zwp_keyboard_shortcuts_inhibit_manager_v1, zwp_keyboard_shortcuts_inhibit_manager_v1_interface)
 GLOBAL_BIND_CB(wp_presentation, wp_presentation_interface,
      wp_presentation_send_clock_id(res, CLOCK_MONOTONIC);
 )
@@ -1716,6 +1817,7 @@ e_comp_wl_extensions_init(void)
    GLOBAL_CREATE_OR_RETURN(xdg_activation_v1, xdg_activation_v1_interface, 1);
    GLOBAL_CREATE_OR_RETURN(zwp_idle_inhibit_manager_v1, zwp_idle_inhibit_manager_v1_interface, 1);
    GLOBAL_CREATE_OR_RETURN(wp_presentation, wp_presentation_interface, 1);
+   GLOBAL_CREATE_OR_RETURN(zwp_keyboard_shortcuts_inhibit_manager_v1, zwp_keyboard_shortcuts_inhibit_manager_v1_interface, 1);
 
    ecore_event_handler_add(ECORE_WL2_EVENT_SYNC_DONE, _dmabuf_add, NULL);
 
@@ -1724,6 +1826,12 @@ e_comp_wl_extensions_init(void)
 
    e_client_hook_add(E_CLIENT_HOOK_FOCUS_SET, _e_comp_wl_extensions_client_focus_set, NULL);
    e_client_hook_add(E_CLIENT_HOOK_FOCUS_UNSET, _e_comp_wl_extensions_client_focus_unset, NULL);
+
+   shortcuts_inhibit_toggle_action = e_action_add("shortcuts_inhibit_toggle");
+   shortcuts_inhibit_toggle_action->func.go = _e_comp_wl_shortcuts_inhibit_toggle_go;
+   e_action_predef_name_set(N_("Window : Actions"),
+                            N_("Toggle Keyboard Shortcuts Inhibited By Window"),
+                            "shortcuts_inhibit_toggle", NULL, NULL, 0);
 
    act = e_action_add("key_route");
    act->func.go_key = _e_comp_wl_action_route_act_key_route_go;
