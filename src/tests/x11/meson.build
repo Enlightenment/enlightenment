@@ -20,6 +20,8 @@ if not config_h.has('HAVE_WAYLAND_ONLY')
     ['x11-iconify', executable('test_x11_iconify', 'test_iconify.c',
                                dependencies: x11_test_deps),
      {'ELM_TRANSITION_DURATION_FACTOR': '4'}],
+    ['x11-key-binding', executable('test_x11_key_binding', 'test_key_binding.c',
+                                   dependencies: x11_test_deps)],
   ]
 
   # Two heads as well: a window on the right-hand screen is far from 0,0,
