@@ -2447,16 +2447,33 @@ _enm_online_check_done(void *data, Eina_Bool online)
    _enm_connected(online);
 }
 
+/* How long to stay in "connected-site" before assuming a captive portal.
+ * NM reports connected-site until its own connectivity check completes,
+ * which can take a couple of seconds after the link comes up. */
+#define ENM_PORTAL_DELAY      6.0
+/* Debounce delay before reporting the connection change */
+#define ENM_CONN_REPORT_DELAY 2.0
+
+/* Whether the pending state is specifically NM's connected-site state.
+ * connected/online alone cannot tell SITE apart from LOCAL. */
+static Eina_Bool _enm_pending_site = EINA_FALSE;
+
+static void
+_enm_connection_report(E_NM_Module_Context *ctxt)
+{
+   ctxt->connected = ctxt->pending_connected;
+   ctxt->online = ctxt->pending_online;
+   if (ctxt->connected) _enm_connected(ctxt->online);
+   else _enm_disconnected();
+}
+
 static Eina_Bool
 _enm_connection_timer_cb(void *data)
 {
    E_NM_Module_Context *ctxt = data;
 
    ctxt->connection_timer = NULL;
-   ctxt->connected = ctxt->pending_connected;
-   ctxt->online = ctxt->pending_online;
-   if (ctxt->connected) _enm_connected(ctxt->online);
-   else _enm_disconnected();
+   _enm_connection_report(ctxt);
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -2464,7 +2481,7 @@ _enm_connection_timer_cb(void *data)
 static void
 _enm_connection_state_update(E_NM_Module_Context *ctxt, enum NM_State state)
 {
-   Eina_Bool connected, online;
+   Eina_Bool connected, online, site;
    const char *str = "unknown";
 
    connected = (state == NM_STATE_CONNECTED_LOCAL) ||
@@ -2473,12 +2490,15 @@ _enm_connection_state_update(E_NM_Module_Context *ctxt, enum NM_State state)
    /* NM's global state reports Internet access; local/site are connected
     * networks without global connectivity. */
    online = (state == NM_STATE_CONNECTED_GLOBAL);
+   site = (state == NM_STATE_CONNECTED_SITE);
    /* Routine manager updates must not postpone a pending notification. */
    if ((ctxt->pending_connected == connected) &&
-       (ctxt->pending_online == online)) return;
+       (ctxt->pending_online == online) &&
+       (_enm_pending_site == site)) return;
 
    ctxt->pending_connected = connected;
    ctxt->pending_online = online;
+   _enm_pending_site = site;
    enm_online_check_state_set(ctxt->online_check, connected, online);
    E_FREE_FUNC(ctxt->connection_timer, ecore_timer_del);
 
@@ -2488,17 +2508,38 @@ _enm_connection_state_update(E_NM_Module_Context *ctxt, enum NM_State state)
    L("NM: state=%s, online=%i", str, online);
 
    /* A brief excursion back to the last reported state needs no callback. */
-//   if (ctxt->connected == connected)
-   if (ctxt->connected)
+   if ((ctxt->connected == connected) && (ctxt->online == online)) return;
+
+   if (online)
      {
-        /* We are online - no need to check more */
-//        if (ctxt->online == online) return;
-        if (ctxt->online) return;
+        /* Internet is reachable: report at once.  This also stops any
+         * captive portal check that a slow NM connectivity check had
+         * already started. */
+        _enm_connection_report(ctxt);
      }
-   /* Wait for two seconds without a connectivity change before reporting. */
-   if (state == NM_STATE_CONNECTED_SITE)
-     ctxt->connection_timer = ecore_timer_add
-       (2.0, _enm_connection_timer_cb, ctxt);
+   else if (site)
+     {
+        /* NM has not (yet) confirmed Internet access.  Give its connectivity
+         * check time to finish; only if we are still stuck in connected-site
+         * afterwards do we report "connected but not online", which is what
+         * triggers the captive portal check and browser. */
+        ctxt->connection_timer = ecore_timer_add
+          (ENM_PORTAL_DELAY, _enm_connection_timer_cb, ctxt);
+     }
+   else if (connected)
+     {
+        /* connected-local: link up but no site connectivity, so this is not
+         * a captive portal candidate (e.g. rfkill/airplane mode).  Make sure
+         * no online check/browser popup is started or left running. */
+        enm_online_check_stop(ctxt->online_check);
+     }
+   else
+     {
+        /* Disconnected/asleep: report after a short debounce so that a
+         * quick roam does not flap. */
+        ctxt->connection_timer = ecore_timer_add
+          (ENM_CONN_REPORT_DELAY, _enm_connection_timer_cb, ctxt);
+     }
 }
 
 static void
