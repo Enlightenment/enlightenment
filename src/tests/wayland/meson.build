@@ -93,6 +93,7 @@ wl_protocol_tests = [
   ['idle-inhibit', 'test_idle_inhibit.c'],
   ['text-input', 'test_text_input.c'],
   ['input-method-keyboard', 'test_input_method_keyboard.c'],
+  ['input-popup', 'test_input_popup.c'],
   ['privileges', 'test_privileges.c',
    {'PATH': meson.current_build_dir()}],
   ['client-iconify', 'test_client_iconify.c',

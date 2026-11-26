@@ -162,6 +162,8 @@ void tk_surface_paint(Tk *tk, struct wl_surface *surface, int w, int h);
 /* Where the compositor has a surface, in compositor coordinates. */
 void tk_surface_geometry(Tk *tk, struct wl_surface *surface,
                          int *x, int *y, int *w, int *h);
+/* Whether the compositor shows a surface. */
+int tk_surface_visible(Tk *tk, struct wl_surface *surface);
 
 /* Press or release a linux/input.h BTN_* button. */
 void tk_pointer_button(Tk *tk, unsigned int button, int pressed);

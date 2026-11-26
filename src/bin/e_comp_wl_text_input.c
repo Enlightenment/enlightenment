@@ -23,6 +23,8 @@ typedef struct
    Eina_Bool change_cause_set;
    uint32_t content_hint, content_purpose;
    Eina_Bool content_set;
+   /* in the focused surface's coordinates */
+   int32_t cursor_x, cursor_y, cursor_w, cursor_h;
 } Text_Input_State;
 
 typedef struct
@@ -40,6 +42,7 @@ typedef struct
    struct wl_resource *grab;
    /* a second input method on the seat is sent unavailable and ignored */
    Eina_Bool inert;
+   Eina_List *popups;
    struct
    {
       char *preedit;
@@ -118,12 +121,15 @@ _e_input_method_state_send(Input_Method *im, Text_Input *ti)
    zwp_input_method_v2_send_done(im->res);
 }
 
+static void _e_input_popups_update(Input_Method *im);
+
 static void
 _e_input_method_activate(Input_Method *im, Text_Input *ti)
 {
    zwp_input_method_v2_send_activate(im->res);
    _e_input_method_pending_clear(im);
    _e_input_method_state_send(im, ti);
+   _e_input_popups_update(im);
 }
 
 static void
@@ -139,6 +145,7 @@ _e_input_method_deactivate(void)
    zwp_input_method_v2_send_done(im->res);
    /* text composed for this field must not reach the next one */
    _e_input_method_pending_clear(im);
+   _e_input_popups_update(im);
 }
 
 static void
@@ -200,8 +207,15 @@ _e_text_input_cb_content_type_set(struct wl_client *client EINA_UNUSED, struct w
 }
 
 static void
-_e_text_input_cb_cursor_rectangle_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, int32_t x EINA_UNUSED, int32_t y EINA_UNUSED, int32_t w EINA_UNUSED, int32_t h EINA_UNUSED)
+_e_text_input_cb_cursor_rectangle_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int32_t x, int32_t y, int32_t w, int32_t h)
 {
+   Text_Input *ti = wl_resource_get_user_data(resource);
+
+   if (!ti->entered) return;
+   ti->pending.cursor_x = x;
+   ti->pending.cursor_y = y;
+   ti->pending.cursor_w = w;
+   ti->pending.cursor_h = h;
 }
 
 static void
@@ -228,10 +242,13 @@ _e_text_input_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_resource
         _active_ti = ti;
         im = _e_input_method_get();
         if (!im) return;
-        if (was_enabled)
-          _e_input_method_state_send(im, ti);
-        else
+        if (!was_enabled)
           _e_input_method_activate(im, ti);
+        else
+          {
+             _e_input_method_state_send(im, ti);
+             _e_input_popups_update(im);
+          }
      }
    else if (was_enabled)
      _e_input_method_deactivate();
@@ -396,26 +413,189 @@ static const struct zwp_input_popup_surface_v2_interface _e_input_popup_surface_
    _e_input_method_cb_resource_destroy,
 };
 
+/* An input popup, the candidate list, is shown if and only if its input
+ * method is active, below the text cursor, or above it when there is no room
+ * below. */
+typedef struct
+{
+   struct wl_resource *res;
+   E_Client *ec;
+   Input_Method *im;
+} Input_Popup;
+
+static void
+_e_input_popup_place(Input_Popup *ip)
+{
+   E_Client *ec = ip->ec, *focus = wl_resource_get_user_data(_focus_surface);
+   const Text_Input_State *st = &_active_ti->current;
+   int cx, cy, x, y, zx, zy, zw, zh;
+
+   cx = focus->client.x + st->cursor_x;
+   cy = focus->client.y + st->cursor_y;
+   x = cx;
+   y = cy + st->cursor_h;
+   e_zone_useful_geometry_get(focus->zone, &zx, &zy, &zw, &zh);
+   if (x + ec->w > zx + zw) x = zx + zw - ec->w;
+   if (x < zx) x = zx;
+   if (y + ec->h > zy + zh) y = cy - ec->h;
+   if (y + ec->h > zy + zh) y = zy + zh - ec->h;
+   if (y < zy) y = zy;
+   e_client_util_move_without_frame(ec, x, y);
+   zwp_input_popup_surface_v2_send_text_input_rectangle(ip->res, cx - x, cy - y,
+                                                        st->cursor_w, st->cursor_h);
+}
+
+static void
+_e_input_popup_visible_update(Input_Popup *ip)
+{
+   E_Client *ec = ip->ec;
+
+   if (e_object_is_del(E_OBJECT(ec))) return;
+   if (ip->im && (ip->im == _e_input_method_get()) && _active_ti &&
+       ec->comp_data->mapped)
+     {
+        _e_input_popup_place(ip);
+        ec->visible = EINA_TRUE;
+        evas_object_show(ec->frame);
+        e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
+     }
+   else
+     {
+        ec->visible = EINA_FALSE;
+        evas_object_hide(ec->frame);
+     }
+}
+
+static void
+_e_input_popups_update(Input_Method *im)
+{
+   Input_Popup *ip;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(im->popups, l, ip)
+     _e_input_popup_visible_update(ip);
+}
+
+static void
+_e_input_popup_shell_map(struct wl_resource *resource)
+{
+   Input_Popup *ip = wl_resource_get_user_data(resource);
+
+   ip->ec->comp_data->mapped = EINA_TRUE;
+   _e_input_popup_visible_update(ip);
+}
+
+static void
+_e_input_popup_shell_unmap(struct wl_resource *resource)
+{
+   Input_Popup *ip = wl_resource_get_user_data(resource);
+
+   ip->ec->comp_data->mapped = EINA_FALSE;
+   _e_input_popup_visible_update(ip);
+}
+
+/* The client chooses its size, which moves it when it is against an edge. */
+static void
+_e_input_popup_shell_configure(struct wl_resource *resource, Evas_Coord x EINA_UNUSED, Evas_Coord y EINA_UNUSED, Evas_Coord w EINA_UNUSED, Evas_Coord h EINA_UNUSED)
+{
+   _e_input_popup_visible_update(wl_resource_get_user_data(resource));
+}
+
+static void
+_e_input_popup_res_destroy(struct wl_resource *resource)
+{
+   Input_Popup *ip = wl_resource_get_user_data(resource);
+   E_Client *ec = ip->ec;
+
+   if (ip->im) ip->im->popups = eina_list_remove(ip->im->popups, ip);
+   if (!e_object_is_del(E_OBJECT(ec)))
+     {
+        ec->visible = EINA_FALSE;
+        evas_object_hide(ec->frame);
+        ec->comp_data->mapped = EINA_FALSE;
+        ec->comp_data->shell.surface = NULL;
+        ec->comp_data->shell.configure = NULL;
+        ec->comp_data->shell.map = NULL;
+        ec->comp_data->shell.unmap = NULL;
+     }
+   e_object_unref(E_OBJECT(ec));
+   free(ip);
+}
+
 static const struct zwp_input_method_keyboard_grab_v2_interface _e_input_method_keyboard_grab_interface =
 {
    _e_input_method_cb_resource_destroy,
 };
 
-/* Not implemented yet: the popup is never shown. */
+/* Like the input panel of wl_desktop_shell, a window E places but neither
+ * decorates nor focuses: the focus going to it would deactivate the input
+ * method, and so hide it. */
 static void
-_e_input_method_cb_input_popup_surface_get(struct wl_client *client, struct wl_resource *resource, uint32_t id, struct wl_resource *surface EINA_UNUSED)
+_e_input_method_cb_input_popup_surface_get(struct wl_client *client, struct wl_resource *resource, uint32_t id, struct wl_resource *surface)
 {
+   Input_Method *im = wl_resource_get_user_data(resource);
+   E_Client *ec = wl_resource_get_user_data(surface);
    struct wl_resource *res;
+   Input_Popup *ip;
 
+   if (ec->comp_data->shell.surface)
+     {
+        wl_resource_post_error(resource, ZWP_INPUT_METHOD_V2_ERROR_ROLE,
+                               "wl_surface already has a role");
+        return;
+     }
+   ip = E_NEW(Input_Popup, 1);
+   if (!ip)
+     {
+        wl_resource_post_no_memory(resource);
+        return;
+     }
    res = wl_resource_create(client, &zwp_input_popup_surface_v2_interface,
                             wl_resource_get_version(resource), id);
    if (!res)
      {
-        wl_client_post_no_memory(client);
+        free(ip);
+        wl_resource_post_no_memory(resource);
         return;
      }
-   wl_resource_set_implementation(res, &_e_input_popup_surface_interface,
-                                  NULL, NULL);
+   ip->res = res;
+   ip->ec = ec;
+   e_object_ref(E_OBJECT(ec));
+   wl_resource_set_implementation(res, &_e_input_popup_surface_interface, ip,
+                                  _e_input_popup_res_destroy);
+   if (!im->inert)
+     {
+        ip->im = im;
+        im->popups = eina_list_append(im->popups, ip);
+     }
+
+   EC_CHANGED(ec);
+   if (!ec->new_client)
+     {
+        ec->new_client = EINA_TRUE;
+        e_comp->new_clients++;
+     }
+   if (ec->ignored) e_client_unignore(ec);
+   ec->borderless = EINA_TRUE;
+   ec->argb = EINA_TRUE;
+   ec->lock_border = EINA_TRUE;
+   ec->lock_focus_in = ec->lock_focus_out = EINA_TRUE;
+   ec->netwm.state.skip_taskbar = EINA_TRUE;
+   ec->netwm.state.skip_pager = EINA_TRUE;
+   ec->no_shape_cut = EINA_TRUE;
+   ec->border_size = 0;
+   ec->netwm.type = E_WINDOW_TYPE_UTILITY;
+   ec->layer = E_LAYER_CLIENT_POPUP;
+   evas_object_layer_set(ec->frame, E_LAYER_CLIENT_POPUP);
+
+   ec->comp_data->shell.surface = res;
+   ec->comp_data->shell.configure_send = NULL;
+   ec->comp_data->shell.configure = _e_input_popup_shell_configure;
+   ec->comp_data->shell.ping = NULL;
+   ec->comp_data->shell.map = _e_input_popup_shell_map;
+   ec->comp_data->shell.unmap = _e_input_popup_shell_unmap;
+   /* A buffer committed before the role was given found no map to call. */
+   if (e_pixmap_usable_get(ec->pixmap)) _e_input_popup_shell_map(res);
 }
 
 EINTERN void
@@ -482,9 +662,15 @@ static void
 _e_input_method_res_destroy(struct wl_resource *resource)
 {
    Input_Method *im = wl_resource_get_user_data(resource);
+   Input_Popup *ip;
 
    if (_input_method == im) _input_method = NULL;
    if (im->grab) wl_resource_set_user_data(im->grab, NULL);
+   EINA_LIST_FREE(im->popups, ip)
+     {
+        ip->im = NULL;
+        _e_input_popup_visible_update(ip);
+     }
    _e_input_method_pending_clear(im);
    free(im);
 }

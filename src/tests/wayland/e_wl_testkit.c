@@ -55,6 +55,7 @@ struct _Tk
 
    struct wl_surface *info_surface;
    int info_x, info_y, info_w, info_h;
+   int info_visible;
    int info_known;
 
    int configured;
@@ -73,12 +74,13 @@ _surface_info(void *data, struct wl_test *t, struct wl_surface *s,
 {
    Tk *tk = data;
 
-   (void)t; (void)vis; (void)foc;
+   (void)t; (void)foc;
    if (s != tk->info_surface) return;
    tk->info_x = x;
    tk->info_y = y;
    tk->info_w = w;
    tk->info_h = h;
+   tk->info_visible = vis;
    tk->info_known = 1;
 }
 
@@ -753,6 +755,13 @@ tk_surface_geometry(Tk *tk, struct wl_surface *surface,
    if (y) *y = tk->info_y;
    if (w) *w = tk->info_w;
    if (h) *h = tk->info_h;
+}
+
+int
+tk_surface_visible(Tk *tk, struct wl_surface *surface)
+{
+   tk_surface_geometry(tk, surface, NULL, NULL, NULL, NULL);
+   return tk->info_visible;
 }
 
 void
