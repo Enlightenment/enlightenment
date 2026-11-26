@@ -13,6 +13,9 @@ protos = [
   '@0@/unstable/keyboard-shortcuts-inhibit/keyboard-shortcuts-inhibit-unstable-v1.xml'.format(dir_wayland_protocols),
   '@0@/unstable/idle-inhibit/idle-inhibit-unstable-v1.xml'.format(dir_wayland_protocols),
   '@0@/unstable/primary-selection/primary-selection-unstable-v1.xml'.format(dir_wayland_protocols),
+  '@0@/unstable/text-input/text-input-unstable-v3.xml'.format(dir_wayland_protocols),
+  # not in wayland-protocols, vendored from wlroots
+  '../../protocol/input-method-unstable-v2.xml',
 ]
 
 proto_c = []

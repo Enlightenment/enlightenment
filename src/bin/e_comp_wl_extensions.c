@@ -1818,6 +1818,7 @@ e_comp_wl_extensions_init(void)
    GLOBAL_CREATE_OR_RETURN(zwp_idle_inhibit_manager_v1, zwp_idle_inhibit_manager_v1_interface, 1);
    GLOBAL_CREATE_OR_RETURN(wp_presentation, wp_presentation_interface, 1);
    GLOBAL_CREATE_OR_RETURN(zwp_keyboard_shortcuts_inhibit_manager_v1, zwp_keyboard_shortcuts_inhibit_manager_v1_interface, 1);
+   if (!e_comp_wl_text_input_init()) return EINA_FALSE;
 
    ecore_event_handler_add(ECORE_WL2_EVENT_SYNC_DONE, _dmabuf_add, NULL);
 

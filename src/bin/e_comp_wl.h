@@ -500,6 +500,13 @@ EINTERN void e_comp_wl_presentation_feedback_present(E_Client *ec);
 EINTERN void e_comp_wl_presentation_feedback_discard(Eina_List **feedbacks);
 EINTERN void e_comp_wl_presentation_feedback_commit(E_Client *ec, Eina_List **feedbacks);
 EINTERN Eina_Bool e_comp_wl_extension_idle_inhibited(void);
+
+EINTERN Eina_Bool e_comp_wl_text_input_init(void);
+/* Called with the client wl_keyboard enters or leaves, after the walk from
+ * an xdg popup up to its toplevel. */
+EINTERN void e_comp_wl_text_input_focus_set(E_Client *ec);
+EINTERN void e_comp_wl_text_input_focus_unset(E_Client *ec);
+
 E_API void e_comp_wl_extension_relative_motion_event(uint64_t time_usec, double dx, double dy, double dx_unaccel, double dy_unaccel);
 E_API void e_comp_wl_extension_pointer_constraints_commit(E_Client *ec);
 E_API Eina_Bool e_comp_wl_extension_pointer_constraints_update(E_Client *ec, int x, int y);

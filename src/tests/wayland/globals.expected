@@ -13,10 +13,12 @@ xdg_toplevel_drag_manager_v1	1
 xdg_wm_base	6
 zwp_e_session_recovery	1
 zwp_idle_inhibit_manager_v1	1
+zwp_input_method_manager_v2	1
 zwp_keyboard_shortcuts_inhibit_manager_v1	1
 zwp_pointer_constraints_v1	1
 zwp_primary_selection_device_manager_v1	1
 zwp_relative_pointer_manager_v1	1
+zwp_text_input_manager_v3	1
 zxdg_decoration_manager_v1	1
 zxdg_exporter_v1	1
 zxdg_exporter_v2	1

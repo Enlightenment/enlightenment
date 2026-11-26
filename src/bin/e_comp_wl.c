@@ -808,6 +808,7 @@ _e_comp_wl_evas_cb_focus_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
           }
      }
 
+   e_comp_wl_text_input_focus_set(ec);
    EINA_LIST_FOREACH(e_comp_wl->kbd.resources, l, res)
      if (wl_resource_get_client(res) == wc)
        added |= _keyboard_resource_add(res);
@@ -843,6 +844,7 @@ _e_comp_wl_keyboard_leave(E_Client *ec)
         while (ec->parent) ec = ec->parent;
      }
 
+   e_comp_wl_text_input_focus_unset(ec);
    serial = wl_display_next_serial(e_comp_wl->wl.disp);
 
    EINA_LIST_FOREACH_SAFE(e_comp_wl->kbd.focused, l, ll, res)

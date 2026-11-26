@@ -36,6 +36,8 @@ foreach p: [
   '@0@/unstable/keyboard-shortcuts-inhibit/keyboard-shortcuts-inhibit-unstable-v1.xml'.format(dir_wayland_protocols),
   '@0@/unstable/idle-inhibit/idle-inhibit-unstable-v1.xml'.format(dir_wayland_protocols),
   '@0@/unstable/primary-selection/primary-selection-unstable-v1.xml'.format(dir_wayland_protocols),
+  '@0@/unstable/text-input/text-input-unstable-v3.xml'.format(dir_wayland_protocols),
+  '../../protocol/input-method-unstable-v2.xml',
 ]
   test_proto_src += gen_scanner_client.process(p)
   test_proto_src += gen_scanner_impl.process(p)
@@ -88,6 +90,7 @@ wl_protocol_tests = [
    {'E_TEST_ACTIVATION_TOKEN_LIFETIME': '1'}],
   ['primary-selection', 'test_primary_selection.c'],
   ['idle-inhibit', 'test_idle_inhibit.c'],
+  ['text-input', 'test_text_input.c'],
   ['client-iconify', 'test_client_iconify.c',
    {'ELM_TRANSITION_DURATION_FACTOR': '4'}],
 ]
