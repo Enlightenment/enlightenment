@@ -93,6 +93,7 @@ exec env \
     E_START=e-test-compositor \
     XDG_RUNTIME_DIR="$RUNDIR" \
     HOME="$RUNDIR" \
+    E_HOME="$RUNDIR/.e" \
     E_PREFIX="$STAGE@PREFIX@" \
     E_BIN_DIR="$STAGE@BIN_DIR@" \
     E_LIB_DIR="$STAGE@LIB_DIR@" \

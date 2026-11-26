@@ -1,0 +1,13 @@
+# Programs named by a .desktop file in this directory, or in
+# ~/.e/e/wayland-privileges, may use the Wayland protocols listed in their
+# X-Enlightenment-Wayland-Privileges key. No other program is told they
+# exist:
+#   input_method  zwp_input_method_v2, which reads the keys typed in a
+#                 text field
+# Exec names the program, as an absolute path or a name looked up in PATH.
+[Desktop Entry]
+Type=Application
+Name=Fcitx 5
+Exec=fcitx5
+NoDisplay=true
+X-Enlightenment-Wayland-Privileges=input_method;

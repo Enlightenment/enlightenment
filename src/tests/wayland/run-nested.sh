@@ -143,7 +143,8 @@ if [ -z "$SOCKET" ]; then
 fi
 
 set +e
-XDG_RUNTIME_DIR="$RUNDIR" WAYLAND_DISPLAY="$SOCKET" E_TEST_PID="$E_PID" "$@"
+XDG_RUNTIME_DIR="$RUNDIR" WAYLAND_DISPLAY="$SOCKET" E_TEST_PID="$E_PID" \
+    E_TEST_PRIVILEGES_DIR="$RUNDIR/.e/e/wayland-privileges" "$@"
 client_status=$?
 set -e
 

@@ -91,6 +91,8 @@ wl_protocol_tests = [
   ['primary-selection', 'test_primary_selection.c'],
   ['idle-inhibit', 'test_idle_inhibit.c'],
   ['text-input', 'test_text_input.c'],
+  ['privileges', 'test_privileges.c',
+   {'PATH': meson.current_build_dir()}],
   ['client-iconify', 'test_client_iconify.c',
    {'ELM_TRANSITION_DURATION_FACTOR': '4'}],
 ]
@@ -106,7 +108,11 @@ foreach t: wl_protocol_tests
   if t.length() > 2
     env = environment({'E_TEST_COMPOSITOR': e_test_compositor})
     foreach k, v: t[2]
-      env.set(k, v)
+      if k == 'PATH'
+        env.prepend(k, v)
+      else
+        env.set(k, v)
+      endif
     endforeach
   endif
   test('wl-' + t[0],

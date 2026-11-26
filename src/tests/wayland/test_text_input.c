@@ -428,6 +428,7 @@ main(void)
    Ti_Watch tw = { 0 };
    Im_Watch iw = { 0 };
 
+   tk_privileges_file("test-text-input", NULL, "input_method");
    app = tk_connect(PROG);
    ime = tk_connect(PROG);
    app_seat = tk_bind(app, &wl_seat_interface, 1);

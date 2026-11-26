@@ -170,4 +170,8 @@ void tk_pointer_button(Tk *tk, unsigned int button, int pressed);
 void tk_touch_down(Tk *tk, int id, int x, int y);
 void tk_touch_up(Tk *tk, int id);
 
+/* Write name.desktop in E's wayland-privileges directory, granting
+ * privileges (no key if NULL) to exec (this test if NULL). */
+void tk_privileges_file(const char *name, const char *exec, const char *privileges);
+
 #endif

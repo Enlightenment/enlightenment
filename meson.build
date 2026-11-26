@@ -415,6 +415,7 @@ subdir('data/icons')
 subdir('data/images')
 subdir('data/input_methods')
 subdir('data/units')
+subdir('data/wayland-privileges')
 subdir('data/session')
 subdir('data/valgrind')
 

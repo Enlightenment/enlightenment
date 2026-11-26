@@ -501,6 +501,7 @@ EINTERN void e_comp_wl_presentation_feedback_discard(Eina_List **feedbacks);
 EINTERN void e_comp_wl_presentation_feedback_commit(E_Client *ec, Eina_List **feedbacks);
 EINTERN Eina_Bool e_comp_wl_extension_idle_inhibited(void);
 
+EINTERN void e_comp_wl_privileges_init(void);
 EINTERN Eina_Bool e_comp_wl_text_input_init(void);
 /* Called with the client wl_keyboard enters or leaves, after the walk from
  * an xdg popup up to its toplevel. */

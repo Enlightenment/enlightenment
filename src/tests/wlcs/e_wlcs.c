@@ -218,6 +218,39 @@ _wait_for_socket(E_Server *s)
    return -1;
 }
 
+/* wlcs is its own input method, and E only advertises
+ * zwp_input_method_manager_v2 to the programs wayland-privileges names. */
+static void
+_privileges_grant(E_Server *s)
+{
+   static const char *dirs[] = { ".e", ".e/e", ".e/e/wayland-privileges" };
+   char path[PATH_MAX], exe[PATH_MAX];
+   unsigned int i;
+   ssize_t n;
+   FILE *f;
+
+   n = readlink("/proc/self/exe", exe, sizeof(exe) - 1);
+   if (n <= 0) return;
+   exe[n] = 0;
+   for (i = 0; i < sizeof(dirs) / sizeof(dirs[0]); i++)
+     {
+        snprintf(path, sizeof(path), "%s/%s", s->runtime_dir, dirs[i]);
+        mkdir(path, 0700);
+     }
+   if (snprintf(path, sizeof(path), "%s/.e/e/wayland-privileges/wlcs.desktop",
+                s->runtime_dir) >= (int)sizeof(path))
+     return;
+   f = fopen(path, "w");
+   if (!f)
+     {
+        fprintf(stderr, "e_wlcs: %s: %s\n", path, strerror(errno));
+        return;
+     }
+   fprintf(f, "[Desktop Entry]\nType=Application\nName=wlcs\nExec=%s\n"
+           "X-Enlightenment-Wayland-Privileges=input_method;\n", exe);
+   fclose(f);
+}
+
 static void
 _server_start(WlcsDisplayServer *server)
 {
@@ -233,6 +266,7 @@ _server_start(WlcsDisplayServer *server)
         s->runtime_dir[0] = 0;
         return;
      }
+   _privileges_grant(s);
 
    pid = fork();
    if (pid < 0)

@@ -8,7 +8,9 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
+#include <limits.h>
 #include <sys/mman.h>
+#include <sys/stat.h>
 
 #include "e_wl_testkit.h"
 
@@ -765,4 +767,46 @@ tk_touch_up(Tk *tk, int id)
 {
    wl_test_touch_up(tk->tester, id);
    tk_settle(tk);
+}
+
+void
+tk_privileges_file(const char *name, const char *exec, const char *privileges)
+{
+   const char *dir = getenv("E_TEST_PRIVILEGES_DIR");
+   char path[PATH_MAX], self[PATH_MAX], *p;
+   ssize_t n;
+   FILE *f;
+
+   if (!dir)
+     {
+        fprintf(stderr, "tk_privileges_file: E_TEST_PRIVILEGES_DIR is unset\n");
+        exit(1);
+     }
+   if (!exec)
+     {
+        n = readlink("/proc/self/exe", self, sizeof(self) - 1);
+        if (n <= 0)
+          {
+             perror("tk_privileges_file: /proc/self/exe");
+             exit(1);
+          }
+        self[n] = 0;
+        exec = self;
+     }
+   snprintf(path, sizeof(path), "%s/%s.desktop", dir, name);
+   for (p = strchr(path + 1, '/'); p; p = strchr(p + 1, '/'))
+     {
+        *p = 0;
+        mkdir(path, 0700);
+        *p = '/';
+     }
+   f = fopen(path, "w");
+   if (!f)
+     {
+        perror(path);
+        exit(1);
+     }
+   fprintf(f, "[Desktop Entry]\nType=Application\nName=%s\nExec=%s\n", name, exec);
+   if (privileges) fprintf(f, "X-Enlightenment-Wayland-Privileges=%s\n", privileges);
+   fclose(f);
 }
