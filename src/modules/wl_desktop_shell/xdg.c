@@ -292,6 +292,7 @@ _e_xdg_shell_cb_positioner_create(struct wl_client *client, struct wl_resource *
 static void
 _e_xdg_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
+   E_Shell_Data *shd;
    E_Client *ec;
 
    /* DBG("XDG_SHELL: Surface Configure: %d \t%d %d %d %d",  */
@@ -306,6 +307,9 @@ _e_xdg_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_
         return;
      }
    if (e_object_is_del(E_OBJECT(ec))) return;
+   shd = ec->comp_data->shell.data;
+   if (shd->size_serial && (shd->acked_serial >= shd->size_serial))
+     shd->size_serial = 0;
    if (e_client_util_is_popup(ec))
      {
         /* A popup's size comes from its positioner, possibly shrunk by
@@ -511,15 +515,14 @@ _xdg_shell_surface_send_configure(struct wl_resource *resource, Eina_Bool fullsc
           } while (focused && (!activated));
      }
    shd = ec->comp_data->shell.data;
+   /* 0x0 lets the client choose its size, and would take back a size it was
+    * given but has not drawn yet: the latest configure wins. */
+   if (shd->size_serial && (!width) && (!height))
+     width = shd->width, height = shd->height;
    if ((shd->edges == edges) && (shd->width == width) && (shd->height == height) &&
        (shd->fullscreen == fullscreen) &&
        (shd->maximized == maximized) &&
        (shd->activated == activated)) return;
-   if (shd->edges && (shd->edges != edges))
-     {
-        if (shd->pending && (!width) && (!height))
-          width = shd->width, height = shd->height;
-     }
    //L("CONFIGURE %dx%d | max(%d) | full(%d)", width, height, maximized, fullscreen);
    shd->edges = edges;
    shd->width = width;
@@ -576,6 +579,7 @@ _xdg_shell_surface_send_configure(struct wl_resource *resource, Eina_Bool fullsc
 
    _e_xdg_toplevel_configure_bounds_send(resource, ec);
    serial = wl_display_next_serial(e_comp_wl->wl.disp);
+   if (width || height) shd->size_serial = serial;
    xdg_toplevel_send_configure(resource, width, height, &states);
    {
       Pending_State *ps;
@@ -784,6 +788,7 @@ _e_xdg_surface_cb_ack_configure(struct wl_client *client EINA_UNUSED, struct wl_
      }
    if (e_object_is_del(E_OBJECT(ec))) return;
    shd = ec->comp_data->shell.data;
+   shd->acked_serial = serial;
    EINA_LIST_FOREACH_SAFE(shd->pending, l, ll, ps)
      {
         if (ps->serial > serial) break;

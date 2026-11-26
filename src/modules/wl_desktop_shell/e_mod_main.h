@@ -31,6 +31,10 @@ struct E_Shell_Data
    int32_t unmax_w;
    int32_t unmax_h;
    Eina_List *pending;
+   /* the last configure with a size, until a commit after its ack; and the
+    * last serial acked */
+   uint32_t size_serial;
+   uint32_t acked_serial;
    struct wl_resource *surface;
    void *shell;
    unsigned int version;

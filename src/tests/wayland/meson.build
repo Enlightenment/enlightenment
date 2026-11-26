@@ -76,6 +76,7 @@ wl_protocol_tests = [
   ['pointer-focus', 'test_pointer_focus.c'],
   ['subsurface-position', 'test_subsurface_position.c'],
   ['window-geometry', 'test_window_geometry.c'],
+  ['configure-size', 'test_configure_size.c'],
   ['touch-moving-surface', 'test_touch_moving_surface.c'],
   ['pointer-axis120', 'test_pointer_axis120.c'],
   ['popup-dismiss', 'test_popup_dismiss.c'],
