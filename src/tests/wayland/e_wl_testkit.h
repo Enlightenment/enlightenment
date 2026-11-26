@@ -139,10 +139,18 @@ Tk_Client *tk_expect(Tk *tk, const char *app_id);
 /* Some of what E does to a window is animated by the theme. Waits, one
  * compositor main loop iteration at a time, until the window's states
  * masked by mask are want, and fails saying what it waited for if that
- * takes more than TK_WAIT_SECONDS. */
+ * takes more than TK_WAIT_SECONDS, or E_TEST_WAIT_SECONDS when set. */
 #define TK_WAIT_SECONDS 10
 Tk_Client *tk_wait_states(Tk *tk, const char *app_id, unsigned int mask,
                           unsigned int want, const char *what);
+/* The same, until done returns non-zero for the window. */
+Tk_Client *tk_wait(Tk *tk, const char *app_id,
+                   int (*done)(const Tk_Client *c, void *data), void *data,
+                   const char *what);
+/* Waits for a shown window of a program the test did not write, whose
+ * app_id contains app_id_part, and returns the largest one: a browser maps
+ * small helper windows too. */
+Tk_Client *tk_wait_window(Tk *tk, const char *app_id_part);
 
 /* Run one of E's own actions on a window. Empty or NULL params means none. */
 void tk_action(Tk *tk, unsigned int id, const char *name, const char *params);

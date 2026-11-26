@@ -668,11 +668,19 @@ _tk_now(void)
    return ts.tv_sec + (ts.tv_nsec / 1e9);
 }
 
+static int
+_tk_wait_seconds(void)
+{
+   const char *s = getenv("E_TEST_WAIT_SECONDS");
+
+   return (s && (atoi(s) > 0)) ? atoi(s) : TK_WAIT_SECONDS;
+}
+
 Tk_Client *
 tk_wait_states(Tk *tk, const char *app_id, unsigned int mask,
                unsigned int want, const char *what)
 {
-   double deadline = _tk_now() + TK_WAIT_SECONDS;
+   double deadline = _tk_now() + _tk_wait_seconds();
    Tk_Client *c;
 
    for (;;)
@@ -683,7 +691,52 @@ tk_wait_states(Tk *tk, const char *app_id, unsigned int mask,
         tk_sync(tk);
      }
    tk_fail(tk, "%s: states still 0x%x after %ds, waiting for 0x%x in 0x%x",
-           what, c->states, TK_WAIT_SECONDS, want, mask);
+           what, c->states, _tk_wait_seconds(), want, mask);
+}
+
+Tk_Client *
+tk_wait(Tk *tk, const char *app_id, int (*done)(const Tk_Client *c, void *data),
+        void *data, const char *what)
+{
+   double deadline = _tk_now() + _tk_wait_seconds();
+   Tk_Client *c;
+
+   for (;;)
+     {
+        c = tk_expect(tk, app_id);
+        if (done(c, data)) return c;
+        if (_tk_now() > deadline) break;
+        tk_sync(tk);
+     }
+   tk_fail(tk, "%s: still %dx%d+%d+%d states 0x%x output %u after %ds", what,
+           c->w, c->h, c->x, c->y, c->states, c->output, _tk_wait_seconds());
+}
+
+Tk_Client *
+tk_wait_window(Tk *tk, const char *app_id_part)
+{
+   double deadline = _tk_now() + _tk_wait_seconds();
+   Tk_Client *best;
+   int i, n;
+
+   for (;;)
+     {
+        best = NULL;
+        n = tk_clients(tk, NULL, 0);
+        for (i = 0; i < n; i++)
+          {
+             Tk_Client *c = &tk->clients[i];
+
+             if (!strstr(c->app_id, app_id_part)) continue;
+             if (!(c->states & WL_TEST_CLIENT_STATE_VISIBLE)) continue;
+             if ((!best) || ((c->w * c->h) > (best->w * best->h))) best = c;
+          }
+        if (best) return best;
+        if (_tk_now() > deadline) break;
+        tk_sync(tk);
+     }
+   tk_fail(tk, "no shown window with an app_id containing '%s' after %ds",
+           app_id_part, _tk_wait_seconds());
 }
 
 void

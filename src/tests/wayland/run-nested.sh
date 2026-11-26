@@ -9,6 +9,11 @@
 #   E_TEST_BACKEND   buffer (default) | x11 | wl        -- see E_WL_FORCE
 #   E_TEST_TIMEOUT   seconds to wait for E's socket (default 20)
 #   E_TEST_KEEP      set to 1 to keep the temp dir and print E's log path
+#   E_TEST_APP       a program the test did not write, run in the session
+#                    before the client, with HOME and E_TEST_RUNDIR set to the
+#                    temp dir
+#   E_TEST_APP_CHECK a command that fails when that program is not
+#                    installed, which makes the test a skip (77)
 #   WAYLAND_DEBUG    passed through to the client
 #
 # The client gets E_TEST_PID, the compositor's pid: Xwayland's lock file names
@@ -35,6 +40,11 @@ if [ -z "$COMPOSITOR" ] || [ ! -f "$COMPOSITOR" ]; then
     exit 2
 fi
 TIMEOUT=${E_TEST_TIMEOUT:-20}
+
+if [ -n "${E_TEST_APP_CHECK:-}" ] && ! sh -c "$E_TEST_APP_CHECK" >/dev/null 2>&1; then
+    echo "run-nested.sh: skipped, '$E_TEST_APP_CHECK' failed" >&2
+    exit 77
+fi
 
 RUNDIR=$(mktemp -d "${TMPDIR:-/tmp}/e-wl-test.XXXXXX")
 chmod 0700 "$RUNDIR"
@@ -142,6 +152,12 @@ if [ -z "$SOCKET" ]; then
     exit 1
 fi
 
+# Its HOME is the temp dir, so the cleanup above finds all its processes.
+if [ -n "${E_TEST_APP:-}" ]; then
+    XDG_RUNTIME_DIR="$RUNDIR" WAYLAND_DISPLAY="$SOCKET" HOME="$RUNDIR" \
+        E_TEST_RUNDIR="$RUNDIR" sh -c "$E_TEST_APP" >"$RUNDIR/app.log" 2>&1 &
+fi
+
 set +e
 XDG_RUNTIME_DIR="$RUNDIR" WAYLAND_DISPLAY="$SOCKET" E_TEST_PID="$E_PID" \
     E_TEST_PRIVILEGES_DIR="$RUNDIR/.e/e/wayland-privileges" "$@"
@@ -150,6 +166,10 @@ set -e
 
 if [ $client_status -ne 0 ]; then
     echo "run-nested.sh: client '$1' exited $client_status" >&2
+    if [ -s "$RUNDIR/app.log" ]; then
+        echo "--- app log (end) ---" >&2
+        tail -40 "$RUNDIR/app.log" >&2 || :
+    fi
     echo "--- compositor log ---" >&2
     cat "$E_LOG" >&2 || :
 fi

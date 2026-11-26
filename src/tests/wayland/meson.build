@@ -145,3 +145,26 @@ if get_option('xwayland') and not config_h.has('HAVE_WAYLAND_ONLY')
     )
   endforeach
 endif
+
+# Real browsers, when installed: slow, and depending on programs this tree
+# does not ship, so they have a suite of their own.
+browser_run = meson.current_source_dir() / 'browser-run.sh'
+test_browser = executable('test_wl_browser',
+  ['test_browser.c', tk_src, test_proto_src],
+  dependencies: [dependency('wayland-client')],
+)
+foreach b: ['firefox', 'chromium', 'brave']
+  test('browser-' + b,
+    run_nested,
+    args: [test_browser, b, 'e-browser-probe'],
+    env: {
+      'E_TEST_COMPOSITOR': e_test_compositor,
+      'E_TEST_APP': ' '.join([browser_run, b,
+                              'file://' + meson.current_source_dir() / 'pages' / 'probe.html']),
+      'E_TEST_APP_CHECK': ' '.join([browser_run, '--find', b]),
+      'E_TEST_WAIT_SECONDS': '60',
+    },
+    suite: 'browser',
+    timeout: 300,
+  )
+endforeach

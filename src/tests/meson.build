@@ -22,3 +22,6 @@ if get_option('wl') == true
 endif
 
 subdir('x11')
+
+# The browser suite runs only when asked for: meson test --suite browser
+add_test_setup('default', exclude_suites: ['browser'], is_default: true)
