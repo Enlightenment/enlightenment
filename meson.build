@@ -318,7 +318,7 @@ dep_elput            = dependency('elput'           , required: false)
 
 dep_wayland = []
 if get_option('wl') == true
-  wayland_protocols = dependency('wayland-protocols', version: '>= 1.12')
+  wayland_protocols = dependency('wayland-protocols', version: '>= 1.34')
   dir_wayland_protocols = wayland_protocols.get_pkgconfig_variable('pkgdatadir')
   wayland_version = '>= 1.11.0'
   dep_wayland = [ dependency('ecore-wl2'),
@@ -336,7 +336,7 @@ if get_option('wl') == true
     requires_drm = 'ecore-drm2'
     dep_wayland += dep_ecore_drm2
   endif
-  requires_wayland = ' '.join([ 'wayland-protocols >= 1.12',
+  requires_wayland = ' '.join([ 'wayland-protocols >= 1.34',
                                 'ecore-wl2',
                                 'efl-canvas-wl',
                                 requires_drm,
