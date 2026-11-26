@@ -38,6 +38,7 @@ foreach p: [
   '@0@/unstable/primary-selection/primary-selection-unstable-v1.xml'.format(dir_wayland_protocols),
   '@0@/unstable/text-input/text-input-unstable-v3.xml'.format(dir_wayland_protocols),
   '../../protocol/input-method-unstable-v2.xml',
+  '../../protocol/virtual-keyboard-unstable-v1.xml',
 ]
   test_proto_src += gen_scanner_client.process(p)
   test_proto_src += gen_scanner_impl.process(p)
@@ -91,6 +92,7 @@ wl_protocol_tests = [
   ['primary-selection', 'test_primary_selection.c'],
   ['idle-inhibit', 'test_idle_inhibit.c'],
   ['text-input', 'test_text_input.c'],
+  ['input-method-keyboard', 'test_input_method_keyboard.c'],
   ['privileges', 'test_privileges.c',
    {'PATH': meson.current_build_dir()}],
   ['client-iconify', 'test_client_iconify.c',

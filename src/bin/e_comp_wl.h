@@ -478,6 +478,9 @@ E_API void e_comp_wl_output_remove(const char *id);
 
 EINTERN Eina_Bool e_comp_wl_key_down(Ecore_Event_Key *ev, E_Client *ec);
 EINTERN Eina_Bool e_comp_wl_key_up(Ecore_Event_Key *ev, E_Client *ec);
+/* A key from a virtual keyboard, an evdev keycode, for the focused client:
+ * neither key bindings nor the input method's grab see it. */
+EINTERN void e_comp_wl_key_inject(uint32_t keycode, Eina_Bool pressed, uint32_t timestamp);
 E_API Eina_Bool e_comp_wl_evas_handle_mouse_button(E_Client *ec, uint32_t timestamp, uint32_t button_id, uint32_t state);
 EINTERN void e_comp_wl_pointer_frame_send(struct wl_resource *res);
 E_API void e_comp_wl_pointer_focus_drop(E_Client *ec);
@@ -507,6 +510,12 @@ EINTERN Eina_Bool e_comp_wl_text_input_init(void);
  * an xdg popup up to its toplevel. */
 EINTERN void e_comp_wl_text_input_focus_set(E_Client *ec);
 EINTERN void e_comp_wl_text_input_focus_unset(E_Client *ec);
+/* Offers a key to the input method's keyboard grab, keycode an evdev one.
+ * EINA_TRUE when the grab took it, and then the focused client must not get
+ * it. */
+EINTERN Eina_Bool e_comp_wl_text_input_key_grab(uint32_t keycode, Eina_Bool pressed, uint32_t timestamp);
+EINTERN void e_comp_wl_text_input_keymap_send(void);
+EINTERN void e_comp_wl_text_input_modifiers_send(void);
 
 E_API void e_comp_wl_extension_relative_motion_event(uint64_t time_usec, double dx, double dy, double dx_unaccel, double dy_unaccel);
 E_API void e_comp_wl_extension_pointer_constraints_commit(E_Client *ec);

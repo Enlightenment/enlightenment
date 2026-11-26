@@ -16,6 +16,7 @@ protos = [
   '@0@/unstable/text-input/text-input-unstable-v3.xml'.format(dir_wayland_protocols),
   # not in wayland-protocols, vendored from wlroots
   '../../protocol/input-method-unstable-v2.xml',
+  '../../protocol/virtual-keyboard-unstable-v1.xml',
 ]
 
 proto_c = []

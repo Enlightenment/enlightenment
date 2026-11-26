@@ -480,6 +480,7 @@ _e_comp_wl_input_keymap_update(struct xkb_keymap *keymap)
    /* send updated keymap */
    EINA_LIST_FOREACH(e_comp_wl->kbd.resources, l, res)
      e_comp_wl_input_keymap_send(res);
+   e_comp_wl_text_input_keymap_send();
 
    /* update modifiers */
    e_comp_wl_input_keyboard_modifiers_update();
@@ -642,6 +643,7 @@ e_comp_wl_input_keyboard_modifiers_update(void)
    Eina_List *l;
 
    if (!e_comp_wl_input_keyboard_modifiers_serialize()) return;
+   e_comp_wl_text_input_modifiers_send();
 
    if ((!e_comp_wl->kbd.focused) || e_comp->input_key_grabs) return;
 

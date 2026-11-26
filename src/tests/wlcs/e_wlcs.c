@@ -247,7 +247,7 @@ _privileges_grant(E_Server *s)
         return;
      }
    fprintf(f, "[Desktop Entry]\nType=Application\nName=wlcs\nExec=%s\n"
-           "X-Enlightenment-Wayland-Privileges=input_method;\n", exe);
+           "X-Enlightenment-Wayland-Privileges=input_method;virtual_keyboard;\n", exe);
    fclose(f);
 }
 

@@ -2,12 +2,14 @@
 # ~/.e/e/wayland-privileges, may use the Wayland protocols listed in their
 # X-Enlightenment-Wayland-Privileges key. No other program is told they
 # exist:
-#   input_method  zwp_input_method_v2, which reads the keys typed in a
-#                 text field
+#   input_method      zwp_input_method_v2, which reads the keys typed in
+#                     a text field
+#   virtual_keyboard  zwp_virtual_keyboard_v1, which types in the focused
+#                     window
 # Exec names the program, as an absolute path or a name looked up in PATH.
 [Desktop Entry]
 Type=Application
 Name=Fcitx 5
 Exec=fcitx5
 NoDisplay=true
-X-Enlightenment-Wayland-Privileges=input_method;
+X-Enlightenment-Wayland-Privileges=input_method;virtual_keyboard;

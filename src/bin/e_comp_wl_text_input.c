@@ -11,6 +11,7 @@
 #include "e.h"
 #include "text-input-unstable-v3-server-protocol.h"
 #include "input-method-unstable-v2-server-protocol.h"
+#include "virtual-keyboard-unstable-v1-server-protocol.h"
 
 typedef struct
 {
@@ -36,6 +37,7 @@ typedef struct
 typedef struct
 {
    struct wl_resource *res;
+   struct wl_resource *grab;
    /* a second input method on the seat is sent unavailable and ignored */
    Eina_Bool inert;
    struct
@@ -52,6 +54,7 @@ typedef struct
 
 static struct wl_global *_text_input_manager_global;
 static struct wl_global *_input_method_manager_global;
+static struct wl_global *_virtual_keyboard_manager_global;
 static Eina_List *_text_inputs;
 /* E has one seat, so there is at most one input method and one enabled
  * text input. */
@@ -60,6 +63,9 @@ static Text_Input *_active_ti;
 static struct wl_resource *_focus_surface;
 static struct wl_client *_focus_client;
 static struct wl_listener _focus_surface_destroy;
+/* The keys the grab took, by evdev code, of which there are 0x300: their
+ * release goes where their press went. */
+static Eina_Bool _grabbed_keys[0x300];
 
 static void
 _e_text_input_state_reset(Text_Input_State *st)
@@ -395,8 +401,7 @@ static const struct zwp_input_method_keyboard_grab_v2_interface _e_input_method_
    _e_input_method_cb_resource_destroy,
 };
 
-/* Not implemented yet: the popup is never shown and the grab never gets a
- * key, so an input method composing from the keyboard does not work. */
+/* Not implemented yet: the popup is never shown. */
 static void
 _e_input_method_cb_input_popup_surface_get(struct wl_client *client, struct wl_resource *resource, uint32_t id, struct wl_resource *surface EINA_UNUSED)
 {
@@ -413,9 +418,33 @@ _e_input_method_cb_input_popup_surface_get(struct wl_client *client, struct wl_r
                                   NULL, NULL);
 }
 
+EINTERN void
+e_comp_wl_text_input_keymap_send(void)
+{
+   Input_Method *im = _e_input_method_get();
+   int fd;
+
+   if ((!im) || (!im->grab)) return;
+   fd = _e_comp_wl_input_keymap_fd_get();
+   if (fd < 0) return;
+   zwp_input_method_keyboard_grab_v2_send_keymap(im->grab, WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1,
+                                                 fd, e_comp_wl->xkb.map_size);
+   close(fd);
+}
+
+static void
+_e_input_method_keyboard_grab_res_destroy(struct wl_resource *resource)
+{
+   Input_Method *im = wl_resource_get_user_data(resource);
+
+   if (im && (im->grab == resource)) im->grab = NULL;
+}
+
+/* A second grab replaces the first, which then stays silent. */
 static void
 _e_input_method_cb_keyboard_grab(struct wl_client *client, struct wl_resource *resource, uint32_t id)
 {
+   Input_Method *im = wl_resource_get_user_data(resource);
    struct wl_resource *res;
 
    res = wl_resource_create(client, &zwp_input_method_keyboard_grab_v2_interface,
@@ -426,7 +455,16 @@ _e_input_method_cb_keyboard_grab(struct wl_client *client, struct wl_resource *r
         return;
      }
    wl_resource_set_implementation(res, &_e_input_method_keyboard_grab_interface,
-                                  NULL, NULL);
+                                  NULL, _e_input_method_keyboard_grab_res_destroy);
+   if (im->inert) return;
+   if (im->grab) wl_resource_set_user_data(im->grab, NULL);
+   im->grab = res;
+   wl_resource_set_user_data(res, im);
+   e_comp_wl_text_input_keymap_send();
+   zwp_input_method_keyboard_grab_v2_send_repeat_info(res,
+                                                      e_config->keyboard.repeat_rate,
+                                                      e_config->keyboard.repeat_delay);
+   e_comp_wl_text_input_modifiers_send();
 }
 
 static const struct zwp_input_method_v2_interface _e_input_method_interface =
@@ -446,6 +484,7 @@ _e_input_method_res_destroy(struct wl_resource *resource)
    Input_Method *im = wl_resource_get_user_data(resource);
 
    if (_input_method == im) _input_method = NULL;
+   if (im->grab) wl_resource_set_user_data(im->grab, NULL);
    _e_input_method_pending_clear(im);
    free(im);
 }
@@ -512,6 +551,159 @@ _e_input_method_manager_cb_bind(struct wl_client *client, void *data EINA_UNUSED
      }
    wl_resource_set_implementation(res, &_e_input_method_manager_interface, NULL,
                                   NULL);
+}
+
+/* The grab only takes keys while a text input is enabled, unlike the
+ * protocol's exclusive grab of the seat's keyboard: an input method that
+ * stops answering then costs the text fields, not the whole keyboard.
+ * Key bindings already ran, so it cannot take them either. */
+EINTERN Eina_Bool
+e_comp_wl_text_input_key_grab(uint32_t keycode, Eina_Bool pressed, uint32_t timestamp)
+{
+   Input_Method *im = _e_input_method_get();
+   uint32_t serial;
+
+   if (keycode >= EINA_C_ARRAY_LENGTH(_grabbed_keys)) return EINA_FALSE;
+   if (pressed)
+     {
+        if (_grabbed_keys[keycode]) return EINA_TRUE;
+        if ((!im) || (!im->grab) || (!_active_ti)) return EINA_FALSE;
+        _grabbed_keys[keycode] = EINA_TRUE;
+     }
+   else
+     {
+        if (!_grabbed_keys[keycode]) return EINA_FALSE;
+        _grabbed_keys[keycode] = EINA_FALSE;
+        if ((!im) || (!im->grab)) return EINA_TRUE;
+     }
+
+   serial = wl_display_next_serial(e_comp_wl->wl.disp);
+   zwp_input_method_keyboard_grab_v2_send_key(im->grab, serial, timestamp, keycode,
+                                              pressed ? WL_KEYBOARD_KEY_STATE_PRESSED :
+                                              WL_KEYBOARD_KEY_STATE_RELEASED);
+   return EINA_TRUE;
+}
+
+EINTERN void
+e_comp_wl_text_input_modifiers_send(void)
+{
+   Input_Method *im = _e_input_method_get();
+
+   if ((!im) || (!im->grab)) return;
+   zwp_input_method_keyboard_grab_v2_send_modifiers(im->grab,
+                                                    wl_display_next_serial(e_comp_wl->wl.disp),
+                                                    e_comp_wl->kbd.mod_depressed,
+                                                    e_comp_wl->kbd.mod_latched,
+                                                    e_comp_wl->kbd.mod_locked,
+                                                    e_comp_wl->kbd.mod_group);
+}
+
+/* zwp_virtual_keyboard_v1 is how the input method gives back the keys it did
+ * not use. They go to the focused window as if typed, without key bindings,
+ * which they already went through, and without the grab they came from. */
+static void
+_e_virtual_keyboard_cb_keymap(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, uint32_t format, int32_t fd, uint32_t size EINA_UNUSED)
+{
+   close(fd);
+   if (format != WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1)
+     {
+        wl_resource_post_error(resource, ZWP_VIRTUAL_KEYBOARD_V1_ERROR_INVALID_KEYMAP_FORMAT,
+                               "keymap format %u is not xkb_v1", format);
+        return;
+     }
+   /* Not applied, as it would change what the keys of every window mean.
+    * An input method sends back the keys of the keymap the grab gave it. */
+   *(Eina_Bool *)wl_resource_get_user_data(resource) = EINA_TRUE;
+}
+
+static void
+_e_virtual_keyboard_cb_key(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, uint32_t time, uint32_t key, uint32_t state)
+{
+   if (!*(Eina_Bool *)wl_resource_get_user_data(resource))
+     {
+        wl_resource_post_error(resource, ZWP_VIRTUAL_KEYBOARD_V1_ERROR_NO_KEYMAP,
+                               "key sent before a keymap");
+        return;
+     }
+   e_comp_wl_key_inject(key, state == WL_KEYBOARD_KEY_STATE_PRESSED, time);
+}
+
+static void
+_e_virtual_keyboard_cb_modifiers(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, uint32_t depressed, uint32_t latched, uint32_t locked, uint32_t group)
+{
+   struct wl_resource *res;
+   Eina_List *l;
+   uint32_t serial;
+
+   if (!*(Eina_Bool *)wl_resource_get_user_data(resource))
+     {
+        wl_resource_post_error(resource, ZWP_VIRTUAL_KEYBOARD_V1_ERROR_NO_KEYMAP,
+                               "modifiers sent before a keymap");
+        return;
+     }
+   serial = wl_display_next_serial(e_comp_wl->wl.disp);
+   EINA_LIST_FOREACH(e_comp_wl->kbd.focused, l, res)
+     wl_keyboard_send_modifiers(res, serial, depressed, latched, locked, group);
+}
+
+static const struct zwp_virtual_keyboard_v1_interface _e_virtual_keyboard_interface =
+{
+   _e_virtual_keyboard_cb_keymap,
+   _e_virtual_keyboard_cb_key,
+   _e_virtual_keyboard_cb_modifiers,
+   _e_input_method_cb_resource_destroy,
+};
+
+static void
+_e_virtual_keyboard_res_destroy(struct wl_resource *resource)
+{
+   free(wl_resource_get_user_data(resource));
+}
+
+/* The user data says whether a keymap was set. */
+static void
+_e_virtual_keyboard_manager_cb_create(struct wl_client *client, struct wl_resource *resource, struct wl_resource *seat EINA_UNUSED, uint32_t id)
+{
+   Eina_Bool *keymap_set;
+   struct wl_resource *res;
+
+   keymap_set = E_NEW(Eina_Bool, 1);
+   if (!keymap_set)
+     {
+        wl_resource_post_no_memory(resource);
+        return;
+     }
+   res = wl_resource_create(client, &zwp_virtual_keyboard_v1_interface,
+                            wl_resource_get_version(resource), id);
+   if (!res)
+     {
+        free(keymap_set);
+        wl_resource_post_no_memory(resource);
+        return;
+     }
+   wl_resource_set_implementation(res, &_e_virtual_keyboard_interface, keymap_set,
+                                  _e_virtual_keyboard_res_destroy);
+}
+
+static const struct zwp_virtual_keyboard_manager_v1_interface _e_virtual_keyboard_manager_interface =
+{
+   _e_virtual_keyboard_manager_cb_create,
+};
+
+static void
+_e_virtual_keyboard_manager_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t version, uint32_t id)
+{
+   struct wl_resource *res;
+
+   res = wl_resource_create(client, &zwp_virtual_keyboard_manager_v1_interface,
+                            version, id);
+   if (!res)
+     {
+        wl_client_post_no_memory(client);
+        return;
+     }
+   wl_resource_set_implementation(res, &_e_virtual_keyboard_manager_interface,
+                                  NULL, NULL);
 }
 
 static void
@@ -595,6 +787,15 @@ e_comp_wl_text_input_init(void)
    if (!_input_method_manager_global)
      {
         ERR("Could not add zwp_input_method_manager_v2 to wayland globals");
+        return EINA_FALSE;
+     }
+   _virtual_keyboard_manager_global =
+     wl_global_create(e_comp_wl->wl.disp,
+                      &zwp_virtual_keyboard_manager_v1_interface, 1, NULL,
+                      _e_virtual_keyboard_manager_cb_bind);
+   if (!_virtual_keyboard_manager_global)
+     {
+        ERR("Could not add zwp_virtual_keyboard_manager_v1 to wayland globals");
         return EINA_FALSE;
      }
    return EINA_TRUE;

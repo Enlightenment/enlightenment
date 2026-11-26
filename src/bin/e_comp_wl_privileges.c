@@ -4,7 +4,7 @@
  * ~/.e/e/wayland-privileges with, for instance:
  *
  *   Exec=fcitx5
- *   X-Enlightenment-Wayland-Privileges=input_method;
+ *   X-Enlightenment-Wayland-Privileges=input_method;virtual_keyboard;
  *
  * A client that is refused does not see the global at all, as on a
  * compositor without the protocol, which every input method handles; a
@@ -15,6 +15,7 @@
 #define E_COMP_WL
 #include "e.h"
 #include "input-method-unstable-v2-server-protocol.h"
+#include "virtual-keyboard-unstable-v1-server-protocol.h"
 
 static const struct
 {
@@ -23,6 +24,7 @@ static const struct
 } _privileged_globals[] =
 {
    { &zwp_input_method_manager_v2_interface, "input_method" },
+   { &zwp_virtual_keyboard_manager_v1_interface, "virtual_keyboard" },
 };
 
 /* The program the Exec key starts, found in PATH as a shell would, or NULL */

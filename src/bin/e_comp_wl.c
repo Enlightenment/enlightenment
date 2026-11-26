@@ -3941,6 +3941,10 @@ e_comp_wl_output_remove(const char *id)
      }
 }
 
+/* Set while e_comp_wl_key_inject runs, to keep a key out of the grab it
+ * came back from. */
+static Eina_Bool _key_injected = EINA_FALSE;
+
 EINTERN Eina_Bool
 e_comp_wl_key_down(Ecore_Event_Key *ev, E_Client *ec)
 {
@@ -3968,6 +3972,16 @@ e_comp_wl_key_down(Ecore_Event_Key *ev, E_Client *ec)
      {
         /* ignore server-generated key repeats */
         if (*k == keycode) return EINA_FALSE;
+     }
+
+   /* Not in kbd.keys, which are the keys the client was told are pressed,
+    * and where the key coming back from the input method would be taken for
+    * a repeat. */
+   if ((!_key_injected) &&
+       e_comp_wl_text_input_key_grab(keycode, EINA_TRUE, ev->timestamp))
+     {
+        e_comp_wl_input_keyboard_state_update(keycode, EINA_TRUE);
+        return EINA_TRUE;
      }
 
    e_comp_wl->kbd.keys.size = (const char *)end - (const char *)e_comp_wl->kbd.keys.data;
@@ -4014,6 +4028,13 @@ e_comp_wl_key_up(Ecore_Event_Key *ev, E_Client *ec)
    keycode = (ev->keycode - 8);
    if (!(e_comp_wl = e_comp->wl_comp_data)) return EINA_FALSE;
 
+   if ((!_key_injected) &&
+       e_comp_wl_text_input_key_grab(keycode, EINA_FALSE, ev->timestamp))
+     {
+        e_comp_wl_input_keyboard_state_update(keycode, EINA_FALSE);
+        return EINA_TRUE;
+     }
+
    end = (uint32_t *)e_comp_wl->kbd.keys.data + (e_comp_wl->kbd.keys.size / sizeof(*k));
    for (k = e_comp_wl->kbd.keys.data; k < end; k++)
      {
@@ -4044,6 +4065,21 @@ e_comp_wl_key_up(Ecore_Event_Key *ev, E_Client *ec)
    /* update modifier state */
    e_comp_wl_input_keyboard_state_update(keycode, EINA_FALSE);
    return !!ec;
+}
+
+EINTERN void
+e_comp_wl_key_inject(uint32_t keycode, Eina_Bool pressed, uint32_t timestamp)
+{
+   Ecore_Event_Key ev;
+
+   memset(&ev, 0, sizeof(ev));
+   ev.window = ev.event_window = ev.root_window = e_comp->ee_win;
+   ev.timestamp = timestamp;
+   ev.keycode = keycode + 8;
+   _key_injected = EINA_TRUE;
+   if (pressed) e_comp_wl_key_down(&ev, NULL);
+   else e_comp_wl_key_up(&ev, NULL);
+   _key_injected = EINA_FALSE;
 }
 
 E_API Eina_Bool
