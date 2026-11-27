@@ -750,8 +750,9 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
         else
           edje_object_part_swallow(cw->shobj, "e.swallow.content", cw->obj);
      }
-   if ((cw->input_objs) || ((cw->ec) && (cw->ec->shaped))
-       || !cw->frame_object)
+   if (cw->input_area)
+     evas_object_pass_events_set(cw->obj, 1);
+   else if (((cw->ec) && (cw->ec->shaped)) || !cw->frame_object)
      evas_object_pass_events_set(cw->obj, 0);
    else
      evas_object_pass_events_set(cw->obj, 1);
@@ -3370,7 +3371,7 @@ e_comp_object_input_area_set(Evas_Object *obj, const Eina_Tiler *area)
    if (area && cw->input_area && eina_tiler_equal(area, cw->input_area)) return;
    _e_comp_input_objs_free(cw);
    if (cw->obj) evas_object_pass_events_set(cw->obj, 1);
-   if ((!area) || eina_tiler_empty(area))
+   if (!area)
      {
         E_FREE_FUNC(cw->input_area, eina_tiler_free);
         E_FREE_FUNC(cw->input_objs, eina_array_free);

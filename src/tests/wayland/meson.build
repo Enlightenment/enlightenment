@@ -75,6 +75,7 @@ wl_protocol_tests = [
   ['surface-unmap', 'test_surface_unmap.c'],
   ['pointer-focus', 'test_pointer_focus.c'],
   ['subsurface-position', 'test_subsurface_position.c'],
+  ['subsurface-input', 'test_subsurface_input.c'],
   ['window-geometry', 'test_window_geometry.c'],
   ['configure-size', 'test_configure_size.c'],
   ['touch-moving-surface', 'test_touch_moving_surface.c'],
