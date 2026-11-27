@@ -1,0 +1,21 @@
+<!doctype html>
+<title>e-ti</title>
+<!-- The field fills the page, so a click anywhere in it focuses the field
+     and not the address bar. The title reports what the compositor cannot
+     see: e-ti:<focused|blur>:<the field's value>| -->
+<body style="margin:0">
+<textarea id="f" spellcheck="false"
+          style="position:fixed;inset:0;border:0;resize:none;font:28px monospace"></textarea>
+<script>
+var f = document.getElementById('f');
+
+function update() {
+  document.title = 'e-ti:' + (document.activeElement === f ? 'focused' : 'blur') +
+                   ':' + f.value + '|';
+}
+f.addEventListener('input', update);
+f.addEventListener('focus', update);
+f.addEventListener('blur', update);
+update();
+</script>
+</body>
