@@ -242,7 +242,7 @@ static Eina_Bool
 _cb_fetch_timer(void *data)
 {
    Plugin *p = data;
-   char expr[1024];
+   char expr[4096];
    char quoted[1200];
    char buf[1400];
 
