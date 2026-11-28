@@ -13,6 +13,7 @@
 #define PROG "test-fcitx5"
 #define APP_ID "e.test.fcitx5"
 
+/* fcitx5 hands back text and editing keys alike. */
 static const struct
 {
    const char *name;
@@ -20,6 +21,7 @@ static const struct
 } _keys[] =
 {
    { "a", KEY_A },
+   { "BackSpace", KEY_BACKSPACE },
 };
 
 static struct wl_test *tester;

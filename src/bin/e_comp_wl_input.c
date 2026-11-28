@@ -995,6 +995,9 @@ e_comp_wl_input_keyboard_event_generate(const char *key, int mods, Eina_Bool up)
            "Return",
            "RTRN",
 
+           "BackSpace",
+           "BKSP",
+
            "Caps_Lock",
            "CAPS",
         };
