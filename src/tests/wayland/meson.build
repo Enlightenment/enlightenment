@@ -189,3 +189,20 @@ foreach b: ['firefox', 'chromium', 'brave']
     timeout: 300,
   )
 endforeach
+
+fcitx5_run = meson.current_source_dir() / 'fcitx5-run.sh'
+test('fcitx5',
+  run_nested,
+  args: [executable('test_wl_fcitx5',
+    ['test_fcitx5.c', tk_src, test_proto_src],
+    dependencies: [dependency('wayland-client')],
+  )],
+  env: {
+    'E_TEST_COMPOSITOR': e_test_compositor,
+    'E_TEST_APP': fcitx5_run,
+    'E_TEST_APP_CHECK': ' '.join([fcitx5_run, '--find']),
+    'E_TEST_WAIT_SECONDS': '60',
+  },
+  suite: 'im',
+  timeout: 300,
+)
