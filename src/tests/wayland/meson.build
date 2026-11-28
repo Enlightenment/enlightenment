@@ -206,3 +206,24 @@ test('fcitx5',
   suite: 'im',
   timeout: 300,
 )
+
+test_browser_pinyin = executable('test_wl_browser_pinyin',
+  ['test_browser_pinyin.c', tk_src, test_proto_src],
+  dependencies: [dependency('wayland-client')],
+)
+foreach b: ['firefox', 'chromium', 'brave']
+  test('browser-pinyin-' + b,
+    run_nested,
+    args: [test_browser_pinyin, b],
+    env: {
+      'E_TEST_COMPOSITOR': e_test_compositor,
+      'E_TEST_APP': ' '.join([fcitx5_run, 'pinyin', '&', browser_run, b,
+                              'file://' + meson.current_source_dir() / 'pages' / 'textinput.html']),
+      'E_TEST_APP_CHECK': ' '.join([fcitx5_run, '--find', 'pinyin', '&&',
+                                    browser_run, '--find', b]),
+      'E_TEST_WAIT_SECONDS': '60',
+    },
+    suite: 'im',
+    timeout: 300,
+  )
+endforeach
